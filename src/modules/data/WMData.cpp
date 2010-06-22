@@ -27,6 +27,7 @@
 
 #include "../../common/WAssert.h"
 #include "../../common/WIOTools.h"
+#include "../../common/WPropertyHelper.h"
 #include "../../dataHandler/WDataSet.h"
 #include "../../dataHandler/WDataSetSingle.h"
 #include "../../dataHandler/WDataSetScalar.h"
@@ -35,9 +36,7 @@
 #include "../../dataHandler/WDataTexture3D.h"
 #include "../../dataHandler/WEEG2.h"
 #include "../../dataHandler/exceptions/WDHException.h"
-//#ifndef _MSC_VER
 #include "../../dataHandler/io/WLoaderBiosig.h"
-//#endif
 #include "../../dataHandler/io/WLoaderEEGASCII.h"
 #include "../../dataHandler/io/WLoaderLibeep.h"
 #include "../../dataHandler/io/WLoaderNIfTI.h"
@@ -122,7 +121,7 @@ void WMData::properties()
 {
     // properties
 
-    m_dataName = m_properties->addProperty( "Name", "The name of the dataset.", std::string( "" ) );
+    m_dataName = m_infoProperties->addProperty( "Filename", "The filename of the dataset.", std::string( "" ) );
 
     // use this callback for the other properties
     WPropertyBase::PropertyChangeNotifierType propertyCallback = boost::bind( &WMData::propertyChanged, this, _1 );
@@ -141,9 +140,16 @@ void WMData::properties()
     m_opacity->setMax( 100 );
     m_opacity->setMin( 0 );
 
-    m_colorMap = m_properties->addProperty( "Colormap", "Colormap type.", 0, propertyCallback );
-    m_colorMap->setMin( 0 );
-    m_colorMap->setMax( 5 );
+    m_colorMapSelectionsList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_colorMapSelectionsList->addItem( "Grayscale", "" );
+    m_colorMapSelectionsList->addItem( "Rainbow", "" );
+    m_colorMapSelectionsList->addItem( "Hot iron", "" );
+    m_colorMapSelectionsList->addItem( "Red-Yellow", "" );
+    m_colorMapSelectionsList->addItem( "Atlas", "" );
+    m_colorMapSelectionsList->addItem( "Blue-Green-Purple", "" );
+
+    m_colorMapSelection = m_properties->addProperty( "Colormap",  "Colormap type.", m_colorMapSelectionsList->getSelectorFirst(), propertyCallback );
+    WPropertyHelper::PC_SELECTONLYONE::addTo( m_colorMapSelection );
 }
 
 void WMData::propertyChanged( boost::shared_ptr< WPropertyBase > property )
@@ -166,9 +172,9 @@ void WMData::propertyChanged( boost::shared_ptr< WPropertyBase > property )
         {
             m_dataSet->getTexture()->setInterpolation( m_interpolation->get() );
         }
-        else if ( property == m_colorMap )
+        else if ( property == m_colorMapSelection )
         {
-            m_dataSet->getTexture()->setSelectedColormap( m_colorMap->get() );
+            m_dataSet->getTexture()->setSelectedColormap( m_colorMapSelection->get( true ).getItemIndexOfSelected( 0 ) );
         }
     }
     else
@@ -215,6 +221,12 @@ void WMData::moduleMain()
     debugLog() << "Loading data from \"" << fileName << "\".";
     m_dataName->set( fileName );
 
+    // remove the path up to the file name and set it as a convenient name for this module instance
+    if ( fileName != "" )
+    {
+        m_runtimeName->set( string_utils::tokenize( fileName, "/" ).back() );
+    }
+
     // load it now
     std::string suffix = getSuffix( fileName );
 
@@ -228,7 +240,7 @@ void WMData::moduleMain()
         m_threshold->setHidden();
         m_opacity->setHidden();
         m_active->setHidden();
-        m_colorMap->setHidden();
+        m_colorMapSelection->setHidden();
     }
 
     if( suffix == ".nii"
@@ -263,11 +275,11 @@ void WMData::moduleMain()
                 case W_DT_UNSIGNED_CHAR:
                 case W_DT_INT16:
                 case W_DT_SIGNED_INT:
-                    m_colorMap->set( 0 );
+                    m_colorMapSelection->set( m_colorMapSelectionsList->getSelector( 0 ) );
                     break;
                 case W_DT_FLOAT:
                 case W_DT_DOUBLE:
-                    m_colorMap->set( 5 );
+                    m_colorMapSelection->set( m_colorMapSelectionsList->getSelector( 5 ) );
                     break;
                 default:
                     WAssert( false, "Unknow data type in Data module" );

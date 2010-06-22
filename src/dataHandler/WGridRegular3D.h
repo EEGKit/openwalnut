@@ -243,10 +243,10 @@ public:
                 |    :        |    |
                 |    :    *<--|--------- grid point (0, 0, 0)
                 |    :........|....|__
-         dz == 1|   ´         |   /
-                |  ´          |  / dy == 1
-                | ´           | /
-               _|´____________|/__
+         dz == 1|   /         |   /
+                |  /          |  / dy == 1
+                | /           | /
+               _|/____________|/__
                 |<- dx == 1 ->|
          -0.5,-0.5,-0.5
        \endverbatim
@@ -388,7 +388,13 @@ public:
      */
     bool encloses( const wmath::WPosition& pos ) const;
 
+    /**
+     * Return whether the transformations of the grid are only translation and/or scaling
+     */
+    bool isNotRotatedOrSheared() const;
+
 protected:
+
 private:
     /**
      * Computes for the n'th component of the voxel coordinate where the voxel
@@ -402,10 +408,6 @@ private:
      */
     int getNVoxelCoord( const wmath::WPosition& pos, size_t axis ) const;
 
-    /**
-     * Return whether the transformations of the grid are only translation and/or scaling
-     */
-    bool isNotRotatedOrSheared() const;
 
     wmath::WPosition m_origin; //!< Origin of the grid.
 

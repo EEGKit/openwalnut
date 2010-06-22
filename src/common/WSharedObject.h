@@ -28,6 +28,9 @@
 #include <boost/thread.hpp>
 
 #include "WCondition.h"
+#include "WSharedObjectTicket.h"
+#include "WSharedObjectTicketRead.h"
+#include "WSharedObjectTicketWrite.h"
 
 /**
  * Wrapper around an object/type for thread safe sharing of objects among multiple threads. The advantage of this class over WFlag
@@ -76,7 +79,7 @@ public:
         /**
          * Desctructor.
          */
-        ~WSharedObjectAccess();
+        virtual ~WSharedObjectAccess();
 
         /**
          * Gets the contained, and protected object.
@@ -139,6 +142,32 @@ public:
     };
 
     /**
+     * Type for read tickets.
+     */
+    typedef boost::shared_ptr< WSharedObjectTicketRead< T > > ReadTicket;
+
+    /**
+     * Type for write tickets.
+     */
+    typedef boost::shared_ptr< WSharedObjectTicketWrite< T > > WriteTicket;
+
+    /**
+     * Returns a ticket to get read access to the contained data. After the ticket is freed, the read lock vanishes.
+     *
+     * \return the read ticket
+     */
+    ReadTicket getReadTicket() const;
+
+    /**
+     * Returns a ticket to get write access to the contained data. After the ticket is freed, the write lock vanishes.
+     *
+     * \param suppressNotify true if no notification should be send after unlocking.
+     *
+     * \return the ticket
+     */
+    WriteTicket getWriteTicket( bool suppressNotify = false ) const;
+
+    /**
      * Use a shared_ptr since the shared and unique locks from boost are non-copyable.
      */
     typedef boost::shared_ptr< WSharedObjectAccess > WSharedAccess;
@@ -147,6 +176,7 @@ public:
      * This method distributes access objects. These objects are able to read/write lock the object and grant access to it, in
      * a thread-safe manner.
      *
+     * \deprecated do not use this anymore. Use getReadTicket and getWriteTicket instead
      * \return the access object which allows thread safe access to the object.
      */
     WSharedAccess getAccessObject();
@@ -161,14 +191,16 @@ public:
 protected:
 
     /**
-     * The object wrapped by this class.
+     * The object wrapped by this class. This member is mutable as the \ref getReadTicket and \ref getWriteTicket functions are const but need a
+     * non-const reference to m_object.
      */
-    T m_object;
+    mutable T m_object;
 
     /**
-     * The lock to ensure thread safe access.
+     * The lock to ensure thread safe access. This member is mutable as the \ref getReadTicket and \ref getWriteTicket functions are const but need a
+     * non-const reference to m_lock.
      */
-    boost::shared_ptr< boost::shared_mutex > m_lock;
+    mutable boost::shared_ptr< boost::shared_mutex > m_lock;
 
     /**
      * This condition set fires whenever the contained object changes. This corresponds to the Observable pattern.
@@ -195,6 +227,7 @@ WSharedObject< T >::~WSharedObject()
 template < typename T >
 typename WSharedObject< T >::WSharedAccess WSharedObject< T >::getAccessObject()
 {
+    // TODO(ebaum): deprecated. Clean up if not needed anymore.
     return typename WSharedObject< T >::WSharedAccess( new typename WSharedObject< T>::WSharedObjectAccess( m_object, m_lock, m_changeCondition ) );
 }
 
@@ -263,6 +296,31 @@ template < typename T >
 boost::shared_ptr< WCondition > WSharedObject< T >::getChangeCondition()
 {
     return m_changeCondition;
+}
+
+template < typename T >
+typename WSharedObject< T >::ReadTicket WSharedObject< T >::getReadTicket() const
+{
+    return boost::shared_ptr< WSharedObjectTicketRead< T > >(
+            new WSharedObjectTicketRead< T >( m_object, m_lock, boost::shared_ptr< WCondition >() )
+    );
+}
+
+template < typename T >
+typename WSharedObject< T >::WriteTicket WSharedObject< T >::getWriteTicket( bool suppressNotify ) const
+{
+    if ( suppressNotify )
+    {
+        return boost::shared_ptr< WSharedObjectTicketWrite< T > >(
+                new WSharedObjectTicketWrite< T >( m_object, m_lock, boost::shared_ptr< WCondition >() )
+        );
+    }
+    else
+    {
+        return boost::shared_ptr< WSharedObjectTicketWrite< T > >(
+                new WSharedObjectTicketWrite< T >( m_object, m_lock, m_changeCondition )
+        );
+    }
 }
 
 #endif  // WSHAREDOBJECT_H

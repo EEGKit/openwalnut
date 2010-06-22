@@ -31,21 +31,6 @@
 WQtDatasetTreeItem::WQtDatasetTreeItem( QTreeWidgetItem * parent, boost::shared_ptr< WModule > module )
     : WQtTreeItem( parent, DATASET, module )
 {
-    // replace the name by the filename
-    boost::shared_ptr< WPropertyBase > p = module->getProperties()->findProperty( "Name" );
-    m_name = "Dataset";
-    if ( p.get() )
-    {
-        m_name = p->toPropString()->get();
-    }
-
-    // remove the path up to the file name
-    if ( m_name != "" )
-    {
-        m_name = string_utils::tokenize( m_name, "/" ).back();
-    }
-
-    setText( 0, m_name.c_str() );
 }
 
 WQtDatasetTreeItem::~WQtDatasetTreeItem()
