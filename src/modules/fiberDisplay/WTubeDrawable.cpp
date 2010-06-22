@@ -27,6 +27,12 @@
 #include "../../dataHandler/WDataSetFibers.h"
 #include "../../kernel/WKernel.h"
 #include "WTubeDrawable.h"
+#include <osg/TexGen>
+#include <osg/Texture1D>
+#include <osg/Texture2D>
+
+#include <cmath>
+
 
 // The constructor here does nothing. One thing that may be necessary is
 // disabling display lists. This can be done by calling
@@ -41,6 +47,7 @@ WTubeDrawable::WTubeDrawable():
 {
     setSupportsDisplayList( false );
     // This contructor intentionally left blank. Duh.
+
 }
 
 // I can't say much about the methods below, but OSG seems to expect
@@ -145,6 +152,106 @@ void WTubeDrawable::drawFibers( osg::RenderInfo& renderInfo ) const //NOLINT
     state.disableColorPointer();
 }
 
+void WTubeDrawable::create1DTextureRectLightning(osg::StateSet* m_rootState) const
+{
+    osg::Image* image = new osg::Image;
+
+    int noPixels = 64;
+
+    // allocate the image data, noPixels x 1 x 1 with 4 rgba floats - equivalent to a Vec4!
+    image->allocateImage(noPixels,1,1,GL_RGBA,GL_FLOAT);
+    image->setInternalTextureFormat(GL_RGBA);
+
+    float step = M_PI/(float)noPixels;
+    float diffuse, specular = 0.0f;
+
+    // fill in the image data.
+    osg::Vec4* dataPtr = (osg::Vec4*)image->data();
+    osg::Vec4 color;
+    for(int i=0;i<noPixels;++i)
+    {
+        diffuse = sin((float)i*step);
+        specular = pow(diffuse, 16);
+
+        color = osg::Vec4(diffuse, specular, 0.0f, 1.0f);
+
+        //color = osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f);
+        *dataPtr++ = color;
+    }
+
+    osg::Texture1D* texture = new osg::Texture1D;
+	texture->setDataVariance(osg::Object::STATIC);
+    texture->setWrap(osg::Texture1D::WRAP_S,osg::Texture1D::CLAMP);
+    texture->setFilter(osg::Texture1D::MIN_FILTER,osg::Texture1D::LINEAR);
+    texture->setImage(image);
+
+    m_rootState->setTextureAttribute(1,texture,osg::StateAttribute::OVERRIDE);
+    m_rootState->setTextureMode(1,GL_TEXTURE_1D,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
+    m_rootState->addUniform(osg::ref_ptr<osg::Uniform>( new osg::Uniform( "texture", 1 ) ) );
+
+}
+
+
+void WTubeDrawable::create2DTextureCycleLightning(osg::StateSet* m_rootState) const
+{
+    osg::Image* image = new osg::Image;
+
+    int noPixels = 64;
+	int noHalfPixels = noPixels/2;
+
+    // allocate the image data, noPixels x noPixels x 1 with 4 rgba floats - equivalent to a Vec4!
+    image->allocateImage(noPixels,noPixels,1,GL_RGBA,GL_FLOAT);
+    image->setInternalTextureFormat(GL_RGBA);
+
+    float step = M_PI/(float)noPixels;
+    float alpha, diffuse, specular = 0.0f;
+	float noPixelsQuad = noPixels * noPixels;
+    float check;
+
+    // fill in the image data.
+    osg::Vec4* dataPtr = (osg::Vec4*)image->data();
+    osg::Vec4 color;
+    for(int i=0;i<noPixels;++i)
+    {
+		diffuse = sin((float)i*step);
+		specular = pow(diffuse, 16);
+
+		for(int j=0;j<noPixels;++j)
+        {
+
+
+			// Einheitskreis,
+			check = pow(j-32,2) + pow(i-32,2);
+			if(check > 1024)
+			{
+				alpha = 0.0f;
+			}
+			else
+			{
+				alpha = 1.0f;
+			}
+			color = osg::Vec4(diffuse, specular, alpha, 0.0f);
+
+			//color = osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f);
+            *dataPtr++ = color;
+        }
+    }
+    osg::Texture2D* texture = new osg::Texture2D;
+	texture->setDataVariance(osg::Object::STATIC);
+	texture->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP);
+    texture->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR);
+    texture->setImage(image);
+
+    m_rootState->setTextureAttribute(2,texture,osg::StateAttribute::OVERRIDE);
+    m_rootState->setTextureMode(2,GL_TEXTURE_2D,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
+	m_rootState->addUniform(osg::ref_ptr<osg::Uniform>( new osg::Uniform( "texturePS", 2 ) ) );
+
+}
+void WTubeDrawable::setRootState(osg::StateSet* rootState)
+{
+	m_rootState = rootState;
+}
+
 void WTubeDrawable::drawTubes() const
 {
     boost::shared_ptr< std::vector< size_t > > startIndexes = m_dataset->getLineStartIndexes();
@@ -161,27 +268,69 @@ void WTubeDrawable::drawTubes() const
     {
         colors = ( m_globalColoring ? m_dataset->getGlobalColors() : m_dataset->getLocalColors() );
     }
-
     boost::shared_ptr< std::vector< bool > > active = WKernel::getRunningKernel()->getRoiManager()->getBitField();
 
-    for( size_t i = 0; i < active->size(); ++i )
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_LIGHTING);
+	for( size_t i = 0; i < active->size(); ++i )
     {
         if ( active->at( i ) )
         {
-            glBegin( GL_QUAD_STRIP );
+			glBegin( GL_TRIANGLE_STRIP );
             int idx = startIndexes->at( i ) * 3;
             for ( size_t k = 0; k < pointsPerLine->at( i ); ++k )
             {
+
                 glNormal3f( tangents->at( idx ), tangents->at( idx + 1 ), tangents->at( idx + 2 ) );
                 glColor3f( colors->at( idx ), colors->at( idx + 1 ), colors->at( idx + 2 ) );
-                glTexCoord1f( -1.0f );
+                // Set TexCoords: first 1DTexturePosition, second Positionflag
+                // SouthPointPosition
+				glTexCoord2f( -1.0f , 0.0f );
                 glVertex3f( verts->at( idx ), verts->at( idx + 1 ), verts->at( idx + 2 ) );
-                glTexCoord1f( 1.0f );
+                // NorthPointPosition
+                glTexCoord2f( 1.0f, 1.0f );
                 glVertex3f( verts->at( idx ), verts->at( idx + 1 ), verts->at( idx + 2 ) );
+
                 idx += 3;
-                //
             }
             glEnd();
         }
-    }
+	}
+	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_NOTEQUAL, 0.0);
+	glEnable(GL_POINT_SPRITE);
+	glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+	for( size_t i = 0; i < active->size(); ++i )
+	{
+		if ( active->at( i ) )
+		{
+
+
+			glBegin( GL_POINTS );
+			int idx = startIndexes->at( i ) * 3;
+			for ( size_t k = 0; k < pointsPerLine->at( i ); ++k )
+			{
+
+				glNormal3f( tangents->at( idx ), tangents->at( idx + 1 ), tangents->at( idx + 2 ) );
+				glColor3f( colors->at( idx ), colors->at( idx + 1 ), colors->at( idx + 2 ) );
+
+				// if k=0 || k=pointPerLine-1 then draw endtexture
+				if(k == 0 || k == pointsPerLine->at(i)-1)
+				{
+					glTexCoord2f( 0.0f , 0.0f);
+				}
+				else
+				{
+					glTexCoord2f( 0.0f , 1.0f);
+				}
+				glVertex3f( verts->at( idx ), verts->at( idx + 1 ), verts->at( idx + 2 ) );
+				idx += 3;
+			}
+			glEnd();
+		}
+	}
+	glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
+	glDisable(GL_ALPHA_TEST);
+	glDisable(GL_POINT_SPRITE);
 }

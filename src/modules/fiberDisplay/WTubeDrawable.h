@@ -123,6 +123,19 @@ public:
      */
     bool getColoringMode() const;
 
+	/**
+	  * Creates a texture to simmulate diffuse and specular lightning
+	  * of a tube from aside
+	  */
+	void create1DTextureRectLightning(osg::StateSet* m_rootState) const;
+
+	/**
+	  * Creates a texture to simmulate diffuse and specular lightning
+	  * of a tube from top or bottom
+	  */
+	void create2DTextureCycleLightning(osg::StateSet* m_rootState) const;
+
+	void setRootState(osg::StateSet* m_rootState);
 protected:
 private:
     /**
@@ -132,10 +145,12 @@ private:
      */
     void drawFibers( osg::RenderInfo& renderInfo ) const; //NOLINT
 
-    /**
+	/**
      * Draw fibers as fake tubes.
      */
     void drawTubes() const;
+
+	osg::StateSet* m_rootState;
 
     boost::shared_ptr< const WDataSetFibers > m_dataset; //!< stores pointer to dataset
 
