@@ -51,7 +51,7 @@ public:
     /**
      * destructor
      */
-    virtual ~WQtRoiTreeItem();
+    ~WQtRoiTreeItem();
 
     /**
      * getter

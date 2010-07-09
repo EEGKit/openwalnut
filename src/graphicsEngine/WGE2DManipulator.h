@@ -114,7 +114,7 @@ protected:
      * dereferenced and the reference count being zero (see osg::Referenced),
      * preventing the deletion of objects which are still in use.
      */
-    virtual ~WGE2DManipulator();
+    ~WGE2DManipulator();
 
     /**
      * Reset the internal GUIEvent stack.

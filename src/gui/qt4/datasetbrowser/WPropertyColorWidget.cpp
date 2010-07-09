@@ -66,15 +66,7 @@ WPropertyColorWidget::~WPropertyColorWidget()
 
 void WPropertyColorWidget::update()
 {
-    std::stringstream buttonColorStr;
-    QColor bgColor = toQColor( m_colorProperty->get() );
-
-    buttonColorStr << "* { background-color: rgb("
-                   << bgColor.red() << ","
-                   << bgColor.green() << ","
-                   << bgColor.blue() << ") }";
-
-    m_button.setStyleSheet( QString().fromStdString( buttonColorStr.str() ) );
+    m_button.setPalette( QPalette( toQColor( m_colorProperty->get() ) ) );
 
     // if this is a info property -> set background of label and some text
     m_asText.setText( QString::fromStdString( m_colorProperty->getAsString() ) );

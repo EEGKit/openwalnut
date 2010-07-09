@@ -29,7 +29,6 @@
 #include <string>
 #include <utility>
 
-#include <boost/tuple/tuple.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 
@@ -46,26 +45,9 @@ class WItemSelection: public boost::enable_shared_from_this< WItemSelection >
 {
 public:
     /**
-     * For shortening, it is the type of an item.
+     * For shortening, it is the type of an item
      */
-    typedef struct
-    {
-        /**
-         * Name
-         */
-        std::string name;
-
-        /**
-         * Description, can be empty.
-         */
-        std::string description;
-
-        /**
-         * Icon shown in the item selection box. Can be NULL.
-         */
-        const char** icon;
-    }
-    Item;
+    typedef std::pair< std::string, std::string > Item;
 
     /**
      * Default constructor.
@@ -82,9 +64,8 @@ public:
      *
      * \param name the name
      * \param description the description
-     * \param icon an icon to show together with this item. Useful to illustrate the selection options.
      */
-    virtual void addItem( std::string name, std::string description, const char** icon = NULL );
+    virtual void addItem( std::string name, std::string description );
 
     /**
      * Creates an default selection (all items selected). After the first call of this function, no more items can be added using \ref addItem.
@@ -133,14 +114,14 @@ public:
      *
      * \return the item
      */
-    virtual Item& at( size_t index ) const;
+    virtual Item at( size_t index ) const;
 
 protected:
 
     /**
      * List of items.
      */
-    std::vector< Item* > m_items;
+    std::vector< Item > m_items;
 
     /**
      * True if the selection can be modified.

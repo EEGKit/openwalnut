@@ -31,27 +31,34 @@
 #include "WQtTreeItem.h"
 
 /**
- * Tree widget item to represent a dataset in the dataset browser tree widget. This class is currently empty as all the functionality has been
- * generalized and moved to WQtTreeItem. This class should be removed.
+ * tree widget item to represent a dataset in the dataset browser tree widget
  */
 class WQtDatasetTreeItem : public WQtTreeItem
 {
 public:
-
     /**
-     * Constructor
-     *
+     * standard constructor
      * \param parent The parent widget that manages this widget.
      * \param module The module that will be represented by the item.
      */
     WQtDatasetTreeItem( QTreeWidgetItem * parent, boost::shared_ptr< WModule > module );
 
     /**
-     * Destructor
+     * destructor
      */
     virtual ~WQtDatasetTreeItem();
 
 protected:
+
+    /**
+     * The property containing the name of the module.
+     */
+    WPropString m_nameProp;
+
+    /**
+     * Called when the name property changes.
+     */
+    void nameChanged();
 
 private:
 };

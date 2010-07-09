@@ -25,8 +25,7 @@
 #ifndef WGEGROUPNODE_H
 #define WGEGROUPNODE_H
 
-#include <queue>
-#include <utility>
+#include <set>
 
 #include <boost/thread.hpp>
 
@@ -74,11 +73,6 @@ public:
      */
     void remove( osg::ref_ptr< osg::Node > node );
 
-    /**
-     * Removes all children from this node.
-     */
-    void clear();
-
 protected:
 
     /**
@@ -106,30 +100,39 @@ protected:
     osg::ref_ptr< SafeUpdaterCallback > m_nodeUpdater;
 
     /**
-     * A pair denoting an operation on this group. The boolean denotes deletion (false) or insertion (true).
+     * Queue of childs that need to be added during the next update cycle.
      */
-    typedef std::pair< bool, osg::ref_ptr< osg::Node > > ChildOperation;
+    std::set< osg::ref_ptr< osg::Node > > m_childInsertionQueue;
 
     /**
-     * Queue of childs that need to be added/removed during the next update cycle. It is a pair per operation, where the bool is denoting removal
-     * or insertion.
+     * Queue of childs that need to be removed during the next update cycle.
      */
-    std::queue< ChildOperation > m_childOperationQueue;
+    std::set< osg::ref_ptr< osg::Node > > m_childRemovalQueue;
 
     /**
-     * Lock used for inserting and removing childs into the child insertion/removal queue.
+     * Lock used for inserting childs into the child insertion queue.
      */
-    boost::shared_mutex m_childOperationQueueLock;
+    boost::shared_mutex m_childInsertionQueueLock;
 
     /**
-     * Flag denoting whether the m_childOperationQueue should be considered during the next update of the node.
+     * Lock used for inserting childs into the child removal queue.
      */
-    bool m_childOperationQueueDirty;
+    boost::shared_mutex m_childRemovalQueueLock;
 
     /**
-     * True whenever all child nodes should be removed.
+     * Flag denoting whether the m_childInsertionQueue should be considered during the next update of the node.
      */
-    bool m_removeAll;
+    bool m_insertionQueueDirty;
+
+    /**
+     * Flag denoting whether the m_childRemovalQueue should be considered during the next update of the node.
+     */
+    bool m_removalQueueDirty;
+
+    /**
+     * Condition which fires when the node is removed.
+     */
+    boost::shared_ptr< WCondition > m_removedCondition;
 
 private:
 };

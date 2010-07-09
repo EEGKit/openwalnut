@@ -88,18 +88,20 @@ public:
         dummyDataSet->setFileName( fileName );
 
         WSubject dummySubject;
+        WSubject::DatasetAccess a = dummySubject.getAccessObject();
         dummySubject.addDataSet( dummyDataSet );
         TS_ASSERT_EQUALS( 1, dummySubject.m_datasets.size() );
 
         // iterate the list and find all textures
-        WSubject::DatasetSharedContainerType::ReadTicket a = dummySubject.getDatasets();
+        a->beginRead();
         int count = 0;
-        for ( WSubject::DatasetConstIterator iter = a->get().begin(); iter != a->get().end(); ++iter )
+        for ( WSubject::DatasetContainerType::iterator iter = a->get().begin(); iter != a->get().end(); ++iter )
         {
             count++;
             TS_ASSERT_EQUALS( fileName, ( *iter )->getFileName() );
             TS_ASSERT_EQUALS( dummyDataSet, ( *iter ) );
         }
+        a->endRead();
 
         TS_ASSERT( count == 1 );
     }

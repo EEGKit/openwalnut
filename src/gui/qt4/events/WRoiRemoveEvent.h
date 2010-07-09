@@ -48,7 +48,7 @@ public:
     /**
      * destructor
      */
-    virtual ~WRoiRemoveEvent();
+    ~WRoiRemoveEvent();
 
     /**
      * Getter for the roi that got removed.

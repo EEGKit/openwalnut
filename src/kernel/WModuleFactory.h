@@ -27,7 +27,6 @@
 
 #include <set>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
@@ -35,7 +34,7 @@
 
 #include "../modules/data/WMData.h" // this is the ONLY module with a special meaning. Every one knowing the factory also knows this
 #include "../common/WSharedAssociativeContainer.h"
-#include "WModuleCombinerTypes.h"
+#include "combiner/WApplyPrototypeCombiner.h"
 #include "WModule.h"
 
 /**
@@ -65,6 +64,11 @@ public:
      * The alias for a shared container.
      */
     typedef WSharedAssociativeContainer< PrototypeContainerType > PrototypeSharedContainerType;
+
+    /**
+     * Alias for the proper access object
+     */
+    typedef PrototypeSharedContainerType::WSharedAccess PrototypeAccess;
 
     /**
      * Default constructor.
@@ -128,13 +132,6 @@ public:
     const boost::shared_ptr< WModule > getPrototypeByInstance( boost::shared_ptr< WModule > instance );
 
     /**
-     * This method gives read access to the list of all prototypes.
-     *
-     * \return the read ticket for the prototype list
-     */
-    PrototypeSharedContainerType::ReadTicket getPrototypes() const;
-
-    /**
      * Checks whether the first instance can be casted to the second one.
      *
      * \param module the module to check.
@@ -154,7 +151,7 @@ public:
      *
      * \return set of compatible combiners.
      */
-    WCombinerTypes::WCompatiblesList getCompatiblePrototypes(
+    std::vector< boost::shared_ptr< WApplyPrototypeCombiner > > getCompatiblePrototypes(
             boost::shared_ptr< WModule > module = boost::shared_ptr< WModule >()
     );
 
@@ -167,13 +164,11 @@ public:
     static void initializeModule( boost::shared_ptr< WModule > module );
 
     /**
-     * Checks whether the specified module is a prototype or an instantiated module.
+     * Get access to all the prototypes.
      *
-     * \param module the module to check
-     *
-     * \return true if it is a prototype
+     * \return the access object to thread safe iterate.
      */
-    static bool isPrototype( boost::shared_ptr< WModule > module );
+    const PrototypeSharedContainerType::WSharedAccess getAvailablePrototypes() const;
 
 protected:
 
@@ -183,14 +178,9 @@ protected:
     PrototypeSharedContainerType m_prototypes;
 
     /**
-     * Checks whether the specified module is a prototype or an instantiated module. Use isPrototype if no ticket acquired yet.
-     *
-     * \param module the module to check
-     * \param ticket ticket which already has read lock.
-     *
-     * \return true if it is a prototype
+     * The lock for the prototypes set.
      */
-    bool checkPrototype( boost::shared_ptr< WModule > module, PrototypeSharedContainerType::ReadTicket ticket );
+    PrototypeSharedContainerType::WSharedAccess m_prototypeAccess;
 
 private:
 
@@ -203,7 +193,8 @@ private:
 template <typename T>
 bool WModuleFactory::isA( boost::shared_ptr< WModule > module )
 {
-    // NOTE: this is RTTI. Everybody says: do not use it. We ignore them.
+    // NOTE: this is RTTI. Everybody says: do not use it but nearly nobody says in which cases and why. So we ignore them and use
+    // it.
     return ( dynamic_cast< T* >( module.get() ) );  // NOLINT
 }
 

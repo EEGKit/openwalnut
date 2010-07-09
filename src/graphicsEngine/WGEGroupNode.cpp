@@ -32,8 +32,9 @@
 
 WGEGroupNode::WGEGroupNode():
     osg::MatrixTransform(),
-    m_childOperationQueueDirty( false ),
-    m_removeAll( false )
+    m_insertionQueueDirty( false ),
+    m_removalQueueDirty( false ),
+    m_removedCondition( new WCondition() )
 {
     setDataVariance( osg::Object::DYNAMIC );
 
@@ -53,26 +54,24 @@ WGEGroupNode::~WGEGroupNode()
 
 void WGEGroupNode::insert( osg::ref_ptr< osg::Node > node )
 {
-    boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_childOperationQueueLock );
-    m_childOperationQueue.push( ChildOperation( true, node ) );
-    m_childOperationQueueDirty = true;
+    boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_childInsertionQueueLock );
+    m_childInsertionQueue.insert( node );
+    m_insertionQueueDirty = true;
     lock.unlock();
 }
 
 void WGEGroupNode::remove( osg::ref_ptr< osg::Node > node )
 {
-    boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_childOperationQueueLock );
-    m_childOperationQueue.push( ChildOperation( false, node ) );
-    m_childOperationQueueDirty = true;
+    boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_childRemovalQueueLock );
+    m_childRemovalQueue.insert( node );
+    m_removalQueueDirty = true;
     lock.unlock();
-}
 
-void WGEGroupNode::clear()
-{
-    boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_childOperationQueueLock );
-    m_childOperationQueue.push( ChildOperation( false, osg::ref_ptr< osg::Node >() ) ); // this encodes the remove all feature
-    m_childOperationQueueDirty = true;
-    lock.unlock();
+    // wait until the job is done
+    if ( getNumParents() )
+    {
+        m_removedCondition->wait();
+    }
 }
 
 void WGEGroupNode::SafeUpdaterCallback::operator()( osg::Node* node, osg::NodeVisitor* nv )
@@ -83,39 +82,49 @@ void WGEGroupNode::SafeUpdaterCallback::operator()( osg::Node* node, osg::NodeVi
     // write lock the insertion list
     boost::unique_lock<boost::shared_mutex> lock;
 
-    // write lock the removal list
-    if ( rootNode->m_childOperationQueueDirty )
+    if ( rootNode->m_insertionQueueDirty )
     {
-        lock = boost::unique_lock<boost::shared_mutex>( rootNode->m_childOperationQueueLock );
-        // insert/remove children which requested it
-        while ( !rootNode->m_childOperationQueue.empty() )
-        {
-            // remove or insert or remove all?
-            if ( ( !rootNode->m_childOperationQueue.front().first ) && ( !rootNode->m_childOperationQueue.front().second ) )
-            {
-                // remove all
-                rootNode->removeChild( 0, rootNode->getNumChildren() );
-            }
-            else if ( rootNode->m_childOperationQueue.front().first )
-            {
-                // add specified child
-                rootNode->addChild( rootNode->m_childOperationQueue.front().second );
-            }
-            else
-            {
-                // remove specified child
-                rootNode->removeChild( rootNode->m_childOperationQueue.front().second );
-            }
+        lock = boost::unique_lock<boost::shared_mutex>( rootNode->m_childInsertionQueueLock );
 
-            // pop item
-            rootNode->m_childOperationQueue.pop();
+        // insert all children which requested it
+        for ( std::set< osg::ref_ptr< osg::Node > >::iterator iter = rootNode->m_childInsertionQueue.begin();
+              iter != rootNode->m_childInsertionQueue.end();
+              ++iter )
+        {
+            rootNode->addChild( ( *iter ) );
         }
 
         rootNode->dirtyBound();
 
-        // all children added/removed -> clear
-        rootNode->m_childOperationQueueDirty = false;
-        rootNode->m_removeAll = false;
+        // all children added -> clear
+        rootNode->m_insertionQueueDirty = false;
+        rootNode->m_childInsertionQueue.clear();
+        lock.unlock();
+    }
+
+    // same game for removal request list
+
+    // write lock the removal list
+    if ( rootNode->m_removalQueueDirty )
+    {
+        lock = boost::unique_lock<boost::shared_mutex>( rootNode->m_childRemovalQueueLock );
+
+        // insert all children which requested it
+        for ( std::set< osg::ref_ptr< osg::Node > >::iterator iter = rootNode->m_childRemovalQueue.begin();
+              iter != rootNode->m_childRemovalQueue.end();
+              ++iter )
+        {
+            rootNode->removeChild( ( *iter ) );
+        }
+
+        rootNode->dirtyBound();
+
+        // all children added -> clear
+        rootNode->m_removalQueueDirty = false;
+        rootNode->m_childRemovalQueue.clear();
+
+        // inform all waiting thread that their removal requests have been processed.
+        rootNode->m_removedCondition->notify();
 
         lock.unlock();
     }

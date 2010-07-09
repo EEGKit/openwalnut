@@ -31,7 +31,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/signals2/signal.hpp>
 
-#include "../common/WFlag.h"
+//#include "../common/WThreadedRunner.h"
+//#include "../common/WFlag.h"
 #include "../kernel/WModule.h"
 #include "../graphicsEngine/WGECamera.h"
 #include "WCustomWidget.h"
@@ -39,9 +40,11 @@
 class WDataSet;
 
 /**
+ * \defgroup gui GUI
+ *
+ * \brief
  * This library implements the graphical user interface for OpenWalnut.
  *
- * \defgroup gui GUI
  */
 
 /**
@@ -50,7 +53,8 @@ class WDataSet;
  *
  * \ingroup gui
  */
-class WGUI : public boost::enable_shared_from_this< WGUI >
+class WGUI:
+    public boost::enable_shared_from_this< WGUI >
 {
 public:
 
@@ -100,6 +104,7 @@ public:
     virtual void closeCustomWidget( std::string title ) = 0;
 
 protected:
+
     /**
      * Flag determining whether the GUI is properly initialized.
      */

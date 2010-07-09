@@ -25,7 +25,6 @@
 #include <string>
 
 #include <QtGui/QGroupBox>
-#include <QtGui/QPushButton>
 #include <QtGui/QScrollArea>
 
 #include "WQtDSBWidget.h"
@@ -97,13 +96,6 @@ WPropertyTriggerWidget* WQtDSBWidget::addProp( WPropTrigger property )
     return new WPropertyTriggerWidget( property, m_controlLayout, this );
 }
 
-WPropertyPositionWidget* WQtDSBWidget::addProp( WPropPosition property )
-{
-    ++m_numberOfWidgets;
-
-    return new WPropertyPositionWidget( property, m_controlLayout, this );
-}
-
 WPropertySelectionWidget* WQtDSBWidget::addProp( WPropSelection property )
 {
     ++m_numberOfWidgets;
@@ -115,11 +107,11 @@ void WQtDSBWidget::addGroup( WQtDSBWidget* widget, bool asScrollArea )
 {
     ++m_numberOfWidgets;
 
-    // create a scrollbox and group box containing the widget
-    QWidget* group = new QWidget( this );
+    // TODO(ebaum): extend it to collapse the group
+    QGroupBox* group = new QGroupBox( widget->getName() , this );
 
-    QScrollArea* scrollArea;
-    QGridLayout* grid = new QGridLayout();
+    QScrollArea *scrollArea;
+    QGridLayout *grid = new QGridLayout();
     grid->addWidget( widget, 0, 0 );
 
     group->setLayout( grid );
@@ -130,46 +122,17 @@ void WQtDSBWidget::addGroup( WQtDSBWidget* widget, bool asScrollArea )
         group->show();
     }
 
-    // encapsulate it into an collapsable widget
-    QFrame* box = new QFrame( this );
-    box->setFrameShape( QFrame::StyledPanel );
-    box->setFrameShadow( QFrame::Raised );
-    QGridLayout* boxLayout = new QGridLayout( box );
+    // create a new group box
+    int row = m_controlLayout->rowCount();
 
-    // create a button as title
-    QPushButton* boxTitle = new QPushButton( this );
-    boxLayout->addWidget( boxTitle, 0, 0 );
-
-    // set the button up
-    QSizePolicy sizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed );
-    sizePolicy.setHorizontalStretch( 0 );
-    sizePolicy.setVerticalStretch( 0 );
-    sizePolicy.setHeightForWidth( boxTitle->sizePolicy().hasHeightForWidth() );
-    boxTitle->setSizePolicy( sizePolicy );
-    boxTitle->setCheckable( true );
-    boxTitle->setChecked( true );
-    boxTitle->setFlat( true );
-    QFont font;
-    font.setBold( true );
-    boxTitle->setFont( font );
-    boxTitle->setText( widget->getName() );
-
-    // toggle should cause the body widget to appear/disappear
-    connect( boxTitle, SIGNAL( toggled( bool ) ), group, SLOT( setVisible( bool ) ) );
-
-    // create a body widget
     if ( asScrollArea )
     {
-        boxLayout->addWidget( scrollArea, 1, 0 );
+        m_controlLayout->addWidget( scrollArea, row, 0, 1, 2 );
     }
     else
     {
-        boxLayout->addWidget( group, 1, 0 );
+        m_controlLayout->addWidget( group, row, 0, 1, 2 );
     }
-
-    // insert into layout
-    int row = m_controlLayout->rowCount();
-    m_controlLayout->addWidget( box, row, 0, 1, 2 );
 }
 
 void WQtDSBWidget::addSpacer()

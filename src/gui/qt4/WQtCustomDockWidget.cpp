@@ -39,6 +39,7 @@ WQtCustomDockWidget::WQtCustomDockWidget( std::string title, QWidget* parent, WG
     resize( 1024, 768 );
 
     m_glWidget = boost::shared_ptr< WQtGLWidget >( new WQtGLWidget( title, this, projectionMode ) );
+    m_glWidget->initialize();
     m_scene = new WGEGroupNode();
     m_scene->setDataVariance( osg::Object::DYNAMIC );
     m_glWidget->getViewer()->setScene( m_scene );
@@ -70,4 +71,12 @@ bool WQtCustomDockWidget::decreaseUseCount()
         close();
     }
     return shouldClose;
+}
+
+void WQtCustomDockWidget::closeEvent( QCloseEvent* event )
+{
+    // forward events
+    m_glWidget->close();
+
+    event->accept();
 }

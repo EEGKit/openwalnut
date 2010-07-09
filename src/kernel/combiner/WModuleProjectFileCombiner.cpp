@@ -302,16 +302,26 @@ void WModuleProjectFileCombiner::done()
     apply();
 }
 
-void WModuleProjectFileCombiner::printProperties( std::ostream& output, boost::shared_ptr< WProperties > props, std::string indent, //NOLINT
-                                                  std::string prefix, unsigned int module )
+/**
+ * Recursively prints the properties and nested properties.
+ *
+ * \param output    the output stream to print to
+ * \param props     the properties to recursively print
+ * \param indent    the indentation level
+ * \param prefix    the prefix (name prefix of property)
+ * \param module    the module ID to use
+ */
+void printProperties( std::ostream& output, boost::shared_ptr< WProperties > props, std::string indent, std::string prefix,  // NOLINT
+                      unsigned int module )
 {
-    // lock, unlocked if l looses focus
-    WProperties::PropertySharedContainerType::ReadTicket l = props->getProperties();
+    // get access object
+    WProperties::PropertyAccessType a = props->getAccessObject();
+    a->beginWrite();    // use write lock here to avoid manipulation of properties list during file write
 
     output << indent << "// Property Group: " << props->getName() << std::endl;
 
     // iterate of them and print them to output
-    for ( WProperties::PropertyConstIterator iter = l->get().begin(); iter != l->get().end(); ++iter )
+    for ( WProperties::PropertyConstIterator iter = a->get().begin(); iter != a->get().end(); ++iter )
     {
         // information properties do not get written
         if ( ( *iter )->getPurpose () == PV_PURPOSE_INFORMATION )
@@ -338,14 +348,19 @@ void WModuleProjectFileCombiner::printProperties( std::ostream& output, boost::s
     }
 
     output << indent << "// Property Group END: " << props->getName() << std::endl;
+
+    a->endWrite();
 }
 
 void WModuleProjectFileCombiner::save( std::ostream& output )   // NOLINT
 {
     // grab access object of root container
-    WModuleContainer::ModuleSharedContainerType::ReadTicket container = WKernel::getRunningKernel()->getRootContainer()->getModules();
+    WModuleContainer::ModuleAccessType container = WKernel::getRunningKernel()->getRootContainer()->getAccessObject();
 
     std::map< boost::shared_ptr< WModule >, unsigned int > moduleToIDMap;
+
+    // get a write access to avoid others to modify the container while project file is written.
+    container->beginWrite();
 
     output << "//////////////////////////////////////////////////////////////////////////////////////////////////////////////////" << std::endl <<
               "// Modules and Properties" << std::endl <<
@@ -388,11 +403,11 @@ void WModuleProjectFileCombiner::save( std::ostream& output )   // NOLINT
     for ( WModuleContainer::ModuleConstIterator iter = container->get().begin(); iter != container->get().end(); ++iter )
     {
         // iterate over all outputs
-        const WModule::OutputConnectorList& outs = ( *iter )->getOutputConnectors();
-        for ( WModule::OutputConnectorList::const_iterator citer = outs.begin(); citer != outs.end(); ++citer )
+        const std::set< boost::shared_ptr< WModuleOutputConnector > >& outs = ( *iter )->getOutputConnectors();
+        for ( std::set< boost::shared_ptr< WModuleOutputConnector > >::const_iterator citer = outs.begin(); citer != outs.end(); ++citer )
         {
             // iterate over all connections:
-            // TODO(ebaum): iterating over a protected member variable? Thats ugly. This should be adopted to WSharedObject
+            // TODO(ebaum): iterating over a protected member variable? Thats ugly. This should be adopted to WSharedAccess
             boost::unique_lock<boost::shared_mutex> lock( ( *citer )->m_connectionListLock );
             for ( std::set<boost::shared_ptr<WModuleConnector> >::const_iterator iciter = ( *citer )->m_connected.begin();
                   iciter != ( *citer )->m_connected.end(); ++iciter )
@@ -405,5 +420,8 @@ void WModuleProjectFileCombiner::save( std::ostream& output )   // NOLINT
             lock.unlock();
         }
     }
+
+    // thats it
+    container->endWrite();
 }
 

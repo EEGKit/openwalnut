@@ -90,7 +90,7 @@ public:
      *
      * \return Scalar value for that given position
      */
-    double getValueAt( size_t id ) const;
+    double getValueAt( size_t id );
 
     /**
      * Determines whether this dataset can be used as a texture.

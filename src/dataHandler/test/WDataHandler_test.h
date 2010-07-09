@@ -100,17 +100,19 @@ public:
         TS_ASSERT_EQUALS( 2, dh->m_subjects.size() );   // note: this is 2 since the datahandler always provides a default subject
 
         // test iteration
-        WDataHandler::SubjectSharedContainerType::ReadTicket a = dh->getSubjects();
+        WDataHandler::SubjectAccess a = dh->getAccessObject();
 
         // iterate the list and find all textures
+        a->beginRead();
         int count = 0;
-        for ( WDataHandler::SubjectContainerType::const_iterator iter = a->get().begin(); iter != a->get().end(); ++iter )
+        for ( WDataHandler::SubjectContainerType::iterator iter = a->get().begin(); iter != a->get().end(); ++iter )
         {
             count++;
 
             // the second one needs to be the added subject
             TS_ASSERT( ( count == 1 ) || ( s == ( *iter ).get() ) );
         }
+        a->endRead();
 
         TS_ASSERT( count == 2 );
     }

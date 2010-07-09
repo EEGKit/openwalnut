@@ -145,10 +145,7 @@ void WMVectorPlot::moduleMain()
             osg::ref_ptr< osg::Geode > newRootNode = new osg::Geode();
 
             newRootNode->addDrawable( buildPlotSlices() );
-            if( m_rootNode )
-            {
-                WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_rootNode );
-            }
+            WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_rootNode );
 
             ++*progress;
 

@@ -90,10 +90,7 @@ void main()
     vec4 specular = vec4(0.0);
 
     if ( useLighting )
-    {
-        calculateLighting( -normal, gl_FrontMaterial.shininess, ambient, diffuse, specular );
-        calculateLighting(  normal, gl_FrontMaterial.shininess, ambient, diffuse, specular );
-    }
+        calculateLighting(-normal, gl_FrontMaterial.shininess, ambient, diffuse, specular);
 
     if( useTexture )
     {
@@ -115,7 +112,7 @@ void main()
     col = clamp(col, 0.0, 1.0);
 
     // opacity of the surface
-    col.a = float(opacity) * 0.01;
+    col.a = float(opacity) * .01;
 
     gl_FragColor = col;
 }

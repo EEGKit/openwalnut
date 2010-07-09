@@ -80,7 +80,7 @@ protected:
     /**
      * Layout used to position the label and the checkbox
      */
-    QGridLayout m_layout;
+    QHBoxLayout m_layout;
 
     /**
      * True if a selection update is currently in progress. This is needed as QT does not provide a signal for selection changes which is NOT

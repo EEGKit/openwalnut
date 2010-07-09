@@ -26,7 +26,6 @@
 #include <sys/prctl.h>
 #endif
 
-#include <algorithm>
 #include <set>
 #include <string>
 #include <sstream>
@@ -70,10 +69,6 @@ WModule::WModule():
     m_infoProperties = boost::shared_ptr< WProperties >( new WProperties( "Informational Properties", "Module's information properties" ) );
     m_infoProperties->setPurpose( PV_PURPOSE_INFORMATION );
 
-    m_runtimeName = m_properties->addProperty( "Name", "The name of the module defined by the user. This is, by default, the module name but "
-                                                       "can be changed by the user to provide some kind of simple identification upon many modules.",
-                                                       std::string( "" ), false );
-
     m_active = m_properties->addProperty( "active", "Determines whether the module should be activated.", true, true );
     m_active->getCondition()->subscribeSignal( boost::bind( &WModule::activate, this ) );
 
@@ -100,66 +95,27 @@ WModule::~WModule()
 
 void WModule::addConnector( boost::shared_ptr< WModuleInputConnector > con )
 {
-    if ( std::count( m_inputConnectors.begin(), m_inputConnectors.end(), con ) == 0 )
-    {
-        m_inputConnectors.push_back( con );
-    }
+    m_inputConnectors.insert( con );
 }
 
 void WModule::addConnector( boost::shared_ptr< WModuleOutputConnector > con )
 {
-    if ( std::count( m_outputConnectors.begin(), m_outputConnectors.end(), con ) == 0 )
-    {
-        m_outputConnectors.push_back( con );
-    }
+    m_outputConnectors.insert( con );
 }
 
 void WModule::disconnect()
 {
     // remove connections and their signals
-    for( InputConnectorList::iterator listIter = m_inputConnectors.begin();
+    for( std::set<boost::shared_ptr< WModuleInputConnector > >::iterator listIter = m_inputConnectors.begin();
          listIter != m_inputConnectors.end(); ++listIter )
     {
         ( *listIter )->disconnectAll();
     }
-    for( OutputConnectorList::iterator listIter = m_outputConnectors.begin();
+    for( std::set<boost::shared_ptr< WModuleOutputConnector > >::iterator listIter = m_outputConnectors.begin();
          listIter != m_outputConnectors.end(); ++listIter )
     {
         ( *listIter )->disconnectAll();
     }
-}
-
-WCombinerTypes::WDisconnectList WModule::getPossibleDisconnections()
-{
-    WCombinerTypes::WDisconnectList discons;
-
-    // iterate inputs
-    for( InputConnectorList::iterator listIter = m_inputConnectors.begin(); listIter != m_inputConnectors.end(); ++listIter )
-    {
-        // get all connections of the current connector:
-        WCombinerTypes::WDisconnectGroup g = WCombinerTypes::WDisconnectGroup( ( *listIter )->getName(),
-                                                                               ( *listIter )->getPossibleDisconnections() );
-
-        if ( g.second.size() )
-        {
-            discons.push_back( g );
-        }
-    }
-
-    // iterate outputs
-    for( OutputConnectorList::iterator listIter = m_outputConnectors.begin(); listIter != m_outputConnectors.end(); ++listIter )
-    {
-        // get all connections of the current connector:
-        WCombinerTypes::WDisconnectGroup g = WCombinerTypes::WDisconnectGroup( ( *listIter )->getName(),
-                                                                               ( *listIter )->getPossibleDisconnections() );
-
-        if ( g.second.size() )
-        {
-            discons.push_back( g );
-        }
-    }
-
-    return discons;
 }
 
 void WModule::removeConnectors()
@@ -196,14 +152,9 @@ void WModule::initialize()
         throw WModuleConnectorInitFailed( "Could not initialize connectors for Module " + getName() + ". Reason: already initialized." );
     }
 
-    // set the module name as default runtime name
-    m_runtimeName->set( getName() );
-
-    // initialize connectors and properties
     connectors();
     properties();
 
-    // now, the module is initialized but not necessarily usable (if not associated with a container)
     m_initialized( true );
     m_isUsable( m_initialized() && m_isAssociated() );
 }
@@ -233,20 +184,20 @@ MODULE_TYPE WModule::getType() const
     return MODULE_ARBITRARY;
 }
 
-const WModule::InputConnectorList& WModule::getInputConnectors() const
+const std::set<boost::shared_ptr< WModuleInputConnector > >& WModule::getInputConnectors() const
 {
     return m_inputConnectors;
 }
 
-const WModule::OutputConnectorList& WModule::getOutputConnectors() const
+const std::set<boost::shared_ptr< WModuleOutputConnector > >& WModule::getOutputConnectors() const
 {
     return m_outputConnectors;
 }
 
-boost::shared_ptr< WModuleInputConnector > WModule::findInputConnector( std::string name )
+boost::shared_ptr< WModuleInputConnector > WModule::getInputConnector( std::string name )
 {
     // simply search
-    for( InputConnectorList::const_iterator listIter = m_inputConnectors.begin();
+    for( std::set<boost::shared_ptr< WModuleInputConnector > >::const_iterator listIter = m_inputConnectors.begin();
          listIter != m_inputConnectors.end(); ++listIter )
     {
         // try the canonical name
@@ -256,25 +207,13 @@ boost::shared_ptr< WModuleInputConnector > WModule::findInputConnector( std::str
         }
     }
 
-    return boost::shared_ptr< WModuleInputConnector >();
+    throw WModuleConnectorNotFound( "The connector \"" + name + "\" does not exist in the module \"" + getName() + "\"." );
 }
 
-boost::shared_ptr< WModuleInputConnector > WModule::getInputConnector( std::string name )
-{
-    boost::shared_ptr< WModuleInputConnector > p = findInputConnector( name );
-
-    if ( !p )
-    {
-        throw WModuleConnectorNotFound( "The connector \"" + name + "\" does not exist in the module \"" + getName() + "\"." );
-    }
-
-    return p;
-}
-
-boost::shared_ptr< WModuleOutputConnector > WModule::findOutputConnector( std::string name )
+boost::shared_ptr< WModuleOutputConnector > WModule::getOutputConnector( std::string name )
 {
     // simply search
-    for( OutputConnectorList::const_iterator listIter = m_outputConnectors.begin();
+    for( std::set<boost::shared_ptr< WModuleOutputConnector > >::const_iterator listIter = m_outputConnectors.begin();
          listIter != m_outputConnectors.end(); ++listIter )
     {
         // try the canonical name
@@ -284,44 +223,7 @@ boost::shared_ptr< WModuleOutputConnector > WModule::findOutputConnector( std::s
         }
     }
 
-    return boost::shared_ptr< WModuleOutputConnector >();
-}
-
-boost::shared_ptr< WModuleOutputConnector > WModule::getOutputConnector( std::string name )
-{
-    boost::shared_ptr< WModuleOutputConnector > p = findOutputConnector( name );
-
-    if ( !p )
-    {
-        throw WModuleConnectorNotFound( "The connector \"" + name + "\" does not exist in the module \"" + getName() + "\"." );
-    }
-
-    return p;
-}
-
-boost::shared_ptr< WModuleConnector > WModule::findConnector( std::string name )
-{
-    // simply search both
-    boost::shared_ptr< WModuleConnector > p = findInputConnector( name );
-    if ( p ) // found?
-    {
-        return p;
-    }
-
-    // search in output list
-    return findOutputConnector( name );
-}
-
-boost::shared_ptr< WModuleConnector > WModule::getConnector( std::string name )
-{
-    boost::shared_ptr< WModuleConnector > p = findConnector( name );
-
-    if ( !p )
-    {
-        throw WModuleConnectorNotFound( "The connector \"" + name + "\" does not exist in the module \"" + getName() + "\"." );
-    }
-
-    return p;
+    throw WModuleConnectorNotFound( "The connector \"" + name + "\" does not exist in the module \"" + getName() + "\"." );
 }
 
 boost::signals2::connection WModule::subscribeSignal( MODULE_SIGNAL signal, t_ModuleGenericSignalHandlerType notifier )

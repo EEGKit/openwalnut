@@ -117,12 +117,3 @@ void WModuleInputConnector::notifyConnectionEstablished( boost::shared_ptr<WModu
     WModuleConnector::notifyConnectionEstablished( here, there );
 }
 
-bool WModuleInputConnector::isInputConnector() const
-{
-    return true;
-}
-
-bool WModuleInputConnector::isOutputConnector() const
-{
-    return false;
-}

@@ -96,12 +96,12 @@ size_t WItemSelector::size() const
     return m_selected.size();
 }
 
-const WItemSelection::Item& WItemSelector::atAll( size_t index ) const
+WItemSelection::Item WItemSelector::atAll( size_t index ) const
 {
     return m_selection->at( index );
 }
 
-const WItemSelection::Item& WItemSelector::at( size_t index ) const
+WItemSelection::Item WItemSelector::at( size_t index ) const
 {
     return m_selection->at( getItemIndexOfSelected( index ) );
 }

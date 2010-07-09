@@ -33,18 +33,15 @@
 #include "../../../kernel/WModule.h"
 
 /**
- * Tree widget item to represent a module in the dataset browser tree widget. This class is currently empty as all the functionality has been
- * generalized and moved to WQtTreeItem. This class should be removed.
+ * TODO(schurade): Document this!
  */
 class WQtModuleTreeItem: public WQtTreeItem
 {
 public:
-
     /**
-     * Constructor
-     *
-     * \param parent The parent widget that manages this widget.
-     * \param module The module that will be represented by the item.
+     * TODO(schurade): Document this!
+     * \param parent The widget managing this widget
+     * \param module The represented module
      */
     WQtModuleTreeItem( QTreeWidgetItem * parent, boost::shared_ptr< WModule > module );
 

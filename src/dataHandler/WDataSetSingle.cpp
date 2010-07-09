@@ -106,7 +106,7 @@ boost::shared_ptr< WPrototyped > WDataSetSingle::getPrototype()
     return m_prototype;
 }
 
-double WDataSetSingle::getValueAt( size_t id ) const
+double WDataSetSingle::getValueAt( size_t id )
 {
     switch( getValueSet()->getDataType() )
     {

@@ -172,16 +172,6 @@ protected:
     WPropString m_dataName;
 
     /**
-     * grouping the texture display properties
-     */
-    WPropGroup    m_groupTex;
-
-    /**
-     * grouping the texture manipulation properties
-     */
-    WPropGroup    m_groupTexManip;
-
-    /**
      * Interpolation?
      */
     WPropBool m_interpolation;
@@ -205,51 +195,6 @@ protected:
      * Opacity value for this data.
      */
     WPropInt m_opacity;
-
-    /**
-     * translation of the texture
-     */
-    WPropInt m_translationX;
-
-    /**
-     * translation of the texture
-     */
-    WPropInt m_translationY;
-
-    /**
-     * translation of the texture
-     */
-    WPropInt m_translationZ;
-
-    /**
-     * voxel size in x direction
-     */
-    WPropDouble m_stretchX;
-
-    /**
-     * voxel size in y direction
-     */
-    WPropDouble m_stretchY;
-
-    /**
-     * voxel size in z direction
-     */
-    WPropDouble m_stretchZ;
-
-    /**
-     * rotation around the x axis
-     */
-    WPropInt m_rotationX;
-
-    /**
-     * rotation around the y axis
-     */
-    WPropInt m_rotationY;
-
-    /**
-     * rotation around the z axis
-     */
-    WPropInt m_rotationZ;
 
     bool m_isTexture; //!< Indicates whether the loaded dataSet will be available as texture.
 

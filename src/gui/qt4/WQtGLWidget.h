@@ -27,14 +27,14 @@
 
 #include <string>
 
-#include <QtCore/QTimer>
-#include <QtGui/QWidget>
 #include <QtOpenGL/QGLWidget>
+#include <QtGui/QWidget>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/signals2/signal.hpp>
 
 #include "../../graphicsEngine/WGECamera.h"
+#include "../../common/WFlag.h"
 
 class WGEViewer;
 class WColor;
@@ -45,7 +45,11 @@ class WColor;
  * \ingroup gui
  */
 class WQtGLWidget
+#ifdef _WIN32
+    : public QWidget
+#else
     : public QGLWidget
+#endif
 {
 public:
     /**
@@ -64,6 +68,11 @@ public:
      * Destructor.
      */
     virtual ~WQtGLWidget();
+
+    /**
+     * Since the widget is not visible during construction, the OSG thread may cause errors, so we use a post constructor.
+     */
+    virtual void initialize();
 
     /**
      * returns the recommended size for the widget to allow
@@ -106,6 +115,13 @@ public:
      */
     boost::shared_ptr< WGEViewer > getViewer() const;
 
+    /**
+     * Determines whether the widget is properly initialized.
+     *
+     * \return flag - initialized.
+     */
+    const WBoolFlag& isInitialized() const;
+
 protected:
     /**
      * The viewer to the scene.
@@ -118,6 +134,10 @@ protected:
     std::string m_nameOfViewer;
 
 
+    //  The GraphincsWindowWin32 implementation already takes care of message handling.
+    //  We don't want to relay these on Windows, it will just cause duplicate messages
+    //  with further problems downstream (i.e. not being able to throw the trackball
+#ifndef WIN32
     /**
      * Event handler for double clicks.
      *
@@ -126,17 +146,26 @@ protected:
     virtual void mouseDoubleClickEvent( QMouseEvent* event );
 
     /**
-     * QT Callback for handling repaints.
+     * Event handler for close events.
+     *
+     * \param event the event description.
      */
-    virtual void paintGL();
+    virtual void closeEvent( QCloseEvent* event );
+
+    /**
+     * Event handler for destroy events (called after close).
+     *
+     * \param destroyWindow flag indicatinng whether to destroy window
+     * \param destroySubWindows flag indicatinng whether to destroy sub windows
+     */
+    virtual void destroyEvent( bool destroyWindow = true, bool destroySubWindows = true );
 
     /**
      * Event handler for  resize events.
      *
-     * \param width the new width.
-     * \param height the new height.
+     * \param event the event description.
      */
-    virtual void resizeGL( int width, int height );
+    virtual void resizeEvent( QResizeEvent* event );
 
     /**
      * Event handler for key press.
@@ -179,6 +208,14 @@ protected:
      * \param event the event description.
      */
     virtual void wheelEvent( QWheelEvent* event );
+#endif
+
+    /**
+     * QT Callback for handling repaints.
+     *
+     * \param event event descriptor.
+     */
+    virtual void paintEvent( QPaintEvent* event );
 
     /**
      * Simply translate the mouse button from an event to an int.
@@ -201,14 +238,14 @@ protected:
 
 private:
     /**
-     * Timer for periodic repaints.
-     */
-    QTimer m_Timer;
-
-    /**
      * Holds the recommended size for the widget
      */
     QSize m_recommendedSize;
+
+    /**
+     * True when initialized.
+     */
+    WBoolFlag m_isInitialized;
 
     /**
      * True when the widget got drawn the very first time.

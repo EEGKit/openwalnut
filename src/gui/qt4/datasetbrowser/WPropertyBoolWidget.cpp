@@ -26,19 +26,29 @@
 
 #include "../../../common/WPropertyVariable.h"
 
-WPropertyBoolWidget::WPropertyBoolWidget( WPropBool property, QGridLayout* propertyGrid, QWidget* parent ):
+WPropertyBoolWidget::WPropertyBoolWidget( WPropBool property, QGridLayout* propertyGrid, QWidget* parent, bool asButton ):
     WPropertyWidget( property, propertyGrid, parent ),
     m_boolProperty( property ),
     m_checkbox( &m_parameterWidgets ),
+    m_button( &m_parameterWidgets ),
     m_layout( &m_parameterWidgets ),
+    m_asButton( asButton ),
     m_asText( &m_informationWidgets ),
     m_infoLayout( &m_informationWidgets )
 {
     // initialize members
+    m_button.setCheckable( true );
     update();
 
     // layout both against each other
-    m_layout.addWidget( static_cast< QWidget* >( &m_checkbox ) );
+    m_button.setVisible( m_asButton );
+    m_checkbox.setVisible( !m_asButton );
+    m_layout.addWidget( m_asButton ? static_cast< QWidget* >( &m_button ) : static_cast< QWidget* >( &m_checkbox ) );
+
+    if ( m_asButton )
+    {
+        m_layout.setContentsMargins( 1, 1, 1, 1 );
+    }
     m_parameterWidgets.setLayout( &m_layout );
 
     // Information Output ( Property Purpose = PV_PURPOSE_INFORMATION )
@@ -46,7 +56,8 @@ WPropertyBoolWidget::WPropertyBoolWidget( WPropBool property, QGridLayout* prope
     m_informationWidgets.setLayout( &m_infoLayout );
 
     // connect the modification signal of m_checkbox with our callback
-    connect( &m_checkbox, SIGNAL( toggled( bool ) ), this, SLOT( checkboxChanged() ) );
+    connect( &m_checkbox, SIGNAL( toggled( bool ) ), this, SLOT( changed() ) );
+    connect( &m_button, SIGNAL( toggled( bool ) ), this, SLOT( changed() ) );
 }
 
 WPropertyBoolWidget::~WPropertyBoolWidget()
@@ -58,12 +69,25 @@ void WPropertyBoolWidget::update()
 {
     // simply set the new state
     m_checkbox.setChecked( m_boolProperty->get() );
+    m_button.setChecked( m_boolProperty->get() );
     m_asText.setText( m_boolProperty->get() ? QString( "Yes" ) : QString( "No" ) );
 }
 
-void WPropertyBoolWidget::checkboxChanged()
+QPushButton* WPropertyBoolWidget::getButton()
 {
-    invalidate( !m_boolProperty->set( m_checkbox.isChecked() ) );
-    m_checkbox.setChecked( m_boolProperty->get() );
+    return &m_button;
+}
+
+void WPropertyBoolWidget::changed()
+{
+    // set the value
+    if ( m_asButton )
+    {
+        invalidate( !m_boolProperty->set( m_button.isChecked() ) );
+    }
+    else
+    {
+        invalidate( !m_boolProperty->set( m_checkbox.isChecked() ) );
+    }
 }
 

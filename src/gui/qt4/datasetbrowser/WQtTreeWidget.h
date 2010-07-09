@@ -53,6 +53,16 @@ public:
     void deleteItem( QTreeWidgetItem* item );
 
 public slots:
+    /**
+     * change order of items, move currently selected item down
+     */
+    void moveTreeItemDown();
+
+    /**
+     * change order of items, move currently selected item up
+     */
+    void moveTreeItemUp();
+
     //void keyPressEvent(QKeyEvent *e);
 
 protected:

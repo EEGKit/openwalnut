@@ -66,14 +66,9 @@ public:
     typedef WSharedSequenceContainer< boost::shared_ptr< WSubject >, SubjectContainerType > SubjectSharedContainerType;
 
     /**
-     * Iterator for subjects.
+     * Alias for access objects
      */
-    typedef SubjectContainerType::const_iterator SubjectConstIterator;
-
-    /**
-     * Iterator for subjects.
-     */
-    typedef SubjectContainerType::iterator SubjectIterator;
+    typedef SubjectSharedContainerType::WSharedAccess SubjectAccess;
 
     /**
      * Empty standard constructor.
@@ -152,12 +147,11 @@ public:
     static boost::shared_ptr< WSubject > getDefaultSubject();
 
     /**
-     * Returns read-access to the list of subjects.
-     * \note as long as you own the read ticket, the list is not changed by others.
+     * Gets an access object which allows thread save iteration over the subjects.
      *
-     * \return the list of subjects.
+     * \return the access object.
      */
-    SubjectSharedContainerType::ReadTicket getSubjects() const;
+    SubjectAccess getAccessObject();
 
 protected:
 
@@ -165,6 +159,11 @@ protected:
      * A container for all WSubjects.
      */
     SubjectSharedContainerType m_subjects;
+
+    /**
+     * The access object used for thread safe access.
+     */
+    SubjectSharedContainerType::WSharedAccess m_subjectAccess;
 
 private:
 

@@ -79,7 +79,7 @@ public:
         /**
          * Desctructor.
          */
-        virtual ~WSharedObjectAccess();
+        ~WSharedObjectAccess();
 
         /**
          * Gets the contained, and protected object.
@@ -142,6 +142,19 @@ public:
     };
 
     /**
+     * Use a shared_ptr since the shared and unique locks from boost are non-copyable.
+     */
+    typedef boost::shared_ptr< WSharedObjectAccess > WSharedAccess;
+
+    /**
+     * This method distributes access objects. These objects are able to read/write lock the object and grant access to it, in
+     * a thread-safe manner.
+     *
+     * \return the access object which allows thread safe access to the object.
+     */
+    WSharedAccess getAccessObject();
+
+    /**
      * Type for read tickets.
      */
     typedef boost::shared_ptr< WSharedObjectTicketRead< T > > ReadTicket;
@@ -156,7 +169,7 @@ public:
      *
      * \return the read ticket
      */
-    ReadTicket getReadTicket() const;
+    ReadTicket getReadTicket();
 
     /**
      * Returns a ticket to get write access to the contained data. After the ticket is freed, the write lock vanishes.
@@ -165,21 +178,7 @@ public:
      *
      * \return the ticket
      */
-    WriteTicket getWriteTicket( bool suppressNotify = false ) const;
-
-    /**
-     * Use a shared_ptr since the shared and unique locks from boost are non-copyable.
-     */
-    typedef boost::shared_ptr< WSharedObjectAccess > WSharedAccess;
-
-    /**
-     * This method distributes access objects. These objects are able to read/write lock the object and grant access to it, in
-     * a thread-safe manner.
-     *
-     * \deprecated do not use this anymore. Use getReadTicket and getWriteTicket instead
-     * \return the access object which allows thread safe access to the object.
-     */
-    WSharedAccess getAccessObject();
+    WriteTicket getWriteTicket( bool suppressNotify = false );
 
     /**
      * This condition fires whenever the encapsulated object changed. This is fired automatically by endWrite().
@@ -191,16 +190,14 @@ public:
 protected:
 
     /**
-     * The object wrapped by this class. This member is mutable as the \ref getReadTicket and \ref getWriteTicket functions are const but need a
-     * non-const reference to m_object.
+     * The object wrapped by this class.
      */
-    mutable T m_object;
+    T m_object;
 
     /**
-     * The lock to ensure thread safe access. This member is mutable as the \ref getReadTicket and \ref getWriteTicket functions are const but need a
-     * non-const reference to m_lock.
+     * The lock to ensure thread safe access.
      */
-    mutable boost::shared_ptr< boost::shared_mutex > m_lock;
+    boost::shared_ptr< boost::shared_mutex > m_lock;
 
     /**
      * This condition set fires whenever the contained object changes. This corresponds to the Observable pattern.
@@ -227,7 +224,6 @@ WSharedObject< T >::~WSharedObject()
 template < typename T >
 typename WSharedObject< T >::WSharedAccess WSharedObject< T >::getAccessObject()
 {
-    // TODO(ebaum): deprecated. Clean up if not needed anymore.
     return typename WSharedObject< T >::WSharedAccess( new typename WSharedObject< T>::WSharedObjectAccess( m_object, m_lock, m_changeCondition ) );
 }
 
@@ -299,7 +295,7 @@ boost::shared_ptr< WCondition > WSharedObject< T >::getChangeCondition()
 }
 
 template < typename T >
-typename WSharedObject< T >::ReadTicket WSharedObject< T >::getReadTicket() const
+typename WSharedObject< T >::ReadTicket WSharedObject< T >::getReadTicket()
 {
     return boost::shared_ptr< WSharedObjectTicketRead< T > >(
             new WSharedObjectTicketRead< T >( m_object, m_lock, boost::shared_ptr< WCondition >() )
@@ -307,7 +303,7 @@ typename WSharedObject< T >::ReadTicket WSharedObject< T >::getReadTicket() cons
 }
 
 template < typename T >
-typename WSharedObject< T >::WriteTicket WSharedObject< T >::getWriteTicket( bool suppressNotify ) const
+typename WSharedObject< T >::WriteTicket WSharedObject< T >::getWriteTicket( bool suppressNotify )
 {
     if ( suppressNotify )
     {

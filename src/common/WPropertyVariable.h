@@ -63,7 +63,6 @@ template< typename T >
 class WPropertyVariable: public WFlag< T >,
                          public WPropertyBase
 {
-friend class WPropertyVariableTest;
 public:
 
     /**
@@ -121,9 +120,6 @@ public:
     /**
      * Copy constructor. Creates a deep copy of this property. As boost::signals2 and condition variables are non-copyable, new instances get
      * created. The subscriptions to a signal are LOST as well as all listeners to a condition.
-     * The conditions you can grab using getValueChangeConditon and getCondition are not the same as in the original! This is because
-     * the class corresponds to the observer/observable pattern. You won't expect a clone to fire a condition if a original variable is changed
-     * (which after cloning is completely decoupled from the clone).
      *
      * \param from the instance to copy.
      */
@@ -220,9 +216,34 @@ public:
     };
 
     /**
+     * For shortening: a type defining a shared set of WModule pointers.
+     */
+    typedef std::set< boost::shared_ptr< PropertyConstraint > > ConstraintContainerType;
+
+    /**
+     * Const iterator for the prototype set.
+     */
+    typedef typename ConstraintContainerType::const_iterator ConstraintContainerConstIteratorType;
+
+    /**
+     * Iterator for the prototype set.
+     */
+    typedef typename ConstraintContainerType::iterator ConstraintContainerIteratorType;
+
+    /**
      * The alias for a shared container.
      */
-    typedef WSharedAssociativeContainer< std::set< boost::shared_ptr< PropertyConstraint > > > ConstraintContainerType;
+    typedef WSharedAssociativeContainer< ConstraintContainerType > ConstraintSharedContainerType;
+
+    /**
+     * Alias for proper accessing the object. Read ticket.
+     */
+    typedef typename ConstraintSharedContainerType::ReadTicket ReadTicket;
+
+    /**
+     * Alias for proper accessing the object. Write ticket.
+     */
+    typedef typename ConstraintSharedContainerType::WriteTicket WriteTicket;
 
     /**
      * Alias for min constraints. It is an alias for convenience.
@@ -247,7 +268,7 @@ public:
      *
      * \return the constraint access object
      */
-    ConstraintContainerType getConstraints();
+    ConstraintSharedContainerType getConstraints();
 
     /**
      * Gets the condition, which gets notified whenever the list of constraints changes. It is notified AFTER the write lock has been released so
@@ -325,20 +346,6 @@ public:
     boost::shared_ptr< PropertyConstraint > replaceConstraint( PROPERTYCONSTRAINT_TYPE constraint, PROPERTYCONSTRAINT_TYPE type );
 
     /**
-     * Cleans list of constraints from all existing constrains of the specified type.
-     *
-     * \param type the type to remove.
-     */
-    void removeConstraint( PROPERTYCONSTRAINT_TYPE type );
-
-    /**
-     * Removes the specified constraint if existent.
-     *
-     * \param constraint the constraint to remove.
-     */
-    void removeConstraint( boost::shared_ptr< PropertyConstraint > constraint );
-
-    /**
      * Method searching the first appearance of a constrained with the specified type.
      *
      * \param type the type of the searched constraint
@@ -410,14 +417,14 @@ protected:
     virtual void updateType();
 
     /**
-     * Cleans list of constraints from all existing constrains of the specified type.
+     * Cleans m_constraints from all existing constrains of the specified type.
      *
      * \param type the type to remove.
      * \param ticket the write ticket if already existent.
      */
     void removeConstraints( PROPERTYCONSTRAINT_TYPE type,
-                            typename WPropertyVariable< T >::ConstraintContainerType::WriteTicket ticket
-                            = ConstraintContainerType::WriteTicket() );
+                            typename WPropertyVariable< T >::ConstraintSharedContainerType::WriteTicket ticket
+                            = ConstraintSharedContainerType::WriteTicket() );
 
     /**
      * This method gets called by WFlag whenever the value of the property changes. It re-emits the signal with a this pointer
@@ -425,9 +432,15 @@ protected:
     void propertyChangeNotifier();
 
     /**
+     * this condition gets notified whenever the list of constraints changes.
+     * \note it gets AFTER the write lock has been released. So in callbacks, a read lock can be acquired.
+     */
+    boost::shared_ptr< WCondition > m_constraintsChanged;
+
+    /**
      * A set of constraints applied on this property.
      */
-    boost::shared_ptr< ConstraintContainerType > m_constraints;
+    ConstraintSharedContainerType m_constraints;
 
 private:
 };
@@ -436,12 +449,13 @@ template < typename T >
 WPropertyVariable< T >::WPropertyVariable( std::string name, std::string description, const T& initial ):
         WFlag< T >( new WCondition(), initial ),
         WPropertyBase( name, description ),
-        m_constraints( new ConstraintContainerType() )
+        m_constraintsChanged( new WCondition() ),
+        m_constraints()
 {
     updateType();
 
     // set constraint and change condition to update condition set of WPropertyBase
-    m_updateCondition->add( m_constraints->getChangeCondition() );
+    m_updateCondition->add( m_constraintsChanged );
     m_updateCondition->add( WFlag< T >::getValueChangeCondition() );
 }
 
@@ -449,12 +463,13 @@ template < typename T >
 WPropertyVariable< T >::WPropertyVariable( std::string name, std::string description, const T& initial, boost::shared_ptr< WCondition > condition ):
         WFlag< T >( condition, initial ),
         WPropertyBase( name, description ),
-        m_constraints( new ConstraintContainerType() )
+        m_constraintsChanged( new WCondition() ),
+        m_constraints()
 {
     updateType();
 
     // set constraint and change condition to update condition set of WPropertyBase
-    m_updateCondition->add( m_constraints->getChangeCondition() );
+    m_updateCondition->add( m_constraintsChanged );
     m_updateCondition->add( WFlag< T >::getValueChangeCondition() );
 }
 
@@ -463,18 +478,17 @@ WPropertyVariable< T >::WPropertyVariable( std::string name, std::string descrip
                                            PropertyChangeNotifierType notifier ):
         WFlag< T >( new WCondition(), initial ),
         WPropertyBase( name, description ),
-        m_constraints( new ConstraintContainerType() )
+        m_constraintsChanged( new WCondition() ),
+        m_constraints()
 {
     updateType();
 
     // set constraint and change condition to update condition set of WPropertyBase
-    m_updateCondition->add( m_constraints->getChangeCondition() );
+    m_updateCondition->add( m_constraintsChanged );
     m_updateCondition->add( WFlag< T >::getValueChangeCondition() );
 
     // set custom notifier
-    m_notifierConnection = WFlag< T >::getValueChangeCondition()->subscribeSignal(
-            boost::bind( &WPropertyVariable< T >::propertyChangeNotifier, this )
-    );
+    m_notifierConnection = WFlag< T >::getCondition()->subscribeSignal( boost::bind( &WPropertyVariable< T >::propertyChangeNotifier, this ) );
     signal_PropertyChange.connect( notifier );
 }
 
@@ -483,18 +497,17 @@ WPropertyVariable< T >::WPropertyVariable( std::string name, std::string descrip
                                            PropertyChangeNotifierType notifier ):
         WFlag< T >( condition, initial ),
         WPropertyBase( name, description ),
-        m_constraints( new ConstraintContainerType() )
+        m_constraintsChanged( new WCondition() ),
+        m_constraints()
 {
     updateType();
 
     // set constraint and change condition to update condition set of WPropertyBase
-    m_updateCondition->add( m_constraints->getChangeCondition() );
+    m_updateCondition->add( m_constraintsChanged );
     m_updateCondition->add( WFlag< T >::getValueChangeCondition() );
 
     // set custom notifier
-    m_notifierConnection = WFlag< T >::getValueChangeCondition()->subscribeSignal(
-            boost::bind( &WPropertyVariable< T >::propertyChangeNotifier, this )
-    );
+    m_notifierConnection = WFlag< T >::getCondition()->subscribeSignal( boost::bind( &WPropertyVariable< T >::propertyChangeNotifier, this ) );
     signal_PropertyChange.connect( notifier );
 }
 
@@ -502,40 +515,34 @@ template < typename T >
 WPropertyVariable< T >::WPropertyVariable( const WPropertyVariable< T >& from ):
     WFlag< T >( from ),
     WPropertyBase( from ),
-    m_constraints( new ConstraintContainerType() )
+    m_constraintsChanged( new WCondition() ),
+    m_constraints()
 {
     // copy the constraints
 
     // lock, unlocked if l looses focus
-    typename WPropertyVariable< T >::ConstraintContainerType::ReadTicket l =
-        const_cast< WPropertyVariable< T >& >( from ).m_constraints->getReadTicket();
-
-    // get write ticket too
-    typename WPropertyVariable< T >::ConstraintContainerType::WriteTicket w = m_constraints->getWriteTicket();
+    typename WPropertyVariable< T >::ConstraintSharedContainerType::ReadTicket l =
+        const_cast< WPropertyVariable< T >& >( from ).m_constraints.getReadTicket();
 
     // we need to make a deep copy here.
-    for ( typename ConstraintContainerType::ConstIterator iter = l->get().begin(); iter != l->get().end(); ++iter )
+    for ( ConstraintContainerIteratorType iter = l->get().begin(); iter != l->get().end(); ++iter )
     {
         // clone them to keep dynamic type
-        w->get().insert( ( *iter )->clone() );
+        l->get().insert( ( *iter )->clone() );
     }
-
-    // set constraint and change condition to update condition set of WPropertyBase
-    m_updateCondition->add( m_constraints->getChangeCondition() );
-    m_updateCondition->add( WFlag< T >::getValueChangeCondition() );
 }
 
 template < typename T >
 WPropertyVariable< T >::~WPropertyVariable()
 {
     // clean up
-    m_updateCondition->remove( m_constraints->getChangeCondition() );
+    m_updateCondition->remove( m_constraintsChanged );
     m_updateCondition->remove( WFlag< T >::getValueChangeCondition() );
 
     m_notifierConnection.disconnect();
 
     // lock, unlocked if l looses focus
-    typename WPropertyVariable< T >::ConstraintContainerType::WriteTicket l = m_constraints->getWriteTicket();
+    typename WPropertyVariable< T >::ConstraintSharedContainerType::WriteTicket l = m_constraints.getWriteTicket();
     l->get().clear();
 }
 
@@ -556,11 +563,11 @@ template < typename T >
 bool WPropertyVariable< T >::accept( T newValue )
 {
     // lock, lock vanishes if l looses focus
-    typename WPropertyVariable< T >::ConstraintContainerType::ReadTicket l = m_constraints->getReadTicket();
+    typename WPropertyVariable< T >::ConstraintSharedContainerType::ReadTicket l = m_constraints.getReadTicket();
 
     // iterate through the set
     bool acceptable = WFlag< T >::accept( newValue );
-    for ( typename ConstraintContainerType::ConstIterator it = l->get().begin(); it !=  l->get().end(); ++it )
+    for ( ConstraintContainerConstIteratorType it = l->get().begin(); it !=  l->get().end(); ++it )
     {
         acceptable &= ( *it )->accept( boost::shared_static_cast< WPropertyVariable< T > >( shared_from_this() ), newValue );
     }
@@ -633,17 +640,19 @@ template < typename T >
 void WPropertyVariable< T >::addConstraint( boost::shared_ptr< PropertyConstraint > constraint )
 {
     // lock, unlocked if l looses focus
-    typename WPropertyVariable< T >::ConstraintContainerType::WriteTicket l = m_constraints->getWriteTicket();
+    typename WPropertyVariable< T >::ConstraintSharedContainerType::WriteTicket l = m_constraints.getWriteTicket();
     l->get().insert( constraint );
 
     // unlock by hand
     l.reset();
+
+    m_constraintsChanged->notify();
 }
 
 template < typename T >
 boost::shared_ptr< WCondition > WPropertyVariable< T >::getContraintsChangedCondition()
 {
-    return m_constraints->getChangeCondition();
+    return m_constraintsChanged;
 }
 
 template < typename T >
@@ -685,10 +694,15 @@ template < typename T >
 void WPropertyVariable< T >::replaceConstraint( boost::shared_ptr< PropertyConstraint > constraint, PROPERTYCONSTRAINT_TYPE type )
 {
     // lock, unlocked if l looses focus
-    typename WPropertyVariable< T >::ConstraintContainerType::WriteTicket l = m_constraints->getWriteTicket();
+    typename WPropertyVariable< T >::ConstraintSharedContainerType::WriteTicket l = m_constraints.getWriteTicket();
 
     removeConstraints( type, l );
     l->get().insert( constraint );
+
+    // unlock by hand
+    l.reset();
+
+    m_constraintsChanged->notify();
 }
 
 template < typename T >
@@ -705,10 +719,10 @@ boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint >
 WPropertyVariable< T >::getFirstConstraint( PROPERTYCONSTRAINT_TYPE type )
 {
     // lock, unlocked if l looses focus
-    typename WPropertyVariable< T >::ConstraintContainerType::ReadTicket l = m_constraints->getReadTicket();
+    typename WPropertyVariable< T >::ConstraintSharedContainerType::ReadTicket l = m_constraints.getReadTicket();
 
     // search first appearance of a constraint of the specified type
-    for ( typename ConstraintContainerType::ConstIterator it = l->get().begin(); it != l->get().end(); ++it )
+    for ( ConstraintContainerConstIteratorType it = l->get().begin(); it != l->get().end(); ++it )
     {
         if ( ( *it )->getType() == type )
         {
@@ -723,11 +737,11 @@ template < typename T >
 int WPropertyVariable< T >::countConstraint( PROPERTYCONSTRAINT_TYPE type )
 {
     // lock, unlocked if l looses focus
-    typename WPropertyVariable< T >::ConstraintContainerType::ReadTicket l = m_constraints->getReadTicket();
+    typename WPropertyVariable< T >::ConstraintSharedContainerType::ReadTicket l = m_constraints.getReadTicket();
 
     int i = 0;
     // search first appearance of a constraint of the specified type
-    for ( typename ConstraintContainerType::ConstIterator it =  l->get().begin(); it != l->get().end(); ++it )
+    for ( ConstraintContainerConstIteratorType it =  l->get().begin(); it != l->get().end(); ++it )
     {
         if ( ( *it )->getType() == type )
         {
@@ -769,16 +783,16 @@ boost::shared_ptr< WPropertyConstraintMax< T > > WPropertyVariable< T >::getMax(
 }
 
 template< typename T >
-typename WPropertyVariable<T>::ConstraintContainerType WPropertyVariable<T>::getConstraints()
+typename WPropertyVariable<T>::ConstraintSharedContainerType WPropertyVariable<T>::getConstraints()
 {
     return m_constraints;
 }
 
 template < typename T >
 void WPropertyVariable< T >::removeConstraints( PROPERTYCONSTRAINT_TYPE type,
-                                                typename WPropertyVariable< T >::ConstraintContainerType::WriteTicket ticket )
+                                                typename WPropertyVariable< T >::ConstraintSharedContainerType::WriteTicket ticket )
 {
-    typename WPropertyVariable< T >::ConstraintContainerType::WriteTicket l = ticket;
+    typename WPropertyVariable< T >::ConstraintSharedContainerType::WriteTicket l = ticket;
 
     bool useLock = !ticket;
 
@@ -786,16 +800,14 @@ void WPropertyVariable< T >::removeConstraints( PROPERTYCONSTRAINT_TYPE type,
     if ( useLock )
     {
         // lock, unlocked if l looses focus
-        l = m_constraints->getWriteTicket();
+        l = m_constraints.getWriteTicket();
     }
 
-    size_t nbErased = 0;    // count how much items have been removed
-    for ( typename ConstraintContainerType::ConstIterator it = l->get().begin(); it != l->get().end(); )
+    for ( ConstraintContainerConstIteratorType it = l->get().begin(); it != l->get().end(); )
     {
         if ( ( *it )->getType() == type )
         {
             l->get().erase( it++ );
-            ++nbErased;
         }
         else
         {
@@ -806,34 +818,10 @@ void WPropertyVariable< T >::removeConstraints( PROPERTYCONSTRAINT_TYPE type,
     // only notify and unlock if locked earlier.
     if ( useLock )
     {
-        // no operations done? No condition fired
-        if ( nbErased == 0 )
-        {
-            l->suppressUnlockCondition();
-        }
-
         // unlock by hand
         l.reset();
-    }
-}
 
-template < typename T >
-void WPropertyVariable< T >::removeConstraint( PROPERTYCONSTRAINT_TYPE type )
-{
-    // simply forward the call
-    removeConstraints( type, typename WPropertyVariable< T >::ConstraintContainerType::WriteTicket() );
-}
-
-template < typename T >
-void WPropertyVariable< T >::removeConstraint( boost::shared_ptr< PropertyConstraint > constraint )
-{
-    // lock released automatically
-    typename WPropertyVariable< T >::ConstraintContainerType::WriteTicket l = m_constraints->getWriteTicket();
-
-    if ( l->get().erase( constraint ) == 0 )
-    {
-        // nothing changed. Suppress update condition to fire
-        l->suppressUnlockCondition();
+        m_constraintsChanged->notify();
     }
 }
 

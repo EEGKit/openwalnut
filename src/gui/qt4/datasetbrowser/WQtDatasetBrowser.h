@@ -25,7 +25,6 @@
 #ifndef WQTDATASETBROWSER_H
 #define WQTDATASETBROWSER_H
 
-#include <list>
 #include <string>
 #include <vector>
 
@@ -38,7 +37,6 @@
 #include "../../../dataHandler/WDataSet.h"
 #include "../../../graphicsEngine/WROI.h"
 #include "../../../modules/fiberDisplay/WRMROIRepresentation.h"
-#include "../WQtCombinerToolbar.h"
 #include "WQtDSBWidget.h"
 #include "WQtModuleHeaderTreeItem.h"
 #include "WQtModuleTreeItem.h"
@@ -58,19 +56,21 @@ class WQtDatasetBrowser : public QDockWidget
 
 public:
     /**
-     * Constructor.
+     * Default constructor.
      *
      * \param parent Parent widget.
+     *
+     * \return
      */
     explicit WQtDatasetBrowser( WMainWindow* parent = 0 );
 
     /**
-     * Default Destructor.
+     * Destructor.
      */
     virtual ~WQtDatasetBrowser();
 
     /**
-     * Adds a page to the context widget
+     * adds a page to the context widget
      *
      * \param content A widget with controls
      *
@@ -79,7 +79,7 @@ public:
     int addTabWidgetContent( WQtDSBWidget* content );
 
     /**
-     * Adds a subject entry to the tree widget
+     * adds a subject entry to the tree widget
      *
      * \param name The entry name of the subjectin the tree widget
      * \return A pointer to the tree widget item
@@ -87,7 +87,7 @@ public:
     WQtSubjectTreeItem* addSubject( std::string name );
 
     /**
-     * Adds a dataset entry to any given subject in the tree widget
+     * adds a dataset entry to any given subject in the tree widget
      *
      * \param module shared pointer to the module associated with this tree widget entry
      * \param subjectId subject id this dataset belongs to
@@ -145,23 +145,6 @@ public:
      */
     boost::shared_ptr< WRMROIRepresentation > getFirstRoiInSelectedBranch();
 
-    /**
-     * Returns a checkable action that can be used to show or close this dock widget.
-     * The action's text is set to the dock widget's window title.
-     *
-     * This member function is overwritten to add a keyboard shortcut to this action.
-     *
-     * \return Modified QAction
-     */
-    QAction* toggleViewAction() const;
-
-    /**
-     * Add the specified toolbar to the top of the dsb.
-     *
-     * \param tb the toolbar to add
-     */
-    void addToolbar( QToolBar* tb );
-
 protected:
 
     /**
@@ -184,34 +167,13 @@ protected:
      * selected dataset
      *
      * \param module pointer to the currently selected module
-     *
-     * \return the new toolbar instance
      */
-    WQtCombinerToolbar* createCompatibleButtons( boost::shared_ptr< WModule >module );
+    void createCompatibleButtons( boost::shared_ptr< WModule >module );
 
     /**
      * Reference to the main window of the application.
      */
     WMainWindow* m_mainWindow;
-
-    /**
-     * Searches the specified tree for all tree items matching the specified module.
-     *
-     * \param module the module uses as search criteria.
-     * \param where in which subtree to search.
-     *
-     * \return a list of all matching items.
-     */
-    std::list< WQtTreeItem* > findItemsByModule( boost::shared_ptr< WModule > module, QTreeWidgetItem* where );
-
-    /**
-     * Searches the tree for all tree items matching the specified module.
-     *
-     * \param module the module uses as search criteria.
-          *
-     * \return a list of all matching items.
-     */
-    std::list< WQtTreeItem* > findItemsByModule( boost::shared_ptr< WModule > module );
 
 private:
     WQtTreeWidget* m_moduleTreeWidget; //!< pointer to the tree widget
@@ -234,31 +196,12 @@ private:
 
     bool m_showToolBarText; //!< Show tool bar icons with text
 
+    std::vector< std::string > m_moduleWhiteList; //!< Stores a list of modules allowed to be shown.
+
     /**
      * The action to remove a module from the tree.
      */
     QAction* m_deleteModuleAction;
-
-    /**
-     * Action which uses a compatibles list (submenu) to connect a selected item with other existing modules.
-     */
-    QAction* m_connectWithModuleAction;
-
-    /**
-     * Action which uses a compatibles list (submenu) to connect a selected item with other prototypes.
-     */
-    QAction* m_connectWithPrototypeAction;
-
-    /**
-     * Action which disconnects a connector from the module.
-     */
-    QAction* m_disconnectAction;
-
-    /**
-     * If true, a selection change does not cause the property tab to rebuild. This is useful if multiple items get selected at once
-     * programatically.
-     */
-    bool m_ignoreSelectionChange;
 
 private slots:
     /**
@@ -303,6 +246,17 @@ private slots:
      * function gets called when a change to a tree item, eg. check box status, occurs
      */
     void changeRoiTreeItem();
+
+
+    /**
+     * change order of items, move currently selected item down
+     */
+    void moveTreeItemDown();
+
+    /**
+     * change order of items, move currently selected item up
+     */
+    void moveTreeItemUp();
 
     /**
      * delete a ROI tree item

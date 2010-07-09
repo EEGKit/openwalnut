@@ -81,15 +81,19 @@ void WQtTextureSorter::handleTextureClicked()
 {
     unsigned int index =  m_textureListWidget->currentIndex().row();
 
-    DatasetSharedContainerType::ReadTicket r = m_textures.getReadTicket();
+    DatasetAccess ta = m_textures.getAccessObject();
+    ta->beginRead();
 
     QListWidgetItem* ci = m_textureListWidget->item( index );
     WAssert( ci, "Problem in source code." );
-    boost::shared_ptr< WDataSet > dataSet = r->get()[index];
+    boost::shared_ptr< WDataSet > dataSet = ta->get()[index];
+
+    ta->endRead();
 
     emit textureSelectionChanged( dataSet );
 }
 
+// TODO(wiebel): have a second look on this begin/end read/write mess.
 void WQtTextureSorter::update()
 {
     boost::shared_ptr< WSubject > subject;
@@ -108,49 +112,82 @@ void WQtTextureSorter::update()
     }
 
 
-    DatasetSharedContainerType::WriteTicket writeTex =  m_textures.getWriteTicket();
-    DatasetSharedContainerType::WriteTicket writeDataSet = subject->getDatasetsForWriting();
+    DatasetAccess ta = m_textures.getAccessObject();
+    ta->beginRead();
 
-    if( writeTex->get().empty() )
+    if( ta->get().empty() )
     {
-        for( DatasetContainerType::iterator it = writeDataSet->get().begin(); it != writeDataSet->get().end(); ++it )
+        ta->endRead(); // end for the begin needed for the if condition
+
+        DatasetAccess da = subject->getAccessObject();
+        da->beginRead();
+
+        for( DatasetContainerType::iterator it = da->get().begin(); it != da->get().end(); ++it )
         {
             if( ( *it )->isTexture() )
             {
-                writeTex->get().insert( writeTex->get().begin(), *it );
+                da->endRead();
+                ta->beginWrite();
+                ta->get().insert( ta->get().begin(), *it );
+                ta->endWrite();
+                da->beginRead();
             }
         }
+        da->endRead();
     }
     else
     {
+        ta->endRead(); // end for the begin needed for the if condition
+
         // insert the new datasets into the texture sorter.
-        for( DatasetContainerType::iterator it = writeDataSet->get().begin(); it != writeDataSet->get().end(); ++it )
+        DatasetAccess da = subject->getAccessObject();
+        da->beginRead();
+        for( DatasetContainerType::iterator it = da->get().begin(); it != da->get().end(); ++it )
         {
             if( ( *it )->isTexture() )
             {
-                if( std::find( writeTex->get().begin(), writeTex->get().end(), *it ) == writeTex->get().end() )
+                ta->beginRead();
+                if( std::find( ta->get().begin(), ta->get().end(), *it ) == ta->get().end() )
                 {
-                    writeTex->get().insert( writeTex->get().begin(), *it );
+                    ta->endRead();
+                    ta->beginWrite();
+                    ta->get().insert( ta->get().begin(), *it );
+                    ta->endWrite();
+                }
+                else
+                {
+                    ta->endRead();
                 }
             }
         }
+        da->endRead();
 
         // remove deregistered datasets from the texture sorter.
-        for( DatasetContainerType::iterator it = writeTex->get().begin(); it != writeTex->get().end(); ++it )
+        ta->beginRead();
+        for( DatasetContainerType::iterator it = ta->get().begin(); it != ta->get().end(); ++it )
         {
-            DatasetContainerType::iterator fIt = std::find( writeDataSet->get().begin(), writeDataSet->get().end(), *it );
-            if( fIt == writeDataSet->get().end() )
+            ta->endRead();
+            da->beginRead();
+            DatasetContainerType::iterator fIt = std::find( da->get().begin(), da->get().end(), *it );
+            if( fIt == da->get().end() )
             {
-                writeTex->get().erase( it );
+                ta->beginWrite();
+                ta->get().erase( it );
+                ta->endWrite();
+                ta->beginRead();
                 break;
             }
+            da->endRead();
+            ta->beginRead();
         }
+        ta->endRead();
     }
 
     int index =  m_textureListWidget->currentIndex().row();
     m_textureListWidget->clear();
 
-    for( DatasetContainerType::iterator it = writeTex->get().begin(); it != writeTex->get().end(); ++it )
+    ta->beginRead();
+    for( DatasetContainerType::iterator it = ta->get().begin(); it != ta->get().end(); ++it )
     {
         std::vector< std::string > names =  string_utils::tokenize( ( *it )->getFileName().c_str(), "/" );
         std::string name;
@@ -164,11 +201,9 @@ void WQtTextureSorter::update()
         }
         m_textureListWidget->addItem( name.c_str() );
     }
+    ta->endRead();
 
     m_textureListWidget->setCurrentRow( index );
-
-    writeTex.reset();
-    writeDataSet.reset();
     sort();
 }
 
@@ -176,10 +211,12 @@ void WQtTextureSorter::moveItemDown()
 {
     unsigned int index =  m_textureListWidget->currentIndex().row();
 
-    DatasetSharedContainerType::WriteTicket writeTex =  m_textures.getWriteTicket();
+    DatasetAccess ta = m_textures.getAccessObject();
+    ta->beginRead();
 
-    if( index < writeTex->get().size() - 1 )
+    if( index < ta->get().size() - 1 )
     {
+        ta->endRead();
         QListWidgetItem* ci = m_textureListWidget->takeItem( index );
 
         if( ci )
@@ -188,16 +225,17 @@ void WQtTextureSorter::moveItemDown()
             m_textureListWidget->clearSelection();
             m_textureListWidget->setCurrentItem( ci );
             ci->setSelected( true );
-            boost::shared_ptr< WDataSet > tmp = writeTex->get()[index+1];
-            writeTex->get()[index+1] = writeTex->get()[index];
-            writeTex->get()[index] = tmp;
+            ta->beginWrite();
+            boost::shared_ptr< WDataSet > tmp = ta->get()[index+1];
+            ta->get()[index+1] = ta->get()[index];
+            ta->get()[index] = tmp;
+            ta->endWrite();
         }
     }
     else
     {
+        ta->endRead();
     }
-
-    writeTex.reset();
     sort();
 }
 
@@ -211,15 +249,18 @@ void WQtTextureSorter::moveItemUp()
 
         if( ci )
         {
-            DatasetSharedContainerType::WriteTicket writeTex = m_textures.getWriteTicket();
+            DatasetAccess ta = m_textures.getAccessObject();
+            ta->beginWrite();
 
             m_textureListWidget->insertItem( index - 1, ci );
             m_textureListWidget->clearSelection();
             m_textureListWidget->setCurrentItem( ci );
             ci->setSelected( true );
-            boost::shared_ptr< WDataSet > tmp = writeTex->get()[index-1];
-            writeTex->get()[index-1] = writeTex->get()[index];
-            writeTex->get()[index] = tmp;
+            boost::shared_ptr< WDataSet > tmp = ta->get()[index-1];
+            ta->get()[index-1] = ta->get()[index];
+            ta->get()[index] = tmp;
+
+            ta->endWrite();
         }
     }
     sort();
@@ -227,18 +268,19 @@ void WQtTextureSorter::moveItemUp()
 
 void WQtTextureSorter::selectTexture( boost::shared_ptr< WDataSet > dataSet )
 {
-    DatasetSharedContainerType::ReadTicket readTex =  m_textures.getReadTicket();
-
+    DatasetAccess ta = m_textures.getAccessObject();
+    ta->beginRead();
     size_t i = 0;
-    for( ; i < readTex->get().size(); ++i )
+    for( ; i < ta->get().size(); ++i )
     {
-        if( readTex->get()[i] == dataSet )
+        if( ta->get()[i] == dataSet )
         {
             break;
         }
     }
+    ta->endRead();
 
-    if( i < readTex->get().size() )
+    if( i < ta->get().size() )
     {
         // select appropriate texture if the data set has a corresponding texture
         QListWidgetItem* ci = m_textureListWidget->item( i );
@@ -253,21 +295,25 @@ void WQtTextureSorter::selectTexture( boost::shared_ptr< WDataSet > dataSet )
 
 bool WQtTextureSorter::isLess( boost::shared_ptr< WDataSet > lhs, boost::shared_ptr< WDataSet > rhs )
 {
-    DatasetSharedContainerType::ReadTicket readTex =  m_textures.getReadTicket();
+    DatasetAccess ta = m_textures.getAccessObject();
+    ta->beginRead();
 
-    DatasetContainerType::const_iterator itLHS = std::find( readTex->get().begin(), readTex->get().end(), lhs );
-    DatasetContainerType::const_iterator itRHS = std::find( readTex->get().begin(), readTex->get().end(), rhs );
+    DatasetContainerType::iterator itLHS = std::find( ta->get().begin(), ta->get().end(), lhs );
+    DatasetContainerType::iterator itRHS = std::find( ta->get().begin(), ta->get().end(), rhs );
 
     bool result = itLHS < itRHS;
+    ta->endRead();
 
     return result;
 }
 
 void WQtTextureSorter::sort()
 {
-    DatasetSharedContainerType::WriteTicket writeDataSet = WDataHandler::getDefaultSubject()->getDatasetsForWriting();
+    DatasetAccess da = WDataHandler::getDefaultSubject()->getAccessObject();
+    da->beginWrite();
 
-    std::sort( writeDataSet->get().begin(), writeDataSet->get().end(), boost::bind( boost::mem_fn( &WQtTextureSorter::isLess ), this, _1, _2 ) );
+    std::sort( da->get().begin(), da->get().end(), boost::bind( boost::mem_fn( &WQtTextureSorter::isLess ), this, _1, _2 ) );
 
+    da->endWrite();
     WDataHandler::getDefaultSubject()->getChangeCondition()->notify();
 }
