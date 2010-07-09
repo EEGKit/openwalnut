@@ -28,6 +28,7 @@
 #include <stdint.h>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/thread.hpp>
 
 #include <osg/Texture3D>
 
@@ -215,6 +216,18 @@ protected:
      * \param source Pointer to the raw data of a dataset
      * \param components Number of values used in a Voxel, usually 1, 3 or 4
      */
+    osg::ref_ptr< osg::Image > createTexture3D( int* source, int components = 1 );
+
+
+    /**
+     * Creates a 3d texture from a dataset. This function will be overloaded for the
+     * various data types. A template function is not recommended due to the different commands
+     * in the image creation.
+     *
+     *
+     * \param source Pointer to the raw data of a dataset
+     * \param components Number of values used in a Voxel, usually 1, 3 or 4
+     */
     osg::ref_ptr< osg::Image > createTexture3D( float* source, int components = 1 );
 
     /**
@@ -237,6 +250,11 @@ protected:
      * Creates a 3D texture for the data set.
      */
     void createTexture();
+
+    /**
+     * The lock for securing createTexture.
+     */
+    boost::shared_mutex m_creationLock;
 
     /**
      * Alpha value. Used for blending in/out textures.
@@ -314,6 +332,15 @@ protected:
      * \param components the number of components
      */
     virtual void findMinMax( int16_t* source, int components );
+
+    /**
+     * This method finds the minimum and maximum value of a dataset. These values get used to scale the texture to use the maximum precision.
+     *
+     * \param source the data
+     * \param components the number of components
+     */
+    virtual void findMinMax( int* source, int components );
+
 
     /**
      * The smallest value inside the dataset
