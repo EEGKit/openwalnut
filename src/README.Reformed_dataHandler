@@ -1,0 +1,14 @@
+See the "doc" directory for more information, e.g. on build and installation process.
+
+In this branch, the dataHandler and relating classes like the data module get reformed. The Goal
+is to provide a more generic way of handling data and loading it.
+
+------------------------------------------------------
+
+Directory Structure:
+    -gui
+    -dataHandler
+    -graphicsEngine
+    -math
+    -common
+    -kernel
