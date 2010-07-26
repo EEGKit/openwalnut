@@ -88,7 +88,7 @@ WDataArray< T >::WDataArray( std::size_t s )
 template< typename T >
 WDataArray< T >::~WDataArray()
 {
-    if( m_data )
+    if( m_elements )
     {
         delete[] m_elements;
     }

@@ -32,9 +32,9 @@ public:
     //! unnamed enum that defines some template meta data
     enum
     {
-        NumElements = s; //! the number of elements
-        ElementSize = sizeof( T ); //! the size of a single element, in bytes
-        Size = NumElements * ElementSize; //! the size of the whole array, in bytes
+        NumElements = s, //! the number of elements
+        ElementSize = sizeof( T ), //! the size of a single element, in bytes
+        Size = NumElements * ElementSize //! the size of the whole array, in bytes
     };
 
     //! the data type
