@@ -1,7 +1,7 @@
 #ifndef WVECTOR_H
 #define WVECTOR_H
 
-#include <array>
+#include <boost/array.hpp>
 
 //#######################################################
 //#### ###### #####   ####       ##       #####    ######
@@ -65,7 +65,7 @@ private:
     // this should store the elements in the WVector object
     // instead of storing only a pointer pointing to some
     // place else
-    std::tr1::array< T, s > m_data;
+    boost::array< T, s > m_data;
 
     // note: try to keep the memory usage as low as possible,
     // this is also one of the reasons for making the number of
