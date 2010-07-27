@@ -6,20 +6,7 @@
 /**
  * \class WDataArray
  *
- * This class creates an array of exactly s elements of type t.
- * The size of the array is a template parameter, so there is no need
- * to store the actual size for every instance of WDataArray.
- *
- * \note This might lead to some bloat.
- *
- * After enough memory for s elements is allocated, they are initialized inside the
- * preallocated memory block. The memory belongs to the WDataArray object,
- * and is deallocated on destruction of the WDataArray object. All references
- * and pointers to the elements of the array thus become invalid. Keep
- * this in mind when using the WDataArray class. Be especially careful when
- * writing multithreaded applications. WDataArray is not threadsafe!
- *
- * \note This class goes hand in hand with \see WValue.
+ * This class creates an array of s elements of type T.
  *
  * The type T should support the following:
  *
@@ -30,8 +17,7 @@ class WDataArray
 {
 public:
     /**
-     * Standard constructor. Try to allocate enough memory for s
-     * objects of type T and initialize the objects.
+     * Standard constructor.
      *
      * \param s The number of objects that must fit into the array.
      */
@@ -43,12 +29,20 @@ public:
     ~WDataArray();
 
     /**
+     * Access operator.
      *
+     * \param i The position of the requested element.
+     *
+     * \return The element at position i.
      */
     T const& operator[] ( std::size_t i ) const;
 
     /**
+     * Access operator.
      *
+     * \param i The position of the requested element.
+     *
+     * \return The element at position i.
      */
     T& operator[] ( std::size_t );
 
@@ -56,14 +50,16 @@ private:
     /**
      * Copy constructor.
      *
-     * \param v
+     * \param v The array to copy.
      */
     WDataArray( WDataArray const& v );
 
     /**
      * Copy assignment.
      *
-     * \param
+     * \param The array to copy.
+     *
+     * \return *this
      */
     WDataArray& operator = ( WDataArray const& v );
 
@@ -106,7 +102,10 @@ T const& WDataArray< T >::operator[] ( std::size_t i ) const
 template< typename T >
 T& WDataArray< T >::operator[] ( std::size_t i )
 {
-    return const_cast< T >( static_cast< WDataArray const& >( *this ) [ i ] );
+#ifdef DEBUG
+    WAssert( i < m_numElements, "" );
+#endif
+    return m_elements[ i ];
 }
 
 #endif  // WDATAARRAY_H

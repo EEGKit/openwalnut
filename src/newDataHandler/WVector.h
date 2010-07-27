@@ -3,6 +3,8 @@
 
 #include <boost/array.hpp>
 
+#include "../common/WAssert.h"
+
 //#######################################################
 //#### ###### #####   ####       ##       #####    ######
 //####  ##### #### ### ###### ##### ######### ##### #####
@@ -51,12 +53,20 @@ public:
     ~WVector();
 
     /**
+     * Access operator.
      *
+     * \param i The position of the requested element.
+     *
+     * \return The element at position i.
      */
     T const& operator[] ( std::size_t i ) const;
 
     /**
+     * Access operator.
      *
+     * \param i The position of the requested element.
+     *
+     * \return The element at position i.
      */
     T& operator[] ( std::size_t i );
 
@@ -92,7 +102,7 @@ template< std::size_t s, typename T >
 T const& WVector< s, T >::operator[] ( std::size_t i ) const
 {
 #ifdef DEBUG
-    WAssert( i < NumElements );
+    WAssert( i < NumElements, "" );
 #endif
     return m_data[ i ];
 }
@@ -100,7 +110,10 @@ T const& WVector< s, T >::operator[] ( std::size_t i ) const
 template< std::size_t s, typename T >
 T& WVector< s, T >::operator[] ( std::size_t i )
 {
-    return const_cast< T >( static_cast< WVector const& >( *this ) [ i ] );
+#ifdef DEBUG
+    WAssert( i < NumElements, "" );
+#endif
+    return m_data[ i ];
 }
 
 #endif  // WVECTOR_H
