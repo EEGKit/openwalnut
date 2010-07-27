@@ -133,13 +133,13 @@ ENDIF()
 
 SET( CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -DDEBUG -O2" CACHE STRING "" FORCE )
 
-ADD_SUBDIRECTORY( dataHandler )
+#ADD_SUBDIRECTORY( dataHandler )
 ADD_SUBDIRECTORY( newDataHandler )
-ADD_SUBDIRECTORY( graphicsEngine )
-ADD_SUBDIRECTORY( gui )
-ADD_SUBDIRECTORY( kernel )
+#ADD_SUBDIRECTORY( graphicsEngine )
+#ADD_SUBDIRECTORY( gui )
+#ADD_SUBDIRECTORY( kernel )
 ADD_SUBDIRECTORY( common )
-ADD_SUBDIRECTORY( modules )
+#ADD_SUBDIRECTORY( modules )
 
 #-------------------------------------------------------------------------------------------------------------
 # Writes information about the revision of the current code to the file version.h which then gets included by OpenWalnut.cpp
@@ -151,8 +151,8 @@ add_custom_command( OUTPUT ${PROJECT_SOURCE_DIR}/version.h
                  )
 
 # finally, build walnut
-ADD_EXECUTABLE( walnut OpenWalnut.cpp version.h )
-TARGET_LINK_LIBRARIES( walnut OWkernel OWdataHandler OWgui OWguiqt4 OWcommon OWge ${Boost_LIBRARIES} )
+#ADD_EXECUTABLE( walnut OpenWalnut.cpp version.h )
+#TARGET_LINK_LIBRARIES( walnut OWkernel OWdataHandler OWgui OWguiqt4 OWcommon OWge ${Boost_LIBRARIES} )
 
 #---------- Shaders -------------
 option( OW_COPY_SHADERS "This enables copying shaders with every make call." ON )
