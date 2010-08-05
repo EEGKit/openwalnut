@@ -135,6 +135,11 @@ public:
 	  */
 	void create2DTextureCycleLightning(osg::StateSet* m_rootState) const;
 
+	void create2DTexDiffuseLightning(osg::StateSet* m_rootState) const;
+	void create2DTexSpecularLightning(osg::StateSet* m_rootState) const;
+
+	void createTextures(osg::StateSet* m_rootState) const;
+
 	void setRootState(osg::StateSet* m_rootState);
 protected:
 private:
@@ -144,13 +149,30 @@ private:
      * \param renderInfo
      */
     void drawFibers( osg::RenderInfo& renderInfo ) const; //NOLINT
-
 	/**
      * Draw fibers as fake tubes.
      */
-    void drawTubes() const;
+	void drawTubes( osg::RenderInfo& renderInfo ) const;
 
 	osg::StateSet* m_rootState;
+
+	osg::ref_ptr<osg::Uniform> m_uniformViewportHeight;
+	osg::ref_ptr<osg::Uniform> m_uniformViewportWidth;
+
+	osg::Vec3Array* m_tubeVerts;
+	osg::Vec3Array* m_tubeTangents;
+	osg::Vec2Array* m_tubeTexCoords;
+	osg::Vec2Array* m_pointTexCoords;
+	osg::Vec3Array* m_tubeColors;
+	osg::VectorGLuint* m_tubeStartIndexes;
+
+	/*
+	boost::shared_ptr< std::vector< float > > m_tubeVerts;
+	boost::shared_ptr< std::vector< float > > m_tubeTangents;
+	boost::shared_ptr< std::vector< float > > m_tubeTexCoords;
+	boost::shared_ptr< std::vector< float > > m_pointTexCoords;
+	boost::shared_ptr< std::vector< float > > m_tubeColors;
+	*/
 
     boost::shared_ptr< const WDataSetFibers > m_dataset; //!< stores pointer to dataset
 

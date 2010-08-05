@@ -9,38 +9,47 @@ varying vec2 imageTangent;
 varying vec4 tubeColor;
 varying vec3 view;
 varying vec3 lightDir;
-varying vec3 halfVector;
 varying float NdotL;
 varying vec3 normal;
 varying float endPoint;
 
-/*
- * simple fragment shader that does rendering of tubes with diffuse illumination
- */
+
 void main()
 {
 
-	vec3 n,halfV;
+	vec3 L,halfVector,V, T, N;
 	vec3 specular = 0.0;
 	float NdotL,NdotHV;
-	n = normalize(normal);
-	NdotL = max(dot(n,lightDir),0.0);
+	float alpha, beta, lt;
+	T = normalize(tangentR3);
+	V = normalize(view);
+	L = normalize(lightDir);
+	N = normalize(normal);
+
+	NdotL = max(dot(T,L),0.0);
 	vec4 color;
 
-		//compute rotation in imageplane for pointsprite
-		if(usePointSprite == 0.0)
+	// koordinaten für illuminated lines texturen
+	alpha = dot(L,N) / sqrt(1 - pow( dot(L,T),2));
+	beta = dot(halfVector,N) / sqrt( 1 - pow( dot(halfVector, T), 2));
+	lt = dot(L, T);
+
+	//compute rotation in imageplane for pointsprite
+	if(usePointSprite == 0.0)
+	{
+		vec2 imageTangentNorm = normalize(imageTangent);
+		vec2 newTexCoords;
+		newTexCoords.x = (imageTangentNorm.y * (gl_PointCoord.y - 0.5) + imageTangentNorm.x * (gl_PointCoord.x - 0.5)) + 0.5;
+		newTexCoords.y = (imageTangentNorm.y * (gl_PointCoord.x - 0.5) - imageTangentNorm.x * (gl_PointCoord.y - 0.5)) + 0.5;
+
+		color = texture2D(texturePS, newTexCoords.xy);
+
+		if(endPoint == 0.0)
 		{
-			vec2 imageTangentNorm = normalize(imageTangent);
-			vec2 newTexCoords;
-			newTexCoords.x = (imageTangentNorm.y * (gl_PointCoord.y - 0.5) + imageTangentNorm.x * (gl_PointCoord.x - 0.5)) + 0.5;
-			newTexCoords.y = (imageTangentNorm.y * (gl_PointCoord.x - 0.5) - imageTangentNorm.x * (gl_PointCoord.y - 0.5)) + 0.5;
-			color = texture2D(texturePS, newTexCoords.xy);
-			if(endPoint == 0.0)
-			{
-				color.x = 1.0;
-			}
-			gl_FragColor.a = color.z;
-			//gl_FragColor.a = 0.0;
+			color.x = 1.0;
+		}
+		gl_FragColor.a = color.z;
+
 		}
 		else
 		{
@@ -49,7 +58,7 @@ void main()
 		}
 
 		/* compute the specular term if NdotL is  larger than zero */
-		if (NdotL > 0.0) {
+		/*if (NdotL > 0.0) {
 
 				// normalize the half-vector, and then compute the
 				// cosine (dot product) with the normal
@@ -57,10 +66,9 @@ void main()
 
 				NdotHV = max(dot(normal, halfV),0.0);
 				specular = NdotHV * color.y;
-		}
+		}*/
 
-		gl_FragColor.rgb = tubeColor.rgb * (color.x + specular);
-		//gl_FragColor = color;
+		gl_FragColor.rgb = tubeColor.rgb * (color.x);
 		//gl_FragColor = vec4(1.0,0.0,0.0,1.0);
 }
 

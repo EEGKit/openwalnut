@@ -261,8 +261,8 @@ void WMFiberDisplay::toggleTubes()
             m_uniformTubeThickness = osg::ref_ptr<osg::Uniform>( new osg::Uniform( "u_thickness", static_cast<float>( m_tubeThickness->get() ) ) );
             rootState->addUniform( m_uniformTubeThickness );
             rootState->addUniform( osg::ref_ptr<osg::Uniform>( new osg::Uniform( "useTexture", m_useTextureProp->get() ) ) );
-			m_tubeDrawable->create1DTextureRectLightning(rootState);
-			m_tubeDrawable->create2DTextureCycleLightning(rootState);
+			m_tubeDrawable->createTextures(rootState);
+			m_tubeDrawable->setRootState(rootState);
 		}
         else if ( m_useTextureProp->get( true ) && !m_useTubesProp->get( true ) )
         {
@@ -282,7 +282,7 @@ void WMFiberDisplay::toggleTubes()
     if  ( !m_useTextureProp->get( true ) && !m_useTubesProp->get( true ) )
     {
         rootState->setTextureMode( 0, GL_TEXTURE_3D, osg::StateAttribute::OFF );
-    }
+	}
 }
 
 void WMFiberDisplay::toggleColoring()
