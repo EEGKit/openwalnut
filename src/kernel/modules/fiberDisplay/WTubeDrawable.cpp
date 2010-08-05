@@ -130,7 +130,7 @@ void WTubeDrawable::setDataset( boost::shared_ptr< const WDataSetFibers > datase
 	for( size_t i = 0; i < startIndices->size(); ++i )
 	{
 		int idx = startIndices->at( i ) * 3;
-		m_tubeStartIndexes->push_back( idx + offset);
+		m_tubeStartIndexes->push_back( offset);
 		for ( size_t k = 0; k < pointsPerLine->at( i ); ++k )
 		{
 			m_tubeTangents->push_back(osg::Vec3f( tangents->at( idx ), tangents->at( idx + 1 ), tangents->at( idx + 2 ) ));
@@ -517,7 +517,7 @@ void WTubeDrawable::drawTubes( osg::RenderInfo& renderInfo ) const
 	{
 		if ( (*active)[i] )
 		{
-			state.glDrawArraysInstanced( osg::PrimitiveSet::QUAD_STRIP, m_tubeStartIndexes->at(i), 2*(*pointsPerLine)[i], 1);
+			state.glDrawArraysInstanced( osg::PrimitiveSet::QUAD_STRIP, m_tubeStartIndexes->at(i), 2 * (*pointsPerLine)[i], 1);
 		}
 	}
 
