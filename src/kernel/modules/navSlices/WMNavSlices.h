@@ -40,11 +40,13 @@
 #include "../../WModuleConnector.h"
 #include "../../WModuleInputData.h"
 
+#include "../../WExportKernel.h"
+
 /**
  * Navigation slice module
  * \ingroup modules
  */
-class WMNavSlices: public WModule, public osg::Referenced
+class OWKERNEL_EXPORT WMNavSlices: public WModule, public osg::Referenced
 {
 public:
 

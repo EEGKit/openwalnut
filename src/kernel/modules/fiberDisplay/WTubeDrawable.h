@@ -33,11 +33,13 @@
 #include <osg/ShapeDrawable>
 #include <osg/Group>
 
+#include "../../WExportKernel.h"
+
 class WDataSetFibers;
 /**
  * TODO(schurade): Document this!
  */
-class WTubeDrawable: public osg::Drawable
+class OWKERNEL_EXPORT WTubeDrawable: public osg::Drawable
 {
 public:
 
@@ -129,6 +131,12 @@ public:
 	  */
 	void create1DTextureRectLightning(osg::StateSet* m_rootState) const;
 
+    /**
+     * Set the bounding box of all fibers.
+     * \param bb The new bounding box.
+     */
+    void setBoundingBox( const osg::BoundingBox & bb );
+
 	/**
 	  * Creates a texture to simmulate diffuse and specular lightning
 	  * of a tube from top or bottom
@@ -141,6 +149,7 @@ public:
 	void createTextures(osg::StateSet* m_rootState) const;
 
 	void setRootState(osg::StateSet* m_rootState);
+
 protected:
 private:
     /**

@@ -259,6 +259,11 @@ void WTubeDrawable::setCustomColoring( bool custom )
     m_customColoring = custom;
 }
 
+void WTubeDrawable::setBoundingBox( const osg::BoundingBox & bb )
+{
+    setBound( bb );
+}
+
 void WTubeDrawable::drawFibers( osg::RenderInfo& renderInfo ) const //NOLINT
 {
     boost::shared_ptr< std::vector< size_t > > startIndexes = m_dataset->getLineStartIndexes();
