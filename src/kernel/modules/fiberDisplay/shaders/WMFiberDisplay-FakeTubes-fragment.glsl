@@ -12,20 +12,23 @@ varying vec3 lightDir;
 varying float NdotL;
 varying vec3 normal;
 varying float endPoint;
+uniform gl_DepthRangeParameters gl_DepthRange;
+varying float z;
 
 void main()
 {
 
-	vec3 L,halfVector,V, T, N;
+	vec3 L,halfVector,V, T, N, halfV;
 	vec3 specular = 0.0;
 	float NdotL,NdotHV;
 	float alpha, beta, lt;
+	halfVector = view - lightDir;
 	T = normalize(tangentR3);
 	V = normalize(view);
 	L = normalize(lightDir);
 	N = normalize(normal);
 
-	NdotL = max(dot(T,L),0.0);
+	NdotL = max(dot(N,L),0.0);
 	vec4 color;
 
 	// koordinaten für illuminated lines texturen
@@ -34,7 +37,7 @@ void main()
 	lt = dot(L, T);
 
 	//compute rotation in imageplane for pointsprite
-	if(usePointSprite == 0.0)
+	if(usePointSprite < 0.8)
 	{
 		vec2 imageTangentNorm = normalize(imageTangent);
 		vec2 newTexCoords;
@@ -49,25 +52,25 @@ void main()
 		}
 		gl_FragColor.a = color.z;
 
-		}
-		else
-		{
-			color = texture1D(texture, gl_TexCoord[1].s);
-			gl_FragColor.a = tubeColor.a;
-		}
+	}
+	else
+	{
+		color = texture1D(texture, gl_TexCoord[1].s);
+		gl_FragColor.a = tubeColor.a;
+	}
 
 		/* compute the specular term if NdotL is  larger than zero */
-		/*if (NdotL > 0.0) {
+		if (NdotL > 0.0) {
 
 				// normalize the half-vector, and then compute the
 				// cosine (dot product) with the normal
 				halfV = normalize(halfVector);
 
 				NdotHV = max(dot(normal, halfV),0.0);
-				specular = NdotHV * color.y;
-		}*/
+				specular = pow(NdotHV,2) * color.y * tubeColor.rgb;
+		}
 
-		gl_FragColor.rgb = tubeColor.rgb * (color.x);
-		//gl_FragColor = vec4(1.0,0.0,0.0,1.0);
+	float depthCueingFactor = 1.0 - (z + gl_DepthRange.near)/(gl_DepthRange.far + gl_DepthRange.near);
+	gl_FragColor.rgb = tubeColor.rgb * (color.x) * depthCueingFactor + specular;
 }
 

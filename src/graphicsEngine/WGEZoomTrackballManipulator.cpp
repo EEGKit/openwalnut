@@ -45,14 +45,11 @@ void WGEZoomTrackballManipulator::setByMatrix( const osg::Matrixd& matrix )
 osg::Matrixd WGEZoomTrackballManipulator::getMatrix() const
 {
     return osg::Matrixd::scale( 1.0 / m_zoom, 1.0 / m_zoom, 1.0 / m_zoom ) * TrackballManipulator::getMatrix();
-<<<<<<< local
 }
 
 osg::Matrixd WGEZoomTrackballManipulator::getMatrixWithoutZoom() const
 {
     return TrackballManipulator::getMatrix();
-=======
->>>>>>> other
 }
 
 osg::Matrixd WGEZoomTrackballManipulator::getInverseMatrix() const

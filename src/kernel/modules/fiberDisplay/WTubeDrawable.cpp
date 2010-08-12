@@ -30,8 +30,10 @@
 #include <osg/TexGen>
 #include <osg/Texture1D>
 #include <osg/Texture2D>
-
+#include <osg/BlendFunc>
+#include <osg/AlphaFunc>
 #include <osg/Timer>
+
 #include <cmath>
 #include <iostream>
 #include <time.h>
@@ -131,6 +133,7 @@ void WTubeDrawable::setDataset( boost::shared_ptr< const WDataSetFibers > datase
 	{
 		int idx = startIndices->at( i ) * 3;
 		m_tubeStartIndexes->push_back( offset);
+		offset += 2*pointsPerLine->at(i);
 		for ( size_t k = 0; k < pointsPerLine->at( i ); ++k )
 		{
 			m_tubeTangents->push_back(osg::Vec3f( tangents->at( idx ), tangents->at( idx + 1 ), tangents->at( idx + 2 ) ));
@@ -151,13 +154,14 @@ void WTubeDrawable::setDataset( boost::shared_ptr< const WDataSetFibers > datase
 
 			idx += 3;
 		}
-		offset += 2*pointsPerLine->at(i);
 	}
 
 	// add vertexdata for pointsprites
 	for( size_t i = 0; i < startIndices->size(); ++i )
 	{
 		int idx = startIndices->at( i ) * 3;
+		m_tubeStartIndexes->push_back( offset);
+		offset += pointsPerLine->at(i);
 		for ( size_t k = 0; k < pointsPerLine->at( i ); ++k )
 		{
 			m_tubeTangents->push_back(osg::Vec3f( tangents->at( idx ), tangents->at( idx + 1 ), tangents->at( idx + 2 ) ));
@@ -177,7 +181,8 @@ void WTubeDrawable::setDataset( boost::shared_ptr< const WDataSetFibers > datase
 			}
 
 			idx += 3;
-			}
+		}
+
 	}
 	/*
 	m_tubeVerts = boost::shared_ptr< std::vector< float > >(new std::vector< float >());
@@ -339,8 +344,8 @@ void WTubeDrawable::create2DTexDiffuseLightning(osg::StateSet* m_rootState) cons
 	texture->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR);
 	texture->setImage(image);
 
-	m_rootState->setTextureAttribute(2,texture,osg::StateAttribute::OVERRIDE);
-	m_rootState->setTextureMode(2,GL_TEXTURE_2D,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
+	m_rootState->setTextureAttribute(3,texture,osg::StateAttribute::OVERRIDE);
+	m_rootState->setTextureMode(3,GL_TEXTURE_2D,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
 	m_rootState->addUniform(osg::ref_ptr<osg::Uniform>( new osg::Uniform( "textureDiff2D", 3 ) ) );
 
 }
@@ -382,8 +387,8 @@ void WTubeDrawable::create2DTexSpecularLightning(osg::StateSet* m_rootState) con
 	texture->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR);
 	texture->setImage(image);
 
-	m_rootState->setTextureAttribute(2,texture,osg::StateAttribute::OVERRIDE);
-	m_rootState->setTextureMode(2,GL_TEXTURE_2D,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
+	m_rootState->setTextureAttribute(4,texture,osg::StateAttribute::OVERRIDE);
+	m_rootState->setTextureMode(4,GL_TEXTURE_2D,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
 	m_rootState->addUniform(osg::ref_ptr<osg::Uniform>( new osg::Uniform( "textureSpec2D", 4 ) ) );
 
 }
@@ -453,7 +458,7 @@ void WTubeDrawable::create2DTextureCycleLightning(osg::StateSet* m_rootState) co
 
 
 			// Einheitskreis,
-			check = pow(j-32,2) + pow(i-32,2);
+			check = pow(j-31,2) + pow(i-31,2);
 			if(check > 1024)
 			{
 				alpha = 0.0f;
@@ -462,19 +467,19 @@ void WTubeDrawable::create2DTextureCycleLightning(osg::StateSet* m_rootState) co
 			{
 				alpha = 1.0f;
 			}
-			color = osg::Vec4(diffuse, specular, alpha, 0.0f);
+			color = osg::Vec4(diffuse, specular, alpha, 1.0f);
 
             *dataPtr++ = color;
         }
     }
-    osg::Texture2D* texture = new osg::Texture2D;
+	osg::Texture2D* texture = new osg::Texture2D;
 	texture->setDataVariance(osg::Object::STATIC);
 	texture->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP);
     texture->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR);
     texture->setImage(image);
 
-    m_rootState->setTextureAttribute(2,texture,osg::StateAttribute::OVERRIDE);
-    m_rootState->setTextureMode(2,GL_TEXTURE_2D,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
+	m_rootState->setTextureAttribute(2,texture,osg::StateAttribute::OVERRIDE);
+	m_rootState->setTextureMode(2,GL_TEXTURE_2D,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
 	m_rootState->addUniform(osg::ref_ptr<osg::Uniform>( new osg::Uniform( "texturePS", 2 ) ) );
 
 }
@@ -510,8 +515,9 @@ void WTubeDrawable::drawTubes( osg::RenderInfo& renderInfo ) const
 	state.setNormalPointer(m_tubeTangents );
 	state.setTexCoordPointer(0, m_tubeTexCoords );
 
-	state.setModeValidity(GL_DEPTH_TEST, osg::StateAttribute::ON);
-	state.setModeValidity(GL_LIGHTING, osg::StateAttribute::OFF);
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_LIGHTING);
+	glEnable(GL_BLEND);
 
 	for ( size_t i = 0; i < active->size(); ++i )
 	{
@@ -521,9 +527,41 @@ void WTubeDrawable::drawTubes( osg::RenderInfo& renderInfo ) const
 		}
 	}
 
+	//osg::TexEnv* texEnvPS = new osg::TexEnv( osg::TexEnv::REPLACE);
+	//osg::AlphaFunc* alphaFunc = new osg::AlphaFunc(osg::AlphaFunc::NOTEQUAL,0.0f);
+
+	//state.setModeValidity(GL_VERTEX_PROGRAM_POINT_SIZE, osg::StateAttribute::ON);
+	//state.setModeValidity(GL_ALPHA_TEST, osg::StateAttribute::ON);
+	//state.setModeValidity(GL_POINT_SPRITE, osg::StateAttribute::ON);
+
+	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+	glEnable(GL_ALPHA_TEST);
+	glEnable(GL_POINT_SPRITE);
+
+	glAlphaFunc(GL_NOTEQUAL, 0.0);
+	glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+
+	//state.setModeValidity(alphaFunc, osg::StateAttribute::ON);
+	//state.setModeValidity(texEnvPS, osg::StateAttribute::ON);
+
+	for ( size_t i = 0; i < active->size(); ++i )
+	{
+		if ( (*active)[i] )
+		{
+			state.glDrawArraysInstanced( GL_POINTS, m_tubeStartIndexes->at(i + active->size()), (*pointsPerLine)[i], 1);
+		}
+	}
+
+	//state.setModeValidity(GL_VERTEX_PROGRAM_POINT_SIZE, osg::StateAttribute::OFF);
+	//state.setModeValidity(GL_ALPHA_TEST, osg::StateAttribute::OFF);
+	//state.setModeValidity(GL_POINT_SPRITE, osg::StateAttribute::OFF);
+
+	glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
+	glDisable(GL_ALPHA_TEST);
+	glDisable(GL_POINT_SPRITE);
+
 	state.disableVertexPointer();
 	state.disableColorPointer();
-
 
 /*
 	boost::shared_ptr< std::vector< size_t > > startIndexes = m_dataset->getLineStartIndexes();
@@ -545,7 +583,9 @@ void WTubeDrawable::drawTubes( osg::RenderInfo& renderInfo ) const
 
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_LIGHTING);
-	for( size_t i = 0; i < active->size(); ++i )
+	glEnable(GL_BLEND);
+
+	for( size_t i = 0; i < active->(); ++i )
     {
         if ( active->at( i ) )
         {
@@ -570,10 +610,11 @@ void WTubeDrawable::drawTubes( osg::RenderInfo& renderInfo ) const
         }
 	}
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+	glAlphaFunc(GL_NOTEQUAL, 0.0f);
 	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_NOTEQUAL, 0.0);
-	glEnable(GL_POINT_SPRITE);
 	glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+	glEnable(GL_POINT_SPRITE);
+
 	for( size_t i = 0; i < active->size(); ++i )
 	{
 		if ( active->at( i ) )

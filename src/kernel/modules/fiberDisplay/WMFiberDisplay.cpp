@@ -295,15 +295,10 @@ void WMFiberDisplay::updateRenderModes()
             m_uniformTubeThickness = osg::ref_ptr<osg::Uniform>( new osg::Uniform( "u_thickness", static_cast<float>( m_tubeThickness->get() ) ) );
             rootState->addUniform( m_uniformTubeThickness );
             rootState->addUniform( osg::ref_ptr<osg::Uniform>( new osg::Uniform( "useTexture", m_useTextureProp->get() ) ) );
-<<<<<<< local
 			m_tubeDrawable->createTextures(rootState);
 			m_tubeDrawable->setRootState(rootState);
-		}
-        else if ( m_useTextureProp->get( true ) && !m_useTubesProp->get( true ) )
-=======
         }
         else if ( ( m_useTextureProp->get( true ) && !m_useTubesProp->get( true ) ) || m_activateCullBox->get( true) )
->>>>>>> other
         {
             m_tubeDrawable->setUseTubes( false );
             updateTexture();

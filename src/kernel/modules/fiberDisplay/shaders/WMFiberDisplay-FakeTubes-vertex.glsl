@@ -12,6 +12,8 @@ varying vec3 lightDir;
 varying float NdotL;
 varying vec3 normal;
 varying float endPoint;
+uniform gl_DepthRangeParameters gl_DepthRange;
+varying float z;
 
 void main()
 {
@@ -23,6 +25,7 @@ void main()
 	endPoint = 1.0;
 
 	pos = gl_ModelViewProjectionMatrix * gl_Vertex;
+	z = pos.z;
 
 	view = - pos.xyz;
 
@@ -31,19 +34,18 @@ void main()
 
 	lightDir = normalize( lightPosition - pos.xyz);
 
-	normal = normalize(gl_NormalMatrix * gl_Normal);
 	vec3 cameraPosition = vec3(gl_ModelViewMatrixInverse * vec4(0,0,0,1.0));
 	vec3 cameraVector = cameraPosition - gl_Vertex.xyz;
 
 	gl_ClipVertex = gl_ModelViewMatrix * gl_Vertex; // make clipping planes work
 
 	// defines northpoint (1.0), southpoint (-1.0) or point sprite (0.0)
-	s_param = gl_MultiTexCoord0.s; // store texture coordinate for shader
+	s_param = gl_MultiTexCoord0.s;
 
 	vec3 tangent = (gl_ModelViewProjectionMatrix * vec4(gl_Normal,0.)).xyz; // transform our tangent vector
 
 	//define thickness of tubes
-	thickness = u_thickness * 0.001 * (1 - pos.z);
+	thickness = u_thickness * 0.0001; //* (1 - (abs(pos.z)+gl_DepthRange.near)/(gl_DepthRange.near+gl_DepthRange.far));
 
 	// color of tube
 	tubeColor = gl_Color;
@@ -51,9 +53,10 @@ void main()
 	vec3 offsetNN = cross( normalize(tangent.xyz), lightPosition);
 	vec3 offset = normalize(offsetNN);
 	tangent_dot_view = length(offsetNN);
+	normal = normalize(cross( offsetNN, lightPosition));
 
 	//scalar product between viewDir and tangent
-	float tmp = dot(lightDir, tangent);
+	float tmp = dot(view, tangent);
 
 	offset.x *= thickness;
 	offset.y *= thickness;
@@ -74,7 +77,8 @@ void main()
 			imageTangent.xy = (pos2p.x/pos2p.w - pos1p.x/pos1p.w, pos1p.y/pos1p.w - pos2p.y/pos2p.w);
 
 			//	compute size with u_viewportWidth and u_viewportHeight;
-			gl_PointSize = 2 * offset.x * u_viewportWidth;
+			gl_PointSize = 1000 * offset.x;
+			//gl_PointSize = 20;
 
 			usePointSprite = 0.0;
 			endPoint = gl_MultiTexCoord0.t;
