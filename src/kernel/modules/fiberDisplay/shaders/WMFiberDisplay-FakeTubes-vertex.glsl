@@ -31,8 +31,11 @@ void main()
 	pos = gl_ModelViewProjectionMatrix * gl_Vertex;
 	z = pos.z;
 
-	zNear = (gl_ModelViewProjectionMatrix * vec4(nearPos,0)).z;
-	zFar = (gl_ModelViewProjectionMatrix * vec4(farPos,0)).z;
+	zNear =0.5 + 0.5*( (gl_ModelViewProjectionMatrix * vec4(nearPos,1.00)).z );
+	zFar =0.5 + 0.5*( (gl_ModelViewProjectionMatrix * vec4(farPos,1.0)).z );
+  float tmp2 = zNear;
+  zNear = min( zNear, zFar );
+  zFar = max( zFar, tmp2 );
 
 	view = - pos.xyz;
 
