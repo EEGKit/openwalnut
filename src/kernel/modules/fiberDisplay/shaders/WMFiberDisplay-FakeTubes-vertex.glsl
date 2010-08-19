@@ -14,6 +14,10 @@ varying vec3 normal;
 varying float endPoint;
 uniform gl_DepthRangeParameters gl_DepthRange;
 varying float z;
+uniform vec3 nearPos;
+uniform vec3 farPos;
+varying float zNear;
+varying float zFar;
 
 void main()
 {
@@ -26,6 +30,9 @@ void main()
 
 	pos = gl_ModelViewProjectionMatrix * gl_Vertex;
 	z = pos.z;
+
+	zNear = (gl_ModelViewProjectionMatrix * vec4(nearPos,0)).z;
+	zFar = (gl_ModelViewProjectionMatrix * vec4(farPos,0)).z;
 
 	view = - pos.xyz;
 
@@ -45,7 +52,7 @@ void main()
 	vec3 tangent = (gl_ModelViewProjectionMatrix * vec4(gl_Normal,0.)).xyz; // transform our tangent vector
 
 	//define thickness of tubes
-	thickness = u_thickness * 0.0001; //* (1 - (abs(pos.z)+gl_DepthRange.near)/(gl_DepthRange.near+gl_DepthRange.far));
+	thickness = u_thickness * 0.0001 * (1 - (z+zNear)/(zNear+zFar));
 
 	// color of tube
 	tubeColor = gl_Color;
@@ -62,8 +69,9 @@ void main()
 	offset.y *= thickness;
 
 	//decide wether point sprite or triangle strip to render
-	if(s_param == 0.0)
-	{
+	#ifdef USE_POINTSPRITE
+	//if(s_param == 0.0)
+	//{
 
 		//calculation for pointsprites
 		if(tmp > 0.93 || gl_MultiTexCoord0.t == 0.0)
@@ -77,8 +85,8 @@ void main()
 			imageTangent.xy = (pos2p.x/pos2p.w - pos1p.x/pos1p.w, pos1p.y/pos1p.w - pos2p.y/pos2p.w);
 
 			//	compute size with u_viewportWidth and u_viewportHeight;
-			gl_PointSize = 1000 * offset.x;
-			//gl_PointSize = 20;
+			//gl_PointSize = tangent_dot_view * u_viewportWidth;
+			gl_PointSize = 20;
 
 			usePointSprite = 0.0;
 			endPoint = gl_MultiTexCoord0.t;
@@ -89,9 +97,10 @@ void main()
 			pos.w = 0.0;
 		}
 
-	}
-	else
-	{
+	#else
+	//}
+	//else
+	//{
 		// don't draw quad strip	//decide wether point sprite or triangle strip to render
 		if(tmp >= 0.98)
 		{
@@ -105,6 +114,7 @@ void main()
 			// TexCoord for 1D texture
 			gl_TexCoord[1] = gl_MultiTexCoord0.t;
 		}
-	}
+	//}
+	#endif
 	gl_Position = pos; //< store final position
 }

@@ -32,6 +32,7 @@
 #include <osg/Drawable>
 #include <osg/ShapeDrawable>
 #include <osg/Group>
+#include "../../../graphicsEngine/WShader.h"
 
 #include "../../WExportKernel.h"
 
@@ -150,6 +151,8 @@ public:
 
 	void setRootState(osg::StateSet* m_rootState);
 
+	void setWShader(osg::ref_ptr< WShader > m_shaderTubes);
+
 protected:
 private:
     /**
@@ -174,6 +177,8 @@ private:
 	osg::Vec2Array* m_pointTexCoords;
 	osg::Vec3Array* m_tubeColors;
 	osg::VectorGLuint* m_tubeStartIndexes;
+
+	osg::ref_ptr< WShader > m_shaderTubes;
 
 	/*
 	boost::shared_ptr< std::vector< float > > m_tubeVerts;

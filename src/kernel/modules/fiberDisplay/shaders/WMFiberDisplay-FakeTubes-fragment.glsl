@@ -14,6 +14,8 @@ varying vec3 normal;
 varying float endPoint;
 uniform gl_DepthRangeParameters gl_DepthRange;
 varying float z;
+varying float zNear;
+varying float zFar;
 
 void main()
 {
@@ -37,8 +39,9 @@ void main()
 	lt = dot(L, T);
 
 	//compute rotation in imageplane for pointsprite
-	if(usePointSprite < 0.8)
-	{
+	#ifdef USE_POINTSPRITE
+	//if(usePointSprite < 0.8)
+	//{
 		vec2 imageTangentNorm = normalize(imageTangent);
 		vec2 newTexCoords;
 		newTexCoords.x = (imageTangentNorm.y * (gl_PointCoord.y - 0.5) + imageTangentNorm.x * (gl_PointCoord.x - 0.5)) + 0.5;
@@ -52,12 +55,14 @@ void main()
 		}
 		gl_FragColor.a = color.z;
 
-	}
-	else
-	{
+	#else
+	//}
+	//else
+	//{
 		color = texture1D(texture, gl_TexCoord[1].s);
 		gl_FragColor.a = tubeColor.a;
-	}
+	//}
+	#endif
 
 		/* compute the specular term if NdotL is  larger than zero */
 		if (NdotL > 0.0) {
@@ -70,7 +75,7 @@ void main()
 				specular = pow(NdotHV,2) * color.y * tubeColor.rgb;
 		}
 
-	float depthCueingFactor = 1.0 - (z + gl_DepthRange.near)/(gl_DepthRange.far + gl_DepthRange.near);
+	float depthCueingFactor = (1 - (z+zNear)/(zNear+zFar));
 	gl_FragColor.rgb = tubeColor.rgb * (color.x) * depthCueingFactor + specular;
 }
 

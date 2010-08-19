@@ -184,64 +184,12 @@ void WTubeDrawable::setDataset( boost::shared_ptr< const WDataSetFibers > datase
 		}
 
 	}
-	/*
-	m_tubeVerts = boost::shared_ptr< std::vector< float > >(new std::vector< float >());
-	m_tubeTangents = boost::shared_ptr< std::vector< float > >(new std::vector< float >());
-	m_tubeTexCoords = boost::shared_ptr< std::vector< float > >(new std::vector< float >());
-	m_pointTexCoords = boost::shared_ptr< std::vector< float > >(new std::vector< float >());
-	m_tubeColors = boost::shared_ptr< std::vector< float > >(new std::vector< float >());
-
-	m_tubeVerts->resize(2*verts->size());
-	m_tubeTangents->resize(2*verts->size());
-	m_tubeTexCoords->resize(4*verts->size()/3);
-	m_tubeColors->resize(2*verts->size());
-	m_pointTexCoords->resize(2*verts->size()/3);
-
-	size_t tmp = 0;
-	size_t tmpTex = 0;
-	size_t tmpTexPoints = 0;
-	int stride = 3;
-	std::vector< size_t >::iterator itPointsPerLine = pointsPerLine->begin();
-	int k = (*itPointsPerLine);
-	for ( size_t i = 0; i < verts->size(); ++i )
-	{
-		if(stride == 0)
-		{
-			m_tubeTexCoords->at( tmpTex ) = -1.0f;
-			m_tubeTexCoords->at( tmpTex + 1) = 0.0f;
-			m_tubeTexCoords->at( tmpTex + 2 ) = 1.0f;
-			m_tubeTexCoords->at( tmpTex + 3 ) = 1.0f;
-
-			if(k == 1 || k == (*itPointsPerLine))
-			{
-				m_tubeTexCoords->at( tmpTexPoints ) = 0.0f;
-				m_tubeTexCoords->at( tmpTexPoints + 1) = 0.0f;
-			}
-			else
-			{
-				m_tubeTexCoords->at( tmpTexPoints ) = 0.0f;
-				m_tubeTexCoords->at( tmpTexPoints + 1) = 1.0f;
-			}
-
-			tmp += 3;
-			tmpTex += 4;
-			stride = 3;
-		}
-		m_tubeVerts->at(tmp) = verts->at(i);
-		m_tubeVerts->at(tmp+3) = verts->at(i);
-		m_tubeTangents->at(tmp) = tangents->at(i);
-		m_tubeTangents->at(tmp+3) = tangents->at(i);
-
-		m_tubeColors->at(tmp) = colors->at(i);
-		m_tubeColors->at(tmp+3) = colors->at(i);
-		--stride;
-	}
-	*/
 }
 
 void WTubeDrawable::setUseTubes( bool flag )		
 {
     m_useTubes = flag;
+
 }
 
 void WTubeDrawable::setColoringMode( bool globalColoring )
@@ -257,6 +205,11 @@ bool WTubeDrawable::getColoringMode() const
 void WTubeDrawable::setCustomColoring( bool custom )
 {
     m_customColoring = custom;
+}
+
+void WTubeDrawable::setWShader(osg::ref_ptr< WShader > shaderTubes)
+{
+	m_shaderTubes = shaderTubes;
 }
 
 void WTubeDrawable::setBoundingBox( const osg::BoundingBox & bb )
@@ -310,6 +263,12 @@ void WTubeDrawable::createTextures(osg::StateSet* m_rootState) const
 
 	create2DTexDiffuseLightning(m_rootState);
 	create2DTexSpecularLightning(m_rootState);
+
+	const osg::BoundingBox & bb = this->getBound();
+	osg::Uniform* nearPos = new osg::Uniform("nearPos",osg::Vec3(bb.xMin(),bb.yMin(),bb.zMin()));
+	osg::Uniform* farPos = new osg::Uniform("farPos",osg::Vec3(bb.xMax(),bb.yMax(),bb.zMax()));
+	m_rootState->addUniform(nearPos);
+	m_rootState->addUniform(farPos);
 }
 
 void WTubeDrawable::create2DTexDiffuseLightning(osg::StateSet* m_rootState) const
@@ -432,7 +391,6 @@ void WTubeDrawable::create1DTextureRectLightning(osg::StateSet* m_rootState) con
     m_rootState->setTextureAttribute(1,texture,osg::StateAttribute::OVERRIDE);
     m_rootState->setTextureMode(1,GL_TEXTURE_1D,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
     m_rootState->addUniform(osg::ref_ptr<osg::Uniform>( new osg::Uniform( "texture", 1 ) ) );
-
 }
 
 
@@ -509,7 +467,8 @@ void WTubeDrawable::drawTubes( osg::RenderInfo& renderInfo ) const
 	}
 	m_uniformViewportHeight->set( static_cast<int>( (*renderInfo.getCurrentCamera()->getViewport()).height() ) );
 	m_uniformViewportWidth->set( static_cast<int>( (*renderInfo.getCurrentCamera()->getViewport()).width() ) );
-
+	m_rootState->addUniform(m_uniformViewportHeight);
+	m_rootState->addUniform(m_uniformViewportWidth);
 
 	osg::State& state = *renderInfo.getState();
 
@@ -524,6 +483,8 @@ void WTubeDrawable::drawTubes( osg::RenderInfo& renderInfo ) const
 	glDisable(GL_LIGHTING);
 	glEnable(GL_BLEND);
 
+	//m_shaderTubes->setDefine(USE_QUADSTRIP);
+
 	for ( size_t i = 0; i < active->size(); ++i )
 	{
 		if ( (*active)[i] )
@@ -532,12 +493,16 @@ void WTubeDrawable::drawTubes( osg::RenderInfo& renderInfo ) const
 		}
 	}
 
+	//m_shaderTubes->eraseDefine(USE_QUADSTRIP);
+
 	//osg::TexEnv* texEnvPS = new osg::TexEnv( osg::TexEnv::REPLACE);
 	//osg::AlphaFunc* alphaFunc = new osg::AlphaFunc(osg::AlphaFunc::NOTEQUAL,0.0f);
 
 	//state.setModeValidity(GL_VERTEX_PROGRAM_POINT_SIZE, osg::StateAttribute::ON);
 	//state.setModeValidity(GL_ALPHA_TEST, osg::StateAttribute::ON);
 	//state.setModeValidity(GL_POINT_SPRITE, osg::StateAttribute::ON);
+
+	m_shaderTubes->setDefine("USE_POINTSPRITE");
 
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 	glEnable(GL_ALPHA_TEST);
@@ -567,6 +532,7 @@ void WTubeDrawable::drawTubes( osg::RenderInfo& renderInfo ) const
 
 	state.disableVertexPointer();
 	state.disableColorPointer();
+	m_shaderTubes->eraseDefine("USE_POINTSPRITE");
 
 /*
 	boost::shared_ptr< std::vector< size_t > > startIndexes = m_dataset->getLineStartIndexes();

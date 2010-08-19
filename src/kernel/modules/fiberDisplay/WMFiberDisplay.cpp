@@ -304,6 +304,7 @@ void WMFiberDisplay::updateRenderModes()
             m_tubeDrawable->setUseTubes( true );
 			m_tubeDrawable->setRootState(rootState);
             m_shaderTubes->apply( m_osgNode );
+			m_tubeDrawable->setWShader(m_shaderTubes);
             rootState->addUniform( osg::ref_ptr<osg::Uniform>( new osg::Uniform( "globalColor", 1 ) ) );
             m_uniformTubeThickness = osg::ref_ptr<osg::Uniform>( new osg::Uniform( "u_thickness", static_cast<float>( m_tubeThickness->get() ) ) );
             rootState->addUniform( m_uniformTubeThickness );
