@@ -61,6 +61,7 @@ int main( int argc, char** argv )
 
     // init logger here. It will be started by the GUI.
     WLogger logger;
+    logger.setLogLevel( LL_WARNING );
 
     // initialize GUI
     // NOTE: we need a shared ptr here since WGUI uses enable_shared_from_this.
