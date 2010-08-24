@@ -96,7 +96,7 @@ void WMainWindow::setupGUI()
     // TODO(all): what is this?
     resize( 946, 632 );
     setWindowIcon( m_iconManager.getIcon( "logo" ) );
-    setWindowTitle( QApplication::translate( "MainWindow", "OpenWalnut (development version)", 0, QApplication::UnicodeUTF8 ) );
+    setWindowTitle( QApplication::translate( "MainWindow", "OpenWalnut 1.1", 0, QApplication::UnicodeUTF8 ) );
 
     setupPermanentToolBar();
 
