@@ -24,42 +24,37 @@
 
 #include <string>
 
-#include "WQtNumberEditDouble.h"
+#include "WItemSelectionItem.h"
 
-WQtNumberEditDouble::WQtNumberEditDouble( QString name, QWidget* parent )
-    : QLineEdit( parent ),
-      m_name( name )
+WItemSelectionItem::WItemSelectionItem( std::string name, std::string description, const char** icon ):
+    m_name( name ),
+    m_description( description ),
+    m_icon( icon )
 {
-    connect( this, SIGNAL( returnPressed() ), this, SLOT( numberChanged() ) );
+    // initialize members
 }
 
-WQtNumberEditDouble::~WQtNumberEditDouble()
+WItemSelectionItem::~WItemSelectionItem()
 {
+    // cleanup
 }
 
-void WQtNumberEditDouble::setName( QString name )
+std::string WItemSelectionItem::getName() const
 {
-    m_name = name;
+    return m_name;
 }
 
-
-void WQtNumberEditDouble::setDouble( double number )
+std::string WItemSelectionItem::getDescription() const
 {
-    setText( QString::number( number ) );
-    emit signalNumberWithName( m_name, number );
+    return m_description;
 }
 
-void WQtNumberEditDouble::numberChanged()
+const char** WItemSelectionItem::getIcon() const
 {
-    bool ok;
-    double number = text().toDouble( &ok );
-    if ( ok )
-    {
-        emit signalNumberWithName( m_name, number );
-    }
-    else
-    {
-        setText( QString::number( 0 ) );
-        emit signalNumberWithName( m_name, 0 );
-    }
+    return m_icon;
+}
+
+bool WItemSelectionItem::operator==( const WItemSelectionItem& other ) const
+{
+    return ( m_name == other.m_name );
 }

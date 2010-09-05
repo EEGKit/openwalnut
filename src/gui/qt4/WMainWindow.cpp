@@ -98,6 +98,8 @@ void WMainWindow::setupGUI()
     setWindowIcon( m_iconManager.getIcon( "logo" ) );
     setWindowTitle( QApplication::translate( "MainWindow", "OpenWalnut (development version)", 0, QApplication::UnicodeUTF8 ) );
 
+    setupPermanentToolBar();
+
     // the dataset browser instance is needed for the menu
     m_datasetBrowser = new WQtDatasetBrowser( this );
     m_datasetBrowser->setFeatures( QDockWidget::AllDockWidgetFeatures );
@@ -212,8 +214,10 @@ void WMainWindow::setupGUI()
     // we do not need the dummy widget if there are no other widgets.
     if( m_navAxial || m_navCoronal || m_navSagittal )
     {
-        m_dummyWidget = new QDockWidget( this );
-        m_dummyWidget->setFeatures( QDockWidget::NoDockWidgetFeatures );
+        m_dummyWidget = new QDockWidget( "Spacer", this );
+        QWidget* tmp = new QWidget( m_dummyWidget );
+        m_dummyWidget->setTitleBarWidget( tmp );
+        m_dummyWidget->setFeatures( QDockWidget::DockWidgetClosable );
         m_dummyWidget->setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Ignored );
         addDockWidget( Qt::LeftDockWidgetArea, m_dummyWidget );
     }
@@ -245,8 +249,6 @@ void WMainWindow::setupGUI()
             }
         }
     }
-
-    setupPermanentToolBar();
 }
 
 void WMainWindow::setupPermanentToolBar()
@@ -732,7 +734,7 @@ void WMainWindow::openAboutDialog()
 {
     QMessageBox::about( this, "About OpenWalnut",
                         "OpenWalnut ( http://www.openwalnut.org )\n\n"
-                        "Copyright (C) 2009 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS. "
+                        "Copyright 2009-2010 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS. "
                         "For more information see http://www.openwalnut.org/copying.\n\n"
                         "This program comes with ABSOLUTELY NO WARRANTY. "
                         "This is free software, and you are welcome to redistribute it "

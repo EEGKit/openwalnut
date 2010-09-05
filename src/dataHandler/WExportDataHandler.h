@@ -22,36 +22,24 @@
 //
 //---------------------------------------------------------------------------
 
-#include <string>
+#ifndef WEXPORTDATAHANDLER_H
+#define WEXPORTDATAHANDLER_H
 
-#include "WQtNumberEdit.h"
+#ifdef _MSC_VER
 
-WQtNumberEdit::WQtNumberEdit( QWidget* parent )
-    : QLineEdit( parent )
-{
-    connect( this, SIGNAL( returnPressed() ), this, SLOT( numberChanged() ) );
-}
+    #pragma warning( disable: 4251 )
 
-WQtNumberEdit::~WQtNumberEdit()
-{
-}
+    #ifdef OWdataHandler_EXPORTS
+    #define OWDATAHANDLER_EXPORT __declspec( dllexport )
+    #else
+    #define OWDATAHANDLER_EXPORT __declspec( dllimport )
+    #endif
 
-void WQtNumberEdit::setInt( int number )
-{
-    setText( QString::number( number ) );
-}
+#else
 
-void WQtNumberEdit::numberChanged()
-{
-    bool ok;
-    int number = text().toInt( &ok, 10 );
-    if ( ok )
-    {
-        emit signalNumber( number );
-    }
-    else
-    {
-        setText( QString::number( 0 ) );
-        emit signalNumber( 0 );
-    }
-}
+    #define OWDATAHANDLER_EXPORT
+
+#endif // _MSC_VER
+
+#endif  // WEXPORTDATAHANDLER_H
+

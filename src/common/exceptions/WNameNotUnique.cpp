@@ -24,25 +24,15 @@
 
 #include <string>
 
-#include "WQtLineEdit.h"
+#include "WNameNotUnique.h"
 
-WQtLineEdit::WQtLineEdit()
-    : QLineEdit()
+WNameNotUnique::WNameNotUnique( const std::string& msg )
+    : WException( msg )
 {
-    m_name = QString( "" );
-    connect( this, SIGNAL( returnPressed() ), this, SLOT( emitStateChanged() ) );
+    // init members
 }
 
-WQtLineEdit::~WQtLineEdit()
+WNameNotUnique::~WNameNotUnique() throw()
 {
-}
-
-void WQtLineEdit::setName( QString name )
-{
-    m_name = name;
-}
-
-void WQtLineEdit::emitStateChanged()
-{
-    emit lineEditStateChanged( m_name, this->text() );
+    // clean up
 }

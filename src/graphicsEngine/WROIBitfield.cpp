@@ -22,58 +22,20 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WQTNUMBEREDIT_H
-#define WQTNUMBEREDIT_H
+#include <vector>
 
-#include <string>
+#include "WROIBitfield.h"
 
-#include <QtGui/QLineEdit>
-
-/**
- * a QLineEdit modified to deal only with integer numbers
- */
-class WQtNumberEdit : public QLineEdit
+WROIBitfield::WROIBitfield( boost::shared_ptr< std::vector<bool> > bitfield ) :
+    WROI(),
+    m_bitfield( bitfield )
 {
-    Q_OBJECT
+}
 
-public:
-    /**
-     * Default constructor
-     *
-     * \param parent The parent widget of this widget, i.e. the widget that manages it.
-     */
-    explicit WQtNumberEdit( QWidget* parent = 0 );
+WROIBitfield::~WROIBitfield()
+{
+}
 
-    /**
-     * destructor
-     */
-    virtual ~WQtNumberEdit();
-
-public slots:
-
-    /**
-     * Set the value of the number edit.
-     *
-     * \param number the new number of the number edit.
-     */
-    void setInt( int number );
-
-    /**
-     * Slot getting called whenever the value of the edit changed.
-     */
-    void numberChanged();
-
-signals:
-
-    /**
-     * Signals a new value of the edit
-     *
-     * \param value the new value.
-     */
-    void signalNumber( int value );
-
-protected:
-private:
-};
-
-#endif  // WQTNUMBEREDIT_H
+void WROIBitfield::updateGFX()
+{
+}
