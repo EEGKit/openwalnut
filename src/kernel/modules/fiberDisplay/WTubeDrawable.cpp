@@ -55,6 +55,8 @@ WTubeDrawable::WTubeDrawable():
 																			static_cast<int>( 0 ) ) );
 	m_uniformViewportWidth = osg::ref_ptr<osg::Uniform>( new osg::Uniform( "u_viewportWidth",
 																			static_cast<int>( 0 ) ) );
+	m_usePointSprite = false;
+	m_useQuadStrips = false;
 }
 
 // I can't say much about the methods below, but OSG seems to expect
@@ -212,6 +214,12 @@ void WTubeDrawable::setWShader(osg::ref_ptr< WShader > shaderTubes)
 	m_shaderTubes = shaderTubes;
 }
 
+void WTubeDrawable::setWShaders(osg::ref_ptr< WShader >shaderTubesPS, osg::ref_ptr< WShader >shaderTubesQS)
+{
+	m_shaderTubesPS = shaderTubesPS;
+	m_shaderTubesQS = shaderTubesQS;
+}
+
 void WTubeDrawable::setBoundingBox( const osg::BoundingBox & bb )
 {
     setBound( bb );
@@ -319,6 +327,9 @@ void WTubeDrawable::create2DTexSpecularLightning(osg::StateSet* m_rootState) con
 	osg::Image* image = new osg::Image;
 
 	int noPixels = 64;
+	int noExponents = 64;
+
+	//vector<float> sn;
 
 	// allocate the image data, noPixels x noPixels x 1 with 4 rgba floats - equivalent to a Vec4!
 	image->allocateImage(noPixels,noPixels,1,GL_RGBA,GL_FLOAT);
@@ -451,6 +462,17 @@ void WTubeDrawable::setRootState(osg::StateSet* rootState)
 	m_rootState = rootState;
 }
 
+void WTubeDrawable::setOSGNode(osg::ref_ptr< osg::Group > osgNode)
+{
+	this->m_osgNode = osgNode;
+}
+
+void WTubeDrawable::setActiveRenderingMode(bool usePointSprite, bool useQuadStrips)
+{
+	m_usePointSprite = usePointSprite;
+	m_useQuadStrips = useQuadStrips;
+}
+
 void WTubeDrawable::drawTubes( osg::RenderInfo& renderInfo ) const
 {
 	boost::shared_ptr< std::vector< size_t > > startIndexes = m_dataset->getLineStartIndexes();
@@ -467,8 +489,10 @@ void WTubeDrawable::drawTubes( osg::RenderInfo& renderInfo ) const
 	}
 	m_uniformViewportHeight->set( static_cast<int>( (*renderInfo.getCurrentCamera()->getViewport()).height() ) );
 	m_uniformViewportWidth->set( static_cast<int>( (*renderInfo.getCurrentCamera()->getViewport()).width() ) );
+
+	/*
 	m_rootState->addUniform(m_uniformViewportHeight);
-	m_rootState->addUniform(m_uniformViewportWidth);
+	m_rootState->addUniform(m_uniformViewportWidth);*/
 
 	osg::State& state = *renderInfo.getState();
 
@@ -483,16 +507,20 @@ void WTubeDrawable::drawTubes( osg::RenderInfo& renderInfo ) const
 	glDisable(GL_LIGHTING);
 	glEnable(GL_BLEND);
 
-	//m_shaderTubes->setDefine(USE_QUADSTRIP);
-
-	for ( size_t i = 0; i < active->size(); ++i )
+	//m_shaderTubesQS->applyDirect(state);
+	//dynamic_cast< osg::Program* >(m_shaderTubesQS.get())->apply(state);
+			//m_shaderTubes->setDefine(USE_QUADSTRIP);
+	if(m_useQuadStrips)
 	{
-		if ( (*active)[i] )
+		for ( size_t i = 0; i < active->size(); ++i )
 		{
-			state.glDrawArraysInstanced( osg::PrimitiveSet::QUAD_STRIP, m_tubeStartIndexes->at(i), 2 * (*pointsPerLine)[i], 1);
+			if ( (*active)[i] )
+			{
+				state.glDrawArraysInstanced( GL_TRIANGLE_STRIP, m_tubeStartIndexes->at(i), 2 * (*pointsPerLine)[i], 1);
+			}
 		}
 	}
-
+	//m_shaderTubesQS->deactivate();
 	//m_shaderTubes->eraseDefine(USE_QUADSTRIP);
 
 	//osg::TexEnv* texEnvPS = new osg::TexEnv( osg::TexEnv::REPLACE);
@@ -502,7 +530,10 @@ void WTubeDrawable::drawTubes( osg::RenderInfo& renderInfo ) const
 	//state.setModeValidity(GL_ALPHA_TEST, osg::StateAttribute::ON);
 	//state.setModeValidity(GL_POINT_SPRITE, osg::StateAttribute::ON);
 
-	m_shaderTubes->setDefine("USE_POINTSPRITE");
+	//m_shaderTubes->setDefine("USE_POINTSPRITE");
+
+	//m_shaderTubesPS->apply(state);
+	//m_shaderTubesPS->applyDirect(state);
 
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 	glEnable(GL_ALPHA_TEST);
@@ -513,15 +544,17 @@ void WTubeDrawable::drawTubes( osg::RenderInfo& renderInfo ) const
 
 	//state.setModeValidity(alphaFunc, osg::StateAttribute::ON);
 	//state.setModeValidity(texEnvPS, osg::StateAttribute::ON);
-
-	for ( size_t i = 0; i < active->size(); ++i )
+	if(m_usePointSprite)
 	{
-		if ( (*active)[i] )
+		for ( size_t i = 0; i < active->size(); ++i )
 		{
-			state.glDrawArraysInstanced( GL_POINTS, m_tubeStartIndexes->at(i + active->size()), (*pointsPerLine)[i], 1);
+			if ( (*active)[i] )
+			{
+				state.glDrawArraysInstanced( GL_POINTS, m_tubeStartIndexes->at(i + active->size()), (*pointsPerLine)[i], 1);
+			}
 		}
 	}
-
+		//	m_shaderTubesPS->deactivate(this);
 	//state.setModeValidity(GL_VERTEX_PROGRAM_POINT_SIZE, osg::StateAttribute::OFF);
 	//state.setModeValidity(GL_ALPHA_TEST, osg::StateAttribute::OFF);
 	//state.setModeValidity(GL_POINT_SPRITE, osg::StateAttribute::OFF);
@@ -532,7 +565,7 @@ void WTubeDrawable::drawTubes( osg::RenderInfo& renderInfo ) const
 
 	state.disableVertexPointer();
 	state.disableColorPointer();
-	m_shaderTubes->eraseDefine("USE_POINTSPRITE");
+	//m_shaderTubes->eraseDefine("USE_POINTSPRITE");
 
 /*
 	boost::shared_ptr< std::vector< size_t > > startIndexes = m_dataset->getLineStartIndexes();

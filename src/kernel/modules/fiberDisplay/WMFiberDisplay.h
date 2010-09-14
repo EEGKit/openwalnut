@@ -45,7 +45,7 @@
  *
  * \ingroup modules
  */
-class OWKERNEL_EXPORT WMFiberDisplay : public WModule, public osg::Referenced
+class OWKERNEL_EXPORT WMFiberDisplay : public WModule
 {
 public:
     /**
@@ -129,6 +129,18 @@ protected:
      */
     void notifyTextureChange();
 
+    /**
+    * switches between fiber display and tube representation,
+    * texturing and box culling
+    * activates the neccesary shaders
+    */
+    void updateRenderModes();
+
+    /**
+    * Enable disable global or local coloring
+    */
+    void toggleColoring();
+
 private:
     /**
      * Updates the output with the current selection and generates a WFiberCluster out of it.
@@ -172,10 +184,17 @@ private:
      */
     osg::ref_ptr< osg::Group > m_osgNode;
 
+	osg::ref_ptr<osg::Geode> m_geodeTubeDrawable;
+	osg::ref_ptr<osg::Geode> m_geodePointSprite;
     /**
      * stores pointer to the fiber drawer
      */
     osg::ref_ptr< WTubeDrawable > m_tubeDrawable;
+
+	/**
+	 * stores pointer to the fiber drawer
+	 */
+	osg::ref_ptr< WTubeDrawable > m_tubeDrawablePointSprite;
 
     /**
      * lock to prevent concurrent threads trying to update the osg node
@@ -186,6 +205,9 @@ private:
      * the shader object for rendering tubes
      */
     osg::ref_ptr< WShader >m_shaderTubes;
+	osg::ref_ptr< WShader >m_shaderTubesPS;
+	osg::ref_ptr< WShader >m_shaderTubesQS;
+
 
     /**
      * the shader object for rendering textured lines
@@ -246,17 +268,6 @@ private:
 
     osg::ref_ptr< WROIBox > m_cullBox; //!< stores a pointer to the cull box
 
-    /**
-     * switches between fiber display and tube representation,
-     * texturing and box culling
-     * activates the neccesary shaders
-     */
-    void updateRenderModes();
-
-    /**
-     * Enable disable global or local coloring
-     */
-    void toggleColoring();
 
     /**
      * changes tube parameters
@@ -284,6 +295,42 @@ private:
      */
     void initCullBox();
 
+    /**
+    * Wrapper class for userData to prevent cyclic destructor calls
+    */
+    class userData: public osg::Referenced
+    {
+    public:
+        /**
+        * userData Constructur with shared pointer to module
+        * \param _parent pointer to the module 
+        */
+        explicit userData( boost::shared_ptr< WMFiberDisplay > _parent )
+        {
+            parent = _parent;
+        }
+
+        /**
+        * update wrapper Function
+        */
+        void update();
+
+        /**
+        * updateRenderModes wrapper Function
+        */
+        void updateRenderModes();
+
+        /**
+        * toggleColoring wrapper Function
+        */
+        void toggleColoring();
+    private:
+        /**
+        * shared pointer to the module
+        */
+        boost::shared_ptr< WMFiberDisplay > parent;
+    };
+
 
     /**
      * Node callback to handle updates properly
@@ -299,7 +346,7 @@ private:
          */
         virtual void operator()( osg::Node* node, osg::NodeVisitor* nv )
         {
-            osg::ref_ptr< WMFiberDisplay > module = static_cast< WMFiberDisplay* > ( node->getUserData() );
+            osg::ref_ptr< userData > module = static_cast< userData* > ( node->getUserData() );
 
             if ( module )
             {

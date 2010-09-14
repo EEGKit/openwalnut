@@ -50,12 +50,15 @@ WMFiberDisplay::WMFiberDisplay()
       m_osgNode( osg::ref_ptr< osg::Group >() )
 {
     m_shaderTubes = osg::ref_ptr< WShader > ( new WShader( "WMFiberDisplay-FakeTubes" ) );
+	m_shaderTubesPS = osg::ref_ptr< WShader > ( new WShader( "WMFiberDisplay-FakeTubes-PS" ) );
+	m_shaderTubesQS = osg::ref_ptr< WShader > ( new WShader( "WMFiberDisplay-FakeTubes-QS" ) );
     m_shaderTexturedFibers = osg::ref_ptr< WShader > ( new WShader( "WMFiberDisplay-Textured" ) );
     m_textureChanged = true;
 }
 
 WMFiberDisplay::~WMFiberDisplay()
 {
+    m_fiberDisplayRunning = false;
 }
 
 boost::shared_ptr< WModule > WMFiberDisplay::factory() const
@@ -203,16 +206,27 @@ void WMFiberDisplay::create()
     m_tubeDrawable->setDataset( m_dataset );
     m_tubeDrawable->setUseDisplayList( false );
     m_tubeDrawable->setDataVariance( osg::Object::DYNAMIC );
+	m_tubeDrawable->setWShaders(m_shaderTubesPS, m_shaderTubesQS);
+	m_geodeTubeDrawable = osg::ref_ptr< osg::Geode >( new osg::Geode );
+	m_geodeTubeDrawable->addDrawable( m_tubeDrawable );
 
-    osg::ref_ptr< osg::Geode > geode = osg::ref_ptr< osg::Geode >( new osg::Geode );
-    geode->addDrawable( m_tubeDrawable );
+	m_tubeDrawablePointSprite = osg::ref_ptr< WTubeDrawable >( new WTubeDrawable );
+	m_tubeDrawablePointSprite->setDataset( m_dataset );
+	m_tubeDrawablePointSprite->setUseDisplayList( false );
+	m_tubeDrawablePointSprite->setDataVariance( osg::Object::DYNAMIC );
+	m_tubeDrawablePointSprite->setWShaders(m_shaderTubesPS, m_shaderTubesQS);
+	m_geodePointSprite = osg::ref_ptr< osg::Geode >( new osg::Geode );
+	m_geodePointSprite->addDrawable( m_tubeDrawablePointSprite );
 
-    osgNodeNew->addChild( geode );
+
+	osgNodeNew->addChild( m_geodePointSprite );
+	osgNodeNew->addChild( m_geodeTubeDrawable );
 
     osgNodeNew->getOrCreateStateSet()->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
-    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->addChild( osgNodeNew.get() );
 
-    osgNodeNew->setUserData( this );
+    osgNodeNew->setUserData( osg::ref_ptr< userData >(
+        new userData( boost::shared_dynamic_cast< WMFiberDisplay >( shared_from_this() ) )
+        ) );
     osgNodeNew->addUpdateCallback( new fdNodeCallback );
 
     // remove previous nodes if there are any
@@ -224,6 +238,8 @@ void WMFiberDisplay::create()
 
     osg::StateSet* rootState = m_osgNode->getOrCreateStateSet();
     initUniforms( rootState );
+
+    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->addChild( m_osgNode.get() );
 }
 
 void WMFiberDisplay::connectors()
@@ -302,9 +318,14 @@ void WMFiberDisplay::updateRenderModes()
             updateTexture();
             m_useTextureProp->get( true );
             m_tubeDrawable->setUseTubes( true );
+			m_tubeDrawablePointSprite->setUseTubes(true);
 			m_tubeDrawable->setRootState(rootState);
-            m_shaderTubes->apply( m_osgNode );
+			m_shaderTubesQS->apply( m_geodeTubeDrawable );
 			m_tubeDrawable->setWShader(m_shaderTubes);
+			m_tubeDrawable->setActiveRenderingMode(false,true);
+			m_shaderTubesPS->apply(m_geodePointSprite );
+			m_tubeDrawablePointSprite->setActiveRenderingMode(true,false);
+
             rootState->addUniform( osg::ref_ptr<osg::Uniform>( new osg::Uniform( "globalColor", 1 ) ) );
             m_uniformTubeThickness = osg::ref_ptr<osg::Uniform>( new osg::Uniform( "u_thickness", static_cast<float>( m_tubeThickness->get() ) ) );
             rootState->addUniform( m_uniformTubeThickness );
@@ -489,4 +510,19 @@ void WMFiberDisplay::initCullBox()
 
     m_cullBox = osg::ref_ptr< WROIBox >( new WROIBox( minROIPos, maxROIPos ) );
     m_cullBox->setColor( osg::Vec4( 1.0, 0., 1.0, 0.4 ) );
+}
+
+void WMFiberDisplay::userData::update()
+{
+    parent->update();
+}
+
+void WMFiberDisplay::userData::updateRenderModes()
+{
+    parent->updateRenderModes();
+}
+
+void WMFiberDisplay::userData::toggleColoring()
+{
+    parent->toggleColoring();
 }

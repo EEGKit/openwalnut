@@ -152,7 +152,9 @@ public:
 	void setRootState(osg::StateSet* m_rootState);
 
 	void setWShader(osg::ref_ptr< WShader > m_shaderTubes);
-
+	void setWShaders(osg::ref_ptr< WShader > shaderTubesPS, osg::ref_ptr< WShader > shaderTubesQS);
+	void setOSGNode(osg::ref_ptr< osg::Group > osgNode);
+	void setActiveRenderingMode(bool usePointSprite, bool useQuadStrips);
 protected:
 private:
     /**
@@ -179,7 +181,11 @@ private:
 	osg::VectorGLuint* m_tubeStartIndexes;
 
 	osg::ref_ptr< WShader > m_shaderTubes;
+	osg::ref_ptr< WShader > m_shaderTubesPS;
+	osg::ref_ptr< WShader > m_shaderTubesQS;
 
+	bool m_usePointSprite;
+	bool m_useQuadStrips;
 	/*
 	boost::shared_ptr< std::vector< float > > m_tubeVerts;
 	boost::shared_ptr< std::vector< float > > m_tubeTangents;
@@ -187,6 +193,8 @@ private:
 	boost::shared_ptr< std::vector< float > > m_pointTexCoords;
 	boost::shared_ptr< std::vector< float > > m_tubeColors;
 	*/
+
+	osg::ref_ptr< osg::Group > m_osgNode;
 
     boost::shared_ptr< const WDataSetFibers > m_dataset; //!< stores pointer to dataset
 
