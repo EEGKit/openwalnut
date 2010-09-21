@@ -44,6 +44,7 @@ void main()
 
 	vec3 cameraPosition = vec3(gl_ModelViewMatrixInverse * vec4(0,0,0,1.0));
 	vec3 cameraVector = cameraPosition - gl_Vertex.xyz;
+vec3 referencePosition = vec3(gl_ModelViewProjectionMatrix * vec4(1.0, 1.0, 1.0, 0.0));
 
 	gl_ClipVertex = gl_ModelViewMatrix * gl_Vertex; // make clipping planes work
 
@@ -56,7 +57,7 @@ void main()
 	normal = cross( halfVector, tangent);
 
 	//define thickness of tubes
-	thickness = u_thickness; //(1 - (zNear)/(zNear+zFar));
+	thickness = u_thickness * 0.001; //(1 - (zNear)/(zNear+zFar));
 
 	// color of tube
 	tubeColor = gl_Color;
@@ -67,9 +68,9 @@ void main()
 
 	//scalar product between viewDir and tangent
 	float tmp = dot(view, tangent);
-
-	offset.x *= thickness;
-	offset.y *= thickness;
+thickness *= length(referencePosition);
+	offset.x *= thickness*u_viewportWidth;
+	offset.y *= thickness*u_viewportHeight;
 
 	//decide wether point sprite or triangle strip to render
 
@@ -85,7 +86,7 @@ void main()
 		imageTangent.xy = (pos2p.x/pos2p.w - pos1p.x/pos1p.w, pos1p.y/pos1p.w - pos2p.y/pos2p.w);
 
 		//	compute size with u_viewportWidth and u_viewportHeight;
-		gl_PointSize = thickness*0.6; //* u_viewportWidth;
+		gl_PointSize = length(vec2(offset.x, offset.y));
 		//gl_PointSize = 20;
 
 		usePointSprite = 0.0;

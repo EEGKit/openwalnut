@@ -170,8 +170,7 @@ private:
 
 	osg::StateSet* m_rootState;
 
-	osg::ref_ptr<osg::Uniform> m_uniformViewportHeight;
-	osg::ref_ptr<osg::Uniform> m_uniformViewportWidth;
+
 
 	osg::Vec3Array* m_tubeVerts;
 	osg::Vec3Array* m_tubeTangents;

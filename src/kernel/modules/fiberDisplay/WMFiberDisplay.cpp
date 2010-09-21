@@ -188,12 +188,14 @@ void WMFiberDisplay::update()
     m_uniformCullBoxLBZ->set( static_cast<float>( zMin ) );
     m_uniformCullBoxUBX->set( static_cast<float>( xMax ) );
     m_uniformCullBoxUBY->set( static_cast<float>( yMax ) );
-    m_uniformCullBoxUBZ->set( static_cast<float>( zMax ) );
+	m_uniformCullBoxUBZ->set( static_cast<float>( zMax ) );
+
 }
 
 void WMFiberDisplay::create()
 {
-    // create new node
+
+	// create new node
     osg::ref_ptr< osg::Group > osgNodeNew = osg::ref_ptr< osg::Group >( new osg::Group );
 
     m_tubeDrawable = osg::ref_ptr< WTubeDrawable >( new WTubeDrawable );
@@ -238,6 +240,13 @@ void WMFiberDisplay::create()
 
     osg::StateSet* rootState = m_osgNode->getOrCreateStateSet();
     initUniforms( rootState );
+
+	m_uniformViewportHeight = osg::ref_ptr<osg::Uniform>( new osg::Uniform( "u_viewportHeight",
+																			static_cast<int>( 0 ) ) );
+	m_uniformViewportWidth = osg::ref_ptr<osg::Uniform>( new osg::Uniform( "u_viewportWidth",
+																			static_cast<int>( 0 ) ) );
+	rootState->addUniform(m_uniformViewportHeight);
+	rootState->addUniform(m_uniformViewportWidth);
 
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->addChild( m_osgNode.get() );
 }

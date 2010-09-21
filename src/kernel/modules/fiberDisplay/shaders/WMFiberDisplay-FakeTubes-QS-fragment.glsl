@@ -49,11 +49,10 @@ void main()
 				halfV = normalize(halfVector);
 
 				NdotHV = max(dot(normal, halfV),0.0);
-				specular = pow(NdotHV,2) * color.y * tubeColor.rgb;
+				specular = pow(NdotHV,16) * color.y;
 		}
 
 	float depthCueingFactor = (1 - (z+zNear)/(zNear+zFar));
-	gl_FragColor.rgb = tubeColor.rgb * (color.x) * depthCueingFactor + specular;
-	//gl_FragColor.rgb = vec3(1,0,0);
+	gl_FragColor.rgb = tubeColor.rgb * ((color.x) + specular) * depthCueingFactor  * depthCueingFactor;
 }
 

@@ -261,6 +261,8 @@ private:
     osg::ref_ptr<osg::Uniform> m_uniformCullBoxUBY; //!< cull box upper bound
     osg::ref_ptr<osg::Uniform> m_uniformCullBoxUBZ; //!< cull box upper bound
 
+	osg::ref_ptr<osg::Uniform> m_uniformViewportHeight;
+	osg::ref_ptr<osg::Uniform> m_uniformViewportWidth;
     /**
      * To avoid multiple instances of the fiber display.
      */

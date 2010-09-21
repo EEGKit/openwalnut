@@ -25,13 +25,21 @@ void main()
 	float thickness;
 	vec4 pos;
 	vec3 lightPosition = vec3(0., 0., 1000.);
-  vec3 ez = vec3(0., 0., 10.0);
+  vec3 ez = vec3(0., 0., -1.0);
 	usePointSprite = 1.0;
 	tangentR3 = gl_Normal;
 	endPoint = 1.0;
 
 	pos = gl_ModelViewProjectionMatrix * gl_Vertex;
 	z = pos.z;
+
+	//zNear =0.5 + 0.5*( (gl_ModelViewProjectionMatrix * vec4(nearPos,1.00)).z );
+	//zFar =0.5 + 0.5*( (gl_ModelViewProjectionMatrix * vec4(farPos,1.0)).z );
+  //float tmp2 = zNear;
+  //zNear = min( zNear, zFar );
+  //zFar = max( zFar, tmp2 );
+  //zNear = nearPos.z;
+  //zFar = farPos.z;
 
   vec3 q1 = nearPos;
   vec3 q2 = nearPos; q2.x = farPos.x;
@@ -52,15 +60,15 @@ void main()
 	float z7  =0.5 + 0.5*( (gl_ModelViewProjectionMatrix * vec4(q7,1.0)).z );
 	float z8  =0.5 + 0.5*( (gl_ModelViewProjectionMatrix * vec4(q8,1.0)).z );
 
-  zNear = max( z1, max( z2, max( z3, max( z4, max( z5, max( z6, max( z7,z8)))))));
-  zFar  = min( z1, min( z2, min( z3, min( z4, min( z5, min( z6, min( z7,z8)))))));
+  zFar = max( z1, max( z2, max( z3, max( z4, max( z5, max( z6, max( z7,z8)))))));
+  zNear  = min( z1, min( z2, min( z3, min( z4, min( z5, min( z6, min( z7,z8)))))));
 
 	view = - pos.xyz;
 
 	lightDir = normalize( lightPosition - pos.xyz);
 
 	vec3 cameraPosition = vec3(gl_ModelViewMatrixInverse * vec4(0.0, 0.0, 0.0, 1.0));
-	vec3 referencePosition = vec3(gl_ModelViewMatrixInverse * vec4(1.0, 1.0, 1.0, 1.0));
+	vec3 referencePosition = vec3(gl_ModelViewProjectionMatrix * vec4(1.0, 1.0, 1.0, 0.0));
 	vec3 cameraVector = cameraPosition - gl_Vertex.xyz;
 
 	gl_ClipVertex = gl_ModelViewMatrix * gl_Vertex; // make clipping planes work
@@ -78,13 +86,14 @@ void main()
 	// color of tube
 	tubeColor = gl_Color;
 
-	vec3 offsetNN = cross( (tangent.xyz), ez);
-	vec3 offset = (offsetNN);
+	vec3 offsetNN = cross( normalize(tangent.xyz), ez);
+	vec3 offset = normalize(offsetNN);
 	tangent_dot_view = length(offsetNN);
 
 	//scalar product between viewDir and tangent
 	float tmp = dot(view, tangent);
 
+	thickness *= length(referencePosition);
 	offset.x *= thickness;
 	offset.y *= thickness;
 

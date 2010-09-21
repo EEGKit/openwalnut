@@ -51,10 +51,6 @@ WTubeDrawable::WTubeDrawable():
 {
     setSupportsDisplayList( false );
     // This contructor intentionally left blank. Duh.
-	m_uniformViewportHeight = osg::ref_ptr<osg::Uniform>( new osg::Uniform( "u_viewportHeight",
-																			static_cast<int>( 0 ) ) );
-	m_uniformViewportWidth = osg::ref_ptr<osg::Uniform>( new osg::Uniform( "u_viewportWidth",
-																			static_cast<int>( 0 ) ) );
 	m_usePointSprite = false;
 	m_useQuadStrips = false;
 }
@@ -95,6 +91,11 @@ void WTubeDrawable::drawImplementation( osg::RenderInfo& renderInfo ) const //NO
 
 	if ( m_useTubes )
     {
+		if(m_useQuadStrips)
+		{
+			m_rootState->getUniform("u_viewportHeight")->set( static_cast<int>( (*renderInfo.getCurrentCamera()->getViewport()).height() ) );
+			m_rootState->getUniform("u_viewportWidth")->set( static_cast<int>( (*renderInfo.getCurrentCamera()->getViewport()).width() ) );
+		}
 		drawTubes( renderInfo );
     }
     else
@@ -422,17 +423,15 @@ void WTubeDrawable::create2DTextureCycleLightning(osg::StateSet* m_rootState) co
     // fill in the image data.
     osg::Vec4* dataPtr = (osg::Vec4*)image->data();
     osg::Vec4 color;
-    for(int i=0;i<noPixels;++i)
+	for(int i=1;i<noPixels+1;++i)
     {
 		diffuse = sin((float)i*step);
 		specular = pow(diffuse, 16);
 
-		for(int j=0;j<noPixels;++j)
+		for(int j=1;j<noPixels+1;++j)
         {
-
-
 			// Einheitskreis,
-			check = pow(j-31,2) + pow(i-31,2);
+			check = pow(j-32,2) + pow(i-32,2);
 			if(check > 1024)
 			{
 				alpha = 0.0f;
@@ -487,12 +486,6 @@ void WTubeDrawable::drawTubes( osg::RenderInfo& renderInfo ) const
 	{
 		colors = ( m_globalColoring ? m_dataset->getGlobalColors() : m_dataset->getLocalColors() );
 	}
-	m_uniformViewportHeight->set( static_cast<int>( (*renderInfo.getCurrentCamera()->getViewport()).height() ) );
-	m_uniformViewportWidth->set( static_cast<int>( (*renderInfo.getCurrentCamera()->getViewport()).width() ) );
-
-	/*
-	m_rootState->addUniform(m_uniformViewportHeight);
-	m_rootState->addUniform(m_uniformViewportWidth);*/
 
 	osg::State& state = *renderInfo.getState();
 
