@@ -509,7 +509,7 @@ void WTubeDrawable::drawTubes( osg::RenderInfo& renderInfo ) const
 		{
 			if ( (*active)[i] )
 			{
-				state.glDrawArraysInstanced( GL_TRIANGLE_STRIP, m_tubeStartIndexes->at(i), 2 * (*pointsPerLine)[i], 1);
+				state.glDrawArraysInstanced( GL_QUAD_STRIP, m_tubeStartIndexes->at(i), 2 * (*pointsPerLine)[i], 1);
 			}
 		}
 	}

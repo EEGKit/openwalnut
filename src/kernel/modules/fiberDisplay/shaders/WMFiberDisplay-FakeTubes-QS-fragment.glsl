@@ -52,7 +52,6 @@ void main()
 				specular = pow(NdotHV,16) * color.y;
 		}
 
-	float depthCueingFactor = (1 - (z+zNear)/(zNear+zFar));
+	float depthCueingFactor = clamp((1 - (z+zNear)/(zNear+zFar)),0.5,0.95);
 	gl_FragColor.rgb = tubeColor.rgb * ((color.x) + specular) * depthCueingFactor  * depthCueingFactor;
 }
-

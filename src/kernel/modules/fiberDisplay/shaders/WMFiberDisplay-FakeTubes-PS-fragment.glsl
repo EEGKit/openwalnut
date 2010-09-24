@@ -45,6 +45,7 @@ void main()
 	newTexCoords.y = (imageTangentNorm.y * (gl_PointCoord.x - 0.5) - imageTangentNorm.x * (gl_PointCoord.y - 0.5)) + 0.5;
 
 	color = texture2D(texturePS, newTexCoords.xy);
+	//color = texture2D(texturePS, gl_PointCoord.xy);
 
 	if(endPoint == 0.0)
 	{
@@ -66,4 +67,3 @@ void main()
 	float depthCueingFactor = (1 - (z+zNear)/(zNear+zFar));
 	gl_FragColor.rgb = tubeColor.rgb * ((color.x) + specular) * depthCueingFactor  * depthCueingFactor;
 }
-

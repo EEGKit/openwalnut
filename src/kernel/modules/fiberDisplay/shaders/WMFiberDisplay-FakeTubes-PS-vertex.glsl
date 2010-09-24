@@ -78,13 +78,13 @@ thickness *= length(referencePosition);
 	if(tmp > 0.93 || gl_MultiTexCoord0.t == 0.0)
 	{
 		vec4 pos1 = gl_Vertex;
-		vec4 pos2 = gl_Vertex + vec4(gl_Normal,0);
+		vec4 pos2 = gl_Vertex + vec4(gl_Normal,1);
 
 		vec4 pos1p = gl_ModelViewProjectionMatrix * pos1.xyzw;
 		vec4 pos2p = gl_ModelViewProjectionMatrix * pos2.xyzw;
 
 		imageTangent.xy = (pos2p.x/pos2p.w - pos1p.x/pos1p.w, pos1p.y/pos1p.w - pos2p.y/pos2p.w);
-
+		imageTangent = normalize(imageTangent);
 		//	compute size with u_viewportWidth and u_viewportHeight;
 		gl_PointSize = length(vec2(offset.x, offset.y));
 		//gl_PointSize = 20;
