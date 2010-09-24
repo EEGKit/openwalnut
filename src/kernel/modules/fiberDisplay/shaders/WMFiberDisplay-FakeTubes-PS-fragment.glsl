@@ -44,13 +44,16 @@ void main()
 	newTexCoords.x = (imageTangentNorm.y * (gl_PointCoord.y - 0.5) + imageTangentNorm.x * (gl_PointCoord.x - 0.5)) + 0.5;
 	newTexCoords.y = (imageTangentNorm.y * (gl_PointCoord.x - 0.5) - imageTangentNorm.x * (gl_PointCoord.y - 0.5)) + 0.5;
 
-	color = texture2D(texturePS, newTexCoords.xy);
-	//color = texture2D(texturePS, gl_PointCoord.xy);
-
-	if(endPoint == 0.0)
+  if(endPoint == 0.0)
 	{
+  	color = texture2D(texturePS, gl_PointCoord.xy );
 		color.x = 1.0;
 	}
+  else
+  {
+	  color = texture2D(texturePS, newTexCoords.xy);
+  }
+
 	gl_FragColor.a = color.z;
 
 		/* compute the specular term if NdotL is  larger than zero */

@@ -28,6 +28,8 @@
 #include "../../../kernel/WKernel.h"
 #include "WTubeDrawable.h"
 #include <osg/TexGen>
+#include <osgDB/ReadFile>
+#include <osgDB/WriteFile>
 #include <osg/Texture1D>
 #include <osg/Texture2D>
 #include <osg/BlendFunc>
@@ -189,7 +191,7 @@ void WTubeDrawable::setDataset( boost::shared_ptr< const WDataSetFibers > datase
 	}
 }
 
-void WTubeDrawable::setUseTubes( bool flag )		
+void WTubeDrawable::setUseTubes( bool flag )
 {
     m_useTubes = flag;
 
@@ -420,36 +422,39 @@ void WTubeDrawable::create2DTextureCycleLightning(osg::StateSet* m_rootState) co
     float alpha, diffuse, specular = 0.0f;
     float check;
 
-    // fill in the image data.
-    osg::Vec4* dataPtr = (osg::Vec4*)image->data();
-    osg::Vec4 color;
-	for(int i=1;i<noPixels+1;++i)
+    const size_t resX = 64;
+    osg::ref_ptr< osg::Image > randImage = new osg::Image();
+    randImage->allocateImage( resX, resX, 1, GL_RGBA, GL_UNSIGNED_BYTE );
+    unsigned char *randomLuminance = randImage->data();  // should be 4 megs
+    for( unsigned int x = 0; x < resX; x++ )
     {
-		diffuse = sin((float)i*step);
-		specular = pow(diffuse, 16);
 
-		for(int j=1;j<noPixels+1;++j)
+        diffuse = sin((float)x*step);
+		    specular = pow(diffuse, 16);
+        for( unsigned int y = 0; y < resX; y++ )
         {
-			// Einheitskreis,
-			check = pow(j-32,2) + pow(i-32,2);
-			if(check > 1024)
-			{
-				alpha = 0.0f;
-			}
-			else
-			{
-				alpha = 1.0f;
-			}
-			color = osg::Vec4(diffuse, specular, alpha, 1.0f);
+          check = pow( 2.0 * ( static_cast< float >( x ) / static_cast< float >( resX ) ) - 1.0, 2.0) +
+                  pow( 2.0 * ( static_cast< float >( y ) / static_cast< float >( resX ) ) - 1.0, 2.0);
+          if(check > 1.0)
+          {
+            alpha = 0.0f;
+          }
+          else
+          {
+            alpha = 1.0f;
+          }
 
-            *dataPtr++ = color;
+            randomLuminance[ ( 4 * y * resX ) + ( 4 * x ) + 0 ] = static_cast< unsigned char >( diffuse * 255.0 );
+            randomLuminance[ ( 4 * y * resX ) + ( 4 * x ) + 1 ] = static_cast< unsigned char >( specular * 255.0 );
+            randomLuminance[ ( 4 * y * resX ) + ( 4 * x ) + 2 ] = static_cast< unsigned char >( alpha * 255.0 );
+            randomLuminance[ ( 4 * y * resX ) + ( 4 * x ) + 3 ] = 255;
         }
     }
 	osg::Texture2D* texture = new osg::Texture2D;
 	texture->setDataVariance(osg::Object::STATIC);
 	texture->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP);
     texture->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR);
-    texture->setImage(image);
+    texture->setImage(randImage);
 
 	m_rootState->setTextureAttribute(2,texture,osg::StateAttribute::OVERRIDE);
 	m_rootState->setTextureMode(2,GL_TEXTURE_2D,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
