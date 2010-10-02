@@ -43,7 +43,7 @@
 #include "../../kernel/WKernel.h"
 
 #include "WMAtlasSurfaces.h"
-#include "atlas.xpm"
+#include "WMAtlasSurfaces.xpm"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMAtlasSurfaces )
@@ -103,6 +103,8 @@ void WMAtlasSurfaces::properties()
 {
     WPropertyBase::PropertyChangeNotifierType propertyCallback = boost::bind( &WMAtlasSurfaces::propertyChanged, this );
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+
+    WModule::properties();
 }
 
 void WMAtlasSurfaces::moduleMain()
@@ -117,6 +119,13 @@ void WMAtlasSurfaces::moduleMain()
     // loop until the module container requests the module to quit
     while ( !m_shutdownFlag() )
     {
+        m_moduleState.wait();
+
+        if ( m_shutdownFlag() )
+        {
+            break;
+        }
+
         if( m_dataSet != m_input->getData() )
         {
             // acquire data from the input connector
@@ -140,9 +149,8 @@ void WMAtlasSurfaces::moduleMain()
                     WAssert( false, "Wrong data type in AtlasSurfaces module" );
             }
         }
-
-        //m_moduleState.wait();
     }
+    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_moduleNode );
 }
 
 void WMAtlasSurfaces::createSurfaces()
@@ -348,8 +356,8 @@ void WMAtlasSurfaces::createOSGNode()
     //    }
 
         m_moduleNode->insert( outputGeode );
-        WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_moduleNode );
     }
+    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_moduleNode );
     m_moduleNode->addUpdateCallback( new AtlasSurfaceNodeCallback( this ) );
 }
 

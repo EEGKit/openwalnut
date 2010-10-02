@@ -37,6 +37,7 @@
 #include "../common/WSharedObject.h"
 #include "../common/WSharedSequenceContainer.h"
 #include "WDataSetSingle.h"
+#include "WDataSetScalar.h"
 #include "WValueSet.h"
 #include "WDataHandlerEnums.h"
 
@@ -47,7 +48,7 @@ class WThreadedPerVoxelOperationTest;
  * \class WThreadedPerVoxelOperation
  *
  * A template that performs an operation on a per voxel basis. This
- * template is intended to be used in combination with WThreadedFunction.
+ * template is intended to be used in combination with \see WThreadedFunction.
  *
  * The template parameters are the internal datatype of the input datasets valueset,
  * the number of input data elements per voxel, the type of the output data and the number of
@@ -56,6 +57,13 @@ class WThreadedPerVoxelOperationTest;
  * Example: Suppose one wants to calculate the largest eigenvector of a symmetric tensor of order
  * 2 per voxel, where the input tensors are stored als 6 floats. The output could be 3 double values.
  * The corresponding template parameters would be float, 6, double, 3.
+ *
+ * A function that converts the input values to output values needs to be given via a boost::function
+ * object. The correct 'signature' is:
+ *
+ * boost::array< Output_T, numOutputs > func( WValueSet< Value_T >::SubArray const& );
+ *
+ * The subarray will have exactly numInputs entries.
  */
 template< typename Value_T, std::size_t numValues, typename Output_T, std::size_t numOutputs >
 class WThreadedPerVoxelOperation : public WThreadedJobs< WValueSet< Value_T >, std::size_t >
@@ -113,6 +121,7 @@ public:
 
     /**
      * Get the output dataset.
+     *
      * \return The oupput dataset.
      */
     boost::shared_ptr< WDataSetSingle > getResult();
@@ -215,10 +224,18 @@ void WThreadedPerVoxelOperation< Value_T, numValues, Output_T, numOutputs >::com
 template< typename Value_T, std::size_t numValues, typename Output_T, std::size_t numOutputs >
 boost::shared_ptr< WDataSetSingle > WThreadedPerVoxelOperation< Value_T, numValues, Output_T, numOutputs >::getResult()
 {
-    boost::shared_ptr< OutValueSetType > values( new OutValueSetType( 1, numOutputs,
-                                                                m_output.getReadTicket()->get(),
-                                                                DataType< Output_T >::type ) );
-    return boost::shared_ptr< WDataSetSingle >( new WDataSetSingle( values, m_grid ) );
+    boost::shared_ptr< OutValueSetType > values;
+    switch( numOutputs )
+    {
+    case 1:
+        values = boost::shared_ptr< OutValueSetType >( new OutValueSetType( 0, 1, m_output.getReadTicket()->get(),
+                                                                            DataType< Output_T >::type ) );
+        return boost::shared_ptr< WDataSetScalar >( new WDataSetScalar( values, m_grid ) );
+    default:
+        values = boost::shared_ptr< OutValueSetType >( new OutValueSetType( 1, numOutputs, m_output.getReadTicket()->get(),
+                                                                            DataType< Output_T >::type ) );
+        return boost::shared_ptr< WDataSetSingle >( new WDataSetSingle( values, m_grid ) );
+    }
 }
 
 #endif  // WTHREADEDPERVOXELOPERATION_H

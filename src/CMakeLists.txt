@@ -76,9 +76,10 @@ IF( NOT CMAKE_GENERATOR MATCHES "Visual Studio" )
   FIND_PACKAGE( osgText ${MIN_OSG_VERSION} REQUIRED )
   FIND_PACKAGE( osgGA ${MIN_OSG_VERSION} REQUIRED )
   FIND_PACKAGE( osgSim ${MIN_OSG_VERSION} REQUIRED )
+  FIND_PACKAGE( osgWidget ${MIN_OSG_VERSION} REQUIRED )
   FIND_PACKAGE( OpenThreads ${MIN_OSG_VERSION} REQUIRED )
-  SET( OPENSCENEGRAPH_LIBRARIES ${OSGDB_LIBRARY} ${OSGTEXT_LIBRARY} ${OSGGA_LIBRARY} ${OSGUTIL_LIBRARY} ${OSGVIEWER_LIBRARY} ${OSG_LIBRARY} ${OSGSIM_LIBRARY} ${OPENTHREADS_LIBRARY} )
-  SET( OPENSCENEGRAPH_INCLUDE_DIRS ${OSG_INCLUDE_DIR} ${OSGDB_INCLUDE_DIR} ${OSGTEXT_INCLUDE_DIR} ${OSGGA_INCLUDE_DIR} ${OSGVIEWER_INCLUDE_DIR} ${OSGUTIL_INCLUDE_DIR} ${OSGSIM_INCLUDE_DIR} ${OPENTHREADS_INCLUDE_DIR} )
+  SET( OPENSCENEGRAPH_LIBRARIES ${OSGDB_LIBRARY} ${OSGTEXT_LIBRARY} ${OSGGA_LIBRARY} ${OSGUTIL_LIBRARY} ${OSGVIEWER_LIBRARY} ${OSG_LIBRARY} ${OSGSIM_LIBRARY} ${OSGWIDGET_LIBRARY} ${OPENTHREADS_LIBRARY} )
+  SET( OPENSCENEGRAPH_INCLUDE_DIRS ${OSG_INCLUDE_DIR} ${OSGDB_INCLUDE_DIR} ${OSGTEXT_INCLUDE_DIR} ${OSGGA_INCLUDE_DIR} ${OSGVIEWER_INCLUDE_DIR} ${OSGUTIL_INCLUDE_DIR} ${OSGSIM_INCLUDE_DIR} ${OSGWIDGET_INCLUDE_DIR} ${OPENTHREADS_INCLUDE_DIR} )
   # When new cmake version available >=2.6.4 we may use this the line below instead the stuff above
   # FIND_PACKAGE( OpenSceneGraph 2.8.0 REQUIRED osgDB osgUtil osgGA osgViewer osgSim OpenThreads )
   INCLUDE_DIRECTORIES( ${OPENSCENEGRAPH_INCLUDE_DIRS} )
@@ -86,7 +87,7 @@ ELSE()
   IF( NOT VERSION LESS 2.6.3 )
     SET ( CMAKE_PREFIX_PATH "$ENV{ProgramFiles}/OpenSceneGraph" )
   ENDIF()
-  FIND_PACKAGE( OpenSceneGraph ${MIN_OSG_VERSION} REQUIRED osgUtil osgDB osgViewer osgText osgGA osgSim )
+  FIND_PACKAGE( OpenSceneGraph ${MIN_OSG_VERSION} REQUIRED osgUtil osgDB osgViewer osgText osgGA osgSim osgWidget )
   INCLUDE_DIRECTORIES( ${OPENSCENEGRAPH_INCLUDE_DIRS} )
 ENDIF()
 
@@ -96,6 +97,20 @@ IF( Teem_FOUND )    # we need to add the include path and lib path to allow the 
                     # /usr/local
     INCLUDE_DIRECTORIES( ${Teem_INCLUDE_DIRS} )
     LINK_DIRECTORIES( ${LINK_DIRECTORIES} ${Teem_LIBRARY_DIRS} )
+ENDIF()
+
+### OSSIM ###
+FIND_PACKAGE( OSSIM QUIET )
+IF( OSSIM_FOUND )
+  MESSAGE( STATUS "Found OSSIM." )
+  ADD_DEFINITIONS( -DUSEOSSIM )
+  INCLUDE_DIRECTORIES( ${OSSIM_INCLUDE_DIR} )
+  LINK_LIBRARIES( ${OSSIM_LIBRARY} )
+# TODO(math): is an entry in link directories necessary?
+#   LINK_DIRECTORIES( ${OSSIM_LIBDIR} )
+  MARK_AS_ADVANCED( OSSIM_INCLUDEDIR )
+  MARK_AS_ADVANCED( OSSIM_LIBRARIES )
+#   MARK_AS_ADVANCED( OSSIM_LIBDIR )
 ENDIF()
 
 # other options:
@@ -252,15 +267,17 @@ ADD_CUSTOM_TARGET( tags DEPENDS ctags DEPENDS cscope )
 
 #-------------------------------------------------------------------------------------------------------------
 # Determines the number of cores available on this machine
-SET( NUM_CORES_SOURCE_DIR ${PROJECT_SOURCE_DIR}/../tools/numCores )
-SET( NUM_CORES_BINARY_DIR ${PROJECT_BINARY_DIR}/numCores )
-SET( NUM_CORES_BINARY ${NUM_CORES_BINARY_DIR}/numCores )
-ADD_CUSTOM_TARGET( numCores
+IF( NOT CMAKE_GENERATOR MATCHES "Visual Studio" )
+	SET( NUM_CORES_SOURCE_DIR ${PROJECT_SOURCE_DIR}/../tools/numCores )
+	SET( NUM_CORES_BINARY_DIR ${PROJECT_BINARY_DIR}/numCores )
+	SET( NUM_CORES_BINARY ${NUM_CORES_BINARY_DIR}/numCores )
+	ADD_CUSTOM_TARGET( numCores
                    COMMAND ${CMAKE_COMMAND} -E make_directory ${NUM_CORES_BINARY_DIR}
                    COMMAND cd ${NUM_CORES_BINARY_DIR} && ${CMAKE_COMMAND} ${NUM_CORES_SOURCE_DIR} > /dev/null
                    COMMAND $(MAKE) -C ${NUM_CORES_BINARY_DIR} > /dev/null
                    COMMENT "Determines the number of cores available on this machine"
                  )
+ENDIF()
 
 #-------------------------------------------------------------------------------------------------------------
 # Checks style guide lines via the BrainLint tool against all source code files
@@ -268,6 +285,7 @@ ADD_CUSTOM_TARGET( numCores
 #    noncolored if it is set to OFF
 FILE( GLOB_RECURSE STYLE_CPP ${PROJECT_SOURCE_DIR}/*.cpp )
 FILE( GLOB_RECURSE STYLE_H ${PROJECT_SOURCE_DIR}/*.h )
+FILE( GLOB_RECURSE STYLE_GLSL ${PROJECT_SOURCE_DIR}/*.glsl )
 # Set dirs to exclude from stylecheck
 SET( EXCLUDE_DIRS "/ext/nifti/;/dataHandler/io/biosig/;/dataHandler/io/biosigWin/;/dataHandler/io/biosig/XMLParser/;/dataHandler/io/biosigWin/XMLParser/;/ext/libeep/avr/;/ext/libeep/cnt/;/ext/libeep/eep/;/common/platformDependent/visualStudio/;/modules/lic/fibernavigator/;/modules/lic/fantom/" )
 FOREACH( dirname ${EXCLUDE_DIRS} )
@@ -299,7 +317,7 @@ ELSE()
 ENDIF()
 
 FILE( WRITE ${PROJECT_BINARY_DIR}/brainlintlist "" )
-FOREACH( fname ${STYLE_CPP} ${STYLE_H} )
+FOREACH( fname ${STYLE_CPP} ${STYLE_H} ${STYLE_GLSL} )
     FILE( APPEND ${PROJECT_BINARY_DIR}/brainlintlist "${fname}\n" )
 ENDFOREACH()
 

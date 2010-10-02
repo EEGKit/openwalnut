@@ -169,10 +169,21 @@ void WPickHandler::pick( osgViewer::View* view, const osgGA::GUIEventAdapter& ea
     float x = ea.getX(); // pixel position in x direction
     float y = ea.getY(); // pixel position in x direction
 
+    WPickInfo pickInfo;
+
+    if( m_shift )
+    {
+        pickInfo.setModifierKey( WPickInfo::SHIFT );
+    }
+
+    if ( m_ctrl )
+    {
+        pickInfo.setModifierKey( WPickInfo::STRG );
+    }
+
     // if we are in another viewer than the main view we just need the pixel position
     if ( m_viewerName != "" && m_viewerName != "main" )
     {
-        WPickInfo pickInfo;
         pickInfo = WPickInfo( "", m_viewerName, m_startPick.getPickPosition(), std::make_pair( x, y ),
                               m_startPick.getModifierKey(), m_mouseButton, m_startPick.getPickNormal() );
         m_hitResult = pickInfo;
@@ -219,8 +230,12 @@ void WPickHandler::pick( osgViewer::View* view, const osgGA::GUIEventAdapter& ea
 
         if ( hitr == intersections.end() )
         {
-            // after everything was ignored nothing pickable remained
-            return;
+            // after everything was ignored nothing pickable remained and we have noting picked before
+            // we just stop further processing.
+            if(  m_startPick.getName() == "" )
+            {
+                return;
+            }
         }
 
         // if we have a previous pick we search for it in the list
@@ -237,10 +252,24 @@ void WPickHandler::pick( osgViewer::View* view, const osgGA::GUIEventAdapter& ea
                 }
             }
         }
+    } // end of if( intersetionsExist )
+    else
+    {
+        // if we found no intersection and we have noting picked before
+        // we want to return "nothing" in order to provide the pixel coordinates
+        // even though we did not hit anything.
+        if(  m_startPick.getName() == "" )
+        {
+            pickInfo = WPickInfo( "nothing", m_viewerName, wmath::WPosition( 0.0, 0.0, 0.0 ), std::make_pair( x, y ),
+                                  m_startPick.getModifierKey(), m_mouseButton, wmath::WVector3D( 0.0, 0.0, 0.0 ) );
+
+            m_hitResult = pickInfo;
+            m_pickSignal( getHitResult() );
+            return;
+        }
     }
 
     // Set the new pickInfo if the previously picked is still in list or we have a pick in conjunction with previously no pick
-    WPickInfo pickInfo;
     if( startPickIsStillInList || ( intersetionsExist && ( m_startPick.getName() == "unpick" || m_startPick.getName() == "" ) ) )
     {
         // if nothing was picked before, or the previously picked was found: set new pickInfo
@@ -254,7 +283,7 @@ void WPickHandler::pick( osgViewer::View* view, const osgGA::GUIEventAdapter& ea
         pickNormal[1] = hitr->getWorldIntersectNormal()[1];
         pickNormal[2] = hitr->getWorldIntersectNormal()[2];
         pickInfo = WPickInfo( extractSuitableName( hitr ), m_viewerName, pickPos, std::make_pair( x, y ),
-                WPickInfo::NONE, m_mouseButton, pickNormal );
+                              pickInfo.getModifierKey(), m_mouseButton, pickNormal );
     }
 
     // Use the old PickInfo with updated pixel info if we have previously picked something but the old is not in list anymore
@@ -262,11 +291,6 @@ void WPickHandler::pick( osgViewer::View* view, const osgGA::GUIEventAdapter& ea
     {
         pickInfo = WPickInfo( m_startPick.getName(), m_viewerName, m_startPick.getPickPosition(), std::make_pair( x, y ),
                               m_startPick.getModifierKey(), m_mouseButton, m_startPick.getPickNormal() );
-    }
-
-    if( m_shift )
-    {
-        pickInfo.setModifierKey( WPickInfo::SHIFT );
     }
 
     m_hitResult = pickInfo;

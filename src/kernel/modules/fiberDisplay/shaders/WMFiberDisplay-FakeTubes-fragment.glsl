@@ -1,3 +1,27 @@
+//---------------------------------------------------------------------------
+//
+// Project: OpenWalnut ( http://www.openwalnut.org )
+//
+// Copyright 2009 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
+// For more information see http://www.openwalnut.org/copying
+//
+// This file is part of OpenWalnut.
+//
+// OpenWalnut is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// OpenWalnut is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with OpenWalnut. If not, see <http://www.gnu.org/licenses/>.
+//
+//---------------------------------------------------------------------------
+
 varying vec3 tangentR3; // Tangent vector in world space
 varying float s_param; // s parameter of texture [-1..1]
 varying float tangent_dot_view;
@@ -17,65 +41,61 @@ varying float z;
 varying float zNear;
 varying float zFar;
 
+varying vec4 VaryingTexCoord0;
+uniform int dimX, dimY, dimZ;
+
+uniform sampler3D tex;
+uniform int type;
+uniform float threshold;
+uniform int cMap;
+
+
+#include "WGEColorMaps.glsl"
+
+float lookupTex()
+{
+    vec3 v = VaryingTexCoord0.xyz;
+    v.x = v.x / ( float( dimX ) );
+    v.y = v.y / ( float( dimY ) );
+    v.z = v.z / ( float( dimZ ) );
+
+    vec3 col1;
+    col1.r = clamp( texture3D( tex, v ).r, 0.0, 1.0 );
+
+    if ( col1.r < threshold )
+    {
+        discard;
+    }
+    else
+    {
+        return col1.r;
+    }
+}
+
+/**
+ * simple fragment shader that does rendering of tubes with diffuse illumination
+ */
 void main()
 {
+    vec3 color;
 
-	vec3 L,halfVector,V, T, N, halfV;
-	vec3 specular = 0.0;
-	float NdotL,NdotHV;
-	float alpha, beta, lt;
-	halfVector = view - lightDir;
-	T = normalize(tangentR3);
-	V = normalize(view);
-	L = normalize(lightDir);
-	N = normalize(normal);
+    if ( useTexture )
+    {
+        float value = lookupTex();
+        colorMap( color.rgb, value, cMap );
+    }
+    else
+    {
+        color = abs( normalize( myColor.rgb ) );
+    }
 
-	NdotL = max(dot(N,L),0.0);
-	vec4 color;
 
-	// koordinaten für illuminated lines texturen
-	alpha = dot(L,N) / sqrt(1 - pow( dot(L,T),2));
-	beta = dot(halfVector,N) / sqrt( 1 - pow( dot(halfVector, T), 2));
-	lt = dot(L, T);
+    // set the color of this fragment (i.e. pixel)
+    gl_FragColor.rgb = clamp( view_dot_normal
+                              * ( color + 0.15 * pow( view_dot_normal, 10. )
+                                  *  pow( tangent_dot_view, 10. )
+								  * vec3( 1., 1., 1. ) ), 0., 1. );
 
-	//compute rotation in imageplane for pointsprite
-	#ifdef USE_POINTSPRITE
-	//if(usePointSprite < 0.8)
-	//{
-		vec2 imageTangentNorm = normalize(imageTangent);
-		vec2 newTexCoords;
-		newTexCoords.x = (imageTangentNorm.y * (gl_PointCoord.y - 0.5) + imageTangentNorm.x * (gl_PointCoord.x - 0.5)) + 0.5;
-		newTexCoords.y = (imageTangentNorm.y * (gl_PointCoord.x - 0.5) - imageTangentNorm.x * (gl_PointCoord.y - 0.5)) + 0.5;
-
-		color = texture2D(texturePS, newTexCoords.xy);
-
-		if(endPoint == 0.0)
-		{
-			color.x = 1.0;
-		}
-		gl_FragColor.a = color.z;
-
-	#else
-	//}
-	//else
-	//{
-		color = texture1D(texture, gl_TexCoord[1].s);
-		gl_FragColor.a = tubeColor.a;
-	//}
-	#endif
-
-		/* compute the specular term if NdotL is  larger than zero */
-		if (NdotL > 0.0) {
-
-				// normalize the half-vector, and then compute the
-				// cosine (dot product) with the normal
-				halfV = normalize(halfVector);
-
-				NdotHV = max(dot(normal, halfV),0.0);
-				specular = pow(NdotHV,2) * color.y * tubeColor.rgb;
-		}
-
-	float depthCueingFactor = (1 - (z+zNear)/(zNear+zFar));
-	gl_FragColor.rgb = tubeColor.rgb * (color.x) * depthCueingFactor + specular;
+    gl_FragColor.a = myColor.a;
 }
 

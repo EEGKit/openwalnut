@@ -31,6 +31,9 @@
 #include <string>
 #include <vector>
 
+#include <osg/Vec4>
+
+#include "math/WVector3D.h"
 #include "WExportCommon.h"
 
 /**
@@ -48,6 +51,20 @@ public:
      * \param alpha opacity value between [0,1]
      */
     WColor( float red = 0.0, float green = 0.0, float blue = 0.0, float alpha = 1.0 );
+
+    /**
+     * Casts a color to a vector comfortably.
+     *
+     * \return vector instance
+     */
+    inline operator osg::Vec4f() const;
+
+    /**
+     * Casts a color to a vector comfortably. As the returned vector is three-dimensional, the alpha value is omitted.
+     *
+     * \return vector instance
+     */
+    inline operator wmath::WVector3D() const;
 
     /**
      * Sets the green channel for this color
@@ -109,6 +126,18 @@ public:
      */
     void setRGB( double r, double g, double b );
 
+    /**
+     * Computes the inverse of this color in means of RGB space.
+     */
+    void inverse();
+
+    /**
+     * Computes the arithmetic mean of this and the other color. This is done component wisely.
+     * For example red mixed with green will become yellow.
+     *
+     * \param other The other color to mix in here :D.
+     */
+    void average( const WColor& other );
 
     /**
      * Compares two WColor instances on all four channels.
@@ -128,6 +157,10 @@ public:
      */
     bool operator!=( const WColor &rhs ) const;
 
+    static const WColor green; //!< Default for green
+    static const WColor red; //!< Default for red
+    static const WColor blue; //!< Default for blue
+
 protected:
 private:
     float m_red; //!< Red channel
@@ -145,5 +178,20 @@ std::ostream& operator<<( std::ostream& out, const WColor& c );
  * Read a color in string representation from the given input stream.
  */
 std::istream& operator>>( std::istream& in, WColor& c );
+
+inline WColor::operator osg::Vec4f() const
+{
+    return osg::Vec4f( static_cast< float >( m_red ),
+                       static_cast< float >( m_green ),
+                       static_cast< float >( m_blue ),
+                       static_cast< float >( m_alpha ) );
+}
+
+inline WColor::operator wmath::WVector3D() const
+{
+    return wmath::WVector3D( static_cast< float >( m_red ),
+                             static_cast< float >( m_green ),
+                             static_cast< float >( m_blue ) );
+}
 
 #endif  // WCOLOR_H

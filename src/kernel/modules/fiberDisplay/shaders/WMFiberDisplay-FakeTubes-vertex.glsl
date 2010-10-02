@@ -1,3 +1,27 @@
+//---------------------------------------------------------------------------
+//
+// Project: OpenWalnut ( http://www.openwalnut.org )
+//
+// Copyright 2009 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
+// For more information see http://www.openwalnut.org/copying
+//
+// This file is part of OpenWalnut.
+//
+// OpenWalnut is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// OpenWalnut is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with OpenWalnut. If not, see <http://www.gnu.org/licenses/>.
+//
+//---------------------------------------------------------------------------
+
 varying float tangent_dot_view;
 varying vec3 tangentR3;
 varying float s_param;
@@ -21,103 +45,37 @@ varying float zFar;
 
 void main()
 {
-	float thickness;
-	vec4 pos;
-	vec3 lightPosition = vec3(0., 0., -1.);
-	usePointSprite = 1.0;
-	tangentR3 = gl_Normal;
-	endPoint = 1.0;
 
-	pos = gl_ModelViewProjectionMatrix * gl_Vertex;
-	z = pos.z;
+    VaryingTexCoord0 = gl_Vertex;
 
-	zNear =0.5 + 0.5*( (gl_ModelViewProjectionMatrix * vec4(nearPos,1.00)).z );
-	zFar =0.5 + 0.5*( (gl_ModelViewProjectionMatrix * vec4(farPos,1.0)).z );
-  float tmp2 = zNear;
-  zNear = min( zNear, zFar );
-  zFar = max( zFar, tmp2 );
+    gl_ClipVertex = gl_ModelViewMatrix * gl_Vertex; //< make clipping planes work
 
-	view = - pos.xyz;
 
-	//lightDir = normalize(gl_LightSource[0].position.xyz - view);
-	//halfVector = normalize(gl_LightSource[0].halfVector.xyz);
 
-	lightDir = normalize( lightPosition - pos.xyz);
+    vec3 tangent;
 
-	vec3 cameraPosition = vec3(gl_ModelViewMatrixInverse * vec4(0,0,0,1.0));
-	vec3 cameraVector = cameraPosition - gl_Vertex.xyz;
 
-	gl_ClipVertex = gl_ModelViewMatrix * gl_Vertex; // make clipping planes work
 
-	// defines northpoint (1.0), southpoint (-1.0) or point sprite (0.0)
-	s_param = gl_MultiTexCoord0.s;
+    float thickness = 0.01 * u_thickness/ 100.;
 
-	vec3 tangent = (gl_ModelViewProjectionMatrix * vec4(gl_Normal,0.)).xyz; // transform our tangent vector
 
-	//define thickness of tubes
-	thickness = u_thickness * 0.0001 * (1 - (z+zNear)/(zNear+zFar));
 
-	// color of tube
-	tubeColor = gl_Color;
+    tangentR3 = gl_Normal;
+    tangent = ( gl_ModelViewProjectionMatrix * vec4( gl_Normal, 0. ) ).xyz; //< transform our tangent vector
+    s_param = gl_MultiTexCoord0.x; //< store texture coordinate for shader
 
-	vec3 offsetNN = cross( normalize(tangent.xyz), lightPosition);
-	vec3 offset = normalize(offsetNN);
-	tangent_dot_view = length(offsetNN);
-	normal = normalize(cross( offsetNN, lightPosition));
 
-	//scalar product between viewDir and tangent
-	float tmp = dot(view, tangent);
 
-	offset.x *= thickness;
-	offset.y *= thickness;
+    vec4 pos = ftransform(); //< transform position to eye space
 
-	//decide wether point sprite or triangle strip to render
-	#ifdef USE_POINTSPRITE
-	//if(s_param == 0.0)
-	//{
+    offset.x *= thickness;
+    offset.y *= thickness;
 
-		//calculation for pointsprites
-		if(tmp > 0.93 || gl_MultiTexCoord0.t == 0.0)
-		{
-			vec4 pos1 = gl_Vertex;
-			vec4 pos2 = gl_Vertex + vec4(gl_Normal,0);
 
-			vec4 pos1p = gl_ModelViewProjectionMatrix * pos1.xyzw;
-			vec4 pos2p = gl_ModelViewProjectionMatrix * pos2.xyzw;
 
-			imageTangent.xy = (pos2p.x/pos2p.w - pos1p.x/pos1p.w, pos1p.y/pos1p.w - pos2p.y/pos2p.w);
+    pos.xyz += offset * ( s_param ); //< add offset in y-direction (eye-space)
 
-			//	compute size with u_viewportWidth and u_viewportHeight;
-			//gl_PointSize = tangent_dot_view * u_viewportWidth;
-			gl_PointSize = 20;
+    myColor = gl_Color;
 
-			usePointSprite = 0.0;
-			endPoint = gl_MultiTexCoord0.t;
-		}
-		else
-		{
-			//clip point sprite
-			pos.w = 0.0;
-		}
-
-	#else
-	//}
-	//else
-	//{
-		// don't draw quad strip	//decide wether point sprite or triangle strip to render
-		if(tmp >= 0.98)
-		{
-			tubeColor.a = 0.0;
-		}
-		else
-		{
-			// transform quad points to position
-			pos.xyz += offset * (s_param); //< add offset in y-direction (eye-space)
-
-			// TexCoord for 1D texture
-			gl_TexCoord[1] = gl_MultiTexCoord0.t;
-		}
-	//}
-	#endif
 	gl_Position = pos; //< store final position
 }

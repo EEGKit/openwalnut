@@ -56,6 +56,7 @@ WTriangleMesh2::WTriangleMesh2( size_t vertNum, size_t triangleNum )
       m_neighborsCalculated( false )
 {
     m_verts = osg::ref_ptr< osg::Vec3Array >( new osg::Vec3Array( vertNum ) );
+    m_textureCoordinates = osg::ref_ptr< osg::Vec3Array >( new osg::Vec3Array( vertNum ) );
     m_vertNormals = osg::ref_ptr< osg::Vec3Array >( new osg::Vec3Array( vertNum ) );
     m_vertColors = osg::ref_ptr< osg::Vec4Array >( new osg::Vec4Array( vertNum ) );
 
@@ -70,6 +71,7 @@ WTriangleMesh2::WTriangleMesh2( osg::ref_ptr< osg::Vec3Array > vertices, const s
       m_meshDirty( true ),
       m_neighborsCalculated( false ),
       m_verts( vertices ),
+      m_textureCoordinates( new osg::Vec3Array( vertices->size() ) ),
       m_vertNormals( new osg::Vec3Array( vertices->size() ) ),
       m_vertColors( new osg::Vec4Array( vertices->size() ) ),
       m_triangles( triangles ),
@@ -158,6 +160,16 @@ osg::ref_ptr< osg::Vec3Array >WTriangleMesh2::getVertexArray()
 osg::ref_ptr< const osg::Vec3Array >WTriangleMesh2::getVertexArray() const
 {
     return m_verts;
+}
+
+osg::ref_ptr< osg::Vec3Array > WTriangleMesh2::getTextureCoordinateArray()
+{
+    return m_textureCoordinates;
+}
+
+osg::ref_ptr< const osg::Vec3Array > WTriangleMesh2::getTextureCoordinateArray() const
+{
+    return m_textureCoordinates;
 }
 
 osg::ref_ptr< osg::Vec3Array >WTriangleMesh2::getVertexNormalArray( bool forceRecalc )
@@ -639,6 +651,24 @@ std::ostream& tm_utils::operator<<( std::ostream& os, const WTriangleMesh2& rhs 
 
 boost::shared_ptr< std::list< boost::shared_ptr< WTriangleMesh2 > > > tm_utils::componentDecomposition( const WTriangleMesh2& mesh )
 {
+    boost::shared_ptr< std::list< boost::shared_ptr< WTriangleMesh2 > > > result( new std::list< boost::shared_ptr< WTriangleMesh2 > >() );
+    if( mesh.vertSize() <= 0 ) // no component possible
+    {
+        return result;
+    }
+    if( mesh.triangleSize() < 3 )
+    {
+        if( mesh.vertSize() > 0 )
+        {
+            // there are vertices but no triangles
+            WAssert( false, "Not implemented the decomposition of a TriangleMesh without any triangles" );
+        }
+        else // no component possible
+        {
+            return result;
+        }
+    }
+
     WUnionFind uf( mesh.vertSize() ); // idea: every vertex in own component, then successivley join in accordance with the triangles
 
     const std::vector< size_t >& triangles = mesh.getTriangles();
@@ -686,10 +716,9 @@ boost::shared_ptr< std::list< boost::shared_ptr< WTriangleMesh2 > > > tm_utils::
         }
     }
 
-    boost::shared_ptr< std::list< boost::shared_ptr< WTriangleMesh2 > > > result( new std::list< boost::shared_ptr< WTriangleMesh2 > >() );
     for( std::map< size_t, BucketType >::const_iterator cit = buckets.begin(); cit != buckets.end(); ++cit )
     {
-        osg::ref_ptr< osg::Vec3Array > newVertices;
+        osg::ref_ptr< osg::Vec3Array > newVertices( new osg::Vec3Array );
         newVertices->resize( cit->second.first.size() );
         for( VertexType::const_iterator vit = cit->second.first.begin(); vit != cit->second.first.end(); ++vit )
         {

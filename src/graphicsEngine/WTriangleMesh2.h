@@ -42,6 +42,7 @@
  */
 class WGE_EXPORT WTriangleMesh2  : public WTransferable
 {
+friend class WTriangleMeshTest;
 public:
     /**
      * constructor that already reserves space for a given number of triangles and vertexes
@@ -85,7 +86,6 @@ public:
      */
     virtual const std::string getDescription() const;
 
-
     /**
      * adds a vertex position to the mesh
      *
@@ -108,6 +108,22 @@ public:
      * \param vert
      */
     void addVertex( wmath::WPosition vert );
+
+    /**
+     * Adds a texture coordinate for the vertex.
+     *
+     * \param texCoord the texture coordinate
+     */
+    void addTextureCoordinate( osg::Vec3 texCoord );
+
+    /**
+     * Adds a texture coordinate for the vertex.
+     *
+     * \param x texture coordinate X
+     * \param y texture coordinate Y
+     * \param z texture coordinate Z
+     */
+    void addTextureCoordinate( float x, float y, float z );
 
     /**
      * adds a tringle to the mesh
@@ -203,6 +219,20 @@ public:
      * \return vertex array
      */
     osg::ref_ptr< const osg::Vec3Array >getVertexArray() const;
+
+    /**
+     * Returns a reference pointer to the texture coordinate array.
+     *
+     * \return texture coordinate array
+     */
+    osg::ref_ptr< osg::Vec3Array > getTextureCoordinateArray();
+
+    /**
+     * Returns a const reference pointer to the texture coordinate array.
+     *
+     * \return texture coordinate array
+     */
+    osg::ref_ptr< const osg::Vec3Array > getTextureCoordinateArray() const;
 
     /**
      * getter
@@ -338,6 +368,18 @@ public:
      */
     void zoomMesh( float zoom );
 
+    /**
+     * Checks if two meshes are exactly the same. Same number of triangles, and
+     * points, and indices as well as same ordering. Keep in mind different
+     * ordering might result in the same structure but is considered different
+     * here.
+     *
+     * \param rhs The other mesh to compare with
+     *
+     * \return True if and only if both: vertices and triangles are exactly the same.
+     */
+    bool operator==( const WTriangleMesh2& rhs ) const;
+
 protected:
     static boost::shared_ptr< WPrototyped > m_prototype; //!< The prototype as singleton.
 private:
@@ -403,6 +445,8 @@ private:
      * \param coVert1
      * \param coVert2
      * \param triangleNum
+     *
+     * \return the number of the neighboring triangle.
      */
     size_t getNeighbor( const size_t coVert1, const size_t coVert2, const size_t triangleNum );
 
@@ -526,6 +570,8 @@ private:
 
     osg::ref_ptr< osg::Vec3Array > m_verts; //!< array containing the vertices
 
+    osg::ref_ptr< osg::Vec3Array > m_textureCoordinates; //!< array containing the texture coordinates
+
     osg::ref_ptr< osg::Vec3Array > m_vertNormals; //!< array containing the vertex normals
 
     osg::ref_ptr< osg::Vec4Array > m_vertColors; //!< array containing vertex colors
@@ -558,7 +604,7 @@ namespace tm_utils
      *
      * \return List of components where each of them is a WTriangleMesh again.
      */
-    boost::shared_ptr< std::list< boost::shared_ptr< WTriangleMesh2 > > > componentDecomposition( const WTriangleMesh2& mesh );
+    WGE_EXPORT boost::shared_ptr< std::list< boost::shared_ptr< WTriangleMesh2 > > > componentDecomposition( const WTriangleMesh2& mesh );
 
     /**
      * Prints for each mesh \#vertices and \#triangles, as well as each triangle with its positions. No point IDs are printed.
@@ -568,7 +614,23 @@ namespace tm_utils
      *
      * \return The output stream again for further usage.
      */
-    std::ostream& operator<<( std::ostream& os, const WTriangleMesh2& rhs );
+    WGE_EXPORT std::ostream& operator<<( std::ostream& os, const WTriangleMesh2& rhs );
+}
+
+inline bool WTriangleMesh2::operator==( const WTriangleMesh2& rhs ) const
+{
+    return std::equal( m_verts->begin(), m_verts->end(), rhs.m_verts->begin() ) &&
+           std::equal( m_triangles.begin(), m_triangles.end(), rhs.m_triangles.begin() );
+}
+
+inline void WTriangleMesh2::addTextureCoordinate( osg::Vec3 texCoord )
+{
+    ( *m_textureCoordinates )[m_countVerts-1] = texCoord;
+}
+
+inline void WTriangleMesh2::addTextureCoordinate( float x, float y, float z )
+{
+    addTextureCoordinate( osg::Vec3( x, y, z ) );
 }
 
 inline void WTriangleMesh2::addVertex( osg::Vec3 vert )
@@ -577,6 +639,11 @@ inline void WTriangleMesh2::addVertex( osg::Vec3 vert )
     {
         ( *m_verts ).resize( m_countVerts + 1 );
     }
+    if ( ( *m_textureCoordinates ).size() == m_countVerts )
+    {
+        ( *m_textureCoordinates ).resize( m_countVerts + 1 );
+    }
+
     ( *m_verts )[m_countVerts] = vert;
     ++m_countVerts;
 }

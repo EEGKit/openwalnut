@@ -40,7 +40,7 @@
 #include "../../graphicsEngine/WGEUtils.h"
 
 #include "WMArbitraryPlane.h"
-#include "arbitraryPlane.xpm"
+#include "WMArbitraryPlane.xpm"
 
 // This line is needed by the module loader to actually find your module. Do not remove. Do NOT add a ";" here.
 W_LOADABLE_MODULE( WMArbitraryPlane )
@@ -102,6 +102,8 @@ void WMArbitraryPlane::properties()
     m_buttonReset2Axial = m_properties->addProperty( "Axial", "Resets and aligns the plane", WPVBaseTypes::PV_TRIGGER_READY, m_propCondition  );
     m_buttonReset2Coronal = m_properties->addProperty( "Coronal", "Resets and aligns the plane", WPVBaseTypes::PV_TRIGGER_READY, m_propCondition  );
     m_buttonReset2Sagittal = m_properties->addProperty( "Sagittal", "Resets and aligns the plane", WPVBaseTypes::PV_TRIGGER_READY, m_propCondition  );
+
+    WModule::properties();
 }
 
 void WMArbitraryPlane::moduleMain()
@@ -233,6 +235,10 @@ void WMArbitraryPlane::initPlane()
     m_s1->setLockY();
     m_s2 = boost::shared_ptr<WROISphere>( new WROISphere( m_p2, 2.5 ) );
     m_s2->setLockX();
+
+    WGraphicsEngine::getGraphicsEngine()->getScene()->addChild( &( *m_s0 ) );
+    WGraphicsEngine::getGraphicsEngine()->getScene()->addChild( &( *m_s1 ) );
+    WGraphicsEngine::getGraphicsEngine()->getScene()->addChild( &( *m_s2 ) );
 
     m_s0->getSignalIsModified()->connect( boost::bind( &WMArbitraryPlane::setDirty, this ) );
     m_s1->getSignalIsModified()->connect( boost::bind( &WMArbitraryPlane::setDirty, this ) );

@@ -32,10 +32,11 @@
 #include <osg/ShapeDrawable>
 #include <osg/Vec3>
 
-#include "WGEGeodeUtils.h"
-#include "WGEUtils.h"
 #include "../common/math/WPosition.h"
 #include "../common/WPathHelper.h"
+#include "WGEGeodeUtils.h"
+#include "WGEGeometryUtils.h"
+#include "WGEUtils.h"
 
 
 osg::ref_ptr< osg::Geode > wge::generateBoundingBoxGeode( const wmath::WPosition& pos1, const wmath::WPosition& pos2, const WColor& color )
@@ -188,17 +189,17 @@ osg::ref_ptr< osg::Node > wge::generateSolidBoundingBoxNode( const wmath::WPosit
     return transform;
 }
 
-osg::ref_ptr< osg::Geometry > wge::convertToOsgGeometry( WTriangleMesh* mesh, bool includeNormals )
+osg::ref_ptr< osg::Geometry > wge::convertToOsgGeometry( WTriangleMesh2* mesh, bool includeNormals )
 {
-    osg::ref_ptr< osg::Vec3Array > vertices = wge::osgVec3Array( mesh->getVertices() );
+    osg::ref_ptr< osg::Vec3Array > vertices = mesh->getVertexArray();
 
     osg::DrawElementsUInt* triangles = new osg::DrawElementsUInt( osg::PrimitiveSet::TRIANGLES );
-    triangles->reserve( 3 * mesh->getNumTriangles() );
-    for( size_t triangleID = 0; triangleID < mesh->getNumTriangles(); ++triangleID )
+    triangles->reserve( 3 * mesh->triangleSize() );
+    for( size_t triangleID = 0; triangleID < mesh->triangleSize(); ++triangleID )
     {
-        triangles->push_back( mesh->getTriangleVertexId( triangleID, 0 ) );
-        triangles->push_back( mesh->getTriangleVertexId( triangleID, 1 ) );
-        triangles->push_back( mesh->getTriangleVertexId( triangleID, 2 ) );
+        triangles->push_back( mesh->getTriVertId0( triangleID ) );
+        triangles->push_back( mesh->getTriVertId1( triangleID ) );
+        triangles->push_back( mesh->getTriVertId2( triangleID ) );
     }
 
     osg::ref_ptr< osg::Geometry> geometry( new osg::Geometry );
@@ -207,15 +208,7 @@ osg::ref_ptr< osg::Geometry > wge::convertToOsgGeometry( WTriangleMesh* mesh, bo
 
     if( includeNormals )
     {
-        mesh->computeVertNormals();
-        osg::Vec3Array* normals = new osg::Vec3Array();
-        normals->reserve( mesh->getNumVertices() );
-        for( size_t vertexID = 0; vertexID < mesh->getNumVertices(); ++vertexID )
-        {
-            normals->push_back( wge::osgVec3( mesh->getVertexNormal( vertexID ) ) );
-        }
-
-        geometry->setNormalArray( normals );
+        geometry->setNormalArray( mesh->getVertexNormalArray( true ) );
         geometry->setNormalBinding( osg::Geometry::BIND_PER_VERTEX );
     }
 
@@ -300,3 +293,92 @@ osg::ref_ptr< osg::PositionAttitudeTransform > wge::vector2label( osg::Vec3 posi
     boost::lexical_cast< std::string >( position[1] ) + "," + boost::lexical_cast< std::string >( position[2] ) + ")";
     return ( addLabel( position, label ) );
 }
+
+osg::ref_ptr< osg::Geode > wge::genFinitePlane( double xSize, double ySize, const WPlane& p, const WColor& color, bool border )
+{
+    using osg::ref_ptr;
+    ref_ptr< osg::Vec3Array > vertices = ref_ptr< osg::Vec3Array >( new osg::Vec3Array );
+    ref_ptr< osg::Vec4Array > colors   = ref_ptr< osg::Vec4Array >( new osg::Vec4Array );
+    ref_ptr< osg::Geometry >  geometry = ref_ptr< osg::Geometry >( new osg::Geometry );
+
+    colors->push_back( wge::osgColor( color ) );
+
+    vertices->push_back( osgVec3( p.getPointInPlane(  xSize,  ySize ) ) );
+    vertices->push_back( osgVec3( p.getPointInPlane( -xSize,  ySize ) ) );
+    vertices->push_back( osgVec3( p.getPointInPlane( -xSize, -ySize ) ) );
+    vertices->push_back( osgVec3( p.getPointInPlane(  xSize, -ySize ) ) );
+
+    geometry->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::QUADS, 0, 4 ) );
+    geometry->setVertexArray( vertices );
+    geometry->setColorArray( colors );
+    geometry->setColorBinding( osg::Geometry::BIND_OVERALL );
+
+    osg::StateSet* stateset = new osg::StateSet;
+    stateset->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
+    geometry->setStateSet( stateset );
+
+    osg::ref_ptr< osg::Geode > geode = osg::ref_ptr< osg::Geode >( new osg::Geode );
+    geode->addDrawable( geometry );
+
+    if( border )
+    {
+        vertices->push_back( vertices->front() );
+        ref_ptr< osg::Geometry >  borderGeom = ref_ptr< osg::Geometry >( new osg::Geometry );
+        borderGeom->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::LINE_STRIP, 0, 4 ) );
+        borderGeom->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::LINE_STRIP, 3, 2 ) );
+        ref_ptr< osg::Vec4Array > colors   = ref_ptr< osg::Vec4Array >( new osg::Vec4Array );
+        WColor borderColor = color;
+        borderColor.inverse();
+        colors->push_back( wge::osgColor( borderColor ) );
+        borderGeom->setColorArray( colors );
+        borderGeom->setColorBinding( osg::Geometry::BIND_OVERALL );
+        borderGeom->setVertexArray( vertices );
+        geode->addDrawable( borderGeom );
+    }
+    return geode;
+}
+
+osg::ref_ptr< osg::Geode > wge::genFinitePlane( osg::Vec3 const& base, osg::Vec3 const& a, osg::Vec3 const& b )
+{
+    // the stuff needed by the OSG to create a geometry instance
+    osg::ref_ptr< osg::Vec3Array > vertices = new osg::Vec3Array;
+    osg::ref_ptr< osg::Vec3Array > texcoords0 = new osg::Vec3Array;
+    osg::ref_ptr< osg::Vec3Array > normals = new osg::Vec3Array;
+    osg::ref_ptr< osg::Vec4Array > colors = new osg::Vec4Array;
+
+    osg::Vec3 aPlusB = a + b;
+
+    vertices->push_back( base );
+    vertices->push_back( base + a );
+    vertices->push_back( base + aPlusB );
+    vertices->push_back( base + b );
+
+    osg::Vec3 aCrossB = a ^ b;
+    aCrossB.normalize();
+    osg::Vec3 aNorm = a;
+    aNorm.normalize();
+    osg::Vec3 bNorm = b;
+    bNorm.normalize();
+
+    normals->push_back( aCrossB );
+    colors->push_back( osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
+    texcoords0->push_back( osg::Vec3( 0.0, 0.0, 0.0 ) );
+    texcoords0->push_back( aNorm );
+    texcoords0->push_back( aNorm + bNorm );
+    texcoords0->push_back( bNorm );
+
+    // put it all together
+    osg::ref_ptr< osg::Geometry > geometry = new osg::Geometry();
+    geometry->setVertexArray( vertices );
+    geometry->setTexCoordArray( 0, texcoords0 );
+    geometry->setNormalBinding( osg::Geometry::BIND_OVERALL );
+    geometry->setColorBinding( osg::Geometry::BIND_OVERALL );
+    geometry->setNormalArray( normals );
+    geometry->setColorArray( colors );
+    geometry->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::QUADS, 0, 4 ) );
+
+    osg::ref_ptr< osg::Geode > geode = new osg::Geode();
+    geode->addDrawable( geometry );
+    return geode;
+}
+

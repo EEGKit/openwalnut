@@ -239,7 +239,7 @@ void WMFiberDisplay::create()
     activate();
 
     osg::StateSet* rootState = m_osgNode->getOrCreateStateSet();
-    initUniforms( rootState );
+	initUniforms( rootState );
 
 	m_uniformViewportHeight = osg::ref_ptr<osg::Uniform>( new osg::Uniform( "u_viewportHeight",
 																			static_cast<int>( 0 ) ) );
@@ -247,6 +247,7 @@ void WMFiberDisplay::create()
 																			static_cast<int>( 0 ) ) );
 	rootState->addUniform(m_uniformViewportHeight);
 	rootState->addUniform(m_uniformViewportWidth);
+
 
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->addChild( m_osgNode.get() );
 }
