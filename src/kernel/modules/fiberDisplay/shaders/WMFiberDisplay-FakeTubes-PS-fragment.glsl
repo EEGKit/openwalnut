@@ -47,6 +47,7 @@ void main()
   if(endPoint == 0.0)
 	{
   	color = texture2D(texturePS, gl_PointCoord.xy );
+	color = texture2D(texturePS, newTexCoords.xy);
 		color.x = 1.0;
 	}
   else

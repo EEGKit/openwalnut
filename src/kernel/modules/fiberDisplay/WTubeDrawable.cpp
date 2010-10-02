@@ -452,8 +452,10 @@ void WTubeDrawable::create2DTextureCycleLightning(osg::StateSet* m_rootState) co
     }
 	osg::Texture2D* texture = new osg::Texture2D;
 	texture->setDataVariance(osg::Object::STATIC);
-	texture->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP);
-    texture->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR);
+	texture->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP_TO_BORDER);
+	texture->setWrap(osg::Texture2D::WRAP_T,osg::Texture2D::CLAMP_TO_BORDER);
+	texture->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+	texture->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
     texture->setImage(randImage);
 
 	m_rootState->setTextureAttribute(2,texture,osg::StateAttribute::OVERRIDE);
@@ -504,10 +506,9 @@ void WTubeDrawable::drawTubes( osg::RenderInfo& renderInfo ) const
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_LIGHTING);
 	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	//m_shaderTubesQS->applyDirect(state);
-	//dynamic_cast< osg::Program* >(m_shaderTubesQS.get())->apply(state);
-			//m_shaderTubes->setDefine(USE_QUADSTRIP);
+
 	if(m_useQuadStrips)
 	{
 		for ( size_t i = 0; i < active->size(); ++i )
@@ -518,8 +519,6 @@ void WTubeDrawable::drawTubes( osg::RenderInfo& renderInfo ) const
 			}
 		}
 	}
-	//m_shaderTubesQS->deactivate();
-	//m_shaderTubes->eraseDefine(USE_QUADSTRIP);
 
 	//osg::TexEnv* texEnvPS = new osg::TexEnv( osg::TexEnv::REPLACE);
 	//osg::AlphaFunc* alphaFunc = new osg::AlphaFunc(osg::AlphaFunc::NOTEQUAL,0.0f);
