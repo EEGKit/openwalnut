@@ -361,12 +361,7 @@ void WMainWindow::moduleSpecificSetup( boost::shared_ptr< WModule > module )
         else if( dataModule->getDataSet()->isA< WDataSetFibers >() )
         {
             // it is a fiber dataset -> add the FiberDisplay module
-
-            // if it not already is running: add it
-            if( !WMFiberDisplay::isRunning() )
-            {
-                autoAdd( module, "Fiber Display" );
-            }
+            autoAdd( module, "Fiber Display" );
         }
         else if( dataModule->getDataSet()->isA< WEEG2 >() )
         {
@@ -679,6 +674,17 @@ void WMainWindow::projectLoad()
 
 void WMainWindow::openLoadDialog()
 {
+#ifdef _MSC_VER
+    QStringList fileNames;
+    QString filters;
+    filters = QString::fromStdString( std::string( "Known file types (*.cnt *.edf *.asc *.nii *.nii.gz *.fib);;" )
+        + std::string( "EEG files (*.cnt *.edf *.asc);;" )
+        + std::string( "NIfTI (*.nii *.nii.gz);;" )
+        + std::string( "Fibers (*.fib);;" )
+        + std::string( "Any files (*)" ) );
+
+    fileNames = QFileDialog::getOpenFileNames( this, "Open", "", filters  );
+#else
     QFileDialog fd;
     fd.setFileMode( QFileDialog::ExistingFiles );
 
@@ -695,6 +701,7 @@ void WMainWindow::openLoadDialog()
     {
         fileNames = fd.selectedFiles();
     }
+#endif
 
     std::vector< std::string > stdFileNames;
 
@@ -967,12 +974,6 @@ void WMainWindow::closeCustomDockWidget( std::string title )
 void WMainWindow::newRoi()
 {
     // do nothing if we can not get
-    if( !WKernel::getRunningKernel()->getRoiManager()->getBitField() )
-    {
-        wlog::warn( "WMainWindow" ) << "Refused to add ROI, as ROIManager does not have computed its bitfield yet.";
-        return;
-    }
-
     wmath::WPosition crossHairPos = WKernel::getRunningKernel()->getSelectionManager()->getCrosshair()->getPosition();
     wmath::WPosition minROIPos = crossHairPos - wmath::WPosition( 10., 10., 10. );
     wmath::WPosition maxROIPos = crossHairPos + wmath::WPosition( 10., 10., 10. );
@@ -985,7 +986,7 @@ void WMainWindow::newRoi()
     else
     {
         osg::ref_ptr< WROIBox > newRoi = osg::ref_ptr< WROIBox >( new WROIBox( minROIPos, maxROIPos ) );
-        WKernel::getRunningKernel()->getRoiManager()->addRoi( newRoi, m_controlPanel->getFirstRoiInSelectedBranch()->getROI() );
+        WKernel::getRunningKernel()->getRoiManager()->addRoi( newRoi, m_controlPanel->getFirstRoiInSelectedBranch() );
     }
 }
 

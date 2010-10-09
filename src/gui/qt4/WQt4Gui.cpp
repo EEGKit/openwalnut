@@ -150,7 +150,7 @@ int WQt4Gui::run()
     m_ge = WGraphicsEngine::getGraphicsEngine();
 
     // and startup kernel
-    m_kernel = boost::shared_ptr< WKernel >( new WKernel( m_ge, shared_from_this() ) );
+    m_kernel = boost::shared_ptr< WKernel >( WKernel::instance( m_ge, shared_from_this() ) );
     m_kernel->run();
     t_ModuleErrorSignalHandlerType func = boost::bind( &WQt4Gui::moduleError, this, _1, _2 );
     m_kernel->getRootContainer()->addDefaultNotifier( WM_ERROR, func );
@@ -192,10 +192,10 @@ int WQt4Gui::run()
     t_GenericSignalHandlerType connectionClosedSignal = boost::bind( &WQt4Gui::slotConnectionClosed, this, _1, _2 );
     m_kernel->getRootContainer()->addDefaultNotifier( CONNECTION_CLOSED, connectionClosedSignal );
 
-    boost::function< void( boost::shared_ptr< WRMROIRepresentation > ) > assocRoiSignal =
+    boost::function< void( osg::ref_ptr< WROI > ) > assocRoiSignal =
             boost::bind( &WQt4Gui::slotAddRoiToTree, this, _1 );
     m_kernel->getRoiManager()->addAddNotifier( assocRoiSignal );
-    boost::function< void( boost::shared_ptr< WRMROIRepresentation > ) > removeRoiSignal =
+    boost::function< void( osg::ref_ptr< WROI > ) > removeRoiSignal =
             boost::bind( &WQt4Gui::slotRemoveRoiFromTree, this, _1 );
     m_kernel->getRoiManager()->addRemoveNotifier( removeRoiSignal );
 
@@ -282,12 +282,12 @@ void WQt4Gui::slotAddDatasetOrModuleToTree( boost::shared_ptr< WModule > module 
     QCoreApplication::postEvent( m_mainWindow->getControlPanel(), new WModuleAssocEvent( module ) );
 }
 
-void WQt4Gui::slotAddRoiToTree( boost::shared_ptr< WRMROIRepresentation > roi )
+void WQt4Gui::slotAddRoiToTree( osg::ref_ptr< WROI > roi )
 {
     QCoreApplication::postEvent( m_mainWindow->getControlPanel(), new WRoiAssocEvent( roi ) );
 }
 
-void WQt4Gui::slotRemoveRoiFromTree( boost::shared_ptr< WRMROIRepresentation > roi )
+void WQt4Gui::slotRemoveRoiFromTree( osg::ref_ptr< WROI > roi )
 {
     QCoreApplication::postEvent( m_mainWindow->getControlPanel(), new WRoiRemoveEvent( roi ) );
 }

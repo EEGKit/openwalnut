@@ -25,6 +25,7 @@
 #ifndef WROI_H
 #define WROI_H
 
+#include <list>
 #include <string>
 
 #include <boost/signals2/signal.hpp>
@@ -32,7 +33,9 @@
 
 #include <osg/Geode>
 
-#include "../common/WColor.h"
+#include "../common/WProperties.h"
+
+
 #include "WExportWGE.h"
 
 class WPickHandler;
@@ -49,13 +52,6 @@ public:
      * Need virtual destructor because of virtual function.
      */
     virtual ~WROI();
-
-    /**
-     * getter for the boost signal object that indicates a modified box
-     *
-     * \return signal object
-     */
-    boost::signals2::signal0< void >* getSignalIsModified();
 
     /**
      * sets the NOT flag
@@ -76,7 +72,7 @@ public:
      *
      * \return the active flag
      */
-    bool isActive();
+    bool active();
 
     /**
      * setter
@@ -97,27 +93,92 @@ public:
 
     /**
      * Getter for modified flag
+     * \return the dirty flag
      */
-    bool isModified();
-
-
-protected:
-    osg::ref_ptr< WPickHandler > m_pickHandler; //!< A pointer to the pick handler used to get gui events for moving the box.
-
-    bool m_isModified; //!< Indicates whether a changed ROI has already taken effect. Means: if true, still some updates needed.
+    bool dirty();
 
     /**
-     * boost signal object to indicate box manipulation
+     * sets the dirty flag
      */
-    boost::signals2::signal0< void >m_signalIsModified;
+    void setDirty();
 
-    bool m_isNot; //!< Indivated whether the region of interest is inside the WROI (false) oroutside (true).
+    /**
+     * Getter
+     * \return the properties object for this roi
+     */
+    boost::shared_ptr< WProperties > getProperties();
 
-    WColor m_color; //!< The selected onject (Fibers, region on surface, ...) will have this color if m_useColor.
+    /**
+     * Add a specified notifier to the list of default notifiers which get connected to each roi.
+     *
+     * \param notifier  the notifier function
+     */
+    void addChangeNotifier( boost::function< void() > notifier );
 
-    bool m_useColor; //!< Indicated whether m_color should be used for display.
+protected:
+    /**
+     * initializes the roi's properties
+     */
+    void properties();
 
-    bool m_isActive; //!< active or not
+    /**
+     * callback when a property gets changed
+     */
+    void propertyChanged();
+
+    /**
+     * signals a roi change to all subscribers
+     */
+    void signalRoiChange();
+
+
+    osg::ref_ptr< WPickHandler > m_pickHandler; //!< A pointer to the pick handler used to get gui events for moving the box.
+
+    /**
+     * the property object for the module
+     */
+    boost::shared_ptr< WProperties > m_properties;
+
+    /**
+     * dirty flag, indicating the graphics needs updating, it is no longer used for bitfield updating
+     * since these customers get the update notification via callback
+     */
+    WPropBool m_dirty;
+
+    /**
+     * indicates if the roi is active
+     */
+    WPropBool m_active;
+
+    /**
+     * indicates if the roi is visible in the scene
+     */
+    WPropBool m_show;
+
+    /**
+     * indicates if the roi is negated
+     */
+    WPropBool m_not;
+
+    /**
+     * threshold for an arbitrary roi
+     */
+    WPropDouble m_threshold;
+
+    /**
+     * A color for painting the roi in the scene
+     */
+    WPropColor m_color;
+
+    /**
+     * The notifiers connected to added rois by default.
+     */
+    std::list< boost::function< void() > > m_changeNotifiers;
+
+    /**
+     * Lock for associated notifiers set.
+     */
+    boost::shared_mutex m_associatedNotifiersLock;
 
 private:
     /**

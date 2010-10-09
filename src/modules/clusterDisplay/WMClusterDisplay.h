@@ -37,7 +37,9 @@
 #include "../../kernel/WModuleInputData.h"
 #include "../../kernel/WModuleOutputData.h"
 
-#include "WDendrogram.h"
+#include "../../kernel/WFiberSelector.h"
+
+#include "WDendrogramGeode.h"
 #include "WOSGButton.h"
 #include "WHierarchicalTree.h"
 
@@ -205,6 +207,11 @@ private:
     void dendrogramClick( WPickInfo pickInfo );
 
     /**
+     * helper function to initialize a fiber display node
+     */
+    void createFiberGeode();
+
+    /**
      * Input connector for a fiber dataset.
      */
     boost::shared_ptr< WModuleInputData< const WDataSetFibers > > m_fiberInput;
@@ -281,12 +288,20 @@ private:
     WPropTrigger  m_readTriggerProp; //!< This property triggers the actual reading,
     WPropFilename m_propTreeFile; //!< The tree will be read from this file, i hope we will get a real load button some time
 
-    WPropTrigger m_createRoiTrigger; //!< when triggered the selected cluster will be transfered into a WRoiBitfield
-
     /**
      * stores the tree object
      */
     WHierarchicalTree m_tree;
+
+    /**
+     * Point to a fiber selector, which is an adapater between the roi manager and the this module
+     */
+    boost::shared_ptr< WFiberSelector>m_fiberSelector;
+
+    /**
+     * stores pointer to the fiber drawer
+     */
+    osg::ref_ptr< WFiberDrawable > m_fiberDrawable;
 
     /**
      * The root node used for this modules graphics.
@@ -307,7 +322,7 @@ private:
 
     osg::Camera* m_camera; //!< stores the camera object
 
-    WDendrogram* m_dendrogramGeode; //!< stores the dendrogram geode
+    WDendrogramGeode* m_dendrogramGeode; //!< stores the dendrogram geode
 
     osgWidget::WindowManager* m_wm; //!< stores a pointer to the window manager used for osg wdgets and overlay stuff
 

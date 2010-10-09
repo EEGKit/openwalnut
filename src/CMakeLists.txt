@@ -113,6 +113,22 @@ IF( OSSIM_FOUND )
 #   MARK_AS_ADVANCED( OSSIM_LIBDIR )
 ENDIF()
 
+# insight toolkit (for image segmentation and registration)
+#----------------------------------------------------------
+FIND_PACKAGE( ITK QUIET )
+OPTION( OW_USE_ITK "Use the insight toolkit for image segmentation" OFF )
+IF( ITK_FOUND AND OW_USE_ITK )
+	INCLUDE( ${ITK_USE_FILE} )
+ENDIF( ITK_FOUND AND OW_USE_ITK )
+
+### Eigen #### (for the gauss process, the covariance matrices tend to be sparse and 20x20, but ~70.000 of them)
+FIND_PACKAGE( Eigen3 QUIET )
+IF( EIGEN3_FOUND )
+    MESSAGE( STATUS "Found Eigen3 in: ${EIGEN3_INCLUDE_DIR} with version: ${EIGEN3_VERSION}" )
+    MARK_AS_ADVANCED( EIGEN3_INCLUDE_DIR )
+    MARK_AS_ADVANCED( EIGEN3_VERSION )
+ENDIF()
+
 # other options:
 #---------------
 # Set default build type
@@ -136,6 +152,8 @@ IF( CMAKE_GENERATOR MATCHES "Visual Studio" )
     SET( CMAKE_SHARED_LINKER_FLAGS " /STACK:10000000 /machine:I386 /NODEFAULTLIB:${EXCLUDE_LIBRARIES}"  CACHE STRING "" FORCE )
     SET( CMAKE_EXE_LINKER_FLAGS " /STACK:10000000 /machine:I386 /NODEFAULTLIB:${EXCLUDE_LIBRARIES}"  CACHE STRING "" FORCE )
     SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D \"NOMINMAX\"" )
+    SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP" )
+	SET( CMAKE_DEBUG_POSTFIX "d" CACHE STRING "add a postfix, usually d on windows" )
 ELSE()
     # Unfortunately libstdc++'s header files don't work with mingw in ansi mode (basically libstdc++'s fault)
     IF( CMAKE_HOST_SYSTEM MATCHES "Windows" )
@@ -153,6 +171,11 @@ ELSE()
     SET( CMAKE_CXX_FLAGS_RELEASE "-O3" CACHE STRING "" FORCE )
     SET( CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG -O0" CACHE STRING "" FORCE )
 ENDIF()
+
+IF( ITK_FOUND AND OW_USE_ITK )
+	SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DOW_USE_ITK" CACHE STRING "" FORCE )
+	SET( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DOW_USE_ITK" CACHE STRING "" FORCE )
+ENDIF( ITK_FOUND AND OW_USE_ITK )
 
 SET( CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -DDEBUG -O2" CACHE STRING "" FORCE )
 
@@ -185,6 +208,11 @@ ENDIF()
 # finally, build walnut
 ADD_EXECUTABLE( walnut OpenWalnut.cpp version.h )
 TARGET_LINK_LIBRARIES( walnut OWkernel OWdataHandler OWgui OWguiqt4 OWcommon OWge ${Boost_LIBRARIES} )
+
+IF(MSVC_IDE)
+	SET_TARGET_PROPERTIES( walnut PROPERTIES DEBUG_POSTFIX "d")
+	SET_TARGET_PROPERTIES( walnut PROPERTIES PREFIX "../")    
+ENDIF(MSVC_IDE)
 
 #---------- Shaders -------------
 option( OW_COPY_SHADERS "This enables copying shaders with every make call." ON )
