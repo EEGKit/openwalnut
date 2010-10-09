@@ -28,9 +28,6 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include <osg/Geode>
-#include <osg/Geometry>
-
 #include "../../../common/WColor.h"
 #include "../../../common/WLogger.h"
 #include "../../../common/WPathHelper.h"
@@ -47,7 +44,7 @@ bool WMFiberDisplay::m_fiberDisplayRunning = false;
 WMFiberDisplay::WMFiberDisplay()
     : WModule(),
       m_noData( new WCondition, true ),
-      m_osgNode( osg::ref_ptr< osg::Group >() )
+	  m_osgSwitch( osg::ref_ptr< osg::Switch >() )
 {
     m_shaderTubes = osg::ref_ptr< WShader > ( new WShader( "WMFiberDisplay-FakeTubes" ) );
 	m_shaderTubesPS = osg::ref_ptr< WShader > ( new WShader( "WMFiberDisplay-FakeTubes-PS" ) );
@@ -133,7 +130,7 @@ void WMFiberDisplay::moduleMain()
                 boost::shared_ptr< WProgress > progress = boost::shared_ptr< WProgress >( new WProgress( "Fiber Display", 2 ) );
                 m_progress->addSubProgress( progress );
 
-                WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->removeChild( m_osgNode.get() );
+				WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->removeChild( m_osgSwitch.get() );
                 ++*progress;
                 WKernel::getRunningKernel()->getRoiManager()->addFiberDataset( m_dataset );
                 ++*progress;
@@ -147,22 +144,23 @@ void WMFiberDisplay::moduleMain()
         }
     }
 
-    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_osgNode );
+	WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_osgSwitch );
 }
 
 void WMFiberDisplay::update()
 {
+
     if( m_noData.changed() )
     {
-        if( m_osgNode && m_noData.get( true ) )
+		if( m_osgSwitch && m_noData.get( true ) )
         {
-            m_osgNode->setNodeMask( 0x0 );
+			m_osgSwitch->setNodeMask( 0x0 );
         }
         else
         {
-            m_osgNode->setNodeMask( 0xFFFFFFFF );
+			m_osgSwitch->setNodeMask( 0xFFFFFFFF );
         }
-    }
+	}
 
     if( !m_showCullBox->get() )
     {
@@ -196,60 +194,61 @@ void WMFiberDisplay::create()
 {
 
 	// create new node
-    osg::ref_ptr< osg::Group > osgNodeNew = osg::ref_ptr< osg::Group >( new osg::Group );
+	osg::ref_ptr< osg::Switch > osgSwitchNew = osg::ref_ptr< osg::Switch >( new osg::Switch );
 
     m_tubeDrawable = osg::ref_ptr< WTubeDrawable >( new WTubeDrawable );
-    m_tubeDrawable->setBoundingBox( osg::BoundingBox( m_dataset->getBoundingBox().first[0],
-                                                      m_dataset->getBoundingBox().first[1],
-                                                      m_dataset->getBoundingBox().first[2],
-                                                      m_dataset->getBoundingBox().second[0],
-                                                      m_dataset->getBoundingBox().second[1],
-                                                      m_dataset->getBoundingBox().second[2] ) );
     m_tubeDrawable->setDataset( m_dataset );
-    m_tubeDrawable->setUseDisplayList( false );
-    m_tubeDrawable->setDataVariance( osg::Object::DYNAMIC );
-	m_tubeDrawable->setWShaders(m_shaderTubesPS, m_shaderTubesQS);
+	m_tubeDrawable->setUseDisplayList( false );
+	m_tubeDrawable->setDataVariance( osg::Object::DYNAMIC );
 	m_geodeTubeDrawable = osg::ref_ptr< osg::Geode >( new osg::Geode );
 	m_geodeTubeDrawable->addDrawable( m_tubeDrawable );
 
-	m_tubeDrawablePointSprite = osg::ref_ptr< WTubeDrawable >( new WTubeDrawable );
-	m_tubeDrawablePointSprite->setDataset( m_dataset );
-	m_tubeDrawablePointSprite->setUseDisplayList( false );
-	m_tubeDrawablePointSprite->setDataVariance( osg::Object::DYNAMIC );
-	m_tubeDrawablePointSprite->setWShaders(m_shaderTubesPS, m_shaderTubesQS);
+	m_tubeGeometryPointSprite = osg::ref_ptr< WTubeGeometry >( new WTubeGeometry );
+	m_tubeGeometryPointSprite->setDataset( m_dataset );
+	m_tubeGeometryPointSprite->setUseDisplayList( false );
+	m_tubeGeometryPointSprite->setUseVertexBufferObjects(true);
+	osg::VertexBufferObject* m_vboPS = m_tubeGeometryPointSprite->getOrCreateVertexBufferObject();
+	m_vboPS->setUsage (GL_STREAM_DRAW);
+	m_tubeGeometryPointSprite->setDataVariance( osg::Object::DYNAMIC );
 	m_geodePointSprite = osg::ref_ptr< osg::Geode >( new osg::Geode );
-	m_geodePointSprite->addDrawable( m_tubeDrawablePointSprite );
+	m_geodePointSprite->addDrawable( m_tubeGeometryPointSprite );
+
+	m_tubeGeometryQuadStripes = osg::ref_ptr< WTubeGeometry >( new WTubeGeometry );
+	m_tubeGeometryQuadStripes->setDataset( m_dataset );
+	m_tubeGeometryQuadStripes->setUseDisplayList( false );
+	m_tubeGeometryQuadStripes->setUseVertexBufferObjects(true);
+	osg::VertexBufferObject* m_vboQS = m_tubeGeometryQuadStripes->getOrCreateVertexBufferObject();
+	m_vboQS->setUsage (GL_STREAM_DRAW);
+	m_tubeGeometryQuadStripes->setDataVariance( osg::Object::DYNAMIC );
+	m_geodeQuadStripes = osg::ref_ptr< osg::Geode >( new osg::Geode );
+	m_geodeQuadStripes->addDrawable( m_tubeGeometryPointSprite );
+
+	osgSwitchNew->addChild( m_geodeTubeDrawable, true );
+	osgSwitchNew->addChild( m_geodePointSprite, false );
+	osgSwitchNew->addChild( m_geodeQuadStripes, false );
 
 
-	osgNodeNew->addChild( m_geodePointSprite );
-	osgNodeNew->addChild( m_geodeTubeDrawable );
+	osgSwitchNew->getOrCreateStateSet()->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
 
-    osgNodeNew->getOrCreateStateSet()->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
-
-    osgNodeNew->setUserData( osg::ref_ptr< userData >(
+	osgSwitchNew->setUserData( osg::ref_ptr< userData >(
         new userData( boost::shared_dynamic_cast< WMFiberDisplay >( shared_from_this() ) )
         ) );
-    osgNodeNew->addUpdateCallback( new fdNodeCallback );
+	osgSwitchNew->addUpdateCallback( new fdNodeCallback );
 
     // remove previous nodes if there are any
-    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->removeChild( m_osgNode.get() );
+	WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->removeChild( m_osgSwitch.get() );
 
-    m_osgNode = osgNodeNew;
+	m_osgSwitch = osgSwitchNew;
 
     activate();
 
-    osg::StateSet* rootState = m_osgNode->getOrCreateStateSet();
+	osg::StateSet* rootState = m_osgSwitch->getOrCreateStateSet();
 	initUniforms( rootState );
+	createTextures( rootState );
+	createTubeData();
 
-	m_uniformViewportHeight = osg::ref_ptr<osg::Uniform>( new osg::Uniform( "u_viewportHeight",
-																			static_cast<int>( 0 ) ) );
-	m_uniformViewportWidth = osg::ref_ptr<osg::Uniform>( new osg::Uniform( "u_viewportWidth",
-																			static_cast<int>( 0 ) ) );
-	rootState->addUniform(m_uniformViewportHeight);
-	rootState->addUniform(m_uniformViewportWidth);
-
-
-    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->addChild( m_osgNode.get() );
+	WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->addChild( m_osgSwitch.get() );
+	std::cout << "Created /n";
 }
 
 void WMFiberDisplay::connectors()
@@ -271,15 +270,15 @@ void WMFiberDisplay::connectors()
 
 void WMFiberDisplay::activate()
 {
-    if( m_osgNode )
+	if( m_osgSwitch )
     {
         if( m_active->get() )
         {
-            m_osgNode->setNodeMask( 0xFFFFFFFF );
+			m_osgSwitch->setNodeMask( 0xFFFFFFFF );
         }
         else
         {
-            m_osgNode->setNodeMask( 0x0 );
+			m_osgSwitch->setNodeMask( 0x0 );
         }
     }
 
@@ -293,10 +292,19 @@ void WMFiberDisplay::properties()
 
     m_useTubesProp = m_properties->addProperty( "Use tubes", "Draw fiber tracts as fake tubes.", false );
     m_useTextureProp = m_properties->addProperty( "Use texture", "Texture fibers with the texture on top of the list.", false );
-    m_tubeThickness = m_properties->addProperty( "Tube thickness", "Adjusts the thickness of the tubes.", 50.,
+	m_tubeThickness = m_properties->addProperty( "Tube thickness", "Adjusts the thickness of the tubes.", 30.,
             boost::bind( &WMFiberDisplay::adjustTubes, this ) );
     m_tubeThickness->setMin( 0 );
     m_tubeThickness->setMax( 300 );
+
+
+	m_depthCueing = m_properties->addProperty( "Use depth cueing", "Activates depth cueing for the shaders.", false );
+	m_lightModel = m_properties->addProperty( "Change lightning", "Changes lightning model", false );
+	m_usePointSprites  = m_properties->addProperty( "Use PointSprites", "", false );
+	m_useQuadStripes  = m_properties->addProperty( "Use QuadStripes", "", false );
+	//m_lowDepthCueingFactor;
+	//m_upperDepthCueingFactor;
+
 
     m_save = m_properties->addProperty( "Save", "Saves the selected fiber bundles.", false, boost::bind( &WMFiberDisplay::saveSelected, this ) );
     m_saveFileName = m_properties->addProperty( "File name", "", WPathHelper::getAppPath() );
@@ -313,7 +321,7 @@ void WMFiberDisplay::properties()
 
 void WMFiberDisplay::updateRenderModes()
 {
-    osg::StateSet* rootState = m_osgNode->getOrCreateStateSet();
+	osg::StateSet* rootState = m_osgSwitch->getOrCreateStateSet();
 
     if ( m_textureChanged )
     {
@@ -327,35 +335,42 @@ void WMFiberDisplay::updateRenderModes()
         {
             updateTexture();
             m_useTextureProp->get( true );
-            m_tubeDrawable->setUseTubes( true );
-			m_tubeDrawablePointSprite->setUseTubes(true);
-			m_tubeDrawable->setRootState(rootState);
-			m_shaderTubesQS->apply( m_geodeTubeDrawable );
-			m_tubeDrawable->setWShader(m_shaderTubes);
-			m_tubeDrawable->setActiveRenderingMode(false,true);
-			m_shaderTubesPS->apply(m_geodePointSprite );
-			m_tubeDrawablePointSprite->setActiveRenderingMode(true,false);
+
+			m_osgSwitch->setChildValue( m_geodeTubeDrawable, false );
+			m_osgSwitch->setChildValue( m_geodePointSprite, true );
+			m_osgSwitch->setChildValue( m_geodeQuadStripes, true );
+
+			m_shaderTubesQS->apply( m_geodeQuadStripes );
+			m_shaderTubesPS->apply( m_geodePointSprite );
+
+			//m_tubeDrawable->setActiveRenderingMode(false,true);
+			//m_tubeDrawablePointSprite->setActiveRenderingMode(true,false);
 
             rootState->addUniform( osg::ref_ptr<osg::Uniform>( new osg::Uniform( "globalColor", 1 ) ) );
             m_uniformTubeThickness = osg::ref_ptr<osg::Uniform>( new osg::Uniform( "u_thickness", static_cast<float>( m_tubeThickness->get() ) ) );
             rootState->addUniform( m_uniformTubeThickness );
             rootState->addUniform( osg::ref_ptr<osg::Uniform>( new osg::Uniform( "useTexture", m_useTextureProp->get() ) ) );
-			m_tubeDrawable->createTextures(rootState);
-			m_tubeDrawable->setRootState(rootState);
+
         }
         else if ( ( m_useTextureProp->get( true ) && !m_useTubesProp->get( true ) ) || m_activateCullBox->get( true) )
         {
-            m_tubeDrawable->setUseTubes( false );
+			m_osgSwitch->setChildValue( m_geodeTubeDrawable, true );
+			m_osgSwitch->setChildValue( m_geodePointSprite, false );
+			m_osgSwitch->setChildValue( m_geodeQuadStripes, false );
+			//m_tubeDrawable->setUseTubes( false );
             updateTexture();
-            m_shaderTubes->deactivate( m_osgNode );
-            m_shaderTexturedFibers->apply( m_osgNode );
+			m_shaderTubes->deactivate( m_geodeTubeDrawable );
+			m_shaderTexturedFibers->apply( m_geodeTubeDrawable );
             m_uniformUseTexture->set( m_useTextureProp->get() );
         }
         else
         {
-            m_tubeDrawable->setUseTubes( false );
-            m_shaderTubes->deactivate( m_osgNode );
-            m_shaderTexturedFibers->deactivate( m_osgNode );
+			m_osgSwitch->setChildValue( m_geodeTubeDrawable, true );
+			m_osgSwitch->setChildValue( m_geodePointSprite, false );
+			m_osgSwitch->setChildValue( m_geodeQuadStripes, false );
+			//m_tubeDrawable->setUseTubes( false );
+			m_shaderTubes->deactivate( m_geodeTubeDrawable );
+			m_shaderTexturedFibers->deactivate( m_geodeTubeDrawable );
         }
     }
 
@@ -420,7 +435,7 @@ void WMFiberDisplay::updateOutput() const
 
 void WMFiberDisplay::updateTexture()
 {
-    osg::StateSet* rootState = m_osgNode->getOrCreateStateSet();
+	osg::StateSet* rootState = m_osgSwitch->getOrCreateStateSet();
 
     // grab a list of data textures
     std::vector< boost::shared_ptr< WDataTexture3D > > tex = WDataHandler::getDefaultSubject()->getDataTextures();
@@ -505,6 +520,27 @@ void WMFiberDisplay::initUniforms( osg::StateSet* rootState )
     rootState->addUniform( m_uniformCullBoxUBX );
     rootState->addUniform( m_uniformCullBoxUBY );
     rootState->addUniform( m_uniformCullBoxUBZ );
+
+	m_uniformDepthCueing = osg::ref_ptr<osg::Uniform>( new osg::Uniform( "useDepthCueing", false ) );
+	m_uniformLightModel= osg::ref_ptr<osg::Uniform>( new osg::Uniform( "useLightModel", false ) );
+	m_uniformUsePointSprites = osg::ref_ptr<osg::Uniform>( new osg::Uniform( "usePointSprites", false ) );
+	m_uniformUseQuadStripes = osg::ref_ptr<osg::Uniform>( new osg::Uniform( "useQuadStripes", false ) );
+	m_uniformLowDepthCueingFactor = osg::ref_ptr<osg::Uniform>( new osg::Uniform( "lowerDepthCueingFactor", 0.2f ) );
+	m_uniformUpperDepthCueingFactor = osg::ref_ptr<osg::Uniform>( new osg::Uniform( "upperDepthCueingFactor", 0.8f ) );
+
+	rootState->addUniform( m_uniformDepthCueing );
+	rootState->addUniform( m_uniformLightModel );
+	rootState->addUniform( m_uniformUsePointSprites );
+	rootState->addUniform( m_uniformUseQuadStripes );
+	rootState->addUniform( m_uniformLowDepthCueingFactor );
+	rootState->addUniform( m_uniformUpperDepthCueingFactor );
+
+	m_uniformViewportHeight = osg::ref_ptr<osg::Uniform>( new osg::Uniform( "u_viewportHeight",
+																			static_cast<int>( 0 ) ) );
+	m_uniformViewportWidth = osg::ref_ptr<osg::Uniform>( new osg::Uniform( "u_viewportWidth",
+																			static_cast<int>( 0 ) ) );
+	rootState->addUniform(m_uniformViewportHeight);
+	rootState->addUniform(m_uniformViewportWidth);
 }
 
 void WMFiberDisplay::notifyTextureChange()
@@ -535,4 +571,313 @@ void WMFiberDisplay::userData::updateRenderModes()
 void WMFiberDisplay::userData::toggleColoring()
 {
     parent->toggleColoring();
+}
+
+void WMFiberDisplay::create2DTexDiffuseLightning(osg::StateSet* m_rootState) const
+{
+	osg::Image* image = new osg::Image;
+
+	int noPixels = 64;
+
+	// allocate the image data, noPixels x noPixels x 1 with 4 rgba floats - equivalent to a Vec4!
+	image->allocateImage(noPixels,noPixels,1,GL_RGBA,GL_FLOAT);
+	image->setInternalTextureFormat(GL_RGBA);
+
+	float stepAlpha = M_PI/4*(float)noPixels;
+	float stepLt = M_PI/2*(float)noPixels;
+	float alpha, lt, diffuse = 0.0f;
+
+	// fill in the image data.
+	osg::Vec4* dataPtr = (osg::Vec4*)image->data();
+	osg::Vec4 color;
+	for(int i=0;i<noPixels;++i)
+	{
+		alpha = (float)i*stepAlpha;
+
+		for(int j=0;j<noPixels;++j)
+		{
+			lt = (float)j * stepLt;
+			diffuse = sqrt(1- pow(lt,2)) * (sin(alpha) + (M_PI-alpha) * cos(alpha)) / 4;
+			// Einheitskreis,
+			color = osg::Vec4(diffuse, 0.0f, 0.0f, 0.0f);
+
+			*dataPtr++ = color;
+		}
+	}
+	osg::Texture2D* texture = new osg::Texture2D;
+	texture->setDataVariance(osg::Object::STATIC);
+	texture->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP);
+	texture->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR);
+	texture->setImage(image);
+
+	m_rootState->setTextureAttribute(3,texture,osg::StateAttribute::OVERRIDE);
+	m_rootState->setTextureMode(3,GL_TEXTURE_2D,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
+	m_rootState->addUniform(osg::ref_ptr<osg::Uniform>( new osg::Uniform( "textureDiff2D", 3 ) ) );
+
+}
+
+void WMFiberDisplay::create2DTexSpecularLightning(osg::StateSet* m_rootState) const
+{
+	osg::Image* image = new osg::Image;
+
+	int noPixels = 64;
+	int noExponents = 64;
+
+	//vector<float> sn;
+
+	// allocate the image data, noPixels x noPixels x 1 with 4 rgba floats - equivalent to a Vec4!
+	image->allocateImage(noPixels,noPixels,1,GL_RGBA,GL_FLOAT);
+	image->setInternalTextureFormat(GL_RGBA);
+
+	float stepAlpha = M_PI/4*(float)noPixels;
+	float stepLt = M_PI/2*(float)noPixels;
+	float alpha, lt, diffuse = 0.0f;
+
+	// fill in the image data.
+	osg::Vec4* dataPtr = (osg::Vec4*)image->data();
+	osg::Vec4 color;
+	for(int i=0;i<noPixels;++i)
+	{
+		alpha = (float)i*stepAlpha;
+
+		for(int j=0;j<noPixels;++j)
+		{
+			lt = (float)j * stepLt;
+			diffuse = sqrt(1- pow(lt,2)) * (sin(alpha) + (M_PI-alpha) * cos(alpha)) / 4;
+			// Einheitskreis,
+			color = osg::Vec4(diffuse, 0.0f, 0.0f, 0.0f);
+
+			*dataPtr++ = color;
+		}
+	}
+	osg::Texture2D* texture = new osg::Texture2D;
+	texture->setDataVariance(osg::Object::STATIC);
+	texture->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP);
+	texture->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR);
+	texture->setImage(image);
+
+	m_rootState->setTextureAttribute(4,texture,osg::StateAttribute::OVERRIDE);
+	m_rootState->setTextureMode(4,GL_TEXTURE_2D,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
+	m_rootState->addUniform(osg::ref_ptr<osg::Uniform>( new osg::Uniform( "textureSpec2D", 4 ) ) );
+
+}
+
+void WMFiberDisplay::create1DTextureRectLightning(osg::StateSet* m_rootState) const
+{
+	osg::Image* image = new osg::Image;
+
+	int noPixels = 64;
+
+	// allocate the image data, noPixels x 1 x 1 with 4 rgba floats - equivalent to a Vec4!
+	image->allocateImage(noPixels,1,1,GL_RGBA,GL_FLOAT);
+	image->setInternalTextureFormat(GL_RGBA);
+
+	float step = M_PI/(float)noPixels;
+	float diffuse, specular = 0.0f;
+
+	// fill in the image data.
+	osg::Vec4* dataPtr = (osg::Vec4*)image->data();
+	osg::Vec4 color;
+	for(int i=0;i<noPixels;++i)
+	{
+		diffuse = sin((float)i*step);
+		specular = pow(diffuse, 16);
+
+		color = osg::Vec4(diffuse, specular, 0.0f, 1.0f);
+		*dataPtr++ = color;
+	}
+
+	osg::Texture1D* texture = new osg::Texture1D;
+	texture->setDataVariance(osg::Object::STATIC);
+	texture->setWrap(osg::Texture1D::WRAP_S,osg::Texture1D::CLAMP);
+	texture->setFilter(osg::Texture1D::MIN_FILTER,osg::Texture1D::LINEAR);
+	texture->setImage(image);
+
+	m_rootState->setTextureAttribute(1,texture,osg::StateAttribute::OVERRIDE);
+	m_rootState->setTextureMode(1,GL_TEXTURE_1D,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
+	m_rootState->addUniform(osg::ref_ptr<osg::Uniform>( new osg::Uniform( "texture", 1 ) ) );
+}
+
+
+void WMFiberDisplay::create2DTextureCycleLightning(osg::StateSet* m_rootState) const
+{
+	osg::Image* image = new osg::Image;
+
+	int noPixels = 64;
+
+	// allocate the image data, noPixels x noPixels x 1 with 4 rgba floats - equivalent to a Vec4!
+	image->allocateImage(noPixels,noPixels,1,GL_RGBA,GL_FLOAT);
+	image->setInternalTextureFormat(GL_RGBA);
+
+	float step = M_PI/(float)noPixels;
+	float alpha, diffuse, specular = 0.0f;
+	float check;
+
+	const size_t resX = 64;
+	osg::ref_ptr< osg::Image > randImage = new osg::Image();
+	randImage->allocateImage( resX, resX, 1, GL_RGBA, GL_UNSIGNED_BYTE );
+	unsigned char *randomLuminance = randImage->data();  // should be 4 megs
+	for( unsigned int x = 0; x < resX; x++ )
+	{
+
+		diffuse = sin((float)x*step);
+			specular = pow(diffuse, 16);
+		for( unsigned int y = 0; y < resX; y++ )
+		{
+		  check = pow( 2.0 * ( static_cast< float >( x ) / static_cast< float >( resX ) ) - 1.0, 2.0) +
+				  pow( 2.0 * ( static_cast< float >( y ) / static_cast< float >( resX ) ) - 1.0, 2.0);
+		  if(check > 1.0)
+		  {
+			alpha = 0.0f;
+		  }
+		  else
+		  {
+			alpha = 1.0f;
+		  }
+
+			randomLuminance[ ( 4 * y * resX ) + ( 4 * x ) + 0 ] = static_cast< unsigned char >( diffuse * 255.0 );
+			randomLuminance[ ( 4 * y * resX ) + ( 4 * x ) + 1 ] = static_cast< unsigned char >( specular * 255.0 );
+			randomLuminance[ ( 4 * y * resX ) + ( 4 * x ) + 2 ] = static_cast< unsigned char >( alpha * 255.0 );
+			randomLuminance[ ( 4 * y * resX ) + ( 4 * x ) + 3 ] = 255;
+		}
+	}
+	osg::Texture2D* texture = new osg::Texture2D;
+	texture->setDataVariance(osg::Object::STATIC);
+	texture->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP_TO_BORDER);
+	texture->setWrap(osg::Texture2D::WRAP_T,osg::Texture2D::CLAMP_TO_BORDER);
+	texture->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+	texture->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
+	texture->setImage(randImage);
+
+	m_rootState->setTextureAttribute(2,texture,osg::StateAttribute::OVERRIDE);
+	m_rootState->setTextureMode(2,GL_TEXTURE_2D,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
+	m_rootState->addUniform(osg::ref_ptr<osg::Uniform>( new osg::Uniform( "texturePS", 2 ) ) );
+
+}
+
+void WMFiberDisplay::createTextures(osg::StateSet* m_rootState) const
+{
+	create1DTextureRectLightning(m_rootState);
+	create2DTextureCycleLightning(m_rootState);
+
+	create2DTexDiffuseLightning(m_rootState);
+	create2DTexSpecularLightning(m_rootState);
+
+}
+
+void WMFiberDisplay::createTubeData()
+{
+	boost::shared_ptr< std::vector< size_t > > pointsPerLine = m_dataset->getLineLengths();
+	boost::shared_ptr< std::vector< float > > verts = m_dataset->getVertices();
+	boost::shared_ptr< std::vector< float > > tangents = m_dataset->getTangents();
+	boost::shared_ptr< std::vector< float > > colors;
+	boost::shared_ptr< std::vector< size_t > > startIndices = m_dataset->getLineStartIndexes();
+	if ( m_customColoring )
+	{
+		colors = WKernel::getRunningKernel()->getRoiManager()->getCustomColors();
+	}
+	else
+	{
+		colors = ( m_coloring->get( true ) ? m_dataset->getGlobalColors() : m_dataset->getLocalColors() );
+	}
+
+	m_tubeVerts = new osg::Vec3Array;
+	m_tubeTangents = new osg::Vec3Array;
+	m_tubeTexCoords = new osg::Vec2Array;
+	m_tubeColors = new osg::Vec3Array;
+
+	m_pointTexCoords = new osg::Vec2Array;
+	m_pointVerts  = new osg::Vec3Array;
+	m_pointTangents  = new osg::Vec3Array;
+	m_pointColors  = new osg::Vec3Array;
+
+	m_fiberPointStartIndexes = new osg::VectorGLuint;
+	m_fiberQuadStartIndexes = new osg::VectorGLuint;
+	unsigned int offset = 0;
+
+	// add vertexdata for quadstrips
+	for( size_t i = 0; i < startIndices->size(); ++i )
+	{
+		int idx = startIndices->at( i ) * 3;
+		m_fiberQuadStartIndexes->push_back( offset);
+		offset += 2*pointsPerLine->at(i);
+		for ( size_t k = 0; k < pointsPerLine->at( i ); ++k )
+		{
+			m_tubeTangents->push_back(osg::Vec3f( tangents->at( idx ), tangents->at( idx + 1 ), tangents->at( idx + 2 ) ));
+			m_tubeTangents->push_back(osg::Vec3f( tangents->at( idx ), tangents->at( idx + 1 ), tangents->at( idx + 2 ) ));
+
+			m_tubeColors->push_back(osg::Vec3f( colors->at( idx ), colors->at( idx + 1 ), colors->at( idx + 2 ) ));
+			m_tubeColors->push_back(osg::Vec3f( colors->at( idx ), colors->at( idx + 1 ), colors->at( idx + 2 ) ));
+
+			m_tubeVerts->push_back(osg::Vec3f( verts->at( idx ), verts->at( idx + 1 ), verts->at( idx + 2 ) ));
+			m_tubeVerts->push_back(osg::Vec3f( verts->at( idx ), verts->at( idx + 1 ), verts->at( idx + 2 ) ));
+
+			// TexCoords: first 1DTexturePosition, second Positionflag
+			// SouthPointPosition
+			m_tubeTexCoords->push_back(osg::Vec2f( -1.0f , 0.0f ));
+
+			// NorthPointPosition
+			m_tubeTexCoords->push_back(osg::Vec2f( 1.0f, 1.0f ));
+
+			idx += 3;
+		}
+	}
+
+	offset = 0;
+
+	// add vertexdata for pointsprites
+	for( size_t i = 0; i < startIndices->size(); ++i )
+	{
+		int idx = startIndices->at( i ) * 3;
+		m_fiberPointStartIndexes->push_back( offset);
+		offset += pointsPerLine->at(i);
+		for ( size_t k = 0; k < pointsPerLine->at( i ); ++k )
+		{
+			m_pointTangents->push_back(osg::Vec3f( tangents->at( idx ), tangents->at( idx + 1 ), tangents->at( idx + 2 ) ));
+
+			m_pointColors->push_back(osg::Vec3f( colors->at( idx ), colors->at( idx + 1 ), colors->at( idx + 2 ) ));
+
+			m_pointVerts->push_back(osg::Vec3f( verts->at( idx ), verts->at( idx + 1 ), verts->at( idx + 2 ) ));
+
+			// if k=0 || k=pointPerLine-1 then draw endtexture
+			if(k == 0 || k == pointsPerLine->at(i)-1)
+			{
+				m_pointTexCoords->push_back(osg::Vec2f( 0.0f , 0.0f ));
+			}
+			else
+			{
+				m_pointTexCoords->push_back(osg::Vec2f( 0.0f , 1.0f ));
+			}
+
+			idx += 3;
+		}
+
+	}
+	// setting up VBO and PrimitivSets
+	m_tubeGeometryPointSprite->setVertexArray( m_pointVerts );
+	m_tubeGeometryPointSprite->setColorArray( m_pointColors );
+	m_tubeGeometryPointSprite->setColorBinding( osg::Geometry::BIND_PER_VERTEX );
+	m_tubeGeometryPointSprite->setNormalArray( m_pointTangents );
+	m_tubeGeometryPointSprite->setNormalBinding( osg::Geometry::BIND_PER_VERTEX );
+	m_shaderTubesPS->addBindAttribLocation("psTexCoords", VERTEXBIND);
+	m_tubeGeometryPointSprite->setVertexAttribArray(VERTEXBIND, m_pointTexCoords );
+	m_tubeGeometryPointSprite->setVertexAttribBinding( VERTEXBIND, osg::Geometry::BIND_PER_VERTEX );
+
+	m_tubeGeometryQuadStripes->setVertexArray( m_tubeVerts );
+	m_tubeGeometryQuadStripes->setColorArray( m_tubeColors );
+	m_tubeGeometryQuadStripes->setColorBinding( osg::Geometry::BIND_PER_VERTEX );
+	m_tubeGeometryQuadStripes->setNormalArray( m_tubeTangents );
+	m_tubeGeometryQuadStripes->setNormalBinding( osg::Geometry::BIND_PER_VERTEX );
+	m_shaderTubesQS->addBindAttribLocation("qsTexCoords", VERTEXBIND);
+	m_tubeGeometryQuadStripes->setVertexAttribArray(VERTEXBIND, m_tubeTexCoords );
+	m_tubeGeometryQuadStripes->setVertexAttribBinding( VERTEXBIND, osg::Geometry::BIND_PER_VERTEX );
+
+/*
+	for ( size_t i = 0; i < pointsPerLine->size(); ++i )
+	{
+		m_tubeGeometryPointSprite->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::POINTS, m_fiberPointStartIndexes->at(i), (*pointsPerLine)[i] ) );
+		m_tubeGeometryQuadStripes->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::QUADS, m_fiberQuadStartIndexes->at(i), 2 * (*pointsPerLine)[i] ) );
+
+	}
+*/
 }

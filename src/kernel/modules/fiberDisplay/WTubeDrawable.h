@@ -126,34 +126,8 @@ public:
      */
     bool getColoringMode() const;
 
-	/**
-	  * Creates a texture to simmulate diffuse and specular lightning
-	  * of a tube from aside
-	  */
-	void create1DTextureRectLightning(osg::StateSet* m_rootState) const;
-
-    /**
-     * Set the bounding box of all fibers.
-     * \param bb The new bounding box.
-     */
-    void setBoundingBox( const osg::BoundingBox & bb );
-
-	/**
-	  * Creates a texture to simmulate diffuse and specular lightning
-	  * of a tube from top or bottom
-	  */
-	void create2DTextureCycleLightning(osg::StateSet* m_rootState) const;
-
-	void create2DTexDiffuseLightning(osg::StateSet* m_rootState) const;
-	void create2DTexSpecularLightning(osg::StateSet* m_rootState) const;
-
-	void createTextures(osg::StateSet* m_rootState) const;
-
 	void setRootState(osg::StateSet* m_rootState);
 
-	void setWShader(osg::ref_ptr< WShader > m_shaderTubes);
-	void setWShaders(osg::ref_ptr< WShader > shaderTubesPS, osg::ref_ptr< WShader > shaderTubesQS);
-	void setOSGNode(osg::ref_ptr< osg::Group > osgNode);
 	void setActiveRenderingMode(bool usePointSprite, bool useQuadStrips);
 protected:
 private:
@@ -170,30 +144,8 @@ private:
 
 	osg::StateSet* m_rootState;
 
-
-
-	osg::Vec3Array* m_tubeVerts;
-	osg::Vec3Array* m_tubeTangents;
-	osg::Vec2Array* m_tubeTexCoords;
-	osg::Vec2Array* m_pointTexCoords;
-	osg::Vec3Array* m_tubeColors;
-	osg::VectorGLuint* m_tubeStartIndexes;
-
-	osg::ref_ptr< WShader > m_shaderTubes;
-	osg::ref_ptr< WShader > m_shaderTubesPS;
-	osg::ref_ptr< WShader > m_shaderTubesQS;
-
 	bool m_usePointSprite;
 	bool m_useQuadStrips;
-	/*
-	boost::shared_ptr< std::vector< float > > m_tubeVerts;
-	boost::shared_ptr< std::vector< float > > m_tubeTangents;
-	boost::shared_ptr< std::vector< float > > m_tubeTexCoords;
-	boost::shared_ptr< std::vector< float > > m_pointTexCoords;
-	boost::shared_ptr< std::vector< float > > m_tubeColors;
-	*/
-
-	osg::ref_ptr< osg::Group > m_osgNode;
 
     boost::shared_ptr< const WDataSetFibers > m_dataset; //!< stores pointer to dataset
 
