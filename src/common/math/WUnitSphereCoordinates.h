@@ -54,8 +54,8 @@ public:
     WUnitSphereCoordinates( double theta, double phi );
 
     /**
-     * Constructor for Euclidean coordinates.
-     * \param vector Euclidean coordinates
+     * Constructor for euclidean coordinates.
+     * \param vector euclidean coordinates
      */
     explicit WUnitSphereCoordinates( wmath::WVector3D vector );
 
@@ -87,7 +87,7 @@ public:
     void setPhi( double phi );
 
     /**
-     * Returns the stored sphere coordinates as Euclidean coordinates.
+     * Returns the stored sphere coordinates as euclidean coordinates.
      */
     wmath::WVector3D getEuclidean() const;
 
@@ -102,3 +102,4 @@ private:
 }
 
 #endif  // WUNITSPHERECOORDINATES_H
+

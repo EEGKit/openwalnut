@@ -34,13 +34,12 @@
 #include "../../common/math/WMatrix.h"
 
 #include "../../ext/nifti/nifti1_io.h"
-#include "../WExportDataHandler.h"
 
 /**
  * Reader for the NIfTI file format. For NIfTI just see http://nifti.nimh.nih.gov/.
  * \ingroup dataHandler
  */
-class OWDATAHANDLER_EXPORT WReaderNIfTI : public WReader // NOLINT
+class WReaderNIfTI : public WReader
 {
 /**
  * Only UnitTests may be friends.

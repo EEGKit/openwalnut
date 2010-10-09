@@ -27,7 +27,7 @@
 #include "../../common/WPropertyHelper.h"
 #include "../../dataHandler/io/WWriterFiberVTK.h"
 #include "WMFiberTransform.h"
-#include "WMFiberTransform.xpm"
+#include "fiberTransform.xpm"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMFiberTransform )
@@ -78,7 +78,7 @@ void WMFiberTransform::properties()
     m_savePath = m_properties->addProperty( "Save path", "Where to save the result", boost::filesystem::path( "/no/such/file" ) );
     m_run      = m_properties->addProperty( "Run", "Do the transformation", WPVBaseTypes::PV_TRIGGER_READY, m_recompute );
     m_run->get( true ); // reset so no initial run occurs
-    WPropertyHelper::PC_NOTEMPTY::addTo( m_savePath );
+    WPropertyHelper::PC_PATHEXISTS::addTo( m_savePath );
 
     m_translationProp = m_properties->addProperty( "Translation",
                                                    "Translation part of the transformation. You need to press enter to make the values effective.",
@@ -92,8 +92,6 @@ void WMFiberTransform::properties()
     m_matrix2Prop = m_properties->addProperty( "M Row 2",
                                                "Row 2 of matrix part of the transformation. You need to press enter to make the values effective.",
                                                wmath::WPosition( 0.0, 0.0, 1.0 ) );
-
-    WModule::properties();
 }
 
 void WMFiberTransform::moduleMain()

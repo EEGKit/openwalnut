@@ -30,13 +30,10 @@
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
-#include <boost/tuple/tuple.hpp>
 
 #include "../common/math/WPosition.h"
-#include "../common/WProperties.h"
 
 #include "WDataSet.h"
-#include "WExportDataHandler.h"
 
 /**
  * converts an integer into a byte array and back
@@ -59,118 +56,9 @@ union converterByteFloat
 /**
  * Represents a simple set of WFibers.
  */
-class OWDATAHANDLER_EXPORT WDataSetFibers : public WDataSet // NOLINT
+class WDataSetFibers : public WDataSet
 {
 public:
-
-    // some type alias for the used arrays.
-
-    /**
-     * List of vertex coordinates.
-     */
-    typedef boost::shared_ptr< std::vector< float > > VertexArray;
-
-    /**
-     * Index list indexing fibers in VertexArray.
-     */
-    typedef boost::shared_ptr< std::vector< size_t > > IndexArray;
-
-    /**
-     * Lengths of fibers.
-     */
-    typedef boost::shared_ptr< std::vector< size_t > > LengthArray;
-
-    /**
-     * Tangents at each vertex in VertexArray.
-     */
-    typedef boost::shared_ptr< std::vector< float > > TangentArray;
-
-    /**
-     * Colors for each vertex in VertexArray.
-     */
-    typedef boost::shared_ptr< std::vector< float > > ColorArray;
-
-    /**
-     * Item used in the selection below also containing color info.
-     */
-    class ColorScheme: public WItemSelectionItem
-    {
-    friend class WDataSetFibers;
-    public:
-
-        /**
-         * different kinds of color arrays can be used in this class. This enum defines their possible types.
-         */
-        typedef enum
-        {
-            GRAY = 1,   //!< gray value per vertex
-            RGB  = 3,   //!< rgb per vertex
-            RGBA = 4    //!< rgba per vertex
-        }
-        ColorMode;
-
-        /**
-         * Constructor. Creates new item.
-         *
-         * \param name name, name of item.
-         * \param description description of item. Can be empty.
-         * \param icon icon, can be NULL
-         * \param color the color array of this item.
-         * \param mode the mode of the color array. This defines whether the colors are luminance, RGB or RGBA
-         */
-        ColorScheme( std::string name, std::string description, const char** icon, ColorArray color, ColorMode mode = RGB ):
-            WItemSelectionItem( name, description, icon ),
-            m_color( color ),
-            m_mode( mode )
-        {
-        };
-
-        /**
-         * Get the color.
-         *
-         * \return the color array.
-         */
-        ColorArray getColor() const
-        {
-            return m_color;
-        };
-
-        /**
-         * Returns the mode of the color scheme.
-         *
-         * \return the mode.
-         */
-        ColorMode getMode() const
-        {
-            return m_mode;
-        };
-
-    protected:
-
-        /**
-         * Sets the color array for this item.
-         *
-         * \param color the color to set.
-         * \param mode the mode of the color array. This defines whether the colors are luminance, RGB or RGBA
-         */
-        void setColor( ColorArray color, ColorMode mode = RGB )
-        {
-            m_color = color;
-            m_mode = mode;
-        };
-
-    private:
-        /**
-         * The color array associated with the item.
-         */
-        ColorArray m_color;
-
-        /**
-         * Coloring mode.
-         */
-        ColorMode m_mode;
-    };
-
     /**
      * Constructs a new set of fibers, usage of WFiber here is for backward compatibility and should be removed
      *
@@ -227,101 +115,41 @@ public:
     /**
      * Getter for m_vertices
      */
-    VertexArray getVertices() const;
+    boost::shared_ptr< std::vector< float > > getVertices() const;
 
     /**
      * Getter
      */
-    IndexArray getLineStartIndexes() const;
+    boost::shared_ptr< std::vector< size_t > > getLineStartIndexes() const;
 
     /**
      * Getter
      */
-    LengthArray getLineLengths() const;
+    boost::shared_ptr< std::vector< size_t > > getLineLengths() const;
 
     /**
      * Getter
      */
-    IndexArray getVerticesReverse() const;
+    boost::shared_ptr< std::vector< size_t > > getVerticesReverse() const;
 
     /**
      * Getter
      */
-    TangentArray getTangents() const;
+    boost::shared_ptr< std::vector< float > > getTangents() const;
 
     /**
      * Reference to the vector storing the global colors.
      *
-     * \return Pointer to the float array. This always is RGB.
+     * \return Pointer to the float array.
      */
-    ColorArray getGlobalColors() const;
+    boost::shared_ptr< std::vector< float > > getGlobalColors() const;
 
     /**
      * Reference to the vector storing the local colors.
      *
-     * \return Pointer to the float array. This always is RGB.
+     * \return Pointer to the float array.
      */
-    ColorArray getLocalColors() const;
-
-    /**
-     * This method adds a new color scheme to the list of available colors. The color scheme needs to have a name and description to allow the
-     * user to identify which color has which meaning. If the specified color array already exists, only an update is triggered and the name and
-     * description is ignored. It detects the type of colors by its size.
-     *
-     * \param colors the color array. Needs to have exactly getVertices()->size() items.
-     * \param name name of the color scheme. Should be a telling name.
-     * \param description description. How calculated and so on.
-     */
-    void addColorScheme( ColorArray colors, std::string name, std::string description );
-
-    /**
-     * This method removes the specified color scheme from the list and triggers an update.
-     *
-     * \param colors the color array.
-     */
-    void removeColorScheme( ColorArray colors );
-
-    /**
-     * Replaces the specified old color scheme by the new color scheme. If the old color scheme did not exist, nothing happens.
-     *
-     * \param oldColors old colors to remove
-     * \param newColors new colors to set
-     */
-    void replaceColorScheme( WDataSetFibers::ColorArray oldColors, WDataSetFibers::ColorArray newColors );
-
-    /**
-     * Get the color scheme with the specified name. If it is not found, an exception gets thrown.
-     *
-     * \param name the name of the color scheme
-     *
-     * \return the color scheme
-     * \throw WDHNoSuchDataSet if the name could not be found.
-     */
-    const boost::shared_ptr< ColorScheme > getColorScheme( std::string name ) const;
-
-    /**
-     * Get the color scheme with the specified ID. If the index is invalid, an exception gets thrown.
-     *
-     * \param idx the index
-     *
-     * \return the color scheme
-     */
-    const boost::shared_ptr< ColorScheme > getColorScheme( size_t idx ) const;
-
-    /**
-     * Convenience method returning the currently selected scheme. This is a comfortable alternative to using the color scheme selection
-     * property.
-     *
-     * \return the current active color scheme
-     */
-    const boost::shared_ptr< ColorScheme > getColorScheme() const;
-
-    /**
-     * Returns the property controlling the color scheme selection.
-     *
-     * \return the property.
-     */
-    const WPropSelection getColorSchemeProperty() const;
+    boost::shared_ptr< std::vector< float > > getLocalColors() const;
 
     /**
      * returns the position in space for a vertex of a given fiber
@@ -363,41 +191,40 @@ private:
     /**
      * Point vector for all fibers
      */
-    VertexArray m_vertices;
+    boost::shared_ptr< std::vector< float > > m_vertices;
 
     /**
      * Point vector for tangents at each vertex, used for fake tubes
      */
-    TangentArray m_tangents;
-
-    // the following typedefs are for convenience.
+    boost::shared_ptr< std::vector< float > > m_tangents;
 
     /**
-     * An array of color arrays. The first two elements are: 0: global color, 1: local color
+     * Storing the global color value of the fibers for each point.
      */
-    boost::shared_ptr< WItemSelection > m_colors;
+    boost::shared_ptr< std::vector< float > > m_globalColors;
 
     /**
-     * Property keeping track of the active color in m_colors.
+     * Storing the local color value of the fibers for each point.
+     * \note it is mutable to allow getLocalColors creating it on demand.
      */
-    WPropSelection m_colorProp;
+    mutable boost::shared_ptr< std::vector< float > > m_localColors;
 
     /**
      * Line vector that contains the start index of its first point for each line.
      * \warning The index returned cannot be used in the vertices array until
      * the number of components for each point is multiplied.
      */
-    IndexArray m_lineStartIndexes;
+    boost::shared_ptr< std::vector< size_t > > m_lineStartIndexes;
 
     /**
      * Line vector that contains the number of vertices for each line
      */
-    LengthArray m_lineLengths;
+    boost::shared_ptr< std::vector< size_t > > m_lineLengths;
 
     /**
      * Reverse lookup table for which point belongs to which fiber
      */
-    IndexArray m_verticesReverse;
+    boost::shared_ptr< std::vector< size_t > > m_verticesReverse;
 
     wmath::WPosition m_bbMin; //!< Minimum position of bounding box of all fibers.
     wmath::WPosition m_bbMax; //!< Maximum position of bounding box of all fibers.

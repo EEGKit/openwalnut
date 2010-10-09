@@ -33,7 +33,6 @@
 #include "constraints/WPropertyConstraintPathExists.h"
 #include "constraints/WPropertyConstraintIsDirectory.h"
 #include "constraints/WPropertyConstraintSelectOnlyOne.h"
-#include "constraints/WPropertyConstraintIsValid.h"
 #include "WExportCommon.h"
 
 /**
@@ -105,19 +104,6 @@ namespace WPropertyHelper
          * \param prop the property where to add the constraint.
          */
         void OWCOMMON_EXPORT addTo( WPropFilename prop );
-    }
-
-    /**
-     * Contains functions for easily adding constraints of type PC_ISVALID  to properties compatible with this constraint.
-     */
-    namespace PC_ISVALID
-    {
-        /**
-         * Add the PC_ISVALID constraint to the property.
-         *
-         * \param prop the property where to add the constraint.
-         */
-        void OWCOMMON_EXPORT addTo( WPropSelection prop );
     }
 }
 

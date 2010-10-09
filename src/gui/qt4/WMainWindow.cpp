@@ -55,7 +55,7 @@
 #include "../../kernel/modules/data/WMData.h"
 #include "../../kernel/modules/navSlices/WMNavSlices.h"
 #include "../icons/WIcons.h"
-#include "controlPanel/WPropertyBoolWidget.h"
+#include "datasetbrowser/WPropertyBoolWidget.h"
 #include "events/WEventTypes.h"
 #include "events/WModuleCrashEvent.h"
 #include "events/WModuleReadyEvent.h"
@@ -98,39 +98,32 @@ void WMainWindow::setupGUI()
     setWindowIcon( m_iconManager.getIcon( "logo" ) );
     setWindowTitle( QApplication::translate( "MainWindow", "OpenWalnut (development version)", 0, QApplication::UnicodeUTF8 ) );
 
+    // the dataset browser instance is needed for the menu
+    m_datasetBrowser = new WQtDatasetBrowser( this );
+    m_datasetBrowser->setFeatures( QDockWidget::AllDockWidgetFeatures );
+    addDockWidget( Qt::RightDockWidgetArea, m_datasetBrowser );
+    m_datasetBrowser->addSubject( "Default Subject" );
 
-    // the control panel instance is needed for the menu
-    m_controlPanel = new WQtControlPanel( this );
-    m_controlPanel->setFeatures( QDockWidget::AllDockWidgetFeatures );
-    addDockWidget( Qt::RightDockWidgetArea, m_controlPanel );
-    m_controlPanel->addSubject( "Default Subject" );
-
-    setupPermanentToolBar();
-
-    // we want the upper most tree item to be selected. This helps to make the always compatible modules
-    // show up in the tool bar from the beginning. And ... it doesn't hurt.
-    m_controlPanel->selectUpperMostEntry();
-
-    // set the size of the control panel according to config file
-    int controlPanelWidth = 250;
-    if( WPreferences::getPreference( "qt4gui.dsbWidth", &controlPanelWidth ) )
+    // set the size of the dsb according to config file
+    int dsbWidth = 250;
+    if( WPreferences::getPreference( "qt4gui.dsbWidth", &dsbWidth ) )
     {
-        m_controlPanel->setSizePolicy( QSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred ) );
-        m_controlPanel->setMinimumWidth( controlPanelWidth );
+        m_datasetBrowser->setSizePolicy( QSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred ) );
+        m_datasetBrowser->setMinimumWidth( dsbWidth );
     }
 
-    // hide the control panel by default?
-    bool controlPanelInvisibleByDefault = false;
-    if( WPreferences::getPreference( "qt4gui.dsbInvisibleByDefault", &controlPanelInvisibleByDefault ) )
+    // hide the DSB by default?
+    bool dsbInvisibleByDefault = false;
+    if( WPreferences::getPreference( "qt4gui.dsbInvisibleByDefault", &dsbInvisibleByDefault ) )
     {
-        m_controlPanel->setVisible( !controlPanelInvisibleByDefault );
+        m_datasetBrowser->setVisible( !dsbInvisibleByDefault );
     }
 
-    // undock the control panel by default?
-    bool controlPanelFloatingByDefault = false;
-    if( WPreferences::getPreference( "qt4gui.dsbFloatingByDefault", &controlPanelFloatingByDefault ) )
+    // undock the DSB by default?
+    bool dsbFloatingByDefault = false;
+    if( WPreferences::getPreference( "qt4gui.dsbFloatingByDefault", &dsbFloatingByDefault ) )
     {
-        m_controlPanel->setFloating( controlPanelFloatingByDefault );
+        m_datasetBrowser->setFloating( dsbFloatingByDefault );
     }
 
     // NOTE: Please be aware that not every menu needs a shortcut key. If you add a shortcut, you should use one of the
@@ -165,24 +158,23 @@ void WMainWindow::setupGUI()
     // directly -> set shortcuts, and some further properties using QAction's interface
     QMenu* viewMenu = m_menuBar->addMenu( "View" );
 
-    QAction* controlPanelTrigger = m_controlPanel->toggleViewAction();
-    QList< QKeySequence > controlPanelShortcut;
-    controlPanelShortcut.append( QKeySequence( Qt::Key_F9 ) );
-    controlPanelTrigger->setShortcuts( controlPanelShortcut );
-    viewMenu->addAction( controlPanelTrigger );
+    QAction* dsbTrigger = m_datasetBrowser->toggleViewAction();
+    QList< QKeySequence > dsbShortcut;
+    dsbShortcut.append( QKeySequence( Qt::Key_F9 ) );
+    dsbTrigger->setShortcuts( dsbShortcut );
+    viewMenu->addAction( dsbTrigger );
     viewMenu->addSeparator();
-    this->addAction( controlPanelTrigger );  // this enables the action even if the menu bar is invisible
+    this->addAction( dsbTrigger );  // this enables the action even if the menu bar is invisible
 
     // NOTE: the shortcuts for these view presets should be chosen carefully. Most keysequences have another meaning in the most applications
     // so the user may get confused. It is also not a good idea to take letters as they might be used by OpenSceneGraph widget ( like "S" for
     // statistics ).
-    // By additionally adding the action to the main window, we ensure the action can be triggered even if the menu bar is hidden.
-    this->addAction( viewMenu->addAction( "Left", this, SLOT( setPresetViewLeft() ),           QKeySequence( Qt::CTRL + Qt::SHIFT + Qt::Key_L ) ) );
-    this->addAction( viewMenu->addAction( "Right", this, SLOT( setPresetViewRight() ),         QKeySequence( Qt::CTRL + Qt::SHIFT + Qt::Key_R ) ) );
-    this->addAction( viewMenu->addAction( "Superior", this, SLOT( setPresetViewSuperior() ),   QKeySequence( Qt::CTRL + Qt::SHIFT + Qt::Key_S ) ) );
-    this->addAction( viewMenu->addAction( "Inferior", this, SLOT( setPresetViewInferior() ),   QKeySequence( Qt::CTRL + Qt::SHIFT + Qt::Key_I ) ) );
-    this->addAction( viewMenu->addAction( "Anterior", this, SLOT( setPresetViewAnterior() ),   QKeySequence( Qt::CTRL + Qt::SHIFT + Qt::Key_A ) ) );
-    this->addAction( viewMenu->addAction( "Posterior", this, SLOT( setPresetViewPosterior() ), QKeySequence( Qt::CTRL + Qt::SHIFT + Qt::Key_P ) ) );
+    viewMenu->addAction( "Left", this, SLOT( setPresetViewLeft() ),           QKeySequence( Qt::CTRL + Qt::SHIFT + Qt::Key_L ) );
+    viewMenu->addAction( "Right", this, SLOT( setPresetViewRight() ),         QKeySequence( Qt::CTRL + Qt::SHIFT + Qt::Key_R ) );
+    viewMenu->addAction( "Superior", this, SLOT( setPresetViewSuperior() ),   QKeySequence( Qt::CTRL + Qt::SHIFT + Qt::Key_S ) );
+    viewMenu->addAction( "Inferior", this, SLOT( setPresetViewInferior() ),   QKeySequence( Qt::CTRL + Qt::SHIFT + Qt::Key_I ) );
+    viewMenu->addAction( "Anterior", this, SLOT( setPresetViewAnterior() ),   QKeySequence( Qt::CTRL + Qt::SHIFT + Qt::Key_A ) );
+    viewMenu->addAction( "Posterior", this, SLOT( setPresetViewPosterior() ), QKeySequence( Qt::CTRL + Qt::SHIFT + Qt::Key_P ) );
 
     QMenu* helpMenu = m_menuBar->addMenu( "Help" );
     helpMenu->addAction( m_iconManager.getIcon( "help" ), "About OpenWalnut", this, SLOT( openAboutDialog() ),
@@ -220,10 +212,8 @@ void WMainWindow::setupGUI()
     // we do not need the dummy widget if there are no other widgets.
     if( m_navAxial || m_navCoronal || m_navSagittal )
     {
-        m_dummyWidget = new QDockWidget( "Spacer", this );
-        QWidget* tmp = new QWidget( m_dummyWidget );
-        m_dummyWidget->setTitleBarWidget( tmp );
-        m_dummyWidget->setFeatures( QDockWidget::DockWidgetClosable );
+        m_dummyWidget = new QDockWidget( this );
+        m_dummyWidget->setFeatures( QDockWidget::NoDockWidgetFeatures );
         m_dummyWidget->setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Ignored );
         addDockWidget( Qt::LeftDockWidgetArea, m_dummyWidget );
     }
@@ -255,6 +245,8 @@ void WMainWindow::setupGUI()
             }
         }
     }
+
+    setupPermanentToolBar();
 }
 
 void WMainWindow::setupPermanentToolBar()
@@ -303,10 +295,10 @@ void WMainWindow::setupPermanentToolBar()
     m_permanentToolBar->addWidget( roiButton );
     m_permanentToolBar->addSeparator();
 
-    if( getToolbarPos() == InControlPanel )
+    if( getToolbarPos() == InDSB )
     {
-        m_controlPanel->addToolbar( m_permanentToolBar );
-        //m_controlPanel->setTitleBarWidget( m_permanentToolBar );
+        m_datasetBrowser->addToolbar( m_permanentToolBar );
+        //m_datasetBrowser->setTitleBarWidget( m_permanentToolBar );
     }
     else if( getToolbarPos() == Hide )
     {
@@ -361,7 +353,12 @@ void WMainWindow::moduleSpecificSetup( boost::shared_ptr< WModule > module )
         else if( dataModule->getDataSet()->isA< WDataSetFibers >() )
         {
             // it is a fiber dataset -> add the FiberDisplay module
-            autoAdd( module, "Fiber Display" );
+
+            // if it not already is running: add it
+            if( !WMFiberDisplay::isRunning() )
+            {
+                autoAdd( module, "Fiber Display" );
+            }
         }
         else if( dataModule->getDataSet()->isA< WEEG2 >() )
         {
@@ -517,7 +514,7 @@ Qt::ToolBarArea WMainWindow::toQtToolBarArea( ToolBarPosition pos )
         case Right:
             return Qt::RightToolBarArea;
             break;
-        case InControlPanel:
+        case InDSB:
             return Qt::RightToolBarArea;
         default:
             return Qt::NoToolBarArea;
@@ -564,9 +561,9 @@ void WMainWindow::setCompatiblesToolbar( WQtCombinerToolbar* toolbar )
     addToolBar( toQtToolBarArea( getCompatiblesToolbarPos() ), m_currentCompatiblesToolbar );
 }
 
-WQtControlPanel* WMainWindow::getControlPanel()
+WQtDatasetBrowser* WMainWindow::getDatasetBrowser()
 {
-    return m_controlPanel;
+    return m_datasetBrowser;
 }
 
 void WMainWindow::projectSave( const std::vector< boost::shared_ptr< WProjectFileIO > >& writer )
@@ -674,17 +671,6 @@ void WMainWindow::projectLoad()
 
 void WMainWindow::openLoadDialog()
 {
-#ifdef _MSC_VER
-    QStringList fileNames;
-    QString filters;
-    filters = QString::fromStdString( std::string( "Known file types (*.cnt *.edf *.asc *.nii *.nii.gz *.fib);;" )
-        + std::string( "EEG files (*.cnt *.edf *.asc);;" )
-        + std::string( "NIfTI (*.nii *.nii.gz);;" )
-        + std::string( "Fibers (*.fib);;" )
-        + std::string( "Any files (*)" ) );
-
-    fileNames = QFileDialog::getOpenFileNames( this, "Open", "", filters  );
-#else
     QFileDialog fd;
     fd.setFileMode( QFileDialog::ExistingFiles );
 
@@ -701,7 +687,6 @@ void WMainWindow::openLoadDialog()
     {
         fileNames = fd.selectedFiles();
     }
-#endif
 
     std::vector< std::string > stdFileNames;
 
@@ -747,7 +732,7 @@ void WMainWindow::openAboutDialog()
 {
     QMessageBox::about( this, "About OpenWalnut",
                         "OpenWalnut ( http://www.openwalnut.org )\n\n"
-                        "Copyright 2009-2010 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS. "
+                        "Copyright (C) 2009 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS. "
                         "For more information see http://www.openwalnut.org/copying.\n\n"
                         "This program comes with ABSOLUTELY NO WARRANTY. "
                         "This is free software, and you are welcome to redistribute it "
@@ -974,11 +959,17 @@ void WMainWindow::closeCustomDockWidget( std::string title )
 void WMainWindow::newRoi()
 {
     // do nothing if we can not get
+    if( !WKernel::getRunningKernel()->getRoiManager()->getBitField() )
+    {
+        wlog::warn( "WMainWindow" ) << "Refused to add ROI, as ROIManager does not have computed its bitfield yet.";
+        return;
+    }
+
     wmath::WPosition crossHairPos = WKernel::getRunningKernel()->getSelectionManager()->getCrosshair()->getPosition();
     wmath::WPosition minROIPos = crossHairPos - wmath::WPosition( 10., 10., 10. );
     wmath::WPosition maxROIPos = crossHairPos + wmath::WPosition( 10., 10., 10. );
 
-    if( m_controlPanel->getFirstRoiInSelectedBranch().get() == NULL )
+    if( m_datasetBrowser->getFirstRoiInSelectedBranch().get() == NULL )
     {
         osg::ref_ptr< WROIBox > newRoi = osg::ref_ptr< WROIBox >( new WROIBox( minROIPos, maxROIPos ) );
         WKernel::getRunningKernel()->getRoiManager()->addRoi( newRoi );
@@ -986,7 +977,7 @@ void WMainWindow::newRoi()
     else
     {
         osg::ref_ptr< WROIBox > newRoi = osg::ref_ptr< WROIBox >( new WROIBox( minROIPos, maxROIPos ) );
-        WKernel::getRunningKernel()->getRoiManager()->addRoi( newRoi, m_controlPanel->getFirstRoiInSelectedBranch() );
+        WKernel::getRunningKernel()->getRoiManager()->addRoi( newRoi, m_datasetBrowser->getFirstRoiInSelectedBranch()->getROI() );
     }
 }
 

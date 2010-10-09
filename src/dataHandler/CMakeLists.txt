@@ -17,28 +17,12 @@ FILE( GLOB DATAHANDLER_IO_SRC "io/*.cpp" "io/*.h" ) # former WLoader
 #    ADD_LIBRARY( dataHandler ${DATAHANDLER_SRC} ${DATAHANDLER_EXCEPTIONS_SRC} ${DATAHANDLER_IO_SRC} ${DATAHANDLER_DATASTRUCTURES_SRC} )
 #    TARGET_LINK_LIBRARIES( dataHandler common ${Boost_LIBRARIES} niftiio libeep ${OPENSCENEGRAPH_LIBRARIES})
 #ELSE()
-    ADD_LIBRARY( OWdataHandler SHARED ${DATAHANDLER_SRC} ${DATAHANDLER_EXCEPTIONS_SRC} ${DATAHANDLER_IO_SRC} ${DATAHANDLER_DATASTRUCTURES_SRC} )
-    IF( ITK_FOUND AND OW_USE_ITK )
-        TARGET_LINK_LIBRARIES( OWdataHandler OWcommon ${Boost_LIBRARIES} OWext_niftiio OWext_biosig OWext_eep ${OPENSCENEGRAPH_LIBRARIES} ${ITK_LIBRARIES} )
-    ELSE()
-        TARGET_LINK_LIBRARIES( OWdataHandler OWcommon ${Boost_LIBRARIES} OWext_niftiio OWext_biosig OWext_eep ${OPENSCENEGRAPH_LIBRARIES} )
-    ENDIF()
+    ADD_LIBRARY( OWdataHandler ${DATAHANDLER_SRC} ${DATAHANDLER_EXCEPTIONS_SRC} ${DATAHANDLER_IO_SRC} ${DATAHANDLER_DATASTRUCTURES_SRC} )
+    TARGET_LINK_LIBRARIES( OWdataHandler OWcommon ${Boost_LIBRARIES} OWext_niftiio OWext_biosig OWext_eep ${OPENSCENEGRAPH_LIBRARIES})
 #ENDIF()
-
-IF(MSVC_IDE)
-	SET_TARGET_PROPERTIES( OWdataHandler PROPERTIES PREFIX "../")    
-ENDIF(MSVC_IDE)
-
 # Unit tests
 IF( OW_COMPILE_TESTS )
-    # in case of not installed ITK the unit test won't compile, so we remove it
-    IF( NOT ITK_FOUND OR NOT OW_USE_ITK )
-        LIST( REMOVE_ITEM DATAHANDLER_SRC "${CMAKE_CURRENT_SOURCE_DIR}/WITKImageConversion.cpp" )
-    ENDIF()
-
-    CXXTEST_ADD_TESTS_FROM_LIST( "${DATAHANDLER_SRC}" "OWdataHandler"
-        "WDataTexture3D.cpp"
-        "WDataHandlerEnums.cpp" )
+    CXXTEST_ADD_TESTS_FROM_LIST( "${DATAHANDLER_SRC}" "OWdataHandler" "WDataTexture3D.cpp" "WDataHandlerEnums.cpp" )
 
     # Copy fixtures if existend
     IF( EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/test/fixtures )

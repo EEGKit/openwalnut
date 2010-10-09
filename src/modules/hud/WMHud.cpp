@@ -32,7 +32,7 @@
 #include "../../kernel/WKernel.h"
 
 #include "WMHud.h"
-#include "WMHud.xpm"
+#include "hud.xpm"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMHud )
@@ -71,7 +71,8 @@ void WMHud::connectors()
 
 void WMHud::properties()
 {
-    WModule::properties();
+    // m_active gets initialized in WModule and is available for all modules. Overwrite activate() to have a special callback for m_active
+    // changes or add a callback manually.
 }
 
 void WMHud::moduleMain()
@@ -188,11 +189,7 @@ void WMHud::init()
     m_osgPickText->setColor( osg::Vec4( 0, 0, 0, 1 ) );
     m_osgPickText->setDataVariance( osg::Object::DYNAMIC );
 
-    osg::ref_ptr< userData > usrData = osg::ref_ptr< userData >(
-        new userData( boost::shared_dynamic_cast< WMHud >( shared_from_this() ) )
-        );
-
-    m_rootNode->setUserData( usrData );
+    m_rootNode->setUserData( this );
     m_rootNode->setUpdateCallback( new HUDNodeCallback );
 
     HUDGeode->addDrawable( m_osgPickText );
@@ -256,8 +253,3 @@ void WMHud::activate()
     WModule::activate();
 }
 
-
-void WMHud::userData::update()
-{
-    m_parent->update();
-}

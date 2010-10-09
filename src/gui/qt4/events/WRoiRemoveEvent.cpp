@@ -26,7 +26,7 @@
 #include "WRoiRemoveEvent.h"
 
 
-WRoiRemoveEvent::WRoiRemoveEvent( osg::ref_ptr< WROI > roi )
+WRoiRemoveEvent::WRoiRemoveEvent( boost::shared_ptr< WRMROIRepresentation > roi )
     : QEvent( static_cast< QEvent::Type >( WQT_ROI_REMOVE_EVENT ) ),
       m_roi( roi )
 {
@@ -38,7 +38,7 @@ WRoiRemoveEvent::~WRoiRemoveEvent()
     // cleanup
 }
 
-osg::ref_ptr< WROI > WRoiRemoveEvent::getRoi()
+boost::shared_ptr< WRMROIRepresentation > WRoiRemoveEvent::getRoi()
 {
     return m_roi;
 }

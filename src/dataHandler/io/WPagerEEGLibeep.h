@@ -34,7 +34,6 @@
 
 #include "../WEEGValueMatrix.h"
 #include "WPagerEEG.h"
-#include "../WExportDataHandler.h"
 
 typedef struct eeg_dummy_t eeg_t;
 
@@ -44,7 +43,7 @@ typedef struct eeg_dummy_t eeg_t;
  * Uses the libeep library to read the CNT format.
  * \ingroup dataHandler
  */
-class OWDATAHANDLER_EXPORT WPagerEEGLibeep : public WPagerEEG // NOLINT
+class WPagerEEGLibeep : public WPagerEEG
 {
 public:
     /**

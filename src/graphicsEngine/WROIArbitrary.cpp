@@ -30,16 +30,19 @@
 #include <osg/LineWidth>
 #include <osg/LightModel>
 
-#include "algorithms/WMarchingLegoAlgorithm.h"
+#include "../common/WProgressCombiner.h"
+
+#include "algorithms/WMarchingCubesAlgorithm.h"
 
 #include "WGraphicsEngine.h"
+//#include "WGEUtils.h"
 
 #include "WROIArbitrary.h"
 
 WROIArbitrary::WROIArbitrary( size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
                               const wmath::WMatrix< double >& mat,
                               const std::vector< float >& vals,
-                              boost::shared_ptr< WTriangleMesh > triMesh,
+                              boost::shared_ptr< WTriangleMesh2 > triMesh,
                               float threshold,
                               float maxThreshold,
                               WColor color ) :
@@ -48,24 +51,18 @@ WROIArbitrary::WROIArbitrary( size_t nbCoordsX, size_t nbCoordsY, size_t nbCoord
     m_matrix( mat ),
     m_vals( vals ),
     m_triMesh( triMesh ),
+    m_threshold( threshold ),
+    m_maxThreshold( maxThreshold ),
     m_color( color )
 {
     m_nbCoordsVec[0] = nbCoordsX;
     m_nbCoordsVec[1] = nbCoordsY;
     m_nbCoordsVec[2] = nbCoordsZ;
-
-    properties();
-
-    m_threshold->set( threshold );
-    m_threshold->setMax( maxThreshold );
-
     updateGFX();
-
+    m_isModified = true;
     WGraphicsEngine::getGraphicsEngine()->getScene()->addChild( this );
     setUserData( this );
     setUpdateCallback( osg::ref_ptr<ROIArbNodeCallback>( new ROIArbNodeCallback ) );
-
-    setDirty();
 }
 
 WROIArbitrary::WROIArbitrary( size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
@@ -77,24 +74,19 @@ WROIArbitrary::WROIArbitrary( size_t nbCoordsX, size_t nbCoordsY, size_t nbCoord
     m_nbCoordsVec( 3 ),
     m_matrix( mat ),
     m_vals( vals ),
+    m_threshold( 0.01 ),
+    m_maxThreshold( maxThreshold ),
     m_color( color )
 {
     m_nbCoordsVec[0] = nbCoordsX;
     m_nbCoordsVec[1] = nbCoordsY;
     m_nbCoordsVec[2] = nbCoordsZ;
 
-    properties();
-
-    m_threshold->set( 0.01 );
-    m_threshold->setMax( maxThreshold );
-
     updateGFX();
-
+    m_isModified = true;
     WGraphicsEngine::getGraphicsEngine()->getScene()->addChild( this );
     setUserData( this );
     setUpdateCallback( osg::ref_ptr< ROIArbNodeCallback >( new ROIArbNodeCallback ) );
-
-    setDirty();
 }
 
 WROIArbitrary::~WROIArbitrary()
@@ -105,25 +97,20 @@ WROIArbitrary::~WROIArbitrary()
 //    WGraphicsEngine::getGraphicsEngine()->getScene()->remove( m_geode );
 }
 
-void WROIArbitrary::properties()
-{
-    m_threshold = m_properties->addProperty( "Threshold", "description", 0. , boost::bind( &WROIArbitrary::propertyChanged, this ) );
-}
-
-void WROIArbitrary::propertyChanged()
-{
-    setDirty();
-}
-
 void WROIArbitrary::setThreshold( double threshold )
 {
-    m_threshold->set( threshold );
-    setDirty();
+    m_threshold = threshold;
+    m_isModified = true;
 }
 
 double WROIArbitrary::getThreshold()
 {
-    return m_threshold->get();
+    return m_threshold;
+}
+
+double WROIArbitrary::getMaxThreshold()
+{
+    return m_maxThreshold;
 }
 
 std::vector< size_t > WROIArbitrary::getCoordDimensions()
@@ -147,13 +134,15 @@ float WROIArbitrary::getValue( size_t i )
 
 void WROIArbitrary::updateGFX()
 {
-    if ( m_dirty->get() )
+    if ( m_isModified )
     {
-        WMarchingLegoAlgorithm mlAlgo;
-        m_triMesh = mlAlgo.generateSurface( m_nbCoordsVec[0], m_nbCoordsVec[1], m_nbCoordsVec[2],
+        boost::shared_ptr< WProgressCombiner > progress = boost::shared_ptr< WProgressCombiner >( new WProgressCombiner() );
+        WMarchingCubesAlgorithm mcAlgo;
+        m_triMesh = mcAlgo.generateSurface( m_nbCoordsVec[0], m_nbCoordsVec[1], m_nbCoordsVec[2],
                                             m_matrix,
                                             &m_vals,
-                                            m_threshold->get() );
+                                            m_threshold,
+                                            progress );
 
         osg::Geometry* surfaceGeometry = new osg::Geometry();
         setName( "roi" );
@@ -201,6 +190,6 @@ void WROIArbitrary::updateGFX()
     //        state->setAttribute( material );
     //    }
 
-        m_dirty->set( false );
+        m_isModified = false;
     }
 }

@@ -24,7 +24,6 @@
 
 #include <string>
 #include <vector>
-#include <cstdlib>
 
 #include <boost/tokenizer.hpp>
 
@@ -71,22 +70,7 @@ boost::filesystem::path WPathHelper::getAppPath()
 boost::filesystem::path WPathHelper::getConfigFile()
 {
     // TODO(ebaum): we should prefer a user config file in ~.walnut.cfg in future. This needs to be platform independent of course.
-    namespace fs = boost::filesystem;
-
-    // I know that this work only for linux, but it should not break anything elsewhere.
-    // Thus, we prefer the file in the home directory now.
-    std::string homeDir = getenv( "HOME" ) ? getenv( "HOME" ) : "";
-    std::string linuxDefault= homeDir + "/.walnut.cfg";
-    boost::filesystem::path configFile;
-    if( fs::exists( linuxDefault ) )
-    {
-        configFile = boost::filesystem::path( linuxDefault );
-    }
-    else
-    {
-        configFile = getPathHelper()->m_sharePath / "walnut.cfg";
-    }
-    return configFile;
+    return getPathHelper()->m_sharePath / "walnut.cfg";
 }
 
 boost::filesystem::path WPathHelper::getFontPath()

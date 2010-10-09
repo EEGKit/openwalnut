@@ -36,7 +36,7 @@
 #include "../../common/WAssert.h"
 #include "../../kernel/WKernel.h"
 #include "WMApplyMask.h"
-#include "WMApplyMask.xpm"
+#include "apply_mask.xpm"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMApplyMask )
@@ -182,7 +182,6 @@ void WMApplyMask::connectors()
 
 void WMApplyMask::properties()
 {
-    WModule::properties();
 }
 
 template< typename T > void WMApplyMask::applyMask( boost::shared_ptr< WValueSet< T > > valSet, dataType type )

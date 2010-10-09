@@ -29,81 +29,44 @@
 WROI::WROI() :
     osg::Geode()
 {
-    properties();
 }
 
 WROI::~WROI()
 {
 }
 
-void WROI::properties()
+boost::signals2::signal0< void >* WROI::getSignalIsModified()
 {
-    m_properties = boost::shared_ptr< WProperties >( new WProperties( "Properties", "This ROI's properties" ) );
-
-    m_active = m_properties->addProperty( "active", "description", true, boost::bind( &WROI::propertyChanged, this ) );
-    m_active->setHidden( true );
-
-    m_show = m_properties->addProperty( "show", "Toggles visibility of the roi", true, boost::bind( &WROI::propertyChanged, this ) );
-
-    m_dirty = m_properties->addProperty( "Dirty", "description", true ); // boost::bind( &WROI::propertyChanged, this ) );
-    m_dirty->setHidden( true );
-
-    m_not = m_properties->addProperty( "NOT", "description", false, boost::bind( &WROI::propertyChanged, this ) );
-}
-
-void WROI::propertyChanged()
-{
-    if ( m_show->changed() )
-    {
-        if ( m_show->get( true ) )
-        {
-            unhide();
-        }
-        else
-        {
-            hide();
-        }
-    }
-
-    setDirty();
-}
-
-boost::shared_ptr<WProperties> WROI::getProperties()
-{
-    return m_properties;
+    return &m_signalIsModified;
 }
 
 void WROI::setNot( bool isNot )
 {
-    m_not->set( isNot );
-    setDirty();
+    m_isNot = isNot;
+    m_isModified = true;
 }
 
 bool WROI::isNot()
 {
-    return m_not->get();
+    return m_isNot;
 }
 
-bool WROI::active()
+bool WROI::isActive()
 {
-    return m_active->get();
+    return m_isActive;
 }
 
 void WROI::setActive( bool active )
 {
-    m_active->set( active );
-    setDirty();
+    m_isActive = active;
+    m_isModified = true;
 }
 
-void WROI::setDirty()
+bool WROI::isModified()
 {
-    m_dirty->set( true );
-    signalRoiChange();
-}
-
-bool WROI::dirty()
-{
-    return m_dirty->get();
+    bool tmp = m_isModified;
+    m_isModified = false;
+    return tmp;
 }
 
 void WROI::hide()
@@ -114,21 +77,4 @@ void WROI::hide()
 void WROI::unhide()
 {
     setNodeMask( 0xFFFFFFFF );
-}
-
-void WROI::signalRoiChange()
-{
-    for ( std::list< boost::function< void() > >::iterator iter = m_changeNotifiers.begin();
-                iter != m_changeNotifiers.end(); ++iter )
-    {
-        ( *iter )();
-    }
-}
-
-void WROI::addChangeNotifier( boost::function< void() > notifier )
-{
-    boost::unique_lock< boost::shared_mutex > lock;
-    lock = boost::unique_lock< boost::shared_mutex >( m_associatedNotifiersLock );
-    m_changeNotifiers.push_back( notifier );
-    lock.unlock();
 }

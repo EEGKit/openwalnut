@@ -10,14 +10,7 @@ SET( MODULE_NAME    "OWmodule_${MODULE_NAME}" )      # prefix all module names w
 
 # Build module lib
 ADD_LIBRARY( ${MODULE_NAME} SHARED ${MODULES_SRC} )
-IF( ITK_FOUND AND OW_USE_ITK )
-    TARGET_LINK_LIBRARIES( ${MODULE_NAME} OWkernel ${ITK_LIBRARIES})
-ELSE()
-    TARGET_LINK_LIBRARIES( ${MODULE_NAME} OWkernel )
-ENDIF()    
-IF(MSVC_IDE)
-	SET_TARGET_PROPERTIES( ${MODULE_NAME} PROPERTIES PREFIX "../")    
-ENDIF(MSVC_IDE)
+TARGET_LINK_LIBRARIES( ${MODULE_NAME} OWkernel )
 
 # Copy local shaders to module target directory
 IF( OW_COPY_SHADERS AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/shaders )    # copy shaders only if the user wants it

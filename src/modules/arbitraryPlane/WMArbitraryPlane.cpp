@@ -40,7 +40,7 @@
 #include "../../graphicsEngine/WGEUtils.h"
 
 #include "WMArbitraryPlane.h"
-#include "WMArbitraryPlane.xpm"
+#include "arbitraryPlane.xpm"
 
 // This line is needed by the module loader to actually find your module. Do not remove. Do NOT add a ";" here.
 W_LOADABLE_MODULE( WMArbitraryPlane )
@@ -102,8 +102,6 @@ void WMArbitraryPlane::properties()
     m_buttonReset2Axial = m_properties->addProperty( "Axial", "Resets and aligns the plane", WPVBaseTypes::PV_TRIGGER_READY, m_propCondition  );
     m_buttonReset2Coronal = m_properties->addProperty( "Coronal", "Resets and aligns the plane", WPVBaseTypes::PV_TRIGGER_READY, m_propCondition  );
     m_buttonReset2Sagittal = m_properties->addProperty( "Sagittal", "Resets and aligns the plane", WPVBaseTypes::PV_TRIGGER_READY, m_propCondition  );
-
-    WModule::properties();
 }
 
 void WMArbitraryPlane::moduleMain()
@@ -136,20 +134,14 @@ void WMArbitraryPlane::moduleMain()
     {
         m_moduleState.wait();
 
-        if ( m_shutdownFlag() )
-        {
-            break;
-        }
-
         if ( m_showComplete->changed() )
         {
-            m_showComplete->get( true );
             m_dirty = true;
         }
 
         if ( m_active->changed() )
         {
-            if ( m_active->get( true ) && m_showManipulators->get() )
+            if ( m_active->get() && m_showManipulators->get() )
             {
                 m_s0->unhide();
                 m_s1->unhide();
@@ -211,11 +203,12 @@ void WMArbitraryPlane::moduleMain()
             m_buttonReset2Sagittal->set( WPVBaseTypes::PV_TRIGGER_READY, false );
             m_dirty = true;
         }
-    }
-    WGraphicsEngine::getGraphicsEngine()->getScene()->remove( &( *m_s0 ) );
-    WGraphicsEngine::getGraphicsEngine()->getScene()->remove( &( *m_s1 ) );
-    WGraphicsEngine::getGraphicsEngine()->getScene()->remove( &( *m_s2 ) );
 
+        if ( m_shutdownFlag() )
+        {
+            break;
+        }
+    }
     con.disconnect();
 
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_rootNode );
@@ -241,14 +234,9 @@ void WMArbitraryPlane::initPlane()
     m_s2 = boost::shared_ptr<WROISphere>( new WROISphere( m_p2, 2.5 ) );
     m_s2->setLockX();
 
-    WGraphicsEngine::getGraphicsEngine()->getScene()->addChild( &( *m_s0 ) );
-    WGraphicsEngine::getGraphicsEngine()->getScene()->addChild( &( *m_s1 ) );
-    WGraphicsEngine::getGraphicsEngine()->getScene()->addChild( &( *m_s2 ) );
-
-    boost::function< void() > changeRoiSignal = boost::bind( &WMArbitraryPlane::setDirty, this );
-    m_s0->addChangeNotifier( changeRoiSignal );
-    m_s1->addChangeNotifier( changeRoiSignal );
-    m_s2->addChangeNotifier( changeRoiSignal );
+    m_s0->getSignalIsModified()->connect( boost::bind( &WMArbitraryPlane::setDirty, this ) );
+    m_s1->getSignalIsModified()->connect( boost::bind( &WMArbitraryPlane::setDirty, this ) );
+    m_s2->getSignalIsModified()->connect( boost::bind( &WMArbitraryPlane::setDirty, this ) );
 }
 
 void WMArbitraryPlane::updatePlane()
@@ -280,10 +268,10 @@ void WMArbitraryPlane::updatePlane()
     osg::ref_ptr<osg::Geometry> planeGeometry = osg::ref_ptr<osg::Geometry>( new osg::Geometry() );
     osg::Vec3Array* planeVertices = new osg::Vec3Array;
 
-    planeVertices->push_back( v0 );
-    planeVertices->push_back( v1 );
-    planeVertices->push_back( v2 );
-    planeVertices->push_back( v3 );
+    planeVertices->push_back( wge::wv3D2ov3( v0 ) );
+    planeVertices->push_back( wge::wv3D2ov3( v1 ) );
+    planeVertices->push_back( wge::wv3D2ov3( v2 ) );
+    planeVertices->push_back( wge::wv3D2ov3( v3 ) );
 
     planeGeometry->setVertexArray( planeVertices );
     osg::DrawElementsUInt* quad = new osg::DrawElementsUInt( osg::PrimitiveSet::QUADS, 0 );
@@ -303,10 +291,10 @@ void WMArbitraryPlane::updatePlane()
         boost::shared_ptr< WGridRegular3D > grid = WKernel::getRunningKernel()->getSelectionManager()->getGrid();
         osg::Vec3Array* texCoords = new osg::Vec3Array;
 
-        texCoords->push_back( grid->worldCoordToTexCoord( v0 ) );
-        texCoords->push_back( grid->worldCoordToTexCoord( v1 ) );
-        texCoords->push_back( grid->worldCoordToTexCoord( v2 ) );
-        texCoords->push_back( grid->worldCoordToTexCoord( v3 ) );
+        texCoords->push_back( wge::wv3D2ov3( grid->worldCoordToTexCoord( v0 ) ) );
+        texCoords->push_back( wge::wv3D2ov3( grid->worldCoordToTexCoord( v1 ) ) );
+        texCoords->push_back( wge::wv3D2ov3( grid->worldCoordToTexCoord( v2 ) ) );
+        texCoords->push_back( wge::wv3D2ov3( grid->worldCoordToTexCoord( v3 ) ) );
 
         planeGeometry->setTexCoordArray( c, texCoords );
         ++c;
@@ -318,10 +306,10 @@ void WMArbitraryPlane::updatePlane()
 
         osg::Vec3Array* texCoords = new osg::Vec3Array;
 
-        texCoords->push_back( grid->worldCoordToTexCoord( v0 ) );
-        texCoords->push_back( grid->worldCoordToTexCoord( v1 ) );
-        texCoords->push_back( grid->worldCoordToTexCoord( v2 ) );
-        texCoords->push_back( grid->worldCoordToTexCoord( v3 ) );
+        texCoords->push_back( wge::wv3D2ov3( grid->worldCoordToTexCoord( v0 ) ) );
+        texCoords->push_back( wge::wv3D2ov3( grid->worldCoordToTexCoord( v1 ) ) );
+        texCoords->push_back( wge::wv3D2ov3( grid->worldCoordToTexCoord( v2 ) ) );
+        texCoords->push_back( wge::wv3D2ov3( grid->worldCoordToTexCoord( v3 ) ) );
 
         planeGeometry->setTexCoordArray( c, texCoords );
         ++c;

@@ -30,10 +30,8 @@
 
 #include <boost/program_options.hpp>
 
-#include "../../graphicsEngine/WROI.h"
-
 #include "../../kernel/WModule.h"
-
+#include "../../kernel/modules/fiberDisplay/WRMROIRepresentation.h"
 #include "../WGUI.h"
 
 class WMainWindow;
@@ -68,7 +66,7 @@ public:
     virtual int run();
 
     /**
-     * returns a pointer to the selected module in the control panel
+     * returns a pointer to the selected module in the dataset browser
      *
      * \return the module
      */
@@ -86,35 +84,35 @@ public:
      *
      * \note This can be used to add datasets or other modules.
      */
-    virtual void slotAddDatasetOrModuleToTree( boost::shared_ptr< WModule > module );
+    virtual void slotAddDatasetOrModuleToBrowser( boost::shared_ptr< WModule > module );
 
     /**
      * Slot gets called whenever a new roi is added.
      *
      * \param roi the roi to be added
      */
-    virtual void slotAddRoiToTree( osg::ref_ptr< WROI > roi );
+    virtual void slotAddRoiToBrowser( boost::shared_ptr< WRMROIRepresentation > roi );
 
     /**
      * Slot gets called whenever a roi is removed.
      *
      * \param roi the roi to be removed
      */
-    virtual void slotRemoveRoiFromTree( osg::ref_ptr< WROI > roi );
+    virtual void slotRemoveRoiFromBrowser( boost::shared_ptr< WRMROIRepresentation > roi );
 
     /**
      * Slot gets called whenever a module switches its state to "ready".
      *
      * \param module the module.
      */
-    virtual void slotActivateDatasetOrModuleInTree( boost::shared_ptr< WModule > module );
+    virtual void slotActivateDatasetOrModuleInBrowser( boost::shared_ptr< WModule > module );
 
     /**
      * Slot gets called whenever a module has been removed from the root container.
      *
      * \param module the module
      */
-    virtual void slotRemoveDatasetOrModuleInTree( boost::shared_ptr< WModule > module );
+    virtual void slotRemoveDatasetOrModuleInBrowser( boost::shared_ptr< WModule > module );
 
     /**
      * Slot gets called whenever a connector pair got connected.

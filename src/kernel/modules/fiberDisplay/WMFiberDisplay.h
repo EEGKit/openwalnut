@@ -35,6 +35,8 @@
 
 #include <osg/Geode>
 #include <osg/Switch>
+#include <osg/ref_ptr>
+#include <osg/Group>
 
 #include "../../../dataHandler/datastructures/WFiberCluster.h"
 #include "../../../dataHandler/WDataSetFibers.h"

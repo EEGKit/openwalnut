@@ -54,7 +54,6 @@ public:
 
     /**
      * Class allowing thread-safe access to an object. It provides some convenience methods to read and write lock the access.
-     * OBSOLETE.
      */
     class WSharedObjectAccess
     {

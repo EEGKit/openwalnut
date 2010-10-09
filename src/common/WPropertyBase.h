@@ -160,7 +160,6 @@ public:
      * \li WPropertyVariable::addConstraint is called
      * \li WPropertyVariable::removeConstraints is called
      * \li WProperties::addProperty is called
-     * \li WProperties::removeProperty is called
      * \li WProperties::addPropertyGroup is called
      * This is especially useful if you simply want to know that something has happened.
      *

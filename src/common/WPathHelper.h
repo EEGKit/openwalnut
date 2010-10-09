@@ -40,6 +40,11 @@ class OWCOMMON_EXPORT WPathHelper // NOLINT
 public:
 
     /**
+     * Default constructor.
+     */
+    WPathHelper();
+
+    /**
      * Destructor.
      */
     virtual ~WPathHelper();
@@ -151,11 +156,6 @@ public:
     static boost::filesystem::path getSharePath();
 
 protected:
-
-    /**
-     * Constructors are protected because this is a Singleton.
-     */
-    WPathHelper();
 
 private:
 

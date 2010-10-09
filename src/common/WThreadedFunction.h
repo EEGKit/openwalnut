@@ -36,52 +36,22 @@
 #include "WWorkerThread.h"
 #include "WSharedObject.h"
 
-/**
- * An enum indicating the status of a multithreaded computation
- */
+//! an enum indicating the status of a multithreaded computation
 enum WThreadedFunctionStatus
 {
-    W_THREADS_INITIALIZED,      //! the status after constructing the function
-    W_THREADS_RUNNING,          //! the threads were started
-    W_THREADS_STOP_REQUESTED,   //! a stop was requested and not all threads have stopped yet
-    W_THREADS_ABORTED,          //! at least one thread was aborted due to a stop request or an exception
-    W_THREADS_FINISHED          //! all threads completed their work successfully
+    W_THREADS_INITIALIZED,      // the status after constructing the function
+    W_THREADS_RUNNING,          // the threads were started
+    W_THREADS_STOP_REQUESTED,   // a stop was requested and not all threads have stopped yet
+    W_THREADS_ABORTED,          // at least one thread was aborted due to a stop request or an exception
+    W_THREADS_FINISHED          // all threads completed their work successfully
 };
-
-/**
- * An enum indicating the number of threads used
- */
-enum WThreadedFunctionNbThreads
-{
-    W_AUTOMATIC_NB_THREADS = 0      //!< Use half the available cores as number of threads
-};
-
 
 /**
  * \class WThreadedFunction
  *
- * Creates threads that compute a function in a multithreaded fashion. The template parameter
- * is an object that provides a function to execute. The following function needs to be implemented:
+ * Creates threads that compute a function in a multithreaded fashion.
  *
- * void operator ( std::size_t id, std::size_t mx, WBoolFlag const& s );
- *
- * Here, 'id' is the number of the thread currently executing the function, ranging from
- * 0 to mx - 1, where 'mx' is the number of threads running. 's' is a flag that indicates
- * if the execution should be stopped. Make sure to check the flag often, so that the threads
- * can be stopped when needed.
- *
- * This class is NOT thread-safe, do not access it from different threads simultaneously.
- * Also, make sure any resources used by your function are accessed in a threadsafe manner,
- * as all threads share the same function object.
- *
- * Any exception thrown by your function will be caught and forwarded via the exception
- * signal. Beware that the signal function will be called in the executing threads, as opposed
- * to in your module thread. This means that the exception handler bound to the exception
- * signal must be threadsafe too.
- *
- * The status of the execution can be checked via the status() function. Also, when all threads
- * finish (due to throwing exceptions or actually successfully finishing computation ), a condition
- * will be notified.
+ * \note This class is NOT thread-safe, do not access it from different threads simultaneously.
  *
  * \ingroup common
  */
@@ -212,7 +182,7 @@ WThreadedFunction< Function_T >::WThreadedFunction( std::size_t numThreads, boos
     }
 
     // find a suitable number of threads
-    if( m_numThreads == W_AUTOMATIC_NB_THREADS )
+    if( m_numThreads == 0 )
     {
         m_numThreads = 1;
         while( m_numThreads < boost::thread::hardware_concurrency() / 2 && m_numThreads < 1024 )
@@ -322,15 +292,18 @@ void WThreadedFunction< Function_T >::handleThreadDone()
         if( s->get() == W_THREADS_RUNNING )
         {
             s->get() = W_THREADS_FINISHED;
+            std::cout << "All threads finished." << std::endl;
         }
         else if( s->get() == W_THREADS_STOP_REQUESTED )
         {
             s->get() = W_THREADS_ABORTED;
+            std::cout << "All threads aborted." << std::endl;
         }
         else
         {
             throw WException( std::string( "Invalid status change." ) );
         }
+        std::cout << "Notifiing condition." << std::endl;
         m_doneCondition->notify();
     }
 }

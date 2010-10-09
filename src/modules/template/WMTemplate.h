@@ -355,3 +355,4 @@ private:
 };
 
 #endif  // WMTEMPLATE_H
+

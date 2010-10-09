@@ -28,7 +28,7 @@
 #include <vector>
 
 #include "WMDistanceMapIsosurface.h"
-#include "WMDistanceMapIsosurface.xpm"
+#include "distancemapIsosurface.xpm"
 
 #include "../../kernel/WKernel.h"
 #include "../../kernel/WModuleFactory.h"

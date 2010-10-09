@@ -28,14 +28,13 @@
 #include <string>
 
 #include "WReaderEEG.h"
-#include "../WExportDataHandler.h"
 
 
 /**
  * Reader for the CNT format supported by the libeep library.
  * \ingroup dataHandler
  */
-class OWDATAHANDLER_EXPORT WReaderLibeep : public WReaderEEG // NOLINT
+class WReaderLibeep : public WReaderEEG
 {
 public:
     /**

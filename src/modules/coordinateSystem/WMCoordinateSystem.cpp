@@ -40,7 +40,7 @@
 #include "../../kernel/WKernel.h"
 
 #include "WTalairachConverter.h"
-#include "WMCoordinateSystem.xpm"
+#include "coordinateSystem.xpm"
 
 #include "WMCoordinateSystem.h"
 
@@ -89,13 +89,6 @@ void WMCoordinateSystem::moduleMain()
     // loop until the module container requests the module to quit
     while ( !m_shutdownFlag() )
     {
-        m_moduleState.wait();
-
-        if ( m_shutdownFlag() )
-        {
-            break;
-        }
-
         if ( m_dataSet != m_input->getData() )
         {
             // acquire data from the input connector
@@ -106,6 +99,9 @@ void WMCoordinateSystem::moduleMain()
             m_dirty = true;
         }
     }
+    // Since the modules run in a separate thread: wait
+    waitForStop();
+
     // clean up stuff
     // NOTE: ALWAYS remove your osg nodes!
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_rootNode );
@@ -159,8 +155,6 @@ void WMCoordinateSystem::properties()
     m_acTrigger = m_properties->addProperty( "Set AC", "Press me.", WPVBaseTypes::PV_TRIGGER_READY, propertyCallback );
     m_pcTrigger = m_properties->addProperty( "Set PC", "Press me.", WPVBaseTypes::PV_TRIGGER_READY, propertyCallback );
     m_ihpTrigger = m_properties->addProperty( "Set IHP", "Press me.", WPVBaseTypes::PV_TRIGGER_READY, propertyCallback );
-
-    WModule::properties();
 }
 
 void WMCoordinateSystem::propertyChanged()
@@ -168,7 +162,7 @@ void WMCoordinateSystem::propertyChanged()
     if ( m_csSelection->changed() )
     {
         WItemSelector s = m_csSelection->get( true );
-        infoLog() << "Selected " << s.at( 0 )->getName() << " coordinate system.";
+        infoLog() << "Selected " << s.at( 0 ).name << " coordinate system.";
         m_coordConverter->setCoordinateSystemMode( static_cast< coordinateSystemMode > ( s.getItemIndexOfSelected( 0 ) ) );
     }
 
@@ -224,11 +218,7 @@ void WMCoordinateSystem::createGeometry()
 
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_rootNode );
 
-    osg::ref_ptr< userData > usrData = osg::ref_ptr< userData >(
-        new userData( boost::shared_dynamic_cast< WMCoordinateSystem >( shared_from_this() ) )
-        );
-
-    m_rootNode->setUserData( usrData );
+    m_rootNode->setUserData( this );
     m_rootNode->addUpdateCallback( new coordinateNodeCallback );
 
     if ( m_active->get() )
@@ -739,9 +729,4 @@ void WMCoordinateSystem::addAxialGrid( float position )
     gridGeode->addDrawable( geometry );
 
     m_rulerNode->addChild( gridGeode );
-}
-
-void WMCoordinateSystem::userData::updateGeometry()
-{
-    m_parent->updateGeometry();
 }

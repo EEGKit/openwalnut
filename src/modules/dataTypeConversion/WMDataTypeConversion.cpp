@@ -39,7 +39,7 @@
 #include "../../common/math/WPosition.h"
 #include "../../common/math/WVector3D.h"
 #include "WMDataTypeConversion.h"
-#include "WMDataTypeConversion.xpm"
+#include "datatypeconversion.xpm"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMDataTypeConversion )
@@ -177,7 +177,6 @@ void WMDataTypeConversion::connectors()
 
 void WMDataTypeConversion::properties()
 {
-    WModule::properties();
 }
 
 

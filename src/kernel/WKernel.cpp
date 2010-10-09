@@ -50,7 +50,7 @@
 /**
  * Used for program wide access to the kernel.
  */
-WKernel* WKernel::m_kernel = NULL;
+WKernel* kernel = NULL;
 
 WKernel::WKernel( boost::shared_ptr< WGraphicsEngine > ge, boost::shared_ptr< WGUI > gui ):
     WThreadedRunner()
@@ -58,7 +58,7 @@ WKernel::WKernel( boost::shared_ptr< WGraphicsEngine > ge, boost::shared_ptr< WG
     WLogger::getLogger()->addLogMessage( "Initializing Kernel", "Kernel", LL_INFO );
 
     // init the singleton
-    m_kernel = this;
+    kernel = this;
 
     // initialize members
     m_gui = gui;
@@ -74,20 +74,10 @@ WKernel::~WKernel()
     WLogger::getLogger()->addLogMessage( "Shutting down Kernel", "Kernel", LL_INFO );
 }
 
-WKernel* WKernel::instance( boost::shared_ptr< WGraphicsEngine > ge, boost::shared_ptr< WGUI > gui )
-{
-    if( m_kernel == NULL )
-    {
-        new WKernel( ge, gui ); // m_kernel will be set in the constructor.
-    }
-
-    return m_kernel;
-}
-
 void WKernel::init()
 {
     // initialize
-    m_roiManager = boost::shared_ptr< WROIManager >( new WROIManager() );
+    m_roiManager = boost::shared_ptr< WROIManagerFibers >( new WROIManagerFibers() );
 
     m_selectionManager = boost::shared_ptr< WSelectionManager >( new WSelectionManager() );
 
@@ -109,7 +99,7 @@ void WKernel::init()
 
 WKernel* WKernel::getRunningKernel()
 {
-    return m_kernel;
+    return kernel;
 }
 
 boost::shared_ptr< WGraphicsEngine > WKernel::getGraphicsEngine() const
@@ -199,7 +189,7 @@ boost::shared_ptr< WModule > WKernel::applyModule( boost::shared_ptr< WModule > 
     return getRootContainer()->applyModule( applyOn, prototype );
 }
 
-boost::shared_ptr< WROIManager > WKernel::getRoiManager()
+boost::shared_ptr< WROIManagerFibers> WKernel::getRoiManager()
 {
     return m_roiManager;
 }

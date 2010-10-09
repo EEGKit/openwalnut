@@ -41,7 +41,7 @@
  * This module implements several onscreen status displays
  * \ingroup modules
  */
-class WMHud : public WModule
+class WMHud : public WModule, public osg::Referenced
 {
 public:
     /**
@@ -148,34 +148,6 @@ private:
     void activate();
 
     /**
-    * Wrapper class for userData to prevent cyclic destructor calls
-    */
-    class userData: public osg::Referenced
-    {
-        friend class WMHud;
-    public:
-        /**
-        * userData Constructur with shared pointer to module
-        * \param _parent pointer to the module 
-        */
-        explicit userData( boost::shared_ptr< WMHud > _parent )
-        {
-            m_parent = _parent;
-        }
-
-        /**
-        * update wrapper Function
-        */
-        void update();
-
-    private:
-        /**
-        * shared pointer to the module
-        */
-        boost::shared_ptr< WMHud > m_parent;
-    };
-
-    /**
      * Node callback to handle updates properly
      */
     class HUDNodeCallback : public osg::NodeCallback
@@ -189,7 +161,7 @@ private:
          */
         virtual void operator()( osg::Node* node, osg::NodeVisitor* nv )
         {
-            osg::ref_ptr< userData > module = static_cast< userData* > ( node->getUserData() );
+            osg::ref_ptr< WMHud > module = static_cast< WMHud* > ( node->getUserData() );
 
             if( module )
             {

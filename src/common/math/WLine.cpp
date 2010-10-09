@@ -24,13 +24,11 @@
 
 #include <algorithm>
 #include <iostream>
-#include <string>
 #include <vector>
 
-#include "../exceptions/WOutOfBounds.h"
-#include "../WAssert.h"
 #include "../WLimits.h"
 #include "../WStringUtils.h"
+#include "../exceptions/WOutOfBounds.h"
 #include "WLine.h"
 #include "WPosition.h"
 
@@ -50,7 +48,7 @@ const wmath::WPosition& WLine::midPoint() const
 {
     if( empty() )
     {
-        throw WOutOfBounds( std::string( "There is no midpoint for an empty line." ) );
+        throw WOutOfBounds( "There is no midpoint for an empty line." );
     }
     return at( ( size() - 1 ) / 2 );
 }
@@ -138,20 +136,6 @@ int WLine::equalsDelta( const wmath::WLine& other, double delta ) const
         }
     }
     return diffPos;
-}
-
-double WLine::maxSegmentLength() const
-{
-    double result = 0.0;
-    if( empty() || size() == 1 )
-    {
-        return result;
-    }
-    for( size_t i = 0; i < size() - 1; ++i )
-    {
-        result = std::max( result, ( ( *this )[i] - ( *this )[i+1] ).norm() );
-    }
-    return result;
 }
 
 } // end of namespace

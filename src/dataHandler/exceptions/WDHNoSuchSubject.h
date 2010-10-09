@@ -28,7 +28,6 @@
 #include <string>
 
 #include "WDHException.h"
-#include "../WExportDataHandler.h"
 
 /**
  * Should be thrown when an invalid index is used to get a WSubject from the
@@ -37,7 +36,7 @@
  *
  * \ingroup dataHandler
  */
-class OWDATAHANDLER_EXPORT WDHNoSuchSubject : public WDHException
+class WDHNoSuchSubject : public WDHException
 {
 public:
     /**

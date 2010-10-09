@@ -30,14 +30,13 @@
 #include "../WEEG.h"
 #include "../exceptions/WDHIOFailure.h"
 #include "WReader.h"
-#include "../WExportDataHandler.h"
 
 
 /**
  * Abstract base class for all Readers who handle with EEG data
  * \ingroup dataHandler
  */
-class OWDATAHANDLER_EXPORT WReaderEEG : public WReader // NOLINT
+class WReaderEEG : public WReader
 {
 public:
 protected:

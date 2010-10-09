@@ -39,7 +39,7 @@
 #include "../../common/math/WVector3D.h"
 
 /**
- * Show an glyph plot (in this case the glyphs are arrows) of a vector data set.
+ * Show an arrow plot of a vector data set.
  * \warning Selectable slices are limited to [0,160]x[0,200]x[0,160] so far.
  * \ingroup modules
  */
@@ -115,17 +115,6 @@ private:
      */
     osg::ref_ptr<osg::Geometry> buildPlotSlices();
 
-    /**
-     * The update callback that is called for the osg node of this module.
-     */
-    void updateCallback();
-
-    /**
-     * Transforms the given vertices according to m_matrix
-     * \param verts These vertices will be transformed.
-     */
-    void transformVerts( osg::ref_ptr< osg::Vec3Array > verts );
-
 
     /**
      * An input connector used to get datasets from other modules. The connection management between connectors must not be handled by the module.
@@ -146,24 +135,54 @@ private:
 
     WPropBool     m_coloringMode; //!< indicates a set color or direction color coding.
 
-    WPropInt      m_xSlice; //!< x position of the slice
+    WPropInt      m_xPos; //!< x posistion of the slice
 
-    WPropInt      m_ySlice; //!< y position of the slice
+    WPropInt      m_yPos; //!< y posistion of the slice
 
-    WPropInt      m_zSlice; //!< z position of the slice
+    WPropInt      m_zPos; //!< z posistion of the slice
 
-    WPropBool     m_showonX; //!< indicates whether the vector should be shown on slice X
+    WPropBool     m_showonX; //!< in dicates whether the vector should be shown on slice X
 
-    WPropBool     m_showonY; //!< indicates whether the vector should be shown on slice Y
+    WPropBool     m_showonY; //!< in dicates whether the vector should be shown on slice Y
 
-    WPropBool     m_showonZ; //!< indicates whether the vector should be shown on slice Z
+    WPropBool     m_showonZ; //!< in dicates whether the vector should be shown on slice Z
 
 
     WPropColor    m_aColor; //!< color
 
     osg::ref_ptr< WShader > m_shader; //!< the shader object for this module
 
-    wmath::WMatrix< double > m_mat; //!< The 4x4 transformation matrix for the glyph vertices.
+    /**
+     * Node callback to change the color of the shapes inside the root node. For more details on this class, refer to the documentation in
+     * moduleMain().
+     */
+    class SafeUpdateCallback : public osg::NodeCallback
+    {
+    public: // NOLINT
+
+        /**
+         * Constructor.
+         *
+         * \param module just set the creating module as pointer for later reference.
+         */
+        explicit SafeUpdateCallback( WMVectorPlot* module ): m_module( module )
+        {
+        };
+
+        /**
+         * operator () - called during the update traversal.
+         *
+         * \param node the osg node
+         * \param nv the node visitor
+         */
+        virtual void operator()( osg::Node* node, osg::NodeVisitor* nv );
+
+        /**
+         * Pointer used to access members of the module to modify the node.
+         */
+        WMVectorPlot* m_module;
+    };
 };
 
 #endif  // WMVECTORPLOT_H
+

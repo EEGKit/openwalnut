@@ -58,7 +58,11 @@ WROISphere::WROISphere( wmath::WPosition position, float radius ) :
 
     redrawSphere();
     //**********************************************************
-    m_dirty->set( true );
+    m_isModified = true;
+    m_isNot = false;
+
+    assert( WGraphicsEngine::getGraphicsEngine() );
+    WGraphicsEngine::getGraphicsEngine()->getScene()->addChild( this );
 
     setUserData( this );
     setUpdateCallback( osg::ref_ptr<ROISphereNodeCallback>( new ROISphereNodeCallback ) );
@@ -96,7 +100,7 @@ void WROISphere::setPosition( wmath::WPosition position )
 {
     m_position = position;
     m_originalPosition = position;
-    m_dirty->set( true );
+    m_isModified = true;
 }
 
 void WROISphere::registerRedrawRequest( WPickInfo pickInfo )
@@ -108,7 +112,6 @@ void WROISphere::updateGFX()
 {
     std::stringstream ss;
     ss << "ROISphere" << sphereId << "";
-
     if ( m_pickInfo.getName() == ss.str() )
     {
         std::pair< float, float > newPixelPos( m_pickInfo.getPickPixelPosition() );
@@ -142,8 +145,10 @@ void WROISphere::updateGFX()
         }
 
         m_oldPixelPosition = newPixelPos;
-        m_dirty->set( true );
+        m_isModified = true;
         m_isPicked = true;
+
+        m_signalIsModified();
     }
     if ( m_isPicked && m_pickInfo.getName() == "unpick" )
     {
@@ -152,11 +157,9 @@ void WROISphere::updateGFX()
         m_isPicked = false;
     }
 
-    if ( m_dirty->get() )
+    if ( isModified() )
     {
         redrawSphere();
-        signalRoiChange();
-        m_dirty->set( false );
     }
 }
 

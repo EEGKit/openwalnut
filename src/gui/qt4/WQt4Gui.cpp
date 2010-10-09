@@ -150,7 +150,7 @@ int WQt4Gui::run()
     m_ge = WGraphicsEngine::getGraphicsEngine();
 
     // and startup kernel
-    m_kernel = boost::shared_ptr< WKernel >( WKernel::instance( m_ge, shared_from_this() ) );
+    m_kernel = boost::shared_ptr< WKernel >( new WKernel( m_ge, shared_from_this() ) );
     m_kernel->run();
     t_ModuleErrorSignalHandlerType func = boost::bind( &WQt4Gui::moduleError, this, _1, _2 );
     m_kernel->getRootContainer()->addDefaultNotifier( WM_ERROR, func );
@@ -173,15 +173,15 @@ int WQt4Gui::run()
     // bind the GUI's slot with the ready signal
 
     // Assoc Event
-    t_ModuleGenericSignalHandlerType assocSignal = boost::bind( &WQt4Gui::slotAddDatasetOrModuleToTree, this, _1 );
+    t_ModuleGenericSignalHandlerType assocSignal = boost::bind( &WQt4Gui::slotAddDatasetOrModuleToBrowser, this, _1 );
     m_kernel->getRootContainer()->addDefaultNotifier( WM_ASSOCIATED, assocSignal );
 
     // Ready Event
-    t_ModuleGenericSignalHandlerType readySignal = boost::bind( &WQt4Gui::slotActivateDatasetOrModuleInTree, this, _1 );
+    t_ModuleGenericSignalHandlerType readySignal = boost::bind( &WQt4Gui::slotActivateDatasetOrModuleInBrowser, this, _1 );
     m_kernel->getRootContainer()->addDefaultNotifier( WM_READY, readySignal );
 
     // Remove Event
-    t_ModuleGenericSignalHandlerType removedSignal = boost::bind( &WQt4Gui::slotRemoveDatasetOrModuleInTree, this, _1 );
+    t_ModuleGenericSignalHandlerType removedSignal = boost::bind( &WQt4Gui::slotRemoveDatasetOrModuleInBrowser, this, _1 );
     m_kernel->getRootContainer()->addDefaultNotifier( WM_REMOVED, removedSignal );
 
     // Connect Event
@@ -192,11 +192,11 @@ int WQt4Gui::run()
     t_GenericSignalHandlerType connectionClosedSignal = boost::bind( &WQt4Gui::slotConnectionClosed, this, _1, _2 );
     m_kernel->getRootContainer()->addDefaultNotifier( CONNECTION_CLOSED, connectionClosedSignal );
 
-    boost::function< void( osg::ref_ptr< WROI > ) > assocRoiSignal =
-            boost::bind( &WQt4Gui::slotAddRoiToTree, this, _1 );
+    boost::function< void( boost::shared_ptr< WRMROIRepresentation > ) > assocRoiSignal =
+            boost::bind( &WQt4Gui::slotAddRoiToBrowser, this, _1 );
     m_kernel->getRoiManager()->addAddNotifier( assocRoiSignal );
-    boost::function< void( osg::ref_ptr< WROI > ) > removeRoiSignal =
-            boost::bind( &WQt4Gui::slotRemoveRoiFromTree, this, _1 );
+    boost::function< void( boost::shared_ptr< WRMROIRepresentation > ) > removeRoiSignal =
+            boost::bind( &WQt4Gui::slotRemoveRoiFromBrowser, this, _1 );
     m_kernel->getRoiManager()->addRemoveNotifier( removeRoiSignal );
 
     // now we are initialized
@@ -273,33 +273,33 @@ int WQt4Gui::run()
 void WQt4Gui::slotUpdateTextureSorter()
 {
     // create a new event for this and insert it into event queue
-    QCoreApplication::postEvent( m_mainWindow->getControlPanel(), new WUpdateTextureSorterEvent() );
+    QCoreApplication::postEvent( m_mainWindow->getDatasetBrowser(), new WUpdateTextureSorterEvent() );
 }
 
-void WQt4Gui::slotAddDatasetOrModuleToTree( boost::shared_ptr< WModule > module )
+void WQt4Gui::slotAddDatasetOrModuleToBrowser( boost::shared_ptr< WModule > module )
 {
     // create a new event for this and insert it into event queue
-    QCoreApplication::postEvent( m_mainWindow->getControlPanel(), new WModuleAssocEvent( module ) );
+    QCoreApplication::postEvent( m_mainWindow->getDatasetBrowser(), new WModuleAssocEvent( module ) );
 }
 
-void WQt4Gui::slotAddRoiToTree( osg::ref_ptr< WROI > roi )
+void WQt4Gui::slotAddRoiToBrowser( boost::shared_ptr< WRMROIRepresentation > roi )
 {
-    QCoreApplication::postEvent( m_mainWindow->getControlPanel(), new WRoiAssocEvent( roi ) );
+    QCoreApplication::postEvent( m_mainWindow->getDatasetBrowser(), new WRoiAssocEvent( roi ) );
 }
 
-void WQt4Gui::slotRemoveRoiFromTree( osg::ref_ptr< WROI > roi )
+void WQt4Gui::slotRemoveRoiFromBrowser( boost::shared_ptr< WRMROIRepresentation > roi )
 {
-    QCoreApplication::postEvent( m_mainWindow->getControlPanel(), new WRoiRemoveEvent( roi ) );
+    QCoreApplication::postEvent( m_mainWindow->getDatasetBrowser(), new WRoiRemoveEvent( roi ) );
 }
 
-void WQt4Gui::slotActivateDatasetOrModuleInTree( boost::shared_ptr< WModule > module )
+void WQt4Gui::slotActivateDatasetOrModuleInBrowser( boost::shared_ptr< WModule > module )
 {
     // create a new event for this and insert it into event queue
-    QCoreApplication::postEvent( m_mainWindow->getControlPanel(), new WModuleReadyEvent( module ) );
+    QCoreApplication::postEvent( m_mainWindow->getDatasetBrowser(), new WModuleReadyEvent( module ) );
     QCoreApplication::postEvent( m_mainWindow, new WModuleReadyEvent( module ) );
 }
 
-void WQt4Gui::slotRemoveDatasetOrModuleInTree( boost::shared_ptr< WModule > module )
+void WQt4Gui::slotRemoveDatasetOrModuleInBrowser( boost::shared_ptr< WModule > module )
 {
     // create a new event for this and insert it into event queue
     if( module->getName() == "Data Module" )
@@ -312,7 +312,7 @@ void WQt4Gui::slotRemoveDatasetOrModuleInTree( boost::shared_ptr< WModule > modu
             m_mainWindow->setFibersLoaded( false );
         }
     }
-    QCoreApplication::postEvent( m_mainWindow->getControlPanel(), new WModuleRemovedEvent( module ) );
+    QCoreApplication::postEvent( m_mainWindow->getDatasetBrowser(), new WModuleRemovedEvent( module ) );
 }
 
 void WQt4Gui::slotConnectionEstablished( boost::shared_ptr<WModuleConnector> in, boost::shared_ptr<WModuleConnector> out )
@@ -320,11 +320,11 @@ void WQt4Gui::slotConnectionEstablished( boost::shared_ptr<WModuleConnector> in,
     // create a new event for this and insert it into event queue
     if ( in->isInputConnector() )
     {
-        QCoreApplication::postEvent( m_mainWindow->getControlPanel(), new WModuleConnectEvent( in, out ) );
+        QCoreApplication::postEvent( m_mainWindow->getDatasetBrowser(), new WModuleConnectEvent( in, out ) );
     }
     else
     {
-        QCoreApplication::postEvent( m_mainWindow->getControlPanel(), new WModuleConnectEvent( out, in ) );
+        QCoreApplication::postEvent( m_mainWindow->getDatasetBrowser(), new WModuleConnectEvent( out, in ) );
     }
 }
 
@@ -333,17 +333,17 @@ void WQt4Gui::slotConnectionClosed( boost::shared_ptr<WModuleConnector> in, boos
     // create a new event for this and insert it into event queue
     if ( in->isInputConnector() )
     {
-        QCoreApplication::postEvent( m_mainWindow->getControlPanel(), new WModuleDisconnectEvent( in, out ) );
+        QCoreApplication::postEvent( m_mainWindow->getDatasetBrowser(), new WModuleDisconnectEvent( in, out ) );
     }
     else
     {
-        QCoreApplication::postEvent( m_mainWindow->getControlPanel(), new WModuleDisconnectEvent( out, in ) );
+        QCoreApplication::postEvent( m_mainWindow->getDatasetBrowser(), new WModuleDisconnectEvent( out, in ) );
     }
 }
 
 boost::shared_ptr< WModule > WQt4Gui::getSelectedModule()
 {
-    return m_mainWindow->getControlPanel()->getSelectedModule();
+    return m_mainWindow->getDatasetBrowser()->getSelectedModule();
 }
 
 boost::signals2::signal1< void, std::vector< std::string > >* WQt4Gui::getLoadButtonSignal()

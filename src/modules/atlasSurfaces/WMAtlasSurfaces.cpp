@@ -37,16 +37,13 @@
 #include <osg/LightModel>
 
 #include "../../common/WAssert.h"
-#include "../../common/WThreadedFunction.h"
 #include "../../dataHandler/WDataSetScalar.h"
 #include "../../graphicsEngine/WGEUtils.h"
 #include "../../graphicsEngine/algorithms/WMarchingCubesAlgorithm.h"
 #include "../../kernel/WKernel.h"
 
-#include "WCreateSurfaceJob.h"
-
 #include "WMAtlasSurfaces.h"
-#include "WMAtlasSurfaces.xpm"
+#include "atlas.xpm"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMAtlasSurfaces )
@@ -106,8 +103,6 @@ void WMAtlasSurfaces::properties()
 {
     WPropertyBase::PropertyChangeNotifierType propertyCallback = boost::bind( &WMAtlasSurfaces::propertyChanged, this );
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
-
-    WModule::properties();
 }
 
 void WMAtlasSurfaces::moduleMain()
@@ -122,13 +117,6 @@ void WMAtlasSurfaces::moduleMain()
     // loop until the module container requests the module to quit
     while ( !m_shutdownFlag() )
     {
-        m_moduleState.wait();
-
-        if ( m_shutdownFlag() )
-        {
-            break;
-        }
-
         if( m_dataSet != m_input->getData() )
         {
             // acquire data from the input connector
@@ -152,8 +140,9 @@ void WMAtlasSurfaces::moduleMain()
                     WAssert( false, "Wrong data type in AtlasSurfaces module" );
             }
         }
+
+        //m_moduleState.wait();
     }
-    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_moduleNode );
 }
 
 void WMAtlasSurfaces::createSurfaces()
@@ -166,81 +155,173 @@ void WMAtlasSurfaces::createSurfaces()
     fn.replace( fn.find( ext ), ext.size(), csvExt );
     loadLabels( fn );
 
-    boost::shared_ptr<WProgressCombiner> newProgress = boost::shared_ptr<WProgressCombiner>( new WProgressCombiner() );
-    boost::shared_ptr<WProgress>pro = boost::shared_ptr<WProgress>( new WProgress( "dummy", m_dataSet->getMax() ) );
-    m_progress->addSubProgress( pro );
-
-    boost::shared_ptr<WThreadedJobs<WDataSetScalar, size_t> >job;
-
-    m_regionMeshes2 = boost::shared_ptr< std::vector< boost::shared_ptr< WTriangleMesh > > >(
-            new std::vector< boost::shared_ptr< WTriangleMesh > >( m_dataSet->getMax() + 1 ) );
+    size_t order = ( *m_dataSet ).getValueSet()->order();
+    size_t vDim = ( *m_dataSet ).getValueSet()->dimension();
+    std::vector< float > data;
 
     switch( ( *m_dataSet ).getValueSet()->getDataType() )
     {
         case W_DT_UNSIGNED_CHAR:
-            job = boost::shared_ptr<WCreateSurfaceJob<unsigned char> >(
-                    new WCreateSurfaceJob<unsigned char>( m_dataSet, m_regionMeshes2, newProgress, pro ) );
+        {
+            boost::shared_ptr< WValueSet< unsigned char > > vals;
+            vals =  boost::shared_dynamic_cast< WValueSet< unsigned char > >( ( *m_dataSet ).getValueSet() );
+            WAssert( vals, "Data type and data type indicator must fit." );
+
+            infoLog() << "creating " << m_dataSet->getMax() << " regions" << std::endl;
+
+            m_possibleSelections = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+
+            boost::shared_ptr<WProgressCombiner> newProgress = boost::shared_ptr<WProgressCombiner>( new WProgressCombiner() );
+
+            boost::shared_ptr<WProgress>pro = boost::shared_ptr<WProgress>( new WProgress( "dummy", m_dataSet->getMax() ) );
+
+            m_progress->addSubProgress( pro );
+            for (size_t i = 1; i < m_dataSet->getMax() + 1; ++i )
+            //for (size_t i = 1; i < 10; ++i )
+            {
+                data = cutArea( ( *m_dataSet ).getGrid(), vals, i );
+                boost::shared_ptr< WValueSet< float > > newValueSet = boost::shared_ptr< WValueSet< float > >(
+                        new WValueSet< float >( order, vDim, data, W_DT_FLOAT ) );
+                WMarchingCubesAlgorithm mcAlgo;
+
+                boost::shared_ptr< WTriangleMesh2 >triMesh = mcAlgo.generateSurface( grid->getNbCoordsX(), grid->getNbCoordsY(), grid->getNbCoordsZ(),
+                                                        grid->getTransformationMatrix(),
+                                                        newValueSet->rawDataVectorPointer(),
+                                                        0.9,
+                                                        newProgress );
+                //triMesh->doLoopSubD();
+                if ( triMesh->vertSize() != 0 )
+                {
+                    m_regionMeshes.push_back( triMesh );
+                    m_regionMeshIds.push_back( i );
+
+                    std::string label = boost::lexical_cast<std::string>( i ) + std::string( " " ) + m_labels[i].second;
+                    m_possibleSelections->addItem( label, "" );
+                }
+                ++*pro;
+            }
+            pro->finish();
+            m_aMultiSelection  = m_properties->addProperty( "Regions", "Regions", m_possibleSelections->getSelectorAll(),
+                                                                    m_propCondition );
+
             break;
+        }
         case W_DT_INT16:
+        {
+            boost::shared_ptr< WValueSet< int16_t > > vals;
+            vals =  boost::shared_dynamic_cast< WValueSet< int16_t > >( ( *m_dataSet ).getValueSet() );
+            WAssert( vals, "Data type and data type indicator must fit." );
+
+            infoLog() << "creating " << m_dataSet->getMax() << " regions" << std::endl;
+
+            for (size_t i = 0; i < m_dataSet->getMax(); ++i )
+            {
+                data = cutArea( ( *m_dataSet ).getGrid(), vals, i );
+                boost::shared_ptr< WValueSet< float > > newValueSet = boost::shared_ptr< WValueSet< float > >(
+                        new WValueSet< float >( order, vDim, data, W_DT_FLOAT ) );
+                WMarchingCubesAlgorithm mcAlgo;
+                boost::shared_ptr< WTriangleMesh2 >triMesh = mcAlgo.generateSurface( grid->getNbCoordsX(), grid->getNbCoordsY(), grid->getNbCoordsZ(),
+                                                        grid->getTransformationMatrix(),
+                                                        newValueSet->rawDataVectorPointer(),
+                                                        0.9,
+                                                        m_progress );
+                m_regionMeshes.push_back( triMesh );
+            }
+
             break;
+        }
         case W_DT_SIGNED_INT:
+        {
+            boost::shared_ptr< WValueSet< int32_t > > vals;
+            vals =  boost::shared_dynamic_cast< WValueSet< int32_t > >( ( *m_dataSet ).getValueSet() );
+            WAssert( vals, "Data type and data type indicator must fit." );
+            std::cout << "creating " << m_dataSet->getMax() << " regions" << std::endl;
+            for (size_t i = 0; i < m_dataSet->getMax(); ++i )
+            {
+                data = cutArea( ( *m_dataSet ).getGrid(), vals, i );
+                boost::shared_ptr< WValueSet< float > > newValueSet = boost::shared_ptr< WValueSet< float > >(
+                        new WValueSet< float >( order, vDim, data, W_DT_FLOAT ) );
+                WMarchingCubesAlgorithm mcAlgo;
+                boost::shared_ptr< WTriangleMesh2 >triMesh = mcAlgo.generateSurface( grid->getNbCoordsX(), grid->getNbCoordsY(), grid->getNbCoordsZ(),
+                                                        grid->getTransformationMatrix(),
+                                                        newValueSet->rawDataVectorPointer(),
+                                                        0.9,
+                                                        m_progress );
+                m_regionMeshes.push_back( triMesh );
+            }
             break;
+        }
         case W_DT_FLOAT:
         case W_DT_DOUBLE:
         default:
             WAssert( false, "Unknown data type in MarchingCubes module" );
     }
+}
 
-    WThreadedFunction< WThreadedJobs<WDataSetScalar, size_t> >threadPool( 4, job );
-    threadPool.run();
-    threadPool.wait();
+template< typename T > std::vector< float >  WMAtlasSurfaces::cutArea( boost::shared_ptr< WGrid > inGrid,
+        boost::shared_ptr< WValueSet< T > > vals, unsigned int number )
+{
+    boost::shared_ptr< WGridRegular3D > grid = boost::shared_dynamic_cast< WGridRegular3D >( inGrid );
 
-    pro->finish();
+    size_t nx = grid->getNbCoordsX();
+    size_t ny = grid->getNbCoordsY();
+    size_t nz = grid->getNbCoordsZ();
 
-    m_possibleSelections = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+//    double dx = grid->getOffsetX();
+//    double dy = grid->getOffsetY();
+//    double dz = grid->getOffsetZ();
 
-    for (size_t i = 1; i < m_dataSet->getMax() + 1; ++i )
+    std::vector< float >newVals( nx * ny * nz, 0 );
+
+    for ( size_t z = 0; z < nz; ++z )
     {
-        std::string label = boost::lexical_cast<std::string>( i ) + std::string( " " ) + m_labels[i].second;
-        m_possibleSelections->addItem( label, "" );
+        for ( size_t y = 0 ; y < ny; ++y )
+        {
+            for ( size_t x = 0 ; x < nx; ++x )
+            {
+                 if ( static_cast<unsigned int>( vals->getScalar( x + nx * y + nx * ny * z ) ) == number )
+                 {
+                     newVals[ x + nx * y + nx * ny * z ] = 1.0;
+                 }
+            }
+        }
     }
-
-    m_aMultiSelection  = m_properties->addProperty( "Regions", "Regions", m_possibleSelections->getSelectorAll(),
-                                                                        m_propCondition );
+    return newVals;
 }
 
 void WMAtlasSurfaces::createOSGNode()
 {
-    for ( size_t i = 1; i < m_regionMeshes2->size(); ++i )
+    for ( size_t i = 0; i < m_regionMeshes.size(); ++i )
     {
         osg::Geometry* surfaceGeometry = new osg::Geometry();
         osg::ref_ptr< osg::Geode > outputGeode = osg::ref_ptr< osg::Geode >( new osg::Geode );
 
-        std::string label = boost::lexical_cast<std::string>( i ) + std::string( " " ) + m_labels[i].second;
+        size_t id = m_regionMeshIds[i];
+        std::string label = boost::lexical_cast<std::string>( id ) + std::string( " " ) + m_labels[id].second;
         outputGeode->setName( label );
 
         surfaceGeometry->setUseDisplayList( false );
         surfaceGeometry->setUseVertexBufferObjects( true );
 
-        surfaceGeometry->setVertexArray( ( *m_regionMeshes2 )[i]->getVertexArray() );
+        surfaceGeometry->setVertexArray( m_regionMeshes[i]->getVertexArray() );
 
         // ------------------------------------------------
         // normals
-        surfaceGeometry->setNormalArray( ( *m_regionMeshes2 )[i]->getVertexNormalArray() );
+        surfaceGeometry->setNormalArray( m_regionMeshes[i]->getVertexNormalArray() );
         surfaceGeometry->setNormalBinding( osg::Geometry::BIND_PER_VERTEX );
 
         // ------------------------------------------------
         // colors
         osg::Vec4Array* colors = new osg::Vec4Array;
 
-        colors->push_back( wge::osgColor( wge::createColorFromIndex( i ) ) );
+        colors->push_back( wge::osgColor( wge::createColorFromIndex( i + 1 ) ) );
 
         surfaceGeometry->setColorArray( colors );
         surfaceGeometry->setColorBinding( osg::Geometry::BIND_OVERALL );
 
         osg::DrawElementsUInt* surfaceElement = new osg::DrawElementsUInt( osg::PrimitiveSet::TRIANGLES, 0 );
 
-        std::vector< size_t >tris = ( *m_regionMeshes2 )[i]->getTriangles();
+        std::vector< size_t >tris = m_regionMeshes[i]->getTriangles();
         surfaceElement->reserve( tris.size() );
 
         for( unsigned int vertId = 0; vertId < tris.size(); ++vertId )
@@ -256,9 +337,19 @@ void WMAtlasSurfaces::createOSGNode()
         state->setAttributeAndModes( lightModel.get(), osg::StateAttribute::ON );
         state->setMode(  GL_BLEND, osg::StateAttribute::ON );
 
+    //    {
+    //        osg::ref_ptr< osg::Material > material = new osg::Material();
+    //        material->setDiffuse(   osg::Material::FRONT, osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
+    //        material->setSpecular(  osg::Material::FRONT, osg::Vec4( 0.0, 0.0, 0.0, 1.0 ) );
+    //        material->setAmbient(   osg::Material::FRONT, osg::Vec4( 0.1, 0.1, 0.1, 1.0 ) );
+    //        material->setEmission(  osg::Material::FRONT, osg::Vec4( 0.0, 0.0, 0.0, 1.0 ) );
+    //        material->setShininess( osg::Material::FRONT, 25.0 );
+    //        state->setAttribute( material );
+    //    }
+
         m_moduleNode->insert( outputGeode );
+        WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_moduleNode );
     }
-    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_moduleNode );
     m_moduleNode->addUpdateCallback( new AtlasSurfaceNodeCallback( this ) );
 }
 

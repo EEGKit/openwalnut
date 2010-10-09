@@ -22,8 +22,6 @@
 //
 //---------------------------------------------------------------------------
 
-#include <string>
-
 #include "exceptions/WGEInitFailed.h"
 #include "WGECamera.h"
 
@@ -69,7 +67,7 @@ void WGECamera::reset()
             setProjectionResizePolicy( osg::Camera::FIXED );
             break;
         default:
-            throw WGEInitFailed( std::string( "Unknown projection mode" ) );
+            throw WGEInitFailed( "Unknown projection mode" );
     }
 }
 

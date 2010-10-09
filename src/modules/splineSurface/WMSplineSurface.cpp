@@ -29,7 +29,7 @@
 
 #include <cmath>
 
-#include "WMSplineSurface.xpm"
+#include "spline_surface.xpm"
 #include "../../common/WLimits.h"
 #include "../../common/WAssert.h"
 
@@ -113,7 +113,7 @@ void WMSplineSurface::moduleMain()
     // loop until the module container requests the module to quit
     while ( !m_shutdownFlag() )
     {
-        // update isosurface
+        // update ISO surface
         debugLog() << "Computing surface ...";
 
         WSurface surf;
@@ -165,13 +165,8 @@ void WMSplineSurface::moduleMain()
 
 void WMSplineSurface::connectors()
 {
-    // TODO(someone): This connector should be used as soon as the module gets more functionality.
-    // The surface will aligned to these tracts.
-    typedef WModuleInputData< const WFiberCluster > InputType; // just an alias
-    m_input = boost::shared_ptr< InputType >( new InputType( shared_from_this(), "Tracts", "A cluster of tracts." ) );
-    addConnector( m_input );
-
-    m_output = boost::shared_ptr< WModuleOutputData< WTriangleMesh > >( new WModuleOutputData< WTriangleMesh > ( shared_from_this(), "out",
+    // initialize connectors
+    m_output = boost::shared_ptr< WModuleOutputData< WTriangleMesh2 > >( new WModuleOutputData< WTriangleMesh2 > ( shared_from_this(), "out",
             "The mesh representing the spline surface." ) );
 
     addConnector( m_output );
@@ -195,8 +190,6 @@ void WMSplineSurface::properties()
     m_saveTriggerProp->getCondition()->subscribeSignal( boost::bind( &WMSplineSurface::save, this ) );
 
     m_meshFile = m_savePropGroup->addProperty( "Mesh file", "", WPathHelper::getAppPath() );
-
-    WModule::properties();
 }
 
 void WMSplineSurface::renderMesh()
@@ -490,7 +483,7 @@ void WMSplineSurface::updateGraphics()
                     for ( size_t i = 0; i < m_triMesh->vertSize(); ++i )
                     {
                         osg::Vec3 vertPos = m_triMesh->getVertex( i );
-                        texCoords->push_back( grid->worldCoordToTexCoord( wmath::WPosition( vertPos[0], vertPos[1], vertPos[2] ) ) );
+                        texCoords->push_back( wge::wv3D2ov3( grid->worldCoordToTexCoord( wmath::WPosition( vertPos[0], vertPos[1], vertPos[2] ) ) ) );
                     }
                     surfaceGeometry->setTexCoordArray( c, texCoords );
                 }

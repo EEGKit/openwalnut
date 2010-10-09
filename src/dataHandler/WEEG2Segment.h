@@ -31,14 +31,13 @@
 
 #include "io/WPagerEEG.h"
 #include "WEEGValueMatrix.h"
-#include "WExportDataHandler.h"
 
 
 /**
  * Class which contains one segment of an EEG recording, read from a WPagerEEG.
  * \ingroup dataHandler
  */
-class OWDATAHANDLER_EXPORT WEEG2Segment // NOLINT
+class WEEG2Segment
 {
 public:
     /**

@@ -25,7 +25,6 @@
 #ifndef WVALUE_H
 #define WVALUE_H
 
-#include <algorithm>
 #include <cmath>
 #include <vector>
 
@@ -123,7 +122,7 @@ public:
     }
 
     /**
-     * Adds a the argument component-wise to the components of this WValue
+     * Adds a the argument componentwise to the components of this WValue
      * \param rhs The right hand side of the assignment
      */
     WValue& operator+=( const WValue& rhs )
@@ -135,7 +134,7 @@ public:
     }
 
     /**
-     * Subtracts the argument component-wise from the components of this WValue
+     * Subtracts the argument componentwise from the components of this WValue
      * \param rhs The right hand side of the assignment
      */
     WValue& operator-=( const WValue& rhs )
@@ -158,7 +157,7 @@ public:
     }
 
     /**
-     * Scales each component of this WValue with the corresponding
+     * Scales each component of this WValue with the coressponding
      * component of the given argument WValue
      * \param rhs The right hand side of the assignment
      */
@@ -183,7 +182,7 @@ public:
 
 
     /**
-     * Component-wise addition.
+     * Componentwise addition.
      * \param summand2 The right hand side of the summation
      */
     const WValue operator+( const WValue& summand2 ) const
@@ -195,7 +194,7 @@ public:
     }
 
     /**
-     * Component-wise subtraction.
+     * Componentwise subtraction.
      * \param subtrahend The right hand side of the subtraction
      */
     const WValue operator-( const WValue& subtrahend ) const
@@ -207,7 +206,7 @@ public:
     }
 
     /**
-     * Component-wise multiplication.
+     * Componentwise multiplication.
      * \param factor2 The right hand side of the product
      */
     const WValue operator*( const WValue& factor2 ) const
@@ -273,31 +272,6 @@ public:
         return result;
     }
 
-    /**
-     * Returns the mean value of all values stored in this WValue.
-     */
-    T mean() const
-    {
-        WAssert( !m_components.empty(), "WValue has no entries." );
-        T sum = 0;
-        for ( typename std::vector< T >::const_iterator it = m_components.begin(); it != m_components.end(); it++  )
-        {
-            sum += ( *it );
-        }
-        return ( sum / static_cast< T >( m_components.size() ) );
-    }
-
-    /**
-     * Returns the median of all values stored in this WValue.
-     */
-    T median() const
-    {
-        WAssert( !m_components.empty(), "WValue has no entries. " );
-        std::vector< T > components( m_components );
-        std::sort( components.begin(), components.end() );
-        return components[ components.size() / 2 ];
-    }
-
 protected:
 private:
     /**
@@ -348,7 +322,7 @@ template< typename T > inline const WValue< T > operator/( const WValue< T >& lh
  * \param os The operator will write to this stream.
  * \param rhs This will be written to the stream.
  *
- * \return the output stream
+ * \return the outputstream
  */
 template< typename U > inline std::ostream& operator<<( std::ostream& os, const WValue< U > &rhs )
 {
@@ -361,7 +335,7 @@ template< typename U > inline std::ostream& operator<<( std::ostream& os, const 
  * \param in the input stream
  * \param rhs the value to where to write the stream
  *
- * \return the input stream
+ * \return the inputstream
  */
 template< typename U > inline std::istream& operator>>( std::istream& in, WValue< U >& rhs )
 {

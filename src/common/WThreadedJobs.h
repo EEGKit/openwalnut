@@ -36,15 +36,6 @@
  * \class WThreadedJobs
  *
  * A threaded functor base class for producer-consumer-style multithreaded computation.
- *
- * A job generator function produces jobs that are then distributed to the threads in
- * a first come first serve manner. The first template parameter is the type of the input data,
- * for example a WDataSetScalar. The second template parameter is the type of object that
- * represents the jobs.
- *
- * Both the getJob() and the compute() functions need to be implemented.
- *
- * \ingroup common
  */
 template< class Input_T, class Job_T >
 class WThreadedJobs
@@ -59,9 +50,9 @@ public:
     /**
      * Constructor.
      *
-     * \param input The input.
+     * \param input The input dataset.
      */
-    WThreadedJobs( boost::shared_ptr< InputType const > input ); // NOLINT
+    WThreadedJobs( boost::shared_ptr< InputType > input ); // NOLINT
 
     /**
      * Destructor.
@@ -69,8 +60,7 @@ public:
     virtual ~WThreadedJobs();
 
     /**
-     * The threaded function operation. Pulls jobs and executes the \see compute()
-     * function.
+     * The operation to be performed per job.
      *
      * \param id The thread's ID.
      * \param numThreads How many threads are working on the jobs.
@@ -87,22 +77,20 @@ public:
     virtual bool getJob( JobType& job ) = 0; // NOLINT
 
     /**
-     * Abstract function that performs the actual computation per job.
+     * Abstract function that performs the actual computation.
      *
      * \param input The input data.
      * \param job The current job.
      */
     virtual void compute( boost::shared_ptr< InputType const > input, JobType const& job ) = 0;
 
-protected:
-
+private:
     //! the input
     boost::shared_ptr< InputType const > m_input;
-private:
 };
 
 template< class Input_T, class Job_T >
-WThreadedJobs< Input_T, Job_T >::WThreadedJobs( boost::shared_ptr< InputType const > input )
+WThreadedJobs< Input_T, Job_T >::WThreadedJobs( boost::shared_ptr< InputType > input )
     : m_input( input )
 {
     if( !m_input )

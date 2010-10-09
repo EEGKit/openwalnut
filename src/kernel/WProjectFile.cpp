@@ -30,7 +30,7 @@
 
 #include "WKernel.h"
 #include "combiner/WModuleProjectFileCombiner.h"
-#include "WRoiProjectFileIO.h"
+#include "modules/fiberDisplay/WRoiProjectFileIO.h"
 #include "../graphicsEngine/WGEProjectFileIO.h"
 #include "../common/exceptions/WFileNotFound.h"
 #include "../common/exceptions/WFileOpenFailed.h"
@@ -92,8 +92,7 @@ void WProjectFile::save( const std::vector< boost::shared_ptr< WProjectFileIO > 
     std::ofstream output( m_project.file_string().c_str() );
     if ( !output.is_open() )
     {
-        throw WFileOpenFailed( std::string( "The project file \"" ) + m_project.file_string() +
-                               std::string( "\" could not be opened for write access." ) );
+        throw WFileOpenFailed( "The project file \"" + m_project.file_string() + "\" could not be opened for write access." );
     }
 
     // allow each parser to handle save request
@@ -122,8 +121,7 @@ void WProjectFile::threadMain()
         std::ifstream input( m_project.file_string().c_str() );
         if ( !input.is_open() )
         {
-            throw WFileNotFound( std::string( "The project file \"" ) + m_project.file_string() +
-                                 std::string( "\" does not exist." ) );
+            throw WFileNotFound( "The project file \"" + m_project.file_string() + "\" does not exist." );
         }
 
         // the comment

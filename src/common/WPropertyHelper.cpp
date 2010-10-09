@@ -79,14 +79,4 @@ namespace WPropertyHelper
             ) );
         }
     }
-
-    namespace PC_ISVALID
-    {
-        void addTo( WPropSelection prop )
-        {
-            prop->addConstraint( boost::shared_ptr< WPropertyConstraintIsValid< WPVBaseTypes::PV_SELECTION > >(
-                    new  WPropertyConstraintIsValid< WPVBaseTypes::PV_SELECTION >()
-            ) );
-        }
-    }
 }

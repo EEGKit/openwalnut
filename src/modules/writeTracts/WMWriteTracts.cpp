@@ -28,7 +28,7 @@
 #include "../../dataHandler/io/WWriterFiberVTK.h"
 #include "../../kernel/WKernel.h"
 #include "WMWriteTracts.h"
-#include "WMWriteTracts.xpm"
+#include "writeTracts.xpm"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMWriteTracts )
@@ -70,7 +70,7 @@ const std::string WMWriteTracts::getDescription() const
 void WMWriteTracts::connectors()
 {
     typedef WModuleInputData< const WFiberCluster > InputType; // just an alias
-    m_input = boost::shared_ptr< InputType >( new InputType( shared_from_this(), "tractInput", "A loaded dataset with grid." ) );
+    m_input = boost::shared_ptr< InputType >( new InputType( shared_from_this(), "voxelInput", "A loaded dataset with grid." ) );
     addConnector( m_input );
 
     // call WModules initialization
@@ -81,8 +81,6 @@ void WMWriteTracts::properties()
 {
     m_savePath         = m_properties->addProperty( "Save Path", "Where to save the result", boost::filesystem::path( "/no/such/file" ) );
     WPropertyHelper::PC_NOTEMPTY::addTo( m_savePath );
-
-    WModule::properties();
 }
 
 void WMWriteTracts::moduleMain()

@@ -29,14 +29,13 @@
 #include <string>
 
 #include "../../common/WException.h"
-#include "../WExportDataHandler.h"
 
 /**
  * General purpose exception and therefore base class for all DataHandler
  * related exceptions.
  * \ingroup dataHandler
  */
-class OWDATAHANDLER_EXPORT WDHException: public WException // NOLINT
+class WDHException: public WException
 {
 public:
     /**

@@ -76,10 +76,9 @@ IF( NOT CMAKE_GENERATOR MATCHES "Visual Studio" )
   FIND_PACKAGE( osgText ${MIN_OSG_VERSION} REQUIRED )
   FIND_PACKAGE( osgGA ${MIN_OSG_VERSION} REQUIRED )
   FIND_PACKAGE( osgSim ${MIN_OSG_VERSION} REQUIRED )
-  FIND_PACKAGE( osgWidget ${MIN_OSG_VERSION} REQUIRED )
   FIND_PACKAGE( OpenThreads ${MIN_OSG_VERSION} REQUIRED )
-  SET( OPENSCENEGRAPH_LIBRARIES ${OSGDB_LIBRARY} ${OSGTEXT_LIBRARY} ${OSGGA_LIBRARY} ${OSGUTIL_LIBRARY} ${OSGVIEWER_LIBRARY} ${OSG_LIBRARY} ${OSGSIM_LIBRARY} ${OSGWIDGET_LIBRARY} ${OPENTHREADS_LIBRARY} )
-  SET( OPENSCENEGRAPH_INCLUDE_DIRS ${OSG_INCLUDE_DIR} ${OSGDB_INCLUDE_DIR} ${OSGTEXT_INCLUDE_DIR} ${OSGGA_INCLUDE_DIR} ${OSGVIEWER_INCLUDE_DIR} ${OSGUTIL_INCLUDE_DIR} ${OSGSIM_INCLUDE_DIR} ${OSGWIDGET_INCLUDE_DIR} ${OPENTHREADS_INCLUDE_DIR} )
+  SET( OPENSCENEGRAPH_LIBRARIES ${OSGDB_LIBRARY} ${OSGTEXT_LIBRARY} ${OSGGA_LIBRARY} ${OSGUTIL_LIBRARY} ${OSGVIEWER_LIBRARY} ${OSG_LIBRARY} ${OSGSIM_LIBRARY} ${OPENTHREADS_LIBRARY} )
+  SET( OPENSCENEGRAPH_INCLUDE_DIRS ${OSG_INCLUDE_DIR} ${OSGDB_INCLUDE_DIR} ${OSGTEXT_INCLUDE_DIR} ${OSGGA_INCLUDE_DIR} ${OSGVIEWER_INCLUDE_DIR} ${OSGUTIL_INCLUDE_DIR} ${OSGSIM_INCLUDE_DIR} ${OPENTHREADS_INCLUDE_DIR} )
   # When new cmake version available >=2.6.4 we may use this the line below instead the stuff above
   # FIND_PACKAGE( OpenSceneGraph 2.8.0 REQUIRED osgDB osgUtil osgGA osgViewer osgSim OpenThreads )
   INCLUDE_DIRECTORIES( ${OPENSCENEGRAPH_INCLUDE_DIRS} )
@@ -87,7 +86,7 @@ ELSE()
   IF( NOT VERSION LESS 2.6.3 )
     SET ( CMAKE_PREFIX_PATH "$ENV{ProgramFiles}/OpenSceneGraph" )
   ENDIF()
-  FIND_PACKAGE( OpenSceneGraph ${MIN_OSG_VERSION} REQUIRED osgUtil osgDB osgViewer osgText osgGA osgSim osgWidget )
+  FIND_PACKAGE( OpenSceneGraph ${MIN_OSG_VERSION} REQUIRED osgUtil osgDB osgViewer osgText osgGA osgSim )
   INCLUDE_DIRECTORIES( ${OPENSCENEGRAPH_INCLUDE_DIRS} )
 ENDIF()
 
@@ -97,36 +96,6 @@ IF( Teem_FOUND )    # we need to add the include path and lib path to allow the 
                     # /usr/local
     INCLUDE_DIRECTORIES( ${Teem_INCLUDE_DIRS} )
     LINK_DIRECTORIES( ${LINK_DIRECTORIES} ${Teem_LIBRARY_DIRS} )
-ENDIF()
-
-### OSSIM ###
-FIND_PACKAGE( OSSIM QUIET )
-IF( OSSIM_FOUND )
-  MESSAGE( STATUS "Found OSSIM." )
-  ADD_DEFINITIONS( -DUSEOSSIM )
-  INCLUDE_DIRECTORIES( ${OSSIM_INCLUDE_DIR} )
-  LINK_LIBRARIES( ${OSSIM_LIBRARY} )
-# TODO(math): is an entry in link directories necessary?
-#   LINK_DIRECTORIES( ${OSSIM_LIBDIR} )
-  MARK_AS_ADVANCED( OSSIM_INCLUDEDIR )
-  MARK_AS_ADVANCED( OSSIM_LIBRARIES )
-#   MARK_AS_ADVANCED( OSSIM_LIBDIR )
-ENDIF()
-
-# insight toolkit (for image segmentation and registration)
-#----------------------------------------------------------
-FIND_PACKAGE( ITK QUIET )
-OPTION( OW_USE_ITK "Use the insight toolkit for image segmentation" OFF )
-IF( ITK_FOUND AND OW_USE_ITK )
-	INCLUDE( ${ITK_USE_FILE} )
-ENDIF( ITK_FOUND AND OW_USE_ITK )
-
-### Eigen #### (for the gauss process, the covariance matrices tend to be sparse and 20x20, but ~70.000 of them)
-FIND_PACKAGE( Eigen3 QUIET )
-IF( EIGEN3_FOUND )
-    MESSAGE( STATUS "Found Eigen3 in: ${EIGEN3_INCLUDE_DIR} with version: ${EIGEN3_VERSION}" )
-    MARK_AS_ADVANCED( EIGEN3_INCLUDE_DIR )
-    MARK_AS_ADVANCED( EIGEN3_VERSION )
 ENDIF()
 
 # other options:
@@ -152,8 +121,6 @@ IF( CMAKE_GENERATOR MATCHES "Visual Studio" )
     SET( CMAKE_SHARED_LINKER_FLAGS " /STACK:10000000 /machine:I386 /NODEFAULTLIB:${EXCLUDE_LIBRARIES}"  CACHE STRING "" FORCE )
     SET( CMAKE_EXE_LINKER_FLAGS " /STACK:10000000 /machine:I386 /NODEFAULTLIB:${EXCLUDE_LIBRARIES}"  CACHE STRING "" FORCE )
     SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D \"NOMINMAX\"" )
-    SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP" )
-	SET( CMAKE_DEBUG_POSTFIX "d" CACHE STRING "add a postfix, usually d on windows" )
 ELSE()
     # Unfortunately libstdc++'s header files don't work with mingw in ansi mode (basically libstdc++'s fault)
     IF( CMAKE_HOST_SYSTEM MATCHES "Windows" )
@@ -171,11 +138,6 @@ ELSE()
     SET( CMAKE_CXX_FLAGS_RELEASE "-O3" CACHE STRING "" FORCE )
     SET( CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG -O0" CACHE STRING "" FORCE )
 ENDIF()
-
-IF( ITK_FOUND AND OW_USE_ITK )
-	SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DOW_USE_ITK" CACHE STRING "" FORCE )
-	SET( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DOW_USE_ITK" CACHE STRING "" FORCE )
-ENDIF( ITK_FOUND AND OW_USE_ITK )
 
 SET( CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -DDEBUG -O2" CACHE STRING "" FORCE )
 
@@ -208,11 +170,6 @@ ENDIF()
 # finally, build walnut
 ADD_EXECUTABLE( walnut OpenWalnut.cpp version.h )
 TARGET_LINK_LIBRARIES( walnut OWkernel OWdataHandler OWgui OWguiqt4 OWcommon OWge ${Boost_LIBRARIES} )
-
-IF(MSVC_IDE)
-	SET_TARGET_PROPERTIES( walnut PROPERTIES DEBUG_POSTFIX "d")
-	SET_TARGET_PROPERTIES( walnut PROPERTIES PREFIX "../")    
-ENDIF(MSVC_IDE)
 
 #---------- Shaders -------------
 option( OW_COPY_SHADERS "This enables copying shaders with every make call." ON )
@@ -295,17 +252,15 @@ ADD_CUSTOM_TARGET( tags DEPENDS ctags DEPENDS cscope )
 
 #-------------------------------------------------------------------------------------------------------------
 # Determines the number of cores available on this machine
-IF( NOT CMAKE_GENERATOR MATCHES "Visual Studio" )
-	SET( NUM_CORES_SOURCE_DIR ${PROJECT_SOURCE_DIR}/../tools/numCores )
-	SET( NUM_CORES_BINARY_DIR ${PROJECT_BINARY_DIR}/numCores )
-	SET( NUM_CORES_BINARY ${NUM_CORES_BINARY_DIR}/numCores )
-	ADD_CUSTOM_TARGET( numCores
+SET( NUM_CORES_SOURCE_DIR ${PROJECT_SOURCE_DIR}/../tools/numCores )
+SET( NUM_CORES_BINARY_DIR ${PROJECT_BINARY_DIR}/numCores )
+SET( NUM_CORES_BINARY ${NUM_CORES_BINARY_DIR}/numCores )
+ADD_CUSTOM_TARGET( numCores
                    COMMAND ${CMAKE_COMMAND} -E make_directory ${NUM_CORES_BINARY_DIR}
                    COMMAND cd ${NUM_CORES_BINARY_DIR} && ${CMAKE_COMMAND} ${NUM_CORES_SOURCE_DIR} > /dev/null
                    COMMAND $(MAKE) -C ${NUM_CORES_BINARY_DIR} > /dev/null
                    COMMENT "Determines the number of cores available on this machine"
                  )
-ENDIF()
 
 #-------------------------------------------------------------------------------------------------------------
 # Checks style guide lines via the BrainLint tool against all source code files
@@ -313,7 +268,6 @@ ENDIF()
 #    noncolored if it is set to OFF
 FILE( GLOB_RECURSE STYLE_CPP ${PROJECT_SOURCE_DIR}/*.cpp )
 FILE( GLOB_RECURSE STYLE_H ${PROJECT_SOURCE_DIR}/*.h )
-FILE( GLOB_RECURSE STYLE_GLSL ${PROJECT_SOURCE_DIR}/*.glsl )
 # Set dirs to exclude from stylecheck
 SET( EXCLUDE_DIRS "/ext/nifti/;/dataHandler/io/biosig/;/dataHandler/io/biosigWin/;/dataHandler/io/biosig/XMLParser/;/dataHandler/io/biosigWin/XMLParser/;/ext/libeep/avr/;/ext/libeep/cnt/;/ext/libeep/eep/;/common/platformDependent/visualStudio/;/modules/lic/fibernavigator/;/modules/lic/fantom/" )
 FOREACH( dirname ${EXCLUDE_DIRS} )
@@ -345,7 +299,7 @@ ELSE()
 ENDIF()
 
 FILE( WRITE ${PROJECT_BINARY_DIR}/brainlintlist "" )
-FOREACH( fname ${STYLE_CPP} ${STYLE_H} ${STYLE_GLSL} )
+FOREACH( fname ${STYLE_CPP} ${STYLE_H} )
     FILE( APPEND ${PROJECT_BINARY_DIR}/brainlintlist "${fname}\n" )
 ENDFOREACH()
 

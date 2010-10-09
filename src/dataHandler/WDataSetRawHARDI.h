@@ -30,13 +30,12 @@
 
 #include "WDataSetSingle.h"
 #include "../common/math/WVector3D.h"
-#include "WExportDataHandler.h"
 
 /**
  * This data set type contains raw HARDI and its gradients.
  * \ingroup dataHandler
  */
-class OWDATAHANDLER_EXPORT WDataSetRawHARDI : public WDataSetSingle // NOLINT
+class WDataSetRawHARDI : public WDataSetSingle
 {
 public:
 
@@ -49,12 +48,10 @@ public:
      * \param newValueSet the vector value set to use
      * \param newGrid the grid which maps world space to the value set
      * \param newGradients the Gradients of the
-     * \param diffusionBValue Strength of the gradient
      */
     WDataSetRawHARDI( boost::shared_ptr< WValueSetBase > newValueSet,
                       boost::shared_ptr< WGrid > newGrid,
-                      boost::shared_ptr< std::vector< wmath::WVector3D > > newGradients,
-                      double diffusionBValue = 1.0 );
+                      boost::shared_ptr< std::vector< wmath::WVector3D > > newGradients );
 
     /**
      * Construct an empty and unusable instance. This is needed for the prototype mechanism.
@@ -103,20 +100,6 @@ public:
      */
     virtual const std::string getDescription() const;
 
-    /**
-     * Get the orientations.
-     *
-     * \return A vector of orientations.
-     */
-    std::vector< wmath::WVector3D > const& getOrientations() const;
-
-    /**
-     * Returns the \e b-value of the diffusion.
-     *
-     * \return b-value as double
-     */
-    double getDiffusionBValue() const;
-
 protected:
 
     /**
@@ -126,10 +109,6 @@ protected:
 
 private:
     boost::shared_ptr< std::vector< wmath::WVector3D > > m_gradients; //!< Gradients of measurements
-    /**
-     * Strength (b-value) of the so-called magnetic diffusion gradient.
-     */
-    double m_diffusionBValue;
 };
 
 #endif  // WDATASETRAWHARDI_H

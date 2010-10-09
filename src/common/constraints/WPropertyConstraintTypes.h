@@ -38,8 +38,7 @@ typedef enum
     PC_PATHEXISTS,       // type ID for WPropertyConstraintPathExists
     PC_ISDIRECTORY,      // type ID for WPropertyConstraintIsDirectory
     PC_SELECTONLYONE,    // type ID for WPropertyConstraintSelectOnlyOne
-    PC_SELECTATLEASTONE, // type ID for WPropertyConstraintSelectAtLeastOne
-    PC_ISVALID           // type ID for WPropertyConstraintIsValid
+    PC_SELECTATLEASTONE  // type ID for WPropertyConstraintSelectAtLeastOne
 }
 PROPERTYCONSTRAINT_TYPE;
 

@@ -31,7 +31,6 @@
 #include "WRecording.h"
 #include "../common/WPrototyped.h"
 #include "../common/math/WPosition.h"
-#include "WExportDataHandler.h"
 
 
 ///======================================
@@ -41,7 +40,7 @@ typedef double WDummyType;
 /**
  * An incomplete implementation to store information about electrodes of EEG data
  */
-class OWDATAHANDLER_EXPORT WEEGElectrodeObject // NOLINT
+class WEEGElectrodeObject
 {
 public:
     /**
@@ -86,7 +85,7 @@ typedef std::vector< std::pair< std::string, std::string > > WEEGChannelLabels;
  * Contains EEG recording data.
  * \ingroup dataHandler
  */
-class OWDATAHANDLER_EXPORT WEEG : public WRecording // NOLINT
+class WEEG : public WRecording
 {
 public:
 

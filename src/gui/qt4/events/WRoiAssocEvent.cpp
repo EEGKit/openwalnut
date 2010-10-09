@@ -26,7 +26,7 @@
 
 #include "WRoiAssocEvent.h"
 
-WRoiAssocEvent::WRoiAssocEvent( osg::ref_ptr< WROI > roi )
+WRoiAssocEvent::WRoiAssocEvent( boost::shared_ptr< WRMROIRepresentation > roi )
     : QEvent( static_cast< QEvent::Type >( WQT_ROI_ASSOC_EVENT ) ),
     m_roi( roi )
 {
@@ -38,7 +38,7 @@ WRoiAssocEvent::~WRoiAssocEvent()
     // cleanup
 }
 
-osg::ref_ptr< WROI > WRoiAssocEvent::getRoi()
+boost::shared_ptr< WRMROIRepresentation > WRoiAssocEvent::getRoi()
 {
     return m_roi;
 }

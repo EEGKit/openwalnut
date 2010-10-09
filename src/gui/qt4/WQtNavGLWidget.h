@@ -32,7 +32,7 @@
 
 #include "../../common/WPropertyVariable.h"
 #include "../../graphicsEngine/WGEGroupNode.h"
-#include "controlPanel/WPropertyIntWidget.h"
+#include "datasetbrowser/WPropertyIntWidget.h"
 
 #include "WQtGLWidget.h"
 

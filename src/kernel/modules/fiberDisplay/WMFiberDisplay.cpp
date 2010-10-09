@@ -27,6 +27,15 @@
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
+#include <osg/TexGen>
+#include <osgDB/ReadFile>
+#include <osgDB/WriteFile>
+#include <osg/Texture1D>
+#include <osg/Texture2D>
+
+#include <cmath>
+#include <iostream>
+#include <time.h>
 
 #include "../../../common/WColor.h"
 #include "../../../common/WLogger.h"
@@ -44,7 +53,7 @@ bool WMFiberDisplay::m_fiberDisplayRunning = false;
 WMFiberDisplay::WMFiberDisplay()
     : WModule(),
       m_noData( new WCondition, true ),
-	  m_osgSwitch( osg::ref_ptr< osg::Switch >() )
+	  m_osgNode( osg::ref_ptr< osg::Group >() )
 {
     m_shaderTubes = osg::ref_ptr< WShader > ( new WShader( "WMFiberDisplay-FakeTubes" ) );
 	m_shaderTubesPS = osg::ref_ptr< WShader > ( new WShader( "WMFiberDisplay-FakeTubes-PS" ) );
@@ -248,6 +257,7 @@ void WMFiberDisplay::create()
 	createTubeData();
 
 	WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->addChild( m_osgSwitch.get() );
+	std::cout << "Created /n";
 	std::cout << "Created /n";
 }
 

@@ -33,12 +33,11 @@
 #include "../common/datastructures/WFiber.h"
 #include "WDataSet.h"
 #include "WDataSetFibers.h"
-#include "WExportDataHandler.h"
 
 /**
  * Represents a simple set of WFibers.
  */
-class OWDATAHANDLER_EXPORT WDataSetFiberVector : public WMixinVector< wmath::WFiber >, public WDataSet // NOLINT
+class WDataSetFiberVector : public WMixinVector< wmath::WFiber >, public WDataSet
 {
 public:
     /**

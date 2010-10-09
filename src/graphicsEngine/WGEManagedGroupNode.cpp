@@ -22,23 +22,52 @@
 //
 //---------------------------------------------------------------------------
 
-#include "callbacks/WGENodeMaskCallback.h"
+#include <osg/ShapeDrawable>
+#include <osg/MatrixTransform>
+#include <osg/Geode>
+
 #include "WGEManagedGroupNode.h"
 
 WGEManagedGroupNode::WGEManagedGroupNode( boost::shared_ptr< WBoolFlag > active ):
-    WGEGroupNode()
+    WGEGroupNode(),
+    m_activeFlag( active )
 {
     setDataVariance( osg::Object::DYNAMIC );
 
-    // since we have the WGENodeMaskCallback, this node is quite simple
+    // get change signal
+    m_connection = m_activeFlag->getValueChangeCondition()->subscribeSignal(
+            boost::bind( &WGEManagedGroupNode::activate, this )
+    );
 
     // setup an update callback
-    addUpdateCallback( osg::ref_ptr< WGENodeMaskCallback >( new WGENodeMaskCallback( active ) ) );
+    addUpdateCallback( osg::ref_ptr< NodeMaskCallback >( new NodeMaskCallback( m_activeFlag ) ) );
 }
 
 WGEManagedGroupNode::~WGEManagedGroupNode()
 {
     // cleanup
+    m_connection.disconnect();
 }
 
+void WGEManagedGroupNode::activate()
+{
+    if ( m_activeFlag->get() ) // only handle activation here
+    {
+        setNodeMask( 0xFFFFFFFF );
+    }
+}
+
+void WGEManagedGroupNode::NodeMaskCallback::operator()( osg::Node* node, osg::NodeVisitor* nv )
+{
+    // Deactivate the node
+    if ( !m_activeFlag->get() ) // only handle deactivation here
+    {
+        node->setNodeMask( 0x0 );
+
+        // NOTE: this also deactivates the callback. So reactivating the node is done in a separate method
+    }
+
+    // forward the call
+    traverse( node, nv );
+}
 
