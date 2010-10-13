@@ -32,11 +32,9 @@
 #define VERTEXBIND 6
 
 #include <string>
+#include <vector>
 
 #include <osg/Geode>
-#include <osg/Switch>
-#include <osg/ref_ptr>
-#include <osg/Group>
 
 #include "../../../dataHandler/datastructures/WFiberCluster.h"
 #include "../../../dataHandler/WDataSetFibers.h"
@@ -166,13 +164,6 @@ private:
     WPropFilename m_saveFileName; //!< the filename for saving
     WPropTrigger m_updateOC; //!< updates the output connector
 
-	WPropBool m_depthCueing;
-	WPropBool m_lightModel;
-	WPropBool m_usePointSprites;
-	WPropBool m_useQuadStripes;
-	WPropDouble m_lowDepthCueingFactor;
-	WPropDouble m_upperDepthCueingFactor;
-
     WBoolFlag m_noData; //!< Flag indicating whether there is data to display.
 
     WPropGroup m_cullBoxGroup; //!< property group for box culling
@@ -180,7 +171,15 @@ private:
     WPropBool m_showCullBox; //!< Enable/Disable showing of the cull box
     WPropBool m_insideCullBox; //!< if true fibers inside the cull box are shown, outside if false
 
-	/**
+    WPropBool m_depthCueing; //!< Enable/Disable DepthCueing
+    WPropBool m_lightModel; //!< Change lightning model
+    WPropBool m_usePointSprites; //!< Enable/Disable PointSprites
+    WPropBool m_useQuadStripes; //!< Enable/Disable QuadStripes
+    WPropDouble m_lowDepthCueingFactor; //!< Set lower depth cueing factor
+    WPropDouble m_upperDepthCueingFactor; //!< Set upper depth cueing factor
+    WPropBool m_useProjection; //!< Enable/Disable projection
+
+    /**
      * Input connector for a fiber dataset.
      */
     boost::shared_ptr< WModuleInputData< const WDataSetFibers > > m_fiberInput;
@@ -199,46 +198,89 @@ private:
      * OSG node for this module. All other OSG nodes of this module should be
      * placed as child to this node.
      */
-	osg::ref_ptr< osg::Group > m_osgNode;
+    osg::ref_ptr< osg::Switch > m_osgNode;
 
+    /**
+     * OSG geode for the osg drawable.
+     */
+    osg::ref_ptr<osg::Geode> m_geodeTubeDrawable;
 
-	/**
-	 * OSG node for this module. All other OSG nodes of this module should be
-	 * placed as child to this node.
-	 */
-	osg::ref_ptr< osg::Switch > m_osgSwitch;
+    /**
+     * OSG geode for the osg drawable.
+     */
+    osg::ref_ptr<osg::Geode> m_geodePointSprite;
 
-	osg::ref_ptr< osg::Vec3Array > m_tubeVerts;
-	osg::ref_ptr< osg::Vec3Array > m_tubeTangents;
-	osg::ref_ptr< osg::Vec2Array > m_tubeTexCoords;
-	osg::ref_ptr< osg::Vec3Array > m_tubeColors;
-	osg::ref_ptr< osg::Vec2Array > m_pointTexCoords;
-	osg::ref_ptr< osg::Vec3Array > m_pointVerts;
-	osg::ref_ptr< osg::Vec3Array > m_pointTangents;
-	osg::ref_ptr< osg::Vec3Array > m_pointColors;
-	osg::ref_ptr< osg::VectorGLuint > m_fiberQuadStartIndexes;
-	osg::ref_ptr< osg::VectorGLuint > m_fiberPointStartIndexes;
+    /**
+     * OSG geode for the osg drawable.
+     */
+    osg::ref_ptr< osg::Geode > m_geodeQuadStripes;
 
-	osg::ref_ptr< osg::Geode > m_geodeTubeDrawable;
-	osg::ref_ptr< osg::Geode > m_geodePointSprite;
-	osg::ref_ptr< osg::Geode > m_geodeQuadStripes;
+    /**
+     * Array for vertices.
+     */
+    osg::ref_ptr< osg::Vec3Array > m_tubeVerts;
+
+    /**
+     * Array for tangents.
+     */
+    osg::ref_ptr< osg::Vec3Array > m_tubeTangents;
+
+    /**
+     * Array for texture coordinates.
+     */
+    osg::ref_ptr< osg::Vec2Array > m_tubeTexCoords;
+
+    /**
+     * Array for colors.
+     */
+    osg::ref_ptr< osg::Vec3Array > m_tubeColors;
+
+    /**
+     * Array for texture coordinates of the pointsprites.
+     */
+    osg::ref_ptr< osg::Vec2Array > m_pointTexCoords;
+
+    /**
+     * Array for vertices of the pointsprites.
+     */
+    osg::ref_ptr< osg::Vec3Array > m_pointVerts;
+
+    /**
+     * Array for tangents  of the pointsprites.
+     */
+    osg::ref_ptr< osg::Vec3Array > m_pointTangents;
+
+    /**
+     * Array for colors  of the pointsprites.
+     */
+    osg::ref_ptr< osg::Vec3Array > m_pointColors;
+
+    /**
+     * Vector for fiber start indices.
+     */
+    boost::shared_ptr< std::vector< size_t > > m_fiberQuadStartIndexes;
+
+    /**
+     * Vector for fiber start indices.
+     */
+    boost::shared_ptr< std::vector< size_t > > m_fiberPointStartIndexes;
+
+    /**
+     * stores pointer to the fiber drawer
+     */
+    osg::ref_ptr< WTubeGeometry > m_tubeGeometryPointSprite;
+
+    /**
+     * stores pointer to the fiber drawer
+     */
+    osg::ref_ptr< WTubeGeometry > m_tubeGeometryQuadStripes;
 
     /**
      * stores pointer to the fiber drawer
      */
     osg::ref_ptr< WTubeDrawable > m_tubeDrawable;
 
-	/**
-	 * stores pointer to the fiber drawer
-	 */
-	osg::ref_ptr< WTubeGeometry > m_tubeGeometryPointSprite;
-
-	/**
-	 * stores pointer to the fiber drawer
-	 */
-	osg::ref_ptr< WTubeGeometry > m_tubeGeometryQuadStripes;
-
-	/**
+    /**
      * lock to prevent concurrent threads trying to update the osg node
      */
     boost::shared_mutex m_updateLock;
@@ -247,8 +289,16 @@ private:
      * the shader object for rendering tubes
      */
     osg::ref_ptr< WShader >m_shaderTubes;
-	osg::ref_ptr< WShader >m_shaderTubesPS;
-	osg::ref_ptr< WShader >m_shaderTubesQS;
+
+    /**
+     * the shader object for rendering tubes
+     */
+    osg::ref_ptr< WShader >m_shaderTubesPS;
+
+    /**
+     * the shader object for rendering tubes
+     */
+    osg::ref_ptr< WShader >m_shaderTubesQS;
 
 
     /**
@@ -303,16 +353,19 @@ private:
     osg::ref_ptr<osg::Uniform> m_uniformCullBoxUBY; //!< cull box upper bound
     osg::ref_ptr<osg::Uniform> m_uniformCullBoxUBZ; //!< cull box upper bound
 
-	osg::ref_ptr<osg::Uniform> m_uniformViewportHeight;
-	osg::ref_ptr<osg::Uniform> m_uniformViewportWidth;
+    osg::ref_ptr<osg::Uniform> m_uniformViewportHeight; //!< viewport height
+    osg::ref_ptr<osg::Uniform> m_uniformViewportWidth; //!< viewport width
 
-	osg::ref_ptr<osg::Uniform> m_uniformDepthCueing;
-	osg::ref_ptr<osg::Uniform> m_uniformLightModel;
-	osg::ref_ptr<osg::Uniform> m_uniformUsePointSprites;
-	osg::ref_ptr<osg::Uniform> m_uniformUseQuadStripes;
-	osg::ref_ptr<osg::Uniform> m_uniformLowDepthCueingFactor;
-	osg::ref_ptr<osg::Uniform> m_uniformUpperDepthCueingFactor;
+    osg::ref_ptr<osg::Uniform> m_uniformDepthCueing; //!< notify shader that depth cueing is activated
+    osg::ref_ptr<osg::Uniform> m_uniformUseProjection; //!< notify shader that projection is activated
+    osg::ref_ptr<osg::Uniform> m_uniformLightModel; //!< notify shader that light model has changed
+    osg::ref_ptr<osg::Uniform> m_uniformUsePointSprites; //!< notify shader that pointsprites are activated
+    osg::ref_ptr<osg::Uniform> m_uniformUseQuadStripes; //!< notify shader that quadstripes are activated
+    osg::ref_ptr<osg::Uniform> m_uniformLowDepthCueingFactor; //!< lower clamp factor
+    osg::ref_ptr<osg::Uniform> m_uniformUpperDepthCueingFactor; //!< upper clamp factor
 
+    osg::ref_ptr<osg::Uniform> m_uniformNearPos; //!< near position of the bounding box
+    osg::ref_ptr<osg::Uniform> m_uniformFarPos; //!< far position of the bounding box
     /**
      * To avoid multiple instances of the fiber display.
      */
@@ -347,27 +400,46 @@ private:
      */
     void initCullBox();
 
+    /**
+      * Creates a texture to simmulate diffuse and specular lightning
+      * of a tube from aside
+      * \param rootState The uniforms will be applied to this state.
+      */
+    void create1DTextureRectLightning( osg::StateSet* rootState ) const;
 
-	/**
-	  * Creates a texture to simmulate diffuse and specular lightning
-	  * of a tube from aside
-	  */
-	void create1DTextureRectLightning(osg::StateSet* rootState) const;
+    /**
+      * Creates a texture to simmulate diffuse and specular lightning
+      * of a tube from top or bottom
+      * \param rootState The uniforms will be applied to this state.
+      */
+    void create2DTextureCycleLightning( osg::StateSet* rootState ) const;
 
-	/**
-	  * Creates a texture to simmulate diffuse and specular lightning
-	  * of a tube from top or bottom
-	  */
-	void create2DTextureCycleLightning(osg::StateSet* rootState) const;
+    /**
+      * Creates a texture to simmulate diffuse and specular lightning
+      * of a tube from top or bottom
+      * \param rootState The uniforms will be applied to this state.
+      */
+    void create2DTexDiffuseLightning( osg::StateSet* rootState ) const;
 
-	void create2DTexDiffuseLightning(osg::StateSet* rootState) const;
-	void create2DTexSpecularLightning(osg::StateSet* rootState) const;
+    /**
+      * Creates a texture to simmulate diffuse and specular lightning
+      * of a tube from top or bottom
+      * \param rootState The uniforms will be applied to this state.
+      */
+    void create2DTexSpecularLightning( osg::StateSet* rootState ) const;
 
-	void createTextures(osg::StateSet* rootState) const;
-	void createTubeData();
+    /**
+      * Creates a texture to simmulate diffuse and specular lightning
+      * of a tube from top or bottom
+      * \param rootState The uniforms will be applied to this state.
+      */
+    void createTextures( osg::StateSet* rootState ) const;
 
-
-
+    /**
+      * Creates a texture to simmulate diffuse and specular lightning
+      * of a tube from top or bottom
+      */
+    void createTubeData();
 
     /**
     * Wrapper class for userData to prevent cyclic destructor calls

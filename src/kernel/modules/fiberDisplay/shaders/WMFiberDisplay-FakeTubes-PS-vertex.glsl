@@ -1,102 +1,116 @@
 varying float tangent_dot_view;
 varying vec3 tangentR3;
-varying float s_param;
 varying vec4 tubeColor;
-uniform float u_thickness;
-uniform int u_viewportHeight;
-uniform int u_viewportWidth;
+
 varying vec2 imageTangent;
-varying float usePointSprite;
 varying vec3 view;
 varying vec3 lightDir;
 varying float NdotL;
 varying vec3 normal;
 varying vec3 halfVector;
 varying float endPoint;
-uniform gl_DepthRangeParameters gl_DepthRange;
+
 varying float z;
-uniform vec3 nearPos;
-uniform vec3 farPos;
 varying float zNear;
 varying float zFar;
 
+attribute vec2 psTexCoords;
+
+uniform float u_thickness;
+uniform int u_viewportHeight;
+uniform int u_viewportWidth;
+
+uniform vec3 nearPos;
+uniform vec3 farPos;
+
+uniform bool useDepthCueing;
+uniform bool useLightModel;
+uniform bool usePointSprites;
+uniform bool useQuadStripes;
+uniform bool useProjection;
+
 void main()
 {
-	float thickness;
-	vec4 pos;
-	vec3 lightPosition = vec3(0., 0., -1.);
-	usePointSprite = 1.0;
-	tangentR3 = gl_Normal;
-	endPoint = 1.0;
-
-	pos = gl_ModelViewProjectionMatrix * gl_Vertex;
-	z = pos.z;
-
-	zNear =0.5 + 0.5*( (gl_ModelViewProjectionMatrix * vec4(nearPos,1.00)).z );
-	zFar =0.5 + 0.5*( (gl_ModelViewProjectionMatrix * vec4(farPos,1.0)).z );
-  float tmp2 = zNear;
-  zNear = min( zNear, zFar );
-  zFar = max( zFar, tmp2 );
-
-	view = - pos.xyz;
-
-	lightDir = normalize( lightPosition - pos.xyz);
-
-	vec3 cameraPosition = vec3(gl_ModelViewMatrixInverse * vec4(0,0,0,1.0));
-	vec3 cameraVector = cameraPosition - gl_Vertex.xyz;
-vec3 referencePosition = vec3(gl_ModelViewProjectionMatrix * vec4(1.0, 1.0, 1.0, 0.0));
-
+    float thickness;
+	vec4 pos = gl_ModelViewProjectionMatrix * gl_Vertex;
+	vec3 tangent = (gl_ModelViewProjectionMatrix * vec4(gl_Normal,0.)).xyz; // transform our tangent vector
+	float tmp = dot(-pos.xyz, tangent);
 	gl_ClipVertex = gl_ModelViewMatrix * gl_Vertex; // make clipping planes work
 
-	// defines northpoint (1.0), southpoint (-1.0) or point sprite (0.0)
-	s_param = gl_MultiTexCoord0.s;
+    //calculation for pointsprites
+    if(tmp > 0.93 ||psTexCoords.t == 0.0 )
+    {
+        vec3 lightPosition = vec3(0., 0., -1.);
+        tangentR3 = gl_Normal;
+        endPoint = 1.0;
 
-	vec3 tangent = (gl_ModelViewProjectionMatrix * vec4(gl_Normal,0.)).xyz; // transform our tangent vector
+        if ( useDepthCueing )
+        {
+            z = pos.z;
+            float z1 =0.5 + 0.5 * ( ( gl_ModelViewProjectionMatrix * vec4( nearPos, 1.0 ) ).z );
+            float z2 =0.5 + 0.5 * ( ( gl_ModelViewProjectionMatrix * vec4( farPos.x, nearPos.yz, 1.0 ) ).z );
+            float z3 =0.5 + 0.5 * ( ( gl_ModelViewProjectionMatrix * vec4( farPos.xy, nearPos.z, 1.0 ) ).z );
+            float z4 =0.5 + 0.5 * ( ( gl_ModelViewProjectionMatrix * vec4( nearPos.x, farPos.y, nearPos.z, 1.0 ) ).z );
+            float z5 =0.5 + 0.5 * ( ( gl_ModelViewProjectionMatrix * vec4( nearPos.xy, farPos.z, 1.0 ) ).z );
+            float z6 =0.5 + 0.5 * ( ( gl_ModelViewProjectionMatrix * vec4( farPos.x, nearPos.y, farPos.z, 1.0 ) ).z );
+            float z7 =0.5 + 0.5 * ( ( gl_ModelViewProjectionMatrix * vec4( farPos, 1.0 ) ).z );
+            float z8 =0.5 + 0.5 * ( ( gl_ModelViewProjectionMatrix * vec4( nearPos.x, farPos.yz, 1.0 ) ).z );
 
-	halfVector = normalize(cross(view,tangent));
-	normal = cross( halfVector, tangent);
+            zFar = max( z1, max( z2, max( z3, max( z4, max( z5, max( z6, max( z7,z8)))))));
+            zNear  = min( z1, min( z2, min( z3, min( z4, min( z5, min( z6, min( z7,z8)))))));
+        }
 
-	//define thickness of tubes
-	thickness = u_thickness * 0.001; //(1 - (zNear)/(zNear+zFar));
+        view = - pos.xyz;
 
-	// color of tube
-	tubeColor = gl_Color;
+        lightDir = normalize( lightPosition - pos.xyz);
 
-	vec3 offsetNN = cross( normalize(tangent.xyz), vec3(.0, .0, -1.));
-	vec3 offset = normalize(offsetNN);
-	tangent_dot_view = length(offsetNN);
+        vec3 cameraPosition = vec3(gl_ModelViewMatrixInverse * vec4(0,0,0,1.0));
+        vec3 cameraVector = cameraPosition - gl_Vertex.xyz;
+        vec3 referencePosition = vec3(gl_ModelViewProjectionMatrix * vec4(1.0, 1.0, 1.0, 0.0));
 
-	//scalar product between viewDir and tangent
-	float tmp = dot(view, tangent);
-thickness *= length(referencePosition);
-	offset.x *= thickness*u_viewportWidth;
-	offset.y *= thickness*u_viewportHeight;
+        halfVector = normalize(cross(view,tangent));
+        normal = cross( halfVector, tangent);
 
-	//decide wether point sprite or triangle strip to render
+        // color of tube
+        tubeColor = gl_Color;
 
-	//calculation for pointsprites
-	if(tmp > 0.93 || gl_MultiTexCoord0.t == 0.0)
-	{
-		vec4 pos1 = gl_Vertex;
-		vec4 pos2 = gl_Vertex + vec4(gl_Normal,1);
+        vec3 offsetNN;
+        if ( useProjection )
+        {
+            offsetNN = cross( (tangent.xyz), vec3(.0, .0, -1.));
+        }
+        else
+        {
+            offsetNN = cross( normalize(tangent.xyz), vec3(.0, .0, -1.));
+        }
+        vec3 offset = normalize(offsetNN);
+        tangent_dot_view = length(offsetNN);
 
-		vec4 pos1p = gl_ModelViewProjectionMatrix * pos1.xyzw;
-		vec4 pos2p = gl_ModelViewProjectionMatrix * pos2.xyzw;
+        //scalar product between viewDir and tangent
+        // compute thickness
+        thickness *= length(referencePosition) * u_thickness * 0.001;
+        offset.x *= thickness*u_viewportWidth;
+        offset.y *= thickness*u_viewportHeight;
 
-		imageTangent.xy = (pos2p.x/pos2p.w - pos1p.x/pos1p.w, pos1p.y/pos1p.w - pos2p.y/pos2p.w);
-		imageTangent = normalize(imageTangent);
-		//	compute size with u_viewportWidth and u_viewportHeight;
-		gl_PointSize = length(vec2(offset.x, offset.y));
-		//gl_PointSize = 20;
+        vec4 pos1 = gl_Vertex;
+        vec4 pos2 = gl_Vertex + vec4(gl_Normal,1);
 
-		usePointSprite = 0.0;
-		endPoint = gl_MultiTexCoord0.t;
-	}
-	else
-	{
-		//clip point sprite
-		pos.w = 0.0;
-	}
+        vec4 pos1p = gl_ModelViewProjectionMatrix * pos1.xyzw;
+        vec4 pos2p = gl_ModelViewProjectionMatrix * pos2.xyzw;
 
-	gl_Position = pos; //< store final position
+        imageTangent.xy = (pos2p.x/pos2p.w - pos1p.x/pos1p.w, pos1p.y/pos1p.w - pos2p.y/pos2p.w);
+        imageTangent = normalize(imageTangent);
+
+        //  compute size with u_viewportWidth and u_viewportHeight;
+        gl_PointSize = length(vec2(offset.x, offset.y));
+
+        endPoint = psTexCoords.t;
+    }
+    else
+    {
+        //clip point sprite
+        pos.w = 0.0;
+    }
+
+    gl_Position = pos; //< store final position
 }

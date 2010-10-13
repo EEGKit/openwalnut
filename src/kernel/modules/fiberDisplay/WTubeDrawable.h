@@ -126,12 +126,16 @@ public:
      */
     bool getColoringMode() const;
 
-	void setRootState(osg::StateSet* m_rootState);
+    /**
+     * Set the bounding box of all fibers.
+     * \param bb The new bounding box.
+     */
+    void setBoundingBox( const osg::BoundingBox & bb );
 
-	void setActiveRenderingMode(bool usePointSprite, bool useQuadStrips);
+
 protected:
 private:
-    /**
+	/**
      * Draw fibers as ordinary lines.
      *
      * \param renderInfo
@@ -139,13 +143,9 @@ private:
     void drawFibers( osg::RenderInfo& renderInfo ) const; //NOLINT
 	/**
      * Draw fibers as fake tubes.
-     */
-	void drawTubes( osg::RenderInfo& renderInfo ) const;
-
-	osg::StateSet* m_rootState;
-
-	bool m_usePointSprite;
-	bool m_useQuadStrips;
+     * \param renderInfo
+	 */
+    void drawTubes( osg::RenderInfo& renderInfo ) const;
 
     boost::shared_ptr< const WDataSetFibers > m_dataset; //!< stores pointer to dataset
 

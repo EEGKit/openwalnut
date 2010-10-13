@@ -13,45 +13,58 @@ varying float NdotL;
 varying vec3 normal;
 varying vec3 halfVector;
 varying float endPoint;
-uniform gl_DepthRangeParameters gl_DepthRange;
 varying float z;
 varying float zNear;
 varying float zFar;
 
+uniform bool useDepthCueing;
+uniform bool useLightModel;
+uniform bool usePointSprites;
+uniform bool useQuadStripes;
+uniform bool useProjection;
+
 void main()
 {
 
-	vec3 L,V, T, N, halfV;
-	vec3 specular = 0.0;
-	float NdotL,NdotHV;
-	float alpha, beta, lt;
-	T = normalize(tangentR3);
-	V = normalize(view);
-	L = normalize(lightDir);
-	N = normalize(normal);
+    vec3 L,V, T, N, halfV;
+    vec3 specular = 0.0;
+    float NdotL,NdotHV;
+    float alpha, beta, lt;
+    T = normalize(tangentR3);
+    V = normalize(view);
+    L = normalize(lightDir);
+    N = normalize(normal);
+    float depthCueingFactor = 1.0;
+    //NdotL = max(dot(N,L),0.0);
+    vec4 color;
 
-	NdotL = max(dot(N,L),0.0);
-	vec4 color;
+    if ( useLightModel )
+    {
+        // koordinaten für illuminated lines texturen
+        alpha = dot(L,N) / sqrt(1 - pow( dot(L,T),2));
+        beta = dot(halfVector,N) / sqrt( 1 - pow( dot(halfVector, T), 2));
+        lt = dot(L, T);
+    }
+    else
+    {
+        color = texture1D(texture, gl_TexCoord[1].s);
+        gl_FragColor.a = tubeColor.a;
+    }
 
-	// koordinaten für illuminated lines texturen
-	alpha = dot(L,N) / sqrt(1 - pow( dot(L,T),2));
-	beta = dot(halfVector,N) / sqrt( 1 - pow( dot(halfVector, T), 2));
-	lt = dot(L, T);
+    /* compute the specular term if NdotL is  larger than zero */
+    if (NdotL > 0.0)
+    {
+        // normalize the half-vector, and then compute the
+        // cosine (dot product) with the normal
+        halfV = normalize(halfVector);
 
-	color = texture1D(texture, gl_TexCoord[1].s);
-	gl_FragColor.a = tubeColor.a;
+        NdotHV = max(dot(N, halfV),0.0);
+        specular = pow(NdotHV,16) * color.y;
+    }
 
-		/* compute the specular term if NdotL is  larger than zero */
-		if (NdotL > 0.0) {
-
-				// normalize the half-vector, and then compute the
-				// cosine (dot product) with the normal
-				halfV = normalize(halfVector);
-
-				NdotHV = max(dot(normal, halfV),0.0);
-				specular = pow(NdotHV,16) * color.y;
-		}
-
-	float depthCueingFactor = clamp((1 - (z+zNear)/(zNear+zFar)),0.5,0.95);
-	gl_FragColor.rgb = tubeColor.rgb * ((color.x) + specular) * depthCueingFactor  * depthCueingFactor;
+    if ( useDepthCueing )
+    {
+        depthCueingFactor = clamp((1 - (z+zNear)/(zNear+zFar)),0.5,0.8);
+    }
+    gl_FragColor.rgb = ( tubeColor.rgb * color.x + specular ) * depthCueingFactor  * depthCueingFactor;
 }

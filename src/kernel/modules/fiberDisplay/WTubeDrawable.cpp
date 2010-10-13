@@ -22,7 +22,10 @@
 //
 //---------------------------------------------------------------------------
 
+#include <time.h>
 #include <vector>
+#include <cmath>
+#include <iostream>
 
 #include "../../../dataHandler/WDataSetFibers.h"
 #include "../../../kernel/WKernel.h"
@@ -35,10 +38,6 @@
 #include <osg/BlendFunc>
 #include <osg/AlphaFunc>
 #include <osg/Timer>
-
-#include <cmath>
-#include <iostream>
-#include <time.h>
 
 // The constructor here does nothing. One thing that may be necessary is
 // disabling display lists. This can be done by calling
@@ -53,8 +52,6 @@ WTubeDrawable::WTubeDrawable():
 {
     setSupportsDisplayList( false );
     // This contructor intentionally left blank. Duh.
-	m_usePointSprite = false;
-	m_useQuadStrips = false;
 }
 
 // I can't say much about the methods below, but OSG seems to expect
@@ -87,15 +84,9 @@ osg::Object* WTubeDrawable::clone( const osg::CopyOp& copyop ) const
 // *Change the OpenGL state only if strictly necessary*.
 void WTubeDrawable::drawImplementation( osg::RenderInfo& renderInfo ) const //NOLINT
 {
-	if ( m_useTubes )
+    if ( m_useTubes )
     {
-		// set current vieport height and width for the shaders
-		if(m_useQuadStrips)
-		{
-			m_rootState->getUniform("u_viewportHeight")->set( static_cast<int>( (*renderInfo.getCurrentCamera()->getViewport()).height() ) );
-			m_rootState->getUniform("u_viewportWidth")->set( static_cast<int>( (*renderInfo.getCurrentCamera()->getViewport()).width() ) );
-		}	std::cout << "State /n";
-		drawTubes( renderInfo );
+        drawTubes( renderInfo );
     }
     else
     {
@@ -111,7 +102,6 @@ void WTubeDrawable::setDataset( boost::shared_ptr< const WDataSetFibers > datase
 void WTubeDrawable::setUseTubes( bool flag )
 {
     m_useTubes = flag;
-
 }
 
 void WTubeDrawable::setColoringMode( bool globalColoring )
@@ -129,6 +119,11 @@ void WTubeDrawable::setCustomColoring( bool custom )
     m_customColoring = custom;
 }
 
+void WTubeDrawable::setBoundingBox( const osg::BoundingBox & bb )
+{
+    setBound( bb );
+}
+
 void WTubeDrawable::drawFibers( osg::RenderInfo& renderInfo ) const //NOLINT
 {
     boost::shared_ptr< std::vector< size_t > > startIndexes = m_dataset->getLineStartIndexes();
@@ -141,7 +136,7 @@ void WTubeDrawable::drawFibers( osg::RenderInfo& renderInfo ) const //NOLINT
     {
         colors = WKernel::getRunningKernel()->getRoiManager()->getCustomColors();
     }
-	else
+    else
     {
         colors = ( m_globalColoring ? m_dataset->getGlobalColors() : m_dataset->getLocalColors() );
     }
@@ -166,99 +161,68 @@ void WTubeDrawable::drawFibers( osg::RenderInfo& renderInfo ) const //NOLINT
     state.disableColorPointer();
 }
 
-void WTubeDrawable::setRootState(osg::StateSet* rootState)
-{
-	m_rootState = rootState;
-}
-
-void WTubeDrawable::setActiveRenderingMode(bool usePointSprite, bool useQuadStrips)
-{
-	m_usePointSprite = usePointSprite;
-	m_useQuadStrips = useQuadStrips;
-}
-
-
 void WTubeDrawable::drawTubes( osg::RenderInfo& renderInfo ) const
 {
-	/*boost::shared_ptr< std::vector< size_t > > startIndexes = m_dataset->getLineStartIndexes();
-	boost::shared_ptr< std::vector< size_t > > pointsPerLine = m_dataset->getLineLengths();
-	boost::shared_ptr< std::vector< bool > > active = WKernel::getRunningKernel()->getRoiManager()->getBitField();
-	boost::shared_ptr< std::vector< float > > colors;
-	if ( m_customColoring )
-	{
-		colors = WKernel::getRunningKernel()->getRoiManager()->getCustomColors();
-	}
-	else
-	{
-		colors = ( m_globalColoring ? m_dataset->getGlobalColors() : m_dataset->getLocalColors() );
-	}
+    boost::shared_ptr< std::vector< size_t > > startIndexes = m_dataset->getLineStartIndexes();
+    boost::shared_ptr< std::vector< size_t > > pointsPerLine = m_dataset->getLineLengths();
+    boost::shared_ptr< std::vector< bool > > active = WKernel::getRunningKernel()->getRoiManager()->getBitField();
+    boost::shared_ptr< std::vector< float > > colors;
+    if ( m_customColoring )
+    {
+        colors = WKernel::getRunningKernel()->getRoiManager()->getCustomColors();
+    }
+    else
+    {
+        colors = ( m_globalColoring ? m_dataset->getGlobalColors() : m_dataset->getLocalColors() );
+    }
 
-	osg::State& state = *renderInfo.getState();
+    osg::State& state = *renderInfo.getState();
 
-	state.disableAllVertexArrays();
+    state.disableAllVertexArrays();
 
-	state.setVertexPointer( m_tubeVerts);
-	state.setColorPointer( m_tubeColors );
-	state.setNormalPointer(m_tubeTangents );
-	state.setTexCoordPointer(0, m_tubeTexCoords );
+    //state.setVertexPointer( m_tubeVerts);
+    //state.setColorPointer( m_tubeColors );
+    //state.setNormalPointer(m_tubeTangents );
+    //state.setTexCoordPointer(0, m_tubeTexCoords );
 
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_LIGHTING);
-	glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable( GL_DEPTH_TEST );
+    glDisable( GL_LIGHTING );
+    glEnable( GL_BLEND );
+    glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
+    //if(m_useQuadStrips)
+    {
+        for ( size_t i = 0; i < active->size(); ++i )
+        {
+            if ( (*active)[i] )
+            {
+                //state.glDrawArraysInstanced( GL_QUAD_STRIP, m_tubeStartIndexes->at(i), 2 * (*pointsPerLine)[i], 1);
+            }
+        }
+    }
 
-	if(m_useQuadStrips)
-	{
-		for ( size_t i = 0; i < active->size(); ++i )
-		{
-			if ( (*active)[i] )
-			{
-				state.glDrawArraysInstanced( GL_QUAD_STRIP, m_tubeStartIndexes->at(i), 2 * (*pointsPerLine)[i], 1);
-			}
-		}
-	}
+    glEnable( GL_VERTEX_PROGRAM_POINT_SIZE );
+    glEnable( GL_ALPHA_TEST );
+    glEnable( GL_POINT_SPRITE );
 
-	//osg::TexEnv* texEnvPS = new osg::TexEnv( osg::TexEnv::REPLACE);
-	//osg::AlphaFunc* alphaFunc = new osg::AlphaFunc(osg::AlphaFunc::NOTEQUAL,0.0f);
+    glAlphaFunc( GL_NOTEQUAL, 0.0 );
+    glTexEnvi( GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE );
 
-	//state.setModeValidity(GL_VERTEX_PROGRAM_POINT_SIZE, osg::StateAttribute::ON);
-	//state.setModeValidity(GL_ALPHA_TEST, osg::StateAttribute::ON);
-	//state.setModeValidity(GL_POINT_SPRITE, osg::StateAttribute::ON);
+    //if(m_usePointSprite)
+    {
+        for ( size_t i = 0; i < active->size(); ++i )
+        {
+            if ( (*active)[i] )
+            {
+                //state.glDrawArraysInstanced( GL_POINTS, m_tubeStartIndexes->at(i + active->size()), (*pointsPerLine)[i], 1);
+            }
+        }
+    }
 
-	//m_shaderTubes->setDefine("USE_POINTSPRITE");
+    glDisable( GL_VERTEX_PROGRAM_POINT_SIZE );
+    glDisable( GL_ALPHA_TEST );
+    glDisable( GL_POINT_SPRITE );
 
-	//m_shaderTubesPS->apply(state);
-	//m_shaderTubesPS->applyDirect(state);
-
-	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-	glEnable(GL_ALPHA_TEST);
-	glEnable(GL_POINT_SPRITE);
-
-	glAlphaFunc(GL_NOTEQUAL, 0.0f);
-	glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
-
-	//state.setModeValidity(alphaFunc, osg::StateAttribute::ON);
-	//state.setModeValidity(texEnvPS, osg::StateAttribute::ON);
-	if(m_usePointSprite)
-	{
-		for ( size_t i = 0; i < active->size(); ++i )
-		{
-			if ( (*active)[i] )
-			{
-				state.glDrawArraysInstanced( GL_POINTS, m_tubeStartIndexes->at(i + active->size()), (*pointsPerLine)[i], 1);
-			}
-		}
-	}
-		//	m_shaderTubesPS->deactivate(this);
-	//state.setModeValidity(GL_VERTEX_PROGRAM_POINT_SIZE, osg::StateAttribute::OFF);
-	//state.setModeValidity(GL_ALPHA_TEST, osg::StateAttribute::OFF);
-	//state.setModeValidity(GL_POINT_SPRITE, osg::StateAttribute::OFF);
-
-	glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
-	glDisable(GL_ALPHA_TEST);
-	glDisable(GL_POINT_SPRITE);
-
-	state.disableVertexPointer();
-	state.disableColorPointer();*/
+    state.disableVertexPointer();
+    state.disableColorPointer();
 }
