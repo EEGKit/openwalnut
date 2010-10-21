@@ -38,12 +38,14 @@
 #include "../../../dataHandler/WDataSet.h"
 #include "../../../dataHandler/WDataSetSingle.h"
 
+#include "../../WExportKernel.h"
+
 /**
  * Module for encapsulating WDataSets. It can encapsulate almost everything, but is intended to be used with WDataSets and its
  * inherited classes. This class builds a "source" in OpenWalnut's DataFlow Network.
  * \ingroup modules
  */
-class WMData: public WModule
+class OWKERNEL_EXPORT WMData: public WModule
 {
 public:
 
@@ -172,6 +174,11 @@ protected:
     WPropString m_dataName;
 
     /**
+     * The basic type of data used in this data set (e.g. float, double, ...)
+     */
+    WPropString m_dataType;
+
+    /**
      * grouping the texture display properties
      */
     WPropGroup    m_groupTex;
@@ -272,6 +279,11 @@ protected:
     void propertyChanged( boost::shared_ptr< WPropertyBase > property );
 
 private:
+
+    /**
+     * Get a string for the datatype of the given dataset.
+     */
+    std::string getDataTypeString( boost::shared_ptr< WDataSetSingle > dss );
 
     /**
      * The associated dataset.

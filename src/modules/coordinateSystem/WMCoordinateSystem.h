@@ -43,7 +43,7 @@
  * class that implements the various coordinate systems as overlays within the 3D view
  * \ingroup modules
  */
-class WMCoordinateSystem : public WModule, public osg::Referenced
+class WMCoordinateSystem : public WModule
 {
 public:
     /**
@@ -150,6 +150,8 @@ private:
 
     boost::shared_ptr<WCoordConverter>m_coordConverter; //!< stores pointer
 
+    int m_viewAngle; //!< stores the last view angle
+
     /**
      * initialize the properties for this module
      */
@@ -166,7 +168,7 @@ private:
     void createGeometry();
 
     /**
-     * helper function that finds the bounding box of the topmost dataset in the datasetbrowser
+     * helper function that computes the innerBoundingBox for the actual data
      */
     void findBoundingBox();
 
@@ -206,27 +208,9 @@ private:
     // boost::shared_ptr< WShader >m_shader;
 
     /**
-     * Node callback to handle updates properly
+     * update function, called with each update pass of the osg render loop
      */
-    class coordinateNodeCallback : public osg::NodeCallback
-    {
-    public: //NOLINT
-        /**
-         * operator ()
-         *
-         * \param node the osg node
-         * \param nv the node visitor
-         */
-        virtual void operator()( osg::Node* node, osg::NodeVisitor* nv )
-        {
-            osg::ref_ptr< WMCoordinateSystem > module = static_cast< WMCoordinateSystem* > ( node->getUserData() );
-            if ( module )
-            {
-                module->updateGeometry();
-            }
-            traverse( node, nv );
-        }
-    };
+    void updateCallback();
 };
 
 #endif  // WMCOORDINATESYSTEM_H

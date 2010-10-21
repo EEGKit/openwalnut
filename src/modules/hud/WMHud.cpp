@@ -26,18 +26,20 @@
 
 #include <osg/MatrixTransform>
 #include <osg/Projection>
+#include <osgDB/WriteFile>
 
 #include "../../common/WAssert.h"
 #include "../../common/WPathHelper.h"
 #include "../../kernel/WKernel.h"
 
 #include "WMHud.h"
-#include "hud.xpm"
+#include "WMHud.xpm"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMHud )
 
 WMHud::WMHud()
+    : m_updatedPickText( true )
 {
 }
 
@@ -62,7 +64,7 @@ const std::string WMHud::getName() const
 
 const std::string WMHud::getDescription() const
 {
-    return "This module provides several HUD's for status displays";
+    return "This module provides a HUD (Head Up Display) for status displays";
 }
 
 void WMHud::connectors()
@@ -71,8 +73,7 @@ void WMHud::connectors()
 
 void WMHud::properties()
 {
-    // m_active gets initialized in WModule and is available for all modules. Overwrite activate() to have a special callback for m_active
-    // changes or add a callback manually.
+    WModule::properties();
 }
 
 void WMHud::moduleMain()
@@ -86,7 +87,7 @@ void WMHud::moduleMain()
     waitForStop();
 
     // clean up stuff
-    // NOTE: ALLAWAYS remove your osg nodes!
+    // NOTE: ALWAYS remove your osg nodes!
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_rootNode );
 }
 
@@ -187,16 +188,14 @@ void WMHud::init()
     m_osgPickText->setAxisAlignment( osgText::Text::SCREEN );
     m_osgPickText->setPosition( osg::Vec3( 600, 80, -1.5 ) );
     m_osgPickText->setColor( osg::Vec4( 0, 0, 0, 1 ) );
-    m_osgPickText->setDataVariance( osg::Object::DYNAMIC );
 
-    m_rootNode->setUserData( this );
-    m_rootNode->setUpdateCallback( new HUDNodeCallback );
+    m_rootNode->addUpdateCallback( new WGEFunctorCallback< osg::Node >( boost::bind( &WMHud::updateCallback, this ) ) );
 
     HUDGeode->addDrawable( m_osgPickText );
 
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_rootNode );
 
-    if ( m_active->get() )
+    if( m_active->get() )
     {
         m_rootNode->setNodeMask( 0xFFFFFFFF );
     }
@@ -208,7 +207,7 @@ void WMHud::init()
     // connect updateGFX with picking
     boost::shared_ptr< WGEViewer > viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "main" );
     WAssert( viewer, "Requested viewer (main) not found." );
-    if (viewer->getPickHandler() )
+    if(viewer->getPickHandler() )
         viewer->getPickHandler()->getPickSignal()->connect( boost::bind( &WMHud::updatePickText, this, _1 ) );
 }
 
@@ -226,22 +225,29 @@ void WMHud::updatePickText( WPickInfo pickInfo )
 
     m_pickText = os.str();
 
+    m_updatedPickText = true;
+
     lock.unlock();
 }
 
-void WMHud::update()
+void WMHud::updateCallback()
 {
-    boost::unique_lock< boost::shared_mutex > lock;
-    lock = boost::unique_lock< boost::shared_mutex >( m_updateLock );
+    if( m_updatedPickText )
+    {
+        m_osgPickText->setText( m_pickText.c_str() );
 
-    m_osgPickText->setText( m_pickText.c_str() );
+        boost::unique_lock< boost::shared_mutex > lock;
+        lock = boost::unique_lock< boost::shared_mutex >( m_updateLock );
 
-    lock.unlock();
+        m_updatedPickText = false;
+
+        lock.unlock();
+    }
 }
 
 void WMHud::activate()
 {
-    if ( m_active->get() )
+    if( m_active->get() )
     {
         m_rootNode->setNodeMask( 0xFFFFFFFF );
     }
@@ -252,4 +258,3 @@ void WMHud::activate()
 
     WModule::activate();
 }
-

@@ -27,6 +27,7 @@
 
 #include "../common/WAssert.h"
 #include "../common/WLimits.h"
+#include "datastructures/WValueSetHistogram.h"
 #include "WDataSetSingle.h"
 
 #include "WDataSetScalar.h"
@@ -42,17 +43,6 @@ WDataSetScalar::WDataSetScalar( boost::shared_ptr< WValueSetBase > newValueSet,
     WAssert( newGrid, "No grid given." );
     WAssert( newValueSet->size() == newGrid->size(), "Number of values unequal number of positions in grid." );
     WAssert( newValueSet->order() == 0, "The value set does not contain scalars." );
-
-    m_histogram = boost::shared_ptr< WHistogram >( new WHistogram( newValueSet ) );
-    m_maximum = m_histogram->getMax();
-    m_minimum = m_histogram->getMin();
-
-    // TEST
-    //boost::shared_ptr< WHistogram > hist( new WHistogram( *m_histogram, 15 ) );
-    //m_histogram->setInterval( 20.0 );
-    //m_histogram->test();
-    //hist->setInterval( 15.0 );
-    //hist->test();
 }
 
 WDataSetScalar::WDataSetScalar()
@@ -61,38 +51,18 @@ WDataSetScalar::WDataSetScalar()
     // default constructor used by the prototype mechanism
 }
 
-WDataSetScalar::WDataSetScalar( boost::shared_ptr< WValueSetBase > newValueSet,
-                                boost::shared_ptr< WGrid > newGrid,
-                                double max,
-                                double min )
-    : WDataSetSingle( newValueSet, newGrid )
-{
-    WAssert( newValueSet, "No value set given." );
-    WAssert( newGrid, "No grid given." );
-    WAssert( newValueSet->size() == newGrid->size(), "Number of values unequal number of positions in grid." );
-    WAssert( newValueSet->order() == 0, "The value set does not contain scalars." );
-
-    WAssert( max >= min, "max must be at least as large as min." );
-    // TODO(ebaum, rfrohl): WHistogram calculates min/max, change constructor
-    m_histogram = boost::shared_ptr< WHistogram >( new WHistogram( newValueSet ) );
-    m_maximum = max;
-    m_minimum = min;
-}
-
 WDataSetScalar::~WDataSetScalar()
 {
 }
 
 double WDataSetScalar::getMax() const
 {
-    //change to whistogram->getMax()?
-    return m_maximum;
+    return m_valueSet->getMaximumValue();
 }
 
 double WDataSetScalar::getMin() const
 {
-    //change to whistogram->getMin()?
-    return m_minimum;
+    return m_valueSet->getMinimumValue();
 }
 
 boost::shared_ptr< WPrototyped > WDataSetScalar::getPrototype()
@@ -114,14 +84,16 @@ double WDataSetScalar::interpolate( const wmath::WPosition& pos, bool* success )
     WAssert( ( m_valueSet->order() == 0 &&  m_valueSet->dimension() == 1 ),
              "Only implemented for scalar values so far." );
 
-    *success = grid->encloses( pos );
+    bool isInside = true;
+    size_t cellId = grid->getCellId( pos, &isInside );
 
-    if( !*success )
+    if( !isInside )
     {
-        return 0;
+        *success = false;
+        return 0.0;
     }
 
-    std::vector< size_t > vertexIds = grid->getCellVertexIds( grid->getCellId( pos ) );
+    std::vector< size_t > vertexIds = grid->getCellVertexIds( cellId );
 
     wmath::WPosition localPos = pos - grid->getPosition( vertexIds[0] );
 
@@ -164,3 +136,19 @@ double WDataSetScalar::getValueAt( int x, int y, int z ) const
 
     return WDataSetSingle::getValueAt( id );
 }
+
+boost::shared_ptr< const WValueSetHistogram > WDataSetScalar::getHistogram( size_t buckets )
+{
+    boost::lock_guard<boost::mutex> lock( m_histogramLock );
+
+    if ( m_histograms.count( buckets ) != 0 )
+    {
+        return m_histograms[ buckets ];
+    }
+
+    // create if not yet existing
+    m_histograms[ buckets ] = boost::shared_ptr< WValueSetHistogram >( new WValueSetHistogram( m_valueSet, buckets ) );
+
+    return m_histograms[ buckets ];
+}
+

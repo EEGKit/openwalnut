@@ -57,7 +57,7 @@
 #include "../../graphicsEngine/WGELabel.h"
 #include "../../graphicsEngine/WGEUtils.h"
 
-#include "effectiveConnectivityCluster.xpm"
+#include "WMEffectiveConnectivityCluster.xpm"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMEffectiveConnectivityCluster )
@@ -86,7 +86,7 @@ boost::shared_ptr< WModule > WMEffectiveConnectivityCluster::factory() const
 
 const char** WMEffectiveConnectivityCluster::getXPMIcon() const
 {
-    return effectiveConnectivityCluster_xpm;
+    return WMEffectiveConnectivityCluster_xpm;
 }
 
 const std::string WMEffectiveConnectivityCluster::getName() const
@@ -148,12 +148,12 @@ void WMEffectiveConnectivityCluster::moduleMain()
 
     // set some props
     boost::shared_ptr< WProperties >  props = m_fiberSelection->getProperties();
-    props->getProperty( "VOI1 Threshold" )->toPropDouble()->set( 50.0 );
-    props->getProperty( "VOI2 Threshold" )->toPropDouble()->set( 50.0 );
-    props->getProperty( "Cut Fibers" )->toPropBool()->set( true );
-    m_properties->addProperty( props->getProperty( "Cut Fibers" ) );
-    props->getProperty( "Prefer Shortest Path" )->toPropBool()->set( false );
-    m_properties->addProperty( props->getProperty( "Prefer Shortest Path" ) );
+    props->getProperty( "VOI1 threshold" )->toPropDouble()->set( 50.0 );
+    props->getProperty( "VOI2 threshold" )->toPropDouble()->set( 50.0 );
+    props->getProperty( "Cut fibers" )->toPropBool()->set( true );
+    m_properties->addProperty( props->getProperty( "Cut fibers" ) );
+    props->getProperty( "Prefer shortest path" )->toPropBool()->set( false );
+    m_properties->addProperty( props->getProperty( "Prefer shortest path" ) );
 
     // as this module needs the centerline / longest line -> subscribe to the output connector DATA_CHANGE signal
     m_fiberSelection->getOutputConnector( "cluster" )->subscribeSignal( DATA_CHANGED,
@@ -175,20 +175,20 @@ void WMEffectiveConnectivityCluster::moduleMain()
 
     // set/forward some props
     props = m_voxelizer->getProperties();
-    props->getProperty( "Center Line" )->toPropBool()->set( false );
+    props->getProperty( "Center line" )->toPropBool()->set( false );
     props->getProperty( "active" )->toPropBool()->set( false );
-    props->getProperty( "Fiber Tracts" )->toPropBool()->set( false );
-    props->getProperty( "Display Voxels" )->toPropBool()->set( false );
+    props->getProperty( "Fiber tracts" )->toPropBool()->set( false );
+    props->getProperty( "Display voxels" )->toPropBool()->set( false );
     props->getProperty( "Lighting" )->toPropBool()->set( false );
 
     // set longest line based parameterization
-    props->getProperty( "Voxels per Unit" )->toPropInt()->set( 2 );
+    props->getProperty( "Voxels per unit" )->toPropInt()->set( 2 );
     WItemSelector::IndexList idx;
     idx.push_back( 1 );
     props->getProperty( "Parameterization" )->toPropSelection()->set( props->getProperty( "Parameterization"
                 )->toPropSelection()->get().newSelector( idx ) );
 
-    m_properties->addProperty( props->getProperty( "Voxels per Unit" ) );
+    m_properties->addProperty( props->getProperty( "Voxels per unit" ) );
 
     //////////////////////////////////////////////////////////////////////
     // Gauss Filter the voxel output
@@ -226,18 +226,18 @@ void WMEffectiveConnectivityCluster::moduleMain()
     props = m_animation->getProperties();
     props->getProperty( "Isovalue" )->toPropInt()->set( 32 );
     m_properties->addProperty( props->getProperty( "Isovalue" ) );
-    props->getProperty( "Step Count" )->toPropInt()->set( 500 );
-    m_properties->addProperty( props->getProperty( "Step Count" ) );
-    props->getProperty( "Iso Color" )->toPropColor()->set( WColor( 0.0, 0.5, 1.0, 1.0 ) );
-    m_properties->addProperty( props->getProperty( "Iso Color" ) );
+    props->getProperty( "Step count" )->toPropInt()->set( 500 );
+    m_properties->addProperty( props->getProperty( "Step count" ) );
+    props->getProperty( "Iso color" )->toPropColor()->set( WColor( 0.0, 0.5, 1.0, 1.0 ) );
+    m_properties->addProperty( props->getProperty( "Iso color" ) );
     props->getProperty( "Opacity %" )->toPropInt()->set( 100 );
     m_properties->addProperty( props->getProperty( "Opacity %" ) );
     m_properties->addProperty( props->getProperty( "Saturation %" ) );
-    m_properties->addProperty( props->getProperty( "Beam1 Size" ) );
-    m_properties->addProperty( props->getProperty( "Beam2 Size" ) );
-    m_properties->addProperty( props->getProperty( "Beam1 Speed" ) );
-    m_properties->addProperty( props->getProperty( "Beam2 Speed" ) );
-    m_properties->addProperty( props->getProperty( "Parameter Scale" ) );
+    m_properties->addProperty( props->getProperty( "Beam1 size" ) );
+    m_properties->addProperty( props->getProperty( "Beam2 size" ) );
+    m_properties->addProperty( props->getProperty( "Beam1 speed" ) );
+    m_properties->addProperty( props->getProperty( "Beam2 speed" ) );
+    m_properties->addProperty( props->getProperty( "Parameter scale" ) );
 
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -245,7 +245,7 @@ void WMEffectiveConnectivityCluster::moduleMain()
     //////////////////////////////////////////////////////////////////////////////////
 
     // Connect voxelizer input with the selected fibers
-    m_voxelizer->getInputConnector( "voxelInput" )->connect( m_fiberSelection->getOutputConnector( "cluster" ) );
+    m_voxelizer->getInputConnector( "tractInput" )->connect( m_fiberSelection->getOutputConnector( "cluster" ) );
 
     // Connect voxelizer output with the gauss filter
     m_gauss->getInputConnector( "in" )->connect( m_voxelizer->getOutputConnector( "voxelOutput" ) );
@@ -307,7 +307,7 @@ void WMEffectiveConnectivityCluster::moduleMain()
             {
                 osg::ref_ptr< WGELabel > label1 = new WGELabel();
                 label1->setText( voi1 );
-                label1->setAnchor( wge::osgVec3( m_labelPos1 ) ); // the position relative to the current world coordinate system
+                label1->setAnchor( m_labelPos1 ); // the position relative to the current world coordinate system
                 label1->setCharacterSize( m_labelCharacterSize->get( true ) );
                 layouter->addLayoutable( label1 );
             }
@@ -316,7 +316,7 @@ void WMEffectiveConnectivityCluster::moduleMain()
             {
                 osg::ref_ptr< WGELabel > label2 = new WGELabel();
                 label2->setText( voi2 );
-                label2->setAnchor( wge::osgVec3( m_labelPos2 ) ); // the position relative to the current world coordinate system
+                label2->setAnchor( m_labelPos2 ); // the position relative to the current world coordinate system
                 label2->setCharacterSize( m_labelCharacterSize->get( true ) );
                 layouter->addLayoutable( label2 );
             }
@@ -403,7 +403,9 @@ void WMEffectiveConnectivityCluster::properties()
     m_voi1Name = m_properties->addProperty( "Name of VOI1", "The name of the VOI1.", std::string( "" ), m_propCondition );
     m_voi2Name = m_properties->addProperty( "Name of VOI2", "The name of the VOI2.", std::string( "" ), m_propCondition );
 
-    m_labelCharacterSize = m_properties->addProperty( "Font Size", "The size of the label fonts.", 20, m_propCondition );
+    m_labelCharacterSize = m_properties->addProperty( "Font size", "The size of the label fonts.", 20, m_propCondition );
+
+    WModule::properties();
 }
 
 void WMEffectiveConnectivityCluster::activate()

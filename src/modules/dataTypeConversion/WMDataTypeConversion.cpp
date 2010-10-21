@@ -39,7 +39,7 @@
 #include "../../common/math/WPosition.h"
 #include "../../common/math/WVector3D.h"
 #include "WMDataTypeConversion.h"
-#include "datatypeconversion.xpm"
+#include "WMDataTypeConversion.xpm"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMDataTypeConversion )
@@ -69,7 +69,7 @@ const char** WMDataTypeConversion::getXPMIcon() const
 
 const std::string WMDataTypeConversion::getName() const
 {
-    return "Data Type Conversion";
+    return "Data Type Conversion (to float)";
 }
 
 const std::string WMDataTypeConversion::getDescription() const
@@ -177,6 +177,7 @@ void WMDataTypeConversion::connectors()
 
 void WMDataTypeConversion::properties()
 {
+    WModule::properties();
 }
 
 

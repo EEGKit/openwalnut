@@ -43,7 +43,7 @@
 #include "../../common/math/WVector3D.h"
 #include "../../kernel/modules/data/WMData.h"
 #include "WMBoundingBox.h"
-#include "boundingbox.xpm"
+#include "WMBoundingBox.xpm"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMBoundingBox )
@@ -91,13 +91,13 @@ void WMBoundingBox::moduleMain()
     ready();
 
     // loop until the module container requests the module to quit
-    while ( !m_shutdownFlag() )
+    while( !m_shutdownFlag() )
     {
         bool dataUpdated = m_input->updated();
         boost::shared_ptr< WDataSetSingle > dataSet = m_input->getData();
         bool dataValid = ( dataSet );
 
-        if ( !dataValid )
+        if( !dataValid )
         {
             // OK, the output has not yet sent data
             // NOTE: see comment at the end of this while loop for m_moduleState
@@ -106,7 +106,7 @@ void WMBoundingBox::moduleMain()
             continue;
         }
 
-        if ( dataUpdated )
+        if( dataUpdated )
         {
             createGFX();
         }
@@ -169,17 +169,14 @@ void WMBoundingBox::connectors()
 
 void WMBoundingBox::properties()
 {
-//    ( m_properties->addInt( "Thickness", 1 ) )->connect( boost::bind( &WMBoundingBox::slotPropertyChanged, this, _1 ) );
-
-    // m_active gets initialized in WModule and is available for all modules. Overwrite activate() to have a special callback for m_active
-    // changes.
+    WModule::properties();
 }
 
 void WMBoundingBox::activate()
 {
-    if ( m_bBoxNode )
+    if( m_bBoxNode )
     {
-        if ( m_active->get() )
+        if( m_active->get() )
         {
             m_bBoxNode->setNodeMask( 0xFFFFFFFF );
         }

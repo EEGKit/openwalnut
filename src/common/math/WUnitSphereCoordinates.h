@@ -29,12 +29,14 @@
 
 #include "../../common/math/WVector3D.h"
 
+#include "../../common/WExportCommon.h"
+
 namespace wmath
 {
 /**
  * This class stores coordinates on the unit sphere.
  */
-class WUnitSphereCoordinates
+class OWCOMMON_EXPORT WUnitSphereCoordinates // NOLINT
 {
 // TODO(all): implement test
 // friend class WUnitSphereCoordinatesTest;
@@ -52,8 +54,8 @@ public:
     WUnitSphereCoordinates( double theta, double phi );
 
     /**
-     * Constructor for euclidean coordinates.
-     * \param vector euclidean coordinates
+     * Constructor for Euclidean coordinates.
+     * \param vector Euclidean coordinates
      */
     explicit WUnitSphereCoordinates( wmath::WVector3D vector );
 
@@ -85,7 +87,7 @@ public:
     void setPhi( double phi );
 
     /**
-     * Returns the stored sphere coordinates as euclidean coordinates.
+     * Returns the stored sphere coordinates as Euclidean coordinates.
      */
     wmath::WVector3D getEuclidean() const;
 
@@ -100,4 +102,3 @@ private:
 }
 
 #endif  // WUNITSPHERECOORDINATES_H
-

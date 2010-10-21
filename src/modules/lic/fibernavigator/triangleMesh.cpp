@@ -6,7 +6,7 @@
 #include <algorithm>
 
 // Construction
-TriangleMesh::TriangleMesh ( boost::shared_ptr< WTriangleMesh2 > mesh, boost::shared_ptr< WGridRegular3D > grid )
+TriangleMesh::TriangleMesh ( boost::shared_ptr< WTriangleMesh > mesh, boost::shared_ptr< WGridRegular3D > grid )
     : m_grid( grid )
 {
     // copy over content
@@ -512,7 +512,6 @@ void TriangleMesh::doLoopSubD()
 
 void TriangleMesh::getCellVerticesIndices( const FIndex& triNum, std::vector< FIndex >& vertices )
 {
-    //assert( triNum < numTris );
     vertices.clear();
 
     vertices.push_back( FIndex(triangles[triNum].pointID[0]) );
@@ -523,7 +522,6 @@ void TriangleMesh::getCellVerticesIndices( const FIndex& triNum, std::vector< FI
 void TriangleMesh::getPosition( FPosition& resultPos, const FIndex& pIndex )
 {
     positive ind = pIndex.getIndex();
-    //assert( ind < numVerts );
     resultPos.resize(3);
     resultPos[0] = vertices[ind].x;
     resultPos[1] = vertices[ind].y;

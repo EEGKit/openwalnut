@@ -26,6 +26,7 @@
 #define WMATRIX_H
 
 #include "WValue.h"
+#include "WVector3D.h"
 
 namespace wmath
 {
@@ -34,122 +35,80 @@ namespace wmath
  * The access function are row-major, which means that the rows
  * are the first parameter or index.
  */
-template< typename T > class WMatrix : WValue< T >
+template< typename T > class WMatrix : public WValue< T >
 {
 public:
     /**
+     * Produces a square matrix with the given number of components.
+     * The components will be set to zero if T is a type representing numbers.
+     *
+     * \param n Number of cols and rows in the matrix
+     */
+    explicit WMatrix( size_t n );
+
+    /**
      * Produces a matrix with the given number of components.
      * The components will be set to zero if T is a type representing numbers.
+     *
      * \param nbRows number of rows in the matrix
      * \param nbCols number of columns in the matrix
      */
-    explicit WMatrix( size_t nbRows, size_t nbCols )
-        : WValue< T >( nbRows * nbCols )
-    {
-        m_nbCols = nbCols;
-    }
+    explicit WMatrix( size_t nbRows, size_t nbCols );
 
     /**
      * Produces a matrix as copy of the one given as parameter.
      * \param newMatrix The matrix to be copied.
      */
-    WMatrix( const WMatrix& newMatrix )
-        : WValue< T >( newMatrix )
-    {
-        m_nbCols = newMatrix.m_nbCols;
-    }
+    WMatrix( const WMatrix& newMatrix );
 
     /**
-     * Makes the matix contain the identity matrix, i.e. 1 on the diagonal.
+     * Makes the matrix contain the identity matrix, i.e. 1 on the diagonal.
      */
-    WMatrix& makeIdentity()
-    {
-        size_t nbRows = this->size() / m_nbCols;
-        for( size_t i = 0; i < nbRows; ++i )
-        {
-            for( size_t j = 0; j < m_nbCols; ++j )
-            {
-                if( i == j )
-                {
-                    (*this)( i, j ) = 1;
-                }
-                else
-                {
-                    (*this)( i, j ) = 0;
-                }
-            }
-        }
-        return *this;
-    }
+    WMatrix& makeIdentity();
 
     /**
      * Get number of rows.
      */
-    size_t getNbRows() const
-    {
-        return this->size() / m_nbCols;
-    }
+    size_t getNbRows() const;
 
     /**
      * Get number of columns.
      */
-    size_t getNbCols() const
-    {
-        return m_nbCols;
-    }
+    size_t getNbCols() const;
 
     /**
-     * Returns a reference to the component an row i, colums j in order to
+     * Returns a reference to the component an row i, columns j in order to
      * provide access to the component.
      * \param i row
      * \param j column
      */
-    T& operator()( size_t i, size_t j )
-    {
-        WAssert( j < m_nbCols && i * m_nbCols < this->size(), "Index out of bounds." );
-        return (*this)[i * m_nbCols + j];
-    }
+    T& operator()( size_t i, size_t j );
 
     /**
-     * Returns a const reference to the component an row i, colums j in order to
+     * Returns a const reference to the component an row i, columns j in order to
      * provide read-only access to the component.
      * \param i row
      * \param j column
      */
-    const T& operator()( size_t i, size_t j ) const
-    {
-        WAssert( j < m_nbCols && i * m_nbCols < this->size(), "Index out of bounds." );
-        return (*this)[i * m_nbCols + j];
-    }
+    const T& operator()( size_t i, size_t j ) const;
 
     /**
      * Compares two matrices and returns true if they are equal.
      * \param rhs The right hand side of the comparison
      */
-    bool operator==( const WMatrix& rhs ) const
-    {
-        return WValue< T >::operator==( rhs ) && m_nbCols == rhs.m_nbCols;
-    }
+    bool operator==( const WMatrix& rhs ) const;
 
     /**
      * Compares two matrices and returns true if they are not equal.
      * \param rhs The right hand side of the comparison
      */
-    bool operator!=( const WMatrix& rhs ) const
-    {
-        return WValue< T >::operator!=( rhs ) || m_nbCols != rhs.m_nbCols;
-    }
+    bool operator!=( const WMatrix& rhs ) const;
 
     /**
      * Assigns the argument WMatrix to this WMatrix.
      * \param rhs The right hand side of the assignment
      */
-    WMatrix& operator=( const WMatrix& rhs )
-    {
-        WValue< T >::operator=( rhs );
-        m_nbCols = rhs.m_nbCols;
-        return *this;
-    }
+    WMatrix& operator=( const WMatrix& rhs );
 
     /**
      * Multiplication of two matrices.
@@ -164,23 +123,147 @@ public:
     WValue< T > operator*( const WValue< T >& rhs ) const;
 
     /**
+     * Multiplication with a vector.
+     * \param rhs The right hand side of the multiplication
+     */
+    WVector3D operator*( const WVector3D& rhs ) const;
+
+    /**
      * Returns the transposed matrix.
      */
-    WMatrix transposed() const
-    {
-      WMatrix result( m_nbCols, getNbRows() );
-
-      for ( std::size_t i = 0; i < getNbRows(); i++ )
-        for ( std::size_t j = 0; j < m_nbCols; j++ )
-          result( j, i ) = (*this)( i, j);
-      return result;
-    }
+    WMatrix transposed() const;
 
 protected:
 private:
     size_t m_nbCols; //!< Number of columns of the matrix. The number of rows will be computed by (size/m_nbCols).
 };
 
+template< typename T > WMatrix< T >::WMatrix( size_t n )
+    : WValue< T >( n * n )
+{
+    m_nbCols = n;
+}
+
+template< typename T > WMatrix< T >::WMatrix( size_t nbRows, size_t nbCols )
+    : WValue< T >( nbRows * nbCols )
+{
+    m_nbCols = nbCols;
+}
+
+/**
+ * Produces a matrix as copy of the one given as parameter.
+ * \param newMatrix The matrix to be copied.
+ */
+template< typename T > WMatrix< T >::WMatrix( const WMatrix& newMatrix )
+    : WValue< T >( newMatrix )
+{
+    m_nbCols = newMatrix.m_nbCols;
+}
+
+/**
+ * Makes the matrix contain the identity matrix, i.e. 1 on the diagonal.
+ */
+template< typename T > WMatrix< T >& WMatrix< T >::makeIdentity()
+{
+    size_t nbRows = this->size() / m_nbCols;
+    for( size_t i = 0; i < nbRows; ++i )
+    {
+        for( size_t j = 0; j < m_nbCols; ++j )
+        {
+            if( i == j )
+            {
+                (*this)( i, j ) = 1;
+            }
+            else
+            {
+                (*this)( i, j ) = 0;
+            }
+        }
+    }
+    return *this;
+}
+
+/**
+ * Get number of rows.
+ */
+template< typename T > size_t WMatrix< T >::getNbRows() const
+{
+    return this->size() / m_nbCols;
+}
+
+/**
+ * Get number of columns.
+ */
+template< typename T > size_t WMatrix< T >::getNbCols() const
+{
+    return m_nbCols;
+}
+
+/**
+ * Returns a reference to the component an row i, columns j in order to
+ * provide access to the component.
+ * \param i row
+ * \param j column
+ */
+template< typename T > T& WMatrix< T >::operator()( size_t i, size_t j )
+{
+    WAssert( j < m_nbCols && i * m_nbCols < this->size(), "Index out of bounds." );
+    return (*this)[i * m_nbCols + j];
+}
+
+/**
+ * Returns a const reference to the component an row i, columns j in order to
+ * provide read-only access to the component.
+ * \param i row
+ * \param j column
+ */
+template< typename T > const T& WMatrix< T >::operator()( size_t i, size_t j ) const
+{
+    WAssert( j < m_nbCols && i * m_nbCols < this->size(), "Index out of bounds." );
+    return (*this)[i * m_nbCols + j];
+}
+
+/**
+ * Compares two matrices and returns true if they are equal.
+ * \param rhs The right hand side of the comparison
+ */
+template< typename T > bool WMatrix< T >::operator==( const WMatrix& rhs ) const
+{
+    return WValue< T >::operator==( rhs ) && m_nbCols == rhs.m_nbCols;
+}
+
+/**
+ * Compares two matrices and returns true if they are not equal.
+ * \param rhs The right hand side of the comparison
+ */
+template< typename T > bool WMatrix< T >::operator!=( const WMatrix& rhs ) const
+{
+    return WValue< T >::operator!=( rhs ) || m_nbCols != rhs.m_nbCols;
+}
+
+/**
+ * Assigns the argument WMatrix to this WMatrix.
+ * \param rhs The right hand side of the assignment
+ */
+template< typename T > WMatrix< T >& WMatrix< T >::operator=( const WMatrix& rhs )
+{
+    WValue< T >::operator=( rhs );
+    m_nbCols = rhs.m_nbCols;
+    return *this;
+}
+
+/**
+ * Returns the transposed matrix.
+ */
+template< typename T > WMatrix< T > WMatrix< T >::transposed() const
+{
+  WMatrix result( m_nbCols, getNbRows() );
+
+  for ( std::size_t i = 0; i < getNbRows(); i++ )
+    for ( std::size_t j = 0; j < m_nbCols; j++ )
+      result( j, i ) = (*this)( i, j);
+  return result;
+}
 
 template< typename T > WMatrix< T > WMatrix< T >::operator*( const WMatrix< T >& rhs ) const
 {
@@ -204,6 +287,21 @@ template< typename T > WValue< T > WMatrix< T >::operator*( const WValue< T >& r
 {
     WAssert( rhs.size() == getNbCols(), "Incompatible number of rows of rhs and columns of lhs." );
     WValue< T > result( getNbRows() );
+
+    for( size_t r = 0; r < getNbRows(); ++r)
+    {
+        for( size_t i = 0; i < getNbCols(); ++i )
+        {
+            result[r] += ( *this )( r, i ) * rhs[i];
+        }
+    }
+    return result;
+}
+
+template< typename T > WVector3D WMatrix< T >::operator*( const WVector3D& rhs ) const
+{
+    WAssert( rhs.num_components == getNbCols(), "Incompatible number of rows of rhs and columns of lhs." );
+    WVector3D result;
 
     for( size_t r = 0; r < getNbRows(); ++r)
     {

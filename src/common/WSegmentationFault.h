@@ -35,6 +35,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include "WException.h"
+#include "WExportCommon.h"
 
 #ifdef __linux__
 // This is highly platform dependent. Used for backtrace functionality.
@@ -47,16 +48,16 @@ template <class SignalExceptionClass> class SignalTranslator
 public:
     SignalTranslator()
     {
-        static SingleTonTranslator s_objTranslator;
+        static SingletonTranslator s_objTranslator;
     }
 
 protected:
 
 private:
-    class SingleTonTranslator
+    class SingletonTranslator
     {
     public:  // NOLINT
-        SingleTonTranslator()
+        SingletonTranslator()
         {
             signal( SignalExceptionClass::getSignalNumber(), SignalHandler );
         }
@@ -76,7 +77,7 @@ private:
  * recoverable, which means it can NOT be catched!
  * Also note that this will only work on Linux.
  */
-class WSegmentationFault: public WException
+class OWCOMMON_EXPORT WSegmentationFault: public WException
 {
 public:
 

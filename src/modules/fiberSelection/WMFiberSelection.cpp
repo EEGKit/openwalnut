@@ -38,7 +38,7 @@
 #include "../../common/WColor.h"
 
 #include "WMFiberSelection.h"
-#include "fiberSelection.xpm"
+#include "WMFiberSelection.xpm"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMFiberSelection )
@@ -132,14 +132,16 @@ void WMFiberSelection::properties()
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
 
     // the threshold for testing whether a fiber vertex is inside a volume of interest.
-    m_voi1Threshold = m_properties->addProperty( "VOI1 Threshold", "The threshold uses for determining whether a fiber is inside the first VOI"
+    m_voi1Threshold = m_properties->addProperty( "VOI1 threshold", "The threshold uses for determining whether a fiber is inside the first VOI"
                                                                     "dataset or not.", 5.0, m_propCondition );
-    m_voi2Threshold = m_properties->addProperty( "VOI2 Threshold", "The threshold uses for determining whether a fiber is inside the second VOI"
+    m_voi2Threshold = m_properties->addProperty( "VOI2 threshold", "The threshold uses for determining whether a fiber is inside the second VOI"
                                                                     "dataset or not.", 5.0, m_propCondition );
-    m_cutFibers     = m_properties->addProperty( "Cut Fibers",     "Cut the fibers after they gone through both VOI.", true, m_propCondition );
+    m_cutFibers     = m_properties->addProperty( "Cut fibers",     "Cut the fibers after they gone through both VOI.", true, m_propCondition );
 
-    m_preferShortestPath = m_properties->addProperty( "Prefer Shortest Path", "Determines whether the fibers should be cut on the entry and "
+    m_preferShortestPath = m_properties->addProperty( "Prefer shortest path", "Determines whether the fibers should be cut on the entry and "
                             "exit of a VOI. This should prevent the fibers from going deep into the VOI's.", false, m_propCondition );
+
+    WModule::properties();
 }
 
 /**

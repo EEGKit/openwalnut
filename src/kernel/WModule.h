@@ -53,22 +53,30 @@
 #include "../common/WPrototyped.h"
 #include "../common/WThreadedRunner.h"
 
+#include "WExportKernel.h"
+
 class WModuleConnector;
 class WModuleContainer;
 class WModuleFactory;
 class WModuleInputConnector;
 class WModuleOutputConnector;
+template < typename T > class WModuleInputData;
+template < typename T > class WModuleInputForwardData;
+template < typename T > class WModuleOutputData;
 
 /**
  * Class representing a single module of OpenWalnut.
  * \ingroup kernel
  */
-class WModule: public WThreadedRunner,
-               public WPrototyped,
-               public boost::enable_shared_from_this< WModule >
+class OWKERNEL_EXPORT WModule: public WThreadedRunner,
+                               public WPrototyped,
+                               public boost::enable_shared_from_this< WModule >
 {
 friend class WModuleConnector;  // requires access to notify members
-friend class WModuleFactory;    // for proper creation of module instaces, the factory needs access to protected functions.
+template< typename T > friend class WModuleInputData;  // requires access for convenience functions to automatically add a created connector
+template< typename T > friend class WModuleInputForwardData;  // requires access for convenience functions to automatically add a created connector
+template< typename T > friend class WModuleOutputData;  // requires access for convenience functions to automatically add a created connector
+friend class WModuleFactory;    // for proper creation of module instances, the factory needs access to protected functions.
                                 // (especially initialize)
 friend class WModuleContainer;  // for proper management of m_container WModuleContainer needs access.
 
@@ -591,10 +599,29 @@ private:
 };
 
 /**
- * The following macro is used by modules so the factory can aquire a prototype instance from a shared library using the symbol.
+ * Simply a list of modules. The type is used by the following macros and typedefs
  */
+typedef std::vector< boost::shared_ptr< WModule > > WModuleList;
+
+/**
+ * The signature used for the module loading entry point
+ */
+typedef void ( *W_LOADABLE_MODULE_SIGNATURE )( WModuleList& );
+
+/**
+ * The following macro is used by modules so the factory can acquire a prototype instance from a shared library using the symbol.
+ * You can write this symbol for your own if you need to add multiple modules to the list. This one is for convenience.
+ *
+ * \note we need the module instance to be created using a shared_ptr as WModule is derived from enable_shared_from_this. Removing the shared
+ *       pointer causes segmentation faults during load.
+ */
+#ifdef _MSC_VER
 #define W_LOADABLE_MODULE( MODULECLASS ) \
-extern "C" boost::shared_ptr< WModule > WLoadModule() { return boost::shared_ptr< WModule >( new MODULECLASS ); } // NOLINT
+extern "C" __declspec(dllexport) void WLoadModule( WModuleList& m ) { m.push_back( boost::shared_ptr< WModule >( new MODULECLASS ) ); }  // NOLINT
+#else
+#define W_LOADABLE_MODULE( MODULECLASS ) \
+extern "C"                       void WLoadModule( WModuleList& m ) { m.push_back( boost::shared_ptr< WModule >( new MODULECLASS ) ); }  // NOLINT
+#endif
 
 /**
  * The corresponding symbol name.

@@ -22,225 +22,243 @@
 //
 //---------------------------------------------------------------------------
 
+#include <algorithm>
 #include <cstring> // memset()
+#include <numeric>
+#include <string>
+#include <utility>
 
 #include "../../common/WAssert.h"
 #include "../../common/WLimits.h"
+#include "../../common/exceptions/WOutOfBounds.h"
+#include "../WDataHandlerEnums.h"
 
 #include "WValueSetHistogram.h"
 
-WValueSetHistogram::WValueSetHistogram( boost::shared_ptr< WValueSetBase > valueSet )
+WValueSetHistogram::WValueSetHistogram( boost::shared_ptr< WValueSetBase > valueSet, size_t buckets ):
+    WHistogram( valueSet->getMinimumValue(), valueSet->getMaximumValue(), buckets )
 {
-    // calculate min max
-    m_minimum = wlimits::MAX_DOUBLE;
-    m_maximum = wlimits::MIN_DOUBLE;
-    double minDistance = wlimits::MAX_DOUBLE;
-    for( size_t i = 0; i != valueSet->size(); ++i )
-    {
-        double tmp = valueSet->getScalarDouble( i );
-        m_maximum = m_maximum < tmp ? tmp : m_maximum;
-        m_minimum = m_minimum > tmp ? tmp : m_minimum;
-
-        if( m_minimum != tmp && m_minimum != wlimits::MAX_DOUBLE )
-        {
-            minDistance = tmp - m_minimum < minDistance ? tmp - m_minimum : minDistance;
-        }
-        if( m_maximum != tmp && m_maximum != wlimits::MIN_DOUBLE )
-        {
-            minDistance = m_maximum - tmp < minDistance ? m_maximum - tmp : minDistance;
-        }
-    }
-
-    // create base histogram
-    m_nInitialBuckets = ( ( m_maximum - m_minimum ) / minDistance ) + 1;
-    m_bucketSize = minDistance;
-    unsigned int* initialBuckets = new unsigned int[m_nInitialBuckets];
-    // initialize array to zero
-    memset( initialBuckets, 0, m_nInitialBuckets * sizeof( unsigned int ) );
-    //*initialBuckets = { 0 }; // this should works with C++0x (instead memset), TEST IT!
-    m_initialBuckets = boost::shared_array< unsigned int >( initialBuckets );
-
-    m_nMappedBuckets = 0;
-
-    for( size_t i = 0; i < valueSet->size(); ++i )
-    {
-        double tmp = valueSet->getScalarDouble( i );
-        increment( tmp );
-    }
+    buildHistogram( *valueSet );
 }
 
-WValueSetHistogram::WValueSetHistogram( const WValueSetBase& valueSet )
+WValueSetHistogram::WValueSetHistogram( const WValueSetBase& valueSet, size_t buckets ):
+    WHistogram( valueSet.getMinimumValue(), valueSet.getMaximumValue(), buckets )
 {
-    // calculate min max
-    m_minimum = wlimits::MAX_DOUBLE;
-    m_maximum = wlimits::MIN_DOUBLE;
-    double minDistance = wlimits::MAX_DOUBLE;
-    for( size_t i = 0; i != valueSet.size(); ++i )
-    {
-        double tmp = valueSet.getScalarDouble( i );
-        m_maximum = m_maximum < tmp ? tmp : m_maximum;
-        m_minimum = m_minimum > tmp ? tmp : m_minimum;
+    buildHistogram( valueSet );
+}
 
-        if( m_minimum != tmp && m_minimum != wlimits::MAX_DOUBLE )
-        {
-            minDistance = tmp - m_minimum < minDistance ? tmp - m_minimum : minDistance;
-        }
-        if( m_maximum != tmp && m_maximum != wlimits::MIN_DOUBLE )
-        {
-            minDistance = m_maximum - tmp < minDistance ? m_maximum - tmp : minDistance;
-        }
-    }
+WValueSetHistogram::WValueSetHistogram( boost::shared_ptr< WValueSetBase > valueSet, double min, double max, size_t buckets ):
+    WHistogram( min, max, buckets )
+{
+    buildHistogram( *valueSet );
+}
+
+WValueSetHistogram::WValueSetHistogram( const WValueSetBase& valueSet, double min, double max, size_t buckets ):
+    WHistogram( min, max, buckets )
+{
+    buildHistogram( valueSet );
+}
+
+void WValueSetHistogram::buildHistogram( const WValueSetBase& valueSet )
+{
+    m_nbTotalElements = 0;
 
     // create base histogram
-    m_nInitialBuckets = ( ( m_maximum - m_minimum ) / minDistance ) + 1;
-    m_bucketSize = minDistance;
-    unsigned int* initialBuckets = new unsigned int[m_nInitialBuckets];
-    // initialize array to zero
-    memset( initialBuckets, 0, m_nInitialBuckets * sizeof( unsigned int ) );
-    //*initialBuckets = { 0 }; // this should works with C++0x (instead memset), TEST IT!
-    m_initialBuckets = boost::shared_array< unsigned int >( initialBuckets );
+    WAssert( m_nbBuckets > 1, "WValueSetHistogram::buildHistogram : number of buckets needs to be larger than 1." );
+    m_nInitialBuckets = m_nbBuckets - 1;
+    m_initialBucketSize = ( m_maximum - m_minimum ) / static_cast< double >( m_nInitialBuckets );
+    WAssert( m_initialBucketSize > 0.0, "WValueSetHistogram::buildHistogram() : m_initialBucketSize to small." );
 
-    m_nMappedBuckets = 0;
+    // NOTE: as all the intervals are right-open, we need an additional slot in our array for the last interval [m_maximum,\infinity). For the
+    // calculation of interval sizes, the value must not be incremented
+    m_nInitialBuckets++;
 
+    // create and initialize array to zero which finally contains the counts
+    size_t* initialBuckets = new size_t[ m_nInitialBuckets ];
+    memset( initialBuckets, 0, m_nInitialBuckets * sizeof( size_t ) );
+    // *initialBuckets = { 0 }; // this should works with C++0x (instead memset), TEST IT!
+
+    // the array can be shared among several instances of WValueSetHistogram.
+    m_initialBuckets = boost::shared_array< size_t >( initialBuckets );
+
+    // no mapping applied yet. Initial and mapped are equal
+    m_nMappedBuckets = m_nInitialBuckets;
+    m_mappedBuckets = m_initialBuckets;
+    m_mappedBucketSize = m_initialBucketSize;
+
+    // and finally create the histogram
     for( size_t i = 0; i < valueSet.size(); ++i )
     {
         double tmp = valueSet.getScalarDouble( i );
-        increment( tmp );
+        insert( tmp );
+    }
+
+    m_nbTotalElements = valueSet.size();
+}
+
+WValueSetHistogram::WValueSetHistogram( const WValueSetHistogram& histogram, size_t buckets ):
+    WHistogram( histogram ),
+    m_initialBucketSize( histogram.m_initialBucketSize ),
+    m_initialBuckets( histogram.m_initialBuckets ),
+    m_nInitialBuckets( histogram.m_nInitialBuckets ),
+    m_mappedBuckets( histogram.m_mappedBuckets ),
+    m_nMappedBuckets( histogram.m_nMappedBuckets ),
+    m_mappedBucketSize( histogram.m_mappedBucketSize ),
+    m_nbTotalElements( histogram.m_nbTotalElements )
+{
+    // apply modification of the histogram bucket size?
+    if( ( buckets == 0 ) || ( buckets == m_nMappedBuckets ) )
+    {
+        return;
+    }
+
+    WAssert( buckets > 1, "WValueSetHistogram::WValueSetHistogram : number of buckets needs to be larger than 1." );
+    WAssert( buckets < m_nInitialBuckets,
+                          "WValueSetHistogram::WValueSetHistogram : number of buckets needs to be smaller than the initial bucket count." );
+
+    // number of elements in the new mapped histogram = division + (round up)
+    m_nMappedBuckets = buckets - 1;
+    m_mappedBucketSize = ( m_maximum - m_minimum ) / static_cast< double >( m_nMappedBuckets );
+
+    // NOTE: as all the intervals are right-open, we need an additional slot in our array for the last interval [m_maximum,\infinity). For the
+    // calculation of interval sizes, the value must not be incremented
+    m_nMappedBuckets++;
+
+    size_t ratio = static_cast<size_t>( m_nInitialBuckets / m_nMappedBuckets );
+
+    m_mappedBuckets.reset();
+
+    size_t* mappedBuckets = new size_t[ m_nMappedBuckets ];
+    memset( mappedBuckets, 0, m_nMappedBuckets * sizeof( size_t ) );
+    // *mappedBuckets = { 0 }; // works with C++0x
+    m_mappedBuckets = boost::shared_array< size_t >( mappedBuckets );
+
+    // map it
+    size_t index = 0;
+    for( size_t i = 0; i < m_nInitialBuckets; ++i )
+    {
+        if( ( i % ratio == 0 ) && ( i != 0 ) && ( i != m_nInitialBuckets - 1 ) )
+        {
+            index++;
+        }
+        m_mappedBuckets[ index ] += m_initialBuckets[i];
     }
 }
 
-WValueSetHistogram::WValueSetHistogram( const WValueSetHistogram& histogram, double intervalSize )
+WValueSetHistogram& WValueSetHistogram::operator=( const WValueSetHistogram& other )
 {
-    // copy constructor
-    m_nInitialBuckets = histogram.getNInitialBuckets();
-    m_initialBuckets = boost::shared_array< unsigned int >( histogram.getInitialBuckets() );
-    m_bucketSize = histogram.getBucketSize();
-
-    m_nMappedBuckets = 0;
-
-    m_minimum = histogram.getMin();
-    m_maximum = histogram.getMax();
-
-    if( intervalSize != 0.0 )
+    if ( this != &other ) // protect against invalid self-assignment
     {
-        WAssert( intervalSize > 0.0, "WValueSetHistogram::WValueSetHistogram : intervalSize has to be greater then zero." );
-        calculateMapping( intervalSize );
+        m_minimum = other.m_minimum;
+        m_maximum = other.m_maximum;
+        m_initialBucketSize = other.m_initialBucketSize;
+        m_nInitialBuckets = other.m_nInitialBuckets;
+        m_nMappedBuckets = other.m_nMappedBuckets;
+        m_mappedBucketSize = other.m_mappedBucketSize;
+
+        // copy the initial/mapped buckets reference, no deep copy here!
+        m_initialBuckets = other.m_initialBuckets;
+        m_mappedBuckets =  other.m_mappedBuckets;
     }
+
+    return *this;
 }
 
 WValueSetHistogram::~WValueSetHistogram()
 {
 }
 
-boost::shared_array< unsigned int > WValueSetHistogram::getInitialBuckets() const
+boost::shared_array< size_t > WValueSetHistogram::getInitialBuckets() const
 {
     return m_initialBuckets;
 }
 
-unsigned int WValueSetHistogram::getNInitialBuckets() const
+size_t WValueSetHistogram::getNInitialBuckets() const
 {
     return m_nInitialBuckets;
 }
 
-double WValueSetHistogram::getBucketSize() const
+double WValueSetHistogram::getInitialBucketSize() const
 {
-    return m_bucketSize;
+    return m_initialBucketSize;
 }
 
-void WValueSetHistogram::increment( double value )
+double WValueSetHistogram::getBucketSize( size_t /* index */ ) const
 {
-    WAssert( m_bucketSize > 0.0, "WValueSetHistogram::increment() : m_bucketSize to small." );
-    unsigned int index = static_cast<unsigned int>( value / m_bucketSize );
-    m_initialBuckets[index]++;
+    // ignore index as each bucket has the same width
+    return m_mappedBucketSize;
 }
 
-unsigned int WValueSetHistogram::setInterval( double intervalSize )
+void WValueSetHistogram::insert( double value )
 {
-    if( m_bucketSize == intervalSize )
-    {
-        if( m_mappedBuckets )
-        {
-            m_mappedBuckets.reset();
-            m_nMappedBuckets = 0;
-        }
-    }
-    else
-    {
-        calculateMapping( intervalSize );
-    }
-    return m_nMappedBuckets;
+    m_mappedBuckets[ getIndexForValue( value ) ]++;
 }
 
-void WValueSetHistogram::calculateMapping( double intervalSize )
+size_t WValueSetHistogram::operator[]( size_t index ) const
 {
-    unsigned int ratio = static_cast<unsigned int>( intervalSize / m_bucketSize );
-    WAssert( ratio > 1, "WValueSetHistogram::calculateMapping() : intervalSize has to be greater then the original size." );
-    // number of elements in the new mapped histogram = division + (round up)
-    m_nMappedBuckets = m_nInitialBuckets / ratio + ( m_nInitialBuckets % ratio > 0 ? 1 : 0 );
-
-    if( m_mappedBuckets )
-    {
-        m_mappedBuckets.reset();
-    }
-
-    unsigned int* mappedBuckets = new unsigned int[m_nMappedBuckets];
-    memset( mappedBuckets, 0, m_nMappedBuckets * sizeof( unsigned int ) );
-    //*mappedBuckets = { 0 }; // works with C++0x
-    boost::scoped_array< unsigned int > scoped( mappedBuckets );
-    m_mappedBuckets.swap( scoped );
-    unsigned int index = 0;
-    for( unsigned int i = 0; i != m_nInitialBuckets; ++i )
-    {
-        if( i % ratio == 0 && i != 0 )
-        {
-            index++;
-        }
-        m_mappedBuckets[index] += m_initialBuckets[i];
-    }
+    // if no mapping has been applied, mappedBuckets points to the initial bucket
+    return m_mappedBuckets[ index ];
 }
 
-unsigned int WValueSetHistogram::operator[]( unsigned int index )
+size_t WValueSetHistogram::at( size_t index ) const
 {
-    unsigned int value = 0;
-    if( m_mappedBuckets )
-    {
-        index = m_mappedBuckets[index];
-    }
-    else
-    {
-        value = m_initialBuckets[index];
-    }
-    return value;
+    WAssert( index < m_nMappedBuckets, "WValueSetHistogram::at() : index out of range." );
+
+    // if no mapping has been applied, mappedBuckets points to the initial bucket
+    return m_mappedBuckets[ index ];
 }
 
-unsigned int WValueSetHistogram::at( unsigned int index )
+size_t WValueSetHistogram::size() const
 {
-    unsigned int value = 0;
-    if( m_mappedBuckets )
+    return m_nMappedBuckets;    // overwrite the WHistogram::size here as we have our own size.
+}
+
+size_t WValueSetHistogram::getTotalElementCount() const
+{
+    return m_nbTotalElements;
+}
+
+std::pair< double, double > WValueSetHistogram::getIntervalForIndex( size_t index ) const
+{
+    double first = m_minimum + m_mappedBucketSize * index;
+    double second =  m_minimum + m_mappedBucketSize * ( index + 1 );
+    return std::make_pair( first, second );
+}
+
+size_t WValueSetHistogram::accumulate( size_t startIndex, size_t endIndex ) const
+{
+    if ( startIndex > endIndex )
     {
-        WAssert( index < m_nMappedBuckets, "WValueSetHistogram::at() : index out of range." );
-        value = m_mappedBuckets[index];
+        std::swap( startIndex, endIndex );
     }
-    else
+
+    // valid index?
+    if ( endIndex > size() )    // as endIndex is exclusive, it is allowed to equal size()
     {
-        WAssert( index < m_nInitialBuckets, "WValueSetHistogram::at() : index out of range." );
-        value = m_initialBuckets[index];
+        throw WOutOfBounds( std::string( "The specified endIndex is out of bounds." ) );
     }
-    return value;
+
+    // unfortunately, shared_array can't be used for std::accumulate
+    size_t acc = 0;
+    while ( startIndex != endIndex )
+    {
+        acc += m_mappedBuckets[ startIndex++ ];
+    }
+
+    return acc;
 }
 
-unsigned int WValueSetHistogram::size() const
+std::ostream& operator<<( std::ostream& out, const WValueSetHistogram& h )
 {
-    return (m_mappedBuckets ? m_nMappedBuckets : m_nInitialBuckets);
-}
+    for ( size_t i = 0; i < h.size() - 1; ++i )
+    {
+        std::pair< double, double > interval = h.getIntervalForIndex( i );
+        // NOTE: the notation for open intervals is [a,b) or alternatively [a,b[.
+        out << i << " = [" << interval.first << ", " << interval.second << ") = " << h[ i ] << std::endl;
+    }
+    // the last interval is handled special
+    out << h.size() - 1 << " = [" << h.getIntervalForIndex( h.size() - 1 ).first << ", inf) = " << h[ h.size() - 1 ] << std::endl;
 
-double WValueSetHistogram::getMin() const
-{
-    return m_minimum;
-}
-
-double WValueSetHistogram::getMax() const
-{
-    return m_maximum;
+    return out;
 }
 

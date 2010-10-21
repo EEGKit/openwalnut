@@ -33,12 +33,13 @@
 #include "WValueSet.h"
 
 #include "WDataSetSingle.h"
+#include "WExportDataHandler.h"
 
 /**
  * This data set type contains spherical harmonic coefficients as values. The index scheme is like in the Descoteaux paper "Regularized, Fast, and Robust Analytical Q-Ball Imaging".
  * \ingroup dataHandler
  */
-class WDataSetSphericalHarmonics : public WDataSetSingle
+class OWDATAHANDLER_EXPORT WDataSetSphericalHarmonics : public WDataSetSingle // NOLINT
 {
 public:
 
@@ -79,12 +80,11 @@ public:
     wmath::WSymmetricSphericalHarmonic interpolate( const wmath::WPosition &pos, bool *success ) const;
 
     /**
-     * Get the vector on the given position in value set.
-     * \note currently only implmented for WVector3D
+     * Get the spherical harmonic on the given position in value set.
      *
-     * \param index the position where to get the vector from
+     * \param index the position where to get the spherical harmonic from
      *
-     * \return the vector
+     * \return the spherical harmonic
      */
     wmath::WSymmetricSphericalHarmonic getSphericalHarmonicAt( size_t index ) const;
 
@@ -101,6 +101,13 @@ public:
      * \return the description
      */
     virtual const std::string getDescription() const;
+
+    /**
+     * Determines whether this dataset can be used as a texture.
+     *
+     * \return true if usable as texture.
+     */
+    virtual bool isTexture() const;
 
 protected:
 

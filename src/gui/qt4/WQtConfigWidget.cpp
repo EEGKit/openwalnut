@@ -32,6 +32,7 @@
 #include "WCfgOperations.h"
 #include "../../kernel/WModuleFactory.h"
 #include "../../common/WConditionOneShot.h"
+#include "../../common/WPathHelper.h"
 
 #include "WQtConfigWidget.h"
 
@@ -279,12 +280,12 @@ void WQtConfigWidget::registerComponents()
     ctbpos->setMax( 5 );
     m_defaultProperties->addProperty( "qt4gui.hideMenuBar", "Hide the menu bar.", false, m_propCondition );
 
-    WPropInt dsbWidth = m_defaultProperties->addProperty( "qt4gui.dsbWidth", "The width of the dataset browser.", 250, m_propCondition );
-    dsbWidth->setMin( 0 );
-    dsbWidth->setMax( 1000 );
+    WPropInt controlPanelWidth = m_defaultProperties->addProperty( "qt4gui.dsbWidth", "The width of the control panel.", 250, m_propCondition );
+    controlPanelWidth->setMin( 0 );
+    controlPanelWidth->setMax( 1000 );
 
-    m_defaultProperties->addProperty( "qt4gui.dsbInvisibleByDefault", "Hide the dataset browser on startup?", false, m_propCondition );
-    m_defaultProperties->addProperty( "qt4gui.dsbFloatingByDefault", "Undock the dataset browser on startup?", false, m_propCondition );
+    m_defaultProperties->addProperty( "qt4gui.dsbInvisibleByDefault", "Hide the control panel on startup?", false, m_propCondition );
+    m_defaultProperties->addProperty( "qt4gui.dsbFloatingByDefault", "Undock the control panel on startup?", false, m_propCondition );
 
     WPropGroup moduleWhiteList =  m_defaultProperties->addPropertyGroup( "modules.whiteListGroup", "moduleWhiteList" );
     m_skipPropertyWrite.push_back( "modules.whiteListGroup" );
@@ -326,7 +327,48 @@ void WQtConfigWidget::registerComponents()
 
 boost::shared_ptr< WProperties > WQtConfigWidget::copyProperties( boost::shared_ptr< WProperties > from )
 {
-    return boost::shared_static_cast< WProperties >( from->clone() );
+    boost::shared_ptr< WProperties > res = boost::shared_static_cast< WProperties >( from->clone() );
+
+    std::list< boost::shared_ptr< WProperties > > propertyStack;
+    std::list< WProperties::PropertyIterator > iteratorStack;
+
+    propertyStack.push_back( res );
+
+    WProperties::PropertyIterator iter;
+    WProperties::PropertyAccessType accessObject = propertyStack.back()->getAccessObject();
+
+    iter = accessObject->get().begin();
+    iteratorStack.push_back( iter );
+
+    while ( !propertyStack.empty() )
+    {
+        // check if at the end of group, if so pop and continue
+        if ( iteratorStack.back() == propertyStack.back()->getAccessObject()->get().end() )
+        {
+            propertyStack.pop_back();
+            iteratorStack.pop_back();
+            continue;
+        }
+
+        // add group to stack, and move iterator
+        if ( ( *( iteratorStack.back() ) )->getType() == PV_GROUP )
+        {
+            propertyStack.push_back( ( *iteratorStack.back() )->toPropGroup() );
+            ++iteratorStack.back();
+            iteratorStack.push_back( propertyStack.back()->getAccessObject()->get().begin() );
+            continue;
+        }
+        else
+        {
+            boost::shared_ptr< WProperties > prop = ( *( iteratorStack.back() ) )->toPropGroup();
+
+            m_configState.add( prop->getUpdateCondition() );
+        }
+
+        ++iteratorStack.back();
+    } // LOOP over properties
+
+    return res;
 }
 
 void WQtConfigWidget::copyPropertiesContents( boost::shared_ptr< WProperties > from, boost::shared_ptr< WProperties > to, bool lock )
@@ -927,15 +969,15 @@ void WQtConfigWidget::saveToConfig()
         }
     } // END write not finished loop
 
-    WCfgOperations::writeCfg( "walnut.cfg", configOut );
+    WCfgOperations::writeCfg( WPathHelper::getConfigFile().file_string(), configOut );
 }
 
 void WQtConfigWidget::loadConfigFile()
 {
     namespace fs = boost::filesystem;
-    if ( fs::exists( fs::path( std::string( "walnut.cfg" ) ) ) )
+    if ( fs::exists( WPathHelper::getConfigFile() ) )
     {
-        m_configLines = WCfgOperations::readCfg( "walnut.cfg" );
+        m_configLines = WCfgOperations::readCfg( WPathHelper::getConfigFile().file_string() );
     }
     // copy all default properties into the loaded properties
     m_loadedProperties = copyProperties( m_defaultProperties );
@@ -958,7 +1000,7 @@ void WQtConfigWidget::updateGui( boost::shared_ptr< WProperties > properties )
     updatePropertyGroups( properties, "modules.defaultList", true );
 }
 
-WQtDSBWidget *WQtConfigWidget::createTabForSection( boost::shared_ptr< WProperties > from, std::string sectionName )
+WQtPropertyGroupWidget *WQtConfigWidget::createTabForSection( boost::shared_ptr< WProperties > from, std::string sectionName )
 {
     WProperties::PropertyAccessType accesObject = from->getAccessObject();
     // Temporarily disabled since locking causes several problems here :-/
@@ -970,7 +1012,7 @@ WQtDSBWidget *WQtConfigWidget::createTabForSection( boost::shared_ptr< WProperti
         name = from->getName();
     }
 
-    WQtDSBWidget* tab = new WQtDSBWidget( name );
+    WQtPropertyGroupWidget* tab = new WQtPropertyGroupWidget( name );
 
     WProperties::PropertyIterator iter;
     for ( iter = accesObject->get().begin(); iter != accesObject->get().end(); ++iter )
@@ -1001,14 +1043,14 @@ WQtDSBWidget *WQtConfigWidget::createTabForSection( boost::shared_ptr< WProperti
                 tab->addProp( ( *iter )->toPropFilename() );
                 break;
             case PV_SELECTION:
-                WLogger::getLogger()->addLogMessage( "This property type \"PV_SELECTION\" is not yet supported by the GUI.", "DatasetBrowser",
+                WLogger::getLogger()->addLogMessage( "This property type \"PV_SELECTION\" is not yet supported by the GUI.", "ControlPanel",
                     LL_WARNING );
                 break;
             case PV_COLOR:
                 tab->addProp( ( *iter )->toPropColor() );
                 break;
             case PV_POSITION:
-                WLogger::getLogger()->addLogMessage( "This property type \"PV_POSITION\" is not yet supported by the GUI.", "DatasetBrowser",
+                WLogger::getLogger()->addLogMessage( "This property type \"PV_POSITION\" is not yet supported by the GUI.", "ControlPanel",
                     LL_WARNING );
                 break;
             case PV_TRIGGER:
@@ -1018,7 +1060,7 @@ WQtDSBWidget *WQtConfigWidget::createTabForSection( boost::shared_ptr< WProperti
                 tab->addGroup( createTabForSection( ( *iter )->toPropGroup(), sectionName ), true );
                 break;
             default:
-                WLogger::getLogger()->addLogMessage( "This property type is not yet supported.", "DatasetBrowser", LL_WARNING );
+                WLogger::getLogger()->addLogMessage( "This property type is not yet supported.", "ControlPanel", LL_WARNING );
                 break;
             }
         }
@@ -1116,17 +1158,17 @@ bool WQtConfigWidget::setWalnutFromProperties()
     {
         view->setBgColor( color );
     }
-    view = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "axial" );
+    view = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Axial View" );
     if ( view )
     {
         view->setBgColor( color );
     }
-    view = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "coronal" );
+    view = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Coronal View" );
     if ( view )
     {
         view->setBgColor( color );
     }
-    view = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "sagittal" );
+    view = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Sagittal View" );
     if ( view )
     {
         view->setBgColor( color );

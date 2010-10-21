@@ -29,6 +29,7 @@
 #include <iostream>
 #include <vector>
 
+#include "../WExportCommon.h"
 #include "../WMixinVector.h"
 #include "WPosition.h"
 
@@ -41,7 +42,7 @@ namespace wmath
      * A line is an ordered sequence of WPositions.
      */
 //    typedef WMixinVector< WPosition > WLine;
-    class WLine : public WMixinVector< WPosition >
+    class OWCOMMON_EXPORT WLine : public WMixinVector< WPosition >
     {
     public:
         /**
@@ -97,6 +98,14 @@ namespace wmath
          * \return -1 in case of the two fibers are considered equal, otherwise the first position on which they differ is returned.
          */
         int equalsDelta( const wmath::WLine& other, double delta ) const;
+
+        /**
+         * Compute the maximal segment length of all segements. If there are no segements meaning
+         * zero or one point, zero is returned.
+         *
+         * \return Max segement length or zero if there aren't any.
+         */
+        double maxSegmentLength() const;
     };
 } // end of namespace
 #endif  // WLINE_H

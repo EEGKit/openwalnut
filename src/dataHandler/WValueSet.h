@@ -31,6 +31,7 @@
 #include "../common/math/WValue.h"
 #include "../common/math/WVector3D.h"
 #include "../common/WAssert.h"
+#include "../common/WLimits.h"
 #include "WDataHandlerEnums.h"
 #include "WValueSetBase.h"
 
@@ -111,6 +112,15 @@ public:
         : WValueSetBase( order, dimension, inDataType ),
           m_data( data )
     {
+        // calculate min and max
+        // Calculating this once simply ensures that it does not need to be recalculated in textures, histograms ...
+        m_minimum = wlimits::MAX_DOUBLE;
+        m_maximum = wlimits::MIN_DOUBLE;
+        for ( typename std::vector< T >::const_iterator iter = data.begin(); iter != data.end(); ++iter )
+        {
+            m_minimum = m_minimum > *iter ? *iter : m_minimum;
+            m_maximum = m_maximum < *iter ? *iter : m_maximum;
+        }
     }
 
     /**
@@ -213,13 +223,54 @@ public:
         return SubArray( rawData() + start, size );
     }
 
+    /**
+     * This method returns the smallest value in the valueset. It does not handle vectors, matrices and so on well. It simply returns the
+     * smallest value in the data array. This is especially useful for texture scaling or other statistic tools (histograms).
+     *
+     * \return the smallest value in the data.
+     */
+    virtual double getMinimumValue() const
+    {
+        return m_minimum;
+    }
+
+    /**
+     * This method returns the largest value in the valueset. It does not handle vectors, matrices and so on well. It simply returns the
+     * largest value in the data array. This is especially useful for texture scaling or other statistic tools (histograms).
+     *
+     * \return the largest value in the data.
+     */
+    virtual double getMaximumValue() const
+    {
+        return m_maximum;
+    }
+
 protected:
+    /**
+     * The smallest value in m_data.
+     */
+    T m_minimum;
+
+    /**
+     * The largest value in m_data.
+     */
+    T m_maximum;
 
 private:
     /**
      * Stores the values of type T as simple array which never should be modified.
      */
     const std::vector< T > m_data;  // WARNING: don't remove constness since &m_data[0] won't work anymore!
+
+    /**
+     * Get a variant reference to this valueset (the reference is stored in the variant).
+     * \note Use this as a temporary object inside a function or something like that.
+     * \return var A variant reference.
+     */
+    virtual WValueSetVariant const getVariant() const
+    {
+        return WValueSetVariant( this );
+    }
 };
 
 template< typename T > wmath::WVector3D WValueSet< T >::getVector3D( size_t index ) const

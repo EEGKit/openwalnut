@@ -29,7 +29,7 @@
 
 #include <cmath>
 
-#include "spline_surface.xpm"
+#include "WMSplineSurface.xpm"
 #include "../../common/WLimits.h"
 #include "../../common/WAssert.h"
 
@@ -113,11 +113,34 @@ void WMSplineSurface::moduleMain()
     // loop until the module container requests the module to quit
     while ( !m_shutdownFlag() )
     {
-        // update ISO surface
+        // update isosurface
         debugLog() << "Computing surface ...";
 
         WSurface surf;
-        m_triMesh = surf.execute();
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////
+        std::vector< wmath::WVector3D > givenPoints;
+        for( int y = 0; y < 11; ++y )
+        {
+            for( int z = 0; z < 11; ++z )
+            {
+                float pi = 3.14159265;
+                float pi2 = pi * 2;
+                float yy = pi2 * y / 10.;
+                float zz = pi2 * z / 10.;
+
+                wmath::WVector3D p;
+                p[0] = 60. + sin( yy ) * 10 + cos( zz ) * 10;
+                p[1] = y * 20.;
+                p[2] = z * 16.;
+                givenPoints.push_back( p );
+            }
+        }
+        surf.setSupportPoints( givenPoints );
+        //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        surf.execute();
+        m_triMesh = surf.getTriangleMesh();
 
         debugLog() << "Rendering surface ...";
 
@@ -135,14 +158,21 @@ void WMSplineSurface::moduleMain()
         m_moduleState.wait();
     }
 
+    con.disconnect();
+
     WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getScene()->remove( m_moduleNode );
 }
 
 void WMSplineSurface::connectors()
 {
-    // initialize connectors
-    m_output = boost::shared_ptr< WModuleOutputData< WTriangleMesh2 > >( new WModuleOutputData< WTriangleMesh2 > ( shared_from_this(), "out",
-            "The mesh representing the isosurface." ) );
+    // TODO(someone): This connector should be used as soon as the module gets more functionality.
+    // The surface will aligned to these tracts.
+    typedef WModuleInputData< const WFiberCluster > InputType; // just an alias
+    m_input = boost::shared_ptr< InputType >( new InputType( shared_from_this(), "Tracts", "A cluster of tracts." ) );
+    addConnector( m_input );
+
+    m_output = boost::shared_ptr< WModuleOutputData< WTriangleMesh > >( new WModuleOutputData< WTriangleMesh > ( shared_from_this(), "out",
+            "The mesh representing the spline surface." ) );
 
     addConnector( m_output );
 
@@ -156,15 +186,17 @@ void WMSplineSurface::properties()
     m_opacityProp->setMin( 0 );
     m_opacityProp->setMax( 100 );
 
-    m_useTextureProp = m_properties->addProperty( "Use Texture", "Use texturing of the surface?", false );
+    m_useTextureProp = m_properties->addProperty( "Use texture", "Use texturing of the surface?", false );
 
-    m_surfaceColor = m_properties->addProperty( "Surface Color", "Description.", WColor( 0.5, 0.5, 0.5, 1.0 ) );
+    m_surfaceColor = m_properties->addProperty( "Surface color", "Description.", WColor( 0.5, 0.5, 0.5, 1.0 ) );
 
     m_savePropGroup = m_properties->addPropertyGroup( "Save Surface", "" );
-    m_saveTriggerProp = m_savePropGroup->addProperty( "Do Save", "Press!", WPVBaseTypes::PV_TRIGGER_READY );
+    m_saveTriggerProp = m_savePropGroup->addProperty( "Do save", "Press!", WPVBaseTypes::PV_TRIGGER_READY );
     m_saveTriggerProp->getCondition()->subscribeSignal( boost::bind( &WMSplineSurface::save, this ) );
 
-    m_meshFile = m_savePropGroup->addProperty( "Mesh File", "", WPathHelper::getAppPath() );
+    m_meshFile = m_savePropGroup->addProperty( "Mesh file", "", WPathHelper::getAppPath() );
+
+    WModule::properties();
 }
 
 void WMSplineSurface::renderMesh()
@@ -174,7 +206,7 @@ void WMSplineSurface::renderMesh()
     osg::Geometry* surfaceGeometry = new osg::Geometry();
     m_surfaceGeode = osg::ref_ptr< osg::Geode >( new osg::Geode );
 
-    m_surfaceGeode->setName( "iso surface" );
+    m_surfaceGeode->setName( "spline surface" );
 
     surfaceGeometry->setVertexArray( m_triMesh->getVertexArray() );
 
@@ -281,7 +313,7 @@ void WMSplineSurface::renderMesh()
     m_cmapUniforms.push_back( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "useCmap8", 0 ) ) );
     m_cmapUniforms.push_back( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "useCmap9", 0 ) ) );
 
-    for ( int i = 0; i < m_maxNumberOfTextures; ++i )
+    for ( size_t i = 0; i < wlimits::MAX_NUMBER_OF_TEXTURES; ++i )
     {
         state->addUniform( m_typeUniforms[i] );
         state->addUniform( m_thresholdUniforms[i] );
@@ -418,6 +450,8 @@ void WMSplineSurface::updateGraphics()
     {
         bool localTextureChangedFlag = m_textureChanged;
         m_textureChanged = false;
+        m_opacityProp->get( true );
+        m_useTextureProp->get( true );
 
         // grab a list of data textures
         std::vector< boost::shared_ptr< WDataTexture3D > > tex = WDataHandler::getDefaultSubject()->getDataTextures( true );
@@ -427,7 +461,7 @@ void WMSplineSurface::updateGraphics()
             osg::StateSet* rootState = m_surfaceGeode->getOrCreateStateSet();
 
             // reset all uniforms
-            for ( int i = 0; i < m_maxNumberOfTextures; ++i )
+            for ( size_t i = 0; i < wlimits::MAX_NUMBER_OF_TEXTURES; ++i )
             {
                 m_typeUniforms[i]->set( 0 );
             }
@@ -445,7 +479,7 @@ void WMSplineSurface::updateGraphics()
             }
 
             // for each texture -> apply
-            int c = 0;
+            size_t c = 0;
             for ( std::vector< boost::shared_ptr< WDataTexture3D > >::const_iterator iter = tex.begin(); iter != tex.end(); ++iter )
             {
                 if ( localTextureChangedFlag )
@@ -456,7 +490,7 @@ void WMSplineSurface::updateGraphics()
                     for ( size_t i = 0; i < m_triMesh->vertSize(); ++i )
                     {
                         osg::Vec3 vertPos = m_triMesh->getVertex( i );
-                        texCoords->push_back( wge::wv3D2ov3( grid->worldCoordToTexCoord( wmath::WPosition( vertPos[0], vertPos[1], vertPos[2] ) ) ) );
+                        texCoords->push_back( grid->worldCoordToTexCoord( wmath::WPosition( vertPos[0], vertPos[1], vertPos[2] ) ) );
                     }
                     surfaceGeometry->setTexCoordArray( c, texCoords );
                 }
@@ -477,7 +511,7 @@ void WMSplineSurface::updateGraphics()
                 m_cmapUniforms[c]->set( cmap );
 
                 ++c;
-                if ( c == m_maxNumberOfTextures )
+                if ( c == wlimits::MAX_NUMBER_OF_TEXTURES )
                 {
                     break;
                 }

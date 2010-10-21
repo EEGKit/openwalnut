@@ -27,22 +27,38 @@
 
 #include "WDataSetSingle.h"
 #include "../common/WLogger.h"
+#include "../common/WLimits.h"
 #include "../common/WCondition.h"
 
+#include "../graphicsEngine/WGETexture.h"
 #include "WDataTexture3D.h"
 
 WDataTexture3D::WDataTexture3D( boost::shared_ptr<WValueSetBase> valueSet, boost::shared_ptr<WGrid> grid ):
+    m_properties( boost::shared_ptr< WProperties >( new WProperties( "Data Texture Properties", "Properties of a texture." ) ) ),
+    m_infoProperties( boost::shared_ptr< WProperties >( new WProperties( "Data Texture Info Properties", "Texture's information properties." ) ) ),
     m_alpha( 1.0 ),
     m_threshold( 0.0 ),
-    m_texture( osg::ref_ptr< osg::Texture3D >() ),
+    m_texture( osg::ref_ptr< WGETexture3D >() ),
     m_valueSet( valueSet ),
     m_grid( boost::shared_dynamic_cast< WGridRegular3D >( grid ) ),
     m_changeCondition( new WCondition() ),
     m_globalActive( true ),
     m_interpolation( true ),
-    m_cmap( 0 )
+    m_cmap( 0 ),
+    m_minValue( static_cast< float >( valueSet->getMinimumValue() ) ),
+    m_maxValue( static_cast< float >( valueSet->getMaximumValue() ) ),
+    m_scale( m_maxValue - m_minValue )
 {
     // initialize members
+    wlog::debug( "WDataTexture3D" ) << "Texture scaling information for data in [" << m_minValue << ", "<< m_maxValue <<
+                                       "]: scaling factor=" << m_scale;
+    wlog::debug( "WDataTexture3D" ) << "Resolution is " <<  m_grid->getNbCoordsX() << "x" << m_grid->getNbCoordsY() << "x" << m_grid->getNbCoordsZ();
+    WAssert( m_grid->getNbCoordsX() <= wlimits::MAX_TEXTURE_DIMENSION, "Cannot create a texture with more"
+                                                                       " than 2048 pixels/voxels in one dimension." );
+    WAssert( m_grid->getNbCoordsY() <= wlimits::MAX_TEXTURE_DIMENSION, "Cannot create a texture with more"
+                                                                       " than 2048 pixels/voxels in one dimension." );
+    WAssert( m_grid->getNbCoordsZ() <= wlimits::MAX_TEXTURE_DIMENSION, "Cannot create a texture with more"
+                                                                       " than 2048 pixels/voxels in one dimension." );
 }
 
 WDataTexture3D::~WDataTexture3D()
@@ -102,7 +118,7 @@ boost::shared_ptr< WGridRegular3D > WDataTexture3D::getGrid() const
     return m_grid;
 }
 
-osg::ref_ptr< osg::Texture3D > WDataTexture3D::getTexture()
+osg::ref_ptr< WGETexture3D > WDataTexture3D::getTexture()
 {
     createTexture();
     return m_texture;
@@ -110,8 +126,6 @@ osg::ref_ptr< osg::Texture3D > WDataTexture3D::getTexture()
 
 osg::ref_ptr< osg::Image > WDataTexture3D::createTexture3D( unsigned char* source, int components )
 {
-    findMinMax( source, components );
-
     osg::ref_ptr< osg::Image > ima = new osg::Image;
 
     if ( components == 1 )
@@ -149,8 +163,6 @@ osg::ref_ptr< osg::Image > WDataTexture3D::createTexture3D( unsigned char* sourc
 
 osg::ref_ptr< osg::Image > WDataTexture3D::createTexture3D( int16_t* source, int components )
 {
-    findMinMax( source, components );
-
     osg::ref_ptr< osg::Image > ima = new osg::Image;
     if( components == 1 )
     {
@@ -225,8 +237,6 @@ osg::ref_ptr< osg::Image > WDataTexture3D::createTexture3D( int16_t* source, int
 
 osg::ref_ptr< osg::Image > WDataTexture3D::createTexture3D( int* source, int components )
 {
-    findMinMax( source, components );
-
     osg::ref_ptr< osg::Image > ima = new osg::Image;
     if( components == 1 )
     {
@@ -264,7 +274,6 @@ osg::ref_ptr< osg::Image > WDataTexture3D::createTexture3D( float* source, int c
     osg::ref_ptr< osg::Image > ima = new osg::Image;
     if ( components == 1)
     {
-        findMinMax( source, components );
         wlog::debug( "WDataTexture3D" ) << "Texture for scalar float data set.";
         // OpenGL just supports float textures
         ima->allocateImage( m_grid->getNbCoordsX(), m_grid->getNbCoordsY(), m_grid->getNbCoordsZ(), GL_LUMINANCE, GL_FLOAT );
@@ -278,11 +287,6 @@ osg::ref_ptr< osg::Image > WDataTexture3D::createTexture3D( float* source, int c
     }
     else if ( components == 3 )
     {
-        // we cannot use findMinMax her because of the possibly negative values.
-        m_scale = 1.;
-        m_minValue = 0.;
-        m_maxValue = 1.;
-
         wlog::debug( "WDataTexture3D" ) << "Texture for 3-vector float data set.";
         // OpenGL just supports float textures
         ima->allocateImage( m_grid->getNbCoordsX(), m_grid->getNbCoordsY(), m_grid->getNbCoordsZ(), GL_RGBA, GL_FLOAT );
@@ -300,7 +304,6 @@ osg::ref_ptr< osg::Image > WDataTexture3D::createTexture3D( float* source, int c
     }
     else if ( components == 4 )
     {
-        findMinMax( source, components );
         wlog::debug( "WDataTexture3D" ) << "Texture for 4-vector float data set.";
         // OpenGL just supports float textures
         ima->allocateImage( m_grid->getNbCoordsX(), m_grid->getNbCoordsY(), m_grid->getNbCoordsZ(), GL_RGBA, GL_FLOAT );
@@ -327,8 +330,6 @@ osg::ref_ptr< osg::Image > WDataTexture3D::createTexture3D( float* source, int c
 
 osg::ref_ptr< osg::Image > WDataTexture3D::createTexture3D( double* source, int components )
 {
-    findMinMax( source, components );
-
     osg::ref_ptr< osg::Image > ima = new osg::Image;
     if ( components == 1)
     {
@@ -384,118 +385,9 @@ osg::ref_ptr< osg::Image > WDataTexture3D::createTexture3D( double* source, int 
     return ima;
 }
 
-void WDataTexture3D::findMinMax( double* source, int components )
-{
-    wlog::debug( "WDataTexture3D" ) << "Calculating min/max values for dataset.";
-
-    double minV = source[ 0 ];
-    double maxV = source[ 0 ];
-
-    // Go through each value and find min/max
-    for ( unsigned int i = 0; i < components * m_grid->getNbCoordsX() * m_grid->getNbCoordsY() * m_grid->getNbCoordsZ(); ++i )
-    {
-        double val = source[ i ];
-        minV = val < minV ? val : minV;
-        maxV = val > maxV ? val : maxV;
-    }
-
-    m_scale = static_cast< float >( maxV - minV );
-    m_minValue = static_cast< float >( minV );
-    m_maxValue = static_cast< float >( maxV );
-
-    wlog::debug( "WDataTexture3D" ) << "Calculating min/max values for dataset: done! Values are in [" << m_minValue << "," << m_maxValue << "].";
-}
-
-void WDataTexture3D::findMinMax( unsigned char* source, int components )
-{
-    wlog::debug( "WDataTexture3D" ) << "Calculating min/max values for dataset.";
-
-    double minV = source[ 0 ];
-    double maxV = source[ 0 ];
-
-    // Go through each value and find min/max
-    for ( unsigned int i = 0; i < components * m_grid->getNbCoordsX() * m_grid->getNbCoordsY() * m_grid->getNbCoordsZ(); ++i )
-    {
-        double val = source[ i ];
-        minV = val < minV ? val : minV;
-        maxV = val > maxV ? val : maxV;
-    }
-
-    m_scale = static_cast< float >( maxV - minV );
-    m_minValue = static_cast< float >( minV );
-    m_maxValue = static_cast< float >( maxV );
-
-    wlog::debug( "WDataTexture3D" ) << "Calculating min/max values for dataset: done! Values are in [" << m_minValue << "," << m_maxValue << "].";
-}
-
-void WDataTexture3D::findMinMax( int16_t* source, int components )
-{
-    wlog::debug( "WDataTexture3D" ) << "Calculating min/max values for dataset.";
-
-    double minV = source[ 0 ];
-    double maxV = source[ 0 ];
-
-    // Go through each value and find min/max
-    for ( unsigned int i = 0; i < components * m_grid->getNbCoordsX() * m_grid->getNbCoordsY() * m_grid->getNbCoordsZ(); ++i )
-    {
-        double val = source[ i ];
-        minV = val < minV ? val : minV;
-        maxV = val > maxV ? val : maxV;
-    }
-
-    m_scale = static_cast< float >( maxV - minV );
-    m_minValue = static_cast< float >( minV );
-    m_maxValue = static_cast< float >( maxV );
-
-    wlog::debug( "WDataTexture3D" ) << "Calculating min/max values for dataset: done! Values are in [" << m_minValue << "," << m_maxValue << "].";
-}
-
-void WDataTexture3D::findMinMax( int* source, int components )
-{
-    wlog::debug( "WDataTexture3D" ) << "Calculating min/max values for dataset.";
-
-    double minV = source[ 0 ];
-    double maxV = source[ 0 ];
-
-    // Go through each value and find min/max
-    for ( unsigned int i = 0; i < components * m_grid->getNbCoordsX() * m_grid->getNbCoordsY() * m_grid->getNbCoordsZ(); ++i )
-    {
-        double val = source[ i ];
-        minV = val < minV ? val : minV;
-        maxV = val > maxV ? val : maxV;
-    }
-
-    m_scale = static_cast< float >( maxV - minV );
-    m_minValue = static_cast< float >( minV );
-    m_maxValue = static_cast< float >( maxV );
-
-    wlog::debug( "WDataTexture3D" ) << "Calculating min/max values for dataset: done! Values are in [" << m_minValue << "," << m_maxValue << "].";
-}
-
-void WDataTexture3D::findMinMax( float* source, int components )
-{
-    wlog::debug( "WDataTexture3D" ) << "Calculating min/max values for dataset.";
-
-    float minV = source[ 0 ];
-    float maxV = source[ 0 ];
-
-    // Go through each value and find min/max
-    for ( unsigned int i = 0; i < components * m_grid->getNbCoordsX() * m_grid->getNbCoordsY() * m_grid->getNbCoordsZ(); ++i )
-    {
-        float val = source[ i ];
-        minV = val < minV ? val : minV;
-        maxV = val > maxV ? val : maxV;
-    }
-
-    m_scale = maxV - minV;
-    m_minValue = minV;
-    m_maxValue = maxV;
-
-    wlog::debug( "WDataTexture3D" ) << "Calculating min/max values for dataset: done! Values are in [" << m_minValue << "," << m_maxValue << "].";
-}
-
 void WDataTexture3D::createTexture()
 {
+    WAssert( m_minValue <= m_maxValue, "" );
     boost::unique_lock< boost::shared_mutex > lock( m_creationLock );
     if ( !m_texture )
     {
@@ -504,8 +396,8 @@ void WDataTexture3D::createTexture()
         if ( m_valueSet->getDataType() == W_DT_UINT8 )
         {
             wlog::debug( "WDataTexture3D" ) << "Handling W_DT_UINT8";
-            boost::shared_ptr< WValueSet< unsigned char > > vs = boost::shared_dynamic_cast< WValueSet< unsigned char > >( m_valueSet );
-            unsigned char* source = const_cast< unsigned char* > ( vs->rawData() );
+            boost::shared_ptr< WValueSet< uint8_t > > vs = boost::shared_dynamic_cast< WValueSet< uint8_t > >( m_valueSet );
+            uint8_t* source = const_cast< uint8_t* > ( vs->rawData() );
             ima = createTexture3D( source, m_valueSet->dimension() );
         }
         else if ( m_valueSet->getDataType() == W_DT_INT16 )
@@ -542,7 +434,7 @@ void WDataTexture3D::createTexture()
             wlog::error( "WDataTexture3D" ) << "Conversion of this data type to texture not supported yet.";
         }
 
-        m_texture = osg::ref_ptr<osg::Texture3D>( new osg::Texture3D );
+        m_texture = osg::ref_ptr< WGETexture3D >( new WGETexture3D( m_scale, m_minValue ) );
         m_texture->setFilter( osg::Texture3D::MIN_FILTER, osg::Texture3D::LINEAR );
         m_texture->setFilter( osg::Texture3D::MAG_FILTER, osg::Texture3D::LINEAR );
         m_texture->setWrap( osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_BORDER );
@@ -550,6 +442,7 @@ void WDataTexture3D::createTexture()
         m_texture->setWrap( osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_BORDER );
         m_texture->setImage( ima );
         m_texture->setResizeNonPowerOfTwoHint( false );
+        m_texture->setTextureSize( ima->s(), ima->t(), ima->r() );
     }
     lock.unlock();
 }
@@ -581,6 +474,18 @@ float WDataTexture3D::getMaxValue()
     return m_maxValue;
 }
 
+void WDataTexture3D::setMinValue( float min )
+{
+    m_minValue = min;
+    m_scale = m_maxValue - m_minValue;
+}
+
+void WDataTexture3D::setMaxValue( float max )
+{
+    m_maxValue = max;
+    m_scale = m_maxValue - m_minValue;
+}
+
 float WDataTexture3D::getMinMaxScale()
 {
     createTexture();
@@ -590,7 +495,7 @@ float WDataTexture3D::getMinMaxScale()
 float WDataTexture3D::scaleInterval( float value ) const
 {
     //return value;
-    return ( value - m_minValue ) / m_scale;
+    return ( std::min( std::max( value, m_minValue ), m_maxValue ) - m_minValue ) / m_scale;
 }
 
 bool WDataTexture3D::isInterpolated()
@@ -613,5 +518,15 @@ void WDataTexture3D::setSelectedColormap( int cmap )
 {
     m_cmap = cmap;
     notifyChange();
+}
+
+boost::shared_ptr< WProperties > WDataTexture3D::getProperties() const
+{
+    return m_properties;
+}
+
+boost::shared_ptr< WProperties > WDataTexture3D::getInformationProperties() const
+{
+    return m_infoProperties;
 }
 

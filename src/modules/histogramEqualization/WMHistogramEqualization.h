@@ -94,6 +94,18 @@ protected:
      */
     virtual void properties();
 
+    /**
+     * Callback for m_active. Overwrite this in your modules to handle m_active changes separately.
+     */
+    virtual void activate();
+
+    /**
+     * Called whenever a property changes.
+     *
+     * \param property the property that has been changed
+     */
+    void propertyChanged( boost::shared_ptr< WPropertyBase > property );
+
 private:
 
     /**
@@ -109,12 +121,78 @@ private:
     /**
      * This is a pointer to the dataset the module is currently working on.
      */
-    boost::shared_ptr< WDataSetScalar > m_dataSet;
+    boost::shared_ptr< WDataSetScalar > m_lastOutputDataSet;
 
     /**
      * A condition used to notify about changes in several properties.
      */
     boost::shared_ptr< WCondition > m_propCondition;
+
+    /**
+     * If true, histogram equalization is turned on.
+     */
+    WPropBool m_equalize;
+
+    /**
+     * True if the values should be clamped before further processing
+     */
+    WPropBool m_clamp;
+
+    /**
+     * How many percent should be clamped from the histogram.
+     */
+    WPropDouble m_clampPerc;
+
+    /**
+     * Resolution of the initial histogram.
+     */
+    WPropInt m_histogramResolution;
+
+    /**
+     * Resolution with which the CDF gets calculated.
+     */
+    WPropInt m_cdfResolution;
+
+    /**
+     * Group for keeping all the clamping related props
+     */
+    WPropGroup m_clamping;
+
+    /**
+     * Group for keeping all the equalizing-related props
+     */
+    WPropGroup m_equalizing;
+
+    // TODO(ebaum): cleanup -> belongs to some central place
+    /**
+     * grouping the texture display properties
+     */
+    WPropGroup    m_groupTex;
+
+    /**
+     * Interpolation?
+     */
+    WPropBool m_interpolation;
+
+    /**
+     * A list of color map selection types
+     */
+    boost::shared_ptr< WItemSelection > m_colorMapSelectionsList;
+
+    /**
+     * Selection property for color map
+     */
+    WPropSelection m_colorMapSelection;
+
+    /**
+     * Threshold value for this data.
+     */
+    WPropDouble m_threshold;
+
+    /**
+     * Opacity value for this data.
+     */
+    WPropInt m_opacity;
 };
 
 #endif  // WMHISTOGRAMEQUALIZATION_H

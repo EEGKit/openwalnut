@@ -36,7 +36,11 @@
  * \par
  * http://www.openwalnut.org
  * \par
- * Copyright 2009 OpenWalnut Community, BSV\@Uni-Leipzig and CNCF\@MPI-CBS.
+ * There exist two versions of this API.
+ * A simple one at http://berkeley.informatik.uni-leipzig.de/api/
+ * and one with callgraphs at http://berkeley.informatik.uni-leipzig.de/apiFull/
+ * \par
+ * Copyright 2009-2010 OpenWalnut Community, BSV\@Uni-Leipzig and CNCF\@MPI-CBS.
  * For more information see http://www.openwalnut.org/copying
  */
 
@@ -47,7 +51,7 @@ int main( int argc, char** argv )
 {
     std::cout << "OpenWalnut ( http://www.openwalnut.org )" << std::endl <<
     "Build from: " << W_VERSION << std::endl << std::endl <<
-    "Copyright (C) 2009 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS\n"
+    "Copyright 2009-2010 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS\n"
     "For more information see http://www.openwalnut.org/copying\n"
     "This program comes with ABSOLUTELY NO WARRANTY.\n"
     "This is free software, and you are welcome to redistribute it\n"
@@ -66,12 +70,6 @@ int main( int argc, char** argv )
     // NOTE: we need a shared ptr here since WGUI uses enable_shared_from_this.
     boost::shared_ptr< WQt4Gui > gui = boost::shared_ptr< WQt4Gui > ( new WQt4Gui( argc, argv ) );
     int result = gui->run();
-
-    // finish running thread if there is a WLogger.
-    if( !result )
-    {
-        WLogger::getLogger()->wait( true );
-    }
 
     std::cout << "Closed OpenWalnut smoothly. Goodbye!" << std::endl;
 

@@ -72,14 +72,15 @@ wmath::WVector3D WDataSetVector::interpolate( const wmath::WPosition& pos, bool 
     WAssert( ( m_valueSet->order() == 1 &&  m_valueSet->dimension() == 3 ),
              "Only implemented for 3D Vectors so far." );
 
-    *success = grid->encloses( pos );
+    bool isInside = true;
+    size_t cellId = grid->getCellId( pos, &isInside );
 
-    if( !*success )
+    if( !isInside )
     {
-        return wmath::WVector3D( 0, 0, 0 );
+        *success = false;
+        return wmath::WVector3D();
     }
-
-    std::vector< size_t > vertexIds = grid->getCellVertexIds( grid->getCellId( pos ) );
+    std::vector< size_t > vertexIds = grid->getCellVertexIds( cellId );
 
     wmath::WPosition localPos = pos - grid->getPosition( vertexIds[0] );
 
@@ -121,7 +122,7 @@ wmath::WVector3D WDataSetVector::getVectorAt( size_t index ) const
     {
         case W_DT_UNSIGNED_CHAR:
         {
-            return boost::shared_dynamic_cast< WValueSet< unsigned char > >( getValueSet() )->getVector3D( index );
+            return boost::shared_dynamic_cast< WValueSet< uint8_t > >( getValueSet() )->getVector3D( index );
         }
         case W_DT_INT16:
         {

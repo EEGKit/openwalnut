@@ -27,13 +27,33 @@
 
 #include <cstddef>
 #include <cmath>
+
+#include <boost/variant.hpp>
+
 #include "WDataHandlerEnums.h"
+#include "WExportDataHandler.h"
+
+//! forward declaration
+template< typename T >
+class WValueSet;
+
+//! declare a boost::variant of all possible valuesets
+typedef boost::variant< WValueSet< uint8_t > const*,
+                        WValueSet< int8_t > const*,
+                        WValueSet< uint16_t > const*,
+                        WValueSet< int16_t > const*,
+                        WValueSet< uint32_t > const*,
+                        WValueSet< int32_t > const*,
+                        WValueSet< uint64_t > const*,
+                        WValueSet< int64_t > const*,
+                        WValueSet< float > const*,
+                        WValueSet< double > const* > WValueSetVariant;
 
 /**
  * Abstract base class to all WValueSets. This class doesn't provide any genericness.
  * \ingroup dataHandler
  */
-class WValueSetBase
+class OWDATAHANDLER_EXPORT WValueSetBase // NOLINT
 {
 public:
     /**
@@ -101,6 +121,36 @@ public:
         return m_dataType;
     }
 
+    /**
+     * This method returns the smallest value in the valueset. It does not handle vectors, matrices and so on well. It simply returns the
+     * smallest value in the data array. This is especially useful for texture scaling or other statistic tools (histograms).
+     *
+     * \return the smallest value in the data.
+     */
+    virtual double getMinimumValue() const = 0;
+
+    /**
+     * This method returns the largest value in the valueset. It does not handle vectors, matrices and so on well. It simply returns the
+     * largest value in the data array. This is especially useful for texture scaling or other statistic tools (histograms).
+     *
+     * \return the largest value in the data.
+     */
+    virtual double getMaximumValue() const = 0;
+
+    /**
+     * Apply a function object to this valueset.
+     *
+     * \tparam Func_T The type of the function object, should be derived from the boost::static_visitor template.
+     *
+     * \param func The function object to apply.
+     * \return The result of the operation.
+     */
+    template< typename Func_T >
+    typename Func_T::result_type applyFunction( Func_T const& func )
+    {
+        return boost::apply_visitor( func, getVariant() );
+    }
+
 protected:
     /**
      * The order of the tensors for this ValueSet
@@ -118,6 +168,15 @@ protected:
     const dataType m_dataType;
 
 private:
+    /**
+     * Creates a boost::variant reference.
+     *
+     * \return var A pointer to a variant reference to the valueset.
+     */
+    virtual WValueSetVariant const getVariant() const
+    {
+        return WValueSetVariant();
+    }
 };
 
 #endif  // WVALUESETBASE_H
