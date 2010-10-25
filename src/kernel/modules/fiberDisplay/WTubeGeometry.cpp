@@ -80,34 +80,8 @@ void WTubeGeometry::drawImplementation( osg::RenderInfo& renderInfo ) const
     if (checkForGLErrors) state.checkGLErrors( "start of Geometry::drawImplementation()" );
 
     bool useFastPath = areFastPathsUsed();
-    useFastPath = false;
 
-    bool usingVertexBufferObjects = _useVertexBufferObjects && state.isVertexBufferObjectSupported();
-    bool handleVertexAttributes = !_vertexAttribList.empty();
-
-    osg::ArrayDispatchers& arrayDispatchers = state.getArrayDispatchers();
-
-    arrayDispatchers.reset();
-    arrayDispatchers.setUseVertexAttribAlias(useFastPath && state.getUseVertexAttributeAliasing());
-    arrayDispatchers.setUseGLBeginEndAdapter(!useFastPath);
-
-    arrayDispatchers.activateNormalArray(_normalData.binding, _normalData.array.get(), _normalData.indices.get());
-    arrayDispatchers.activateColorArray(_colorData.binding, _colorData.array.get(), _colorData.indices.get());
-    arrayDispatchers.activateSecondaryColorArray(_secondaryColorData.binding, _secondaryColorData.array.get(), _secondaryColorData.indices.get());
-    arrayDispatchers.activateFogCoordArray(_fogCoordData.binding, _fogCoordData.array.get(), _fogCoordData.indices.get());
-
-    if (handleVertexAttributes)
-    {
-        for(unsigned int unit=0;unit<_vertexAttribList.size();++unit)
-        {
-            arrayDispatchers.activateVertexAttribArray(_vertexAttribList[unit].binding,
-            unit, _vertexAttribList[unit].array.get(), _vertexAttribList[unit].indices.get());
-        }
-    }
     state.disableAllVertexArrays();
-
-    // dispatch any attributes that are bound overall
-    arrayDispatchers.dispatch(BIND_OVERALL,0);
 
     state.lazyDisablingOfVertexAttributes();
 
@@ -136,9 +110,6 @@ void WTubeGeometry::drawImplementation( osg::RenderInfo& renderInfo ) const
 
 
     state.applyDisablingOfVertexAttributes();
-
-    bool bindPerPrimitiveSetActive = arrayDispatchers.active(BIND_PER_PRIMITIVE_SET);
-    bool bindPerPrimitiveActive = arrayDispatchers.active(BIND_PER_PRIMITIVE);
 
     unsigned int primitiveNum = 0;
 
@@ -169,8 +140,7 @@ void WTubeGeometry::drawImplementation( osg::RenderInfo& renderInfo ) const
             {
                 glDisable( GL_VERTEX_PROGRAM_POINT_SIZE );
                 glDisable( GL_POINT_SPRITE );
-                glEnable( GL_ALPHA_TEST );
-                glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+                glDisable( GL_ALPHA_TEST );
                 glAlphaFunc( GL_NOTEQUAL, 0.0 );
                 break;
             }
@@ -181,16 +151,16 @@ void WTubeGeometry::drawImplementation( osg::RenderInfo& renderInfo ) const
 
     boost::shared_ptr< std::vector< bool > > active = WKernel::getRunningKernel()->getRoiManager()->getBitField();
     boost::shared_ptr< std::vector< size_t > > pointsPerLine = m_dataset->getLineLengths();
-
+  //useFastPath = false;
     if ( useFastPath )
     {
         for( unsigned int primitiveSetNum = 0; primitiveSetNum != _primitives.size(); ++primitiveSetNum )
         {
-            // dispatch any attributes that are bound per primitive
-            //if (bindPerPrimitiveSetActive) arrayDispatchers.dispatch(BIND_PER_PRIMITIVE_SET, primitiveSetNum);
-
             const osg::PrimitiveSet* primitiveset = _primitives[primitiveSetNum].get();
-            primitiveset->draw( state, true );
+            if( (*active)[primitiveSetNum] )
+            {
+                primitiveset->draw( state, true );
+            }
         }
     }
     else

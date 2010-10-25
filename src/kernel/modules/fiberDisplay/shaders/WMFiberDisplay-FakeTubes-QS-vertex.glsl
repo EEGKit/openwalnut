@@ -11,6 +11,10 @@ varying vec3 normal;
 varying vec3 halfVector;
 
 varying float endPoint;
+// Auch die Richtung zum Betrachter ist in der Regel
+// für jedes Fragment unterschiedlich.
+varying vec3 eyeDirection;
+varying vec3  lightDirection;
 
 varying float z;
 varying float zNear;
@@ -30,15 +34,20 @@ uniform bool useLightModel;
 uniform bool usePointSprites;
 uniform bool useQuadStripes;
 uniform bool useProjection;
+uniform float lowerDepthCueingFactor;
+uniform float upperDepthCueingFactor;
 
 void main()
 {
     vec4 pos = gl_ModelViewProjectionMatrix * gl_Vertex;
-    vec3 tangent = ( gl_ModelViewProjectionMatrix * vec4(gl_Normal, 0. ) ).xyz; //!< transform our tangent vector
-    gl_ClipVertex = gl_ModelViewMatrix * gl_Vertex; //!< make clipping planes work
+    vec4 posWorld = gl_ModelViewMatrix * gl_Vertex;
+    vec3 tangent = ( gl_ModelViewProjectionMatrix * vec4(gl_Normal, 1. ) ).xyz; //!< transform our tangent vector
+    vec3 tangentR3 = normalize((gl_NormalMatrix * gl_Normal));
+    vec3 eyeDir = normalize(-(gl_ModelViewMatrix * gl_Vertex).xyz);
+    gl_ClipVertex = gl_ModelViewMatrix * gl_Vertex;//!< make clipping planes work
 
     //scalar product between viewDir and tangent
-    float tmp = dot(-pos.xyz, tangent);
+    float tmp = dot( tangentR3, eyeDir);
 
     //decide wether point sprite or triangle strip to render
     // don't draw quad strip	//decide wether point sprite or triangle strip to render
@@ -49,12 +58,11 @@ void main()
     else
     {
         float thickness;
-
-        vec3 lightPos = vec3(0., 0., -1000.);
+        vec3 lightPos = vec3(0., 0., 0.);
+        vec3 lightDir = normalize(lightPos+eyeDir);
         vec3 ez = vec3(0., 0., -1.0);
-        tangentR3 = gl_NormalMatrix * gl_Normal;
 
-        if ( useDepthCueing )
+        if ( useDepthCueing || useProjection )
         {
             z = pos.z;
             float z1 =0.5 + 0.5 * ( ( gl_ModelViewProjectionMatrix * vec4( nearPos, 1.0 ) ).z );
@@ -69,39 +77,34 @@ void main()
             zFar = max( z1, max( z2, max( z3, max( z4, max( z5, max( z6, max( z7,z8)))))));
             zNear  = min( z1, min( z2, min( z3, min( z4, min( z5, min( z6, min( z7,z8)))))));
         }
-        light = lightPos - pos;
 
-        vec3 cameraPosition = vec3(gl_ModelViewMatrixInverse * vec4(0.0, 0.0, 0.0, 1.0));
-        vec3 referencePosition = vec3(gl_ModelViewProjectionMatrix * vec4(1.0, 1.0, 1.0, 0.0));
-
-        halfVector = normalize( -pos + light );
-        vec3 binormal = normalize( cross( tangent, -pos ) );
-        normal = cross( binormal, tangentR3);
-        NdotL = max(dot(normal, light), 0.0);
-
-        //define thickness of tubes
-        thickness = u_thickness * 0.001; //* cross( cameraPosition, referencePosition );
+        vec3 cameraPosition = vec3(gl_ModelViewProjectionMatrix * vec4(0.0, 0.0, 1.0, 0.0));
+        vec3 referencePosition = vec3(gl_ModelViewProjectionMatrix * vec4(0.0, 0.0, -1.0, 0.0));
 
         // color of tube
         tubeColor = gl_Color;
 
-        vec3 offsetNN;
+        vec3 offset = normalize(cross( eyeDir, tangentR3));
+
+       //define thickness of tubes
+        thickness = u_thickness * 0.001;
+
         if ( useProjection )
         {
-            offsetNN = cross( (tangent.xyz), vec3(.0, .0, -1.));
+            thickness *= clamp( ( 1 - z + zNear ) / ( zNear + zFar ), lowerDepthCueingFactor, upperDepthCueingFactor );
         }
-        else
-        {
-            offsetNN = cross( normalize(tangent.xyz), vec3(.0, .0, -1.));
-        }
-        vec3 offset = normalize(offsetNN);
-        tangent_dot_view = length(offsetNN);
 
-        thickness *= length(referencePosition);
-        offset.x *= thickness;
-        offset.y *= thickness;
+        thickness *= max(distance(referencePosition, cameraPosition), 0.1);
+        offset.xy *= thickness;
         // transform quad points to position
         pos.xyz += offset * qsTexCoords.s; //< add offset in y-direction (eye-space)
+
+        halfVector = normalize( ( eyeDir + lightDir ));
+        vec3 binormal = normalize( cross( tangentR3, eyeDir ) );
+        normal = cross( binormal, tangentR3);
+
+        lightDirection = lightDir;
+        eyeDirection = eyeDir;
 
         // TexCoord for 1D texture
         gl_TexCoord[1].s = qsTexCoords.t;

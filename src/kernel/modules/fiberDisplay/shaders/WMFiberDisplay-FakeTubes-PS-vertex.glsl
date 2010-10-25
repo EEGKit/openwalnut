@@ -28,23 +28,36 @@ uniform bool useLightModel;
 uniform bool usePointSprites;
 uniform bool useQuadStripes;
 uniform bool useProjection;
+uniform float lowerDepthCueingFactor;
+uniform float upperDepthCueingFactor;
+
+// Auch die Richtung zum Betrachter ist in der Regel
+// für jedes Fragment unterschiedlich.
+varying vec3 eyeDirection;
+varying vec3  lightDirection;
+
 
 void main()
 {
-    float thickness;
-	vec4 pos = gl_ModelViewProjectionMatrix * gl_Vertex;
-	vec3 tangent = (gl_ModelViewProjectionMatrix * vec4(gl_Normal,0.)).xyz; // transform our tangent vector
-	float tmp = dot(-pos.xyz, tangent);
-	gl_ClipVertex = gl_ModelViewMatrix * gl_Vertex; // make clipping planes work
+    vec4 pos = gl_ModelViewProjectionMatrix * gl_Vertex;
+    vec3 tangent = ( gl_ModelViewProjectionMatrix * vec4(gl_Normal, 1. ) ).xyz; //!< transform our tangent vector
+    vec3 tangentR3 = normalize(gl_NormalMatrix * gl_Normal);
+    vec3 eyeDir = normalize(-(gl_ModelViewMatrix * gl_Vertex).xyz);
+    gl_ClipVertex = gl_ModelViewMatrix * gl_Vertex;//!< make clipping planes work
+
+    //scalar product between viewDir and tangent
+    float tmp = dot( tangent, eyeDir);
 
     //calculation for pointsprites
-    if(tmp > 0.93 ||psTexCoords.t == 0.0 )
+    if(tmp > 0.93 ||psTexCoords.t == 0.0 || !useQuadStripes)
     {
-        vec3 lightPosition = vec3(0., 0., -1.);
-        tangentR3 = gl_Normal;
+        float thickness;
+        vec3 lightPos = vec3(0., 0., 0.);
+        vec3 lightDir = normalize(lightPos+eyeDir);
+        vec3 ez = vec3(0., 0., -1.0);
         endPoint = 1.0;
 
-        if ( useDepthCueing )
+        if ( useDepthCueing || useProjection )
         {
             z = pos.z;
             float z1 =0.5 + 0.5 * ( ( gl_ModelViewProjectionMatrix * vec4( nearPos, 1.0 ) ).z );
@@ -60,43 +73,35 @@ void main()
             zNear  = min( z1, min( z2, min( z3, min( z4, min( z5, min( z6, min( z7,z8)))))));
         }
 
-        view = - pos.xyz;
+        vec3 cameraPosition = vec3(gl_ModelViewProjectionMatrix * vec4(0.0, 0.0, 1.0, 0.0));
+        vec3 referencePosition = vec3(gl_ModelViewProjectionMatrix * vec4(0.0, 0.0, -1.0, 0.0));
 
-        lightDir = normalize( lightPosition - pos.xyz);
+        halfVector = normalize( eyeDir + lightDir );
+        vec3 binormal = normalize( cross( tangentR3, eyeDir ) );
+        normal = normalize( cross( binormal, tangentR3));
 
-        vec3 cameraPosition = vec3(gl_ModelViewMatrixInverse * vec4(0,0,0,1.0));
-        vec3 cameraVector = cameraPosition - gl_Vertex.xyz;
-        vec3 referencePosition = vec3(gl_ModelViewProjectionMatrix * vec4(1.0, 1.0, 1.0, 0.0));
-
-        halfVector = normalize(cross(view,tangent));
-        normal = cross( halfVector, tangent);
+        lightDirection = lightDir;
+        eyeDirection = eyeDir;
 
         // color of tube
         tubeColor = gl_Color;
-
-        vec3 offsetNN;
+        vec3 offset = normalize(cross( eyeDir, tangentR3));
         if ( useProjection )
         {
-            offsetNN = cross( (tangent.xyz), vec3(.0, .0, -1.));
+            thickness *= clamp(( 1 - z + zNear ) / ( zNear + zFar ), lowerDepthCueingFactor, upperDepthCueingFactor );
         }
-        else
-        {
-            offsetNN = cross( normalize(tangent.xyz), vec3(.0, .0, -1.));
-        }
-        vec3 offset = normalize(offsetNN);
-        tangent_dot_view = length(offsetNN);
 
         //scalar product between viewDir and tangent
         // compute thickness
-        thickness *= length(referencePosition) * u_thickness * 0.001;
+        thickness = max(distance(referencePosition, cameraPosition), 0.1) * u_thickness * 0.001;
         offset.x *= thickness*u_viewportWidth;
         offset.y *= thickness*u_viewportHeight;
 
         vec4 pos1 = gl_Vertex;
         vec4 pos2 = gl_Vertex + vec4(gl_Normal,1);
 
-        vec4 pos1p = gl_ModelViewProjectionMatrix * pos1.xyzw;
-        vec4 pos2p = gl_ModelViewProjectionMatrix * pos2.xyzw;
+        vec4 pos1p = gl_ModelViewProjectionMatrix * pos1;
+        vec4 pos2p = gl_ModelViewProjectionMatrix * pos2;
 
         imageTangent.xy = (pos2p.x/pos2p.w - pos1p.x/pos1p.w, pos1p.y/pos1p.w - pos2p.y/pos2p.w);
         imageTangent = normalize(imageTangent);

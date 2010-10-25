@@ -405,28 +405,21 @@ private:
       * of a tube from aside
       * \param rootState The uniforms will be applied to this state.
       */
-    void create1DTextureRectLightning( osg::StateSet* rootState ) const;
+    void create1DTextureRectLighting( osg::StateSet* rootState ) const;
 
     /**
       * Creates a texture to simmulate diffuse and specular lightning
       * of a tube from top or bottom
       * \param rootState The uniforms will be applied to this state.
       */
-    void create2DTextureCycleLightning( osg::StateSet* rootState ) const;
+    void create2DTextureCycleLighting( osg::StateSet* rootState ) const;
 
     /**
       * Creates a texture to simmulate diffuse and specular lightning
       * of a tube from top or bottom
       * \param rootState The uniforms will be applied to this state.
       */
-    void create2DTexDiffuseLightning( osg::StateSet* rootState ) const;
-
-    /**
-      * Creates a texture to simmulate diffuse and specular lightning
-      * of a tube from top or bottom
-      * \param rootState The uniforms will be applied to this state.
-      */
-    void create2DTexSpecularLightning( osg::StateSet* rootState ) const;
+    void create2DTexturesBlinn( osg::StateSet* rootState ) const;
 
     /**
       * Creates a texture to simmulate diffuse and specular lightning
@@ -440,6 +433,22 @@ private:
       * of a tube from top or bottom
       */
     void createTubeData();
+
+    /**
+      * Computes integrand for specular blinn lighting texture
+      * \param beta
+      * \param n specular exponent
+      * \param theta
+      */
+    double computeIntegrand( double beta, int n, double theta ) const;
+
+    /**
+      * Computes integral for specular blinn lighting texture
+      * \param alpha
+      * \param beta
+      * \param n specular exponent
+    */
+    double computeSpecIntegral( double alpha, double beta, int n ) const;
 
     /**
     * Wrapper class for userData to prevent cyclic destructor calls
