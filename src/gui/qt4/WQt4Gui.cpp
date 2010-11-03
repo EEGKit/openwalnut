@@ -53,6 +53,7 @@
 #include "events/WOpenCustomDockWidgetEvent.h"
 #include "events/WRoiAssocEvent.h"
 #include "events/WRoiRemoveEvent.h"
+#include "events/WUpdateStatusBarEvent.h"
 #include "events/WUpdateTextureSorterEvent.h"
 
 #include "WQt4Gui.h"
@@ -126,7 +127,7 @@ int WQt4Gui::run()
         return 1;
     }
 
-    // exit as fast as possible if command line asked for help. The ,essage has been printed by parseOptions().
+    // exit as fast as possible if command line asked for help. The message has been printed by parseOptions().
     if( m_optionsMap.count( "help" ) )
     {
         return 1;
@@ -207,7 +208,7 @@ int WQt4Gui::run()
     if( m_optionsMap.count("input") )
     {
         //
-        // WE KNOW THAT THIS IS KIND OF A HACK. Iis is only provided to prevent naive users from having trouble.
+        // WE KNOW THAT THIS IS KIND OF A HACK. It is only provided to prevent naive users from having trouble.
         //
         bool allowOnlyOneFiberDataSet = false;
         bool doubleFibersFound = false; // have we detected the multiple loading of fibers?
@@ -279,9 +280,11 @@ void WQt4Gui::slotUpdateTextureSorter()
     QCoreApplication::postEvent( m_mainWindow->getControlPanel(), new WUpdateTextureSorterEvent() );
 }
 
-void WQt4Gui::slotAddLog( const WLogEntry& /*entry*/ )
+void WQt4Gui::slotAddLog( const WLogEntry& entry )
 {
     // TODO(rfrohl): create a new event for this and insert it into event queue
+    //WUpdateStatusBarEvent* event = new WUpdateStatusBarEvent( entry );
+    QCoreApplication::postEvent( m_mainWindow->statusBar(), new WUpdateStatusBarEvent( entry ) );
 }
 
 void WQt4Gui::slotAddDatasetOrModuleToTree( boost::shared_ptr< WModule > module )

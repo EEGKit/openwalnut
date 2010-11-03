@@ -66,4 +66,7 @@
 // when a module connection got closed.
 #define WQT_MODULE_DISCONNECT_EVENT QEvent::User + 11
 
+// when a entry is send to the status bar
+#define WQT_UPDATE_STATUS_BAR_EVENT QEvent::User + 12
+
 #endif  // WEVENTTYPES_H

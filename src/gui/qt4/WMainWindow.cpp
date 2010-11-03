@@ -64,6 +64,7 @@
 #include "WQtCustomDockWidget.h"
 #include "WQtGLWidget.h"
 #include "WQtNavGLWidget.h"
+#include "WQtStatusBar.h"
 
 #include "WMainWindow.h"
 
@@ -256,6 +257,10 @@ void WMainWindow::setupGUI()
             }
         }
     }
+
+    // Add staus bar
+    WQtStatusBar* statusBar = new WQtStatusBar();
+    setStatusBar( statusBar );
 }
 
 void WMainWindow::setupPermanentToolBar()
