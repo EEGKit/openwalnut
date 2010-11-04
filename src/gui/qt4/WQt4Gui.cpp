@@ -284,7 +284,7 @@ void WQt4Gui::slotAddLog( const WLogEntry& entry )
 {
     // TODO(rfrohl): create a new event for this and insert it into event queue
     //WUpdateStatusBarEvent* event = new WUpdateStatusBarEvent( entry );
-    QCoreApplication::postEvent( m_mainWindow->statusBar(), new WUpdateStatusBarEvent( entry ) );
+    QCoreApplication::postEvent( m_mainWindow->getStatusBar(), new WUpdateStatusBarEvent( entry ) );
 }
 
 void WQt4Gui::slotAddDatasetOrModuleToTree( boost::shared_ptr< WModule > module )

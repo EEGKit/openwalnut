@@ -47,6 +47,7 @@
 #include "WQtConfigWidget.h"
 #include "WQtCustomDockWidget.h"
 #include "WQtGLWidget.h"
+#include "WQtStatusBar.h"
 #include "WQtNavGLWidget.h"
 #include "WQtToolBar.h"
 #include "controlPanel/WQtControlPanel.h"
@@ -161,6 +162,13 @@ public:
      * \param toolbar the toolbar to set. If NULL, the toolbar gets reset.
      */
     void setCompatiblesToolbar( WQtCombinerToolbar* toolbar = NULL );
+
+    /**
+     * Returns the status bar used for error/info notification
+     *
+     * \return status bar pointer
+     */
+    WQtStatusBar* getStatusBar() const;
 
 protected:
 
@@ -317,6 +325,11 @@ private:
     boost::shared_ptr< WQtNavGLWidget > m_navCoronal; //!< the coronal view widget GL widget of the GUI
     boost::shared_ptr< WQtNavGLWidget > m_navSagittal; //!< the sgittal view widget GL widget of the GUI
     QDockWidget* m_dummyWidget; //!< The dummywidget serves as spacer in the dockwidget area;
+
+    /**
+     * The status bar used for error/info feedback and so on.
+     */
+    WQtStatusBar* m_statusBar;
 
     /**
      * shared pointer for the configuration widget

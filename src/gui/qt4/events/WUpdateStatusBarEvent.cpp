@@ -38,6 +38,6 @@ WUpdateStatusBarEvent::~WUpdateStatusBarEvent()
 
 const WLogEntry& WUpdateStatusBarEvent::getEntry() const
 {
-    return m_entry
+    return m_entry;
 }
 

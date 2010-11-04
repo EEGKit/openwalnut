@@ -38,7 +38,9 @@ class WQtStatusIcon : public QWidget
         {
         }
 
-        ~WQtStatusIcon();
+        ~WQtStatusIcon()
+        {
+        }
 
         void setColor( QColor color )
         {

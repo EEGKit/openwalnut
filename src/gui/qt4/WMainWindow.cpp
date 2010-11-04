@@ -259,8 +259,8 @@ void WMainWindow::setupGUI()
     }
 
     // Add staus bar
-    WQtStatusBar* statusBar = new WQtStatusBar();
-    setStatusBar( statusBar );
+    m_statusBar = new WQtStatusBar();
+    setStatusBar( m_statusBar );
 }
 
 void WMainWindow::setupPermanentToolBar()
@@ -1011,5 +1011,10 @@ void WMainWindow::openConfigDialog()
     m_configWidget = boost::shared_ptr< WQtConfigWidget >( new WQtConfigWidget );
 
     m_configWidget->initAndShow();
+}
+
+WQtStatusBar* WMainWindow::getStatusBar() const
+{
+    return m_statusBar;
 }
 

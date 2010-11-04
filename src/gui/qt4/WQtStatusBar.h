@@ -27,6 +27,7 @@
 
 #include <QtGui/QStatusBar>
 #include <QtGui/QMenu>
+#include <QtGui/QLabel>
 
 #include "guiElements/WQtStatusIcon.h"
 #include "events/WUpdateStatusBarEvent.h"
