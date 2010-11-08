@@ -24,9 +24,13 @@
 
 #include <QtGui/QLabel>
 
+#include "events/WLogEvent.h"
 #include "events/WEventTypes.h"
 
 #include "WQtStatusBar.h"
+
+// TESTING
+#include <iostream>
 
 // public
 
@@ -35,10 +39,13 @@ WQtStatusBar::WQtStatusBar( QWidget* parent ):
 {
     //QHBoxLayout* layout = new QHBoxLayout( this );
     WQtStatusIcon* m_statusIcon = new WQtStatusIcon( Qt::green, this );
-    this->addPermanentWidget( m_statusIcon, 0 );
+    //std::cout << "c: " << this << std::endl;
+    //std::cout << m_statusIcon << std::endl;
+    m_statusIcon->setMaximumSize( QSize( 17, 17 ) );
+    this->addPermanentWidget( m_statusIcon, 1 );
     m_label = new QLabel( this );
     m_label->setText("OpenWalnut");
-    this->addPermanentWidget( m_label, 1 );
+    this->addPermanentWidget( m_label, 2 );
 }
 
 WQtStatusBar::~WQtStatusBar()
@@ -51,11 +58,15 @@ WQtStatusBar::~WQtStatusBar()
 
 bool WQtStatusBar::event( QEvent* event )
 {
+    //std::cout << "e: " << this << std::endl;
+    //std::cout << m_statusIcon << std::endl;
     bool returnValue = false;
-    if( event->type() == WQT_UPDATE_STATUS_BAR_EVENT )
+    if( event->type() == WQT_LOG_EVENT )
     {
+        if( !m_statusIcon )
+            return returnValue;
         returnValue = true;
-        WUpdateStatusBarEvent* updateEvent = dynamic_cast< WUpdateStatusBarEvent* >( event );
+        WLogEvent* updateEvent = dynamic_cast< WLogEvent* >( event );
         //WAssert( updateEvent, "Error with WUpdateStatusBarEvent" ); // TODO check this, change error message
         const WLogEntry& entry = updateEvent->getEntry();
 

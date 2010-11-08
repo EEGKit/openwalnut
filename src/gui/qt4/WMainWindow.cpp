@@ -127,6 +127,12 @@ void WMainWindow::setupGUI()
         m_controlPanel->setVisible( !controlPanelInvisibleByDefault );
     }
 
+    // Add status bar
+    //std::cout << "statusbar" << std::endl;
+    m_statusBar = new WQtStatusBar();
+    //std::cout << "statusbar" << std::endl;
+    setStatusBar( m_statusBar );
+
     // undock the control panel by default?
     bool controlPanelFloatingByDefault = false;
     if( WPreferences::getPreference( "qt4gui.dsbFloatingByDefault", &controlPanelFloatingByDefault ) )
@@ -257,10 +263,6 @@ void WMainWindow::setupGUI()
             }
         }
     }
-
-    // Add staus bar
-    m_statusBar = new WQtStatusBar();
-    setStatusBar( m_statusBar );
 }
 
 void WMainWindow::setupPermanentToolBar()

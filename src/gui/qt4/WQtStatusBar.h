@@ -30,8 +30,12 @@
 #include <QtGui/QLabel>
 
 #include "guiElements/WQtStatusIcon.h"
-#include "events/WUpdateStatusBarEvent.h"
 
+/**
+ * The status bar at the bottom of the main window, displays messages and
+ * with the help of a colored circle ifany errors or warnings occure during the
+ * use of OpenWalnut
+ **/
 class WQtStatusBar : public QStatusBar
 {
     Q_OBJECT
@@ -40,33 +44,35 @@ class WQtStatusBar : public QStatusBar
 
     public:
         /**
-         *
+         * constructor
          **/
         WQtStatusBar( QWidget* parent = 0 );
 
         /**
-         *
+         * destructor
          **/
         ~WQtStatusBar();
 
         /**
          *
          **/
-        QMenu* createPopupMenu();
+        //QMenu* createPopupMenu();
 
     protected:
-        //void contextMenuEvent( QContextMenuEvent * event );
+        /**
+         * reimplementing QStatusBar::event()
+         **/
         virtual bool event( QEvent* event );
 
     private:
 
         /**
-         *
+         * pointer to the "trafic light" element in the bottom left corner
          **/
         WQtStatusIcon* m_statusIcon;
 
         /**
-         *
+         * pointer to the label in the status bar, displaying messages
          **/
         QLabel* m_label;
 };

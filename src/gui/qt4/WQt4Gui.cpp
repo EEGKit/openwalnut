@@ -53,7 +53,7 @@
 #include "events/WOpenCustomDockWidgetEvent.h"
 #include "events/WRoiAssocEvent.h"
 #include "events/WRoiRemoveEvent.h"
-#include "events/WUpdateStatusBarEvent.h"
+#include "events/WLogEvent.h"
 #include "events/WUpdateTextureSorterEvent.h"
 
 #include "WQt4Gui.h"
@@ -284,7 +284,10 @@ void WQt4Gui::slotAddLog( const WLogEntry& entry )
 {
     // TODO(rfrohl): create a new event for this and insert it into event queue
     //WUpdateStatusBarEvent* event = new WUpdateStatusBarEvent( entry );
-    QCoreApplication::postEvent( m_mainWindow->getStatusBar(), new WUpdateStatusBarEvent( entry ) );
+    if( m_mainWindow && m_mainWindow->getStatusBar() )
+    {
+        //QCoreApplication::postEvent( m_mainWindow->getStatusBar(), new WLogEvent( entry ) );
+    }
 }
 
 void WQt4Gui::slotAddDatasetOrModuleToTree( boost::shared_ptr< WModule > module )
