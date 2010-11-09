@@ -49,7 +49,7 @@ class WQtStatusIcon : public QWidget
              QWidget( parent )
         {
             m_color = color ;
-            //std::cout << this << std::endl << &m_color << std::endl;
+            std::cout << "Constructor:" << this << std::endl << &m_color << std::endl;
         }
 
 
@@ -73,7 +73,7 @@ class WQtStatusIcon : public QWidget
          **/
         QColor getColor() const
         {
-            //std::cout << this << std::endl << &m_color << std::endl;
+            std::cout << this << std::endl << &m_color << std::endl;
             return m_color;
         }
 

@@ -134,7 +134,6 @@ int WQt4Gui::run()
     }
 
     // init logger
-    m_loggerConnection = WLogger::getLogger()->subscribeSignal( WLogger::AddLog, boost::bind( &WQt4Gui::slotAddLog, this, _1 ) );
     wlog::info( "GUI" ) << "Bringing up GUI";
 
     // the call path of the application
@@ -173,6 +172,9 @@ int WQt4Gui::run()
     WDataHandler::getDefaultSubject()->getListChangeCondition()->subscribeSignal( newDatasetSignal );
 
     // bind the GUI's slot with the ready signal
+
+    // Log event
+    m_loggerConnection = WLogger::getLogger()->subscribeSignal( WLogger::AddLog, boost::bind( &WQt4Gui::slotAddLog, this, _1 ) );
 
     // Assoc Event
     t_ModuleGenericSignalHandlerType assocSignal = boost::bind( &WQt4Gui::slotAddDatasetOrModuleToTree, this, _1 );
@@ -284,9 +286,9 @@ void WQt4Gui::slotAddLog( const WLogEntry& entry )
 {
     // TODO(rfrohl): create a new event for this and insert it into event queue
     //WUpdateStatusBarEvent* event = new WUpdateStatusBarEvent( entry );
-    if( m_mainWindow && m_mainWindow->getStatusBar() )
+//    if( m_mainWindow && m_mainWindow->getStatusBar() )
     {
-        //QCoreApplication::postEvent( m_mainWindow->getStatusBar(), new WLogEvent( entry ) );
+        QCoreApplication::postEvent( m_mainWindow->getStatusBar(), new WLogEvent( entry ) );
     }
 }
 

@@ -35,10 +35,10 @@
 // public
 
 WQtStatusBar::WQtStatusBar( QWidget* parent ):
-    QStatusBar( parent )
+    QStatusBar( parent ),
+    m_statusIcon( new WQtStatusIcon( Qt::green, this ) )
 {
     //QHBoxLayout* layout = new QHBoxLayout( this );
-    WQtStatusIcon* m_statusIcon = new WQtStatusIcon( Qt::green, this );
     //std::cout << "c: " << this << std::endl;
     //std::cout << m_statusIcon << std::endl;
     m_statusIcon->setMaximumSize( QSize( 17, 17 ) );

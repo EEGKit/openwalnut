@@ -22,38 +22,22 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WUPDATESTATUSBAREVENT_h
-#define WUPDATESTATUSBAREVENT_h
+#include "WEventTypes.h"
 
-#include <QtCore/QEvent>
+#include "WLogEvent.h"
 
-#include "../../../common/WLogEntry.h"
-
-class WUpdateStatusBarEvent : public QEvent
+WLogEvent::WLogEvent( const WLogEntry& entry ) :
+    QEvent( static_cast< QEvent::Type >( WQT_LOG_EVENT ) ),
+    m_entry( entry )
 {
-    public:
-        /**
-         *
-         **/
-        WUpdateStatusBarEvent( const WLogEntry& entry );
+}
 
-        /**
-         *
-         **/
-        ~WUpdateStatusBarEvent();
+WLogEvent::~WLogEvent()
+{
+}
 
-        /**
-         *
-         **/
-        const WLogEntry& getEntry() const;
-
-    protected:
-    private:
-        /**
-         * The associated WLogEntry
-         **/
-        const WLogEntry& m_entry;
-};
-
-#endif  // WUPDATESTATUSBAREVENT_h
+const WLogEntry& WLogEvent::getEntry() const
+{
+    return m_entry;
+}
 
