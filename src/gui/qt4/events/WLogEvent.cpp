@@ -27,8 +27,8 @@
 #include "WLogEvent.h"
 
 WLogEvent::WLogEvent( const WLogEntry& entry ) :
-    QEvent( static_cast< QEvent::Type >( WQT_LOG_EVENT ) ),
-    m_entry( entry )
+    m_entry( entry ),
+    QEvent( static_cast< QEvent::Type >( WQT_LOG_EVENT ) )
 {
 }
 

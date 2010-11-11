@@ -39,8 +39,6 @@ WQtStatusBar::WQtStatusBar( QWidget* parent ):
     m_statusIcon( new WQtStatusIcon( Qt::green, this ) )
 {
     //QHBoxLayout* layout = new QHBoxLayout( this );
-    //std::cout << "c: " << this << std::endl;
-    //std::cout << m_statusIcon << std::endl;
     m_statusIcon->setMaximumSize( QSize( 17, 17 ) );
     this->addPermanentWidget( m_statusIcon, 1 );
     m_label = new QLabel( this );
@@ -58,47 +56,54 @@ WQtStatusBar::~WQtStatusBar()
 
 bool WQtStatusBar::event( QEvent* event )
 {
-    //std::cout << "e: " << this << std::endl;
-    //std::cout << m_statusIcon << std::endl;
     bool returnValue = false;
     if( event->type() == WQT_LOG_EVENT )
     {
-        if( !m_statusIcon )
-            return returnValue;
+        //std::cout << "log event\n";
         returnValue = true;
         WLogEvent* updateEvent = dynamic_cast< WLogEvent* >( event );
-        //WAssert( updateEvent, "Error with WUpdateStatusBarEvent" ); // TODO check this, change error message
         const WLogEntry& entry = updateEvent->getEntry();
-
-        QColor color = m_statusIcon->getColor();
-        if( entry.getLogLevel() == LL_INFO )
+        if( updateEvent && entry.getLogLevel() >= LL_DEBUG && entry.getLogLevel() <= LL_ERROR) // TODO this is crap, event still bugs out
         {
-            if( color != Qt::red && color != QColor( 255, 140, 0 ) )
+            //WAssert( updateEvent, "Error with WUpdateStatusBarEvent" ); // TODO check this, change error message
+            const WLogEntry &entry = WLogEntry( "now", "yet another test message", LL_ERROR, "WLogEntryTest", false ); // TODO remove, helps to stop the segfaults and demonstrates functionality of the code below
+            //std::cout << entry.getSource() << std::endl;
+
+            QString msg = QString::fromStdString( entry.getSource() );
+            msg += ": ";
+            msg += QString::fromStdString( entry.getMessage() );
+
+            //std::cout << updateEvent->getEntry().getSource() << std::endl;
+
+            QColor color = m_statusIcon->getColor();
+            if( entry.getLogLevel() == LL_INFO )
             {
-                m_statusIcon->setColor( Qt::green );
+                if( color != Qt::red && color != QColor( 255, 140, 0 ) )
+                {
+                    m_statusIcon->setColor( Qt::green );
+                }
+            }
+
+            if( entry.getLogLevel() == LL_WARNING )
+            {
+                if( color != Qt::red )
+                {
+                    // 'Dark Orange' = 255, 140, 0
+                    m_statusIcon->setColor( QColor( 255, 140, 0 ) );
+                    m_label->setText( msg );
+                }
+            }
+
+            if( entry.getLogLevel() == LL_ERROR )
+            {
+                m_statusIcon->setColor( Qt::red );
+                m_label->setText( msg );
             }
         }
-
-        if( entry.getLogLevel() == LL_WARNING )
-        {
-            if( color != Qt::red )
-            {
-                // 'Dark Orange' = 255, 140, 0
-                m_statusIcon->setColor( QColor( 255, 140, 0 ) );
-            }
-        }
-
-        if( entry.getLogLevel() == LL_ERROR )
-        {
-            m_statusIcon->setColor( Qt::red );
-        }
-        // TODO set message
+        /*std::cout << "debug: " << LL_DEBUG << "\ninfo: " << LL_INFO << "\nwarning: " << LL_WARNING << "\nerror: " << LL_ERROR << "\n";
+        std::cout << "loglevel: " << entry.getLogLevel() << std::endl;
+    std::cout << "eventend \n";*/
     }
     return returnValue;
 }
-
-/*QMenu* WQtStatusBar::createPopupMenu()
-{
-    return new QMenu();
-}*/
 

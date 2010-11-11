@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WLOGEVENT_h
-#define WLOGEVENT_h
+#ifndef WLOGEVENT_H
+#define WLOGEVENT_H
 
 #include <QtCore/QEvent>
 
@@ -55,5 +55,5 @@ class WLogEvent : public QEvent
         const WLogEntry& m_entry;
 };
 
-#endif  // WLOGEVENT_h
+#endif  // WLOGEVENT_H
 

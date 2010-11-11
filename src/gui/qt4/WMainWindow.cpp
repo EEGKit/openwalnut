@@ -128,9 +128,7 @@ void WMainWindow::setupGUI()
     }
 
     // Add status bar
-    //std::cout << "statusbar" << std::endl;
     m_statusBar = new WQtStatusBar();
-    //std::cout << "statusbar" << std::endl;
     setStatusBar( m_statusBar );
 
     // undock the control panel by default?

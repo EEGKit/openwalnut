@@ -49,7 +49,6 @@ class WQtStatusIcon : public QWidget
              QWidget( parent )
         {
             m_color = color ;
-            std::cout << "Constructor:" << this << std::endl << &m_color << std::endl;
         }
 
 
@@ -64,7 +63,6 @@ class WQtStatusIcon : public QWidget
          **/
         void setColor( QColor color )
         {
-            //std::cout << this << std::endl << &m_color << std::endl;
             m_color = color;
         }
 
@@ -73,7 +71,6 @@ class WQtStatusIcon : public QWidget
          **/
         QColor getColor() const
         {
-            std::cout << this << std::endl << &m_color << std::endl;
             return m_color;
         }
 
@@ -86,7 +83,7 @@ class WQtStatusIcon : public QWidget
             QPainter painter( this );
             painter.setRenderHint( QPainter::Antialiasing );
             painter.setBrush( QBrush( m_color ) );
-            painter.drawEllipse( 2, 2, 14, 14 );
+            painter.drawEllipse( 1, 1, width()-2, height()-2 );
         }
 
     private:
