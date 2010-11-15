@@ -1,6 +1,10 @@
 // loopSubD.cpp: implementation of the loopSubD class.
 //
 //////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// these lines where created by a python script, do not edit
+#include "_OWmodule_lic_PCH.h"
 
 #include "loopSubD.h"
 #include "triangleMesh.h"

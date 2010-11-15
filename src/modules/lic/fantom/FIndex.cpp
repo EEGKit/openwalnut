@@ -12,6 +12,8 @@
 // Version:   $Revision: 1.6 $
 //
 //---------------------------------------------------------------------------
+// these lines where created by a python script, do not edit
+#include "_OWmodule_lic_PCH.h"
 
 #include "FIndex.h"
 

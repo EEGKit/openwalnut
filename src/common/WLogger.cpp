@@ -34,8 +34,8 @@
 #include "WLogger.h"
 
 /**
- * Used for program wide access to the logger.
- */
+* Used for program wide access to the logger.
+*/
 WLogger* logger = NULL;
 
 void WLogger::startup( std::ostream& output, LogLevel level )  // NOLINT - we need this non-const ref here
@@ -47,7 +47,7 @@ void WLogger::startup( std::ostream& output, LogLevel level )  // NOLINT - we ne
 }
 
 WLogger::WLogger( std::ostream& output, LogLevel level ):       // NOLINT - we need this non-const ref here
-    m_outputs()
+m_outputs()
 {
     m_outputs.push_back( WLogStream::SharedPtr( new WLogStream( output, level ) ) );
 
@@ -113,3 +113,7 @@ void WLogger::addStream( WLogStream::SharedPtr s )
     m_outputs.push_back( s );
 }
 
+wlog::WStreamedLogger::Buffer::~Buffer()
+{
+    WLogger::getLogger()->addLogMessage( m_logString.str(), m_source, m_level );
+}

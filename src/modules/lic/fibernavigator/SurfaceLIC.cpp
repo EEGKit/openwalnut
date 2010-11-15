@@ -4,6 +4,10 @@
  *  Created on: 17.11.2008
  *      Author: ralph
  */
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// these lines where created by a python script, do not edit
+#include "_OWmodule_lic_PCH.h"
 
 #include <exception>
 
@@ -116,7 +120,6 @@ void SurfaceLIC::execute()
     if ( streamline ) delete streamline;
 }
 
-//---------------------------------------------------------------------------
 
 void SurfaceLIC::calculatePixelLuminance(const FIndex& cellId)
 {

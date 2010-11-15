@@ -1,3 +1,8 @@
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// these lines where created by a python script, do not edit
+#include "_OWmodule_lic_PCH.h"
+
 #include "FMultiIndex.h"
 
 std::ostream& operator<<(std::ostream& os, const FMultiIndex& mi)

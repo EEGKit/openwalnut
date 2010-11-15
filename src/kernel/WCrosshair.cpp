@@ -22,6 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
+
 #include "WCrosshair.h"
 
 wmath::WPosition WCrosshair::getPosition()

@@ -1,6 +1,10 @@
 // Vector.cpp: implementation of the Vector class.
 //
 //////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// these lines where created by a python script, do not edit
+#include "_OWmodule_lic_PCH.h"
 
 #include "Vector.h"
 

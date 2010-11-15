@@ -34,6 +34,7 @@
 #include "../../kernel/WModule.h"
 #include "../../kernel/WModuleInputData.h"
 #include "../../kernel/WModuleOutputData.h"
+#include "../../dataHandler/datastructures/WFiberCluster.h"
 
 /**
  * This module writes the tracts of either a fiber cluster or directly out of a

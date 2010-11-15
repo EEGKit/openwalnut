@@ -21,6 +21,8 @@
 // along with OpenWalnut. If not, see <http://www.gnu.org/licenses/>.
 //
 //---------------------------------------------------------------------------
+// these lines where created by a python script, do not edit
+#include "_OWmodule_voxelizer_PCH.h"
 
 #include <algorithm>
 #include <iostream>
@@ -50,7 +52,7 @@ boost::shared_ptr< WDataSetScalar > WCenterlineParameterization::getDataSet()
     return boost::shared_ptr< WDataSetScalar >( new WDataSetScalar( valueSet, m_grid ) );
 }
 
-namespace
+namespace dummyNS
 {
     size_t index( int x, int y, int z, boost::shared_ptr< WGridRegular3D > grid )
     {
@@ -117,7 +119,7 @@ void WCenterlineParameterization::parameterizeVoxel( const wmath::WValue< int >&
                                                       const wmath::WPosition& /*end*/ )
 {
     // update a 27 neighbourhood
-    Neighbourhood n = neighbourhood( voxel[0], voxel[1], voxel[2], m_grid );
+    dummyNS::Neighbourhood n = dummyNS::neighbourhood( voxel[0], voxel[1], voxel[2], m_grid );
 
     // now update the neighbourhood
     for ( unsigned int i = 0; i < 27; ++i )
@@ -187,7 +189,7 @@ void WCenterlineParameterization::finished()
         {
             for ( size_t z = 0; z < m_grid->getNbCoordsZ(); ++z )
             {
-                size_t idx = index( x, y, z, m_grid );
+                size_t idx = dummyNS::index( x, y, z, m_grid );
 
                 // copy
                 m_paramFinalValues[ idx ] = m_paramValues[ idx ];
@@ -198,7 +200,7 @@ void WCenterlineParameterization::finished()
                     m_paramSetValues[ idx ] = true;
 
                     // find maximum in neighbourhood
-                    Neighbourhood n = neighbourhood( x, y, z, m_grid );
+                    dummyNS::Neighbourhood n = dummyNS::neighbourhood( x, y, z, m_grid );
 
                     double maxVal = m_paramValues[ n.indices[ 0 ] ];
                     for ( unsigned int i = 1; i < 27; ++i )

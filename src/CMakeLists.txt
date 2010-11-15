@@ -13,6 +13,7 @@ ENDIF()
 LIST( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../tools/CMakeModules )
 # include custom CMake commands like assert
 INCLUDE( ${PROJECT_SOURCE_DIR}/../tools/CMakeModules/Utils.cmake )
+INCLUDE( ${PROJECT_SOURCE_DIR}/../tools/CMakeModules/OnlyOneBuildFile.cmake )
 
 # mimic layout of install dir for build:
 #----------------------------------------
@@ -34,6 +35,39 @@ IF( CMAKE_GENERATOR MATCHES "Visual Studio" )
   INCLUDE_DIRECTORIES( "${PROJECT_SOURCE_DIR}/common/platformDependent/visualStudio/" )
 ENDIF()
 
+OPTION( OW_BUILD_AS_ONE_BIG_FILE "Build every library as one big cpp" OFF )
+INCLUDE( FindPythonInterp )
+
+IF( PYTHONINTERP_FOUND )
+    OPTION( OW_BUILD_WITH_PCH "Build every library with usage of precompiled headers" OFF )
+    SET(PCH_INCLUDE_FILE "${PROJECT_SOURCE_DIR}/../tools/CMakeModules/PCHSupport_${CMAKE_MAJOR_VERSION}${CMAKE_MINOR_VERSION}.cmake")
+    IF(NOT EXISTS "${PCH_INCLUDE_FILE}")
+        IF(OW_BUILD_WITH_PCH)
+            MESSAGE(FATAL_ERROR "The use of precompiled headers to build OpenWalnut is not supported with this version of CMake. Please set the OW_BUILD_WITH_PCH option to OFF.")
+        ENDIF(OW_BUILD_WITH_PCH)
+    ELSE(NOT EXISTS "${PCH_INCLUDE_FILE}")
+        INCLUDE(${PCH_INCLUDE_FILE})
+    ENDIF(NOT EXISTS "${PCH_INCLUDE_FILE}")
+ENDIF( PYTHONINTERP_FOUND )
+
+# define libnames with small suffix letters because GCC does not cope with -DOWLibname_Exports
+IF( OW_BUILD_WITH_PCH AND NOT OW_BUILD_AS_ONE_BIG_FILE AND CMAKE_COMPILER_IS_GNUCXX )
+    SET( OWCommonName "_OWcommon" )
+    SET( OWDatahandlerName "_OWdataHandler" )
+    SET( OWgeName "_OWge" )
+    SET( OWguiName "_OWgui" )
+    SET( OWguiqt4Name "_OWguiqt4" )
+    SET( OWKernelName "_OWkernel" )
+    SET( OWmodulesPrefix "_OWmodule" )
+ELSE( OW_BUILD_WITH_PCH AND NOT OW_BUILD_AS_ONE_BIG_FILE AND CMAKE_COMPILER_IS_GNUCXX )
+    SET( OWCommonName "OWcommon" )
+    SET( OWDatahandlerName "OWdataHandler" )
+    SET( OWgeName "OWge" )
+    SET( OWguiName "OWgui" )
+    SET( OWguiqt4Name "OWguiqt4" )
+    SET( OWKernelName "OWkernel" )
+    SET( OWmodulesPrefix "OWmodule" )
+ENDIF( OW_BUILD_WITH_PCH AND NOT OW_BUILD_AS_ONE_BIG_FILE AND CMAKE_COMPILER_IS_GNUCXX )
 
 # Package dependencies:
 #----------------------
@@ -202,7 +236,7 @@ IF( CMAKE_GENERATOR MATCHES "Visual Studio" )
     SET( CMAKE_SHARED_LINKER_FLAGS " /STACK:10000000 /machine:I386 /NODEFAULTLIB:${EXCLUDE_LIBRARIES}"  CACHE STRING "" FORCE )
     SET( CMAKE_EXE_LINKER_FLAGS " /STACK:10000000 /machine:I386 /NODEFAULTLIB:${EXCLUDE_LIBRARIES}"  CACHE STRING "" FORCE )
     SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D \"NOMINMAX\"" )
-    SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP" )
+    SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /wd4101" )
     SET( CMAKE_DEBUG_POSTFIX "d" CACHE STRING "add a postfix, usually d on windows" )
 ELSE()
     # Unfortunately libstdc++'s header files don't work with mingw in ansi mode (basically libstdc++'s fault)
@@ -252,7 +286,7 @@ ENDIF()
 
 # finally, build walnut
 ADD_EXECUTABLE( walnut OpenWalnut.cpp version.h )
-TARGET_LINK_LIBRARIES( walnut OWkernel OWdataHandler OWgui OWguiqt4 OWcommon OWge ${Boost_LIBRARIES} )
+TARGET_LINK_LIBRARIES( walnut ${OWKernelName} ${OWDatahandlerName} ${OWguiName} ${OWguiqt4Name} ${OWCommonName} ${OWgeName} ${Boost_LIBRARIES} )
 
 IF(MSVC_IDE)
     SET_TARGET_PROPERTIES( walnut PROPERTIES DEBUG_POSTFIX "d")
