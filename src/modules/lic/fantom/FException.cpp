@@ -8,8 +8,6 @@
 // Version:   $Revision: 1.9 $
 //
 //---------------------------------------------------------------------------
-// these lines where created by a python script, do not edit
-#include "_OWmodule_lic_PCH.h"
 
 #include "FException.h"
 #include <iostream>

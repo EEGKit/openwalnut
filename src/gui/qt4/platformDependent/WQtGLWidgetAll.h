@@ -45,7 +45,13 @@ class WColor;
  * \ingroup gui
  */
 class WQtGLWidgetAll
+#ifndef _MSC_VER
     : public QGLWidget
+#else
+    : public QWidget
+#endif
+// Note: to make OW Work in Win the Widget must not be derived from QGLWidget because QGLWidget initializes Opengl which conflicts
+// with the win opengl driver and the following osg graphic initialization causing OW to crash in Win
 {
 public:
     /**

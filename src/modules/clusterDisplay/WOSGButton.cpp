@@ -21,8 +21,6 @@
 // along with OpenWalnut. If not, see <http://www.gnu.org/licenses/>.
 //
 //---------------------------------------------------------------------------
-// these lines where created by a python script, do not edit
-#include "_OWmodule_clusterDisplay_PCH.h"
 
 #include <string>
 

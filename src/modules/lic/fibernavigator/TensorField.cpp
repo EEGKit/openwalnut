@@ -7,8 +7,6 @@
  */
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-// these lines where created by a python script, do not edit
-#include "_OWmodule_lic_PCH.h"
 
 #include <boost/shared_ptr.hpp>
 

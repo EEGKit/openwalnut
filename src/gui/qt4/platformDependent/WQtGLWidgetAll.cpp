@@ -47,7 +47,12 @@ typedef osgViewer::GraphicsWindowWin32::WindowData WindowData;
 
 
 WQtGLWidgetAll::WQtGLWidgetAll( std::string nameOfViewer, QWidget* parent, WGECamera::ProjectionMode projectionMode, const QGLWidget * shareWidget )
-    : QGLWidget( parent, shareWidget ),
+#ifndef _MSC_VER
+    :QGLWidget( parent, shareWidget ),
+#else
+    :QWidget( parent ),
+#endif
+
       m_nameOfViewer( nameOfViewer ),
       m_recommendedSize()
 {
