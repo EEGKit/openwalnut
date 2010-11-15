@@ -201,37 +201,54 @@ void WMSpatialDerivation::derive( boost::shared_ptr< WGridRegular3D > grid, boos
     size_t nY = grid->getNbCoordsY();
     size_t nZ = grid->getNbCoordsZ();
 
-    std::vector< double > vectors( 3 * nX * nY * nZ, 0.0 );
+    boost::shared_ptr< std::vector< double > > vectors = boost::shared_ptr< std::vector< double > >( new std::vector< double >( 3 * nX * nY * nZ, 0.0 ) );
 
     // iterate field
-    for( size_t z = 1; z < nZ - 1; z++ )
+    float xp;
+    float xm;
+    float yp;
+    float ym;
+    float zp;
+    float zm;
+
+    float vx;
+    float vy;
+    float vz;
+
+    float sqsum;
+    float len;
+    float scal;
+    // Note by ledig: move the var definition out of the inner loop should drasticly improve performance
+    size_t x, y, z;
+
+    for( z = 1; z < nZ - 1; z++ )
     {
-        for( size_t y = 1; y < nY - 1; y++ )
+        for( y = 1; y < nY - 1; y++ )
         {
-            for( size_t x = 1; x < nX - 1; x++ )
+            for( x = 1; x < nX - 1; x++ )
             {
                 // TODO(ebaum): improve performance
                 // this loop should be quite slow but it works for now. Sorry.
-                float xp = values->getScalar( getId( nX, nY, nZ, x + 1, y, z ) );
-                float xm = values->getScalar( getId( nX, nY, nZ, x - 1, y, z ) );
-                float yp = values->getScalar( getId( nX, nY, nZ, x, y + 1, z ) );
-                float ym = values->getScalar( getId( nX, nY, nZ, x, y - 1, z ) );
-                float zp = values->getScalar( getId( nX, nY, nZ, x, y, z + 1 ) );
-                float zm = values->getScalar( getId( nX, nY, nZ, x, y, z - 1 ) );
+                xp = values->getScalar( getId( nX, nY, nZ, x + 1, y, z ) );
+                xm = values->getScalar( getId( nX, nY, nZ, x - 1, y, z ) );
+                yp = values->getScalar( getId( nX, nY, nZ, x, y + 1, z ) );
+                ym = values->getScalar( getId( nX, nY, nZ, x, y - 1, z ) );
+                zp = values->getScalar( getId( nX, nY, nZ, x, y, z + 1 ) );
+                zm = values->getScalar( getId( nX, nY, nZ, x, y, z - 1 ) );
 
-                float vx = xp - xm;
-                float vy = yp - ym;
-                float vz = zp - zm;
+                vx = xp - xm;
+                vy = yp - ym;
+                vz = zp - zm;
 
-                float sqsum = vx * vx + vy * vy + vz * vz;
-                float len = sqrt( sqsum );
-                float scal = m_normalize->get( true ) ? 1.0 / len : 1.0;
+                sqsum = vx * vx + vy * vy + vz * vz;
+                len = sqrt( sqsum );
+                scal = m_normalize->get( true ) ? 1.0 / len : 1.0;
                 if ( len == 0.0 )
                     scal = 0.0;
 
-                vectors[ getId( nX, nY, nZ, x, y, z, 0, 3 ) ] = scal * vx;
-                vectors[ getId( nX, nY, nZ, x, y, z, 1, 3 ) ] = scal * vy;
-                vectors[ getId( nX, nY, nZ, x, y, z, 2, 3 ) ] = scal * vz;
+                vectors->at( getId( nX, nY, nZ, x, y, z, 0, 3 ) ) = scal * vx;
+                vectors->at( getId( nX, nY, nZ, x, y, z, 1, 3 ) ) = scal * vy;
+                vectors->at( getId( nX, nY, nZ, x, y, z, 2, 3 ) ) = scal * vz;
             }
         }
     }
