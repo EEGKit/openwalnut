@@ -74,7 +74,10 @@ private:
     /**
      * All the loaded shared libraries. Get freed on destruction. So do NOT free this instance while the libs are used.
      */
-    std::vector< WSharedLib > m_libs;
+    //std::vector< WSharedLib > m_libs;
+    // Note (ledig): this is for testing porpuse because a push_back invokes the copy of the WSharedLib and therefor a complete reload 
+    // of the shared lib, but its enough to have it once
+    std::vector< boost::shared_ptr< WSharedLib > > m_libs;
 
     /**
      * Load the module prototypes from the shared libraries from the specified directory. It traverses the subdirectories and searches there.
