@@ -25,7 +25,6 @@
 #ifndef WQTROITREEITEM_H
 #define WQTROITREEITEM_H
 
-#include <QtCore/QTimer>
 #include <QtGui/QProgressBar>
 #include <QtGui/QTreeWidgetItem>
 

@@ -27,7 +27,6 @@
 
 #include <QtGui/QTreeWidgetItem>
 #include <QtGui/QProgressBar>
-#include <QtCore/QTimer>
 
 #include "WQtTreeItem.h"
 #include "../../../kernel/WModule.h"
