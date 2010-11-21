@@ -66,7 +66,7 @@ bool WQtStatusBar::event( QEvent* event )
         if( updateEvent && entry.getLogLevel() >= LL_DEBUG && entry.getLogLevel() <= LL_ERROR) // TODO this is crap, event still bugs out
         {
             //WAssert( updateEvent, "Error with WUpdateStatusBarEvent" ); // TODO check this, change error message
-            const WLogEntry &entry = WLogEntry( "now", "yet another test message", LL_ERROR, "WLogEntryTest", false ); // TODO remove, helps to stop the segfaults and demonstrates functionality of the code below
+            //const WLogEntry &entry = WLogEntry( "now", "yet another test message", LL_ERROR, "WLogEntryTest", false ); // TODO remove, helps to stop the segfaults and demonstrates functionality of the code below
             //std::cout << entry.getSource() << std::endl;
 
             QString msg = QString::fromStdString( entry.getSource() );
@@ -104,6 +104,7 @@ bool WQtStatusBar::event( QEvent* event )
         std::cout << "loglevel: " << entry.getLogLevel() << std::endl;
     std::cout << "eventend \n";*/
     }
+    //return QObject::event( event )
     return returnValue;
 }
 

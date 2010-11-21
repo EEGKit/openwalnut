@@ -282,12 +282,9 @@ void WQt4Gui::slotUpdateTextureSorter()
     QCoreApplication::postEvent( m_mainWindow->getControlPanel(), new WUpdateTextureSorterEvent() );
 }
 
-void WQt4Gui::slotAddLog( const WLogEntry& /*entry*/ )
+void WQt4Gui::slotAddLog( const WLogEntry& entry )
 {
     // TODO(rfrohl): create a new event for this and insert it into event queue
-    //WUpdateStatusBarEvent* event = new WUpdateStatusBarEvent( entry );
-    const WLogEntry &entry = WLogEntry( "now", "msg", LL_ERROR, "WLogEntryTest", false );
-    //std::cout << "create source: " << entry.getSource() << std::endl;
     QCoreApplication::postEvent( m_mainWindow->getStatusBar(), new WLogEvent( entry ) );
 }
 

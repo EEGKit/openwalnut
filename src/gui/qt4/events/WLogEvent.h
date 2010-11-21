@@ -52,7 +52,7 @@ class WLogEvent : public QEvent
         /**
          * The associated WLogEntry
          **/
-        const WLogEntry& m_entry;
+        const WLogEntry m_entry;
 };
 
 #endif  // WLOGEVENT_H
