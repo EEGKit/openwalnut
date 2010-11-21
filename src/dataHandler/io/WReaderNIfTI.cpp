@@ -59,12 +59,17 @@ template< typename T > boost::shared_ptr< std::vector< T > > WReaderNIfTI::copyA
         const size_t vDim )
 {
     boost::shared_ptr< std::vector< T > > data = boost::shared_ptr< std::vector< T > >( new std::vector< T >( countVoxels * vDim ) );
+    unsigned int j;
+    T *dataAcces = &(*data.get())[0];
+    size_t iTimesVdim = 0;
     for( unsigned int i = 0; i < countVoxels; ++i )
     {
-        for ( unsigned int j = 0; j < vDim; ++j )
+        for ( j = 0; j < vDim; ++j )
         {
-            data->at(i * vDim + j) = dataArray[( j * countVoxels ) + i];
+            // i * vDim + j 
+            dataAcces[ iTimesVdim + j ] = dataArray[( j * countVoxels ) + i];
         }
+        iTimesVdim += vDim;
     }
     return data;
 }
