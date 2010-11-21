@@ -116,10 +116,44 @@ public:
         // Calculating this once simply ensures that it does not need to be recalculated in textures, histograms ...
         m_minimum = wlimits::MAX_DOUBLE;
         m_maximum = wlimits::MIN_DOUBLE;
-        for ( typename std::vector< T >::const_iterator iter = data->begin(); iter != data->end(); ++iter )
+/*
+        T val;
+        typename std::vector< T >::const_iterator endItr = data->end();
+        for ( typename std::vector< T >::const_iterator iter = data->begin(); iter != endItr; ++iter )
         {
-            m_minimum = m_minimum > *iter ? *iter : m_minimum;
-            m_maximum = m_maximum < *iter ? *iter : m_maximum;
+            val = *iter;
+            m_minimum = m_minimum > val ? val : m_minimum;
+            m_maximum = m_maximum < val ? val : m_maximum;
+        }
+*/
+        // proposed half loop version:
+        const std::vector< T > *dataarray = data.get();
+        size_t minInd = 0;
+        size_t maxInd = data->size() - 1;
+        size_t itr_len = maxInd - minInd + 1;
+        if ( itr_len % 2 == 1 )
+        {
+            m_minimum = wlimits::MAX_DOUBLE;
+            m_maximum = wlimits::MIN_DOUBLE;
+            minInd = 1;
+            itr_len = maxInd - minInd + 1;
+        }
+        size_t len_half = itr_len / 2;
+        T a, b;
+        for ( size_t i = 0; i < len_half; ++i )
+        {
+            if ( (*dataarray)[i] < (*dataarray)[ i + len_half ] )
+            {
+                a = (*dataarray)[i];
+                b = (*dataarray)[ i + len_half ];
+            }
+            else
+            {
+                b = (*dataarray)[i];
+                a = (*dataarray)[ i + len_half ];
+            }
+            m_minimum = m_minimum > a ? a : m_minimum;
+            m_maximum = m_maximum < b ? b : m_maximum;
         }
     }
 
