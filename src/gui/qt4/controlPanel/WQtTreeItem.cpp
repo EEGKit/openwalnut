@@ -84,7 +84,11 @@ WQtTreeItem::WQtTreeItem( QTreeWidgetItem * parent, WTreeItemType type, boost::s
 
     m_updateTimer = boost::shared_ptr< QTimer >( new QTimer() );
     connect( m_updateTimer.get(), SIGNAL( timeout() ), this, SLOT( update() ) );
+#ifndef _DEBUG
     m_updateTimer->start( 500 );
+#else
+    m_updateTimer->start( 5000 );
+#endif
 }
 
 WQtTreeItem::~WQtTreeItem()
