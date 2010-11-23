@@ -364,6 +364,11 @@ protected:
     float m_scale;
 
     /**
+    * The inverse scaling factor to apply to unscale a [0,1] to [0,max-min]
+    */
+    float m_invscale;
+
+    /**
      * Scales the specified value to the interval [0,1] using m_maxValue and m_minValue.
      *
      * \param value the value to scale

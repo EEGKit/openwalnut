@@ -50,6 +50,7 @@ WDataTexture3D::WDataTexture3D( boost::shared_ptr<WValueSetBase> valueSet, boost
     m_maxValue( static_cast< float >( valueSet->getMaximumValue() ) ),
     m_scale( m_maxValue - m_minValue )
 {
+    m_invscale = 1.0 / m_scale;
     // initialize members
     wlog::debug( "WDataTexture3D" ) << "Texture scaling information for data in [" << m_minValue << ", "<< m_maxValue <<
                                        "]: scaling factor=" << m_scale;
@@ -479,12 +480,14 @@ void WDataTexture3D::setMinValue( float min )
 {
     m_minValue = min;
     m_scale = m_maxValue - m_minValue;
+    m_invscale = 1.0 / m_scale;
 }
 
 void WDataTexture3D::setMaxValue( float max )
 {
     m_maxValue = max;
     m_scale = m_maxValue - m_minValue;
+    m_invscale = 1.0 / m_scale;
 }
 
 float WDataTexture3D::getMinMaxScale()
@@ -496,7 +499,8 @@ float WDataTexture3D::getMinMaxScale()
 float WDataTexture3D::scaleInterval( float value ) const
 {
     //return value;
-    return ( std::min( std::max( value, m_minValue ), m_maxValue ) - m_minValue ) / m_scale;
+    //return ( std::min( std::max( value, m_minValue ), m_maxValue ) - m_minValue ) / m_scale;
+    return ( std::min( std::max( value, m_minValue ), m_maxValue ) - m_minValue ) * m_invscale;
 }
 
 bool WDataTexture3D::isInterpolated()
