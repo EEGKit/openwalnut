@@ -949,6 +949,7 @@ void WMNavSlices::updateGeometry()
 void WMNavSlices::updateTextures()
 {
     osg::StateSet* rootState = m_slicesNode->getOrCreateStateSet();
+    bool rootStateChanged = false;
     if ( m_textureChanged )
     {
         m_textureChanged = false;
@@ -982,6 +983,7 @@ void WMNavSlices::updateTextures()
                 texture3D->setFilter( osg::Texture::MAG_FILTER, osg::Texture::NEAREST );
 
                 rootState->setTextureAttributeAndModes( c, texture3D, osg::StateAttribute::ON );
+                rootStateChanged = true;
                 ++c;
             }
             //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1001,6 +1003,7 @@ void WMNavSlices::updateTextures()
                     texture3D->setFilter( osg::Texture::MAG_FILTER, osg::Texture::NEAREST );
                 }
                 rootState->setTextureAttributeAndModes( c, texture3D, osg::StateAttribute::ON );
+                rootStateChanged = true;
 
                 // set threshold/opacity as uniforms
                 float minValue = ( *iter )->getMinValue();
@@ -1029,9 +1032,13 @@ void WMNavSlices::updateTextures()
 
     m_showCompleteUniform->set( m_showComplete->get() );
 
-    m_xSliceNode->getOrCreateStateSet()->merge( *rootState );
-    m_ySliceNode->getOrCreateStateSet()->merge( *rootState );
-    m_zSliceNode->getOrCreateStateSet()->merge( *rootState );
+    // Note (ledig): those 3 are realy costly, only update them if realy needed
+    if ( rootStateChanged )
+    {
+        m_xSliceNode->getOrCreateStateSet()->merge( *rootState );
+        m_ySliceNode->getOrCreateStateSet()->merge( *rootState );
+        m_zSliceNode->getOrCreateStateSet()->merge( *rootState );
+    }
 }
 
 void WMNavSlices::initUniforms( osg::StateSet* rootState )
