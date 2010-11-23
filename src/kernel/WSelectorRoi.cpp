@@ -87,21 +87,28 @@ void WSelectorRoi::recalculate()
         size_t nx = roi->getCoordDimensions()[0];
         size_t ny = roi->getCoordDimensions()[1];
 
-        double dx = roi->getCoordOffsets()[0];
-        double dy = roi->getCoordOffsets()[1];
-        double dz = roi->getCoordOffsets()[2];
+        double dx = 1.0 / roi->getCoordOffsets()[0];
+        double dy = 1.0 / roi->getCoordOffsets()[1];
+        double dz = 1.0 / roi->getCoordOffsets()[2];
+
+        size_t x;
+        size_t y;
+        size_t z;
+        int index;
+        size_t threei = 0;
 
         for ( size_t i = 0; i < m_currentArray->size()/3; ++i )
         {
-            size_t x = static_cast<size_t>( ( *m_currentArray )[i * 3 ] / dx );
-            size_t y = static_cast<size_t>( ( *m_currentArray )[i * 3 + 1] / dy );
-            size_t z = static_cast<size_t>( ( *m_currentArray )[i * 3 + 2] / dz );
-            int index = x + y * nx + z * nx * ny;
+            x = static_cast<size_t>( ( *m_currentArray )[threei ] * dx );
+            y = static_cast<size_t>( ( *m_currentArray )[threei + 1] * dy );
+            z = static_cast<size_t>( ( *m_currentArray )[threei + 2] * dz );
+            index = x + y * nx + z * nx * ny;
 
             if ( static_cast<float>( roi->getValue( index ) ) - threshold > 0.1 )
             {
                 ( *m_workerBitfield )[getLineForPoint( i )] = 1;
             }
+            threei += 3;
         }
     }
     m_dirty = false;
