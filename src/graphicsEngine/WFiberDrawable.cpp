@@ -88,12 +88,17 @@ void WFiberDrawable::drawFibers( osg::RenderInfo& renderInfo ) const //NOLINT
     state.disableAllVertexArrays();
     state.setVertexPointer( 3, GL_FLOAT , 0, &( *m_verts )[0] );
     state.setColorPointer( 3 , GL_FLOAT , 0, &( *m_colors )[0] );
-    //state.setNormalPointer( GL_FLOAT , 0, &( *m_tangents )[0] );
-    for ( size_t i = 0; i < m_active->size(); ++i )
+
+    size_t *startIndPTR = &(*m_startIndexes)[0];
+    size_t *pointsPerLinePTR = &(*m_pointsPerLine)[0];
+    size_t activeSize = m_active->size();
+
+    // Note (Ledig): bool arrays are odd...
+    for ( size_t i = 0; i < activeSize; ++i )
     {
         if ( (*m_active)[i] )
         {
-            state.glDrawArraysInstanced( GL_LINE_STRIP, (*m_startIndexes)[i], (*m_pointsPerLine)[i], 1);
+            state.glDrawArraysInstanced( GL_LINE_STRIP, startIndPTR[i], pointsPerLinePTR[i], 1);
         }
     }
 
@@ -103,13 +108,17 @@ void WFiberDrawable::drawFibers( osg::RenderInfo& renderInfo ) const //NOLINT
 
 void WFiberDrawable::drawTubes() const
 {
-    for( size_t i = 0; i < m_active->size(); ++i )
+    size_t active_count = m_active->size();
+    size_t k;
+    size_t ppl;
+    for( size_t i = 0; i < active_count; ++i )
     {
         if ( (*m_active)[i] )
         {
             glBegin( GL_QUAD_STRIP );
             int idx = m_startIndexes->at( i ) * 3;
-            for ( size_t k = 0; k < m_pointsPerLine->at( i ); ++k )
+            ppl = m_pointsPerLine->at( i );
+            for ( k = 0; k < ppl; ++k )
             {
                 glNormal3f( m_tangents->at( idx ), m_tangents->at( idx + 1 ), m_tangents->at( idx + 2 ) );
                 glColor3f( m_colors->at( idx ), m_colors->at( idx + 1 ), m_colors->at( idx + 2 ) );
