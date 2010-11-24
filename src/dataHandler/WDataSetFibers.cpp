@@ -82,16 +82,46 @@ WDataSetFibers::WDataSetFibers( WDataSetFibers::VertexArray vertices,
     // determine bounding box
     m_bbMin = wmath::WPosition( wlimits::MAX_DOUBLE, wlimits::MAX_DOUBLE, wlimits::MAX_DOUBLE );
     m_bbMax = wmath::WPosition( -wlimits::MAX_DOUBLE, -wlimits::MAX_DOUBLE, -wlimits::MAX_DOUBLE );
-    for( size_t i = 0; i < vertices->size()/3; ++i )
+
+    size_t minInd = 0;
+    size_t maxInd = vertices->size()/3 - 1;
+    size_t itr_len = maxInd - minInd + 1;
+
+    float *vertFP = &(*vertices)[0];
+
+    if ( vertices->size()/3+1 % 2 == 1 )
     {
-        if( (*vertices)[ 3 * i + 0 ] > m_bbMax[0] ) m_bbMax[0] = (*vertices)[ 3 * i + 0 ];
-        if( (*vertices)[ 3 * i + 1 ] > m_bbMax[1] ) m_bbMax[1] = (*vertices)[ 3 * i + 1 ];
-        if( (*vertices)[ 3 * i + 2 ] > m_bbMax[2] ) m_bbMax[2] = (*vertices)[ 3 * i + 2 ];
-        if( (*vertices)[ 3 * i + 0 ] < m_bbMin[0] ) m_bbMin[0] = (*vertices)[ 3 * i + 0 ];
-        if( (*vertices)[ 3 * i + 1 ] < m_bbMin[1] ) m_bbMin[1] = (*vertices)[ 3 * i + 1 ];
-        if( (*vertices)[ 3 * i + 2 ] < m_bbMin[2] ) m_bbMin[2] = (*vertices)[ 3 * i + 2 ];
+        m_bbMax[0] = vertFP[0];        m_bbMax[1] = vertFP[1];        m_bbMax[2] = vertFP[2];        m_bbMin[0] = vertFP[0];        m_bbMin[1] = vertFP[1];        m_bbMin[2] = vertFP[2];
+        minInd = 1;
+        itr_len = maxInd - minInd + 1;
     }
-    // remaining initilisation
+    size_t len_half = itr_len / 2;
+    size_t threei = minInd * 3;    float a[3],b[3];    size_t j;    size_t _3lenhalf = len_half * 3;    for( size_t i = minInd; i < len_half; ++i )    {        for ( j = 0; j < 3; ++j )        {            if ( vertFP[threei + j] < vertFP[threei + j + _3lenhalf] )
+            {
+                a[j] = vertFP[threei + j];
+                b[j] = vertFP[threei + j + _3lenhalf];
+            }
+            else
+            {
+                b[j] = vertFP[threei + j];
+                a[j] = vertFP[threei + j + _3lenhalf];
+            }
+            m_bbMin[j] = m_bbMin[j] > a[j] ? a[j] : m_bbMin[j];
+            m_bbMax[j] = m_bbMax[j] < b[j] ? b[j] : m_bbMax[j];
+        }        threei += 3;    }
+//    size_t threei = 0;
+//    for( size_t i = minInd; i < maxInd + 1; ++i )
+//    {
+//        if( vertFP[ threei + 0 ] > m_bbMax[0] ) m_bbMax[0] = vertFP[ threei + 0 ];
+//        if( vertFP[ threei + 1 ] > m_bbMax[1] ) m_bbMax[1] = vertFP[ threei + 1 ];
+//        if( vertFP[ threei + 2 ] > m_bbMax[2] ) m_bbMax[2] = vertFP[ threei + 2 ];
+//        if( vertFP[ threei + 0 ] < m_bbMin[0] ) m_bbMin[0] = vertFP[ threei + 0 ];
+//        if( vertFP[ threei + 1 ] < m_bbMin[1] ) m_bbMin[1] = vertFP[ threei + 1 ];
+//        if( vertFP[ threei + 2 ] < m_bbMin[2] ) m_bbMin[2] = vertFP[ threei + 2 ];
+//        threei += 3;
+//    }
+
+    // remaining initilization
     init();
 }
 
