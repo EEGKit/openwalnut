@@ -85,7 +85,7 @@ void WMSpatialDerivation::properties()
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
 
     // normalizing?
-    m_normalize = m_properties->addProperty( "Normalize", "If true, vectors get normalized.", true );
+    m_normalize = m_properties->addProperty( "Normalize", "If true, vectors get normalized.", true, m_propCondition );
 
     // call WModule's initialization
     WModule::properties();
@@ -236,9 +236,9 @@ void WMSpatialDerivation::derive( boost::shared_ptr< WGridRegular3D > grid, boos
                 zp = values->getScalar( getId( nX, nY, nZ, x, y, z + 1 ) );
                 zm = values->getScalar( getId( nX, nY, nZ, x, y, z - 1 ) );
 
-                vx = xp - xm;
-                vy = yp - ym;
-                vz = zp - zm;
+                float vx = ( xp - xm ) / 2.0;
+                float vy = ( yp - ym ) / 2.0;
+                float vz = ( zp - zm ) / 2.0;
 
                 sqsum = vx * vx + vy * vy + vz * vz;
                 len = sqrt( sqsum );
@@ -253,31 +253,10 @@ void WMSpatialDerivation::derive( boost::shared_ptr< WGridRegular3D > grid, boos
         }
     }
 
-    // de-register at datahandler
-    if ( m_lastOutputDataSet )
-    {
-        WDataHandler::deregisterDataSet( m_lastOutputDataSet );
-    }
-
     boost::shared_ptr< WValueSet< double > > valueset = boost::shared_ptr< WValueSet< double > >(
                                                             new WValueSet< double >( 1, 3, vectors, W_DT_DOUBLE )
                                                         );
-    m_lastOutputDataSet = boost::shared_ptr< WDataSetVector >( new WDataSetVector( valueset, grid ) );
-
     // register new
-    WDataHandler::registerDataSet( m_lastOutputDataSet );
-    m_vectorOut->updateData( m_lastOutputDataSet );
-}
-
-void WMSpatialDerivation::activate()
-{
-    // deactivate the output if wanted
-    if ( m_lastOutputDataSet )
-    {
-        m_lastOutputDataSet->getTexture()->setGloballyActive( m_active->get( true ) );
-    }
-
-    // Always call WModule's activate!
-    WModule::activate();
+    m_vectorOut->updateData( boost::shared_ptr< WDataSetVector >( new WDataSetVector( valueset, grid ) ) );
 }
 

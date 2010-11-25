@@ -30,6 +30,7 @@
 #include <vector>
 
 #include <boost/filesystem.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "../common/WLogger.h"
 #include "../common/WSharedAssociativeContainer.h"
