@@ -95,3 +95,4 @@ void WWriterFiberVTK::writeFibs( boost::shared_ptr< const WDataSetFiberVector > 
     out << lineDelimiter;
     out.close();
 }
+

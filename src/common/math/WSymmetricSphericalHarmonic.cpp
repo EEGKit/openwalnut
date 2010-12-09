@@ -366,3 +366,4 @@ wmath::WMatrix< double > WSymmetricSphericalHarmonic::calcSHToTensorSymMatrix( s
 #endif // OW_USE_OSSIM
 // NOLINT
 } // Namespace wmath
+

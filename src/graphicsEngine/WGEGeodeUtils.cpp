@@ -435,3 +435,4 @@ osg::ref_ptr< WGESubdividedPlane > wge::genUnitSubdividedPlane( size_t resX, siz
     return geode;
 }
 
+

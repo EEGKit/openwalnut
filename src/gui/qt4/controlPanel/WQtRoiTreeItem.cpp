@@ -51,3 +51,4 @@ osg::ref_ptr< WROI > WQtRoiTreeItem::getRoi()
 {
     return m_roi;
 }
+

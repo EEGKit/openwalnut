@@ -21,6 +21,7 @@
 // along with OpenWalnut. If not, see <http://www.gnu.org/licenses/>.
 //
 //---------------------------------------------------------------------------
+
 #include <algorithm>
 #include <string>
 #include <utility>
@@ -799,3 +800,4 @@ void WMCoordinateSystem::addAxialGrid( float position )
 
     m_rulerNode->addChild( gridGeode );
 }
+

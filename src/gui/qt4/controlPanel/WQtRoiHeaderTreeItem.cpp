@@ -45,3 +45,4 @@ WQtBranchTreeItem* WQtRoiHeaderTreeItem::addBranch( boost::shared_ptr< WRMBranch
     rti->setText( 0, QString( "Branch" ) );
     return rti;
 }
+

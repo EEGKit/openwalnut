@@ -67,3 +67,4 @@ void WPropertyBoolWidget::checkboxChanged()
     m_checkbox.setChecked( m_boolProperty->get() );
 }
 
+

@@ -200,3 +200,4 @@ std::string WGEOffscreenRenderPass::getBufferName( BufferComponent buffer )
     }
 }
 
+

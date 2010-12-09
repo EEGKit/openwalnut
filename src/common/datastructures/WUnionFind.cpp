@@ -96,3 +96,4 @@ boost::shared_ptr< std::set< size_t > > WUnionFind::getMaxSet()
     }
     return boost::shared_ptr< std::set< size_t > >( new std::set< size_t >( sets[ maxSetElement ] ) );
 }
+

@@ -34,3 +34,4 @@ void WCrosshair::setPosition( wmath::WPosition position )
 {
     m_position = position;
 }
+

@@ -310,3 +310,4 @@ void WPickHandler::setPaintMode( int mode )
 {
     m_paintMode = mode;
 }
+

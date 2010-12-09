@@ -38,3 +38,4 @@ WDHIOFailure::~WDHIOFailure() throw()
     // cleanup
 }
 
+

@@ -205,3 +205,4 @@ std::string WReaderFiberVTK::getLine( const std::string& desc )
     }
     return line;
 }
+

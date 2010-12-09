@@ -989,3 +989,4 @@ void WMainWindow::openConfigDialog()
     m_configWidget->initAndShow();
 }
 
+

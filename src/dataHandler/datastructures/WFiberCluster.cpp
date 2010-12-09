@@ -375,3 +375,4 @@ boost::shared_ptr< WFiber > WFiberCluster::getLongestLine() const
     }
     return m_longestLine;
 }
+

@@ -112,3 +112,4 @@ void WPropertyColorWidget::buttonReleased()
     m_button.setPalette( QPalette( current ) );
 }
 
+

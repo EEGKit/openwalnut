@@ -51,3 +51,4 @@ boost::shared_ptr< WRMBranch > WQtBranchTreeItem::getBranch()
 {
     return m_branch;
 }
+

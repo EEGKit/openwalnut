@@ -67,3 +67,4 @@ WSegmentationAlgo::DataSetPtr WSegmentationAlgoWatershed::applyOperation()
 }
 
 #endif  // OW_USE_ITK
+

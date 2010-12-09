@@ -159,3 +159,4 @@ void WPropertyDoubleWidget::textEdited( const QString& text )
     invalidate( !m_doubleProperty->accept( value ) );
 }
 
+

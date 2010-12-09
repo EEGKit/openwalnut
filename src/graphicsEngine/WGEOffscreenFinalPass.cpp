@@ -76,3 +76,4 @@ WGEOffscreenFinalPass::~WGEOffscreenFinalPass()
     // cleanup
 }
 
+

@@ -102,3 +102,4 @@ void WRasterAlgorithm::finished()
     lock.unlock();
 }
 
+

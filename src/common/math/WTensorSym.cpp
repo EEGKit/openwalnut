@@ -38,3 +38,4 @@ std::size_t calcSupersymmetricTensorMultiplicity( std::size_t order, std::size_t
          * wmath::factorial( numTwos ) );
 }
 }  // namespace wmath
+

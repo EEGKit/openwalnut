@@ -137,3 +137,4 @@ bool WDataSetSphericalHarmonics::isTexture() const
 {
     return false;
 }
+

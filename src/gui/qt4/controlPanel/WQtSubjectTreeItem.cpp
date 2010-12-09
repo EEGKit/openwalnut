@@ -45,3 +45,4 @@ WQtDatasetTreeItem* WQtSubjectTreeItem::addDatasetItem( boost::shared_ptr< WModu
 
     return ds;
 }
+

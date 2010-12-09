@@ -124,3 +124,4 @@ bool WPersonalInformation::operator!=( WPersonalInformation info ) const
 {
     return !( (*this) == info );
 }
+

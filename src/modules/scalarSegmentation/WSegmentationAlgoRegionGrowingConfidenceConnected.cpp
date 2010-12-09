@@ -73,3 +73,4 @@ WSegmentationAlgo::DataSetPtr WSegmentationAlgoRegionGrowingConfidenceConnected:
 }
 
 #endif  // OW_USE_ITK
+

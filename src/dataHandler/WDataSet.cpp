@@ -119,3 +119,4 @@ boost::shared_ptr< WProperties > WDataSet::getInformationProperties() const
     return m_infoProperties;
 }
 
+

@@ -38,3 +38,4 @@ WModuleConnectionFailed::~WModuleConnectionFailed() throw()
 }
 
 
+

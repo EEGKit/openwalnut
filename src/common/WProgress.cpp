@@ -94,3 +94,4 @@ WProgress& WProgress::operator+( unsigned int steps )
 
     return *this;
 }
+

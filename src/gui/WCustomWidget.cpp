@@ -27,3 +27,4 @@
 WCustomWidget::~WCustomWidget()
 {
 }
+

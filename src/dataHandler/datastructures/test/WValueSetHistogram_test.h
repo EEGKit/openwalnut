@@ -46,7 +46,8 @@ class WValueSetHistogramTest : public CxxTest::TestSuite
         {
             // create some test data
             double a[2] = { 0.0, 3.1415 };
-            const std::vector< double > v( a, a + sizeof( a ) / sizeof( double ) );
+            boost::shared_ptr< std::vector< double > > v = boost::shared_ptr< std::vector< double > >(
+                new std::vector< double >( a, a + sizeof( a ) / sizeof( double ) ) );
             WValueSet< double >* valueSet = new WValueSet< double >( 0, 1, v, W_DT_DOUBLE );
 
             // test both constructors with default bucket size
@@ -62,7 +63,8 @@ class WValueSetHistogramTest : public CxxTest::TestSuite
         {
             // create some test data
             double a[4] = { 0.0, 1.0, 1.0, 4.0 };
-            const std::vector< double > v( a, a + sizeof( a ) / sizeof( double ) );
+            boost::shared_ptr< std::vector< double > > v = boost::shared_ptr< std::vector< double > >(
+                new std::vector< double >( a, a + sizeof( a ) / sizeof( double ) ) );
             WValueSet< double >* valueSet = new WValueSet< double >( 0, 1, v, W_DT_DOUBLE );
 
             // create the histogram
@@ -81,7 +83,8 @@ class WValueSetHistogramTest : public CxxTest::TestSuite
         {
             // create some test data
             double a[4] = { 0.0, 1.0, 1.0, 4.0 };
-            const std::vector< double > v( a, a + sizeof( a ) / sizeof( double ) );
+            boost::shared_ptr< std::vector< double > > v = boost::shared_ptr< std::vector< double > >(
+                new std::vector< double >( a, a + sizeof( a ) / sizeof( double ) ) );
             WValueSet< double >* valueSet = new WValueSet< double >( 0, 1, v, W_DT_DOUBLE );
 
             // create histogram
@@ -105,7 +108,8 @@ class WValueSetHistogramTest : public CxxTest::TestSuite
         {
             // create some test data
             double a[4] = { 0.0, -5.0, 1.0, 2.0 };
-            const std::vector< double > v( a, a + sizeof( a ) / sizeof( double ) );
+            boost::shared_ptr< std::vector< double > > v = boost::shared_ptr< std::vector< double > >(
+                new std::vector< double >( a, a + sizeof( a ) / sizeof( double ) ) );
             WValueSet< double >* valueSet = new WValueSet< double >( 0, 1, v, W_DT_DOUBLE );
 
             // create histogram
@@ -122,7 +126,8 @@ class WValueSetHistogramTest : public CxxTest::TestSuite
         {
             // create some test data
             double a[5] = { 0.0, 4.0, 1.0, 2.0, 1.0 };
-            const std::vector< double > v( a, a + sizeof( a ) / sizeof( double ) );
+            boost::shared_ptr< std::vector< double > > v = boost::shared_ptr< std::vector< double > >(
+                new std::vector< double >( a, a + sizeof( a ) / sizeof( double ) ) );
             WValueSet< double >* valueSet = new WValueSet< double >( 0, 1, v, W_DT_DOUBLE );
 
             // create histogram
@@ -139,7 +144,8 @@ class WValueSetHistogramTest : public CxxTest::TestSuite
         {
             // create some test data
             double a[5] = { 0.0, 4.0, 1.0, 2.0, 1.0 };
-            const std::vector< double > v( a, a + sizeof( a ) / sizeof( double ) );
+            boost::shared_ptr< std::vector< double > > v = boost::shared_ptr< std::vector< double > >(
+                new std::vector< double >( a, a + sizeof( a ) / sizeof( double ) ) );
             WValueSet< double >* valueSet = new WValueSet< double >( 0, 1, v, W_DT_DOUBLE );
 
             // create histogram
@@ -164,7 +170,8 @@ class WValueSetHistogramTest : public CxxTest::TestSuite
         {
             // create some test data
             double a[5] = { 0.0, 4.0, 1.0, 2.0, 1.0 };
-            const std::vector< double > v( a, a + sizeof( a ) / sizeof( double ) );
+            boost::shared_ptr< std::vector< double > > v = boost::shared_ptr< std::vector< double > >(
+                new std::vector< double >( a, a + sizeof( a ) / sizeof( double ) ) );
             WValueSet< double >* valueSet = new WValueSet< double >( 0, 1, v, W_DT_DOUBLE );
 
             // create histogram
@@ -186,7 +193,8 @@ class WValueSetHistogramTest : public CxxTest::TestSuite
         {
             // create some test data
             double a[5] = { 0.0, 4.0, 1.0, 2.0, 1.0 };
-            const std::vector< double > v( a, a + sizeof( a ) / sizeof( double ) );
+            boost::shared_ptr< std::vector< double > > v = boost::shared_ptr< std::vector< double > >(
+                new std::vector< double >( a, a + sizeof( a ) / sizeof( double ) ) );
             WValueSet< double >* valueSet = new WValueSet< double >( 0, 1, v, W_DT_DOUBLE );
 
             // create histogram
@@ -224,7 +232,8 @@ class WValueSetHistogramTest : public CxxTest::TestSuite
         {
             // create some test data
             double a[5] = { 0.0, 4.0, 1.0, 2.0, 1.0 };
-            const std::vector< double > v( a, a + sizeof( a ) / sizeof( double ) );
+            boost::shared_ptr< std::vector< double > > v = boost::shared_ptr< std::vector< double > >(
+                new std::vector< double >( a, a + sizeof( a ) / sizeof( double ) ) );
             WValueSet< double >* valueSet = new WValueSet< double >( 0, 1, v, W_DT_DOUBLE );
 
             // create histogram

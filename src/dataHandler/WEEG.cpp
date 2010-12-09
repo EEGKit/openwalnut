@@ -95,3 +95,4 @@ wmath::WPosition WEEGElectrodeObject::getPosition() const
 {
     return m_position;
 }
+

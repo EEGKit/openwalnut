@@ -43,3 +43,4 @@ boost::shared_ptr< WModule > WModuleReadyEvent::getModule()
     return m_module;
 }
 
+

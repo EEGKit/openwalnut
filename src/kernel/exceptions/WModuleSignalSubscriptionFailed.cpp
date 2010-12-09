@@ -38,3 +38,4 @@ WModuleSignalSubscriptionFailed::~WModuleSignalSubscriptionFailed() throw()
 }
 
 
+

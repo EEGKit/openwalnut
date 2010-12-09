@@ -63,3 +63,4 @@ std::vector< double > getEigenvaluesCardano( WTensorSym< 2, 3 > const& m )
     return w;
 }
 }  // namespace wmath
+

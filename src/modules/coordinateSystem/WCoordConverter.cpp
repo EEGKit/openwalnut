@@ -21,6 +21,7 @@
 // along with OpenWalnut. If not, see <http://www.gnu.org/licenses/>.
 //
 //---------------------------------------------------------------------------
+
 #include <utility>
 
 #include "../../common/math/WLinearAlgebraFunctions.h"
@@ -170,3 +171,4 @@ WVector3D WCoordConverter::t2w( WVector3D in )
 {
     return c2w( m_talairachConverter->ACPC2Canonical( m_talairachConverter->Talairach2ACPC( in ) ) );
 }
+

@@ -71,3 +71,4 @@ boost::shared_ptr< WEEGValueMatrix > WEEG2Segment::getValues( std::size_t start,
     // one time by the pager.
     return m_pager->getValues( m_segmentID, start, length );
 }
+

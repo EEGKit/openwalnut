@@ -289,3 +289,4 @@ double WBresenham::filter( const double distance ) const
     std::vector< double > lookUpTable( tableData, tableData + sizeof( tableData ) / sizeof( double ) );
     return lookUpTable.at( bucket );
 }
+

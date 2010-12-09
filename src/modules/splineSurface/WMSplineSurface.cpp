@@ -519,3 +519,4 @@ void WMSplineSurface::updateGraphics()
         }
     }
 }
+

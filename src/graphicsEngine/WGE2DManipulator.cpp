@@ -203,3 +203,4 @@ bool WGE2DManipulator::zoom( const osgGA::GUIEventAdapter& ea )
 
     return changed;
 }
+

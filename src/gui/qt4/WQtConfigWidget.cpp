@@ -1247,3 +1247,4 @@ void WQtConfigWidget::closeEvent( QCloseEvent *event )
     emit closeWidget();
     event->accept();
 }
+

@@ -43,3 +43,4 @@ boost::shared_ptr< WProperties > WGrid::getInformationProperties() const
 {
     return m_infoProperties;
 }
+

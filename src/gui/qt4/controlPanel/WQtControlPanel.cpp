@@ -1033,3 +1033,4 @@ void WQtControlPanel::selectUpperMostEntry()
 {
     m_tiModules->setSelected( true );
 }
+

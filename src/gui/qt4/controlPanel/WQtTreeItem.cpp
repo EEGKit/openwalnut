@@ -254,3 +254,4 @@ void WQtTreeItem::setHandledOutput( std::string out )
     m_handledOutput = out;
 }
 
+

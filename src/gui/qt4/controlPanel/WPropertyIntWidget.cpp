@@ -152,3 +152,4 @@ void WPropertyIntWidget::textEdited( const QString& text )
     invalidate( !m_intProperty->accept( value ) );
 }
 
+

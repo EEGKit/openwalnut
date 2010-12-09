@@ -407,3 +407,4 @@ std::string WCfgOperations::getPropValAsString( boost::shared_ptr< WProperties >
 
     return result;
 }
+

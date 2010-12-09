@@ -155,3 +155,4 @@ WTriangleMesh wge::triangulate( const std::vector< wmath::WPosition >& points, d
 
     return mesh;
 }
+

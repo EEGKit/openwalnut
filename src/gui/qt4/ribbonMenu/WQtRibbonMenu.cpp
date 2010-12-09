@@ -103,3 +103,4 @@ void WQtRibbonMenu::clearNonPersistentTabs()
     }
 }
 
+

@@ -65,3 +65,4 @@ void WSegmentationAlgo::hideProperties( bool hide )
     WPrecond( m_properties, "Missing properties." );
     m_properties->setHidden( hide );
 }
+

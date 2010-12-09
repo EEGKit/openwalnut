@@ -304,9 +304,12 @@ public:
             case 3:
                 op = &opDiv< ResultT >;
                 break;
+// Note (ledig): VC cannot find the correct abs operator
+#ifndef _MSC_VER
             case 4:
                 op = &opAbsMinus< ResultT >;
                 break;
+#endif
             case 0:
             default:
                 op = &opPlus< ResultT >;
@@ -323,7 +326,7 @@ public:
 
         // create result value set
         boost::shared_ptr< WValueSet< ResultT > > result = boost::shared_ptr< WValueSet< ResultT > >(
-            new WValueSet< ResultT >( order, dim, data, type )
+            new WValueSet< ResultT >( order, dim, boost::shared_ptr< std::vector< ResultT > >( new std::vector< ResultT >( data ) ), type )
         );
         return result;
     }

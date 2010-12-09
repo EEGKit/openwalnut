@@ -55,3 +55,4 @@ void WGELabel::setAnchor( const osg::Vec3& anchor )
     m_anchor = osg::Vec3( anchor );
 }
 
+

@@ -241,3 +241,4 @@ WCombinerTypes::WCompatiblesList WModuleFactory::getCompatiblePrototypes( boost:
 
     return compatibles;
 }
+

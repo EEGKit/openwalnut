@@ -155,3 +155,4 @@ void WDataHandler::deregisterDataSet( boost::shared_ptr< WDataSet > dataset )
     getDefaultSubject()->removeDataSet( dataset );
 }
 
+

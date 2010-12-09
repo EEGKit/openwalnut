@@ -32,3 +32,4 @@ bool WCombinerTypes::compatiblesSort( WCombinerTypes::WCompatiblesGroup lhs, WCo
     return ( lhs.first->getName() < rhs.first->getName() );
 }
 
+

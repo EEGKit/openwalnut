@@ -88,3 +88,4 @@ boost::shared_ptr< WDataSet > WReaderEEGASCII::load()
     eeg->setFileName( m_fname );
     return eeg;
 }
+

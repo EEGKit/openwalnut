@@ -151,3 +151,4 @@ bool WDataSetVector::isTexture() const
 {
     return true;
 }
+

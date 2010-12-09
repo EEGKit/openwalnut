@@ -392,3 +392,4 @@ boost::shared_ptr< WModuleOutputConnector > WModuleConnector::toOutputConnector(
     return boost::shared_dynamic_cast< WModuleOutputConnector >( shared_from_this() );
 }
 
+

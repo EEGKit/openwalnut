@@ -162,3 +162,4 @@ boost::shared_ptr< WDataSet > WReaderBiosig::load()
     wlog::info( "BIOSIG loading done." );
     return eeg;
 }
+

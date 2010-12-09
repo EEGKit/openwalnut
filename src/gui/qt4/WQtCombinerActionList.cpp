@@ -118,3 +118,4 @@ WQtCombinerActionList::~WQtCombinerActionList()
     clear();
 }
 
+

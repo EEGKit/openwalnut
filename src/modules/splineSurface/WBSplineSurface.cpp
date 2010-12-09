@@ -236,3 +236,4 @@ void WBSplineSurface::samplePoints( std::vector< wmath::WVector3D > *points, dou
 
     return;
 }
+

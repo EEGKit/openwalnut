@@ -342,3 +342,4 @@ void WQt4Gui::closeCustomWidget( std::string title )
 {
     m_mainWindow->closeCustomDockWidget( title );
 }
+

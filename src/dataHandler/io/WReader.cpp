@@ -41,3 +41,4 @@ void WReader::setFileName( std::string fname ) throw( WDHNoSuchFile )
         throw WDHNoSuchFile( m_fname );
     }
 }
+

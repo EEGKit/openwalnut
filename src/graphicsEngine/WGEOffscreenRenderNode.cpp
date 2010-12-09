@@ -100,3 +100,4 @@ osg::ref_ptr< WGETextureHud > WGEOffscreenRenderNode::getTextureHUD() const
     return m_hud;
 }
 
+

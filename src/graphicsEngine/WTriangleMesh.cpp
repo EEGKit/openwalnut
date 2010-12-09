@@ -745,3 +745,4 @@ osg::ref_ptr< osg::Vec4Array > WTriangleMesh::getTriangleColors() const
 {
     return m_triangleColors;
 }
+

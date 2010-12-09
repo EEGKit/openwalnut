@@ -283,13 +283,16 @@ void WMDatasetManipulator::manipulatorMoved()
 
     wmath::WPosition stretch( 1.0, 1.0, 1.0 );
 
-    float orgsizex = static_cast<float>( (m_posx2Orig - m_posx1Orig).x() );
-    float orgsizey = static_cast<float>( (m_posy2Orig - m_posy1Orig).y() );
-    float orgsizez = static_cast<float>( (m_posz2Orig - m_posz1Orig).z() );
+    float orgsizex = static_cast<float>( ( m_posx2Orig - m_posx1Orig ).x() );
+    float orgsizey = static_cast<float>( ( m_posy2Orig - m_posy1Orig ).y() );
+    float orgsizez = static_cast<float>( ( m_posz2Orig - m_posz1Orig ).z() );
 
-    m_grid->translate( wmath::WPosition( m_grid->getTranslate().x() + ( m_knobx1->getPosition().x() - m_posx1.x() ) * ( static_cast<float>( m_grid->getNbCoordsX() / orgsizex ) ),
-                                         m_grid->getTranslate().y() + ( m_knoby1->getPosition().y() - m_posy1.y() ) * ( static_cast<float>( m_grid->getNbCoordsY() / orgsizey ) ),
-                                         m_grid->getTranslate().z() + ( m_knobz1->getPosition().z() - m_posz1.z() ) * ( static_cast<float>( m_grid->getNbCoordsZ() / orgsizez ) ) ) );
+    m_grid->translate( wmath::WPosition( m_grid->getTranslate().x() + ( m_knobx1->getPosition().x() - m_posx1.x() )
+                                            * ( static_cast<float>( m_grid->getNbCoordsX() / orgsizex ) ),
+                                         m_grid->getTranslate().y() + ( m_knoby1->getPosition().y() - m_posy1.y() )
+                                            * ( static_cast<float>( m_grid->getNbCoordsY() / orgsizey ) ),
+                                         m_grid->getTranslate().z() + ( m_knobz1->getPosition().z() - m_posz1.z() )
+                                            * ( static_cast<float>( m_grid->getNbCoordsZ() / orgsizez ) ) ) );
 
     m_translationX->set( m_grid->getTranslate().x(), true );
     m_translationY->set( m_grid->getTranslate().y(), true );

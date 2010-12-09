@@ -187,3 +187,4 @@ void WProjectFile::threadMain()
     WKernel::getRunningKernel()->getRootContainer()->finishedPendingThread( shared_from_this() );
 }
 
+

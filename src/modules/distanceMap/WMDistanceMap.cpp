@@ -483,7 +483,7 @@ boost::shared_ptr< WValueSet< float > > WMDistanceMap::createOffset( boost::shar
     floatDataset = tmp;
     boost::shared_ptr< WValueSet< float > > resultValueSet;
     resultValueSet = boost::shared_ptr< WValueSet< float > >(
-        new WValueSet< float >( valueSet->order(), valueSet->dimension(), 
+        new WValueSet< float >( valueSet->order(), valueSet->dimension(),
         boost::shared_ptr< std::vector< float > >( new std::vector< float >( floatDataset ) ), W_DT_FLOAT ) );
 
     progress1->finish();

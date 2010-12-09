@@ -537,3 +537,4 @@ void WMVoxelizer::OSGCB_ChangeLighting::operator()( osg::Node* node, osg::NodeVi
     }
     traverse( node, nv );
 }
+

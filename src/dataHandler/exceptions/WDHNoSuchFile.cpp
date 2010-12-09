@@ -36,3 +36,4 @@ WDHNoSuchFile::~WDHNoSuchFile() throw()
 {
     // clean up
 }
+

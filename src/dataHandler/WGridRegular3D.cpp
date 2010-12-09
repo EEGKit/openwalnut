@@ -1046,7 +1046,6 @@ void WGridRegular3D::rotate( osg::Matrixf osgrot, wmath::WPosition center )
     transFrom( 0, 3 ) = center.x();
     transFrom( 1, 3 ) = center.y();
     transFrom( 2, 3 ) = center.z();
-    
 
     rotmat( 0, 0 ) = osgrot( 0, 0 );
     rotmat( 1, 0 ) = osgrot( 1, 0 );
@@ -1112,3 +1111,4 @@ wmath::WPosition WGridRegular3D::getTranslate()
     wmath::WPosition translate( m_translateMatrix( 0, 3 ), m_translateMatrix( 1, 3 ), m_translateMatrix( 2, 3 ) );
     return translate;
 }
+

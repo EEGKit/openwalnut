@@ -553,3 +553,4 @@ WPropTrigger WProperties::addProperty( std::string name, std::string description
     return addProperty< WPVBaseTypes::PV_TRIGGER >( name, description, initial, condition, notifier, hide );
 }
 
+

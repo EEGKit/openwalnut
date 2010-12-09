@@ -127,3 +127,4 @@ void WPropertyWidget::invalidate( bool invalid )
     }
 }
 
+

@@ -185,3 +185,4 @@ std::string WPagerEEGLibeep::getChannelLabel( std::size_t channelID ) const
 
     return eep_get_chan_label( m_eeg, channelID );
 }
+

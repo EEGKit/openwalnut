@@ -108,3 +108,4 @@ WEEGElectrodeLibrary WReaderEEG::extractElectrodePositions()
 
     return elecPos;
 }
+

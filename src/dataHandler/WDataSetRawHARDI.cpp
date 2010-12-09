@@ -98,3 +98,4 @@ const std::string WDataSetRawHARDI::getDescription() const
 {
     return "Contains HARDI measurements.";
 }
+

@@ -42,3 +42,4 @@ osg::ref_ptr< WROI > WRoiRemoveEvent::getRoi()
 {
     return m_roi;
 }
+

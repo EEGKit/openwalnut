@@ -448,3 +448,4 @@ std::string WMData::getDataTypeString( boost::shared_ptr< WDataSetSingle > dss )
     }
     return result;
 }
+

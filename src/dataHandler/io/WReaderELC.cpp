@@ -149,3 +149,4 @@ boost::shared_ptr< WEEGPositionsLibrary > WReaderELC::read()
 
     return boost::shared_ptr< WEEGPositionsLibrary >( new WEEGPositionsLibrary( positionsMap ) );
 }
+

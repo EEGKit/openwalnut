@@ -274,3 +274,4 @@ void WQtTextureSorter::sort()
 
     WDataHandler::getDefaultSubject()->getChangeCondition()->notify();
 }
+

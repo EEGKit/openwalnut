@@ -43,3 +43,4 @@ boost::shared_ptr< WModule > WModuleRemovedEvent::getModule()
     return m_module;
 }
 
+

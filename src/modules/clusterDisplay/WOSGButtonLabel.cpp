@@ -60,3 +60,4 @@ bool WOSGButtonLabel::mousePush( double, double, osgWidget::WindowManager* )
     }
     return true;
 }
+

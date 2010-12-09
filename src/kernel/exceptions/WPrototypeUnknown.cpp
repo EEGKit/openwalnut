@@ -36,3 +36,4 @@ WPrototypeUnknown::~WPrototypeUnknown() throw()
     // cleanup
 }
 
+

@@ -70,9 +70,9 @@ namespace dummyNS
         return x + y * nbX + z * nbXY;
     }
 
-    typedef struct
+    typedef struct // NOLINT
     {
-        size_t indices[27];
+        size_t indices[27]; // NOLINT
     }
     Neighbourhood;
 
@@ -214,4 +214,5 @@ void WCenterlineParameterization::finished()
         }
     }
 }
+
 

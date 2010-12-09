@@ -85,3 +85,4 @@ void WFiberAccumulator::clear()
     m_fiberLengths->clear();
     m_pointToFiber->clear();
 }
+

@@ -76,3 +76,4 @@ void WBatchLoader::threadMain()
     m_targetContainer->finishedPendingThread( shared_from_this() );
 }
 
+

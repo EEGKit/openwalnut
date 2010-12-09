@@ -201,7 +201,9 @@ void WMSpatialDerivation::derive( boost::shared_ptr< WGridRegular3D > grid, boos
     size_t nY = grid->getNbCoordsY();
     size_t nZ = grid->getNbCoordsZ();
 
-    boost::shared_ptr< std::vector< double > > vectors = boost::shared_ptr< std::vector< double > >( new std::vector< double >( 3 * nX * nY * nZ, 0.0 ) );
+    boost::shared_ptr< std::vector< double > > vectors = boost::shared_ptr< std::vector< double > >(
+                                                             new std::vector< double >( 3 * nX * nY * nZ, 0.0 )
+                                                         );
 
     // iterate field
     float xp;

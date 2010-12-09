@@ -141,7 +141,8 @@ private:
      * \param inGrid
      * \param vals
      */
-    template< typename T > boost::shared_ptr< std::vector< float > > cutArea( boost::shared_ptr< WGrid > inGrid, boost::shared_ptr< WValueSet< T > > vals );
+    template< typename T > boost::shared_ptr< std::vector< float > > cutArea( boost::shared_ptr< WGrid > inGrid,
+        boost::shared_ptr< WValueSet< T > > vals );
 
     /**
      * True when textures haven changed.

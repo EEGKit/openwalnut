@@ -36,3 +36,4 @@ WOutOfBounds::~WOutOfBounds() throw()
 {
     // clean up
 }
+

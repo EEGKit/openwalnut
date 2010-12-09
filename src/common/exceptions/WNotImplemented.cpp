@@ -36,3 +36,4 @@ WNotImplemented::~WNotImplemented() throw()
 {
     // clean up
 }
+

@@ -76,3 +76,4 @@ wmath::WVector3D WUnitSphereCoordinates::getEuclidean() const
 {
   return wmath::WVector3D( std::sin( m_theta )*std::cos( m_phi ), std::sin( m_theta )*std::sin( m_phi ), std::cos( m_theta ) );
 }
+

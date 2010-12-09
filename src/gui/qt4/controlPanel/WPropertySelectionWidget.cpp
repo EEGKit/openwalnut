@@ -278,3 +278,4 @@ void WPropertySelectionWidget::listSelectionChanged()
     invalidate( !m_selectionProperty->set( ns ) );
 }
 
+

@@ -163,3 +163,4 @@ void WPlane::setPlaneVectors( const wmath::WVector3D& first, const wmath::WVecto
     m_first = first;
     m_second = second;
 }
+

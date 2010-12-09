@@ -595,3 +595,4 @@ std::string WRulerOrtho::numberToString( int number )
     }
     return std::string( "" );
 }
+

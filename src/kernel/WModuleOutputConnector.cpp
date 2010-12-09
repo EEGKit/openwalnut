@@ -84,3 +84,4 @@ bool WModuleOutputConnector::isOutputConnector() const
 {
     return true;
 }
+

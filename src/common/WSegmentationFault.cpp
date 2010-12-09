@@ -54,3 +54,4 @@ void WSegmentationFault::installSignalHandler() throw()
 #endif  // __linux__
 }
 
+

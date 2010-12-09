@@ -113,3 +113,4 @@ void WDataTexture3D_2::create()
     setImage( ima );
     setTextureSize( ima->s(), ima->t(), ima->r() );
 }
+

@@ -42,3 +42,4 @@ bool checkCudaError( bool *success, cudaError_t err, const char *msg = NULL )
 
     return *success;
 }
+

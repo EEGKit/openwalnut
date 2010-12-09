@@ -118,3 +118,4 @@ void WGEColormapping::callback( osg::Node* node )
     r.reset();
 }
 
+

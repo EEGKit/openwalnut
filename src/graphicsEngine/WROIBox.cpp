@@ -344,3 +344,4 @@ void WROIBox::setNotColor( osg::Vec4 color )
 {
     m_notColor = color;
 }
+

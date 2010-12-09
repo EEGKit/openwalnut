@@ -58,3 +58,4 @@ void WQtPushButton::emitPressed()
     emit pushButtonPressed( m_name );
 }
 
+

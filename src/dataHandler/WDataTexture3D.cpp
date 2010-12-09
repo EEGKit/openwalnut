@@ -535,3 +535,4 @@ boost::shared_ptr< WProperties > WDataTexture3D::getInformationProperties() cons
     return m_infoProperties;
 }
 
+

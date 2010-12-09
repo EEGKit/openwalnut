@@ -83,3 +83,4 @@ void WQtToolBar::clearButtons()
     dummyButton->setFixedWidth( 0 );
     addWidget( dummyButton );
 }
+

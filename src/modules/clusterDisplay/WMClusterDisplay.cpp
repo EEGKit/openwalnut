@@ -1008,3 +1008,4 @@ void WMClusterDisplay::createFiberGeode()
     m_rootNode->getOrCreateStateSet()->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
     m_rootNode->addChild( geode );
 }
+

@@ -55,3 +55,4 @@ void ProgressWrapper::finish()
 {
     d->progress->finish();
 }
+

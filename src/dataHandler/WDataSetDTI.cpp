@@ -49,3 +49,4 @@ wmath::WTensorSym< 2, 3, float > WDataSetDTI::getTensor( size_t index ) const
     WAssert( values, "The value set of a WDataSetDTI must be a WValueSet< float >, nothing else!" );
     return wmath::WTensorSym< 2, 3, float >( values->getWValue( index ) );
 }
+

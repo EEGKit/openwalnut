@@ -43,3 +43,4 @@ const WFlag< bool >& WGUI::isInitialized() const
     return m_isInitialized;
 }
 
+

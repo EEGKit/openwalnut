@@ -49,3 +49,4 @@ std::string WGERequirement::getDescription() const
     return "Module needs an running graphics engine.";
 }
 
+

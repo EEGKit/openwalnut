@@ -43,3 +43,4 @@ WQtTreeItem* WModuleDeleteEvent::getTreeItem()
     return m_item;
 }
 
+

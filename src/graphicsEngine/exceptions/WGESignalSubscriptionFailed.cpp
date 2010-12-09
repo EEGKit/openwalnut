@@ -36,3 +36,4 @@ WGESignalSubscriptionFailed::~WGESignalSubscriptionFailed() throw()
     // cleanup
 }
 
+

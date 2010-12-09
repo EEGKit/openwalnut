@@ -167,3 +167,4 @@ void WFiberSelector::setDirty()
     recalculate();
     m_dirty = true;
 }
+

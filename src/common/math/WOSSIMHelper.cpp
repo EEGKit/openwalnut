@@ -124,3 +124,4 @@ void wmath::WOSSIMHelper::computeSVD( const wmath::WMatrix< double >& A,
 //             return wmath::WMatrix< double >( V*S*U.transposed() );
 // }
 #endif
+

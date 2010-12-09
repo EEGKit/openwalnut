@@ -262,3 +262,4 @@ std::ostream& operator<<( std::ostream& out, const WValueSetHistogram& h )
     return out;
 }
 
+

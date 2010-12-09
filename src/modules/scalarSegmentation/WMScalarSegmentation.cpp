@@ -187,3 +187,4 @@ void WMScalarSegmentation::doSegmentation()
     m_result = m_algos.at( m_algoIndex )->segment( m_dataSet );
     debugLog() << "Segmentation finished.";
 }
+

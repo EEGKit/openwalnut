@@ -36,3 +36,4 @@ WDHException::~WDHException() throw()
 {
     // cleanup
 }
+

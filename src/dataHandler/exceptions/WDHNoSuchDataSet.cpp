@@ -36,3 +36,4 @@ WDHNoSuchDataSet::~WDHNoSuchDataSet() throw()
 {
     // cleanup
 }
+

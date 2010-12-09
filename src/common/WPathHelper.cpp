@@ -151,3 +151,4 @@ std::vector< boost::filesystem::path > WPathHelper::getAllModulePaths()
     return paths;
 }
 
+

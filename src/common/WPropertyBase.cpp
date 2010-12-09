@@ -166,3 +166,4 @@ boost::shared_ptr< WCondition > WPropertyBase::getUpdateCondition() const
     return m_updateCondition;
 }
 
+

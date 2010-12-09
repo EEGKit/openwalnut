@@ -149,3 +149,4 @@ boost::shared_ptr< WPrototyped > WJoinContourTree::getPrototype()
     }
     return m_prototype;
 }
+

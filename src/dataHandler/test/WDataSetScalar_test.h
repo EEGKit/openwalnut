@@ -59,7 +59,9 @@ public:
         {
             data[i] = i;
         }
-        boost::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 0, 1, data, W_DT_DOUBLE ) );
+        boost::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 0, 1,
+            boost::shared_ptr< std::vector< double > >( new std::vector< double >( data ) ),
+            W_DT_DOUBLE ) );
         WDataSetScalar ds( valueSet, grid );
 
         bool success = false;

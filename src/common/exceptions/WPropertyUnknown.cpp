@@ -36,3 +36,4 @@ WPropertyUnknown::~WPropertyUnknown() throw()
 {
     // clean up
 }
+

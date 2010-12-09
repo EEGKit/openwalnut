@@ -141,3 +141,4 @@ boost::shared_ptr< WPropertyObserver > WPropertyObserver::create()
     return boost::shared_ptr< WPropertyObserver >( new WPropertyObserver() );
 }
 
+

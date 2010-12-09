@@ -39,7 +39,7 @@
 /**
  * base class for hierarchical tree implementations
  */
-class OWCOMMON_EXPORT WHierarchicalTree
+class OWCOMMON_EXPORT WHierarchicalTree // NOLINT
 {
 public:
     /**

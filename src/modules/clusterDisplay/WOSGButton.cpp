@@ -57,3 +57,4 @@ void WOSGButton::setBackgroundColor( WColor color )
 {
     m_label->setColor( color.getRed(), color.getGreen(), color.getBlue(), 1.0f );
 }
+

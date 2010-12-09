@@ -80,3 +80,4 @@ WQtCombinerToolbar::~WQtCombinerToolbar()
 {
 }
 
+

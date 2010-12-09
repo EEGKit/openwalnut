@@ -42,3 +42,4 @@ WGEManagedGroupNode::~WGEManagedGroupNode()
 }
 
 
+

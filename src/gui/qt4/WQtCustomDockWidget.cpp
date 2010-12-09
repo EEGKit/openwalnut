@@ -71,3 +71,4 @@ bool WQtCustomDockWidget::decreaseUseCount()
     }
     return shouldClose;
 }
+

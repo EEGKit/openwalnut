@@ -68,3 +68,4 @@ bool WQtMenuPage::isPersistent() const
     return m_persistent;
 }
 
+

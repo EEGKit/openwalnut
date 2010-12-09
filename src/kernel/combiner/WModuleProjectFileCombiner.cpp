@@ -408,3 +408,4 @@ void WModuleProjectFileCombiner::save( std::ostream& output )   // NOLINT
     }
 }
 
+

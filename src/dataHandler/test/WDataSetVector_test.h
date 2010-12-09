@@ -58,7 +58,9 @@ public:
         {
             data[i] = i;
         }
-        boost::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 1, 3, data, W_DT_DOUBLE ) );
+        boost::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 1, 3,
+            boost::shared_ptr< std::vector< double > >( new std::vector< double >( data ) ),
+            W_DT_DOUBLE ) );
         WDataSetVector ds( valueSet, grid );
 
         bool success = false;
@@ -118,7 +120,9 @@ public:
         {
             data[i] = i;
         }
-        boost::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 1, 3, data, W_DT_DOUBLE ) );
+        boost::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 1, 3,
+            boost::shared_ptr< std::vector< double > >( new std::vector< double >( data ) ),
+            W_DT_DOUBLE ) );
         WDataSetVector ds( valueSet, grid );
         ds.interpolate( wmath::WPosition( 2.0, 3.0, 4.0 ), &success );
         TS_ASSERT( !success );

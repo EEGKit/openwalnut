@@ -144,3 +144,4 @@ void WRMBranch::addChangeNotifier( boost::function< void() > notifier )
     m_changeNotifiers.push_back( notifier );
     lock.unlock();
 }
+

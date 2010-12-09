@@ -68,3 +68,4 @@ WSegmentationAlgo::DataSetPtr WSegmentationAlgoLevelSetCanny::applyOperation()
 }
 
 #endif  // OW_USE_ITK
+

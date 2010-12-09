@@ -59,3 +59,4 @@ WSegmentationAlgo::DataSetPtr WSegmentationAlgoThreshold::applyOperation()
 {
     return m_dataSet->getValueSet()->applyFunction( *this );
 }
+

@@ -89,7 +89,9 @@ public:
             t.push_back( 4.0f );
             boost::shared_ptr< WGridRegular3D > g( new WGridRegular3D( 3, 3, 3, 1.0, 0.5, 2.0 ) );
             std::vector< double > v( 27, 4 );
-            boost::shared_ptr< WValueSet< double > > vs( new WValueSet< double >( 0, 1, v, W_DT_DOUBLE ) );
+            boost::shared_ptr< WValueSet< double > > vs( new WValueSet< double >( 0, 1,
+                boost::shared_ptr< std::vector< double > >( new std::vector< double >( v ) ),
+                W_DT_DOUBLE ) );
             d.push_back( boost::shared_ptr< WDataSetScalar const >( new WDataSetScalar( vs, g ) ) );
             TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), WException );
 
@@ -100,7 +102,9 @@ public:
 
             t.push_back( 4.0f );
             std::vector< float > v2( 27, 4 );
-            boost::shared_ptr< WValueSet< float > > vs2( new WValueSet< float >( 0, 1, v2, W_DT_FLOAT ) );
+            boost::shared_ptr< WValueSet< float > > vs2( new WValueSet< float >( 0, 1,
+                boost::shared_ptr< std::vector< float > >( new std::vector< float >( v2 ) ),
+                W_DT_FLOAT ) );
             d.push_back( boost::shared_ptr< WDataSetScalar const >( new WDataSetScalar( vs2, d.front()->getGrid() ) ) );
             TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), WException );
         }
@@ -137,7 +141,9 @@ public:
             t.push_back( 4.0f );
             boost::shared_ptr< WGridRegular3D > g( new WGridRegular3D( 3, 3, 3, 1.0, 0.5, 2.0 ) );
             std::vector< double > v( 27, 4 );
-            boost::shared_ptr< WValueSet< double > > vs( new WValueSet< double >( 0, 1, v, W_DT_DOUBLE ) );
+            boost::shared_ptr< WValueSet< double > > vs( new WValueSet< double >( 0, 1,
+                boost::shared_ptr< std::vector< double > >( new std::vector< double >( v ) ),
+                W_DT_DOUBLE ) );
             d.push_back( boost::shared_ptr< WDataSetScalar const >( new WDataSetScalar( vs, g ) ) );
             TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), WException );
 
@@ -148,7 +154,9 @@ public:
 
             t.push_back( 4.0f );
             std::vector< float > v2( 27, 4 );
-            boost::shared_ptr< WValueSet< float > > vs2( new WValueSet< float >( 0, 1, v2, W_DT_FLOAT ) );
+            boost::shared_ptr< WValueSet< float > > vs2( new WValueSet< float >( 0, 1,
+                boost::shared_ptr< std::vector< float > >( new std::vector< float >( v2 ) ),
+                W_DT_FLOAT ) );
             d.push_back( boost::shared_ptr< WDataSetScalar const >( new WDataSetScalar( vs2, d.front()->getGrid() ) ) );
             TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), WException );
         }
@@ -533,7 +541,9 @@ private:
         for( int i = 0; i < number; ++i )
         {
             std::vector< double > v( 27, data[ i ] );
-            boost::shared_ptr< WValueSet< double > > vs( new WValueSet< double >( 0, 1, v, W_DT_DOUBLE ) );
+            boost::shared_ptr< WValueSet< double > > vs( new WValueSet< double >( 0, 1,
+                boost::shared_ptr< std::vector< double > >( new std::vector< double >( v ) ),
+                W_DT_DOUBLE ) );
             dsets.push_back( boost::shared_ptr< WDataSetScalar const >( new WDataSetScalar( vs, g ) ) );
             times.push_back( static_cast< float >( i ) );
         }

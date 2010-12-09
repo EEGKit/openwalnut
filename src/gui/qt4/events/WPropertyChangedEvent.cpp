@@ -37,3 +37,4 @@ WPropertyChangedEvent::~WPropertyChangedEvent()
     // cleanup
 }
 
+

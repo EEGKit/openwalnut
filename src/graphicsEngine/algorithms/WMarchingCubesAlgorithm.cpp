@@ -85,3 +85,4 @@ unsigned int WMarchingCubesAlgorithm::getVertexID( unsigned int nX, unsigned int
     return nZ * ( m_nCellsY + 1 ) * ( m_nCellsX + 1) + nY * ( m_nCellsX + 1 ) + nX;
 }
 
+

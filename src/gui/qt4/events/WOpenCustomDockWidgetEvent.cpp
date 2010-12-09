@@ -49,3 +49,4 @@ boost::shared_ptr< WFlag< boost::shared_ptr< WCustomWidget > > > WOpenCustomDock
 {
     return m_flag;
 }
+

@@ -152,3 +152,4 @@ boost::shared_ptr< const WValueSetHistogram > WDataSetScalar::getHistogram( size
     return m_histograms[ buckets ];
 }
 
+

@@ -132,3 +132,4 @@ void WReaderMatrixSymVTK::readTable( boost::shared_ptr< std::vector< double > > 
 
     delete[] data;
 }
+

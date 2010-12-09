@@ -113,3 +113,4 @@ void WIntegrationParameterization::newSegment( const wmath::WPosition& start, co
     m_curLength += start.distanceSquare( end );
 }
 
+

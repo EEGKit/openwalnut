@@ -169,3 +169,4 @@ boost::shared_ptr< WDataSetFibers > WDataSetFiberVector::toWDataSetFibers() cons
 
     return boost::shared_ptr< WDataSetFibers >( new WDataSetFibers( points, fiberStartIndices, fiberLengths, pointFiberMapping ) );
 }
+

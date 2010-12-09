@@ -63,3 +63,4 @@ void WGENodeMaskCallback::operator()( osg::Node* node, osg::NodeVisitor* nv )
     traverse( node, nv );
 }
 
+

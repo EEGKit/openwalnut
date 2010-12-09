@@ -97,3 +97,4 @@ bool initDLtTableCuda( boost::shared_ptr< WMatrixSym > dLtTable,
 
     return result;
 }
+

@@ -192,3 +192,4 @@ bool WQtPropertyGroupWidget::isEmpty() const
 {
     return !m_numberOfWidgets;
 }
+

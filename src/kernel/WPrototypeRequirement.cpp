@@ -50,3 +50,4 @@ std::string WPrototypeRequirement::getDescription() const
     return "Module depends upon the module \"" + m_prototype + "\".";
 }
 
+

@@ -42,3 +42,4 @@ void WWriter::setFileName( std::string fname )
         throw WDHIOFailure( std::string( "File '" + m_fname + "' already exists, skip writing" ) );
     }
 }
+

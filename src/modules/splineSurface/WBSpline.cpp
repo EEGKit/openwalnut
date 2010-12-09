@@ -172,3 +172,4 @@ wmath::WVector3D WBSpline::controlPoint_i_j( int _i, int _j )
 
     return result;
 }
+

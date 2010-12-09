@@ -46,3 +46,4 @@ WPagerEEG::WPagerEEG( std::string fileName )
         throw WDHNoSuchFile( m_fileName + " doesn't exist" );
     }
 }
+

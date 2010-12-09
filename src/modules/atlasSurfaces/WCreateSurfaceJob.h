@@ -134,9 +134,11 @@ void WCreateSurfaceJob< T >::compute( boost::shared_ptr< WDataSetScalar const > 
 {
     WAssert( job <= m_input->getMax(), "" );
 
-    boost::shared_ptr< std::vector< float > > tempData = boost::shared_ptr< std::vector< float > >( new std::vector< float >( input->getGrid()->size() ) );
+    boost::shared_ptr< std::vector< float > > tempData = boost::shared_ptr< std::vector< float > >(
+        new std::vector< float >( input->getGrid()->size() )
+        );
 
-    cutArea( boost::shared_dynamic_cast< WValueSet< T > >( m_input->getValueSet() ), (*tempData.get()), job );
+    cutArea( boost::shared_dynamic_cast< WValueSet< T > >( m_input->getValueSet() ), ( *tempData.get() ), job );
 
 
 

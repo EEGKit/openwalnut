@@ -36,3 +36,4 @@ WPropertyNameMalformed::~WPropertyNameMalformed() throw()
 {
     // clean up
 }
+

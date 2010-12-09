@@ -65,3 +65,4 @@ void WWriterMatrixSymVTK::writeTable( const std::vector< double > &table, size_t
     out << std::endl;
     out.close();
 }
+

@@ -43,3 +43,4 @@ void WGEShaderAnimationCallback::operator() ( osg::Uniform* uniform, osg::NodeVi
     uniform->set( ticks );
 }
 
+

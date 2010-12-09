@@ -36,3 +36,4 @@ WSignalSubscriptionInvalid::~WSignalSubscriptionInvalid() throw()
 {
     // clean up
 }
+

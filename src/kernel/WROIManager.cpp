@@ -192,3 +192,4 @@ std::vector< osg::ref_ptr< WROI > > WROIManager::getRois()
     }
     return returnVec;
 }
+

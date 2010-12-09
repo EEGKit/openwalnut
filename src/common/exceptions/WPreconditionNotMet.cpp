@@ -34,3 +34,4 @@ WPreconditionNotMet::WPreconditionNotMet( std::string const& msg )
 WPreconditionNotMet::~WPreconditionNotMet() throw()
 {
 }
+

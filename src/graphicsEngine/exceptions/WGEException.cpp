@@ -37,3 +37,4 @@ WGEException::~WGEException() throw()
 }
 
 
+

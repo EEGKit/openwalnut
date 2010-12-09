@@ -107,3 +107,4 @@ void WPropertyFilenameWidget::buttonReleased()
     m_button.setText( QString::fromStdString( m_fnProperty->get().filename() ) );
 }
 
+

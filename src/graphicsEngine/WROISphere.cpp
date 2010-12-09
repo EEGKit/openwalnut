@@ -278,3 +278,4 @@ void  WROISphere::setLockOnVector( bool value )
 {
     m_lockOnVector = value;
 }
+

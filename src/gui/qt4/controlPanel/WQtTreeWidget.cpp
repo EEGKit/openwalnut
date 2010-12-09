@@ -48,3 +48,4 @@ void WQtTreeWidget::deleteItem( QTreeWidgetItem* item )
 //{
 //    std::cout << "key pressed: " << e->key() << std::endl;
 //}
+

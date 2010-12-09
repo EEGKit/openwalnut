@@ -59,3 +59,4 @@ std::istream& WPVBaseTypes::operator>>( std::istream& in, WPVBaseTypes::PV_TRIGG
     return in;
 }
 
+

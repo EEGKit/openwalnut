@@ -155,3 +155,4 @@ double WDataSetSingle::getValueAt( size_t id ) const
 
     return 0.0; // should not be reached. Just there to quiet compiler.
 }
+

@@ -152,3 +152,4 @@ std::string WModuleLoader::getModulePrefix()
     return WSharedLib::getSystemPrefix() + "OWmodule";
 }
 
+

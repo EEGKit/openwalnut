@@ -36,3 +36,4 @@ WNameNotUnique::~WNameNotUnique() throw()
 {
     // clean up
 }
+

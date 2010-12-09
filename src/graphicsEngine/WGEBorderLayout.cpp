@@ -148,3 +148,4 @@ void WGEBorderLayout::SafeUpdateCallback::operator()( osg::Node* node, osg::Node
     traverse( node, nv );
 }
 
+

@@ -44,3 +44,4 @@ WQtModuleTreeItem* WQtModuleHeaderTreeItem::addModuleItem( boost::shared_ptr< WM
     ds->setText( 0, QString::fromStdString( module->getName() ) );
     return ds;
 }
+

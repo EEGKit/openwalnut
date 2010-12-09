@@ -90,3 +90,4 @@ void WPropertyStringWidget::textEdited( const QString& text )
 }
 
 
+

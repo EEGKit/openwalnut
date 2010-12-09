@@ -53,3 +53,4 @@ void WRasterParameterization::finished()
     // Overwrite in your class if you need to handle this.
 }
 
+

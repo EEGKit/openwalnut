@@ -146,3 +146,4 @@ void WSelectorRoi::boxTest( int left, int right, int axis )
         boxTest( root + 1, right, axis1 );
     }
 }
+

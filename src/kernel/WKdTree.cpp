@@ -117,3 +117,4 @@ void WKdTreeThread::buildTree( int left, int right, int axis )
     buildTree( left, div - 1, ( axis + 1 ) % 3 );
     buildTree( div + 1, right, ( axis + 1 ) % 3 );
 }
+

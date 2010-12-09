@@ -230,7 +230,9 @@ private:
             v.at( 3 * k + 2 ) = data[ 2 ];
         }
 
-        boost::shared_ptr< WValueSetBase > vs( new WValueSet< double >( 1, 3, v, W_DT_DOUBLE ) );
+        boost::shared_ptr< WValueSetBase > vs( new WValueSet< double >( 1, 3,
+            boost::shared_ptr< std::vector< double > >( new std::vector< double >( v ) ),
+            W_DT_DOUBLE ) );
         return boost::shared_ptr< WDataSetSingle >( new WDataSetSingle( vs, g ) );
     }
 };
@@ -578,7 +580,9 @@ private:
             v.at( 3 * k + 2 ) = data[ 2 ];
         }
 
-        boost::shared_ptr< WValueSetBase > vs( new WValueSet< double >( 1, 3, v, W_DT_DOUBLE ) );
+        boost::shared_ptr< WValueSetBase > vs( new WValueSet< double >( 1, 3,
+            boost::shared_ptr< std::vector< double > >( new std::vector< double >( v ) ),
+            W_DT_DOUBLE ) );
         return boost::shared_ptr< WDataSetSingle >( new WDataSetSingle( vs, g ) );
     }
 

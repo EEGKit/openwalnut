@@ -128,3 +128,4 @@ float WProgressCombiner::getProgress()
     return m_progress;
 }
 
+

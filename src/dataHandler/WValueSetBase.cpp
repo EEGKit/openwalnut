@@ -41,3 +41,4 @@ WValueSetBase::~WValueSetBase()
 {
     // empty since WValueSetBase is an abstract class
 }
+

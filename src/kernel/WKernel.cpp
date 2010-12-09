@@ -209,3 +209,4 @@ boost::shared_ptr< WSelectionManager>WKernel::getSelectionManager()
 {
     return m_selectionManager;
 }
+

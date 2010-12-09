@@ -55,3 +55,4 @@ QIcon WIconManager::getIcon( const std::string name )
 
     return icon;
 }
+

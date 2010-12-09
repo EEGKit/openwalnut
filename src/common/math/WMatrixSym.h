@@ -52,7 +52,7 @@ public:
      *
      * \param n number of rows and cols
      */
-    WMatrixSymImpl( size_t n );
+    explicit WMatrixSymImpl( size_t n );
 
     /**
      * Default constructor leaving all empty.

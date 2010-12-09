@@ -145,3 +145,4 @@ bool WCreateColorArraysThread::isFinished()
 {
     return m_myThreadFinished;
 }
+

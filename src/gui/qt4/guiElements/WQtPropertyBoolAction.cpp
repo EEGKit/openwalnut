@@ -80,3 +80,4 @@ bool WQtPropertyBoolAction::event( QEvent* event )
     return QAction::event( event );
 }
 
+

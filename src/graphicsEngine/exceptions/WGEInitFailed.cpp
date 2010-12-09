@@ -36,3 +36,4 @@ WGEInitFailed::~WGEInitFailed() throw()
     // cleanup
 }
 
+

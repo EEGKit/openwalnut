@@ -210,3 +210,4 @@ boost::signals2::connection WGraphicsEngineAll::subscribeSignal( GE_SIGNAL signa
             break;
     }
 }
+

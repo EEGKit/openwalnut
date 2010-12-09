@@ -131,3 +131,4 @@ void WBresenhamDBL::rasterSegment( const wmath::WPosition& start, const wmath::W
     }
     markVoxel( voxel, -1, start, end );
 }
+

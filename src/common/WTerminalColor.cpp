@@ -126,3 +126,4 @@ std::string WTerminalColor::operator()( const std::string s ) const
     return m_colorString + s + m_colorResetString;
 }
 
+

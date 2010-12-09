@@ -36,3 +36,4 @@ WDHNoSuchSubject::~WDHNoSuchSubject() throw()
 {
     // cleanup
 }
+

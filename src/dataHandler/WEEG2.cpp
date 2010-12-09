@@ -149,3 +149,4 @@ boost::shared_ptr< WPrototyped > WEEG2::getPrototype()
 
     return m_prototype;
 }
+

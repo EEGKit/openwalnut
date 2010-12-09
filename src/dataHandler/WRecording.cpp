@@ -56,3 +56,4 @@ boost::shared_ptr< WPrototyped > WRecording::getPrototype()
     return m_prototype;
 }
 
+

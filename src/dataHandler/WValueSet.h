@@ -126,7 +126,7 @@ public:
         size_t minInd = 0;
         size_t maxInd = data->size() - 1;
         size_t itr_len = maxInd - minInd + 1;
-        T* dPtr = &(*dataarray)[0];
+        T* dPtr = &( *dataarray )[0];
 
         if ( itr_len % 2 == 1 )
         {

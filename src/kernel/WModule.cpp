@@ -593,3 +593,4 @@ boost::filesystem::path WModule::getLocalPath() const
     return m_localPath;
 }
 
+

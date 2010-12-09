@@ -161,3 +161,4 @@ void WGEZoomTrackballManipulator::setPaintMode( int mode )
 {
     m_paintMode = mode;
 }
+

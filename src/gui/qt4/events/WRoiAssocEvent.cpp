@@ -42,3 +42,4 @@ osg::ref_ptr< WROI > WRoiAssocEvent::getRoi()
 {
     return m_roi;
 }
+

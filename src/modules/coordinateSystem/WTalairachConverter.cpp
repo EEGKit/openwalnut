@@ -348,3 +348,4 @@ wmath::WMatrix<double> WTalairachConverter::getInvRotMat()
 {
     return m_rotMatInvert;
 }
+

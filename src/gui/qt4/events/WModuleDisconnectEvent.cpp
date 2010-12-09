@@ -49,3 +49,4 @@ boost::shared_ptr< WModuleConnector > WModuleDisconnectEvent::getOutput() const
     return m_out;
 }
 
+

@@ -78,3 +78,4 @@ void WPropertyTriggerWidget::changed()
     invalidate( !m_triggerProperty->set( m_button.isChecked() ? WPVBaseTypes::PV_TRIGGER_TRIGGERED : WPVBaseTypes::PV_TRIGGER_READY ) );
 }
 
+

@@ -87,16 +87,30 @@ WDataSetFibers::WDataSetFibers( WDataSetFibers::VertexArray vertices,
     size_t maxInd = vertices->size()/3 - 1;
     size_t itr_len = maxInd - minInd + 1;
 
-    float *vertFP = &(*vertices)[0];
+    float *vertFP = &( *vertices )[0];
 
     if ( vertices->size()/3+1 % 2 == 1 )
     {
-        m_bbMax[0] = vertFP[0];        m_bbMax[1] = vertFP[1];        m_bbMax[2] = vertFP[2];        m_bbMin[0] = vertFP[0];        m_bbMin[1] = vertFP[1];        m_bbMin[2] = vertFP[2];
+        m_bbMax[0] = vertFP[0];
+        m_bbMax[1] = vertFP[1];
+        m_bbMax[2] = vertFP[2];
+        m_bbMin[0] = vertFP[0];
+        m_bbMin[1] = vertFP[1];
+        m_bbMin[2] = vertFP[2];
         minInd = 1;
         itr_len = maxInd - minInd + 1;
     }
     size_t len_half = itr_len / 2;
-    size_t threei = minInd * 3;    float a[3],b[3];    size_t j;    size_t _3lenhalf = len_half * 3;    for( size_t i = minInd; i < len_half; ++i )    {        for ( j = 0; j < 3; ++j )        {            if ( vertFP[threei + j] < vertFP[threei + j + _3lenhalf] )
+
+    size_t threei = minInd * 3;
+    float a[3], b[3];
+    size_t j;
+    size_t _3lenhalf = len_half * 3;
+    for( size_t i = minInd; i < len_half; ++i )
+    {
+        for ( j = 0; j < 3; ++j )
+        {
+            if ( vertFP[threei + j] < vertFP[threei + j + _3lenhalf] )
             {
                 a[j] = vertFP[threei + j];
                 b[j] = vertFP[threei + j + _3lenhalf];
@@ -108,7 +122,10 @@ WDataSetFibers::WDataSetFibers( WDataSetFibers::VertexArray vertices,
             }
             m_bbMin[j] = m_bbMin[j] > a[j] ? a[j] : m_bbMin[j];
             m_bbMax[j] = m_bbMax[j] < b[j] ? b[j] : m_bbMax[j];
-        }        threei += 3;    }
+        }
+        threei += 3;
+    }
+
 //    size_t threei = 0;
 //    for( size_t i = minInd; i < maxInd + 1; ++i )
 //    {
@@ -494,3 +511,4 @@ WFiber WDataSetFibers::operator[]( size_t numTract ) const
     }
     return result;
 }
+

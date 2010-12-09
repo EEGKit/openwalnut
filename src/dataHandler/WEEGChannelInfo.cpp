@@ -93,3 +93,4 @@ wmath::WPosition WEEGChannelInfo::getPosition() const throw( WDHException )
         throw WDHException( std::string( "The position of this electrode is unknown." ) );
     }
 }
+

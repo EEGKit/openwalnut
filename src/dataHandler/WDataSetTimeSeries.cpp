@@ -240,3 +240,4 @@ double WDataSetTimeSeries::getMaxValue()
 {
     return m_maxValue;
 }
+

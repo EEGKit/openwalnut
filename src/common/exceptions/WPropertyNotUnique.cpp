@@ -36,3 +36,4 @@ WPropertyNotUnique::~WPropertyNotUnique() throw()
 {
     // clean up
 }
+

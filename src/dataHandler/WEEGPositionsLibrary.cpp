@@ -51,3 +51,4 @@ wmath::WPosition WEEGPositionsLibrary::getPosition( std::string label ) const th
 
     return iter->second;
 }
+

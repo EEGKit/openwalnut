@@ -89,16 +89,16 @@ void WFiberDrawable::drawFibers( osg::RenderInfo& renderInfo ) const //NOLINT
     state.setVertexPointer( 3, GL_FLOAT , 0, &( *m_verts )[0] );
     state.setColorPointer( 3 , GL_FLOAT , 0, &( *m_colors )[0] );
 
-    size_t *startIndPTR = &(*m_startIndexes)[0];
-    size_t *pointsPerLinePTR = &(*m_pointsPerLine)[0];
+    size_t *startIndPTR = &( *m_startIndexes )[0];
+    size_t *pointsPerLinePTR = &( *m_pointsPerLine )[0];
     size_t activeSize = m_active->size();
 
     // Note (Ledig): bool arrays are odd...
     for ( size_t i = 0; i < activeSize; ++i )
     {
-        if ( (*m_active)[i] )
+        if ( ( *m_active )[i] )
         {
-            state.glDrawArraysInstanced( GL_LINE_STRIP, startIndPTR[i], pointsPerLinePTR[i], 1);
+            state.glDrawArraysInstanced( GL_LINE_STRIP, startIndPTR[i], pointsPerLinePTR[i], 1 );
         }
     }
 
@@ -138,3 +138,4 @@ void WFiberDrawable::setDataset( boost::shared_ptr< const WDataSetFibers > datas
 {
     m_dataset = dataset;
 }
+

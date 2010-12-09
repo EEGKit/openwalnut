@@ -94,3 +94,4 @@ void WQtNavGLWidget::setSliderProperty( WPropInt prop )
     m_layout->setStretchFactor( m_propWidget, 0 );
 }
 
+

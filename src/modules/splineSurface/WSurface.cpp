@@ -302,3 +302,4 @@ boost::shared_ptr< WTriangleMesh > WSurface::getTriangleMesh()
 {
     return m_tMesh;
 }
+
