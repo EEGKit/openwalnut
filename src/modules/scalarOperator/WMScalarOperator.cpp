@@ -444,6 +444,7 @@ public:
         // discriminate the right operation with the correct type. It would be nicer to use some kind of strategy pattern here, but the template
         // character of the operators forbids it as template methods can't be virtual. Besides this, at some point in the module main the
         // selector needs to be queried and its index mapped to a pointer. This is what we do here.
+#ifndef _MSC_VER
         boost::function< ResultT( ResultT ) > op;
         switch ( m_opIdx )
         {
@@ -454,17 +455,23 @@ public:
                 op = &opAbs< ResultT >;
                 break;
         }
-
+#endif
         // apply op to each value
         const T* a = vsetA->rawData();
         for ( size_t i = 0; i < vsetA->rawSize(); ++i )
         {
+#ifndef _MSC_VER
             data[ i ] = op( a[ i ] );
+#else
+            data[ i ] = static_cast< ResultT >( a[ i ] );
+#endif
         }
 
         // create result value set
         boost::shared_ptr< WValueSet< ResultT > > result = boost::shared_ptr< WValueSet< ResultT > >(
-            new WValueSet< ResultT >( order, dim, data, type )
+            new WValueSet< ResultT >( order, dim,
+                boost::shared_ptr< std::vector< ResultT > >( new std::vector< ResultT >( data ) ),
+            type )
         );
         return result;
     }

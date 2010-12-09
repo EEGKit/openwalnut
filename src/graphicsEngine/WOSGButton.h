@@ -34,16 +34,18 @@
 
 #include "WOSGButtonLabel.h"
 
+#include "WExportWGE.h"
+
 /**
  * Class implements an osgWidget::Box with a label that can be used as a button in the 3D scene
  */
-class WOSGButton : public osgWidget::Box
+class WGE_EXPORT WOSGButton : public osgWidget::Box // NOLINT
 {
 public:
     /**
      * constructor
      *
-     * \param name name of the button, will also be displayed ont he label
+     * \param name name of the button, will also be displayed on the label
      * \param type taken from the osgWidget::Box
      * \param resize_hint
      * \param pushable denotes if the button is pushable, i.e. keeps a pushed state or not

@@ -143,3 +143,5 @@ void WROI::removeROIChangeNotifier( boost::shared_ptr< boost::function< void() >
     {
         m_changeNotifiers.erase( it );
     }
+    lock.unlock();
+}

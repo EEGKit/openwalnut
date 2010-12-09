@@ -33,10 +33,12 @@
 
 #include "../../common/WHierarchicalTreeFibers.h"
 
+#include "../WExportWGE.h"
+
 /**
  * Class creates a dendrogram from a hierarchical clustering
  */
-class WDendrogramGeode : public osg::Geode
+class WGE_EXPORT WDendrogramGeode : public osg::Geode // NOLINT
 {
 public:
     /**
