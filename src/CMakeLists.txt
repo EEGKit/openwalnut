@@ -441,6 +441,13 @@ ADD_CUSTOM_TARGET( removewinlineendings
                    COMMENT "Removes Windows Line endings"
                  )
 
+IF( CMAKE_GENERATOR MATCHES "Visual Studio" )
+    ADD_CUSTOM_TARGET( copyWinRelease
+                       COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/../tools/copyWinRelease.py
+                       WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+                       COMMENT "Copys all the necessary Windows dll's and executables so binaries can easyly be distributed"
+                     )
+ENDIF( CMAKE_GENERATOR MATCHES "Visual Studio" )
                  
 
 #-------------------------------------------------------------------------------------------------------------
