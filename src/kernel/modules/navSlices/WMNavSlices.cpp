@@ -73,7 +73,11 @@ WMNavSlices::WMNavSlices():
     // Implement WModule::initializeConnectors instead.
 
     // initialize members
+#ifndef LOWGRAPHICS
     m_shader = osg::ref_ptr< WShader > ( new WShader( "WMNavSlices" ) );
+#else
+    m_shader = osg::ref_ptr< WShader > ( new WShader( "WMNavSlices-simple" ) );
+#endif
 }
 
 WMNavSlices::~WMNavSlices()

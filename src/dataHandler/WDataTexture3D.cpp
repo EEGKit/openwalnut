@@ -61,6 +61,9 @@ WDataTexture3D::WDataTexture3D( boost::shared_ptr<WValueSetBase> valueSet, boost
                                                                        " than 2048 pixels/voxels in one dimension." );
     WAssert( m_grid->getNbCoordsZ() <= wlimits::MAX_TEXTURE_DIMENSION, "Cannot create a texture with more"
                                                                        " than 2048 pixels/voxels in one dimension." );
+#ifdef LOWGRAPHICS
+    scaleTexture();
+#endif
 }
 
 WDataTexture3D::~WDataTexture3D()
@@ -535,4 +538,111 @@ boost::shared_ptr< WProperties > WDataTexture3D::getInformationProperties() cons
     return m_infoProperties;
 }
 
+// note (ledig): sry for macro but its no fun fixing the same code again and again
+#define DATADEP_SCALE( data_type ) \
+    boost::shared_ptr< WValueSet< data_type > > vs = boost::shared_dynamic_cast< WValueSet< data_type > >( m_valueSet ); \
+    boost::shared_ptr< std::vector< data_type > > data = boost::shared_ptr< std::vector< data_type > >( \
+    new std::vector< data_type >( newsizeX * newsizeY * newsizeZ ) \
+    ); \
+    newvalueSet = boost::shared_ptr< WValueSet< data_type > >( \
+    new WValueSet< data_type >( vs->order(), vs->dimension(), data, vs->getDataType() \
+    ) \
+    ); \
+    \
+    data_type* source = const_cast< data_type* > ( vs->rawData() ); \
+    data_type* dest = const_cast< data_type* > ( boost::shared_dynamic_cast< WValueSet< data_type > >( newvalueSet )->rawData() ); \
+    \
+    size_t x; \
+    size_t y; \
+    size_t z; \
+    double orgx = 0.0; \
+    double orgy = 0.0; \
+    double orgz = 0.0; \
+    size_t newcellId = 0; \
+    size_t orgId; \
+    for ( z = 0; z < newsizeZ; ++z ) \
+{ \ // NOLINT
+    orgy = 0.0; \
+    for ( y = 0; y < newsizeY; ++y ) \
+{ \ // NOLINT
+    orgx = 0.0; \
+    for ( x = 0; x < newsizeX; ++x ) \
+{ \ // NOLINT
+    orgId = floor( orgx ) + floor( orgy ) * orgsizeX + floor( orgz ) * orgsizeX * orgsizeY; \
+    \
+    dest[ newcellId ] = source[ orgId ]; \
+    \
+    ++newcellId; \
+    orgx += invscaleX; \
+} \ // NOLINT
+    orgy += invscaleY; \
+} \ // NOLINT
+    orgz += invscaleZ; \
+}
+
+
+void WDataTexture3D::scaleTexture()
+{
+    // note this function might not be correct for dimensions above 1
+    unsigned int orgsizeX = m_grid->getNbCoordsX();
+    unsigned int orgsizeY = m_grid->getNbCoordsY();
+    unsigned int orgsizeZ = m_grid->getNbCoordsZ();
+
+    unsigned int newsizeX = 1;
+    unsigned int newsizeY = 1;
+    unsigned int newsizeZ = 1;
+    while ( newsizeX < orgsizeX )
+    {
+        newsizeX <<= 1;
+    }
+    while ( newsizeY < orgsizeY )
+    {
+        newsizeY <<= 1;
+    }
+    while ( newsizeZ < orgsizeZ )
+    {
+        newsizeZ <<= 1;
+    }
+
+    double invscaleX = static_cast< double >( orgsizeX ) / static_cast< double >( newsizeX );
+    double invscaleY = static_cast< double >( orgsizeY ) / static_cast< double >( newsizeY );
+    double invscaleZ = static_cast< double >( orgsizeZ ) / static_cast< double >( newsizeZ );
+
+    boost::shared_ptr< WGridRegular3D > newgrid = boost::shared_ptr< WGridRegular3D >(
+        new WGridRegular3D( newsizeX, newsizeY, newsizeZ,
+        m_grid->getOffsetX() * invscaleX,
+        m_grid->getOffsetY() * invscaleY,
+        m_grid->getOffsetZ() * invscaleZ )
+        );
+
+    boost::shared_ptr< WValueSetBase > newvalueSet;
+
+    if ( m_valueSet->getDataType() == W_DT_UINT8 )
+    {
+        DATADEP_SCALE( uint8_t )
+    }
+    else if ( m_valueSet->getDataType() == W_DT_INT16 )
+    {
+        DATADEP_SCALE( int16_t )
+    }
+    else if ( m_valueSet->getDataType() == W_DT_SIGNED_INT )
+    {
+        DATADEP_SCALE( int32_t )
+    }
+    else if ( m_valueSet->getDataType() == W_DT_FLOAT )
+    {
+        DATADEP_SCALE( float )
+    }
+    else if ( m_valueSet->getDataType() == W_DT_DOUBLE )
+    {
+        DATADEP_SCALE( double )
+    }
+    else
+    {
+        return;
+    }
+
+    m_grid = newgrid;
+    m_valueSet = newvalueSet;
+}
 

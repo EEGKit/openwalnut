@@ -378,6 +378,11 @@ protected:
     float scaleInterval( float value ) const;
 
 private:
+    /**
+    * Scales the texture to a size of power two, this is only need if a graphics card does not
+    * suppport other texture size like on older laptops
+    */
+    void scaleTexture();
 };
 
 #endif  // WDATATEXTURE3D_H
