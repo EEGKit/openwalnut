@@ -22,39 +22,14 @@
 //
 //---------------------------------------------------------------------------
 
-#include <string>
+#include <vector>
 
-#include "WOSGButtonLabel.h"
+#include <boost/shared_ptr.hpp>
 
-#include "WOSGButton.h"
+#include "WTractData.h"
 
-WOSGButton::WOSGButton( std::string name, osgWidget::Box::BoxType type, bool resize_hint, bool pushable ) :
-    osgWidget::Box( name, type, resize_hint )
-{
-    getBackground()->setColor( 0.8f, 0.8f, 0.8f, 0.8f );
-
-    m_label = new WOSGButtonLabel( pushable );
-    m_label->setLabel( name );
-    m_label->setName( std::string( "Button_" ) + name );
-    addWidget( m_label );
-}
-
-WOSGButton::~WOSGButton()
+WTractData::WTractData( boost::shared_ptr< std::vector< float > > pointComponents, boost::shared_ptr< std::vector< size_t > > startIndices )
+    : m_pointComponents( pointComponents ),
+      m_startIndices( startIndices )
 {
 }
-
-void WOSGButton::setLabel( std::string label )
-{
-    m_label->setLabel( label );
-}
-
-void WOSGButton::setId( size_t id )
-{
-    m_id = id;
-}
-
-void WOSGButton::setBackgroundColor( WColor color )
-{
-    m_label->setColor( color.getRed(), color.getGreen(), color.getBlue(), 1.0f );
-}
-

@@ -386,6 +386,22 @@ wmath::WVector3D WGridRegular3D::worldCoordToTexCoord( wmath::WPosition point )
     r[1] += 0.5 / m_nbPosY;
     r[2] += 0.5 / m_nbPosZ;
 
+    return r;
+}
+
+wmath::WPosition WGridRegular3D::texCoordToWorldCoord( wmath::WVector3D coords )
+{
+    wmath::WVector3D r( wmath::transformPosition3DWithMatrix4D( m_matrix, coords ) );
+
+    // Correct the coordinates to have the position at the center of the texture voxel.
+    r[0] -= 0.5 / m_nbPosX;
+    r[1] -= 0.5 / m_nbPosY;
+    r[2] -= 0.5 / m_nbPosZ;
+
+    // Scale to [0,max]
+    r[0] = r[0] * m_nbPosX;
+    r[1] = r[1] * m_nbPosY;
+    r[2] = r[2] * m_nbPosZ;
 
     return r;
 }
@@ -1010,7 +1026,6 @@ void WGridRegular3D::stretch( wmath::WPosition str )
     m_matrixInverse = wmath::invertMatrix4x4( m_matrix );
 }
 
-// TODO(all): compiler warning: warning: unused parameter 'center'
 void WGridRegular3D::rotate( osg::Matrixf osgrot, wmath::WPosition center )
 {
     switch ( m_matrixActive )

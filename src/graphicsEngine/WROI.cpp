@@ -118,14 +118,14 @@ void WROI::unhide()
 
 void WROI::signalRoiChange()
 {
-    for ( std::list< boost::function< void() > >::iterator iter = m_changeNotifiers.begin();
+    for ( std::list< boost::shared_ptr< boost::function< void() > > >::iterator iter = m_changeNotifiers.begin();
                 iter != m_changeNotifiers.end(); ++iter )
     {
-        ( *iter )();
+        ( **iter )();
     }
 }
 
-void WROI::addChangeNotifier( boost::function< void() > notifier )
+void WROI::addROIChangeNotifier( boost::shared_ptr< boost::function< void() > > notifier )
 {
     boost::unique_lock< boost::shared_mutex > lock;
     lock = boost::unique_lock< boost::shared_mutex >( m_associatedNotifiersLock );
@@ -133,3 +133,13 @@ void WROI::addChangeNotifier( boost::function< void() > notifier )
     lock.unlock();
 }
 
+void WROI::removeROIChangeNotifier( boost::shared_ptr< boost::function< void() > > notifier )
+{
+    boost::unique_lock< boost::shared_mutex > lock;
+    lock = boost::unique_lock< boost::shared_mutex >( m_associatedNotifiersLock );
+    std::list<  boost::shared_ptr< boost::function< void() > > >::iterator it;
+    it = std::find( m_changeNotifiers.begin(), m_changeNotifiers.end(), notifier );
+    if( it != m_changeNotifiers.end() )
+    {
+        m_changeNotifiers.erase( it );
+    }

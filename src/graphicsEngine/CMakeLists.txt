@@ -6,6 +6,8 @@ ADD_SUBDIRECTORY( platformDependent )
 FILE( GLOB GE_EXCEPTIONS_SRC "exceptions/*.cpp" "exceptions/*.h" )
 FILE( GLOB GE_CALLBACKS_SRC "callbacks/*.cpp" "callbacks/*.h" )
 FILE( GLOB GE_ALGORITHMS_SRC "algorithms/*.cpp" "algorithms/*.h" )
+FILE( GLOB GE_GEODES_SRC "geodes/*.cpp" "geodes/*.h" )
+
 IF( CMAKE_HOST_SYSTEM MATCHES Darwin )
   FILE( GLOB GE_PLATFORMDEPENDENT_SRC 
     "platformDependent/WGraphicsEngineMac.cpp" 

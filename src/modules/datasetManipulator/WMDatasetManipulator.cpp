@@ -27,11 +27,11 @@
 #include <utility>
 
 #include "../../kernel/WKernel.h"
-#include "../emptyIcon.xpm" // Please put a real icon here.
 
 #include "../../dataHandler/WDataHandler.h"
 #include "../../dataHandler/WDataTexture3D.h"
 #include "../../dataHandler/WSubject.h"
+#include "WMDatasetManipulator.xpm"
 
 #include "WMDatasetManipulator.h"
 
@@ -56,7 +56,7 @@ boost::shared_ptr< WModule > WMDatasetManipulator::factory() const
 
 const char** WMDatasetManipulator::getXPMIcon() const
 {
-    return emptyIcon_xpm; // Please put a real icon here.
+    return WMDatasetManipulator_xpm; // Please put a real icon here.
 }
 const std::string WMDatasetManipulator::getName() const
 {
@@ -165,18 +165,21 @@ void WMDatasetManipulator::init()
     WGraphicsEngine::getGraphicsEngine()->getScene()->addChild( &( *m_knobRotCenter ) );
     WGraphicsEngine::getGraphicsEngine()->getScene()->addChild( &( *m_knobRot ) );
 
-    boost::function< void() > changeRoiSignal = boost::bind( &WMDatasetManipulator::manipulatorMoved, this );
-    m_knobCenter->addChangeNotifier( changeRoiSignal );
-    m_knobx1->addChangeNotifier( changeRoiSignal );
-    m_knobx2->addChangeNotifier( changeRoiSignal );
-    m_knoby1->addChangeNotifier( changeRoiSignal );
-    m_knoby2->addChangeNotifier( changeRoiSignal );
-    m_knobz1->addChangeNotifier( changeRoiSignal );
-    m_knobz2->addChangeNotifier( changeRoiSignal );
+    using boost::function;
+    m_changeRoiSignal
+        = boost::shared_ptr< function< void() > >( new function< void() >( boost::bind( &WMDatasetManipulator::manipulatorMoved, this ) ) );
+    m_knobCenter->addROIChangeNotifier( m_changeRoiSignal );
+    m_knobx1->addROIChangeNotifier( m_changeRoiSignal );
+    m_knobx2->addROIChangeNotifier( m_changeRoiSignal );
+    m_knoby1->addROIChangeNotifier( m_changeRoiSignal );
+    m_knoby2->addROIChangeNotifier( m_changeRoiSignal );
+    m_knobz1->addROIChangeNotifier( m_changeRoiSignal );
+    m_knobz2->addROIChangeNotifier( m_changeRoiSignal );
 
-    boost::function< void() > changeRotRoiSignal = boost::bind( &WMDatasetManipulator::manipulatorRotMoved, this );
-    m_knobRotCenter->addChangeNotifier( changeRotRoiSignal );
-    m_knobRot->addChangeNotifier( changeRotRoiSignal );
+    m_changeRotRoiSignal
+        = boost::shared_ptr< function< void() > >( new function< void() >( boost::bind( &WMDatasetManipulator::manipulatorRotMoved, this ) ) );
+    m_knobRotCenter->addROIChangeNotifier( m_changeRotRoiSignal );
+    m_knobRot->addROIChangeNotifier( m_changeRotRoiSignal );
 
     setManipulatorMode();
 }
@@ -294,6 +297,12 @@ void WMDatasetManipulator::manipulatorMoved()
                                          m_grid->getTranslate().z() + ( m_knobz1->getPosition().z() - m_posz1.z() )
                                             * ( static_cast<float>( m_grid->getNbCoordsZ() / orgsizez ) ) ) );
 
+    m_grid->translate( wmath::WPosition( m_grid->getTranslate().x() + ( m_knobx1->getPosition().x() - m_posx1.x() ) *
+                                            ( static_cast<float>( m_grid->getNbCoordsX() / orgsizex ) ),
+                                         m_grid->getTranslate().y() + ( m_knoby1->getPosition().y() - m_posy1.y() ) *
+                                            ( static_cast<float>( m_grid->getNbCoordsY() / orgsizey ) ),
+                                         m_grid->getTranslate().z() + ( m_knobz1->getPosition().z() - m_posz1.z() ) *
+                                            ( static_cast<float>( m_grid->getNbCoordsZ() / orgsizez ) ) ) );
     m_translationX->set( m_grid->getTranslate().x(), true );
     m_translationY->set( m_grid->getTranslate().y(), true );
     m_translationZ->set( m_grid->getTranslate().z(), true );
@@ -456,5 +465,16 @@ void WMDatasetManipulator::moduleMain()
             WDataHandler::getDefaultSubject()->getChangeCondition()->notify();
         }
     }
+
+    m_knobCenter->removeROIChangeNotifier( m_changeRoiSignal );
+    m_knobx1->removeROIChangeNotifier( m_changeRoiSignal );
+    m_knobx2->removeROIChangeNotifier( m_changeRoiSignal );
+    m_knoby1->removeROIChangeNotifier( m_changeRoiSignal );
+    m_knoby2->removeROIChangeNotifier( m_changeRoiSignal );
+    m_knobz1->removeROIChangeNotifier( m_changeRoiSignal );
+    m_knobz2->removeROIChangeNotifier( m_changeRoiSignal );
+
+    m_knobRotCenter->removeROIChangeNotifier( m_changeRotRoiSignal );
+    m_knobRot->removeROIChangeNotifier( m_changeRotRoiSignal );
 }
 
