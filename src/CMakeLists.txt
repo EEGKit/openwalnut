@@ -244,24 +244,6 @@ ADD_SUBDIRECTORY( common )
 ADD_SUBDIRECTORY( modules )
 ADD_SUBDIRECTORY( ext ) # The needed external libraries
 
-#-------------------------------------------------------------------------------------------------------------
-# Writes information about the revision of the current code to the file version.h which then gets included by OpenWalnut.cpp
-IF( NOT CMAKE_GENERATOR MATCHES "Visual Studio" )
-    add_custom_command( OUTPUT ${PROJECT_SOURCE_DIR}/version.h
-                        MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/../.hg/dirstate
-                        COMMAND hg parents --template '\#define W_VERSION \"{node|short} {rev} {branches} {tags}\" //' > ${PROJECT_SOURCE_DIR}/version.h
-                        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-                        COMMENT "Creating version.h"
-                     )
-ELSE()
-    add_custom_command( OUTPUT ${PROJECT_SOURCE_DIR}/version.h
-                        MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/../.hg/dirstate
-                        COMMAND hg parents --template "\"#define W_VERSION \"\"{node|short} {rev} {branches} {tags}\"\"\"" > ${PROJECT_SOURCE_DIR}/version.h
-                        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-                        COMMENT "Creating version.h"
-                     )
-ENDIF()
-
 # finally, build walnut
 ADD_EXECUTABLE( walnut OpenWalnut.cpp version.h )
 TARGET_LINK_LIBRARIES( walnut ${OWKernelName} ${OWDatahandlerName} ${OWguiName} ${OWguiqt4Name} ${OWCommonName} ${OWgeName} ${Boost_LIBRARIES} )
