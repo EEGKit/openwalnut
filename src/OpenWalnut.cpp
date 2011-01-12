@@ -64,7 +64,7 @@ int main( int argc, char** argv )
     WSegmentationFault::installSignalHandler();
 
     // initialize logger here. It will be started by the GUI.
-    WLogger::startup();
+    WLogger::startup( std::cout, LL_WARNING );
 
     // initialize GUI
     // NOTE: we need a shared_ptr here since WGUI uses enable_shared_from_this.
