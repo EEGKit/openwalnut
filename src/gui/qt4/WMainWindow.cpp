@@ -795,7 +795,7 @@ void WMainWindow::openAboutDialog()
 {
     QMessageBox::about( this, "About OpenWalnut",
                         "OpenWalnut 1.2 ( http://www.openwalnut.org )\n\n"
-                        "Copyright 2009-2010 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS. "
+                        "Copyright 2009-2011 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS. "
                         "For more information see http://www.openwalnut.org/copying.\n\n"
                         "This program comes with ABSOLUTELY NO WARRANTY. "
                         "This is free software, and you are welcome to redistribute it "
