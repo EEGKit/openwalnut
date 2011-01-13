@@ -37,7 +37,7 @@
 
 #include "WQtCombinerToolbar.h"
 
-WQtCombinerToolbar::WQtCombinerToolbar( WMainWindow* parent, WQtCombinerActionList& compatibles )
+WQtCombinerToolbar::WQtCombinerToolbar( WMainWindow* parent, WQtCombinerActionList& compatibles ) // NOLINT
     : QToolBar( "Compatible Modules", parent ),
       m_parent( parent )
 {
@@ -92,7 +92,7 @@ void WQtCombinerToolbar::makeEmpty()
     insertDummyButton();
 }
 
-void WQtCombinerToolbar::updateButtons( WQtCombinerActionList& compatibles )
+void WQtCombinerToolbar::updateButtons( WQtCombinerActionList& compatibles ) //NOLINT
 {
     clear();
     addActions( compatibles );

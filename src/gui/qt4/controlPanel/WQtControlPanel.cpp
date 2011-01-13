@@ -874,7 +874,7 @@ void WQtControlPanel::buildPropTab( boost::shared_ptr< WProperties > props, boos
     }
 }
 
-void deepDeleteActionList( QList< QAction* >& l )
+void deepDeleteActionList( QList< QAction* >& l ) //NOLINT
 {
     // traverse
     for( QList< QAction* >::iterator it = l.begin(); it != l.end(); ++it )
