@@ -23,8 +23,9 @@
 //---------------------------------------------------------------------------
 
 #include <QtGui/QLabel>
+#include <QtGui/QTableWidget>
+#include <QtGui/QStandardItemModel>
 
-#include "events/WLogEvent.h"
 #include "events/WEventTypes.h"
 
 #include "WQtStatusBar.h"
@@ -33,7 +34,6 @@
 #include <iostream>
 
 // public
-
 WQtStatusBar::WQtStatusBar( QWidget* parent ):
     QStatusBar( parent ),
     m_statusIcon( new WQtStatusIcon( Qt::green, this ) )
@@ -44,23 +44,25 @@ WQtStatusBar::WQtStatusBar( QWidget* parent ):
     m_label = new QLabel( this );
     m_label->setText("OpenWalnut");
     this->addPermanentWidget( m_label, 2 );
+    m_model = new QStandardItemModel;
 }
 
 WQtStatusBar::~WQtStatusBar()
 {
     delete m_statusIcon;
     delete m_label;
+    delete m_model;
 }
 
 //private
 
 bool WQtStatusBar::event( QEvent* event )
 {
-    bool returnValue = false;
+    //bool returnValue = false;
     if( event->type() == WQT_LOG_EVENT )
     {
         //std::cout << "log event\n";
-        returnValue = true;
+        //returnValue = true;
         WLogEvent* updateEvent = dynamic_cast< WLogEvent* >( event );
         const WLogEntry& entry = updateEvent->getEntry();
         if( updateEvent && entry.getLogLevel() >= LL_DEBUG && entry.getLogLevel() <= LL_ERROR) // TODO this is crap, event still bugs out
@@ -100,11 +102,39 @@ bool WQtStatusBar::event( QEvent* event )
                 m_label->setText( msg );
             }
         }
+        createLogEntry( entry );
         /*std::cout << "debug: " << LL_DEBUG << "\ninfo: " << LL_INFO << "\nwarning: " << LL_WARNING << "\nerror: " << LL_ERROR << "\n";
         std::cout << "loglevel: " << entry.getLogLevel() << std::endl;
     std::cout << "eventend \n";*/
+        return true;
+    }
+    else
+    {
+        return QStatusBar::event( event );
     }
     //return QObject::event( event )
-    return returnValue;
+    //return returnValue;
+}
+
+void WQtStatusBar::mousePressEvent( QMouseEvent* event )
+{
+    QTableView* tw = new QTableView();
+    tw->setModel( m_model );
+    tw->show();
+    return QStatusBar::mousePressEvent( event );
+}
+
+void WQtStatusBar::createLogEntry( const WLogEntry& entry )
+{
+    // S.106 Advanced Qt Programming
+    //QStandardItem for every entry message => new QStandardItem(QString)
+    QList< QStandardItem* > entryRow;
+    QStandardItem* rowName = new QStandardItem;
+    //rowName->setData( entry.getSource(), Qt::EditRole );
+    entryRow << rowName;
+    //QList<QStandardItem*> for every Row
+    //entryRow << new QStandardItem( entry.getMessage() );
+    //QStandardItemModel::appendRow( QList )
+    m_model->appendRow( entryRow );
 }
 

@@ -28,7 +28,9 @@
 #include <QtGui/QStatusBar>
 #include <QtGui/QMenu>
 #include <QtGui/QLabel>
+#include <QtGui/QStandardItemModel>
 
+#include "events/WLogEvent.h"
 #include "guiElements/WQtStatusIcon.h"
 
 /**
@@ -64,6 +66,11 @@ class WQtStatusBar : public QStatusBar
          **/
         virtual bool event( QEvent* event );
 
+        /**
+         * reimplementing QStatusBar::mousePressEvent()
+         **/
+        void mousePressEvent( QMouseEvent* event );
+
     private:
 
         /**
@@ -75,6 +82,16 @@ class WQtStatusBar : public QStatusBar
          * pointer to the label in the status bar, displaying messages
          **/
         QLabel* m_label;
+
+        /**
+         * the model holding the event data
+         **/
+        QStandardItemModel* m_model;
+
+        /**
+         * TODO
+         **/
+        void createLogEntry( const WLogEntry& );
 };
 
 #endif  // WQTSTATUSBAR_H
