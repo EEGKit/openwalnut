@@ -29,9 +29,11 @@
 #include "../../common/math/WVector3D.h"
 #include "../../common/WAssert.h"
 #include "../../common/WLogger.h"
+#include "../../dataHandler/datastructures/WFiberCluster.h"
 #include "../../dataHandler/WDataHandler.h"
 #include "../../dataHandler/WDataTexture3D.h"
 #include "../../dataHandler/WSubject.h"
+#include "../../graphicsEngine/shaders/WGEShader.h"
 #include "../../graphicsEngine/WGEGeodeUtils.h"
 #include "../../graphicsEngine/WGEUtils.h"
 #include "../../kernel/WKernel.h"
@@ -45,7 +47,7 @@ WMLineGuidedSlice::WMLineGuidedSlice():
     m_textureChanged( true ),
     m_isPicked( false )
 {
-    m_shader = osg::ref_ptr< WShader >( new WShader( "WMLineGuidedSlice" ) );
+    m_shader = osg::ref_ptr< WGEShader >( new WGEShader( "WMLineGuidedSlice" ) );
 }
 
 WMLineGuidedSlice::~WMLineGuidedSlice()
@@ -151,7 +153,7 @@ void WMLineGuidedSlice::updateCenterLine()
     m_centerLine = m_input->getData()->getCenterLine();
     if( m_centerLine )
     {
-        debugLog() << "Draw center line representation." << m_centerLine->pathLength();
+        debugLog() << "Draw center line representation." << wmath::pathLength( *m_centerLine );
         m_centerLineGeode = wge::generateLineStripGeode( *m_centerLine, 2.f );
     }
     else

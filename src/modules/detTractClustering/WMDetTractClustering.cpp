@@ -33,8 +33,8 @@
 #include <osg/Geode>
 #include <osg/Geometry>
 
-#include "../../common/datastructures/WDXtLookUpTable.h"
 #include "../../common/datastructures/WFiber.h"
+#include "../../common/math/WMatrixSym.h"
 #include "../../common/WAssert.h"
 #include "../../common/WColor.h"
 #include "../../common/WIOTools.h"
@@ -44,14 +44,14 @@
 #include "../../common/WThreadedFunction.h"
 #include "../../dataHandler/datastructures/WFiberCluster.h"
 #include "../../dataHandler/exceptions/WDHIOFailure.h"
-#include "../../dataHandler/io/WReaderLookUpTableVTK.h"
-#include "../../dataHandler/io/WWriterLookUpTableVTK.h"
+#include "../../dataHandler/io/WReaderMatrixSymVTK.h"
+#include "../../dataHandler/io/WWriterMatrixSymVTK.h"
 #include "../../dataHandler/WDataSetFiberVector.h"
 #include "../../dataHandler/WSubject.h"
 #include "../../graphicsEngine/WGEUtils.h"
 #include "../../kernel/WKernel.h"
-#include "WMDetTractClustering.xpm"
 #include "WMDetTractClustering.h"
+#include "WMDetTractClustering.xpm"
 
 #ifdef CUDA_FOUND
 #include "WMDetTractClusteringCudaInterface.h"
@@ -182,7 +182,7 @@ void WMDetTractClustering::update()
     if( !( m_dLtTableExists = dLtTableExists() ) )
     {
         debugLog() << "Consider old table as invalid.";
-        m_dLtTable.reset( new WDXtLookUpTable( m_tracts->size() ) );
+        m_dLtTable.reset( new WMatrixSymDBL( m_tracts->size() ) );
     }
 
     cluster();
@@ -191,7 +191,7 @@ void WMDetTractClustering::update()
     m_progress->addSubProgress( saveProgress );
     if( !wiotools::fileExists( lookUpTableFileName() ) )
     {
-        WWriterLookUpTableVTK w( lookUpTableFileName(), true );
+        WWriterMatrixSymVTK w( lookUpTableFileName(), true );
         try
         {
             w.writeTable( m_dLtTable->getData(), m_lastTractsSize );
@@ -233,10 +233,10 @@ bool WMDetTractClustering::dLtTableExists()
         try
         {
             debugLog() << "trying to read table from: " << dLtFileName;
-            WReaderLookUpTableVTK r( dLtFileName );
+            WReaderMatrixSymVTK r( dLtFileName );
             boost::shared_ptr< std::vector< double > > data( new std::vector< double >() );
             r.readTable( data );
-            m_dLtTable.reset( new WDXtLookUpTable( static_cast< size_t >( data->back() ) ) );
+            m_dLtTable.reset( new WMatrixSymDBL( static_cast< size_t >( data->back() ) ) );
             m_lastTractsSize = static_cast< size_t >( data->back() );
 
             // remove the dimension from data array since it's not representing any distance
@@ -351,7 +351,7 @@ osg::ref_ptr< osg::Geode > WMDetTractClustering::genTractGeode( const WFiberClus
     std::list< size_t >::const_iterator cit = cluster.getIndices().begin();
     for( ; cit !=  cluster.getIndices().end(); ++cit )
     {
-        const wmath::WFiber &fib = (*m_tracts)[ *cit ];
+        const WFiber &fib = (*m_tracts)[ *cit ];
         for( size_t i = 0; i < fib.size(); ++i )
         {
             vertices->push_back( osg::Vec3( fib[i][0], fib[i][1], fib[i][2] ) );
@@ -362,7 +362,7 @@ osg::ref_ptr< osg::Geode > WMDetTractClustering::genTractGeode( const WFiberClus
     geometry->setVertexArray( vertices );
 
     ref_ptr< osg::Vec4Array > colors = ref_ptr< osg::Vec4Array >( new osg::Vec4Array );
-    colors->push_back( wge::osgColor( color ) );
+    colors->push_back( color );
     geometry->setColorArray( colors );
     geometry->setColorBinding( osg::Geometry::BIND_OVERALL );
     osg::ref_ptr< osg::Geode > geode = osg::ref_ptr< osg::Geode >( new osg::Geode );
@@ -384,7 +384,7 @@ osg::ref_ptr< WGEManagedGroupNode > WMDetTractClustering::paint() const
     std::stringstream clusterLog;
     for( size_t i = 0; i < m_clusters.size(); ++i, hue += hue_increment )
     {
-        color.setHSV( hue, 1.0, 0.75 );
+        color = convertHSVtoRGBA( hue, 1.0, 0.75 );
         result->insert( genTractGeode( m_clusters[i], color ).get() );
         clusterLog << m_clusters[i].size() << " ";
         numUsedTracts += m_clusters[i].size();
@@ -452,7 +452,7 @@ bool WMDetTractClustering::OutputIDBound::accept( boost::shared_ptr< WPropertyVa
 }
 
 WMDetTractClustering::SimilarityMatrixComputation::SimilarityMatrixComputation(
-        boost::shared_ptr< WDXtLookUpTable > dLtTable,
+        boost::shared_ptr< WMatrixSymDBL > dLtTable,
         boost::shared_ptr< WDataSetFiberVector > tracts,
         double proxSquare,
         const WBoolFlag& shutdownFlag )
@@ -468,8 +468,8 @@ void WMDetTractClustering::SimilarityMatrixComputation::operator()( size_t id, s
     wlog::debug( "WMDetTractClustering::SimilarityMatrixComputation" ) << "Thread: " << id << " starting its work";
     ( void ) b; // NOLINT for removing the warning about unused variables
 
-    boost::function< double ( const wmath::WFiber& q, const wmath::WFiber& r ) > dLt; // NOLINT
-    dLt = boost::bind( wmath::WFiber::distDLT, m_proxSquare, _1, _2 );
+    boost::function< double ( const WFiber& q, const WFiber& r ) > dLt; // NOLINT
+    dLt = boost::bind( WFiber::distDLT, m_proxSquare, _1, _2 );
 
     size_t numTracts = m_tracts->size();
     size_t lines = 0;

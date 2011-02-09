@@ -293,13 +293,13 @@ wmath::WValue< double > WMClusterSlicer::meanParameter( boost::shared_ptr< std::
 void WMClusterSlicer::generateSlices()
 {
     debugLog() << "Generating Slices";
-    wmath::WFiber centerLine( *m_cluster->getCenterLine() ); // copy the centerline
+    WFiber centerLine( *m_cluster->getCenterLine() ); // copy the centerline
     if( centerLine.empty() )
     {
         errorLog() << "CenterLine of the bundle is empty => no slices are drawn";
         return;
     }
-    centerLine.resample( static_cast< size_t >( m_centerLineScale->get( true ) * centerLine.size() ) );
+    centerLine.resampleByNumberOfPoints( static_cast< size_t >( m_centerLineScale->get( true ) * centerLine.size() ) );
 
     m_slices = boost::shared_ptr< std::vector< std::pair< double, WPlane > > >( new std::vector< std::pair< double, WPlane > > );
     m_maxMean = wlimits::MIN_DOUBLE;
@@ -311,8 +311,8 @@ void WMClusterSlicer::generateSlices()
     m_rootNode->remove( m_samplePointsGeode );
     m_samplePointsGeode = osg::ref_ptr< WGEGroupNode >( new WGEGroupNode ); // discard old geode
 
-    wmath::WVector3D generator = ( centerLine.front() - centerLine.midPoint() );
-    generator = generator.crossProduct( centerLine.back() - centerLine.midPoint() );
+    wmath::WVector3D generator = ( centerLine.front() - wmath::midPoint( centerLine ) );
+    generator = generator.crossProduct( centerLine.back() - wmath::midPoint( centerLine ) );
     for( size_t i = 1; i < centerLine.size(); ++i )
     {
         wmath::WVector3D tangent = centerLine[i] - centerLine[i-1];
@@ -415,7 +415,7 @@ void WMClusterSlicer::sliceAndColorMesh( boost::shared_ptr< WTriangleMesh > mesh
 //
 //        for( std::map< size_t, std::pair< double, int > >::const_iterator vertexColor = cm.begin(); vertexColor != cm.end(); ++vertexColor )
 //        {
-//            cmData[ vertexColor->first ] = WColor( 0.0, vertexColor->second.first / vertexColor->second.second, 1.0 );
+//            cmData[ vertexColor->first ] = WColor( 0.0, vertexColor->second.first / vertexColor->second.second, 1.0, 1.0 );
 //        }
     }
     else
@@ -533,7 +533,7 @@ WColor WMClusterSlicer::colorFromPlanePair( const wmath::WPosition& vertex, cons
     double colorQ = ( *m_slices )[ pp.second ].first;
     double vertexColor = colorQ * ( distanceToP / ( distanceToP + distanceToQ ) ) + colorP * ( distanceToQ / ( distanceToP + distanceToQ ) );
     // std::cout << "colorP, colorQ, vertexColor: " << colorP << " " << colorQ << " " << vertexColor << std::endl;
-    return WColor( 0, mapMeanOntoScale( vertexColor ), 1 );
+    return WColor( 0.0, mapMeanOntoScale( vertexColor ), 1.0, 1.0 );
 }
 
 void WMClusterSlicer::updateDisplay( bool force )
@@ -565,7 +565,7 @@ void WMClusterSlicer::updateDisplay( bool force )
             for( std::vector< std::pair< double, WPlane > >::const_iterator cit = m_slices->begin(); cit != m_slices->end(); ++cit )
             {
                 double scaledMean = mapMeanOntoScale( cit->first );
-                WColor color( scaledMean, scaledMean, 1 );
+                WColor color( scaledMean, scaledMean, 1.0, 1.0 );
                 m_sliceGeode->insert( wge::genFinitePlane( width, height, cit->second, color, true ) );
             }
             m_rootNode->insert( m_sliceGeode );
@@ -595,8 +595,8 @@ double WMClusterSlicer::countTractPointsInsideVolume( double isoValue ) const
     size_t pointsInside = 0;
     for( iter = indices.begin(); iter != indices.end(); ++iter )
     {
-        const wmath::WFiber& tract = ( *tracts )[ *iter ];
-        wmath::WFiber::const_iterator pos;
+        const WFiber& tract = ( *tracts )[ *iter ];
+        WFiber::const_iterator pos;
         for( pos = tract.begin(); pos != tract.end(); ++pos, ++pointCounter )
         {
             bool inGrid = false;
@@ -620,8 +620,8 @@ double WMClusterSlicer::computeOptimalIsoValue( double coverage ) const
 
     for( iter = indices.begin(); iter != indices.end(); ++iter )
     {
-        const wmath::WFiber& tract = ( *tracts )[ *iter ];
-        wmath::WFiber::const_iterator pos;
+        const WFiber& tract = ( *tracts )[ *iter ];
+        WFiber::const_iterator pos;
         for( pos = tract.begin(); pos != tract.end(); ++pos )
         {
             bool inGrid = false;

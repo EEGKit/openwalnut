@@ -25,57 +25,50 @@
 #ifndef WGEGEODEUTILS_H
 #define WGEGEODEUTILS_H
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <osg/Array>
 #include <osg/Geode>
 #include <osg/Geometry>
 #include <osg/MatrixTransform>
 #include <osg/PositionAttitudeTransform>
-#include <osgText/Text>
 #include <osg/Vec3>
+#include <osgText/Text>
 
-#include "../common/WColor.h"
 #include "../common/math/WLine.h"
 #include "../common/math/WPlane.h"
 #include "../common/math/WPosition.h"
+#include "../common/WColor.h"
+#include "WExportWGE.h"
 #include "WGEGeometryUtils.h"
+#include "WGESubdividedPlane.h"
 #include "WGEUtils.h"
 #include "WTriangleMesh.h"
-
-#include "WExportWGE.h"
 
 namespace wge
 {
     /**
      * Generates an OSG geode for the bounding box.
      *
-     * \param pos1 Front lower left corner
-     * \param pos2 Back upper right corner
+     * \param bb The axis aligned bounding box to generate a geode from.
      * \param color The color in which the bounding box should be generated
      *
      * \return The OSG geode containing the 12 edges of the box.
      */
-    osg::ref_ptr< osg::Geode > WGE_EXPORT generateBoundingBoxGeode( const wmath::WPosition& pos1,
-                                                                         const wmath::WPosition& pos2,
-                                                                         const WColor& color );
+    osg::ref_ptr< osg::Geode > WGE_EXPORT generateBoundingBoxGeode( const WBoundingBox& bb, const WColor& color );
 
     /**
      * Generates an OSG node for the specified bounding box. It uses solid faces. This actually returns a MatrixTransform node and is especially
      * useful for shader based raytracing.
      *
-     * \param pos1 Front lower left corner
-     * \param pos2 Back upper right corner
+     * \param bb The axis aligned bounding box
      * \param color The color in which the bounding box should be generated
      * \param threeDTexCoords True if 3D texture coordinates should be created.
      *
      * \return The OSG node containing the 12 edges of the box.
      */
-    osg::ref_ptr< osg::Node > WGE_EXPORT generateSolidBoundingBoxNode( const wmath::WPosition& pos1,
-                                                                            const wmath::WPosition& pos2,
-                                                                            const WColor& color,
-                                                                            bool threeDTexCoords = true );
+    osg::ref_ptr< osg::Node > WGE_EXPORT generateSolidBoundingBoxNode( const WBoundingBox& bb, const WColor& color, bool threeDTexCoords = true );
 
     /**
      * Creates a osg::Geometry containing an unit cube, having 3D texture coordinates.
@@ -141,7 +134,7 @@ namespace wge
     osg::ref_ptr< osg::Geode > WGE_EXPORT genFinitePlane( double xSize,
                                                           double ySize,
                                                           const WPlane& p,
-                                                          const WColor& color = WColor( 0, 0.7, 0.7 ),
+                                                          const WColor& color = WColor( 0.0, 0.7, 0.7, 1.0 ),
                                                           bool border = false );
 
     /**
@@ -156,6 +149,17 @@ namespace wge
     osg::ref_ptr< osg::Geode > WGE_EXPORT genFinitePlane( osg::Vec3 const& base, osg::Vec3 const& a, osg::Vec3 const& b );
 
     /**
+     * Generates a plane subdivided into quads.
+     *
+     * \param resX How many quads in x-direction
+     * \param resY How many quads in y-direction
+     * \param spacing \todo(math): Not implement yet
+     *
+     * \return The new uncolored plane geode
+     */
+    osg::ref_ptr< WGESubdividedPlane > WGE_EXPORT genUnitSubdividedPlane( size_t resX, size_t resY, double spacing = 0.01 );
+
+    /**
      * For each points in the STL container generate small cubes.
      *
      * \param points Center point of the cubes
@@ -166,8 +170,8 @@ namespace wge
      * \return Geode with as many cubes as points in the container where each cube is around a certain position.
      */
     template< class Container > osg::ref_ptr< osg::Geode > genPointBlobs( boost::shared_ptr< Container > points,
-                                                                                     double size,
-                                                                                     const WColor& color = WColor( 1, 0, 0 ) );
+                                                                          double size,
+                                                                          const WColor& color = WColor( 1.0, 0.0, 0.0, 1.0 ) );
 } // end of namespace wge
 
 template< class Container > inline osg::ref_ptr< osg::Geode > wge::genPointBlobs( boost::shared_ptr< Container > points,
@@ -202,7 +206,7 @@ template< class Container > inline osg::ref_ptr< osg::Geode > wge::genPointBlobs
     }
 
     geometry->setVertexArray( vertices );
-    colors->push_back( wge::osgColor( color ) );
+    colors->push_back( color );
     geometry->setColorArray( colors );
     geometry->setColorBinding( osg::Geometry::BIND_OVERALL );
     geometry->setNormalArray( normals );

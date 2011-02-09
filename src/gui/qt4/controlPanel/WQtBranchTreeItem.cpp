@@ -32,7 +32,7 @@ WQtBranchTreeItem::WQtBranchTreeItem( QTreeWidgetItem * parent, boost::shared_pt
     QTreeWidgetItem( parent, ROIBRANCH ),
     m_branch( branch )
 {
-    setFlags( Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled );
+    setFlags( Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDropEnabled );
 }
 
 WQtBranchTreeItem::~WQtBranchTreeItem()
@@ -43,7 +43,7 @@ WQtRoiTreeItem* WQtBranchTreeItem::addRoiItem( osg::ref_ptr< WROI > roi )
 {
     WQtRoiTreeItem* rti = new WQtRoiTreeItem( this, roi, ROI );
 
-    rti->setText( 0, QString( "ROI" ) );
+    rti->setText( 0, QString( roi->getName().c_str() ) );
     return rti;
 }
 

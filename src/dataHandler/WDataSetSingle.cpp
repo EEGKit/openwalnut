@@ -25,15 +25,14 @@
 #include <string>
 #include <vector>
 
+#include "../common/WAssert.h"
+#include "../common/WException.h"
+#include "../common/WPrototyped.h"
 #include "WDataTexture3D.h"
 #include "WDataTexture3D_2.h"
-
-#include "WValueSet.h"
 #include "WGrid.h"
 #include "WGridRegular3D.h"
-#include "../common/WAssert.h"
-#include "../common/WPrototyped.h"
-#include "../common/WException.h"
+#include "WValueSet.h"
 
 #include "WDataSetSingle.h"
 
@@ -53,6 +52,8 @@ WDataSetSingle::WDataSetSingle( boost::shared_ptr< WValueSetBase > newValueSet,
     m_valueSet = newValueSet;
     m_grid = newGrid;
     m_texture3D = boost::shared_ptr< WDataTexture3D >( new WDataTexture3D( m_valueSet, m_grid ) );
+
+    m_infoProperties->addProperty( m_grid->getInformationProperties() );
 
     // technically this should be placed into the WDataSetScalar, WDataSetVector and so on
     boost::shared_ptr< WGridRegular3D > regGrid = boost::shared_dynamic_cast< WGridRegular3D >( m_grid );
@@ -97,7 +98,7 @@ boost::shared_ptr< WDataTexture3D > WDataSetSingle::getTexture()
     return m_texture3D;
 }
 
-osg::ref_ptr< WDataTexture3D_2 > WDataSetSingle::getTexture2()
+osg::ref_ptr< WDataTexture3D_2 > WDataSetSingle::getTexture2() const
 {
     return m_texture;
 }

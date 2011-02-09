@@ -28,8 +28,8 @@
 
 #include <boost/regex.hpp>
 
-#include <osgGA/TrackballManipulator>
 #include <osgGA/StateSetManipulator>
+#include <osgGA/TrackballManipulator>
 #include <osgViewer/ViewerEventHandlers>
 #include <osgWidget/Util> //NOLINT
 #include <osgWidget/ViewerEventHandlers> //NOLINT
@@ -37,13 +37,11 @@
 
 #include "../../common/WPathHelper.h"
 #include "../../common/WPropertyHelper.h"
-
 #include "../../graphicsEngine/WGEUtils.h"
-
 #include "../../kernel/WKernel.h"
-#include "WMClusterDisplay.xpm" // Please put a real icon here.
-
+#include "../../kernel/WROIManager.h"
 #include "WMClusterDisplay.h"
+#include "WMClusterDisplay.xpm" // Please put a real icon here.
 
 // This line is needed by the module loader to actually find your module. Do not remove. Do NOT add a ";" here.
 W_LOADABLE_MODULE( WMClusterDisplay )
@@ -195,6 +193,7 @@ bool WMClusterDisplay::loadTreeAscii( std::string fileName )
             float data = boost::lexical_cast<float>( svec[k++] );
 
             m_tree.addCluster( cluster1, cluster2, level, leafes, data );
+            //m_tree.addCluster( cluster1, cluster2, data );
 
             if ( svec[k] != ")" )
             {
@@ -217,7 +216,7 @@ bool WMClusterDisplay::loadTreeAscii( std::string fileName )
 
 void WMClusterDisplay::initWidgets()
 {
-    osg::ref_ptr<osgViewer::Viewer> viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView();
+    osg::ref_ptr<osgViewer::View> viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView();
 
     int height = viewer->getCamera()->getViewport()->height();
     int width = viewer->getCamera()->getViewport()->width();
@@ -299,7 +298,7 @@ void WMClusterDisplay::initWidgets()
 
     m_wm->resizeAllWindows();
 
-    m_rootNode->addUpdateCallback( new SafeUpdateCallback( this ) );
+    m_rootNode->addUpdateCallback( new WGEFunctorCallback< osg::Node >( boost::bind( &WMClusterDisplay::updateWidgets, this ) ) );
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_rootNode );
 }
 
@@ -588,8 +587,8 @@ void WMClusterDisplay::handleBiggestClustersChanged()
     for ( size_t k = 0; k < m_biggestClusters.size(); ++k )
     {
         size_t current = m_biggestClusters[k];
-        setColor( m_tree.getLeafesForCluster( current ), wge::getNthHSVColor( k, m_biggestClusters.size() ) );
-        m_tree.colorCluster( current, wge::getNthHSVColor( k, m_biggestClusters.size() ) );
+        setColor( m_tree.getLeafesForCluster( current ), wge::getNthHSVColor( k ) );
+        m_tree.colorCluster( current, wge::getNthHSVColor( k ) );
     }
 
     m_dendrogramDirty = true;
@@ -626,8 +625,8 @@ void WMClusterDisplay::handleRoiChanged()
         for ( size_t k = 0; k < m_biggestClusters.size(); ++k )
         {
             size_t current = m_biggestClusters[k];
-            setColor( m_tree.getLeafesForCluster( current ), wge::getNthHSVColor( k, m_biggestClusters.size() ) );
-            m_tree.colorCluster( current, wge::getNthHSVColor( k, m_biggestClusters.size() ) );
+            setColor( m_tree.getLeafesForCluster( current ), wge::getNthHSVColor( k ) );
+            m_tree.colorCluster( current, wge::getNthHSVColor( k ) );
         }
 
         m_widgetDirty = true;
@@ -640,7 +639,7 @@ void WMClusterDisplay::handleRoiChanged()
 
 void WMClusterDisplay::updateWidgets()
 {
-    osg::ref_ptr<osgViewer::Viewer> viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView();
+    osg::ref_ptr<osgViewer::View> viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView();
 
     int height = viewer->getCamera()->getViewport()->height();
     int width = viewer->getCamera()->getViewport()->width();
@@ -721,7 +720,7 @@ void WMClusterDisplay::updateWidgets()
             newButton1->managed( m_wm );
             m_wm->addChild( newButton1 );
             m_biggestClustersButtonList.push_back( newButton1 );
-            newButton1->setBackgroundColor( wge::getNthHSVColor( i, m_biggestClusters.size() ) );
+            newButton1->setBackgroundColor( wge::getNthHSVColor( i ) );
 
             osg::ref_ptr<WOSGButton> newButton = osg::ref_ptr<WOSGButton>( new WOSGButton( std::string( "" ),
                     osgWidget::Box::VERTICAL, true, true ) );
@@ -731,7 +730,7 @@ void WMClusterDisplay::updateWidgets()
             newButton->managed( m_wm );
             m_wm->addChild( newButton );
             m_biggestClustersButtonList.push_back( newButton );
-            newButton->setBackgroundColor( wge::getNthHSVColor( i, m_biggestClusters.size() ) );
+            newButton->setBackgroundColor( wge::getNthHSVColor( i ) );
         }
         osg::ref_ptr<WOSGButton> newButton1 = osg::ref_ptr<WOSGButton>( new WOSGButton( std::string( "" ),
                 osgWidget::Box::VERTICAL, true, false ) );
@@ -771,12 +770,12 @@ void WMClusterDisplay::updateWidgets()
         {
             if ( m_propResizeWithWindow->get( true ) )
             {
-                m_dendrogramGeode = new WDendrogramGeode( &m_tree, m_tree.getClusterCount() - 1,
+                m_dendrogramGeode = new WDendrogramGeode( &m_tree, m_tree.getClusterCount() - 1, true,
                         m_propMinSizeToColor->get(), width - 120, height / 2 , 100 );
             }
             else
             {
-                m_dendrogramGeode = new WDendrogramGeode( &m_tree, m_tree.getClusterCount() - 1,
+                m_dendrogramGeode = new WDendrogramGeode( &m_tree, m_tree.getClusterCount() - 1, true,
                         m_propMinSizeToColor->get(), dwidth, dheight, dxOff, dyOff );
             }
             m_camera->addChild( m_dendrogramGeode );
@@ -932,14 +931,12 @@ void WMClusterDisplay::colorClusters( size_t current )
     }
 
     int n = 0;
-    int parts = finalList.size();
-
 
     for ( size_t i = 0; i < finalList.size(); ++i )
     {
         size_t cluster = finalList[i];
-        m_tree.colorCluster( cluster, wge::getNthHSVColor( n, parts ) );
-        setColor( m_tree.getLeafesForCluster( cluster ), wge::getNthHSVColor( n++, parts ) );
+        m_tree.colorCluster( cluster, wge::getNthHSVColor( n ) );
+        setColor( m_tree.getLeafesForCluster( cluster ), wge::getNthHSVColor( n++ ) );
     }
 
     m_fiberDrawable->setBitfield( m_tree.getOutputBitfield( finalList ) );
@@ -961,9 +958,9 @@ void WMClusterDisplay::setColor( std::vector<size_t> clusters, WColor color )
 
         for ( size_t k = (*starts)[current]; k < (*starts)[current] + (*lengths)[current]; ++k)
         {
-            (*colorField)[k*3] = color.getRed();
-            (*colorField)[k*3+1] = color.getGreen();
-            (*colorField)[k*3+2] = color.getBlue();
+            (*colorField)[k*3] =   color[0];
+            (*colorField)[k*3+1] = color[1];
+            (*colorField)[k*3+2] = color[2];
         }
     }
 }
@@ -985,11 +982,11 @@ void WMClusterDisplay::createFiberGeode()
 {
     m_fiberDrawable = osg::ref_ptr< WFiberDrawable >( new WFiberDrawable );
     m_fiberDrawable->setBoundingBox( osg::BoundingBox( m_dataSet->getBoundingBox().first[0],
-                                                      m_dataSet->getBoundingBox().first[1],
-                                                      m_dataSet->getBoundingBox().first[2],
-                                                      m_dataSet->getBoundingBox().second[0],
-                                                      m_dataSet->getBoundingBox().second[1],
-                                                      m_dataSet->getBoundingBox().second[2] ) );
+                                                       m_dataSet->getBoundingBox().first[1],
+                                                       m_dataSet->getBoundingBox().first[2],
+                                                       m_dataSet->getBoundingBox().second[0],
+                                                       m_dataSet->getBoundingBox().second[1],
+                                                       m_dataSet->getBoundingBox().second[2] ) );
 
     m_fiberDrawable->setStartIndexes( m_dataSet->getLineStartIndexes() );
     m_fiberDrawable->setPointsPerLine( m_dataSet->getLineLengths() );

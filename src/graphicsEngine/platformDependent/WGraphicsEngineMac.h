@@ -89,7 +89,7 @@ public:
      */
     boost::shared_ptr< WGEViewerMac > createViewer( std::string name, int x, int y,
                                                int width, int height, WGECamera::ProjectionMode projectionMode = WGECamera::ORTHOGRAPHIC,
-                                               WColor bgColor = WColor( .9, .9, .9 ) );
+                                               WColor bgColor = WColor( .9, .9, .9, 1.0 ) );
 
     /**
      * Closes a viewer and deletes it from the list of viewers.
@@ -134,6 +134,13 @@ public:
      * \return  connection object.
      */
     boost::signals2::connection subscribeSignal( GE_SIGNAL signal, t_GEGenericSignalHandlerType notifier );
+
+    /**
+     * Checks whether the graphics engine is currently running or not.
+     *
+     * \return true if running
+     */
+    static bool isRunning();
 
 protected:
 

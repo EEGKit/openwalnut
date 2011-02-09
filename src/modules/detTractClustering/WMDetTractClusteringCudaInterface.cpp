@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#include "../../common/datastructures/WDXtLookUpTable.h"
 #include "../../common/datastructures/WFiber.h"
+#include "../../common/math/WMatrixSym.h"
 #include "../../common/WProgressCombiner.h"
 #include "../../dataHandler/WDataSetFiberVector.h"
 #include "WMDetTractClusteringCudaInterface.h"
@@ -31,7 +31,7 @@
 #include "WProgressWrapper.h"
 #include "WProgressWrapperData.h"
 
-bool initDLtTableCuda( boost::shared_ptr< WDXtLookUpTable > dLtTable,
+bool initDLtTableCuda( boost::shared_ptr< WMatrixSym > dLtTable,
                        const boost::shared_ptr< WDataSetFiberVector > tracts,
                        double proximity_threshold,
                        boost::shared_ptr< WProgressCombiner > progressCombiner )
@@ -45,7 +45,7 @@ bool initDLtTableCuda( boost::shared_ptr< WDXtLookUpTable > dLtTable,
     size_t maxlength = 0;
     for( size_t i = 0; i < ntracts; ++i )
     {
-        const wmath::WFiber &fib = ( *tracts )[i];
+        const WFiber &fib = ( *tracts )[i];
         offsets[i] = nextoffset;
         lengths[i] = fib.size();
         nextoffset = ( nextoffset + fib.size() + ( align - 1 ) ) & ~( align - 1 );
@@ -61,7 +61,7 @@ bool initDLtTableCuda( boost::shared_ptr< WDXtLookUpTable > dLtTable,
     float* coords = new float[ncoords*3];
     for( size_t i = 0; i < ntracts; ++i )
     {
-        const wmath::WFiber &fib = ( *tracts )[i];
+        const WFiber &fib = ( *tracts )[i];
         int k = offsets[i]*3;
         for( int j = 0; j < lengths[i]; ++j )
         {

@@ -63,6 +63,7 @@
 #include "../../common/WPathHelper.h"
 #include "../../common/WPropertyHelper.h"
 #include "../../graphicsEngine/WGEUtils.h"
+#include "../../graphicsEngine/WGERequirement.h"
 
 #include "WMTemplate.xpm"
 #include "icons/bier.xpm"
@@ -262,6 +263,12 @@ void WMTemplate::properties()
     m_group1a->addProperty( m_aDouble );
     m_group1a->addProperty( m_enableFeature );
 
+    // and add another button to group2. But this time, we do not want to wake up the main thread. We handle this directly. Fortunately,
+    // WPropertyVariable offers you the possibility to specify your own change callback. This callback is used for hiding the m_aColor property
+    // on the fly.
+    m_hideButton = m_group2->addProperty( "(Un-)Hide Color", "Trigger Button Text.", WPVBaseTypes::PV_TRIGGER_READY,
+                                          boost::bind( &WMTemplate::hideButtonPressed, this ) );
+
     // How can the values of the properties be changed? You can take a look at moduleMain where this is shown. For short: m_anInteger->set( 2 )
     // and m_anInteger->get().
 
@@ -324,11 +331,25 @@ void WMTemplate::properties()
     m_infoProperties->addProperty( m_aStringOutput );   // we can also re-add properties
     m_aTriggerOutput = m_infoProperties->addProperty( "A trigger", "Trigger As String", WPVBaseTypes::PV_TRIGGER_READY );
     m_aDoubleOutput = m_infoProperties->addProperty( "Some double", "a Double. Nice isn't it?", 3.1415 );
+    m_aIntOutput = m_infoProperties->addProperty( "Some int", "a int. Nice isn't it?", 123456 );
     m_aColorOutput = m_infoProperties->addProperty( "A color", "Some Color. Nice isn't it?", WColor( 0.5, 0.5, 1.0, 1.0 ) );
     m_aFilenameOutput = m_infoProperties->addProperty( "Nice file", "a Double. Nice isn't it?", WPathHelper::getAppPath() );
     m_aSelectionOutput = m_infoProperties->addProperty( "A selection", "Selection As String",  m_possibleSelections->getSelectorFirst() );
+    // One important note regarding information properties. If a property gets added in a group which is an information property-group, then
+    // each added property does NOT contain any constraints. If a property gets an information property AFTER its creation, like m_aStringOutput,
+    // then it keeps its constraints!
 
     WModule::properties();
+}
+
+void WMTemplate::requirements()
+{
+    // This method allows modules to specify what they need to run properly. This module, for example, needs the WGE. It therefore adds the
+    // WGERequirement to the list of requirements. Modules only get started if all the requirements of it are met by the current running
+    // OpenWalnut. This is a very handy tool for NO-GUI versions or script versions of OpenWalnut where there simply is no graphics engine
+    // running. This way, the kernel can ensure that only modules are allowed to run who do not require the WGE.
+    // Another useful example are module containers. Usually, they need several other modules to work properly.
+    m_requirements.push_back( new WGERequirement() );
 }
 
 void WMTemplate::moduleMain()
@@ -442,6 +463,16 @@ void WMTemplate::moduleMain()
             debugLog() << "Received Data.";
         }
 
+        // If there is no data, this might have the following reasons: the connector never has been connected or it got disconnected. Especially
+        // in the case of a disconnect, you should always clean up your renderings and internal states. A disconnected module should not render
+        // anything anymore. Locally stored referenced to the old input data have to be reset to. Only this way, it is guaranteed that not used
+        // data gets deleted properly.
+        if( !dataValid )
+        {
+            debugLog() << "Data changed. No valid data anymore. Cleaning up.";
+            WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_rootNode );
+        }
+
         // Here we collect our properties. You, as with input connectors, always check if a property really has changed. You most probably do not
         // want to check properties which are used exclusively inside the update callback of your OSG node. As the properties are thread-safe, the
         // update callback can check them and apply it correctly to your visualization.
@@ -462,7 +493,7 @@ void WMTemplate::moduleMain()
         // m_aFile got handled above. Now, handle two properties which together are used as parameters for an operation.
         if( m_aString->changed() )
         {
-            // This is a simple example for doing an operation which is depends on all, but m_anFile,  properties.
+            // This is a simple example for doing an operation which is depends on all, but m_aFile,  properties.
             debugLog() << "Doing an operation basing on m_aString ... ";
             debugLog() << "m_aString: " << m_aString->get( true );
 
@@ -633,7 +664,7 @@ void WMTemplate::moduleMain()
     //  * remove all OSG nodes
     //  * stop any pending threads you may have started earlier
     //  * ...
-    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_rootNode );
+    //  NOTE: as the module gets disconnected prior to shutdown, most of the cleanup should have been done already.
 }
 
 void WMTemplate::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisitor* nv )
@@ -643,12 +674,9 @@ void WMTemplate::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
     // gets set in your thread main and checked here or, as done in this module, by checking whether the callback is called the first time.
     if( m_module->m_aColor->changed() || m_initialUpdate )
     {
-        // Grab the color
-        WColor c = m_module->m_aColor->get( true );
-
         // Set the diffuse color and material:
         osg::ref_ptr< osg::Material > mat = new osg::Material();
-        mat->setDiffuse( osg::Material::FRONT, osg::Vec4( c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha() ) );
+        mat->setDiffuse( osg::Material::FRONT, m_module->m_aColor->get( true ) );
         node->getOrCreateStateSet()->setAttribute( mat, osg::StateAttribute::ON );
     }
     traverse( node, nv );
@@ -712,3 +740,20 @@ void WMTemplate::activate()
     WModule::activate();
 }
 
+void WMTemplate::hideButtonPressed()
+{
+    // This method is called whenever m_hideButton changes its value. You can use such callbacks to avoid waking-up or disturbing the module
+    // thread for certain operations.
+
+    // If the button was triggered, switch the hide-state of m_aColor.
+    if ( m_hideButton->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
+    {
+        // switch the hide flag of the color prop.
+        m_aColor->setHidden( !m_aColor->isHidden() );
+
+        // never forget to reset a trigger. If not done, the trigger is disabled in the GUI and can't be used again.
+        m_hideButton->set( WPVBaseTypes::PV_TRIGGER_READY );
+
+        // NOTE: this again triggers an update, which is why we need to check the state of the trigger in this if-clause.
+    }
+}

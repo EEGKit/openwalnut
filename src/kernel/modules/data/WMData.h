@@ -30,15 +30,16 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
-#include "../../WKernel.h"
+// #include "../../WKernel.h"
 #include "../../WModule.h"
-#include "../../WModuleConnector.h"
-#include "../../WModuleOutputData.h"
-
-#include "../../../dataHandler/WDataSet.h"
-#include "../../../dataHandler/WDataSetSingle.h"
 
 #include "../../WExportKernel.h"
+
+// forward declarations
+class WDataSet;
+class WDataSetSingle;
+class WModuleConnector;
+template< class T > class WModuleOutputData;
 
 /**
  * Module for encapsulating WDataSets. It can encapsulate almost everything, but is intended to be used with WDataSets and its
@@ -178,15 +179,12 @@ protected:
      */
     WPropString m_dataType;
 
+    // { TODO(ebaum): this is deprecated and will be replaced by WGEColormapping
     /**
-     * grouping the texture display properties
+     * \deprecated Be aware that this will be replaced by WGEColormapping
+     * Grouping the texture display properties
      */
     WPropGroup    m_groupTex;
-
-    /**
-     * grouping the texture manipulation properties
-     */
-    WPropGroup    m_groupTexManip;
 
     /**
      * Interpolation?
@@ -204,61 +202,6 @@ protected:
     WPropSelection m_colorMapSelection;
 
     /**
-     * Threshold value for this data.
-     */
-    WPropDouble m_threshold;
-
-    /**
-     * Opacity value for this data.
-     */
-    WPropInt m_opacity;
-
-    /**
-     * translation of the texture
-     */
-    WPropInt m_translationX;
-
-    /**
-     * translation of the texture
-     */
-    WPropInt m_translationY;
-
-    /**
-     * translation of the texture
-     */
-    WPropInt m_translationZ;
-
-    /**
-     * voxel size in x direction
-     */
-    WPropDouble m_stretchX;
-
-    /**
-     * voxel size in y direction
-     */
-    WPropDouble m_stretchY;
-
-    /**
-     * voxel size in z direction
-     */
-    WPropDouble m_stretchZ;
-
-    /**
-     * rotation around the x axis
-     */
-    WPropInt m_rotationX;
-
-    /**
-     * rotation around the y axis
-     */
-    WPropInt m_rotationY;
-
-    /**
-     * rotation around the z axis
-     */
-    WPropInt m_rotationZ;
-
-    /**
      * A list of color map selection types
      */
     boost::shared_ptr< WItemSelection > m_matrixSelectionsList;
@@ -268,6 +211,17 @@ protected:
      */
     WPropSelection m_matrixSelection;
 
+
+    /**
+     * Threshold value for this data.
+     */
+    WPropDouble m_threshold;
+
+    /**
+     * Opacity value for this data.
+     */
+    WPropInt m_opacity;
+    // }
 
     bool m_isTexture; //!< Indicates whether the loaded dataSet will be available as texture.
 
@@ -282,6 +236,10 @@ private:
 
     /**
      * Get a string for the datatype of the given dataset.
+     *
+     * \param dss the data set whose name should be returned.
+     *
+     * \return the type name of the specified dataset
      */
     std::string getDataTypeString( boost::shared_ptr< WDataSetSingle > dss );
 

@@ -35,36 +35,17 @@
 #include "../WITKImageConversion.h"
 
 /**
- * The logger instance used by some tests
- */
-static WLogger logger;
-
-/**
- * True if the logger has been initialized in the past.
- */
-static bool loggerInitialized = false;
-
-/**
  * Test functionality of WITKConversion class.
  */
 class WITKImageConversionTest : public CxxTest::TestSuite
 {
 public:
     /**
-     * Setup method called before every test case. This initializes the logger if needed.
+     * Setup logger and other stuff for each test.
      */
     void setUp()
     {
-        if ( !loggerInitialized )
-        {
-            std::cout << "Initialize logger." << std::endl;
-            logger.setColored( false );
-
-            // NOTE: the logger does not need to be run, since the logger main thread just prints the messages. If compiled in
-            // debug mode, the messages will be printed directly, without the logger thread.
-            //logger.run();
-            loggerInitialized = true;
-        }
+        WLogger::startup();
     }
 
     /**
@@ -75,10 +56,10 @@ public:
     {
 #ifdef OW_USE_ITK
         // build a dataset
-        std::vector< int > values( 27, 0 );
+        boost::shared_ptr< std::vector< int > > values( new std::vector< int >( 27, 0 ) );
         for( int k = 0; k < 27; ++k )
         {
-            values[ k ] = 27 - k;
+            ( *values )[ k ] = 27 - k;
         }
         boost::shared_ptr< WGridRegular3D > g( new WGridRegular3D( 3, 3, 3, 1, 1, 1 ) );
         boost::shared_ptr< WValueSet< int > > v( new WValueSet< int >( 0, 1, values, W_DT_SIGNED_INT ) );
