@@ -48,7 +48,7 @@ class WQtStatusBar : public QStatusBar
         /**
          * constructor
          **/
-        WQtStatusBar( QWidget* parent = 0 );
+        explicit WQtStatusBar( QWidget* parent = 0 );
 
         /**
          * destructor

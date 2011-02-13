@@ -22,16 +22,16 @@
 //
 //---------------------------------------------------------------------------
 
+// TESTING
+#include <iostream>
+
 #include <QtGui/QLabel>
 #include <QtGui/QTableWidget>
 #include <QtGui/QStandardItemModel>
+#include <QtGui/QHeaderView>
 
 #include "events/WEventTypes.h"
-
 #include "WQtStatusBar.h"
-
-// TESTING
-#include <iostream>
 
 // public
 WQtStatusBar::WQtStatusBar( QWidget* parent ):
@@ -42,9 +42,20 @@ WQtStatusBar::WQtStatusBar( QWidget* parent ):
     m_statusIcon->setMaximumSize( QSize( 17, 17 ) );
     this->addPermanentWidget( m_statusIcon, 1 );
     m_label = new QLabel( this );
-    m_label->setText("OpenWalnut");
+    m_label->setText( "OpenWalnut" );
     this->addPermanentWidget( m_label, 2 );
     m_model = new QStandardItemModel;
+    /*m_model->setHeaderData(1, Qt::Horizontal, tr("source"), 0);
+    m_model->setHeaderData(2, Qt::Horizontal, tr("message"), 0);
+    m_model->setHeaderData(3, Qt::Horizontal, tr("time"), 0);
+    */
+    QStandardItem* item = new QStandardItem( QString( "source " ) );
+    m_model->setHorizontalHeaderItem( 0, item );
+    item = new QStandardItem( QString( "message " ) );
+    m_model->setHorizontalHeaderItem( 1, item );
+    item = new QStandardItem( QString( "time " ) );
+    m_model->setHorizontalHeaderItem( 2, item );
+
 }
 
 WQtStatusBar::~WQtStatusBar()
@@ -54,28 +65,21 @@ WQtStatusBar::~WQtStatusBar()
     delete m_model;
 }
 
-//private
 
+//private
 bool WQtStatusBar::event( QEvent* event )
 {
-    //bool returnValue = false;
     if( event->type() == WQT_LOG_EVENT )
     {
-        //std::cout << "log event\n";
-        //returnValue = true;
         WLogEvent* updateEvent = dynamic_cast< WLogEvent* >( event );
         const WLogEntry& entry = updateEvent->getEntry();
-        if( updateEvent && entry.getLogLevel() >= LL_DEBUG && entry.getLogLevel() <= LL_ERROR) // TODO this is crap, event still bugs out
+        if( updateEvent && entry.getLogLevel() >= LL_DEBUG && entry.getLogLevel() <= LL_ERROR)
         {
-            //WAssert( updateEvent, "Error with WUpdateStatusBarEvent" ); // TODO check this, change error message
-            //const WLogEntry &entry = WLogEntry( "now", "yet another test message", LL_ERROR, "WLogEntryTest", false ); // TODO remove, helps to stop the segfaults and demonstrates functionality of the code below
-            //std::cout << entry.getSource() << std::endl;
+            //WAssert( updateEvent, "Error with WUpdateStatusBarEvent" );
 
             QString msg = QString::fromStdString( entry.getSource() );
             msg += ": ";
             msg += QString::fromStdString( entry.getMessage() );
-
-            //std::cout << updateEvent->getEntry().getSource() << std::endl;
 
             QColor color = m_statusIcon->getColor();
             if( entry.getLogLevel() == LL_INFO )
@@ -103,38 +107,42 @@ bool WQtStatusBar::event( QEvent* event )
             }
         }
         createLogEntry( entry );
-        /*std::cout << "debug: " << LL_DEBUG << "\ninfo: " << LL_INFO << "\nwarning: " << LL_WARNING << "\nerror: " << LL_ERROR << "\n";
-        std::cout << "loglevel: " << entry.getLogLevel() << std::endl;
-    std::cout << "eventend \n";*/
         return true;
     }
     else
     {
         return QStatusBar::event( event );
     }
-    //return QObject::event( event )
-    //return returnValue;
 }
 
 void WQtStatusBar::mousePressEvent( QMouseEvent* event )
 {
-    QTableView* tw = new QTableView();
-    tw->setModel( m_model );
-    tw->show();
+    QTableView* tv = new QTableView();
+    tv->horizontalHeader()->setResizeMode( QHeaderView::ResizeToContents );
+    tv->verticalHeader()->hide();
+    tv->setSelectionBehavior( QAbstractItemView::SelectRows );
+    tv->setEditTriggers( QAbstractItemView::NoEditTriggers );
+
+    tv->setModel( m_model );
+
+    QRect rect = tv->geometry();
+    rect.setWidth( 2 + tv->verticalHeader()->width() +
+        tv->columnWidth( 0 ) + tv->columnWidth( 1 ) + tv->columnWidth( 2 ) + tv->columnWidth( 3 ) );
+    rect.setHeight( 2 + tv->verticalHeader()->height() );
+    tv->setGeometry(rect);
+
+    tv->show();
     return QStatusBar::mousePressEvent( event );
 }
 
 void WQtStatusBar::createLogEntry( const WLogEntry& entry )
 {
-    // S.106 Advanced Qt Programming
-    //QStandardItem for every entry message => new QStandardItem(QString)
     QList< QStandardItem* > entryRow;
-    QStandardItem* rowName = new QStandardItem;
-    //rowName->setData( entry.getSource(), Qt::EditRole );
-    entryRow << rowName;
-    //QList<QStandardItem*> for every Row
-    //entryRow << new QStandardItem( entry.getMessage() );
-    //QStandardItemModel::appendRow( QList )
+    //entryRow << new QStandardItem( QString( entry.getLogLevel().c_str() ) ); // loglevel is enum
+    entryRow << new QStandardItem( QString( entry.getSource().c_str() ) );
+    entryRow << new QStandardItem( QString( entry.getMessage().c_str() ) );
+    entryRow << new QStandardItem( QString( entry.getTime().c_str() ) );
+
     m_model->appendRow( entryRow );
 }
 

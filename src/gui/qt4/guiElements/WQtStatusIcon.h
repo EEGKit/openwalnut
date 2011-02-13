@@ -25,11 +25,11 @@
 #ifndef WQTSTATUSICON_H
 #define WQTSTATUSICON_H
 
-#include <QtGui/QWidget>
-#include <QtGui/QPainter>
-
 // TESTING
 #include <iostream>
+
+#include <QtGui/QWidget>
+#include <QtGui/QPainter>
 
 /**
  * Circle with different colors
@@ -48,10 +48,12 @@ class WQtStatusIcon : public QWidget
         WQtStatusIcon( QColor color, QWidget *parent = 0 ) :
              QWidget( parent )
         {
-            m_color = color ;
+            m_color = color;
         }
 
-
+        /**
+         * destructor
+         **/
         ~WQtStatusIcon()
         {
         }
@@ -64,6 +66,7 @@ class WQtStatusIcon : public QWidget
         void setColor( QColor color )
         {
             m_color = color;
+            this->repaint();
         }
 
         /**
@@ -90,8 +93,7 @@ class WQtStatusIcon : public QWidget
         /**
          * Color of the object
          **/
-        QColor m_color; // TODO needed ?
-
+        QColor m_color;
 };
 
 #endif  // WQTSTATUSICON_H

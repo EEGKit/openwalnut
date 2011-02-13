@@ -35,7 +35,7 @@ class WLogEvent : public QEvent
         /**
          *
          **/
-        WLogEvent( const WLogEntry& entry );
+        explicit WLogEvent( const WLogEntry& entry );
 
         /**
          *
