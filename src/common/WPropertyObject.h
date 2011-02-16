@@ -25,6 +25,8 @@
 #ifndef WPROPERTYOBJECT_H
 #define WPROPERTYOBJECT_H
 
+#include <string>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/lexical_cast.hpp>
 
