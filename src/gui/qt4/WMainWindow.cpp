@@ -72,7 +72,6 @@
 #include "WQtConfigWidget.h"
 #include "WQtCustomDockWidget.h"
 #include "WQtNavGLWidget.h"
-#include "WQtStatusBar.h"
 
 #include "WMainWindow.h"
 

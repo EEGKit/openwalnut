@@ -38,7 +38,6 @@
 
 #include "WIconManager.h"
 #include "WQtStatusBar.h"
-#include "WQtNavGLWidget.h"
 #include "WQtToolBar.h"
 #include "WQtGLWidget.h"
 
@@ -331,16 +330,13 @@ private:
 
     WQtControlPanel* m_controlPanel; //!< control panel
 
+    WQtStatusBar* m_statusBar; //!< status bar, at the bottom of the window
+
     boost::shared_ptr< WQtGLWidget > m_mainGLWidget; //!< the main GL widget of the GUI
     boost::shared_ptr< WQtNavGLWidget > m_navAxial; //!< the axial view widget GL widget of the GUI
     boost::shared_ptr< WQtNavGLWidget > m_navCoronal; //!< the coronal view widget GL widget of the GUI
     boost::shared_ptr< WQtNavGLWidget > m_navSagittal; //!< the sgittal view widget GL widget of the GUI
     QDockWidget* m_dummyWidget; //!< The dummywidget serves as spacer in the dockwidget area;
-
-    /**
-     * The status bar used for error/info feedback and so on.
-     */
-    WQtStatusBar* m_statusBar;
 
     /**
      * shared pointer for the configuration widget

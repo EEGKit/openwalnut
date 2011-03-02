@@ -601,7 +601,6 @@ void WMTemplate::moduleMain()
         {
             // Now that the trigger has the state "triggered", a time consuming operation can be done here.
             debugLog() << "User triggered an important and time consuming operation.";
-            errorLog() << "An Error ohh nooo!";
 
             // We can exchange the list used for selection properties. This of course invalidates the current user selection. You should avoid
             // changing this too often and too fast as it might confuse the user.

@@ -83,10 +83,19 @@ class WQtStatusIcon : public QWidget
          **/
         virtual void paintEvent( QPaintEvent* )
         {
+            int size = 0;
+            if( width() > height() )
+            {
+                size = height() - 2;
+            }
+            else
+            {
+                size = width() - 2;
+            }
             QPainter painter( this );
             painter.setRenderHint( QPainter::Antialiasing );
             painter.setBrush( QBrush( m_color ) );
-            painter.drawEllipse( 1, 1, width()-2, height()-2 );
+            painter.drawEllipse( 1, 1, size, size );
         }
 
     private:

@@ -55,11 +55,6 @@ class WQtStatusBar : public QStatusBar
          **/
         ~WQtStatusBar();
 
-        /**
-         *
-         **/
-        //QMenu* createPopupMenu();
-
     protected:
         /**
          * reimplementing QStatusBar::event()

@@ -41,7 +41,6 @@
 #include "../../common/WPreferences.h"
 #include "../../dataHandler/WDataHandler.h"
 #include "../../dataHandler/WSubject.h"
-#include "../../graphicsEngine/WGraphicsEngine.h"
 #include "../../kernel/modules/data/WMData.h"
 #include "../../kernel/WKernel.h"
 #include "../../kernel/WModuleContainer.h"
