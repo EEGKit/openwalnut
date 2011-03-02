@@ -128,7 +128,16 @@ void WQtStatusBar::mousePressEvent( QMouseEvent* event )
 void WQtStatusBar::createLogEntry( const WLogEntry& entry )
 {
     QList< QStandardItem* > entryRow;
-    entryRow << new QStandardItem( QString( entry.getSource().c_str() ) );
+    QStandardItem* source = new QStandardItem( QString( entry.getSource().c_str() ) );
+    if( entry.getLogLevel() == LL_WARNING )
+    {
+        source->setBackground( QColor( 255, 140, 0 ) );
+    }
+    else if ( entry.getLogLevel() == LL_ERROR )
+    {
+        source->setBackground( Qt::red );
+    }
+    entryRow << source;
     entryRow << new QStandardItem( QString( entry.getMessage().c_str() ) );
     entryRow << new QStandardItem( QString( entry.getTime().c_str() ) );
 
