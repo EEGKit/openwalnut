@@ -45,11 +45,6 @@ WQtStatusBar::WQtStatusBar( QWidget* parent ):
     m_label->setText( "OpenWalnut" );
     this->addPermanentWidget( m_label, 2 );
     m_model = new QStandardItemModel;
-    /*
-    m_model->setHeaderData(1, Qt::Horizontal, tr("source"), 0);
-    m_model->setHeaderData(2, Qt::Horizontal, tr("message"), 0);
-    m_model->setHeaderData(3, Qt::Horizontal, tr("time"), 0);
-    */
     QStandardItem* item = new QStandardItem( QString( "source " ) );
     m_model->setHorizontalHeaderItem( 0, item );
     item = new QStandardItem( QString( "message " ) );
@@ -57,12 +52,13 @@ WQtStatusBar::WQtStatusBar( QWidget* parent ):
     item = new QStandardItem( QString( "time " ) );
     m_model->setHorizontalHeaderItem( 2, item );
 
-   m_view = new QTableView();
-   m_view->setModel( m_model );
-   m_view->horizontalHeader()->setResizeMode( QHeaderView::ResizeToContents );
-   m_view->verticalHeader()->hide();
-   m_view->setSelectionBehavior( QAbstractItemView::SelectRows );
-   m_view->setEditTriggers( QAbstractItemView::NoEditTriggers );
+    m_view = new QTableView();
+    m_view->setModel( m_model );
+    m_view->setGeometry( QRect( 0, 0, 1000, 500 ) );
+    m_view->horizontalHeader()->setResizeMode( QHeaderView::Stretch );
+    m_view->verticalHeader()->hide();
+    m_view->setSelectionBehavior( QAbstractItemView::SelectRows );
+    m_view->setEditTriggers( QAbstractItemView::NoEditTriggers );
 }
 
 WQtStatusBar::~WQtStatusBar()
@@ -70,6 +66,7 @@ WQtStatusBar::~WQtStatusBar()
     delete m_statusIcon;
     delete m_label;
     delete m_model;
+    delete m_view;
 }
 
 
@@ -124,14 +121,6 @@ bool WQtStatusBar::event( QEvent* event )
 
 void WQtStatusBar::mousePressEvent( QMouseEvent* event )
 {
-    QRect rect = m_view->geometry();
-    //std::cout << rect.width() << " " << rect.height() << std::endl;
-    rect.setWidth( 2 + m_view->verticalHeader()->width() + m_view->columnWidth( 0 ) +
-            m_view->columnWidth( 1 ) + m_view->columnWidth( 2 ) + m_view->columnWidth( 3 ) );
-    rect.setHeight( 2 + m_view->verticalHeader()->height() );
-    m_view->setGeometry( rect );
-    //std::cout << rect.width() << " " << rect.height() << std::endl;
-
     m_view->show();
     return QStatusBar::mousePressEvent( event );
 }
@@ -139,7 +128,6 @@ void WQtStatusBar::mousePressEvent( QMouseEvent* event )
 void WQtStatusBar::createLogEntry( const WLogEntry& entry )
 {
     QList< QStandardItem* > entryRow;
-    //entryRow << new QStandardItem( QString( entry.getLogLevel().c_str() ) ); // loglevel is enum
     entryRow << new QStandardItem( QString( entry.getSource().c_str() ) );
     entryRow << new QStandardItem( QString( entry.getMessage().c_str() ) );
     entryRow << new QStandardItem( QString( entry.getTime().c_str() ) );
