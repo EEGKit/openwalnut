@@ -45,7 +45,8 @@ WQtStatusBar::WQtStatusBar( QWidget* parent ):
     m_label->setText( "OpenWalnut" );
     this->addPermanentWidget( m_label, 2 );
     m_model = new QStandardItemModel;
-    /*m_model->setHeaderData(1, Qt::Horizontal, tr("source"), 0);
+    /*
+    m_model->setHeaderData(1, Qt::Horizontal, tr("source"), 0);
     m_model->setHeaderData(2, Qt::Horizontal, tr("message"), 0);
     m_model->setHeaderData(3, Qt::Horizontal, tr("time"), 0);
     */
@@ -56,6 +57,12 @@ WQtStatusBar::WQtStatusBar( QWidget* parent ):
     item = new QStandardItem( QString( "time " ) );
     m_model->setHorizontalHeaderItem( 2, item );
 
+   m_view = new QTableView();
+   m_view->setModel( m_model );
+   m_view->horizontalHeader()->setResizeMode( QHeaderView::ResizeToContents );
+   m_view->verticalHeader()->hide();
+   m_view->setSelectionBehavior( QAbstractItemView::SelectRows );
+   m_view->setEditTriggers( QAbstractItemView::NoEditTriggers );
 }
 
 WQtStatusBar::~WQtStatusBar()
@@ -117,21 +124,15 @@ bool WQtStatusBar::event( QEvent* event )
 
 void WQtStatusBar::mousePressEvent( QMouseEvent* event )
 {
-    QTableView* tv = new QTableView();
-    tv->horizontalHeader()->setResizeMode( QHeaderView::ResizeToContents );
-    tv->verticalHeader()->hide();
-    tv->setSelectionBehavior( QAbstractItemView::SelectRows );
-    tv->setEditTriggers( QAbstractItemView::NoEditTriggers );
+    QRect rect = m_view->geometry();
+    //std::cout << rect.width() << " " << rect.height() << std::endl;
+    rect.setWidth( 2 + m_view->verticalHeader()->width() + m_view->columnWidth( 0 ) +
+            m_view->columnWidth( 1 ) + m_view->columnWidth( 2 ) + m_view->columnWidth( 3 ) );
+    rect.setHeight( 2 + m_view->verticalHeader()->height() );
+    m_view->setGeometry( rect );
+    //std::cout << rect.width() << " " << rect.height() << std::endl;
 
-    tv->setModel( m_model );
-
-    QRect rect = tv->geometry();
-    rect.setWidth( 2 + tv->verticalHeader()->width() +
-        tv->columnWidth( 0 ) + tv->columnWidth( 1 ) + tv->columnWidth( 2 ) + tv->columnWidth( 3 ) );
-    rect.setHeight( 2 + tv->verticalHeader()->height() );
-    tv->setGeometry(rect);
-
-    tv->show();
+    m_view->show();
     return QStatusBar::mousePressEvent( event );
 }
 

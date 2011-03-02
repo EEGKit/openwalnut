@@ -33,6 +33,8 @@
 #include "events/WLogEvent.h"
 #include "guiElements/WQtStatusIcon.h"
 
+
+#include <QtGui/QTableView>
 /**
  * The status bar at the bottom of the main window, displays messages and
  * with the help of a colored circle ifany errors or warnings occure during the
@@ -82,6 +84,11 @@ class WQtStatusBar : public QStatusBar
          * the model holding the event data
          **/
         QStandardItemModel* m_model;
+
+        /**
+         * view that displays the model
+         **/
+        QTableView* m_view;
 
         /**
          * TODO
