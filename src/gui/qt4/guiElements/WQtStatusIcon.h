@@ -48,6 +48,7 @@ class WQtStatusIcon : public QWidget
         WQtStatusIcon( QColor color, QWidget *parent = 0 ) :
              QWidget( parent )
         {
+            setMinimumSize( 15, 15 );
             m_color = color;
         }
 
