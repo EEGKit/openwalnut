@@ -38,11 +38,11 @@ WQtStatusBar::WQtStatusBar( QWidget* parent ):
     QStatusBar( parent ),
     m_statusIcon( new WQtStatusIcon( Qt::green, this ) )
 {
-    //QHBoxLayout* layout = new QHBoxLayout( this );
     m_statusIcon->setMaximumSize( QSize( 17, 17 ) );
     this->addPermanentWidget( m_statusIcon, 1 );
     m_label = new QLabel( this );
     m_label->setText( "OpenWalnut" );
+    m_label->setMinimumSize( QSize( 750, 17 ) );
     this->addPermanentWidget( m_label, 2 );
     m_model = new QStandardItemModel;
     QStandardItem* item = new QStandardItem( QString( "source " ) );
