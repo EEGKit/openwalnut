@@ -40,13 +40,14 @@
 #include "WQtStatusBar.h"
 #include "WQtToolBar.h"
 #include "WQtGLWidget.h"
+#include "networkEditor/WQtNetworkEditor.h"
+#include "commandPrompt/WQtCommandPromptToolbar.h"
 
 // forward declarations
 class QMenuBar;
 class WModule;
 class WProjectFileIO;
 class WQtCombinerToolbar;
-class WQtConfigWidget;
 class WQtControlPanel;
 class WQtCustomDockWidget;
 class WQtNavGLWidget;
@@ -66,12 +67,22 @@ public:
     /**
      * Constructor of the main window
      */
-    explicit WMainWindow();
+    WMainWindow();
+
+    /**
+     * Destructor. Stores window state.
+     */
+    virtual ~WMainWindow();
 
     /**
      * Set up all widgets menus an buttons in the main window.
      */
     void setupGUI();
+
+    /**
+     * returns a pointer to the network editor object
+     */
+    WQtNetworkEditor* getNetworkEditor();
 
     /**
      * returns a pointer to the control panel object
@@ -112,42 +123,6 @@ public:
      * \return the toolbar style
      */
     Qt::ToolButtonStyle getToolbarStyle() const;
-
-    /**
-     * All possible positions of the toolbars.
-     */
-    typedef enum
-    {
-        Top = 0,
-        Bottom,
-        Left,
-        Right,
-        Hide,
-        InControlPanel
-    }
-    ToolBarPosition;
-
-    /**
-     * Returns the preferred position of toolbars.
-     *
-     * \return QT Position for the toolbars used as default for all toolbars.
-     */
-    static ToolBarPosition getToolbarPos();
-
-    /**
-     * Returns the preferred position of toolbars.
-     *
-     * \return QT Position for the toolbars used as default for the compatibles toolbars.
-     */
-    static ToolBarPosition getCompatiblesToolbarPos();
-
-    /**
-     * Converts the specified position to the appropriate qt toolbar area constant. Unknown positions (InControlPanel, Hide) are converted to
-     * Qt::NoToolBarArea.
-     *
-     * \param pos the position to convert.
-     */
-    static Qt::ToolBarArea toQtToolBarArea( ToolBarPosition pos );
 
     /**
      * This method removes the old compatibles toolbar and sets the specified one.
@@ -326,22 +301,21 @@ private:
 
     WQtToolBar* m_permanentToolBar; //!< The permanent toolbar of the main window.
 
-    WQtPushButton* m_loadButton; //!< the load Data Button
+    QAction* m_loadButton; //!< the load Data Button
 
     WQtControlPanel* m_controlPanel; //!< control panel
 
+    WQtNetworkEditor* m_networkEditor; //!< network editor
+
     WQtStatusBar* m_statusBar; //!< status bar, at the bottom of the window
+
+    WQtCommandPromptToolbar* m_commandPrompt; //!< command prompt
 
     boost::shared_ptr< WQtGLWidget > m_mainGLWidget; //!< the main GL widget of the GUI
     boost::shared_ptr< WQtNavGLWidget > m_navAxial; //!< the axial view widget GL widget of the GUI
     boost::shared_ptr< WQtNavGLWidget > m_navCoronal; //!< the coronal view widget GL widget of the GUI
     boost::shared_ptr< WQtNavGLWidget > m_navSagittal; //!< the sgittal view widget GL widget of the GUI
     QDockWidget* m_dummyWidget; //!< The dummywidget serves as spacer in the dockwidget area;
-
-    /**
-     * shared pointer for the configuration widget
-     */
-    boost::shared_ptr< WQtConfigWidget > m_configWidget;
 
     /**
      * All registered WQtCustomDockWidgets.
@@ -368,6 +342,16 @@ private:
      * if the module is removed.
      */
     std::map< boost::shared_ptr< WPropertyBase >, WQtPropertyBoolAction* > propertyActionMap;
+
+    /**
+     * Loads the window states and geometries from a file.
+     */
+    void restoreSavedState();
+
+    /**
+     * Saves the current window states and geometries to a file.
+     */
+    void saveWindowState();
 };
 
 #endif  // WMAINWINDOW_H
