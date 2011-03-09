@@ -245,13 +245,14 @@ int WQt4Gui::run()
     // run
     int qtRetCode = appl.exec();
 
+    // after closing app, log messages should not be forwarded anymore.
+    m_loggerConnection.disconnect();
+
     delete m_mainWindow;
 
     // signal everybody to shut down properly.
     WKernel::getRunningKernel()->wait( true );
     WKernel::getRunningKernel()->getGraphicsEngine()->wait( true );
-
-    m_loggerConnection.disconnect();
 
     return qtRetCode;
 }

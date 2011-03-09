@@ -848,6 +848,7 @@ void WMainWindow::closeEvent( QCloseEvent* e )
     // handle close event
     if( reallyClose )
     {
+m_statusBar->closeView();
         saveWindowState();
 
         // signal everybody to shut down properly.

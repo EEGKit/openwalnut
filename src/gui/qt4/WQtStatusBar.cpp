@@ -69,6 +69,10 @@ WQtStatusBar::~WQtStatusBar()
     delete m_view;
 }
 
+void WQtStatusBar::closeView()
+{
+    m_view->close();
+}
 
 //private
 bool WQtStatusBar::event( QEvent* event )

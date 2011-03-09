@@ -57,6 +57,11 @@ class WQtStatusBar : public QStatusBar
          **/
         ~WQtStatusBar();
 
+        /**
+         * Closes the table view again. Does nothing if view is not opened.
+         */
+        void closeView();
+
     protected:
         /**
          * reimplementing QStatusBar::event()
