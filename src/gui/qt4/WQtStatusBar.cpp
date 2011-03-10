@@ -52,7 +52,6 @@ WQtStatusBar::WQtStatusBar( QWidget* parent ):
     m_view = new QTableView();
     m_view->setModel( m_model );
     m_view->setGeometry( QRect( 0, 0, 1000, 500 ) );
-    m_view->horizontalHeader()->setStretchLastSection( true );
     m_view->verticalHeader()->hide();
     m_view->setSelectionBehavior( QAbstractItemView::SelectRows );
     m_view->setEditTriggers( QAbstractItemView::NoEditTriggers );
@@ -123,6 +122,7 @@ bool WQtStatusBar::event( QEvent* event )
 void WQtStatusBar::mousePressEvent( QMouseEvent* event )
 {
     m_view->resizeColumnsToContents();
+    m_view->horizontalHeader()->setStretchLastSection( true );
     m_view->show();
     return QStatusBar::mousePressEvent( event );
 }
