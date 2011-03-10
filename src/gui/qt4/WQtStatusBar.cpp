@@ -46,16 +46,17 @@ WQtStatusBar::WQtStatusBar( QWidget* parent ):
     this->addPermanentWidget( m_label, 2 );
     m_model = new QStandardItemModel;
     QStandardItem* item = new QStandardItem( QString( "source " ) );
-    m_model->setHorizontalHeaderItem( 0, item );
-    item = new QStandardItem( QString( "message " ) );
     m_model->setHorizontalHeaderItem( 1, item );
-    item = new QStandardItem( QString( "time " ) );
+    item = new QStandardItem( QString( "message " ) );
     m_model->setHorizontalHeaderItem( 2, item );
+    item = new QStandardItem( QString( "time " ) );
+    m_model->setHorizontalHeaderItem( 0, item );
 
     m_view = new QTableView();
     m_view->setModel( m_model );
     m_view->setGeometry( QRect( 0, 0, 1000, 500 ) );
-    m_view->horizontalHeader()->setResizeMode( QHeaderView::Stretch );
+    //m_view->horizontalHeader()->setResizeMode( QHeaderView::Stretch );
+    m_view->horizontalHeader()->setStretchLastSection( true );
     m_view->verticalHeader()->hide();
     m_view->setSelectionBehavior( QAbstractItemView::SelectRows );
     m_view->setEditTriggers( QAbstractItemView::NoEditTriggers );
@@ -125,6 +126,7 @@ bool WQtStatusBar::event( QEvent* event )
 
 void WQtStatusBar::mousePressEvent( QMouseEvent* event )
 {
+    m_view->resizeColumnsToContents();
     m_view->show();
     return QStatusBar::mousePressEvent( event );
 }
@@ -132,6 +134,9 @@ void WQtStatusBar::mousePressEvent( QMouseEvent* event )
 void WQtStatusBar::createLogEntry( const WLogEntry& entry )
 {
     QList< QStandardItem* > entryRow;
+    // add time
+    entryRow << new QStandardItem( QString( entry.getTime().c_str() ) );
+    // add source and color for severity
     QStandardItem* source = new QStandardItem( QString( entry.getSource().c_str() ) );
     if( entry.getLogLevel() == LL_WARNING )
     {
@@ -142,8 +147,8 @@ void WQtStatusBar::createLogEntry( const WLogEntry& entry )
         source->setBackground( Qt::red );
     }
     entryRow << source;
+    // add message
     entryRow << new QStandardItem( QString( entry.getMessage().c_str() ) );
-    entryRow << new QStandardItem( QString( entry.getTime().c_str() ) );
 
     m_model->appendRow( entryRow );
 }
