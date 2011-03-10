@@ -25,9 +25,6 @@
 #ifndef WQTSTATUSICON_H
 #define WQTSTATUSICON_H
 
-// TESTING
-#include <iostream>
-
 #include <QtGui/QWidget>
 #include <QtGui/QPainter>
 

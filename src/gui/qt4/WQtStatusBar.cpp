@@ -22,9 +22,6 @@
 //
 //---------------------------------------------------------------------------
 
-// TESTING
-#include <iostream>
-
 #include <QtGui/QLabel>
 #include <QtGui/QTableWidget>
 #include <QtGui/QStandardItemModel>
@@ -55,7 +52,6 @@ WQtStatusBar::WQtStatusBar( QWidget* parent ):
     m_view = new QTableView();
     m_view->setModel( m_model );
     m_view->setGeometry( QRect( 0, 0, 1000, 500 ) );
-    //m_view->horizontalHeader()->setResizeMode( QHeaderView::Stretch );
     m_view->horizontalHeader()->setStretchLastSection( true );
     m_view->verticalHeader()->hide();
     m_view->setSelectionBehavior( QAbstractItemView::SelectRows );
