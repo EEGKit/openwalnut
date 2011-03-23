@@ -147,5 +147,8 @@ void WQtStatusBar::createLogEntry( const WLogEntry& entry )
     entryRow << new QStandardItem( QString( entry.getMessage().c_str() ) );
 
     m_model->appendRow( entryRow );
+
+    m_view->resizeColumnsToContents();
+    m_view->horizontalHeader()->setStretchLastSection( true );
 }
 
