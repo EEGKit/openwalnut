@@ -25,16 +25,16 @@
 #ifndef WQTSTATUSBAR_H
 #define WQTSTATUSBAR_H
 
-#include <QtGui/QStatusBar>
-#include <QtGui/QMenu>
 #include <QtGui/QLabel>
+#include <QtGui/QMenu>
+#include <QtGui/QSortFilterProxyModel>
 #include <QtGui/QStandardItemModel>
+#include <QtGui/QStatusBar>
+#include <QtGui/QTableView>
 
 #include "events/WLogEvent.h"
 #include "guiElements/WQtStatusIcon.h"
 
-
-#include <QtGui/QTableView>
 /**
  * The status bar at the bottom of the main window, displays messages and
  * with the help of a colored circle ifany errors or warnings occure during the
@@ -78,23 +78,28 @@ class WQtStatusBar : public QStatusBar
         /**
          * pointer to the "trafic light" element in the bottom left corner of the status bar.
          **/
-        WQtStatusIcon* m_statusIcon;
+        WQtStatusIcon *m_statusIcon;
 
         /**
          * pointer to the label in the status bar, displaying the the newest
          * and the severest message at that point in time.
          **/
-        QLabel* m_label;
+        QLabel *m_label;
 
         /**
          * the standard item model holding the event data.
          **/
-        QStandardItemModel* m_model;
+        QStandardItemModel *m_model;
 
         /**
          * table view that displays the model.
          **/
-        QTableView* m_view;
+        QTableView *m_view;
+
+        /**
+         * used to filter the content of the model
+         **/
+        QSortFilterProxyModel *m_filter;
 
         /**
          * creates a new entry in the QStandardItemModel, representet by one row in the QTableView.

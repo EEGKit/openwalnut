@@ -22,12 +22,11 @@
 //
 //---------------------------------------------------------------------------
 
-#include <QtGui/QLabel>
 #include <QtGui/QTableWidget>
-#include <QtGui/QStandardItemModel>
 #include <QtGui/QHeaderView>
 
 #include "events/WEventTypes.h"
+
 #include "WQtStatusBar.h"
 
 // public
@@ -41,20 +40,28 @@ WQtStatusBar::WQtStatusBar( QWidget* parent ):
     m_label->setText( "OpenWalnut" );
     m_label->setMinimumSize( QSize( 750, 17 ) );
     this->addPermanentWidget( m_label, 2 );
-    m_model = new QStandardItemModel;
-    QStandardItem* item = new QStandardItem( QString( "source " ) );
-    m_model->setHorizontalHeaderItem( 1, item );
-    item = new QStandardItem( QString( "message " ) );
-    m_model->setHorizontalHeaderItem( 2, item );
-    item = new QStandardItem( QString( "time " ) );
+
+    m_model = new QStandardItemModel();
+    QStandardItem* item = new QStandardItem( QString( "type " ) );
     m_model->setHorizontalHeaderItem( 0, item );
+    item = new QStandardItem( QString( "time " ) );
+    m_model->setHorizontalHeaderItem( 1, item );
+    item = new QStandardItem( QString( "source " ) );
+    m_model->setHorizontalHeaderItem( 2, item );
+    item = new QStandardItem( QString( "message " ) );
+    m_model->setHorizontalHeaderItem( 3, item );
+
+    m_filter = new QSortFilterProxyModel();
+    m_filter->setSourceModel( m_model );
+    m_filter->setFilterFixedString( "1" ); // display beginning with info, ignore debug
 
     m_view = new QTableView();
-    m_view->setModel( m_model );
+    m_view->setModel( m_filter );
     m_view->setGeometry( QRect( 0, 0, 1000, 500 ) );
     m_view->verticalHeader()->hide();
     m_view->setSelectionBehavior( QAbstractItemView::SelectRows );
     m_view->setEditTriggers( QAbstractItemView::NoEditTriggers );
+    m_view->setColumnHidden ( 0, true );
 }
 
 WQtStatusBar::~WQtStatusBar()
@@ -77,7 +84,7 @@ bool WQtStatusBar::event( QEvent* event )
     {
         WLogEvent* updateEvent = dynamic_cast< WLogEvent* >( event );
         const WLogEntry& entry = updateEvent->getEntry();
-        if( updateEvent && entry.getLogLevel() >= LL_DEBUG && entry.getLogLevel() <= LL_ERROR)
+        if( updateEvent ) // && entry.getLogLevel() >= LL_DEBUG && entry.getLogLevel() <= LL_ERROR)
         {
             //WAssert( updateEvent, "Error with WUpdateStatusBarEvent" );
 
@@ -130,8 +137,29 @@ void WQtStatusBar::mousePressEvent( QMouseEvent* event )
 void WQtStatusBar::createLogEntry( const WLogEntry& entry )
 {
     QList< QStandardItem* > entryRow;
+
+    // add type, is hidden
+    QString type;
+    switch(  entry.getLogLevel() )
+    {
+        case LL_DEBUG:
+            type = "0";
+            break;
+        case LL_INFO:
+            type = "1";
+            break;
+        case LL_WARNING:
+            type = "2";
+            break;
+        case LL_ERROR:
+            type = "3";
+            break;
+    }
+    entryRow << new QStandardItem( type );
+
     // add time
     entryRow << new QStandardItem( QString( entry.getTime().c_str() ) );
+
     // add source and color for severity
     QStandardItem* source = new QStandardItem( QString( entry.getSource().c_str() ) );
     if( entry.getLogLevel() == LL_WARNING )
@@ -143,6 +171,7 @@ void WQtStatusBar::createLogEntry( const WLogEntry& entry )
         source->setBackground( Qt::red );
     }
     entryRow << source;
+
     // add message
     entryRow << new QStandardItem( QString( entry.getMessage().c_str() ) );
 
