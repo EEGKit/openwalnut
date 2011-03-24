@@ -61,7 +61,7 @@ WQtStatusBar::WQtStatusBar( QWidget* parent ):
     m_view->verticalHeader()->hide();
     m_view->setSelectionBehavior( QAbstractItemView::SelectRows );
     m_view->setEditTriggers( QAbstractItemView::NoEditTriggers );
-    m_view->setColumnHidden ( 0, true );
+    m_view->setColumnHidden( 0, true );
 }
 
 WQtStatusBar::~WQtStatusBar()
