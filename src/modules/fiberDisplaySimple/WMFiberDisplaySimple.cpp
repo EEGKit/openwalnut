@@ -32,6 +32,7 @@
 #include "../../dataHandler/WDataTexture3D.h"
 #include "../../graphicsEngine/callbacks/WGEFunctorCallback.h"
 #include "../../graphicsEngine/callbacks/WGENodeMaskCallback.h"
+#include "../../graphicsEngine/WGEColormapping.h"
 #include "../../graphicsEngine/shaders/WGEShader.h"
 #include "../../graphicsEngine/shaders/WGEShaderDefineOptions.h"
 #include "../../graphicsEngine/shaders/WGEShaderPropertyDefineOptions.h"
@@ -93,6 +94,10 @@ void WMFiberDisplaySimple::properties()
 
     m_illuminationEnable = m_properties->addProperty( "Illumination", "Enable line illumination.", true );
 
+    m_colormapRatio = m_properties->addProperty( "Colormap Ratio", "Defines the ratio between colormap and fiber color.", 0.0 );
+    m_colormapRatio->setMin( 0.0 );
+    m_colormapRatio->setMax( 1.0 );
+
     m_clipPlaneGroup = m_properties->addPropertyGroup( "Clipping",  "Clip the fiber data basing on an arbitrary plane." );
     m_clipPlaneEnabled = m_clipPlaneGroup->addProperty( "Enabled", "If set, clipping of fibers is done using an arbitrary plane and plane distance.",
                                                         false );
@@ -100,7 +105,9 @@ void WMFiberDisplaySimple::properties()
     m_clipPlanePoint = m_clipPlaneGroup->addProperty( "Plane point", "An point on the plane.", WPosition( 0.0, 0.0, 0.0 ) );
     m_clipPlaneVector = m_clipPlaneGroup->addProperty( "Plane normal", "The normal of the plane.", WPosition( 1.0, 0.0, 0.0 ) );
     m_clipPlaneDistance= m_clipPlaneGroup->addProperty( "Clip distance", "The distance from the plane where fibers get clipped.",  10.0 );
-    m_clipPlaneDistance->removeConstraint( m_clipPlaneDistance->getMax() ); // there simply is no max.
+    //m_clipPlaneDistance->removeConstraint( m_clipPlaneDistance->getMax() ); // there simply is no max.
+    m_clipPlaneDistance->setMin( 0.0 );
+    m_clipPlaneDistance->setMax( 1000.0 );
 
     m_tubeGroup = m_properties->addPropertyGroup( "Tube Rendering", "If true, advanced fake-tube rendering is used." );
     m_tubeEnable = m_tubeGroup->addProperty( "Enable Tubes", "If set, fake-tube rendering is used.", false, m_propCondition  );
@@ -138,6 +145,23 @@ void enableTransparency( osg::StateSet* state )
     state->setMode( GL_LIGHTING, osg::StateAttribute::OFF | osg::StateAttribute::PROTECTED );
 }
 
+/**
+ * Disables everything which is needed for proper transparency.
+ *
+ * \param state the state of the node
+ */
+void disableTransparency( osg::StateSet* state )
+{
+    // TODO(ebaum): this transparency is problematic. Depth write is on because we need the depth buffer for post-processing
+    state->setMode( GL_BLEND, osg::StateAttribute::OFF );
+
+    // Enable depth test so that an opaque polygon will occlude a transparent one behind it.
+    state->setMode( GL_DEPTH_TEST, osg::StateAttribute::ON );
+
+    // disable light for this geode as lines can't be lit properly
+    state->setMode( GL_LIGHTING, osg::StateAttribute::OFF | osg::StateAttribute::PROTECTED );
+}
+
 void WMFiberDisplaySimple::moduleMain()
 {
     m_shader = osg::ref_ptr< WGEShader > ( new WGEShader( "WMFiberDisplaySimple", m_localPath ) );
@@ -169,6 +193,8 @@ void WMFiberDisplaySimple::moduleMain()
         new WGEShaderPropertyDefineOptions< WPropBool >( m_tubeRibbon, "RIBBON_DISABLED", "RIBBON_ENABLED" ) )
     );
     osg::ref_ptr< WGEPropertyUniform< WPropDouble > > tubeSizeUniform = new WGEPropertyUniform< WPropDouble >( "u_tubeSize", m_tubeSize );
+    osg::ref_ptr< WGEPropertyUniform< WPropDouble > > colormapRationUniform =
+        new WGEPropertyUniform< WPropDouble >( "u_colormapRatio", m_colormapRatio );
 
     // get notified about data changes
     m_moduleState.setResetable( true, true );
@@ -187,6 +213,7 @@ void WMFiberDisplaySimple::moduleMain()
     rootState->addUniform( clipPlaneVectorUniform );
     rootState->addUniform( clipPlaneDistanceUniform );
     rootState->addUniform( tubeSizeUniform );
+    rootState->addUniform( colormapRationUniform );
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( rootNode );
 
     // needed to observe the properties of the input connector data
@@ -256,6 +283,9 @@ void WMFiberDisplaySimple::moduleMain()
 
         // Apply the shader. This is for clipping.
         m_shader->apply( geode );
+
+        // apply colormapping
+        WGEColormapping::apply( geode, m_shader );
 
         // Add geometry
         // Add geometry
@@ -357,14 +387,15 @@ osg::ref_ptr< osg::Node > WMFiberDisplaySimple::createFiberGeode( boost::shared_
     WDataSetFibers::ColorScheme::ColorMode fibColorMode = fibers->getColorScheme()->getMode();
     debugLog() << "Color mode is " << fibColorMode << ".";
     WDataSetFibers::ColorArray  fibColors = fibers->getColorScheme()->getColor();
-    // enable blending, select transparent bin if RGBA mode is used
+
+    // enable blending, select transparent bin
     if ( fibColorMode == WDataSetFibers::ColorScheme::RGBA )
     {
         enableTransparency( state );
     }
     else
     {
-        state->setMode( GL_BLEND, osg::StateAttribute::OFF );
+        disableTransparency( state );
     }
 
     // progress indication

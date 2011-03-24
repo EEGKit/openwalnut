@@ -58,13 +58,12 @@ int WQtNetworkArrow::type() const
     return Type;
 }
 
-
 void WQtNetworkArrow::updatePosition()
 {
     QRectF sRect = m_startPort->rect();
     QRectF eRect = m_startPort->rect();
-    QLineF tmpLine( mapFromItem( m_startPort, sRect.bottomRight()/2 ),
-                    mapFromItem( m_endPort, eRect.bottomRight()/2 ) );
+    QLineF tmpLine( mapFromItem( m_startPort, sRect.bottomRight() * 0.5 ),
+                    mapFromItem( m_endPort, eRect.bottomRight() * 0.5 ) );
     QLineF line( tmpLine.x1(), tmpLine.y1()+5, tmpLine.x2(), tmpLine.y2()-5 );
     setLine( line );
 }
@@ -88,6 +87,7 @@ QVariant WQtNetworkArrow::itemChange( GraphicsItemChange change,
     }
     return value;
 }
+
 void WQtNetworkArrow::paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* w )
 {
     if( isSelected() &&

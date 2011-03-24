@@ -256,7 +256,6 @@ void WMData::moduleMain()
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_propCondition );
 
-    using wiotools::getSuffix;
     std::string fileName = m_fileName.string();
 
     debugLog() << "Loading data from \"" << fileName << "\".";
@@ -398,8 +397,8 @@ void WMData::moduleMain()
     // textures also provide properties
     if ( m_dataSet->isTexture() )
     {
-        WGEColormapping::registerTexture( m_dataSet->getTexture2(), m_dataName->get() );
-        // m_properties->addProperty( m_dataSet->getTexture2()->getProperties() );
+        WGEColormapping::registerTexture( m_dataSet->getTexture2(), m_runtimeName->get() );
+        m_properties->addProperty( m_dataSet->getTexture2()->getProperties() );
         m_infoProperties->addProperty( m_dataSet->getTexture2()->getInformationProperties() );
     }
 
@@ -472,8 +471,8 @@ void WMData::moduleMain()
                     // textures also provide properties
                     // if ( m_dataSet->isTexture() )
                     {
-                        WGEColormapping::registerTexture( m_dataSet->getTexture2(), m_dataName->get() );
-                        // m_properties->addProperty( m_dataSet->getTexture2()->getProperties() );
+                        WGEColormapping::registerTexture( m_dataSet->getTexture2(), m_runtimeName->get() );
+                        m_properties->addProperty( m_dataSet->getTexture2()->getProperties() );
                         m_infoProperties->addProperty( m_dataSet->getTexture2()->getInformationProperties() );
                     }
 
@@ -492,7 +491,7 @@ void WMData::moduleMain()
     // }
     if ( m_dataSet->isTexture() )
     {
-        // m_properties->removeProperty( m_dataSet->getTexture2()->getProperties() );
+        m_properties->removeProperty( m_dataSet->getTexture2()->getProperties() );
         m_infoProperties->removeProperty( m_dataSet->getTexture2()->getInformationProperties() );
         WGEColormapping::deregisterTexture( m_dataSet->getTexture2() );
     }
