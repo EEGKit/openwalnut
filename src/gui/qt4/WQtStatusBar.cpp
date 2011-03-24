@@ -22,15 +22,17 @@
 //
 //---------------------------------------------------------------------------
 
-#include <QtGui/QTableWidget>
+#include <QtGui/QComboBox>
+#include <QtGui/QVBoxLayout>
 #include <QtGui/QHeaderView>
+#include <QtGui/QTableWidget>
 
 #include "events/WEventTypes.h"
 
 #include "WQtStatusBar.h"
 
 // public
-WQtStatusBar::WQtStatusBar( QWidget* parent ):
+WQtStatusBar::WQtStatusBar( QWidget *parent ):
     QStatusBar( parent ),
     m_statusIcon( new WQtStatusIcon( Qt::green, this ) )
 {
@@ -40,6 +42,8 @@ WQtStatusBar::WQtStatusBar( QWidget* parent ):
     m_label->setText( "OpenWalnut" );
     m_label->setMinimumSize( QSize( 750, 17 ) );
     this->addPermanentWidget( m_label, 2 );
+
+    QVBoxLayout *layout = new QVBoxLayout();
 
     m_model = new QStandardItemModel();
     QStandardItem* item = new QStandardItem( QString( "type " ) );
@@ -53,38 +57,55 @@ WQtStatusBar::WQtStatusBar( QWidget* parent ):
 
     m_filter = new QSortFilterProxyModel();
     m_filter->setSourceModel( m_model );
-    m_filter->setFilterFixedString( "1" ); // display beginning with info, ignore debug
+    // display log events beginning with log level info, ignore debug
+    m_filter->setFilterRegExp( QRegExp( "^[1-3]" ) );
+
+    QComboBox *comboBox = new QComboBox();
+    comboBox->addItem( "Debug " );
+    comboBox->addItem( "Info " );
+    comboBox->addItem( "Warning " );
+    comboBox->addItem( "Error " );
+    comboBox->setCurrentIndex( 1 ); // set to 'Info'
+    connect( comboBox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( logLevelChanged( int ) ) );
+    layout->addWidget( comboBox );
 
     m_view = new QTableView();
     m_view->setModel( m_filter );
-    m_view->setGeometry( QRect( 0, 0, 1000, 500 ) );
+    //m_view->setGeometry( QRect( 0, 0, 1000, 500 ) );
+    m_view->setMinimumSize( QSize( 1000, 500 ) );
     m_view->verticalHeader()->hide();
     m_view->setSelectionBehavior( QAbstractItemView::SelectRows );
     m_view->setEditTriggers( QAbstractItemView::NoEditTriggers );
     m_view->setColumnHidden( 0, true );
+    layout->addWidget( m_view );
+
+    m_logWidget = new QWidget();
+    m_logWidget->setLayout( layout );
 }
 
 WQtStatusBar::~WQtStatusBar()
 {
     delete m_statusIcon;
     delete m_label;
-    delete m_model;
     delete m_view;
+    delete m_filter;
+    delete m_model;
+    delete m_logWidget;
 }
 
 void WQtStatusBar::closeView()
 {
-    m_view->close();
+    m_logWidget->close();
 }
 
 //private
-bool WQtStatusBar::event( QEvent* event )
+bool WQtStatusBar::event( QEvent *event )
 {
     if( event->type() == WQT_LOG_EVENT )
     {
         WLogEvent* updateEvent = dynamic_cast< WLogEvent* >( event );
         const WLogEntry& entry = updateEvent->getEntry();
-        if( updateEvent ) // && entry.getLogLevel() >= LL_DEBUG && entry.getLogLevel() <= LL_ERROR)
+        if( updateEvent )
         {
             //WAssert( updateEvent, "Error with WUpdateStatusBarEvent" );
 
@@ -126,11 +147,11 @@ bool WQtStatusBar::event( QEvent* event )
     }
 }
 
-void WQtStatusBar::mousePressEvent( QMouseEvent* event )
+void WQtStatusBar::mousePressEvent( QMouseEvent *event )
 {
     m_view->resizeColumnsToContents();
     m_view->horizontalHeader()->setStretchLastSection( true );
-    m_view->show();
+    m_logWidget->show();
     return QStatusBar::mousePressEvent( event );
 }
 
@@ -140,7 +161,7 @@ void WQtStatusBar::createLogEntry( const WLogEntry& entry )
 
     // add type, is hidden
     QString type;
-    switch(  entry.getLogLevel() )
+    switch( entry.getLogLevel() )
     {
         case LL_DEBUG:
             type = "0";
@@ -161,12 +182,12 @@ void WQtStatusBar::createLogEntry( const WLogEntry& entry )
     entryRow << new QStandardItem( QString( entry.getTime().c_str() ) );
 
     // add source and color for severity
-    QStandardItem* source = new QStandardItem( QString( entry.getSource().c_str() ) );
+    QStandardItem *source = new QStandardItem( QString( entry.getSource().c_str() ) );
     if( entry.getLogLevel() == LL_WARNING )
     {
         source->setBackground( QColor( 255, 140, 0 ) );
     }
-    else if ( entry.getLogLevel() == LL_ERROR )
+    else if( entry.getLogLevel() == LL_ERROR )
     {
         source->setBackground( Qt::red );
     }
@@ -176,8 +197,28 @@ void WQtStatusBar::createLogEntry( const WLogEntry& entry )
     entryRow << new QStandardItem( QString( entry.getMessage().c_str() ) );
 
     m_model->appendRow( entryRow );
-
     m_view->resizeColumnsToContents();
     m_view->horizontalHeader()->setStretchLastSection( true );
+}
+
+void WQtStatusBar::logLevelChanged( int logLevel )
+{
+    QString level;
+    switch( logLevel )
+    {
+        case 0:
+            level = "^.";
+            break;
+        case 1:
+            level = "^[1-3]";
+            break;
+        case 2:
+            level = "^[2-3]";
+            break;
+        case 3:
+            level = "^[3]";
+            break;
+    }
+    m_filter->setFilterRegExp( QRegExp( level ) );
 }
 

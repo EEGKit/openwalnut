@@ -74,7 +74,6 @@ class WQtStatusBar : public QStatusBar
         void mousePressEvent( QMouseEvent* event );
 
     private:
-
         /**
          * pointer to the "trafic light" element in the bottom left corner of the status bar.
          **/
@@ -102,11 +101,24 @@ class WQtStatusBar : public QStatusBar
         QSortFilterProxyModel *m_filter;
 
         /**
-         * creates a new entry in the QStandardItemModel, representet by one row in the QTableView.
+         * contains log and combo box to decide what is displayed
+         **/
+        QWidget *m_logWidget;
+
+        /**
+         * creates a new entry in the QStandardItemModel, represented by one row in the QTableView.
          *
          * \param entry the entry from whom the new row is created
          **/
         void createLogEntry( const WLogEntry& entry );
+
+    private slots:
+        /**
+         * gets called when the log level is changed in the log widget (through the combo box)
+         *
+         * \param logLevel the new log level
+         **/
+        void logLevelChanged( int logLevel );
 };
 
 #endif  // WQTSTATUSBAR_H
