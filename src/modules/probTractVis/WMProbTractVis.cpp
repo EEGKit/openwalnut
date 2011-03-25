@@ -25,7 +25,7 @@
 #include <string>
 
 #include "../../kernel/WKernel.h"
-#include "../WMProbTractVis.xpm" // Please put a real icon here.
+#include "WMProbTractVis.xpm"
 
 #include "WMProbTractVis.h"
 
@@ -50,20 +50,19 @@ boost::shared_ptr< WModule > WMProbTractVis::factory() const
 
 const char** WMProbTractVis::getXPMIcon() const
 {
-    return probTractVis_xpm; // Please put a real icon here.
+    return WMProbTractVis_xpm;
 }
 const std::string WMProbTractVis::getName() const
 {
     // Specify your module name here. This name must be UNIQUE!
-    return "ProbTractVis";
+    return "Probablistic Tractography Visualisation";
 }
 
 const std::string WMProbTractVis::getDescription() const
 {
     // Specify your module description here. Be detailed. This text is read by the user.
     // See "src/modules/template/" for an extensively documented example.
-    return "Someone should add some documentation here. "
-    "Probably the best person would be the modules's creator, i.e. \"berres\"";
+    return "This module visualises probablistic DTI tractograms.";
 }
 
 void WMProbTractVis::connectors()
