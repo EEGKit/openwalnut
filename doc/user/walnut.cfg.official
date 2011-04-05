@@ -62,6 +62,7 @@ deleteROIKey = Del
 # saveState = no
 
 # hideMenuBar = yes # hide the menu bar
+# hideStatusBar = yes # hide the status bar
 
 [ge] ## Settings for the graphics engine
 # bgColor.r = .9 # background color (red part)

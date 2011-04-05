@@ -180,7 +180,12 @@ void WMainWindow::setupGUI()
 
     // Add status bar
     m_statusBar = new WQtStatusBar();
-    setStatusBar( m_statusBar );
+    bool hideStatusBar = false;
+    WPreferences::getPreference( "qt4gui.hideStatusBar", &hideStatusBar );
+    if ( !hideStatusBar )
+    {
+        setStatusBar( m_statusBar );
+    }
 
     // NOTE: Please be aware that not every menu needs a shortcut key. If you add a shortcut, you should use one of the
     // QKeySequence::StandardKey defaults and avoid ambiguities like Ctrl-C for the configure dialog is not the best choice as Ctrl-C, for the
@@ -770,7 +775,8 @@ void WMainWindow::openOpenWalnutHelpDialog()
     window->show();
 
     QWebView *view = new QWebView( this );
-    view->setHtml( content.c_str() );
+    QString location( QString( "file://" ) + WPathHelper::getAppPath().file_string().c_str() + "/../share/OpenWalnut/" );
+    view->setHtml( content.c_str(), QUrl( location  ) );
     view->show();
     layout->addWidget( view );
 }
@@ -854,7 +860,7 @@ void WMainWindow::closeEvent( QCloseEvent* e )
     // handle close event
     if( reallyClose )
     {
-m_statusBar->closeView();
+        m_statusBar->closeView();
         saveWindowState();
 
         // signal everybody to shut down properly.
