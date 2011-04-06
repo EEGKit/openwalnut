@@ -28,10 +28,18 @@
 #include <string>
 
 #include <osg/Geode>
+#include <osg/Node>
+#include <osg/Uniform>
+
+#include "../../graphicsEngine/shaders/WGEShader.h"
 
 #include "../../kernel/WModule.h"
 #include "../../kernel/WModuleInputData.h"
 #include "../../kernel/WModuleOutputData.h"
+
+//may need forward declaration later
+class WDataSetVector;
+class WDataSetScalar;
 
 /** 
  * Someone should add some documentation here.
@@ -107,6 +115,76 @@ protected:
 
 
 private:
+    /**
+    * Scalar dataset representing the probability field either in real numbers in [0,1], or gray values, or the
+    * connectivity score (#visits per voxel).
+    */
+    boost::shared_ptr< WModuleInputForwardData< WDataSetScalar > > m_input;
+
+    /**
+     * The gradient field input
+     */
+    boost::shared_ptr< WModuleInputData< WDataSetVector > > m_gradients;
+
+    /**
+     * The Isovalue used in the case m_isoSurface is true.
+     */
+    WPropDouble m_isoValue;
+
+    /**
+     * The color used when in isosurface mode for blending.
+     */
+    WPropColor m_isoColor;
+
+    /**
+     * The number of steps to walk along the ray.
+     */
+    WPropInt m_stepCount;
+
+    /**
+     * The alpha transparency used for the rendering
+     */
+    WPropDouble m_alpha;
+
+    /**
+     * The ratio between colormap and normal surface color.
+     */
+    WPropDouble m_colormapRatio;
+
+    /**
+     * Some special coloring mode emphasizing the cortex.
+     */
+    WPropBool m_cortexMode;
+
+    /**
+     * If true, per-pixel-phong shading is applied to the surface.
+     */
+    WPropBool m_phongShading;
+
+    /**
+     * If true, the ray-tracer uses stochastic jitter to improve image quality.
+     */
+    WPropBool m_stochasticJitter;
+
+    /**
+     * If true, a certain border area can be clipped. Very useful for non-peeled noisy data.
+     */
+    WPropBool m_borderClip;
+
+    /**
+     * The distance used for clipping.
+     */
+    WPropDouble m_borderClipDistance;
+
+    /**
+     * A condition used to notify about changes in several properties.
+     */
+    boost::shared_ptr< WCondition > m_propCondition;
+
+    /**
+    * Shader
+    */
+    osg::ref_ptr< WGEShader > m_shader;
 };
 
 #endif  // WMPROBTRACTVIS_H

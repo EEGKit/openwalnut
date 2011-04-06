@@ -1,5 +1,5 @@
 /* XPM */
-static const char * WMProbTractVis_xpm[] = {
+static const char * probtractvis_xpm[] = {
 "32 32 129 2",
 "  	c None",
 ". 	c #FFFFFF",
