@@ -132,6 +132,11 @@ private:
     WPropDouble m_isoValue;
 
     /**
+     * The deviation tolerated for the m_isoValue.
+     */
+    WPropDouble m_isoValueTolerance;
+
+    /**
      * The color used when in isosurface mode for blending.
      */
     WPropColor m_isoColor;

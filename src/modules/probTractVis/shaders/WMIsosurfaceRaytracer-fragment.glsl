@@ -26,7 +26,7 @@
 
 #include "WGEColormapping-fragment.glsl"
 
-#include "WGEShadingTools.glsl"
+#include "WGEShadingTools.glsl" // wge_LightIntensityParameter wge_DefaultLightIntensity
 #include "WGETextureTools.glsl"
 #include "WGEPostprocessing.glsl"
 
@@ -66,6 +66,9 @@ uniform sampler3D u_gradientsSampler;
 uniform float u_borderClipDistance = 0.05;
 #endif
 
+// The amount of deviation tolerated for the isovalue
+uniform float u_isovaltolerance;
+
 // The number of steps to use.
 uniform int u_steps;
 
@@ -89,13 +92,15 @@ uniform float u_colormapRatio;
 
 vec3 findRayEnd( out float d )
 {
+    // (0,0,-1,0) in world coordinates + avoid (0,0,0,0)
     vec3 r = v_ray + vec3( 0.0000001 );
+    // current surface point in texture space
     vec3 p = v_rayStart;
 
     // we need to ensure the vector components are not exactly 0.0
 
     // v_ray in cube coordinates is used to check against the unit cube borders
-    // when will v_ray reach the front face?
+    // when will v_ray reach the front face? -> solve equations
     float tFront     = - p.z / r.z;                  // (x,x,0) = v_rayStart + t * v_ray
     float tBack      = ( 1.0 - p.z ) / r.z;          // (x,x,1) = v_rayStart + t * v_ray
 
@@ -138,7 +143,28 @@ vec3 getNormal( in vec3 position )
  */
 void main()
 {
-    // please do not laugh, it is a very very very simple "isosurface" shader
+    // rgba, set for all points
+    // gl_Color is set via the colour picking widget
+    // u_alpha can be modified by the opacity slider (uniform variable u_alpha)
+    wge_FragColor = vec4 ( gl_Color.rgb, u_alpha );
+
+    // 1.0 = back 0.0 front
+    // fragment depth needed for postprocessing
+    gl_FragDepth = 0.0;
+
+    // want to find out the maximal distance we have to evaluate and the end of our ray
+    float maxDistance = 0.0;
+    // findRayEnd also sets the maxDistance
+    vec3 rayEnd = findRayEnd( maxDistance );
+    float stepDistance = maxDistance / float( u_steps ); 
+    //gl_FragData[0] = vec4 ( rayEnd, u_alpha );
+
+    // current point in texture space + v_ray
+    vec3 curPoint = v_rayStart + v_ray;
+    // will set this dynamically
+    float curValue;
+
+/*    // please do not laugh, it is a very very very simple "isosurface" shader
     wge_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
     gl_FragDepth = 1.0;
 
@@ -171,7 +197,7 @@ void main()
         value = texture3D( u_texture0Sampler, curPoint ).r;
 
         // is it the isovalue?
-        if ( ( abs( value - v_isovalue ) < 0.1 )
+        if ( ( abs( value - v_isovalue ) < 0.05 ) //u_isovaltolerance )
 #ifdef BORDERCLIP_ENABLED
                 &&
             !( length( curPoint - rayStart ) < u_borderClipDistance )
@@ -253,6 +279,6 @@ void main()
 
         // do not miss to count the steps already done
         i++;
-    }
+    }*/
 }
 
