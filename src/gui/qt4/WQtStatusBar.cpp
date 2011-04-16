@@ -199,6 +199,7 @@ void WQtStatusBar::createLogEntry( const WLogEntry& entry )
     m_model->appendRow( entryRow );
     m_view->resizeColumnsToContents();
     m_view->horizontalHeader()->setStretchLastSection( true );
+    m_view->scrollToBottom();
 }
 
 void WQtStatusBar::logLevelChanged( int logLevel )

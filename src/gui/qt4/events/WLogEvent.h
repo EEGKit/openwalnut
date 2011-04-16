@@ -29,28 +29,36 @@
 
 #include "../../../common/WLogEntry.h"
 
+/**
+ * This event is triggered when a new event is to be added to the log, displayed by the WQtStatusBar.
+ **/
 class WLogEvent : public QEvent
 {
     public:
         /**
+         * constructor
          *
+         * \param entry WLogEvent which is associated with the event
          **/
         explicit WLogEvent( const WLogEntry& entry );
 
         /**
-         *
+         * destructor
          **/
         ~WLogEvent();
 
         /**
+         * To access the WLogEntry of associated with the event.
          *
+         * \return the log entry
          **/
         const WLogEntry& getEntry() const;
 
     protected:
+
     private:
         /**
-         * The associated WLogEntry
+         * The associated WLogEntry to the event.
          **/
         const WLogEntry m_entry;
 };

@@ -29,7 +29,8 @@
 #include <QtGui/QPainter>
 
 /**
- * Circle with different colors
+ * Circle with different colors, used to indicate how severe the log events are.
+ * Used by WQtStatusBar.
  **/
 class WQtStatusIcon : public QWidget
 {
@@ -39,7 +40,7 @@ class WQtStatusIcon : public QWidget
         /**
          * constructor
          *
-         * \param color the color of the icon
+         * \param color the current color of the icon
          * \param parent the parent widget
          **/
         WQtStatusIcon( QColor color, QWidget *parent = 0 ) :
@@ -57,7 +58,7 @@ class WQtStatusIcon : public QWidget
         }
 
         /**
-         * to change the color
+         * Changes the current color of this item.
          *
          * \param color the new color
          **/
@@ -68,7 +69,7 @@ class WQtStatusIcon : public QWidget
         }
 
         /**
-         * returns the color
+         * returns the current color of the item
          **/
         QColor getColor() const
         {
@@ -77,7 +78,7 @@ class WQtStatusIcon : public QWidget
 
     protected:
         /**
-         * paints the circle with the color
+         * Paints the circle with the current color.
          **/
         virtual void paintEvent( QPaintEvent* )
         {
@@ -98,7 +99,7 @@ class WQtStatusIcon : public QWidget
 
     private:
         /**
-         * Color of the object
+         * The current color of the object.
          **/
         QColor m_color;
 };

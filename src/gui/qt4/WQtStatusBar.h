@@ -36,9 +36,9 @@
 #include "guiElements/WQtStatusIcon.h"
 
 /**
- * The status bar at the bottom of the main window, displays messages and
- * with the help of a colored circle ifany errors or warnings occure during the
- * use of OpenWalnut
+ * The status bar at the bottom of the main window, displays messages severity.
+ * Different colors are used to indicate what type of message occured during the
+ * use of OpenWalnut.
  **/
 class WQtStatusBar : public QStatusBar
 {
@@ -75,38 +75,40 @@ class WQtStatusBar : public QStatusBar
 
     private:
         /**
-         * pointer to the "trafic light" element in the bottom left corner of the status bar.
+         * Pointer to the "trafic light" element in the bottom left corner of the status bar.
+         * Indicator for the 'severest' event that occured.
          **/
         WQtStatusIcon *m_statusIcon;
 
         /**
-         * pointer to the label in the status bar, displaying the the newest
-         * and the severest message at that point in time.
+         * Pointer to the label in the status bar, displaying the severest message and its origin.
          **/
         QLabel *m_label;
 
         /**
-         * the standard item model holding the event data.
+         * The standard item model holding the event data log.
+         * Used to display the event log table.
          **/
         QStandardItemModel *m_model;
 
         /**
-         * table view that displays the model.
+         * Table view that displays the model.
          **/
         QTableView *m_view;
 
         /**
-         * used to filter the content of the model
+         * Used to filter the content of the model by severity of the log message.
          **/
         QSortFilterProxyModel *m_filter;
 
         /**
-         * contains log and combo box to decide what is displayed
+         * Contains log table (the table view) and combo box (to interact with the filter)
+         * to decide what kind of message is displayed in the log table.
          **/
         QWidget *m_logWidget;
 
         /**
-         * creates a new entry in the QStandardItemModel, represented by one row in the QTableView.
+         * Creates a new entry in the QStandardItemModel, represented by one row in the QTableView.
          *
          * \param entry the entry from whom the new row is created
          **/
@@ -114,9 +116,9 @@ class WQtStatusBar : public QStatusBar
 
     private slots:
         /**
-         * gets called when the log level is changed in the log widget (through the combo box)
+         * Gets called when the log level is changed in the log widget (through the combo box)
          *
-         * \param logLevel the new log level
+         * \param logLevel the new log level for the filter
          **/
         void logLevelChanged( int logLevel );
 };
