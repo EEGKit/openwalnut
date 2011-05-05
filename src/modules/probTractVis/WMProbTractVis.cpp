@@ -114,10 +114,10 @@ void WMProbTractVis::properties()
 
     m_isoValue      = m_properties->addProperty( "Isovalue",         "The isovalue used whenever the isosurface Mode is turned on.",
                                                                       128.0 );
-    m_isoValueTolerance = m_properties->addProperty( "Isovalue tolerance", "The amount of deviation tolerated for the isovalue", 0.1 );
-    m_isoValueTolerance->setMax( 1.0 );
+    m_isoValueTolerance = m_properties->addProperty( "Isovalue tolerance", "The amount of deviation tolerated for the isovalue", 0.05 );
+    m_isoValueTolerance->setMax( 0.5 );
 
-    m_isoColor      = m_properties->addProperty( "Iso color",        "The color to blend the isosurface with.", WColor( 1.0, 1.0, 1.0, 1.0 ),
+    m_isoColor      = m_properties->addProperty( "Iso color",        "The color to blend the isosurface with.", WColor( 0.6, 0.0, 1.0, 1.0 ),
                       m_propCondition );
 
     m_stepCount     = m_properties->addProperty( "Step count",       "The number of steps to walk along the ray during raycasting. A low value "
@@ -125,7 +125,7 @@ void WMProbTractVis::properties()
     m_stepCount->setMin( 1 );
     m_stepCount->setMax( 1000 );
 
-    m_alpha         = m_properties->addProperty( "Opacity %",        "The opacity in %. Transparency = 1 - Opacity.", 1.0 );
+    m_alpha         = m_properties->addProperty( "Opacity %",        "The opacity in %. Transparency = 1 - Opacity.", 0.7 );
     m_alpha->setMin( 0.0 );
     m_alpha->setMax( 1.0 );
 
@@ -157,9 +157,8 @@ void WMProbTractVis::requirements()
 
 void WMProbTractVis::moduleMain()
 {
-    // TODO(aberres): adapt + make own
     // the WGEShader can take the name of any glsl shader (without extension) in the shaders folder
-    m_shader = osg::ref_ptr< WGEShader > ( new WGEShader( "WMIsosurfaceRaytracer", m_localPath ) );
+    m_shader = osg::ref_ptr< WGEShader > ( new WGEShader( "WMProbTractVis", m_localPath ) );
     m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
         new WGEShaderPropertyDefineOptions< WPropBool >( m_cortexMode, "CORTEXMODE_DISABLED", "CORTEXMODE_ENABLED" ) )
     );

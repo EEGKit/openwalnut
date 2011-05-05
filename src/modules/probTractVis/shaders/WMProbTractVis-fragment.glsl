@@ -32,9 +32,20 @@
 
 /////////////////////////////////////////////////////////////////////////////
 // Varyings
+// Used in vertex and fragment shader
 /////////////////////////////////////////////////////////////////////////////
 
-#include "WMIsosurfaceRaytracer-varyings.glsl"
+// The ray's starting point in texture space
+varying vec3 v_rayStart;
+
+// The ray direction in texture space
+varying vec3 v_ray;
+
+// the Surface normal at this point
+varying vec3 v_normal;
+
+// The isovalue scaled using texture scaling information to [0,1]
+varying float v_isovalue;
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
@@ -90,6 +101,7 @@ uniform float u_colormapRatio;
 // Functions
 /////////////////////////////////////////////////////////////////////////////
 
+// returns closest point of the cube
 vec3 findRayEnd( out float d )
 {
     // (0,0,-1,0) in world coordinates + avoid (0,0,0,0)
@@ -150,7 +162,7 @@ void main()
 
     // 1.0 = back 0.0 front
     // fragment depth needed for postprocessing
-    gl_FragDepth = 0.0;
+    gl_FragDepth = 1.0; //TODO
 
     // want to find out the maximal distance we have to evaluate and the end of our ray
     float maxDistance = 0.0;
@@ -159,126 +171,69 @@ void main()
     float stepDistance = maxDistance / float( u_steps ); 
     //gl_FragData[0] = vec4 ( rayEnd, u_alpha );
 
-    // current point in texture space + v_ray
-    vec3 curPoint = v_rayStart + v_ray;
-    // will set this dynamically
+    // current value inside the data, will be set dynamically
     float curValue;
 
-/*    // please do not laugh, it is a very very very simple "isosurface" shader
-    wge_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
-    gl_FragDepth = 1.0;
-
-    // First, find the rayEnd point. We need to do it in the fragment shader as the ray end point may be interpolated wrong
-    // when done for each vertex.
-    float totalDistance = 0.0;
-    vec3 rayEnd = findRayEnd( totalDistance );
-    float stepDistance = totalDistance / float( u_steps );
-
-    // the current value inside the data
-    float value;
-
-#ifdef STOCHASTICJITTER_ENABLED
-    // stochastic jittering can help to void these ugly wood-grain artifacts with larger sampling distances but might
-    // introduce some noise artifacts.
-    float jitter = 0.5 - texture2D( u_texture1Sampler, gl_FragCoord.xy / u_texture1SizeX ).r;
-    // the point along the ray in cube coordinates
-    vec3 curPoint = v_ray + v_rayStart + ( v_ray * stepDistance * jitter );
-    vec3 rayStart = curPoint;
+#ifdef STOCHASTICJIBBER_ENABLED
+        float jitter = 10.0;
+        vec3 curPoint = v_rayStart + v_ray + (v_ray * stepDistance * jitter)
 #else
-    // the point along the ray in cube coordinates
-    vec3 curPoint = v_ray + v_rayStart;
+    // current point in texture space + v_ray
+    vec3 curPoint = v_rayStart + v_ray;
 #endif
 
-    // the step counter
-    int i = 1;
-    while ( i < u_steps )
+    for( int i = 1; i < u_steps; i++ )
     {
         // get current value
-        value = texture3D( u_texture0Sampler, curPoint ).r;
+        curValue = texture3D( u_texture0Sampler, curPoint ).r;
 
         // is it the isovalue?
-        if ( ( abs( value - v_isovalue ) < 0.05 ) //u_isovaltolerance )
-#ifdef BORDERCLIP_ENABLED
-                &&
-            !( length( curPoint - rayStart ) < u_borderClipDistance )
-                &&
-            !( length( curPoint - rayEnd ) < u_borderClipDistance )
-#endif
-        )
+        if( abs( curValue - v_isovalue) < u_isovaltolerance )
         {
-            // we need to know the depth value of the current point inside the cube
-            // Therefore, the complete standard pipeline is reproduced here:
+            // we need the depth value of the current point inside the cube -> standard pipeline
 
-            // 1: transfer to world space and right after it, to eye space
+            // 1. transfer to world space and then to eye space
             vec4 curPointProjected = gl_ModelViewProjectionMatrix * vec4( curPoint, 1.0 );
 
-            // 2: scale to screen space and [0,1]
-            // -> x and y is not needed
-            // curPointProjected.x /= curPointProjected.w;
-            // curPointProjected.x  = curPointProjected.x * 0.5 + 0.5 ;
-            // curPointProjected.y /= curPointProjected.w;
-            // curPointProjected.y  = curPointProjected.y * 0.5 + 0.5 ;
+            // 2. scale to screen space and [0,1]
+            // don't need x and y
             curPointProjected.z /= curPointProjected.w;
             curPointProjected.z  = curPointProjected.z * 0.5 + 0.5;
 
-            // 3: set depth value
+            // 3. set depth value
             gl_FragDepth = curPointProjected.z;
 
-	    
-	    // debug by using graphical output
-	    // want to know current depth value
-	    // need return to display this
-	    // gl_FragData[0] = vec4(curPointProjected.z,0,0,1);
-	    // return;
-
-
-            // 4: Shading
-
-            // find a proper normal for a headlight in world-space
+            // 4. shading
+            // find normal for a headlight in world coordinates
             vec3 normal = ( gl_ModelViewMatrix * vec4( getNormal( curPoint ), 0.0 ) ).xyz;
-#ifdef WGE_POSTPROCESSING_ENABLED
-            wge_FragNormal = textureNormalize( normal );
-#endif
 
-            float light = 1.0;
-#ifdef PHONGSHADING_ENABLED
-            // only calculate the phong illumination only if needed
-            light = blinnPhongIlluminationIntensity( normalize( normal ) );
-#endif
-            // 4: set color
+            // full brightness
+            float light = 1.0; //TODO
 
-#ifdef CORTEXMODE_ENABLED
-            // NOTE: these are a lot of weird experiments ;-)
-            float d = 1.0 - curPointProjected.z;
-            d = 1.5 * pointDistance( curPoint, vec3( 0.5 ) );
-
-            float w = dot( normalize( vec3( 0.5 ) - curPoint ), normalize( v_ray ) );
-            w = ( w + 0.5 );
-            if ( w > 0.8 ) w = 0.8;
-
-            float d2 = w * d * d * d * d * d;
-            light = light * 11.0 * d2;
-#endif
-
+            // 5. set colour
             // mix color with colormap
-            vec4 color = mix(
-                colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y * u_texture0SizeY, curPoint.z * u_texture0SizeZ, 1.0 ) ),
-                vec4( gl_Color.rgb, u_alpha ),
-                1.0 - u_colormapRatio );
-            // 5: the final color construction
+            vec4 color = mix( colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y
+                                                  * u_texture0SizeY, curPoint.z * u_texture0SizeZ, 1.0 ) ),
+                              vec4( gl_Color.rgb, u_alpha ),
+                              1.0 - u_colormapRatio );
+
+            // 6: the final color construction
             wge_FragColor = vec4( light * color.rgb, color.a );
 
             break;
         }
+
         else
         {
             // no it is not the iso value
             // -> continue along the ray
             curPoint += stepDistance * v_ray;
         }
-
-        // do not miss to count the steps already done
-        i++;
-    }*/
+    }
+	    // debug by using graphical output
+	    // want to know current depth value
+	    // need return to display this
+	    // gl_FragData[0] = vec4(curPointProjected.z,0,0,1);
+		// return;
 }
 
