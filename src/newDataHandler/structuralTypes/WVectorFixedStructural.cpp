@@ -22,5 +22,5 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WScalar.h"
+#include "WVectorFixedStructural.h"
 
