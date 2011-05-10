@@ -33,7 +33,7 @@
 #include <osg/Geode>
 #include <osg/Uniform>
 
-#include "../../common/math/WVector3D.h"
+#include "../../common/math/linearAlgebra/WLinearAlgebra.h"
 #include "../../dataHandler/WDataSetScalar.h"
 #include "../../kernel/WModule.h"
 #include "../../kernel/WModuleInputData.h"
@@ -46,6 +46,7 @@ class WPickHandler;
  *
  * \ingroup modules
  */
+
 class WMApplyMask : public WModule
 {
 public:
@@ -116,4 +117,5 @@ private:
     boost::shared_ptr< WDataSetScalar > m_dataSetOut; //!< Pointer providing access to the resulting data set in the whole module.
     boost::shared_ptr< WDataSetScalar > m_mask; //!< Pointer providing access to the mask in the whole module.
 };
+
 #endif  // WMAPPLYMASK_H

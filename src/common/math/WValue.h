@@ -25,19 +25,21 @@
 #ifndef WVALUE_H
 #define WVALUE_H
 
+#include <algorithm>
 #include <cmath>
 #include <vector>
 
 #include "../WAssert.h"
 #include "../WStringUtils.h"
+#include "linearAlgebra/WLinearAlgebra.h"
 
-namespace wmath
-{
 /**
  * Base class for all higher level values like tensors, vectors, matrices and so on.
  */
 template< typename T > class WValue
 {
+template< typename S > friend class WValue; //!< All WValues are friends of each other.
+
 // We exclude this from doxygen since they are documented already as functions and I don't want to duplicate that documentation
 // \cond
 template< typename U > friend std::ostream& operator<<( std::ostream& os, const WValue< U > &rhs );
@@ -61,6 +63,32 @@ public:
     WValue( const WValue& newValue )
         : m_components( newValue.m_components )
     {
+    }
+
+    /**
+     * Create a WValue as copy of the one given as parameter but with another template type.
+     * \param newValue The WValue to be copied.
+     */
+    template< typename S > explicit WValue( const WValue< S >& newValue )
+    {
+        m_components.resize( newValue.m_components.size() );
+        for( size_t i = 0; i < m_components.size(); ++i )
+        {
+            m_components[i] = newValue.m_components[i];
+        }
+    }
+
+    /**
+     * Create a WValue from the given WVector_2.
+     * \param newValues The WVector_2 with the values..
+     */
+    explicit WValue( const WVector_2& newValues )
+        : m_components( static_cast< std::size_t >( newValues.size() ) )
+    {
+        for ( std::size_t i = 0; i < m_components.size(); ++i )
+        {
+            m_components[ i ] = static_cast< T >( newValues( i ) );
+        }
     }
 
     /**
@@ -122,7 +150,7 @@ public:
     }
 
     /**
-     * Adds a the argument componentwise to the components of this WValue
+     * Adds a the argument component-wise to the components of this WValue
      * \param rhs The right hand side of the assignment
      */
     WValue& operator+=( const WValue& rhs )
@@ -134,7 +162,7 @@ public:
     }
 
     /**
-     * Subtracts the argument componentwise from the components of this WValue
+     * Subtracts the argument component-wise from the components of this WValue
      * \param rhs The right hand side of the assignment
      */
     WValue& operator-=( const WValue& rhs )
@@ -157,7 +185,7 @@ public:
     }
 
     /**
-     * Scales each component of this WValue with the coressponding
+     * Scales each component of this WValue with the corresponding
      * component of the given argument WValue
      * \param rhs The right hand side of the assignment
      */
@@ -182,7 +210,7 @@ public:
 
 
     /**
-     * Componentwise addition.
+     * Component-wise addition.
      * \param summand2 The right hand side of the summation
      */
     const WValue operator+( const WValue& summand2 ) const
@@ -194,7 +222,7 @@ public:
     }
 
     /**
-     * Componentwise subtraction.
+     * Component-wise subtraction.
      * \param subtrahend The right hand side of the subtraction
      */
     const WValue operator-( const WValue& subtrahend ) const
@@ -206,7 +234,7 @@ public:
     }
 
     /**
-     * Componentwise multiplication.
+     * Component-wise multiplication.
      * \param factor2 The right hand side of the product
      */
     const WValue operator*( const WValue& factor2 ) const
@@ -272,6 +300,53 @@ public:
         return result;
     }
 
+    /**
+     * Returns the mean value of all values stored in this WValue.
+     */
+    T mean() const
+    {
+        WAssert( !m_components.empty(), "WValue has no entries." );
+        T sum = 0;
+        for ( typename std::vector< T >::const_iterator it = m_components.begin(); it != m_components.end(); it++  )
+        {
+            sum += ( *it );
+        }
+        return ( sum / static_cast< T >( m_components.size() ) );
+    }
+
+    /**
+     * Returns the median of all values stored in this WValue.
+     */
+    T median() const
+    {
+        WAssert( !m_components.empty(), "WValue has no entries. " );
+        std::vector< T > components( m_components );
+        std::sort( components.begin(), components.end() );
+        return components[ components.size() / 2 ];
+    }
+
+    /**
+     * Changes the number of scalars held by this WValue.
+     * \param size The number of scalars stored in the WValue.
+     */
+    void resize( size_t size )
+    {
+        m_components.resize( size );
+    }
+
+    /**
+     * Returns this WValue as WVector_2.
+     */
+    WVector_2 toWVector()
+    {
+        WVector_2 result( m_components.size() );
+        for ( size_t i = 0; i < m_components.size(); ++i )
+        {
+            result( i ) = static_cast<double>( m_components[ i ] );
+        }
+        return result;
+    }
+
 protected:
 private:
     /**
@@ -322,7 +397,7 @@ template< typename T > inline const WValue< T > operator/( const WValue< T >& lh
  * \param os The operator will write to this stream.
  * \param rhs This will be written to the stream.
  *
- * \return the outputstream
+ * \return the output stream
  */
 template< typename U > inline std::ostream& operator<<( std::ostream& os, const WValue< U > &rhs )
 {
@@ -335,12 +410,11 @@ template< typename U > inline std::ostream& operator<<( std::ostream& os, const 
  * \param in the input stream
  * \param rhs the value to where to write the stream
  *
- * \return the inputstream
+ * \return the input stream
  */
 template< typename U > inline std::istream& operator>>( std::istream& in, WValue< U >& rhs )
 {
     return string_utils::operator>>( in, rhs.m_components );
 }
 
-}  // End of namespace
 #endif  // WVALUE_H

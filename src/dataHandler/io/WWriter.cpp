@@ -24,6 +24,12 @@
 
 #include <string>
 
+// Use filesystem version 2 for compatibility with newer boost versions.
+#ifndef BOOST_FILESYSTEM_VERSION
+    #define BOOST_FILESYSTEM_VERSION 2
+#endif
+#include <boost/filesystem.hpp>
+
 #include "../../common/WIOTools.h"
 #include "../exceptions/WDHIOFailure.h"
 #include "WWriter.h"
@@ -37,8 +43,8 @@ WWriter::WWriter( std::string fname, bool overwrite )
 void WWriter::setFileName( std::string fname )
 {
     m_fname = fname;
-    if( !m_overwrite && wiotools::fileExists( m_fname ) )
+    if( !m_overwrite && boost::filesystem::exists( boost::filesystem::path( m_fname ) ) )
     {
-        throw WDHIOFailure( "File '" + m_fname + "' already exists, skip writing" );
+        throw WDHIOFailure( std::string( "File '" + m_fname + "' already exists, skip writing" ) );
     }
 }

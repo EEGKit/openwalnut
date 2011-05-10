@@ -41,7 +41,7 @@
  * This module implements several onscreen status displays
  * \ingroup modules
  */
-class WMHud : public WModule, public osg::Referenced
+class WMHud : public WModule
 {
 public:
     /**
@@ -126,6 +126,8 @@ private:
      */
     osg::ref_ptr< osgText::Text > m_osgPickText;
 
+    bool m_updatedPickText; //!< Tells us whether the picktext was updated an has to be rendered.
+
     /**
      * string to store the pick result from the picking method
      */
@@ -148,28 +150,9 @@ private:
     void activate();
 
     /**
-     * Node callback to handle updates properly
+     * The update callback that is called for the osg node of this module.
      */
-    class HUDNodeCallback : public osg::NodeCallback
-    {
-    public: // NOLINT
-        /**
-         * operator ()
-         *
-         * \param node the osg node
-         * \param nv the node visitor
-         */
-        virtual void operator()( osg::Node* node, osg::NodeVisitor* nv )
-        {
-            osg::ref_ptr< WMHud > module = static_cast< WMHud* > ( node->getUserData() );
-
-            if ( module )
-            {
-                module->update();
-            }
-            traverse( node, nv );
-        }
-    };
+    void updateCallback();
 };
 
 #endif  // WMHUD_H

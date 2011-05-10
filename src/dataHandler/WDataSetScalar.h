@@ -25,13 +25,20 @@
 #ifndef WDATASETSCALAR_H
 #define WDATASETSCALAR_H
 
+#include <map>
+
+#include <boost/thread.hpp>
+
+#include "datastructures/WValueSetHistogram.h"
+
 #include "WDataSetSingle.h"
+#include "WExportDataHandler.h"
 
 /**
  * This data set type contains scalars as values.
  * \ingroup dataHandler
  */
-class WDataSetScalar : public WDataSetSingle
+class OWDATAHANDLER_EXPORT WDataSetScalar : public WDataSetSingle // NOLINT
 {
 public:
 
@@ -46,20 +53,6 @@ public:
                     boost::shared_ptr< WGrid > newGrid );
 
     /**
-     * Constructs an instance out of an appropriate value set and a grid.
-     * Computes the maximum an minimum values stored as member variables.
-     *
-     * \param newValueSet the scalar value set to use
-     * \param newGrid the grid which maps world space to the value set
-     * \param min a priori known smallest scalar value in newValueSet
-     * \param max a priori known largest scalar value in newValueSet
-     */
-    WDataSetScalar( boost::shared_ptr< WValueSetBase > newValueSet,
-                    boost::shared_ptr< WGrid > newGrid,
-                    double min,
-                    double max );
-
-    /**
      * Construct an empty and unusable instance. This is needed for the prototype mechanism.
      */
     WDataSetScalar();
@@ -68,6 +61,34 @@ public:
      * Destroys this DataSet instance
      */
     virtual ~WDataSetScalar();
+
+    /**
+     * Creates a copy (clone) of this instance but allows to change the valueset. Unlike copy construction, this is a very useful function if you
+     * want to keep the dynamic type of your dataset even if you just have a WDataSetSingle.
+     *
+     * \param newValueSet the new valueset.
+     *
+     * \return the clone
+     */
+    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WValueSetBase > newValueSet ) const;
+
+    /**
+     * Creates a copy (clone) of this instance but allows to change the grid. Unlike copy construction, this is a very useful function if you
+     * want to keep the dynamic type of your dataset even if you just have a WDataSetSingle.
+     *
+     * \param newGrid the new grid.
+     *
+     * \return the clone
+     */
+    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WGrid > newGrid ) const;
+
+    /**
+     * Creates a copy (clone) of this instance. Unlike copy construction, this is a very useful function if you
+     * want to keep the dynamic type of your dataset even if you just have a WDataSetSingle.
+     *
+     * \return the clone
+     */
+    virtual WDataSetSingle::SPtr clone() const;
 
     /**
      * Returns the largest of the scalars stored in the data set
@@ -80,6 +101,17 @@ public:
     double getMin() const;
 
     /**
+     * Returns the histogram of this dataset's valueset. If it does not exist yet, it will be created and cached. It does NOT make use of the
+     * WValueSetHistogram down scaling feature even though the number of buckets might be lower than the default as the down scaling might
+     * introduce errors. To use down-scaling, grab the default histogram and call WValueSetHistogram( getHistogram(), buckets ) manually.
+     *
+     * \param buckets the number of buckets inside the histogram.
+     *
+     * \return the histogram.
+     */
+    boost::shared_ptr< const WValueSetHistogram > getHistogram( size_t buckets = 1000 );
+
+    /**
      * Interpolate the value fo the valueset at the given position.
      * If interpolation fails, the success parameter will be false
      * and the value returned zero.
@@ -89,7 +121,7 @@ public:
      *
      * \return Scalar value for that given position
      */
-    double interpolate( const wmath::WPosition& pos, bool* success );
+    double interpolate( const WPosition& pos, bool* success ) const;
 
     /**
      * Get the value stored at a certain grid position of the data set
@@ -117,6 +149,8 @@ public:
      */
     static boost::shared_ptr< WPrototyped > getPrototype();
 
+    using WDataSetSingle::getValueAt;
+
 protected:
 
     /**
@@ -125,8 +159,16 @@ protected:
     static boost::shared_ptr< WPrototyped > m_prototype;
 
 private:
-    double m_maximum; //!< Largest scalar of data set.
-    double m_minimum; //!< Smallest scalar of data set.
+
+    /**
+     * The histograms for later use. Each histogram for a requested bucket count gets cached.
+     **/
+    std::map< size_t, boost::shared_ptr< WValueSetHistogram > > m_histograms;
+
+    /**
+     * The lock used for securely creating m_histogram on demand.
+     */
+    boost::mutex m_histogramLock;
 };
 
 template< typename T > T WDataSetScalar::getValueAt( int x, int y, int z ) const

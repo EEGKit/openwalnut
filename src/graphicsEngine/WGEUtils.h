@@ -25,7 +25,10 @@
 #ifndef WGEUTILS_H
 #define WGEUTILS_H
 
+#include <string>
 #include <vector>
+
+#include <boost/lexical_cast.hpp>
 
 #include <osg/Array>
 #include <osg/Vec3>
@@ -33,7 +36,10 @@
 #include <osg/Camera>
 
 #include "../common/WColor.h"
-#include "../common/math/WPosition.h"
+#include "../common/WAssert.h"
+#include "../common/math/linearAlgebra/WLinearAlgebra.h"
+
+#include "WExportWGE.h"
 
 namespace wge
 {
@@ -43,24 +49,7 @@ namespace wge
      * \param pos1 First point
      * \param pos2 Second point
      */
-    WColor getRGBAColorFromDirection( const wmath::WPosition &pos1, const wmath::WPosition &pos2 );
-
-    /**
-     * Converts a WColor to an OSG compatible color
-     *
-     * \param color The color in WColor format
-     * \return A color which may be used inside of OSG
-     */
-    osg::Vec4 osgColor( const WColor& color );
-
-    /**
-     * Converts a given WPosition into an osg::Vec3.
-     *
-     * \param pos The WPosition which should be converted
-     *
-     * \return The osg::Vec3 vector of pos
-     */
-    osg::Vec3 osgVec3( const wmath::WPosition& pos );
+    WColor getRGBAColorFromDirection( const WPosition &pos1, const WPosition &pos2 );
 
     /**
      * Converts a whole vector of WPositions into an osg::Vec3Array.
@@ -69,7 +58,7 @@ namespace wge
      *
      * \return Refernce to the same vector but as osg::Vec3Array.
      */
-    osg::ref_ptr< osg::Vec3Array > osgVec3Array( const std::vector< wmath::WPosition >& posArray );
+    osg::ref_ptr< osg::Vec3Array > WGE_EXPORT osgVec3Array( const std::vector< WPosition >& posArray );
 
     /**
      * Converts screen coordinates into Camera coordinates.
@@ -77,35 +66,39 @@ namespace wge
      * \param screen the screen coordinates
      * \param camera The matrices of this camera will used for unprojecting.
      */
-    osg::Vec3 unprojectFromScreen( const osg::Vec3 screen, osg::ref_ptr< osg::Camera > camera  );
+    osg::Vec3 WGE_EXPORT unprojectFromScreen( const osg::Vec3 screen, osg::ref_ptr< osg::Camera > camera  );
 
     /**
-     * Conversion of WVector3D to osg::Vec3
-     * \param v the vector to convert.
+     * creates the same color as the atlas colormap shader from the index
+     *
+     * \param index unsigned char that indexes the color
+     * \return the color
      */
-    osg::Vec3 wv3D2ov3( wmath::WVector3D v );
+    WColor WGE_EXPORT createColorFromIndex( int index );
+
+    /**
+     * creates a rgb WColor from a HSV value
+     * \param h hue
+     * \param s saturation
+     * \param v value
+     * \return the color
+     */
+    WColor WGE_EXPORT createColorFromHSV( int h, float s = 1.0, float v = 1.0 );
+
+    /**
+     * creates the nth color of a partition of the hsv color circle
+     *
+     * \param n number of the color
+     * \return the color
+     */
+    WColor WGE_EXPORT getNthHSVColor( int n );
 }
 
-inline WColor wge::getRGBAColorFromDirection( const wmath::WPosition &pos1, const wmath::WPosition &pos2 )
+inline WColor wge::getRGBAColorFromDirection( const WPosition &pos1, const WPosition &pos2 )
 {
-    wmath::WPosition direction( ( pos2 - pos1 ) );
-    direction.normalize();
-    return WColor( std::abs( direction[0] ), std::abs( direction[1] ), std::abs( direction[2] ) );
-}
-
-inline osg::Vec4 wge::osgColor( const WColor& color )
-{
-    return osg::Vec4( color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha() );
-}
-
-inline osg::Vec3 wge::osgVec3( const wmath::WPosition& pos )
-{
-    return osg::Vec3( pos[0], pos[1], pos[2] );
-}
-
-inline osg::Vec3 wge::wv3D2ov3( wmath::WVector3D v )
-{
-    return osg::Vec3( v[0], v[1], v[2] );
+    WPosition direction( normalize( pos2 - pos1 ) );
+    return WColor( std::abs( direction[0] ), std::abs( direction[1] ), std::abs( direction[2] ), 1.0f );
 }
 
 #endif  // WGEUTILS_H
+

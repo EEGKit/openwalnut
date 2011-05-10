@@ -33,16 +33,26 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 
-#include "WPropertyTypes.h"
+#include "WProperties_Fwd.h"
 #include "WCondition.h"
 #include "WConditionSet.h"
+#include "WExportCommon.h"
 
 /**
  * Abstract base class for all properties. Simply provides name and type information.
  */
-class WPropertyBase: public boost::enable_shared_from_this< WPropertyBase >
+class OWCOMMON_EXPORT WPropertyBase: public boost::enable_shared_from_this< WPropertyBase >
 {
 public:
+    /**
+     * Convenience typedef for a boost::shared_ptr< WPropertyBase >
+     */
+    typedef boost::shared_ptr< WPropertyBase > SPtr;
+
+    /**
+     * Convenience typedef for a  boost::shared_ptr< const WPropertyBase >
+     */
+    typedef boost::shared_ptr< const WPropertyBase > ConstSPtr;
 
     /**
      * Create an empty named property.
@@ -159,6 +169,7 @@ public:
      * \li WPropertyVariable::addConstraint is called
      * \li WPropertyVariable::removeConstraints is called
      * \li WProperties::addProperty is called
+     * \li WProperties::removeProperty is called
      * \li WProperties::addPropertyGroup is called
      * This is especially useful if you simply want to know that something has happened.
      *
@@ -242,6 +253,13 @@ public:
      * \return the property as trigger property
      */
     WPropTrigger toPropTrigger();
+
+    /**
+     * Helper converts this instance to its native type.
+     *
+     * \return the property as matrix4x4 property
+     */
+    WPropMatrix4X4 toPropMatrix4X4();
 
     /**
      * Helper converts this instance to its native type.

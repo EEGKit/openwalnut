@@ -33,12 +33,13 @@
 #include "WValueSet.h"
 
 #include "WDataSetSingle.h"
+#include "WExportDataHandler.h"
 
 /**
  * This data set type contains spherical harmonic coefficients as values. The index scheme is like in the Descoteaux paper "Regularized, Fast, and Robust Analytical Q-Ball Imaging".
  * \ingroup dataHandler
  */
-class WDataSetSphericalHarmonics : public WDataSetSingle
+class OWDATAHANDLER_EXPORT WDataSetSphericalHarmonics : public WDataSetSingle // NOLINT
 {
 public:
 
@@ -62,6 +63,34 @@ public:
     virtual ~WDataSetSphericalHarmonics();
 
     /**
+     * Creates a copy (clone) of this instance but allows to change the valueset. Unlike copy construction, this is a very useful function if you
+     * want to keep the dynamic type of your dataset even if you just have a WDataSetSingle.
+     *
+     * \param newValueSet the new valueset.
+     *
+     * \return the clone
+     */
+    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WValueSetBase > newValueSet ) const;
+
+    /**
+     * Creates a copy (clone) of this instance but allows to change the grid. Unlike copy construction, this is a very useful function if you
+     * want to keep the dynamic type of your dataset even if you just have a WDataSetSingle.
+     *
+     * \param newGrid the new grid.
+     *
+     * \return the clone
+     */
+    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WGrid > newGrid ) const;
+
+    /**
+     * Creates a copy (clone) of this instance. Unlike copy construction, this is a very useful function if you
+     * want to keep the dynamic type of your dataset even if you just have a WDataSetSingle.
+     *
+     * \return the clone
+     */
+    virtual WDataSetSingle::SPtr clone() const;
+
+    /**
      * Returns a prototype instantiated with the true type of the deriving class.
      *
      * \return the prototype.
@@ -76,17 +105,16 @@ public:
      *
      * \return Interpolated spherical harmonic.
      */
-    wmath::WSymmetricSphericalHarmonic interpolate( const wmath::WPosition &pos, bool *success ) const;
+    WSymmetricSphericalHarmonic interpolate( const WPosition &pos, bool *success ) const;
 
     /**
-     * Get the vector on the given position in value set.
-     * \note currently only implmented for WVector3D
+     * Get the spherical harmonic on the given position in value set.
      *
-     * \param index the position where to get the vector from
+     * \param index the position where to get the spherical harmonic from
      *
-     * \return the vector
+     * \return the spherical harmonic
      */
-    wmath::WSymmetricSphericalHarmonic getSphericalHarmonicAt( size_t index ) const;
+    WSymmetricSphericalHarmonic getSphericalHarmonicAt( size_t index ) const;
 
     /**
      * Gets the name of this prototype.
@@ -102,6 +130,13 @@ public:
      */
     virtual const std::string getDescription() const;
 
+    /**
+     * Determines whether this dataset can be used as a texture.
+     *
+     * \return true if usable as texture.
+     */
+    virtual bool isTexture() const;
+
 protected:
 
     /**
@@ -110,7 +145,15 @@ protected:
     static boost::shared_ptr< WPrototyped > m_prototype;
 
 private:
-    boost::shared_ptr< WValueSet<double> > m_valueSet;
+    /**
+     * The regular 3d grid of the data set.
+     */
+    boost::shared_ptr< WGridRegular3D > m_gridRegular3D;
+
+    /**
+     * The valueset of the data set
+     */
+    boost::shared_ptr< WValueSetBase > m_valueSet;
 };
 
 #endif  // WDATASETSPHERICALHARMONICS_H

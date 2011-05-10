@@ -30,20 +30,23 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
-#include "../../WKernel.h"
+// #include "../../WKernel.h"
 #include "../../WModule.h"
-#include "../../WModuleConnector.h"
-#include "../../WModuleOutputData.h"
 
-#include "../../../dataHandler/WDataSet.h"
-#include "../../../dataHandler/WDataSetSingle.h"
+#include "../../WExportKernel.h"
+
+// forward declarations
+class WDataSet;
+class WDataSetSingle;
+class WModuleConnector;
+template< class T > class WModuleOutputData;
 
 /**
  * Module for encapsulating WDataSets. It can encapsulate almost everything, but is intended to be used with WDataSets and its
  * inherited classes. This class builds a "source" in OpenWalnut's DataFlow Network.
  * \ingroup modules
  */
-class WMData: public WModule
+class OWKERNEL_EXPORT WMData: public WModule
 {
 public:
 
@@ -136,27 +139,6 @@ protected:
     virtual void properties();
 
     /**
-     * Gets called whenever a connector gets connected to the specified input.
-     *
-     * \param here the connector of THIS module that got connected to "there"
-     * \param there the connector that has been connected with the connector "here" of this module.
-     */
-    virtual void notifyConnectionEstablished( boost::shared_ptr< WModuleConnector > here,
-                                              boost::shared_ptr< WModuleConnector > there );
-    /**
-     * Gets called whenever a connection between a remote and local connector gets closed.
-     *
-     * \param here the connector of THIS module getting disconnected.
-     * \param there the connector of the other module getting disconnected.
-     */
-    virtual void notifyConnectionClosed( boost::shared_ptr< WModuleConnector > here, boost::shared_ptr< WModuleConnector > there );
-
-    /**
-     * Gets called when the module should quit. This is from WThreadedRunner.
-     */
-    virtual void notifyStop();
-
-    /**
      * The filename of the dataset to load.
      */
     boost::filesystem::path m_fileName;
@@ -172,84 +154,9 @@ protected:
     WPropString m_dataName;
 
     /**
-     * grouping the texture display properties
+     * The basic type of data used in this data set (e.g. float, double, ...)
      */
-    WPropGroup    m_groupTex;
-
-    /**
-     * grouping the texture manipulation properties
-     */
-    WPropGroup    m_groupTexManip;
-
-    /**
-     * Interpolation?
-     */
-    WPropBool m_interpolation;
-
-    /**
-     * A list of color map selection types
-     */
-    boost::shared_ptr< WItemSelection > m_colorMapSelectionsList;
-
-    /**
-     * Selection property for color map
-     */
-    WPropSelection m_colorMapSelection;
-
-    /**
-     * Threshold value for this data.
-     */
-    WPropDouble m_threshold;
-
-    /**
-     * Opacity value for this data.
-     */
-    WPropInt m_opacity;
-
-    /**
-     * translation of the texture
-     */
-    WPropInt m_translationX;
-
-    /**
-     * translation of the texture
-     */
-    WPropInt m_translationY;
-
-    /**
-     * translation of the texture
-     */
-    WPropInt m_translationZ;
-
-    /**
-     * voxel size in x direction
-     */
-    WPropDouble m_stretchX;
-
-    /**
-     * voxel size in y direction
-     */
-    WPropDouble m_stretchY;
-
-    /**
-     * voxel size in z direction
-     */
-    WPropDouble m_stretchZ;
-
-    /**
-     * rotation around the x axis
-     */
-    WPropInt m_rotationX;
-
-    /**
-     * rotation around the y axis
-     */
-    WPropInt m_rotationY;
-
-    /**
-     * rotation around the z axis
-     */
-    WPropInt m_rotationZ;
+    WPropString m_dataType;
 
     /**
      * A list of color map selection types
@@ -261,7 +168,6 @@ protected:
      */
     WPropSelection m_matrixSelection;
 
-
     bool m_isTexture; //!< Indicates whether the loaded dataSet will be available as texture.
 
     /**
@@ -271,7 +177,29 @@ protected:
      */
     void propertyChanged( boost::shared_ptr< WPropertyBase > property );
 
+    // in case of a nifti file, there may be several transforms specified in the file
+    //! a standard transform (should be an identity transform)
+    WMatrix< double > m_transformNoMatrix;
+
+    //! a standard transform (should be an identity transform)
+    WMatrix< double > m_transformSForm;
+
+    //! a standard transform (should be an identity transform)
+    WMatrix< double > m_transformQForm;
+
 private:
+
+    //! a condition for the matrix selection
+    boost::shared_ptr< WCondition > m_propCondition;
+
+    /**
+     * Get a string for the datatype of the given dataset.
+     *
+     * \param dss the data set whose name should be returned.
+     *
+     * \return the type name of the specified dataset
+     */
+    std::string getDataTypeString( boost::shared_ptr< WDataSetSingle > dss );
 
     /**
      * The associated dataset.

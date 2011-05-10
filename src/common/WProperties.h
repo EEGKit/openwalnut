@@ -34,10 +34,12 @@
 #include <boost/thread/locks.hpp>
 #include <boost/thread.hpp>
 
+#include "WConditionSet.h"
 #include "WSharedSequenceContainer.h"
 #include "WPropertyBase.h"
 #include "WPropertyTypes.h"
 #include "WPropertyVariable.h"
+#include "WExportCommon.h"
 
 /**
  * Class to manage properties of an object and to provide convenience methods for easy access and manipulation. It also allows
@@ -46,12 +48,18 @@
  * is the property with the name "property" in the group "you" which against is in the group "hello".
  * \note The root group of each module does not have a name.
  */
-class WProperties: public WPropertyBase
+class OWCOMMON_EXPORT WProperties: public WPropertyBase
 {
 friend class WPropertiesTest;
 public:
 
     // the following typedefs are for convenience.
+    typedef boost::shared_ptr< WProperties > SPtr; //!< shared pointer to object of this type
+    typedef boost::shared_ptr< const WProperties > ConstSPtr; //!< const shared pointer to object of this type
+    typedef WProperties* Ptr; //!< pointer to object of this type
+    typedef const WProperties* ConstPtr; //!< const pointer to object of this type
+    typedef WProperties& Ref; //!< ref to object of this type
+    typedef const WProperties& ConstRef; //!< const ref to object of this type
 
     /**
      * For shortening: a type defining a shared vector of WSubject pointers.
@@ -61,7 +69,7 @@ public:
     /**
      * The alias for a shared container.
      */
-    typedef WSharedSequenceContainer< boost::shared_ptr< WPropertyBase >, PropertyContainerType > PropertySharedContainerType;
+    typedef WSharedSequenceContainer< PropertyContainerType > PropertySharedContainerType;
 
     /**
      * The const iterator type of the container.
@@ -72,11 +80,6 @@ public:
      * The iterator type of the container.
      */
     typedef PropertyContainerType::iterator PropertyIterator;
-
-    /**
-     * The access type
-     */
-    typedef PropertySharedContainerType::WSharedAccess PropertyAccessType;
 
     /**
      * Constructor. Creates an empty list of properties.
@@ -156,12 +159,12 @@ public:
     PropertySharedContainerType::ReadTicket getProperties() const;
 
     /**
-     * Returns the access object usable to iterate/modify the property list in a thread safe manner.
+     * Returns an read ticket for the properties. This, and only this, has to be used for external iteration of properties.
      *
-     * \deprecated the method should not be used anymore.
-     * \return the access control object.
+     * \see WSharedObjectTicketRead
+     * \return the read ticket.
      */
-    PropertySharedContainerType::WSharedAccess getAccessObject();
+    PropertySharedContainerType::ReadTicket getReadTicket() const;
 
     /**
      * Searches the property with a given name. It does not throw any exception. It simply returns NULL if it can't be found.
@@ -170,7 +173,7 @@ public:
      *
      * \return the property or NULL if not found.
      */
-    boost::shared_ptr< WPropertyBase > findProperty( std::string name );
+    boost::shared_ptr< WPropertyBase > findProperty( std::string name ) const;
 
     /**
      * Removes all properties from the list.
@@ -914,6 +917,13 @@ public:
                                 boost::shared_ptr< WCondition > condition,
                                 WPropertyBase::PropertyChangeNotifierType notifier, bool hide = false );
 
+    /**
+     * This returns the condition fired whenever one children fires its update condition. Useful to get notified about all changes that happen.
+     *
+     * \return the condition fired if a child fires its update condition.
+     */
+    virtual boost::shared_ptr< WCondition > getChildUpdateCondition() const;
+
 protected:
 
    /**
@@ -925,7 +935,7 @@ protected:
     *
     * \return the property if found, else NULL.
     */
-    boost::shared_ptr< WPropertyBase > findProperty( WProperties* props, std::string name );
+    boost::shared_ptr< WPropertyBase > findProperty( const WProperties* const props, std::string name ) const;
 
 private:
 
@@ -933,6 +943,14 @@ private:
      * The set of proerties. This uses the operators ==,<,> WProperty to determine equalness.
      */
     PropertySharedContainerType m_properties;
+
+    /**
+     * Condition notified whenever a property inside this group fires its WPropertyBase::m_updateCondition. This is especially useful to get a
+     * notification if something updates without further knowledge what changed. Useful if you want to listen for updates in modules for example.
+     *
+     * \see getChildUpdateCondition
+     */
+    boost::shared_ptr< WConditionSet > m_childUpdateCondition;
 
     /**
      * Compares the names of two properties and returns true if they are equal.

@@ -24,22 +24,10 @@
 
 #include <string>
 
-#include <boost/filesystem/path.hpp>
-#include <boost/shared_ptr.hpp>
-
-#include "../../common/WAssert.h"
-#include "../../common/WCondition.h"
-#include "../../common/WProgress.h"
-#include "../../common/WPropertyTypes.h"
 #include "../../common/WPropertyHelper.h"
-#include "../../dataHandler/WDataSetFiberVector.h"
-#include "../../dataHandler/WDataSetFibers.h"
 #include "../../dataHandler/io/WWriterFiberVTK.h"
-#include "../../kernel/WModule.h"
-#include "../../kernel/WModuleInputData.h"
-#include "../../kernel/WModuleOutputData.h"
 #include "WMFiberTransform.h"
-#include "fiberTransform.xpm"
+#include "WMFiberTransform.xpm"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMFiberTransform )
@@ -48,6 +36,12 @@ WMFiberTransform::WMFiberTransform()
     : WModule(),
       m_recompute( new WCondition() )
 {
+}
+
+WMFiberTransform::~WMFiberTransform()
+{
+    // cleanup
+    removeConnectors();
 }
 
 boost::shared_ptr< WModule > WMFiberTransform::factory() const
@@ -84,20 +78,25 @@ void WMFiberTransform::properties()
     m_savePath = m_properties->addProperty( "Save path", "Where to save the result", boost::filesystem::path( "/no/such/file" ) );
     m_run      = m_properties->addProperty( "Run", "Do the transformation", WPVBaseTypes::PV_TRIGGER_READY, m_recompute );
     m_run->get( true ); // reset so no initial run occurs
-    WPropertyHelper::PC_PATHEXISTS::addTo( m_savePath );
+    WPropertyHelper::PC_NOTEMPTY::addTo( m_savePath );
 
     m_translationProp = m_properties->addProperty( "Translation",
                                                    "Translation part of the transformation. You need to press enter to make the values effective.",
-                                                   wmath::WPosition( 0.0, 0.0, 0.0 ) );
+                                                   WPosition( 0.0, 0.0, 0.0 ) );
     m_matrix0Prop = m_properties->addProperty( "M Row 0",
                                                "Row 0 of matrix part of the transformation. You need to press enter to make the values effective.",
-                                               wmath::WPosition( 1.0, 0.0, 0.0 ) );
+                                               WPosition( 1.0, 0.0, 0.0 ) );
     m_matrix1Prop = m_properties->addProperty( "M Row 1",
                                                "Row 1 of matrix part of the transformation. You need to press enter to make the values effective.",
-                                               wmath::WPosition( 0.0, 1.0, 0.0 ) );
+                                               WPosition( 0.0, 1.0, 0.0 ) );
     m_matrix2Prop = m_properties->addProperty( "M Row 2",
                                                "Row 2 of matrix part of the transformation. You need to press enter to make the values effective.",
-                                               wmath::WPosition( 0.0, 0.0, 1.0 ) );
+                                               WPosition( 0.0, 0.0, 1.0 ) );
+    m_matrix3Prop = m_properties->addProperty( "M Row 3",
+                                               "Row 3 of matrix part of the transformation. You need to press enter to make the values effective.",
+                                               WPosition( 0.0, 0.0, 0.0 ) );
+
+    WModule::properties();
 }
 
 void WMFiberTransform::moduleMain()
@@ -149,18 +148,26 @@ void WMFiberTransform::update()
     boost::filesystem::path savePath = m_savePath->get();
 
     // set the transformation matrix
-    wmath::WMatrix< double > transformationMatrix( 3, 3 ); //!< matrix which is multiplied with each point to linear transform it.
+    WMatrix< double > transformationMatrix( 4, 4 ); //!< matrix which is multiplied with each point to linear transform it.
     transformationMatrix( 0, 0 ) = m_matrix0Prop->get()[0];
     transformationMatrix( 0, 1 ) = m_matrix0Prop->get()[1];
     transformationMatrix( 0, 2 ) = m_matrix0Prop->get()[2];
+    transformationMatrix( 0, 3 ) = m_translationProp->get()[0];
 
     transformationMatrix( 1, 0 ) = m_matrix1Prop->get()[0];
     transformationMatrix( 1, 1 ) = m_matrix1Prop->get()[1];
     transformationMatrix( 1, 2 ) = m_matrix1Prop->get()[2];
+    transformationMatrix( 1, 3 ) = m_translationProp->get()[1];
 
     transformationMatrix( 2, 0 ) = m_matrix2Prop->get()[0];
     transformationMatrix( 2, 1 ) = m_matrix2Prop->get()[1];
     transformationMatrix( 2, 2 ) = m_matrix2Prop->get()[2];
+    transformationMatrix( 2, 3 ) = m_translationProp->get()[2];
+
+    transformationMatrix( 3, 0 ) = m_matrix3Prop->get()[0];
+    transformationMatrix( 3, 1 ) = m_matrix3Prop->get()[1];
+    transformationMatrix( 3, 2 ) = m_matrix3Prop->get()[2];
+    transformationMatrix( 3, 3 ) = 1.0;
 
     boost::shared_ptr< WProgress > progress( new WProgress( "Transforming", 4 + save ) );
     m_progress->addSubProgress( progress );
@@ -171,12 +178,20 @@ void WMFiberTransform::update()
     ++*progress;
 
     //transform
+    WValue< double > vec( 4 );
+    WValue< double > vec_transformed( 4 );
     for( std::size_t fiberID = 0; fiberID < dataset->size(); ++fiberID )
     {
-        wmath::WFiber& fiber = (*dataset)[fiberID];
+        WFiber& fiber = (*dataset)[fiberID];
         for( std::size_t positionID = 0; positionID < fiber.size(); ++positionID )
         {
-            fiber[positionID] = transformationMatrix * fiber[positionID] + m_translationProp->get();
+            vec[0] = fiber[positionID][0];
+            vec[1] = fiber[positionID][1];
+            vec[2] = fiber[positionID][2];
+            vec[3] = 1.0;
+            vec_transformed = transformationMatrix * vec;
+            vec_transformed = ( 1.0 / vec_transformed[3] ) * vec_transformed;
+            fiber[positionID] = WPosition( vec_transformed[0], vec_transformed[1], vec_transformed[2] );
         }
     }
     ++*progress;
@@ -201,3 +216,16 @@ boost::filesystem::path WMFiberTransform::saveFileName( std::string dataFileName
     boost::filesystem::path fibFileName( dataFileName );
     return fibFileName.replace_extension( ".transformed.fib" );
 }
+inline const std::string WMFiberTransform::getName() const
+{
+    // Specify your module name here. This name must be UNIQUE!
+    return std::string( "Fiber Transform" );
+}
+
+inline const std::string WMFiberTransform::getDescription() const
+{
+    // Specify your module description here. Be detailed. This text is read by the user.
+    // See "src/modules/template/" for an extensively documented example.
+    return std::string( "Transforms a fiber dataset" );
+}
+

@@ -35,6 +35,7 @@
 #include "../WGrid.h"
 #include "../WGridRegular3D.h"
 #include "../WDataHandlerEnums.h"
+#include "../../common/WLogger.h"
 
 /**
  * Test important functionality of WDataSetSingle class
@@ -50,9 +51,11 @@ public:
      */
     void setUp( void )
     {
+        WLogger::startup();
+
         // create dummies, since they are needed in almost every test
-        gridDummy = boost::shared_ptr< WGrid >( new WGridRegular3D( 1, 1, 1, 1, 1, 1 ) );
-        std::vector< int8_t > data( 1, 1 );
+        gridDummy = boost::shared_ptr< WGrid >( new WGridRegular3D( 1, 1, 1 ) );
+        boost::shared_ptr< std::vector< int8_t > > data = boost::shared_ptr< std::vector< int8_t > >( new std::vector< int8_t >( 1, 1 ) );
         valueSetDummy = boost::shared_ptr< WValueSet< int8_t > >( new WValueSet< int8_t >( 0, 1, data, W_DT_INT8 ) );
     }
 
@@ -69,7 +72,7 @@ public:
      */
     void testGetValueSet( void )
     {
-        std::vector< double > data( 1, 3.1415 );
+        boost::shared_ptr< std::vector< double > > data = boost::shared_ptr< std::vector< double > >( new std::vector< double >( 1, 3.1415 ) );
         boost::shared_ptr< WValueSet< double > > other;
         other = boost::shared_ptr< WValueSet< double > >( new WValueSet< double >( 0, 1, data, W_DT_DOUBLE ) );
         WDataSetSingle dataSetSingle( valueSetDummy, gridDummy );
@@ -82,7 +85,7 @@ public:
      */
     void testGetGrid( void )
     {
-        boost::shared_ptr< WGrid > other = boost::shared_ptr< WGridRegular3D >( new WGridRegular3D( 1, 1, 1, 1, 1, 1 ) );
+        boost::shared_ptr< WGrid > other = boost::shared_ptr< WGridRegular3D >( new WGridRegular3D( 1, 1, 1 ) );
         WDataSetSingle dataSetSingle( valueSetDummy, gridDummy );
         TS_ASSERT_EQUALS( dataSetSingle.getGrid(), gridDummy );
         TS_ASSERT_DIFFERS( dataSetSingle.getGrid(), other );

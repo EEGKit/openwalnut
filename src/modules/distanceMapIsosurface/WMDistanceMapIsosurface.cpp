@@ -28,10 +28,11 @@
 #include <vector>
 
 #include "WMDistanceMapIsosurface.h"
-#include "distancemapIsosurface.xpm"
+#include "WMDistanceMapIsosurface.xpm"
 
 #include "../../kernel/WKernel.h"
 #include "../../kernel/WModuleFactory.h"
+#include "../../kernel/WPrototypeRequirement.h"
 #include "../../dataHandler/WSubject.h"
 #include "../../dataHandler/WGridRegular3D.h"
 
@@ -42,9 +43,10 @@ WMDistanceMapIsosurface::WMDistanceMapIsosurface():
     WModuleContainer( "Distance Map Isosurface",
                       "Computes a smoothed version of the dataset"
                       " and a distance map on it. Finally it renders"
-                      "this distance map using an isosurface. This isosurface"
+                      " this distance map using an isosurface. This isosurface"
                       " can be textured with values from scalar data sets in order to display"
-                      "the structures at the given distance." )
+                      " the structures at the given distance."
+                      " This is <b>only</b> useful for peeled data." )
 {
     // WARNING: initializing connectors inside the constructor will lead to an exception.
     // NOTE: Do not use the module factory inside this constructor. This will cause a dead lock as the module factory is locked
@@ -81,18 +83,18 @@ void WMDistanceMapIsosurface::moduleMain()
     // now wait for it to be ready
     m_marchingCubesModule->isReady().wait();
     boost::shared_ptr< WProperties >  mcProps = m_marchingCubesModule->getProperties();
-    m_isoValueProp = mcProps->getProperty( "Iso Value" )->toPropDouble();
+    m_isoValueProp = mcProps->getProperty( "Iso value" )->toPropDouble();
     m_isoValueProp->set( 0.2 );
     m_isoValueProp->setMin( 0.0 );
     m_isoValueProp->setMax( 1.0 );
     m_properties->addProperty( m_isoValueProp );
 
 
-    m_useTextureProp = mcProps->getProperty( "Use Texture" )->toPropBool();
+    m_useTextureProp = mcProps->getProperty( "Use texture" )->toPropBool();
     m_useTextureProp->set( true );
     m_properties->addProperty( m_useTextureProp );
 
-    m_surfaceColorProp = mcProps->getProperty( "Surface Color" )->toPropColor();
+    m_surfaceColorProp = mcProps->getProperty( "Surface color" )->toPropColor();
     m_properties->addProperty( m_surfaceColorProp );
 
     m_opacityProp = mcProps->getProperty( "Opacity %" )->toPropInt();
@@ -118,9 +120,9 @@ void WMDistanceMapIsosurface::moduleMain()
 
     // NOTE: you can use the WModuleContainer::applyModule functions here, which, in this case, is possible, since the connectors
     // can be connected unambiguously (one to one connection). But to show how hard wiring works, we do it manually here.
-    m_marchingCubesModule->getInputConnector( "in" )->connect( m_distanceMapModule->getOutputConnector( "out" ) );
+    m_marchingCubesModule->getInputConnector( "values" )->connect( m_distanceMapModule->getOutputConnector( "out" ) );
     // this is the same as doing it the other way around.
-    // m_distanceMapModule->getOutputConnector( "out" )->connect( m_marchingCubesModule->getInputConnector( "in" ) );
+    // m_distanceMapModule->getOutputConnector( "out" )->connect( m_marchingCubesModule->getInputConnector( "values" ) );
     // simple, isn't it? ;-)
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -170,6 +172,12 @@ void WMDistanceMapIsosurface::connectors()
 
     // call WModules initialization
     WModule::connectors();
+}
+
+void WMDistanceMapIsosurface::requirements()
+{
+    m_requirements.push_back( new WPrototypeRequirement( "Distance Map" ) );
+    m_requirements.push_back( new WPrototypeRequirement( "Isosurface" ) );
 }
 
 void WMDistanceMapIsosurface::activate()

@@ -29,6 +29,7 @@
 
 #include <cxxtest/TestSuite.h>
 
+#include "../../common/WProperties.h"
 #include "../WGrid.h"
 
 /**
@@ -51,9 +52,9 @@ public:
     /**
      * Returns dummy bounding box.
      */
-    virtual std::pair< wmath::WPosition, wmath::WPosition > getBoundingBox() const
+    virtual WBoundingBox getBoundingBox() const
     {
-        return std::make_pair( wmath::WPosition( 0, 0, 0 ), wmath::WPosition( 1, 1, 1 ) );
+        return WBoundingBox( WPosition( 0, 0, 0 ), WPosition( 1, 1, 1 ) );
     }
 };
 

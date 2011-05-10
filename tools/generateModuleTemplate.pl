@@ -84,6 +84,11 @@ public:
      */
     virtual boost::shared_ptr< WModule > factory() const;
 
+    /**
+     * Get the icon for this module in XPM format.
+     */
+    virtual const char** getXPMIcon() const;
+
 protected:
 
     /**
@@ -100,6 +105,11 @@ protected:
      * Initialize the properties for this module.
      */
     virtual void properties();
+
+    /**
+     * Initialize requirements for this module.
+     */
+    virtual void requirements();
 
 
 private:
@@ -137,6 +147,7 @@ $impl = <<EOF
 #include <string>
 
 #include "../../kernel/WKernel.h"
+#include "../emptyIcon.xpm" // Please put a real icon here.
 
 #include "WM#name#.h"
 
@@ -159,6 +170,10 @@ boost::shared_ptr< WModule > WM#name#::factory() const
     return boost::shared_ptr< WModule >( new WM#name#() );
 }
 
+const char** WM#name#::getXPMIcon() const
+{
+    return emptyIcon_xpm; // Please put a real icon here.
+}
 const std::string WM#name#::getName() const
 {
     // Specify your module name here. This name must be UNIQUE!
@@ -177,13 +192,19 @@ void WM#name#::connectors()
 {
     // Put the code for your connectors here. See "src/modules/template/" for an extensively documented example.
 
-    // call WModules initialization
     WModule::connectors();
 }
 
 void WM#name#::properties()
 {
     // Put the code for your properties here. See "src/modules/template/" for an extensively documented example.
+
+    WModule::properties();
+}
+
+void WM#name#::requirements()
+{
+    // Put the code for your requirements here. See "src/modules/template/" for an extensively documented example.
 }
 
 void WM#name#::moduleMain()
@@ -194,9 +215,16 @@ void WM#name#::moduleMain()
 EOF
 ;
 
-die "Need exactly one command line argument (module name)\n" unless $#ARGV == 0;
+die "Need exactly one command line argument (module name).\nPlease execute this script in the src/modules directory with the desired module name.\n" unless $#ARGV == 0;
 
-$modulename = $ARGV[0];
+$dirname = lcfirst($ARGV[0]); # directory has to have lower case first letter
+use Cwd;
+$parentdir = getcwd."/";
+$modulename = ucfirst($ARGV[0]); # name has to have upper case first letter
+
+print "Generating for ".$modulename." in ".$parentdir.$dirname.".\n";
+
+mkdir $dirname;
 
 $header =~ s/\#name\#/$modulename/gm;
 $impl   =~ s/\#name\#/$modulename/gm;
@@ -204,10 +232,14 @@ $impl   =~ s/\#name\#/$modulename/gm;
 # Set the header guards in capitals
 $header =~ s/\#NAME\#/\U$modulename/gm;
 
-open( FILE, ">WM${modulename}.h" ) or die;
+open( FILE, ">${dirname}/WM${modulename}.h" ) or die;
 print FILE $header;
 close( FILE );
 
-open( FILE, ">WM${modulename}.cpp" ) or die;
+open( FILE, ">${dirname}/WM${modulename}.cpp" ) or die;
 print FILE $impl;
 close( FILE );
+
+print "Generating completed.\n";
+print "\n";
+print "Please make sure to copy an appropriate CMakeLists.txt file to the module directory.\n";

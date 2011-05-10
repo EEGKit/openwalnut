@@ -25,35 +25,35 @@
 #ifndef WMAINWINDOW_H
 #define WMAINWINDOW_H
 
-#include <list>
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
-#include <boost/program_options.hpp>
-#include <boost/shared_ptr.hpp>
+//#include <boost/program_options.hpp>
+//#include <boost/shared_ptr.hpp>
 #include <boost/signals2/signal.hpp>
+#include <boost/thread.hpp>
 
-#include <QtGui/QCloseEvent>
-#include <QtGui/QIcon>
 #include <QtGui/QMainWindow>
-#include <QtGui/QSlider>
-#include <QtGui/QWidget>
 
-#include "../../common/WProjectFileIO.h"
-#include "../../kernel/WModule.h"
-#include "datasetbrowser/WQtDatasetBrowser.h"
-#include "ribbonMenu/WQtRibbonMenu.h"
 #include "WIconManager.h"
-#include "WQtConfigWidget.h"
-#include "WQtCustomDockWidget.h"
-#include "WQtNavGLWidget.h"
 #include "WQtToolBar.h"
-#include "WQtCombinerToolbar.h"
+#include "WQtGLWidget.h"
+#include "networkEditor/WQtNetworkEditor.h"
+#include "commandPrompt/WQtCommandPromptToolbar.h"
 
 // forward declarations
 class QMenuBar;
-class WQtGLWidget;
+class WModule;
+class WProjectFileIO;
+class WQtCombinerToolbar;
+class WQtControlPanel;
+class WQtCustomDockWidget;
+class WQtNavGLWidget;
+class WQtGLDockWidget;
+class WQtPropertyBoolAction;
+class WPropertyBase;
+class WQtControlPanel;
 
 /**
  * This class contains the main window and the layout of the widgets within the window.
@@ -67,7 +67,12 @@ public:
     /**
      * Constructor of the main window
      */
-    explicit WMainWindow();
+    WMainWindow();
+
+    /**
+     * Destructor. Stores window state.
+     */
+    virtual ~WMainWindow();
 
     /**
      * Set up all widgets menus an buttons in the main window.
@@ -75,14 +80,14 @@ public:
     void setupGUI();
 
     /**
-     * returns a pointer to the dataset browser object
+     * returns a pointer to the network editor object
      */
-    WQtDatasetBrowser* getDatasetBrowser();
+    WQtNetworkEditor* getNetworkEditor();
 
     /**
-     *  returns a pointer to the ribbon menu object
+     * returns a pointer to the control panel object
      */
-    WQtRibbonMenu* getRibbonMenu();
+    WQtControlPanel* getControlPanel();
 
     /**
      * Return icon manager
@@ -120,47 +125,18 @@ public:
     Qt::ToolButtonStyle getToolbarStyle() const;
 
     /**
-     * All possible positions of the toolbars.
-     */
-    typedef enum
-    {
-        Top = 0,
-        Bottom,
-        Left,
-        Right,
-        Hide,
-        InDSB
-    }
-    ToolBarPosition;
-
-    /**
-     * Returns the preferred position of toolbars.
-     *
-     * \return QT Position for the toolbars used as default for all toolbars.
-     */
-    static ToolBarPosition getToolbarPos();
-
-    /**
-     * Returns the preferred position of toolbars.
-     *
-     * \return QT Position for the toolbars used as default for the compatibles toolbars.
-     */
-    static ToolBarPosition getCompatiblesToolbarPos();
-
-    /**
-     * Converts the specified position to the appropriate qt toolbar area constant. Unknown positions (InDSB, Hide) are converted to
-     * Qt::NoToolBarArea.
-     *
-     * \param pos the position to convert.
-     */
-    static Qt::ToolBarArea toQtToolBarArea( ToolBarPosition pos );
-
-    /**
      * This method removes the old compatibles toolbar and sets the specified one.
      *
      * \param toolbar the toolbar to set. If NULL, the toolbar gets reset.
      */
     void setCompatiblesToolbar( WQtCombinerToolbar* toolbar = NULL );
+
+    /**
+     * This method returns the a pointer to the current compatibles toolbar.
+     *
+     * \return a pointer to the current compatibles toolbar.
+     */
+    WQtCombinerToolbar* getCompatiblesToolbar();
 
 protected:
 
@@ -170,6 +146,12 @@ protected:
      * \param module the module to setup the GUI for.
      */
     void moduleSpecificSetup( boost::shared_ptr< WModule > module );
+    /**
+     * Cleanup the GUI by handling special modules. NavSlices for example remove several toolbar buttons.
+     *
+     * \param module the module to setup the GUI for.
+     */
+    void moduleSpecificCleanup( boost::shared_ptr< WModule > module );
 
     /**
      * We want to react on close events.
@@ -214,6 +196,16 @@ public slots:
      * gets called when menu entry "About OpenWalnut" is activated
      */
     void openAboutDialog();
+
+    /**
+     * Gets called when menu entry "About Qt" is activated
+     */
+    void openAboutQtDialog();
+
+    /**
+     * Gets called when menu entry "OpenWalnut Help" is activated
+     */
+    void openOpenWalnutHelpDialog();
 
     /**
      * Sets the left preset view of the main viewer.
@@ -281,21 +273,11 @@ public slots:
     void projectSaveModuleOnly();
 
     /**
-     * Sets that a fiber data set has already been loaded. Thi shelps to prevent multiple fiber data sets to be loaded.
-     */
-    void setFibersLoaded();
-
-    /**
      * Gets called when menu option or toolbar button load is activated
      */
     void openConfigDialog();
 
 private:
-    /**
-     * Sets up the permanent tool bar.
-     */
-    void setupPermanentToolBar();
-
     /**
      * The currently set compatibles toolbar
      */
@@ -307,26 +289,20 @@ private:
 
     WQtToolBar* m_permanentToolBar; //!< The permanent toolbar of the main window.
 
-    WQtPushButton* m_loadButton; //!< the load Data Button
+    QAction* m_loadButton; //!< the load Data Button
 
-    WQtDatasetBrowser* m_datasetBrowser; //!< dataset browser
+    WQtControlPanel* m_controlPanel; //!< control panel
 
-    boost::shared_ptr<WQtGLWidget> m_mainGLWidget; //!< the main GL widget of the GUI
+    WQtNetworkEditor* m_networkEditor; //!< network editor
+
+    WQtCommandPromptToolbar* m_commandPrompt; //!< command prompt
+
+    boost::shared_ptr< WQtGLWidget > m_mainGLWidget; //!< the main GL widget of the GUI
     boost::shared_ptr< WQtNavGLWidget > m_navAxial; //!< the axial view widget GL widget of the GUI
     boost::shared_ptr< WQtNavGLWidget > m_navCoronal; //!< the coronal view widget GL widget of the GUI
     boost::shared_ptr< WQtNavGLWidget > m_navSagittal; //!< the sgittal view widget GL widget of the GUI
+    QMainWindow* m_glDock;  //!< the dock that is used for gl widgets
     QDockWidget* m_dummyWidget; //!< The dummywidget serves as spacer in the dockwidget area;
-
-    /**
-     * shared pointer for the configuration widget
-     */
-    boost::shared_ptr< WQtConfigWidget > m_configWidget;
-
-    /**
-     * Used to ensure that only one fiber dataset can be loaded since the
-     * ROIManager is not known to work with more than one fiber dataset
-     */
-    bool m_fibLoaded; // TODO(all): remove this when its possible to display more than one fiber dataset
 
     /**
      * All registered WQtCustomDockWidgets.
@@ -347,6 +323,24 @@ private:
      * \param proto the prototype to combine with the module.
      */
     void autoAdd( boost::shared_ptr< WModule > module, std::string proto );
+
+    bool m_navSlicesAlreadyLoaded; //!< if true, the navslices have been loaded already
+
+    /**
+     * Map holding the actions for module properties added automatically. So they can be removed again automatically
+     * if the module is removed.
+     */
+    std::map< boost::shared_ptr< WPropertyBase >, WQtPropertyBoolAction* > propertyActionMap;
+
+    /**
+     * Loads the window states and geometries from a file.
+     */
+    void restoreSavedState();
+
+    /**
+     * Saves the current window states and geometries to a file.
+     */
+    void saveWindowState();
 };
 
 #endif  // WMAINWINDOW_H

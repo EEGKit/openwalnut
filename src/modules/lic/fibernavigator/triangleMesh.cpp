@@ -6,7 +6,7 @@
 #include <algorithm>
 
 // Construction
-TriangleMesh::TriangleMesh ( boost::shared_ptr< WTriangleMesh2 > mesh, boost::shared_ptr< WGridRegular3D > grid )
+TriangleMesh::TriangleMesh ( boost::shared_ptr< WTriangleMesh > mesh, boost::shared_ptr< WGridRegular3D > grid )
     : m_grid( grid )
 {
     // copy over content
@@ -25,7 +25,7 @@ TriangleMesh::TriangleMesh ( boost::shared_ptr< WTriangleMesh2 > mesh, boost::sh
     // copy vertices
     for( size_t i = 0; i < mesh->vertSize(); ++i )
     {
-        wmath::WPosition pos = mesh->getVertexAsPosition( i );
+        WPosition pos = mesh->getVertexAsPosition( i );
         fastAddVert( Vector( pos[0], pos[1], pos[2] ) );
     }
     // copy triangles
@@ -151,27 +151,27 @@ void TriangleMesh::setTriangleColor(const unsigned int triNum, const float r, co
 
 void TriangleMesh::setTriangleColor(const unsigned int triNum, const float r, const float g, const float b)
 {
-    triangleColor[triNum] = WColor( r, g, b, triangleColor[triNum].getAlpha() );
+    triangleColor[triNum] = WColor( r, g, b, triangleColor[triNum][3] );
 }
 
 void TriangleMesh::setTriangleAlpha(const unsigned int triNum, const float a)
 {
-    triangleColor[triNum].setAlpha( a );
+    triangleColor[triNum][3] = a;
 }
 
 void TriangleMesh::setTriangleRed(const unsigned int triNum, const float r)
 {
-    triangleColor[triNum].setRed( r );
+    triangleColor[triNum][0] = r;
 }
 
 void TriangleMesh::setTriangleGreen(const unsigned int triNum, const float g)
 {
-    triangleColor[triNum].setGreen( g );
+    triangleColor[triNum][1] = g;
 }
 
 void TriangleMesh::setTriangleBlue(const unsigned int triNum, const float b)
 {
-    triangleColor[triNum].setBlue( b );
+    triangleColor[triNum][2] = b;
 }
 
 Vector TriangleMesh::calcTriangleNormal(const Triangle t)
@@ -512,7 +512,6 @@ void TriangleMesh::doLoopSubD()
 
 void TriangleMesh::getCellVerticesIndices( const FIndex& triNum, std::vector< FIndex >& vertices )
 {
-    //assert( triNum < numTris );
     vertices.clear();
 
     vertices.push_back( FIndex(triangles[triNum].pointID[0]) );
@@ -523,7 +522,6 @@ void TriangleMesh::getCellVerticesIndices( const FIndex& triNum, std::vector< FI
 void TriangleMesh::getPosition( FPosition& resultPos, const FIndex& pIndex )
 {
     positive ind = pIndex.getIndex();
-    //assert( ind < numVerts );
     resultPos.resize(3);
     resultPos[0] = vertices[ind].x;
     resultPos[1] = vertices[ind].y;

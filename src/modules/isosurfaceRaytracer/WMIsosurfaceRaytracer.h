@@ -30,11 +30,14 @@
 #include <osg/Node>
 #include <osg/Uniform>
 
-#include "../../graphicsEngine/WShader.h"
+#include "../../graphicsEngine/shaders/WGEShader.h"
 
 #include "../../kernel/WModule.h"
 #include "../../kernel/WModuleInputData.h"
 #include "../../kernel/WModuleOutputData.h"
+
+class WDataSetVector;
+class WDataSetScalar;
 
 /**
  * This module builds the base for fast raytracing of isosurfacesin OpenWalnut. It uses shader based raytracing.
@@ -98,14 +101,9 @@ protected:
     virtual void properties();
 
     /**
-     * The root node used for this modules graphics. For OSG nodes, always use osg::ref_ptr to ensure proper resource management.
+     * Initialize requirements for this module.
      */
-    osg::ref_ptr< osg::Node > m_rootNode;
-
-    /**
-     * Callback for m_active. Overwrite this in your modules to handle m_active changes separately.
-     */
-    virtual void activate();
+    virtual void requirements();
 
 private:
 
@@ -115,14 +113,14 @@ private:
     boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_input;
 
     /**
-     * This is a pointer to the dataset the module is currently working on.
+     * The gradient field input
      */
-    boost::shared_ptr< WDataSetScalar > m_dataSet;
+    boost::shared_ptr< WModuleInputData< WDataSetVector > > m_gradients;
 
     /**
      * The Isovalue used in the case m_isoSurface is true.
      */
-    WPropInt m_isoValue;
+    WPropDouble m_isoValue;
 
     /**
      * The color used when in isosurface mode for blending.
@@ -135,31 +133,44 @@ private:
     WPropInt m_stepCount;
 
     /**
+     * The numeric precision used for iso-checking.
+     */
+    WPropDouble m_epsilon;
+
+    /**
      * The alpha transparency used for the rendering
      */
-    WPropInt m_alpha;
+    WPropDouble m_alpha;
 
     /**
-     * Types of shading supported.
+     * The ratio between colormap and normal surface color.
      */
-    enum
-    {
-        Cortex = 0,
-        Depth,
-        Phong,
-        PhongDepth
-    }
-    SHADING_ALGORITHMS;
+    WPropDouble m_colormapRatio;
 
     /**
-     * The available shading algorithms.
+     * Some special coloring mode emphasizing the cortex.
      */
-    boost::shared_ptr< WItemSelection > m_shadingSelections;
+    WPropBool m_cortexMode;
 
     /**
-     * The actually selected shading algorithm.
+     * If true, per-pixel-phong shading is applied to the surface.
      */
-    WPropSelection m_shadingAlgo;
+    WPropBool m_phongShading;
+
+    /**
+     * If true, the ray-tracer uses stochastic jitter to improve image quality.
+     */
+    WPropBool m_stochasticJitter;
+
+    /**
+     * If true, a certain border area can be clipped. Very useful for non-peeled noisy data.
+     */
+    WPropBool m_borderClip;
+
+    /**
+     * The distance used for clipping.
+     */
+    WPropDouble m_borderClipDistance;
 
     /**
      * A condition used to notify about changes in several properties.
@@ -169,73 +180,7 @@ private:
     /**
      * the DVR shader.
      */
-    osg::ref_ptr< WShader > m_shader;
-
-    /**
-     * Node callback to change the color of the shapes inside the root node. For more details on this class, refer to the documentation in
-     * moduleMain().
-     */
-    class SafeUpdateCallback : public osg::NodeCallback
-    {
-    public: // NOLINT
-
-        /**
-         * Constructor.
-         *
-         * \param module just set the creating module as pointer for later reference.
-         */
-        explicit SafeUpdateCallback( WMIsosurfaceRaytracer* module ): m_module( module ), m_initialUpdate( true )
-        {
-        };
-
-        /**
-         * operator () - called during the update traversal.
-         *
-         * \param node the osg node
-         * \param nv the node visitor
-         */
-        virtual void operator()( osg::Node* node, osg::NodeVisitor* nv );
-
-        /**
-         * Pointer used to access members of the module to modify the node.
-         */
-        WMIsosurfaceRaytracer* m_module;
-
-        /**
-         * Denotes whether the update callback is called the first time.
-         */
-        bool m_initialUpdate;
-    };
-
-    /**
-     * Class handling uniform update during render traversal
-     */
-    class SafeUniformCallback: public osg::Uniform::Callback
-    {
-    public:
-
-        /**
-         * Constructor.
-         *
-         * \param module just set the creating module as pointer for later reference.
-         */
-        explicit SafeUniformCallback( WMIsosurfaceRaytracer* module ): m_module( module )
-        {
-        };
-
-        /**
-         * The callback. Called every render traversal for the uniform.
-         *
-         * \param uniform the uniform for which this callback is.
-         * \param nv the visitor.
-         */
-        virtual void operator() ( osg::Uniform* uniform, osg::NodeVisitor* nv );
-
-        /**
-         * Pointer used to access members of the module to modify the node.
-         */
-        WMIsosurfaceRaytracer* m_module;
-    };
+    osg::ref_ptr< WGEShader > m_shader;
 };
 
 #endif  // WMISOSURFACERAYTRACER_H

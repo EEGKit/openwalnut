@@ -38,6 +38,8 @@
 #include "WModuleCombinerTypes.h"
 #include "WModuleConnectorSignals.h"
 
+#include "WExportKernel.h"
+
 class WModuleInputConnector;
 class WModuleOutputConnector;
 
@@ -45,7 +47,7 @@ class WModuleOutputConnector;
  * Base class for modelling connections between kernel modules. It contains several pure virtual member functions and can
  * therefore not instantiated directly.
  */
-class WModuleConnector: public boost::enable_shared_from_this<WModuleConnector>
+class OWKERNEL_EXPORT WModuleConnector: public boost::enable_shared_from_this<WModuleConnector>
 {
 friend class WModuleConnectorTest;
 friend class WModuleProjectFileCombiner;
@@ -275,6 +277,16 @@ protected:
      */
     virtual void notifyConnectionClosed( boost::shared_ptr<WModuleConnector> here, boost::shared_ptr<WModuleConnector> there );
 
+    /**
+     * Signal emitted whenever connection has been established.
+     */
+    t_GenericSignalType signal_ConnectionEstablished;
+
+    /**
+     * Signal emitted whenever connection has been closed.
+     */
+    t_GenericSignalType signal_ConnectionClosed;
+
 private:
 
     /**
@@ -286,16 +298,6 @@ private:
      * The connections description.
      */
     std::string m_description;
-
-    /**
-     * Signal emitted whenever connection has been established.
-     */
-    t_GenericSignalType signal_ConnectionEstablished;
-
-    /**
-     * Signal emitted whenever connection has been closed.
-     */
-    t_GenericSignalType signal_ConnectionClosed;
 };
 
 #endif  // WMODULECONNECTOR_H

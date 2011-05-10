@@ -30,17 +30,17 @@
 
 #include <osg/Geode>
 
-#include "../../dataHandler/datastructures/WFiberCluster.h"
-#include "../../dataHandler/WDataSetSingle.h"
-#include "../../dataHandler/WDataSetScalar.h"
 #include "../../kernel/WModule.h"
-#include "../../kernel/WModuleInputData.h"
-#include "WBresenhamDBL.h"
-#include "WRasterAlgorithm.h"
+
+class WBresenhamDBL;
+class WDataSetScalar;
+class WFiberCluster;
+class WRasterAlgorithm;
+template< class T > class WModuleInputData;
 
 /**
- * Traces a given set of deterministic tracts as given by a WFiberCluster in a voxelwise manner.
- * Every voxel which is hit by one or more tracts or tract-segements is marked with a scalar.
+ * Traces a given set of deterministic tracts as given by a WFiberCluster in a voxel-wise manner.
+ * Every voxel which is hit by one or more tracts or tract-segments is marked with a scalar.
  * \ingroup modules
  */
 class WMVoxelizer : public WModule
@@ -136,12 +136,12 @@ protected:
      *
      * \return OSG Geode with the voxels as cuboids.
      */
-    osg::ref_ptr< osg::Geode > genDataSetGeode( boost::shared_ptr< WDataSetSingle > dataset ) const;
+    osg::ref_ptr< osg::Geode > genDataSetGeode( boost::shared_ptr< WDataSetScalar > dataset ) const;
 
     /**
      * Performs rasterization with the given algorithm.
      *
-     * \param algo The algorithm which actualy rasters every fiber.
+     * \param algo The algorithm which actually rasters every fiber.
      */
     void raster( boost::shared_ptr< WRasterAlgorithm > algo ) const;
 
@@ -150,9 +150,9 @@ protected:
      *
      * \param cluster With its fibers
      *
-     * \return Pair of WPositions: first == front lower left, second == back upper right
+     * \return The axis aligned bounding box.
      */
-    std::pair< wmath::WPosition, wmath::WPosition > createBoundingBox( const WFiberCluster& cluster ) const;
+    WBoundingBox createBoundingBox( const WFiberCluster& cluster ) const;
 
     /**
      * Constructs a grid out of the given bounding box.
@@ -161,7 +161,7 @@ protected:
      *
      * \return A WGridRegular3D reference wherein the voxels may be marked.
      */
-    boost::shared_ptr< WGridRegular3D > constructGrid( const std::pair< wmath::WPosition, wmath::WPosition >& bb ) const;
+    boost::shared_ptr< WGridRegular3D > constructGrid( const WBoundingBox& bb ) const;
 
     /**
      * Callback for m_active. Overwrite this in your modules to handle m_active changes separately.
@@ -189,7 +189,7 @@ private:
 
     boost::shared_ptr< WCondition > m_fullUpdate; //!< module is performing an expensive update
 
-    WPropBool m_antialiased; //!< Enable/Disable antialiased drawing of voxels
+    WPropBool m_antialiased; //!< Enable/Disable anti-aliased drawing of voxels
     WPropBool m_drawfibers; //!< Enable/Disable drawing of the fibers of a cluster
     WPropBool m_drawBoundingBox; //!< Enable/Disable drawing of a clusters BoundingBox
     WPropBool m_drawCenterLine; //!< Enable/Disable drawing of the current clusters CenterLine
@@ -197,6 +197,9 @@ private:
     WPropBool m_drawVoxels; //!< Enable/Disable drawing of marked voxels (this is not hide/unhide since its expensive computation time too!)
     WPropString m_rasterAlgo; //!< Specifies the algorithm you may want to use for voxelization
     WPropInt  m_voxelsPerUnit;  //!< The number of voxels per unit in the coordinate system
+
+    WPropDouble m_fiberTransparency; //!< Transparency of the fibers
+    WPropColor m_explicitFiberColor; //!< If set not to 0.2 0.2 0.2 all fiber having this color
 
     /**
      * The available parameterization algorithms.

@@ -97,6 +97,11 @@ protected:
      */
     virtual void properties();
 
+    /**
+     * Callback for m_active.
+     */
+    virtual void activate();
+
 private:
 
     /**
@@ -127,6 +132,13 @@ private:
      */
     WPropInt m_selectedImage;
 
+    //! The data value percent that maps to 0.0 in the texture.
+    WPropDouble m_minValuePct;
+
+    //! The data value percent that maps to 1.0 in the texture.
+    WPropDouble m_maxValuePct;
+
+    // { TODO(ebaum): this is deprecated and will be replaced by WGEColormapping
     // the following 5 members are taken from WMData
     /**
      * Interpolation?
@@ -152,6 +164,7 @@ private:
      * Opacity value for this data.
      */
     WPropInt m_opacity;
+    // }
 
     /**
      * An input connector that accepts order 1 datasets.
@@ -159,7 +172,7 @@ private:
     boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;
 
     /**
-     * An output connector for the output scalar dsataset.
+     * An output connector for the output scalar dataset.
      */
     boost::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output;
 

@@ -27,16 +27,22 @@
 
 #include <string>
 
+// Use filesystem version 2 for compatibility with newer boost versions.
+#ifndef BOOST_FILESYSTEM_VERSION
+    #define BOOST_FILESYSTEM_VERSION 2
+#endif
 #include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include "../WDataSetFiberVector.h"
+#include "../WDataSetFibers.h"
+#include "../WExportDataHandler.h"
 #include "WWriter.h"
 
 /**
  * Writes a FiberVTK file.
  */
-class WWriterFiberVTK : public WWriter
+class OWDATAHANDLER_EXPORT WWriterFiberVTK : public WWriter // NOLINT
 {
 public:
     /**
@@ -53,6 +59,13 @@ public:
      * \param fiberDS The WDataSetFiberVector where the data is taken from
      */
     void writeFibs( boost::shared_ptr< const WDataSetFiberVector > fiberDS ) const;
+
+    /**
+     * Writes tracts of a WDataSetFibers to the previousely given file.
+     *
+     * \param fiberDS The tract data set
+     */
+    void writeFibs( boost::shared_ptr< const WDataSetFibers > fiberDS ) const;
 
 protected:
 private:

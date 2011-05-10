@@ -25,67 +25,90 @@
 #ifndef WLINEARALGEBRAFUNCTIONS_H
 #define WLINEARALGEBRAFUNCTIONS_H
 
-namespace wmath
-{
-    class WVector3D;
-    typedef WVector3D WPosition;
-    template< typename > class WMatrix;
+#include "../WExportCommon.h"
+#include "WMatrix.h"
+#include "linearAlgebra/WLinearAlgebra.h"
 
-    /**
-     * helper routine to multiply a 3x3 matrix with a vector
-     *
-     * \param mat 3x3 matrix
-     * \param vec vector
-     */
-    WVector3D multMatrixWithVector3D( WMatrix<double> mat, WVector3D vec );
+template< typename > class WMatrix;
 
-    /**
-     * Applies a coordinate transformation in homogenous coordinates to a vector.
-     * This differs from transformPosition3DWithMatrix4D in that it DOES NOT incorporate the translation
-     *
-     * \param mat 4x4 matrix
-     * \param vec vector
-     */
-    WVector3D transformVector3DWithMatrix4D( WMatrix<double> mat, WVector3D vec );
+/**
+ * helper routine to multiply a 3x3 matrix with a vector
+ *
+ * \param mat 3x3 matrix
+ * \param vec vector
+ */
+WVector3d OWCOMMON_EXPORT multMatrixWithVector3D( WMatrix<double> mat, WVector3d vec );
 
-    /**
-     * Applies a coordinate transformation in homogenous coordinates to a position.
-     * This differs from transformVector3DWithMatrix4D in that it incorporates the translation.
-     *
-     * \param mat 4x4 matrix
-     * \param vec vector
-     */
-    WVector3D transformPosition3DWithMatrix4D( WMatrix<double> mat, WPosition vec );
+/**
+ * Applies a coordinate transformation in homogenous coordinates to a vector.
+ * This differs from transformPosition3DWithMatrix4D in that it DOES NOT incorporate the translation
+ *
+ * \param mat 4x4 matrix
+ * \param vec vector
+ */
+WVector3d OWCOMMON_EXPORT transformVector3DWithMatrix4D( WMatrix<double> mat, WVector3d vec );
 
-    /**
-     * helper routine to invert a 3x3 matrix
-     *
-     * \param mat 3x3 matrix
-     *
-     * \return inverted 3x3 matrix
-     */
-    WMatrix<double> invertMatrix3x3( WMatrix<double> mat );
+/**
+ * Applies a coordinate transformation in homogenous coordinates to a position.
+ * This differs from transformVector3DWithMatrix4D in that it incorporates the translation.
+ *
+ * \param mat 4x4 matrix
+ * \param vec vector
+ */
+WPosition OWCOMMON_EXPORT transformPosition3DWithMatrix4D( WMatrix<double> mat, WPosition vec );
 
-    /**
-     * helper routine to invert a 4x4 matrix
-     *
-     * \param mat 4x4 matrix
-     *
-     * \return inverted 4x4 matrix
-     */
-    WMatrix<double> invertMatrix4x4( WMatrix<double> mat );
+/**
+ * helper routine to invert a 3x3 matrix
+ *
+ * \param mat 3x3 matrix
+ *
+ * \return inverted 3x3 matrix
+ */
+WMatrix<double> OWCOMMON_EXPORT invertMatrix3x3( WMatrix<double> mat );
 
-    /**
-     * Checks if the given two vectors are linearly independent.
-     *
-     * \param u First vector
-     * \param v Second vector
-     *
-     * \return True if they are linear independent.
-     *
-     * \note This check is performed with the cross product != (0,0,0) but in numerical stability with FLT_EPS.
-     */
-    bool linearIndependent( const wmath::WVector3D& u, const wmath::WVector3D& v );
-}
+/**
+ * helper routine to invert a 4x4 matrix
+ *
+ * \param mat 4x4 matrix
+ *
+ * \return inverted 4x4 matrix
+ */
+WMatrix<double> OWCOMMON_EXPORT invertMatrix4x4( WMatrix<double> mat );
+
+/**
+ * Checks if the given two vectors are linearly independent.
+ *
+ * \param u First vector
+ * \param v Second vector
+ *
+ * \return True if they are linear independent.
+ *
+ * \note This check is performed with the cross product != (0,0,0) but in numerical stability with FLT_EPS.
+ */
+bool OWCOMMON_EXPORT linearIndependent( const WVector3d& u, const WVector3d& v );
+
+/**
+ * Computes the SVD for the Matrix \param A
+ *
+ * A=U*S*V^T
+ *
+ * \param A Input Matrix
+ * \param U Output Matrix
+ * \param S Output of the entries in the diagonal matrix
+ * \param V Output Matrix
+ *
+ * \note This function needs the OSSIM library.
+ */
+void OWCOMMON_EXPORT computeSVD( const WMatrix_2& A, WMatrix_2& U, WMatrix_2& V, WVector_2& S );
+
+/**
+ * Calculates for a matrix the pseudo inverse.
+ *
+ * \param input Matrix to invert
+ *
+ * \return Inverted Matrix
+ *
+ */
+WMatrix_2 OWCOMMON_EXPORT pseudoInverse( const WMatrix_2& input );
 
 #endif  // WLINEARALGEBRAFUNCTIONS_H

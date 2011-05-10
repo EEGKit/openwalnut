@@ -30,9 +30,10 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include "../WExportCommon.h"
 /**
  * Implements a very simple union-find datastructure aka disjoint_sets.
- * \note I know there is a boost solution on that:
+ * \note I know there is a boost solution on that, but I didn't get it to work and I don't know how fast it is:
  * http://www.boost.org/doc/libs/1_42_0/libs/disjoint_sets/disjoint_sets.html
  *
  * And you may use it like this:
@@ -69,7 +70,7 @@
    dset.find_set( u ); // find the set owning u. A representative of the set is returned
    \endverbatim
  */
-class WUnionFind
+class OWCOMMON_EXPORT WUnionFind
 {
 friend class WUnionFindTest;
 public:
@@ -116,7 +117,7 @@ public:
     void merge( size_t i, size_t j );
 
 private:
-    std::vector< size_t > m_component; //!< Stores for each index its cluster ID
+    std::vector< size_t > m_component; //!< Stores for each index its ID
 };
 
 

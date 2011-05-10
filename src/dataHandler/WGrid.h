@@ -26,15 +26,18 @@
 #define WGRID_H
 
 #include <cstddef>
-#include <utility>
 
-#include "../common/math/WPosition.h"
+#include "../common/WBoundingBox.h"
+#include "WExportDataHandler.h"
+
+// forward declarations
+class WProperties;
 
 /**
  * Base class to all grid types, e.g. a regular grid.
  * \ingroup dataHandler
  */
-class WGrid
+class OWDATAHANDLER_EXPORT WGrid // NOLINT
 {
 public:
     /**
@@ -47,21 +50,35 @@ public:
      * Since WGrid is a base class and thus should be polymorphic we add
      * virtual destructor.
      */
-    virtual ~WGrid()
-    {
-    }
+    virtual ~WGrid();
 
     /**
-     * \return The number of position in this grid.
+     * The number of positions in this grid.
+     *
+     * \return \copybrief WGrid::size()
      */
     size_t size() const;
 
     /**
-     * Returns the two positions representing the bounding box of the grid.
+     * Axis aligned Bounding Box that encloses this grid.
+     *
+     * \return \copybrief WGrid::getBoundingBox()
      */
-    virtual std::pair< wmath::WPosition, wmath::WPosition > getBoundingBox() const = 0;
+    virtual WBoundingBox getBoundingBox() const = 0;
+
+    /**
+     * Returns a pointer to the information properties object of the grid. The grid intends these properties to not be modified.
+     *
+     * \return the properties.
+     */
+    boost::shared_ptr< WProperties > getInformationProperties() const;
 
 protected:
+    /**
+     * The property object for the grid containing only props whose purpose is "PV_PURPOSE_INFORMNATION". It is useful to define some property
+     * to only be of informational nature. The GUI does not modify them.
+     */
+    boost::shared_ptr< WProperties > m_infoProperties;
 
 private:
     /**

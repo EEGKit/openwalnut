@@ -404,7 +404,8 @@ boost::shared_ptr< WModule > WModuleContainer::applyModule( boost::shared_ptr< W
     // is this module already associated with another container?
     if ( applyOn->isAssociated()() && ( applyOn->getAssociatedContainer() != shared_from_this() ) )
     {
-        throw WModuleAlreadyAssociated( "The specified module \"" + applyOn->getName() + "\" is associated with another container." );
+        throw WModuleAlreadyAssociated( std::string( "The specified module \"" ) + applyOn->getName() +
+                                        std::string( "\" is associated with another container." ) );
     }
 
     // create a new initialized instance of the module
@@ -503,8 +504,6 @@ WCombinerTypes::WCompatiblesList WModuleContainer::getPossibleConnections( boost
 
     // read lock the container
     ModuleSharedContainerType::ReadTicket lock = m_modules.getReadTicket();
-
-    // TODO(ebaum): do the same for inputs (module->getInputConnectors())
 
     // handle each module
     for( ModuleConstIterator listIter = lock->get().begin(); listIter != lock->get().end(); ++listIter )

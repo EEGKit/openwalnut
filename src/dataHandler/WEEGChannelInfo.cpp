@@ -30,7 +30,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "../common/exceptions/WOutOfBounds.h"
-#include "../common/math/WPosition.h"
+#include "../common/math/linearAlgebra/WLinearAlgebra.h"
 #include "WEEGPositionsLibrary.h"
 #include "WEEGChannelInfo.h"
 #include "exceptions/WDHException.h"
@@ -43,12 +43,12 @@ WEEGChannelInfo::WEEGChannelInfo( std::size_t channelID,
 {
     if( !pager )
     {
-        throw WDHException( "Couldn't construct new EEG channel info: pager invalid" );
+        throw WDHException( std::string( "Couldn't construct new EEG channel info: pager invalid" ) );
     }
 
     if( !positionsLibrary )
     {
-        throw WDHException( "Couldn't construct new EEG channel info: positions library invalid" );
+        throw WDHException( std::string( "Couldn't construct new EEG channel info: positions library invalid" ) );
     }
 
     if( channelID >= pager->getNumberOfChannels() )
@@ -82,7 +82,7 @@ std::string WEEGChannelInfo::getLabel() const
     return m_label;
 }
 
-wmath::WPosition WEEGChannelInfo::getPosition() const throw( WDHException )
+WPosition WEEGChannelInfo::getPosition() const throw( WDHException )
 {
     if( m_hasPosition )
     {
@@ -90,6 +90,6 @@ wmath::WPosition WEEGChannelInfo::getPosition() const throw( WDHException )
     }
     else
     {
-        throw WDHException( "The position of this electrode is unknown." );
+        throw WDHException( std::string( "The position of this electrode is unknown." ) );
     }
 }

@@ -33,6 +33,10 @@
 #include <vector>
 #include <set>
 
+// Use filesystem version 2 for compatibility with newer boost versions.
+#ifndef BOOST_FILESYSTEM_VERSION
+    #define BOOST_FILESYSTEM_VERSION 2
+#endif
 #include <boost/filesystem.hpp>
 #include <boost/thread.hpp>
 #include <boost/lexical_cast.hpp>
@@ -65,6 +69,15 @@ class WPropertyVariable: public WFlag< T >,
 {
 friend class WPropertyVariableTest;
 public:
+    /**
+     * Convenience typedef for a shared_ptr of WPropertyVariable.
+     */
+    typedef boost::shared_ptr< WPropertyVariable< T > > SPtr;
+
+    /**
+     * Convenience typedef for a shared_ptr of const WPropertyVariable.
+     */
+    typedef boost::shared_ptr< const WPropertyVariable< T > > ConstSPtr;
 
     /**
      * Create an empty instance just containing a name.
@@ -574,23 +587,22 @@ bool WPropertyVariable< T >::setAsString( std::string value )
     try
     {
         // use the helper class which can handle different kinds of properties for us
-        PROPERTY_TYPE_HELPER::WCreateFromString< T > h = PROPERTY_TYPE_HELPER::WCreateFromString< T >();
-        WFlag< T >::set( h.create( WFlag< T >::get(), value ) );
+        PROPERTY_TYPE_HELPER::WStringConversion< T > h = PROPERTY_TYPE_HELPER::WStringConversion< T >();
+        return WFlag< T >::set( h.create( WFlag< T >::get(), value ) );
     }
     catch( const boost::bad_lexical_cast &e )
     {
         return false;
     }
-
-    return true;
 }
 
 template < typename T >
 std::string WPropertyVariable< T >::getAsString()
 {
     std::string val;
-    val = boost::lexical_cast< std::string >( WFlag< T >::get() );
-    // try catch( const boost::bad_lexical_cast &e ) ? No if this happens something is wrong with the value
+    // use the helper class which can handle different kinds of properties for us
+    PROPERTY_TYPE_HELPER::WStringConversion< T > h = PROPERTY_TYPE_HELPER::WStringConversion< T >();
+    return h.asString( WFlag< T >::get() );
 
     return val;
 }

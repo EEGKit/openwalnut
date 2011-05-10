@@ -26,11 +26,11 @@
 
 #include "WBSpline.h"
 
-WBSpline::WBSpline( int order, std::vector< std::vector< double > > deBoorPoints )
+WBSpline::WBSpline( int order, std::vector< WVector3d > deBoorPoints )
 {
-    this->m_deBoorPoints = deBoorPoints;
-    int n = this->m_deBoorPoints.size();
-    int k = this->m_order = order;
+    m_deBoorPoints = deBoorPoints;
+    int n = m_deBoorPoints.size();
+    int k = m_order = order;
 
     //define a normalized knotVector
     for( int i = 0; i < (n + k); i++)
@@ -47,20 +47,20 @@ WBSpline::WBSpline( int order, std::vector< std::vector< double > > deBoorPoints
     }
 }
 
-WBSpline::WBSpline( int order, std::vector< std::vector< double > > deBoorPoints, std::vector<double> knots )
+WBSpline::WBSpline( int order, std::vector< WVector3d > deBoorPoints, std::vector<double> knots )
 {
-    this->m_order = order;
-    this->m_deBoorPoints = deBoorPoints;
-    this->m_knots = knots;
+    m_order = order;
+    m_deBoorPoints = deBoorPoints;
+    m_knots = knots;
 }
 
 WBSpline::~WBSpline()
 {
 }
 
-wmath::WVector3D WBSpline::f( double _t )
+WVector3d WBSpline::f( double _t )
 {
-    wmath::WVector3D result;
+    WVector3d result;
     unsigned int r = 0, i;
 
     if( _t < m_knots[0] )
@@ -102,37 +102,37 @@ wmath::WVector3D WBSpline::f( double _t )
     return result;
 }
 
-std::vector< std::vector< double > > WBSpline::getDeBoorPoints()
+std::vector< WVector3d > WBSpline::getDeBoorPoints()
 {
     return m_deBoorPoints;
 }
 
 std::vector<double> WBSpline::getKnots()
 {
-    return this->m_knots;
+    return m_knots;
 }
 
 int WBSpline::getOrder()
 {
-    return this->m_order;
+    return m_order;
 }
 
-void WBSpline::setDeBoorPoints( std::vector< std::vector< double > > deBoorPoints )
+void WBSpline::setDeBoorPoints( std::vector< WVector3d > deBoorPoints )
 {
-    this->m_deBoorPoints = deBoorPoints;
+    m_deBoorPoints = deBoorPoints;
 }
 
 void WBSpline::setKnots( std::vector<double> knots )
 {
-    this->m_knots = knots;
+    m_knots = knots;
 }
 
 void WBSpline::setOrder( int order )
 {
-    this->m_order = order;
+    m_order = order;
 }
 
-void WBSpline::samplePoints( std::vector< std::vector< double > > *points, double resolution )
+void WBSpline::samplePoints( std::vector< WVector3d > *points, double resolution )
 {
     double deltaT = resolution;
     double currentT = m_knots[0];
@@ -141,13 +141,9 @@ void WBSpline::samplePoints( std::vector< std::vector< double > > *points, doubl
 
     for( int step = 0; step < steps; step++ )
     {
-        std::vector< double > dummy;
         currentT = m_knots[0] + step * deltaT;
-        wmath::WVector3D samplePoint = f( currentT );
-        dummy.push_back( samplePoint[0] );
-        dummy.push_back( samplePoint[1] );
-        dummy.push_back( samplePoint[2] );
-        points->push_back( dummy );
+        WVector3d samplePoint = f( currentT );
+        points->push_back( samplePoint );
     }
 }
 
@@ -157,9 +153,9 @@ double WBSpline::getAlpha_i_j( int _i, int _j )
     return result;
 }
 
-wmath::WVector3D WBSpline::controlPoint_i_j( int _i, int _j )
+WVector3d WBSpline::controlPoint_i_j( int _i, int _j )
 {
-    wmath::WVector3D result;
+    WVector3d result;
 
     if( _j == 0)
     {

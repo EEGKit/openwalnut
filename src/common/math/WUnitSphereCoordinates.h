@@ -27,14 +27,14 @@
 
 #include <vector>
 
-#include "../../common/math/WVector3D.h"
+#include "../../common/math/linearAlgebra/WLinearAlgebra.h"
+#include "../../common/WExportCommon.h"
 
-namespace wmath
-{
+
 /**
  * This class stores coordinates on the unit sphere.
  */
-class WUnitSphereCoordinates
+class OWCOMMON_EXPORT WUnitSphereCoordinates // NOLINT
 {
 // TODO(all): implement test
 // friend class WUnitSphereCoordinatesTest;
@@ -52,10 +52,10 @@ public:
     WUnitSphereCoordinates( double theta, double phi );
 
     /**
-     * Constructor for euclidean coordinates.
-     * \param vector euclidean coordinates
+     * Constructor for Euclidean coordinates.
+     * \param vector Euclidean coordinates
      */
-    explicit WUnitSphereCoordinates( wmath::WVector3D vector );
+    explicit WUnitSphereCoordinates( WVector3d vector );
 
     /**
      * Destructor.
@@ -85,9 +85,9 @@ public:
     void setPhi( double phi );
 
     /**
-     * Returns the stored sphere coordinates as euclidean coordinates.
+     * Returns the stored sphere coordinates as Euclidean coordinates.
      */
-    wmath::WVector3D getEuclidean() const;
+    WVector3d getEuclidean() const;
 
 protected:
 
@@ -97,7 +97,5 @@ private:
     /** coordinate */
     double m_phi;
 };
-}
 
 #endif  // WUNITSPHERECOORDINATES_H
-

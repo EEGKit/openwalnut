@@ -30,15 +30,18 @@
 #include "exceptions/WDHException.h"
 #include "WDataSet.h"
 #include "WDataSetVector.h"
-#include "WDataTexture3D.h"
+#include "WDataTexture3D_2.h"
 
 // prototype instance as singleton
 boost::shared_ptr< WPrototyped > WDataSet::m_prototype = boost::shared_ptr< WPrototyped >();
 
 WDataSet::WDataSet()
     : WTransferable(),
+    m_properties( boost::shared_ptr< WProperties >( new WProperties( "Data-Set Properties", "Properties of a data-set" ) ) ),
+    m_infoProperties( boost::shared_ptr< WProperties >( new WProperties( "Data-Set Info Properties", "Data-set's information properties" ) ) ),
     m_fileName( "" )
 {
+    m_infoProperties->setPurpose( PV_PURPOSE_INFORMATION );
 }
 
 void WDataSet::setFileName( const std::string fileName )
@@ -57,9 +60,9 @@ bool WDataSet::isTexture() const
     return false;
 }
 
-boost::shared_ptr< WDataTexture3D > WDataSet::getTexture()
+osg::ref_ptr< WDataTexture3D_2 > WDataSet::getTexture2() const
 {
-    throw WDHException( "This dataset does not provide a texture." );
+    throw WDHException( std::string( "This dataset does not provide a texture." ) );
 }
 
 const std::string WDataSet::getName() const
@@ -82,19 +85,18 @@ boost::shared_ptr< WPrototyped > WDataSet::getPrototype()
     return m_prototype;
 }
 
-boost::shared_ptr< WCondition > WDataSet::getChangeCondition()
-{
-    // this just forwards to the texture condition. In the future maybe datasets may also change so we need an separate condition in every
-    // dataset.
-    if ( isTexture() )
-    {
-        return getTexture()->getChangeCondition();
-    }
-
-    return boost::shared_ptr< WCondition >();
-}
-
 boost::shared_ptr< WDataSetVector > WDataSet::isVectorDataSet()
 {
     return boost::shared_ptr< WDataSetVector >();
 }
+
+boost::shared_ptr< WProperties > WDataSet::getProperties() const
+{
+    return m_properties;
+}
+
+boost::shared_ptr< WProperties > WDataSet::getInformationProperties() const
+{
+    return m_infoProperties;
+}
+

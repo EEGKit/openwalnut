@@ -35,15 +35,15 @@
 #include "../common/WSharedSequenceContainer.h"
 
 #include "WPersonalInformation.h"
+#include "WExportDataHandler.h"
 
 class WDataSet;
-class WDataTexture3D;
 
 /**
  * Container for all WDataSets belonging to one subject or patient.
  * \ingroup dataHandler
  */
-class WSubject
+class OWDATAHANDLER_EXPORT WSubject // NOLINT
 {
     /**
      * Only tests are allowed as friends.
@@ -67,7 +67,7 @@ public:
     /**
      * The alias for a shared container.
      */
-    typedef WSharedSequenceContainer< boost::shared_ptr< WDataSet >, DatasetContainerType > DatasetSharedContainerType;
+    typedef WSharedSequenceContainer< DatasetContainerType > DatasetSharedContainerType;
 
     /**
      * The dataset iterator.
@@ -78,11 +78,6 @@ public:
      * The dataset const iterator.
      */
     typedef DatasetContainerType::const_iterator DatasetConstIterator;
-
-    /**
-     * Alias for the proper access object
-     */
-    typedef DatasetSharedContainerType::WSharedAccess DatasetAccess;
 
     /**
      * Constructs a dummy subject.
@@ -147,14 +142,6 @@ public:
      * \return the write ticket.
      */
     DatasetSharedContainerType::WriteTicket getDatasetsForWriting() const;
-
-    /**
-     * This gives a list of data textures from all supporting datasets in this subject.
-     *
-     * \param onlyActive true whenever only textures should be returned where isGloballyActive() == true.
-     * \return the list of textures.
-     */
-    std::vector< boost::shared_ptr< WDataTexture3D > > getDataTextures( bool onlyActive = false );
 
     /**
      * This condition fires whenever the list of datasets changes, or one dataset got marked as "dirty" (threshold, opacity, ...).

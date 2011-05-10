@@ -24,10 +24,18 @@
 
 #include <cstddef>
 
+#include "../common/WProperties.h"
 #include "WGrid.h"
 
 WGrid::WGrid( size_t size )
-    : m_size( size )
+    : m_infoProperties( boost::shared_ptr< WProperties >( new WProperties( "Grid Properties", "Grid's information properties" ) ) ),
+      m_size( size )
+{
+    m_infoProperties->setPurpose( PV_PURPOSE_INFORMATION );
+    WPropInt sizeGrid = m_infoProperties->addProperty( "Grid size: ", "The number of position in the grid.", static_cast<int>( m_size ) );
+}
+
+WGrid::~WGrid()
 {
 }
 
@@ -36,4 +44,7 @@ size_t WGrid::size() const
     return m_size;
 }
 
-
+boost::shared_ptr< WProperties > WGrid::getInformationProperties() const
+{
+    return m_infoProperties;
+}

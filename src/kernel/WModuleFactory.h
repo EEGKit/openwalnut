@@ -34,17 +34,19 @@
 #include <boost/thread.hpp>
 
 #include "modules/data/WMData.h" // this is the ONLY module with a special meaning. Every one knowing the factory also knows this
-#include "modules/fiberDisplay/WMFiberDisplay.h"
-#include "modules/navSlices/WMNavSlices.h"
 #include "../common/WSharedAssociativeContainer.h"
 #include "WModuleCombinerTypes.h"
 #include "WModule.h"
 #include "WModuleLoader.h"
 
+#include "../modules/fiberDisplay/WMFiberDisplay.h"
+
+#include "WExportKernel.h"
+
 /**
  * Class able to create a new copy of an arbitrary module. It uses the Factory and Prototype design pattern.
  */
-class WModuleFactory
+class OWKERNEL_EXPORT WModuleFactory // NOLINT
 {
 friend class WModuleFactoryTest;
 public:
@@ -68,11 +70,6 @@ public:
      * The alias for a shared container.
      */
     typedef WSharedAssociativeContainer< PrototypeContainerType > PrototypeSharedContainerType;
-
-    /**
-     * Default constructor.
-     */
-    WModuleFactory();
 
     /**
      * Destructor.
@@ -179,6 +176,10 @@ public:
     static bool isPrototype( boost::shared_ptr< WModule > module );
 
 protected:
+    /**
+     * Constructors are protected because this is a Singleton.
+     */
+    WModuleFactory();
 
     /**
      * The module prototypes available.

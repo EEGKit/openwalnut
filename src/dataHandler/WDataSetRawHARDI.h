@@ -29,13 +29,14 @@
 #include <vector>
 
 #include "WDataSetSingle.h"
-#include "../common/math/WVector3D.h"
+#include "../common/math/linearAlgebra/WLinearAlgebra.h"
+#include "WExportDataHandler.h"
 
 /**
  * This data set type contains raw HARDI and its gradients.
  * \ingroup dataHandler
  */
-class WDataSetRawHARDI : public WDataSetSingle
+class OWDATAHANDLER_EXPORT WDataSetRawHARDI : public WDataSetSingle // NOLINT
 {
 public:
 
@@ -48,10 +49,12 @@ public:
      * \param newValueSet the vector value set to use
      * \param newGrid the grid which maps world space to the value set
      * \param newGradients the Gradients of the
+     * \param diffusionBValue Strength of the gradient
      */
     WDataSetRawHARDI( boost::shared_ptr< WValueSetBase > newValueSet,
                       boost::shared_ptr< WGrid > newGrid,
-                      boost::shared_ptr< std::vector< wmath::WVector3D > > newGradients );
+                      boost::shared_ptr< std::vector< WVector3d > > newGradients,
+                      double diffusionBValue = 1.0 );
 
     /**
      * Construct an empty and unusable instance. This is needed for the prototype mechanism.
@@ -62,6 +65,34 @@ public:
      * Destroys this DataSet instance
      */
     virtual ~WDataSetRawHARDI();
+
+    /**
+     * Creates a copy (clone) of this instance but allows to change the valueset. Unlike copy construction, this is a very useful function if you
+     * want to keep the dynamic type of your dataset even if you just have a WDataSetSingle.
+     *
+     * \param newValueSet the new valueset.
+     *
+     * \return the clone
+     */
+    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WValueSetBase > newValueSet ) const;
+
+    /**
+     * Creates a copy (clone) of this instance but allows to change the grid. Unlike copy construction, this is a very useful function if you
+     * want to keep the dynamic type of your dataset even if you just have a WDataSetSingle.
+     *
+     * \param newGrid the new grid.
+     *
+     * \return the clone
+     */
+    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WGrid > newGrid ) const;
+
+    /**
+     * Creates a copy (clone) of this instance. Unlike copy construction, this is a very useful function if you
+     * want to keep the dynamic type of your dataset even if you just have a WDataSetSingle.
+     *
+     * \return the clone
+     */
+    virtual WDataSetSingle::SPtr clone() const;
 
     /**
      * Returns a prototype instantiated with the true type of the deriving class.
@@ -77,7 +108,7 @@ public:
      *
      * \param index
      */
-    const wmath::WVector3D& getGradient( size_t index ) const;
+    const WVector3d& getGradient( size_t index ) const;
 
     /**
      * Returns the count of measurements per voxel, which is equal to the count of the used gradients.
@@ -100,6 +131,20 @@ public:
      */
     virtual const std::string getDescription() const;
 
+    /**
+     * Get the orientations.
+     *
+     * \return A vector of orientations.
+     */
+    std::vector< WVector3d > const& getOrientations() const;
+
+    /**
+     * Returns the \e b-value of the diffusion.
+     *
+     * \return b-value as double
+     */
+    double getDiffusionBValue() const;
+
 protected:
 
     /**
@@ -108,7 +153,11 @@ protected:
     static boost::shared_ptr< WPrototyped > m_prototype;
 
 private:
-    boost::shared_ptr< std::vector< wmath::WVector3D > > m_gradients; //!< Gradients of measurements
+    boost::shared_ptr< std::vector< WVector3d > > m_gradients; //!< Gradients of measurements
+    /**
+     * Strength (b-value) of the so-called magnetic diffusion gradient.
+     */
+    double m_diffusionBValue;
 };
 
 #endif  // WDATASETRAWHARDI_H

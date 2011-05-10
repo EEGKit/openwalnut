@@ -31,12 +31,13 @@
 #include <boost/thread.hpp>
 
 #include "WProgress.h"
+#include "WExportCommon.h"
 
 /**
  * Base class for all kinds of progress combinations. You might want to derive from this class to implement some special progress
  * combination.
  */
-class WProgressCombiner: public WProgress
+class OWCOMMON_EXPORT WProgressCombiner: public WProgress
 {
 friend class WProgressCombinerTest;
 public:
@@ -100,6 +101,13 @@ public:
      */
     virtual void update();
 
+    /**
+     * Generates a string combined out of every child progress name.
+     *
+     * \return One describing string for all child progress names.
+     */
+    std::string getCombinedNames() const;
+
 protected:
 
     /**
@@ -120,7 +128,7 @@ protected:
     /**
      * Lock for the above child set and the internal state update.
      */
-    boost::shared_mutex m_updateLock;
+    mutable boost::shared_mutex m_updateLock;
 
 private:
 };

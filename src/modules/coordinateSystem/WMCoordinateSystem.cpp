@@ -31,24 +31,24 @@
 #include <osg/Geometry>
 
 #include "../../common/WPropertyHelper.h"
-#include "../../dataHandler/WDataSet.h"
-#include "../../dataHandler/WSubject.h"
-#include "../../dataHandler/WDataHandler.h"
 #include "../../dataHandler/exceptions/WDHNoSuchSubject.h"
+#include "../../dataHandler/WDataHandler.h"
+#include "../../dataHandler/WDataSet.h"
 #include "../../dataHandler/WDataSetScalar.h"
+#include "../../dataHandler/WSubject.h"
 #include "../../graphicsEngine/WGEGeodeUtils.h"
 #include "../../kernel/WKernel.h"
-
-#include "WTalairachConverter.h"
-#include "coordinateSystem.xpm"
-
+#include "../../kernel/WSelectionManager.h"
 #include "WMCoordinateSystem.h"
+#include "WMCoordinateSystem.xpm"
+#include "WTalairachConverter.h"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMCoordinateSystem )
 
 WMCoordinateSystem::WMCoordinateSystem() :
-    WModule(), m_dirty( false ), m_drawOffset( 0.02 )
+    WModule(), m_dirty( false ), m_drawOffset( 0.02 ),
+    m_viewAngle( 0 )
 {
 }
 
@@ -89,19 +89,26 @@ void WMCoordinateSystem::moduleMain()
     // loop until the module container requests the module to quit
     while ( !m_shutdownFlag() )
     {
+        m_moduleState.wait();
+
+        if ( m_shutdownFlag() )
+        {
+            break;
+        }
+
         if ( m_dataSet != m_input->getData() )
         {
             // acquire data from the input connector
             m_dataSet = m_input->getData();
 
-            findBoundingBox();
-            createGeometry();
-            m_dirty = true;
+            if( m_dataSet )
+            {
+                findBoundingBox();
+                createGeometry();
+                m_dirty = true;
+            }
         }
     }
-    // Since the modules run in a separate thread: wait
-    waitForStop();
-
     // clean up stuff
     // NOTE: ALWAYS remove your osg nodes!
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_rootNode );
@@ -121,40 +128,42 @@ void WMCoordinateSystem::properties()
 {
     WPropertyBase::PropertyChangeNotifierType propertyCallback = boost::bind( &WMCoordinateSystem::propertyChanged, this );
 
-    m_showAxial = m_properties->addProperty( "show rulers on axial", "Does exactly what it says", true, propertyCallback );
-    m_showCoronal = m_properties->addProperty( "show rulers on coronal", "Does exactly what it says", false, propertyCallback );
-    m_showSagittal = m_properties->addProperty( "show rulers on sagittal", "Does exactly what it says", false, propertyCallback );
+    m_showAxial = m_properties->addProperty( "Show rulers on axial", "", true, propertyCallback );
+    m_showCoronal = m_properties->addProperty( "Show rulers on coronal", "", false, propertyCallback );
+    m_showSagittal = m_properties->addProperty( "Show rulers on sagittal", "", false, propertyCallback );
 
     m_possibleSelections = boost::shared_ptr< WItemSelection >( new WItemSelection() );
-    m_possibleSelections->addItem( "world", "" ); // NOTE: you can add XPM images here.
-    m_possibleSelections->addItem( "canonical", "" );
-    m_possibleSelections->addItem( "talairach", "" );
+    m_possibleSelections->addItem( "World", "" ); // NOTE: you can add XPM images here.
+    m_possibleSelections->addItem( "Canonical", "" );
+    m_possibleSelections->addItem( "Talairach", "" );
 
     m_csSelection = m_properties->addProperty( "Select coordinate system", "", m_possibleSelections->getSelectorFirst(), propertyCallback );
 
     WPropertyHelper::PC_SELECTONLYONE::addTo( m_csSelection );
     WPropertyHelper::PC_NOTEMPTY::addTo( m_csSelection );
 
-    m_showGridAxial = m_properties->addProperty( "show grid on axial", "Does exactly what it says", false, propertyCallback );
-    m_showGridCoronal = m_properties->addProperty( "show grid on coronal", "Does exactly what it says", false, propertyCallback );
-    m_showGridSagittal = m_properties->addProperty( "show grid on sagittal", "Does exactly what it says", false, propertyCallback );
+    m_showGridAxial = m_properties->addProperty( "Show grid on axial", "", false, propertyCallback );
+    m_showGridCoronal = m_properties->addProperty( "Show grid on coronal", "", false, propertyCallback );
+    m_showGridSagittal = m_properties->addProperty( "Show grid on sagittal", "", false, propertyCallback );
 
-    m_showNumbersOnRulers = m_properties->addProperty( "show numbers on rulers", "Does exactly what it says", true, propertyCallback );
+    m_showNumbersOnRulers = m_properties->addProperty( "Show numbers on rulers", "Does exactly what it says", true, propertyCallback );
 
-    wmath::WPosition ch = WKernel::getRunningKernel()->getSelectionManager()->getCrosshair()->getPosition();
-    m_crosshair = m_properties->addProperty( "crosshair", "Description.", ch );
+    WPosition ch = WKernel::getRunningKernel()->getSelectionManager()->getCrosshair()->getPosition();
+    m_crosshair = m_properties->addProperty( "Crosshair", "", ch );
     // initialize the properties with a certain standard set
     // those properties will be updatet as soon as the first dataset is looaded
-    m_flt = m_infoProperties->addProperty( "front left top", "Description.", wmath::WPosition( 0.0, 0.0, 0.0 ) );
-    m_brb = m_infoProperties->addProperty( "bottom right back", "Description.", wmath::WPosition( 160.0, 200.0, 160.0 ) );
+    m_flt = m_infoProperties->addProperty( "Front left top", "", WPosition( 0.0, 0.0, 0.0 ) );
+    m_brb = m_infoProperties->addProperty( "Bottom right back", "", WPosition( 160.0, 200.0, 160.0 ) );
 
-    m_ac = m_infoProperties->addProperty( "anterior commisure", "Description.", wmath::WPosition( 80.0, 119.0, 80.0 ) );
-    m_pc = m_infoProperties->addProperty( "posterior commisure", "Description.", wmath::WPosition( 80.0, 80.0, 80.0 ) );
-    m_ihp = m_infoProperties->addProperty( "interhemispherical point", "Description.", wmath::WPosition( 80.0, 119.0, 110.0 ) );
+    m_ac = m_infoProperties->addProperty( "Anterior commisure", "", WPosition( 80.0, 119.0, 80.0 ) );
+    m_pc = m_infoProperties->addProperty( "Posterior commisure", "", WPosition( 80.0, 80.0, 80.0 ) );
+    m_ihp = m_infoProperties->addProperty( "Interhemispherical point", "", WPosition( 80.0, 119.0, 110.0 ) );
 
     m_acTrigger = m_properties->addProperty( "Set AC", "Press me.", WPVBaseTypes::PV_TRIGGER_READY, propertyCallback );
     m_pcTrigger = m_properties->addProperty( "Set PC", "Press me.", WPVBaseTypes::PV_TRIGGER_READY, propertyCallback );
     m_ihpTrigger = m_properties->addProperty( "Set IHP", "Press me.", WPVBaseTypes::PV_TRIGGER_READY, propertyCallback );
+
+    WModule::properties();
 }
 
 void WMCoordinateSystem::propertyChanged()
@@ -162,7 +171,7 @@ void WMCoordinateSystem::propertyChanged()
     if ( m_csSelection->changed() )
     {
         WItemSelector s = m_csSelection->get( true );
-        infoLog() << "Selected " << s.at( 0 ).name << " coordinate system.";
+        infoLog() << "Selected " << s.at( 0 )->getName() << " coordinate system.";
         m_coordConverter->setCoordinateSystemMode( static_cast< coordinateSystemMode > ( s.getItemIndexOfSelected( 0 ) ) );
     }
 
@@ -218,8 +227,7 @@ void WMCoordinateSystem::createGeometry()
 
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_rootNode );
 
-    m_rootNode->setUserData( this );
-    m_rootNode->addUpdateCallback( new coordinateNodeCallback );
+    m_rootNode->addUpdateCallback( new WGEFunctorCallback< osg::Node >( boost::bind( &WMCoordinateSystem::updateCallback, this ) ) );
 
     if ( m_active->get() )
     {
@@ -231,10 +239,17 @@ void WMCoordinateSystem::createGeometry()
     }
 }
 
-void WMCoordinateSystem::updateGeometry()
+void WMCoordinateSystem::updateCallback()
 {
-    wmath::WPosition ch = WKernel::getRunningKernel()->getSelectionManager()->getCrosshair()->getPosition();
-    wmath::WPosition cho = m_crosshair->get();
+    if ( WKernel::getRunningKernel()->getSelectionManager()->getFrontSector() != m_viewAngle )
+    {
+        m_viewAngle = WKernel::getRunningKernel()->getSelectionManager()->getFrontSector();
+        m_dirty = true;
+    }
+
+    WPosition ch = WKernel::getRunningKernel()->getSelectionManager()->getCrosshair()->getPosition();
+    WPosition cho = m_crosshair->get();
+
     if ( ch[0] != cho[0] || ch[1] != cho[1] || ch[2] != cho[2] || m_dirty )
     {
         m_crosshair->set( ch );
@@ -298,7 +313,7 @@ void WMCoordinateSystem::findBoundingBox()
     double yOff = grid->getOffsetY();
     double zOff = grid->getOffsetZ();
 
-    wmath::WVector3D offset( xOff, yOff, zOff );
+    WVector3d offset( xOff, yOff, zOff );
     m_coordConverter = boost::shared_ptr< WCoordConverter >( new WCoordConverter( grid->getTransformationMatrix(), grid->getOrigin(), offset ) );
 
     WItemSelector s = m_csSelection->get( true );
@@ -306,8 +321,8 @@ void WMCoordinateSystem::findBoundingBox()
     m_coordConverter->setBoundingBox( m_dataSet->getGrid()->getBoundingBox() );
 
     // now compute the innerBoundingBox for the actual data
-    wmath::WPosition flt = m_flt->get();
-    wmath::WPosition brb = m_brb->get();
+    WPosition flt = m_flt->get();
+    WPosition brb = m_brb->get();
 
     for ( size_t x = 0; x < grid->getNbCoordsX(); ++x )
     {
@@ -432,8 +447,8 @@ void WMCoordinateSystem::findBoundingBox()
         }
     }
 
-    wmath::WPosition tmpflt = m_coordConverter->worldCoordTransformed( flt );
-    wmath::WPosition tmpbrb = m_coordConverter->worldCoordTransformed( brb );
+    WPosition tmpflt = m_coordConverter->worldCoordTransformed( flt );
+    WPosition tmpbrb = m_coordConverter->worldCoordTransformed( brb );
 
     flt[0] = std::min( tmpflt[0], tmpbrb[0] );
     flt[1] = std::max( tmpflt[1], tmpbrb[1] );
@@ -450,21 +465,21 @@ void WMCoordinateSystem::findBoundingBox()
 
 void WMCoordinateSystem::initTalairachConverter()
 {
-    wmath::WVector3D ac_c( m_coordConverter->w2c( m_ac->get() ) );
-    wmath::WVector3D pc_c( m_coordConverter->w2c( m_pc->get() ) );
-    wmath::WVector3D ihp_c( m_coordConverter->w2c( m_ihp->get() ) );
+    WVector3d ac_c( m_coordConverter->w2c( m_ac->get() ) );
+    WVector3d pc_c( m_coordConverter->w2c( m_pc->get() ) );
+    WVector3d ihp_c( m_coordConverter->w2c( m_ihp->get() ) );
     boost::shared_ptr< WTalairachConverter > talairachConverter =
         boost::shared_ptr< WTalairachConverter >( new WTalairachConverter( ac_c, pc_c, ihp_c ) );
 
-    wmath::WVector3D flt_c( m_coordConverter->w2c( m_flt->get() ) );
-    wmath::WVector3D brb_c( m_coordConverter->w2c( m_brb->get() ) );
+    WVector3d flt_c( m_coordConverter->w2c( m_flt->get() ) );
+    WVector3d brb_c( m_coordConverter->w2c( m_brb->get() ) );
 
-    wmath::WVector3D ap( flt_c[0], 0., 0. );
-    wmath::WVector3D pp( brb_c[0], 0., 0. );
-    wmath::WVector3D lp( 0., flt_c[1], 0. );
-    wmath::WVector3D rp( 0., brb_c[1], 0. );
-    wmath::WVector3D sp( 0., 0., flt_c[2] );
-    wmath::WVector3D ip( 0., 0., brb_c[2] );
+    WVector3d ap( flt_c[0], 0., 0. );
+    WVector3d pp( brb_c[0], 0., 0. );
+    WVector3d lp( 0., flt_c[1], 0. );
+    WVector3d rp( 0., brb_c[1], 0. );
+    WVector3d sp( 0., 0., flt_c[2] );
+    WVector3d ip( 0., 0., brb_c[2] );
 
     talairachConverter->setAp( ap );
     talairachConverter->setPp( pp );
@@ -478,11 +493,21 @@ void WMCoordinateSystem::initTalairachConverter()
 
 void WMCoordinateSystem::addRulersSagittal()
 {
+    float offset = 0.0;
+    if ( m_viewAngle < 4 )
+    {
+        offset = -1.0;
+    }
+    else
+    {
+        offset = 1.0;
+    }
+
     osg::ref_ptr< WRulerOrtho > ruler1 = osg::ref_ptr< WRulerOrtho >(
-            new WRulerOrtho( m_coordConverter, osg::Vec3( m_crosshair->get()[0], m_crosshair->get()[1], m_crosshair->get()[2] ),
+            new WRulerOrtho( m_coordConverter, osg::Vec3( m_crosshair->get()[0] + offset, m_crosshair->get()[1], m_crosshair->get()[2] ),
                     RULER_ALONG_Y_AXIS_SCALE_Z, m_showNumbersOnRulers->get() ) );
     osg::ref_ptr< WRulerOrtho > ruler2 = osg::ref_ptr< WRulerOrtho >(
-            new WRulerOrtho( m_coordConverter, osg::Vec3( m_crosshair->get()[0], m_crosshair->get()[1], m_crosshair->get()[2] ),
+            new WRulerOrtho( m_coordConverter, osg::Vec3( m_crosshair->get()[0] + offset, m_crosshair->get()[1], m_crosshair->get()[2] ),
                     RULER_ALONG_Z_AXIS_SCALE_Y, m_showNumbersOnRulers->get() ) );
 
     m_rulerNode->addChild( ruler1 );
@@ -491,11 +516,21 @@ void WMCoordinateSystem::addRulersSagittal()
 
 void WMCoordinateSystem::addRulersAxial()
 {
+    float offset = 0.0;
+    if ( ( m_viewAngle == 1 ) || ( m_viewAngle == 2 ) || ( m_viewAngle == 5 ) || ( m_viewAngle == 6 ) )
+    {
+        offset = 1.0;
+    }
+    else
+    {
+        offset = -1.0;
+    }
+
     osg::ref_ptr< WRulerOrtho > ruler1 = osg::ref_ptr< WRulerOrtho >(
-            new WRulerOrtho( m_coordConverter, osg::Vec3( m_crosshair->get()[0], m_crosshair->get()[1], m_crosshair->get()[2] ),
+            new WRulerOrtho( m_coordConverter, osg::Vec3( m_crosshair->get()[0], m_crosshair->get()[1], m_crosshair->get()[2] + offset ),
             RULER_ALONG_X_AXIS_SCALE_Y, m_showNumbersOnRulers->get() ) );
     osg::ref_ptr< WRulerOrtho > ruler2 = osg::ref_ptr< WRulerOrtho >(
-            new WRulerOrtho( m_coordConverter, osg::Vec3( m_crosshair->get()[0], m_crosshair->get()[1], m_crosshair->get()[2] ),
+            new WRulerOrtho( m_coordConverter, osg::Vec3( m_crosshair->get()[0], m_crosshair->get()[1], m_crosshair->get()[2] + offset ),
             RULER_ALONG_Y_AXIS_SCALE_X, m_showNumbersOnRulers->get() ) );
 
     m_rulerNode->addChild( ruler1 );
@@ -504,11 +539,21 @@ void WMCoordinateSystem::addRulersAxial()
 
 void WMCoordinateSystem::addRulersCoronal()
 {
+    float offset = 0.0;
+    if ( ( m_viewAngle == 2 ) || ( m_viewAngle == 3 ) || ( m_viewAngle == 4 ) || ( m_viewAngle == 5 ) )
+    {
+        offset = 1.0;
+    }
+    else
+    {
+        offset = - 1.0;
+    }
+
     osg::ref_ptr< WRulerOrtho > ruler1 = osg::ref_ptr< WRulerOrtho >(
-            new WRulerOrtho( m_coordConverter, osg::Vec3( m_crosshair->get()[0], m_crosshair->get()[1], m_crosshair->get()[2] ),
+            new WRulerOrtho( m_coordConverter, osg::Vec3( m_crosshair->get()[0], m_crosshair->get()[1] + offset, m_crosshair->get()[2] ),
                     RULER_ALONG_X_AXIS_SCALE_Z, m_showNumbersOnRulers->get() ) );
     osg::ref_ptr< WRulerOrtho > ruler2 = osg::ref_ptr< WRulerOrtho >(
-            new WRulerOrtho( m_coordConverter, osg::Vec3( m_crosshair->get()[0], m_crosshair->get()[1], m_crosshair->get()[2] ),
+            new WRulerOrtho( m_coordConverter, osg::Vec3( m_crosshair->get()[0], m_crosshair->get()[1] + offset, m_crosshair->get()[2] ),
                     RULER_ALONG_Z_AXIS_SCALE_X, m_showNumbersOnRulers->get() ) );
 
     m_rulerNode->addChild( ruler1 );
@@ -517,13 +562,22 @@ void WMCoordinateSystem::addRulersCoronal()
 
 void WMCoordinateSystem::addSagittalGrid( float position )
 {
+    if ( m_viewAngle < 4 )
+    {
+        position -= 1.0;
+    }
+    else
+    {
+        position += 1.0;
+    }
+
     osg::ref_ptr< osg::Geode > gridGeode = osg::ref_ptr< osg::Geode >( new osg::Geode() );
     osg::ref_ptr< osg::Geometry > geometry = osg::ref_ptr< osg::Geometry >( new osg::Geometry() );
     osg::Vec3Array* vertices = new osg::Vec3Array;
 
-    std::pair< wmath::WPosition, wmath::WPosition > boundingBox = m_coordConverter->getBoundingBox();
-    wmath::WPosition p1 = boundingBox.first;
-    wmath::WPosition p2 = boundingBox.second;
+    WBoundingBox boundingBox = m_coordConverter->getBoundingBox();
+    WPosition p1 = boundingBox.getMin();
+    WPosition p2 = boundingBox.getMax();
 
     switch ( m_coordConverter->getCoordinateSystemMode() )
     {
@@ -552,16 +606,16 @@ void WMCoordinateSystem::addSagittalGrid( float position )
 
             for ( int i = -110; i < 81; i += 10 )
             {
-                wmath::WVector3D tmpPoint1 = m_coordConverter->t2w( WVector3D( i, 0, -50 ) );
-                wmath::WVector3D tmpPoint2 = m_coordConverter->t2w( WVector3D( i, 0, 80 ) );
+                WVector3d tmpPoint1 = m_coordConverter->t2w( WVector3d( i, 0, -50 ) );
+                WVector3d tmpPoint2 = m_coordConverter->t2w( WVector3d( i, 0, 80 ) );
 
                 vertices->push_back( osg::Vec3( position, tmpPoint1[1], tmpPoint1[2] ) );
                 vertices->push_back( osg::Vec3( position, tmpPoint2[1], tmpPoint2[2] ) );
             }
             for ( int i = -50; i < 81; i += 10 )
             {
-                wmath::WVector3D tmpPoint1 = m_coordConverter->t2w( WVector3D( -110, 0, i ) );
-                wmath::WVector3D tmpPoint2 = m_coordConverter->t2w( WVector3D( 80, 0, i ) );
+                WVector3d tmpPoint1 = m_coordConverter->t2w( WVector3d( -110, 0, i ) );
+                WVector3d tmpPoint2 = m_coordConverter->t2w( WVector3d( 80, 0, i ) );
 
                 vertices->push_back( osg::Vec3( position, tmpPoint1[1], tmpPoint1[2] ) );
                 vertices->push_back( osg::Vec3( position, tmpPoint2[1], tmpPoint2[2] ) );
@@ -589,13 +643,22 @@ void WMCoordinateSystem::addSagittalGrid( float position )
 
 void WMCoordinateSystem::addCoronalGrid( float position )
 {
+    if ( ( m_viewAngle == 2 ) || ( m_viewAngle == 3 ) || ( m_viewAngle == 4 ) || ( m_viewAngle == 5 ) )
+    {
+        position += 1.0;
+    }
+    else
+    {
+        position -= 1.0;
+    }
+
     osg::ref_ptr< osg::Geode > gridGeode = osg::ref_ptr< osg::Geode >( new osg::Geode() );
     osg::ref_ptr< osg::Geometry > geometry = osg::ref_ptr< osg::Geometry >( new osg::Geometry() );
     osg::Vec3Array* vertices = new osg::Vec3Array;
 
-    std::pair< wmath::WPosition, wmath::WPosition > boundingBox = m_coordConverter->getBoundingBox();
-    wmath::WPosition p1 = boundingBox.first;
-    wmath::WPosition p2 = boundingBox.second;
+    WBoundingBox boundingBox = m_coordConverter->getBoundingBox();
+    WPosition p1 = boundingBox.getMin();
+    WPosition p2 = boundingBox.getMax();
 
     switch ( m_coordConverter->getCoordinateSystemMode() )
     {
@@ -624,16 +687,16 @@ void WMCoordinateSystem::addCoronalGrid( float position )
 
             for ( int i = -80; i < 81; i += 10 )
             {
-                wmath::WVector3D tmpPoint1 = m_coordConverter->t2w( WVector3D( 0, i, -50 ) );
-                wmath::WVector3D tmpPoint2 = m_coordConverter->t2w( WVector3D( 0, i, 80 ) );
+                WVector3d tmpPoint1 = m_coordConverter->t2w( WVector3d( 0, i, -50 ) );
+                WVector3d tmpPoint2 = m_coordConverter->t2w( WVector3d( 0, i, 80 ) );
 
                 vertices->push_back( osg::Vec3( tmpPoint1[0], position, tmpPoint1[2] ) );
                 vertices->push_back( osg::Vec3( tmpPoint2[0], position, tmpPoint2[2] ) );
             }
             for ( int i = -50; i < 81; i += 10 )
             {
-                wmath::WVector3D tmpPoint1 = m_coordConverter->t2w( WVector3D( 0, -80, i ) );
-                wmath::WVector3D tmpPoint2 = m_coordConverter->t2w( WVector3D( 0, 80, i ) );
+                WVector3d tmpPoint1 = m_coordConverter->t2w( WVector3d( 0, -80, i ) );
+                WVector3d tmpPoint2 = m_coordConverter->t2w( WVector3d( 0, 80, i ) );
 
                 vertices->push_back( osg::Vec3( tmpPoint1[0], position, tmpPoint1[2] ) );
                 vertices->push_back( osg::Vec3( tmpPoint2[0], position, tmpPoint2[2] ) );
@@ -661,13 +724,22 @@ void WMCoordinateSystem::addCoronalGrid( float position )
 
 void WMCoordinateSystem::addAxialGrid( float position )
 {
+    if ( ( m_viewAngle == 1 ) || ( m_viewAngle == 2 ) || ( m_viewAngle == 5 ) || ( m_viewAngle == 6 ) )
+    {
+        position += 1.0;
+    }
+    else
+    {
+        position -= 1.0;
+    }
+
     osg::ref_ptr< osg::Geode > gridGeode = osg::ref_ptr< osg::Geode >( new osg::Geode() );
     osg::ref_ptr< osg::Geometry > geometry = osg::ref_ptr< osg::Geometry >( new osg::Geometry() );
     osg::Vec3Array* vertices = new osg::Vec3Array;
 
-    std::pair< wmath::WPosition, wmath::WPosition > boundingBox = m_coordConverter->getBoundingBox();
-    wmath::WPosition p1 = boundingBox.first;
-    wmath::WPosition p2 = boundingBox.second;
+    WBoundingBox boundingBox = m_coordConverter->getBoundingBox();
+    WPosition p1 = boundingBox.getMin();
+    WPosition p2 = boundingBox.getMax();
 
     switch ( m_coordConverter->getCoordinateSystemMode() )
     {
@@ -696,16 +768,16 @@ void WMCoordinateSystem::addAxialGrid( float position )
 
             for ( int i = -80; i < 81; i += 10 )
             {
-                wmath::WVector3D tmpPoint1 = m_coordConverter->t2w( WVector3D( -110, i, 0 ) );
-                wmath::WVector3D tmpPoint2 = m_coordConverter->t2w( WVector3D( 80, i, 0 ) );
+                WVector3d tmpPoint1 = m_coordConverter->t2w( WVector3d( -110, i, 0 ) );
+                WVector3d tmpPoint2 = m_coordConverter->t2w( WVector3d( 80, i, 0 ) );
 
                 vertices->push_back( osg::Vec3( tmpPoint1[0], tmpPoint1[1], position ) );
                 vertices->push_back( osg::Vec3( tmpPoint2[0], tmpPoint2[1], position ) );
             }
             for ( int i = -110; i < 81; i += 10 )
             {
-                wmath::WVector3D tmpPoint1 = m_coordConverter->t2w( WVector3D( i, -80, 0 ) );
-                wmath::WVector3D tmpPoint2 = m_coordConverter->t2w( WVector3D( i, 80, 0 ) );
+                WVector3d tmpPoint1 = m_coordConverter->t2w( WVector3d( i, -80, 0 ) );
+                WVector3d tmpPoint2 = m_coordConverter->t2w( WVector3d( i, 80, 0 ) );
 
                 vertices->push_back( osg::Vec3( tmpPoint1[0], tmpPoint1[1], position ) );
                 vertices->push_back( osg::Vec3( tmpPoint2[0], tmpPoint2[1], position ) );

@@ -29,74 +29,127 @@
 #include <iostream>
 #include <vector>
 
+#include "../WBoundingBox.h"
+#include "../WExportCommon.h"
 #include "../WMixinVector.h"
-#include "WPosition.h"
+#include "linearAlgebra/WLinearAlgebra.h"
 
-// we need this to find the WLineTest class which is not inside wmath namespace
+// forward declarations
 class WLineTest;
 
-namespace wmath
+/**
+ * A line is an ordered sequence of WPositions.
+ */
+class OWCOMMON_EXPORT WLine : public WMixinVector< WPosition >
 {
+public:
     /**
-     * A line is an ordered sequence of WPositions.
+     * Generates a new line out of a sequence of points.
+     *
+     * \param points Point sequence
      */
-//    typedef WMixinVector< WPosition > WLine;
-    class WLine : public WMixinVector< WPosition >
-    {
-    public:
-        /**
-         * Generates a new line out of a sequence of points.
-         *
-         * \param points Point sequence
-         */
-        explicit WLine( const std::vector< WPosition > &points );
+    explicit WLine( const std::vector< WPosition > &points );
 
-        /**
-         * Creates an empty line.
-         */
-        WLine();
+    /**
+     * Creates an empty line.
+     */
+    WLine();
 
-        /**
-         * Resample this line so it has a number of given points afterwards.
-         * \warning This changes your line!
-         *
-         * \param numPoints Number of sampling points.
-         */
-        void resample( size_t numPoints );
+    /**
+     * Resample this line so it has a number of given points afterwards.
+     * \warning This changes your line!
+     *
+     * \param numPoints Number of sampling points.
+     */
+    void resampleByNumberOfPoints( size_t numPoints );
 
-        /**
-         * Reverses the order of the points. (mirroring)
-         */
-        void reverseOrder();
+    /**
+     *
+     *
+     * \warning This may elongate your line at max. by the newSegmentLength
+     *
+     * \param newSegementLength
+     */
+    void resampleBySegmentLength( double newSegementLength );
 
-        /**
-         * Computes the length of the line not in terms of points but in terms
-         * of accumulated segment lengths.
-         *
-         * \return Sum of all line segment lengths
-         */
-        double pathLength() const;
+    /**
+     * Reverses the order of the points. (mirroring)
+     */
+    void reverseOrder();
 
-        /**
-         * Returns the point in the middle of the line. In case of an even sized
-         * line the mid point is the same as if there were only size()-1 many
-         * elements present.
-         *
-         * \throws WOutOfBounds In case its called on an empty line
-         *
-         * \return Const reference to the midpoint element.
-         */
-        const wmath::WPosition& midPoint() const;
+    /**
+     * Collapse samplepoints which are equal and neighboured.
+     */
+    void removeAdjacentDuplicates();
+};
 
-        /**
-         * Compares this line with another line point wise upto a given delta.
-         *
-         * \param other The other line
-         * \param delta Specifying the environment upto this two points are considered to be the same
-         *
-         * \return -1 in case of the two fibers are considered equal, otherwise the first position on which they differ is returned.
-         */
-        int equalsDelta( const wmath::WLine& other, double delta ) const;
-    };
-} // end of namespace
+// Some convinience functions as non-member non-friend functions
+
+/**
+ * Computes a AABB (axis aligned bounding box) for all positions inside this line.
+ *
+ * \param line The line to compute the bounding box for.
+ *
+ * \return The AABB for this line.
+ */
+OWCOMMON_EXPORT WBoundingBox computeBoundingBox( const WLine& line );
+
+/**
+ * Computes the length of a line in terms of accumulated segment lengths.
+ *
+ * \param line The line which used for computations
+ *
+ * \return Sum of all line segment lengths
+ */
+OWCOMMON_EXPORT double pathLength( const WLine& line );
+
+/**
+ * Returns the point in the middle of a line. In case of an even sized
+ * line the mid point is the same as if there were only size()-1 many
+ * elements present.
+ *
+ * \param line The line to compute the mid point for.
+ *
+ * \throws WOutOfBounds In case its called on an empty line
+ *
+ * \return Const reference to the midpoint element.
+ */
+OWCOMMON_EXPORT const WPosition& midPoint( const WLine& line );
+
+/**
+ * Compares two lines with each other point wise upto a given delta.
+ *
+ * \param line The first line
+ * \param other The other line
+ * \param delta Specifying the environment upto this two points are considered to be the same
+ *
+ * \return -1 in case of the two fibers are considered equal, otherwise the first position on which they differ is returned.
+ */
+OWCOMMON_EXPORT int equalsDelta( const WLine& line, const WLine& other, double delta );
+
+/**
+ * Compute the maximal segment length of all segements of a line. If there are no segements meaning
+ * zero or one point, zero is returned.
+ *
+ * \param line The line used for computation of the max segment length
+ *
+ * \return Max segement length or zero if there aren't any.
+ */
+OWCOMMON_EXPORT double maxSegmentLength( const WLine& line );
+
+/**
+ * Boolean predicate indicating that the first line has more points then
+ * the second one.
+ *
+ * \param first First line
+ * \param second Second line
+ * \return True if the first line has more points than the second
+ */
+bool hasMorePointsThen( const WLine& first, const WLine& second );
+
+inline bool hasMorePointsThen( const WLine& first, const WLine& second )
+{
+    return first.size() > second.size();
+}
+
 #endif  // WLINE_H

@@ -30,6 +30,7 @@
 #include <QtGui/QKeyEvent>
 #include <QtGui/QApplication>
 
+#include "../../graphicsEngine/WGECamera.h"
 #include "../../graphicsEngine/WGEViewer.h"
 #include "../../graphicsEngine/WGEScene.h"
 #include "events/WPropertyChangedEvent.h"
@@ -37,41 +38,28 @@
 
 #include "WQtNavGLWidget.h"
 
-WQtNavGLWidget::WQtNavGLWidget( QString title, QWidget* parent, std::string sliderTitle )
-    : QDockWidget( title, parent ),
-    m_propWidget( NULL )
+WQtNavGLWidget::WQtNavGLWidget( QString viewTitle, QString dockTitle, QWidget* parent, std::string sliderTitle, const QGLWidget * shareWidget )
+    : WQtGLDockWidget( viewTitle, dockTitle, parent, WGECamera::ORTHOGRAPHIC, shareWidget )
 {
+    propertyWidgetMap.clear();
     m_sliderTitle = QString( sliderTitle.c_str() );
-
-    setAllowedAreas( Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea );
-    setFeatures( QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable );
-
-    QWidget* panel = new QWidget( this );
-
-    m_layout = new QVBoxLayout();
-
-    m_glWidget = boost::shared_ptr<WQtGLWidget>( new WQtGLWidget( title.toStdString(), panel, WGECamera::ORTHOGRAPHIC ) );
-
-    setMinimumSize( 160, 240 );
-    setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Maximum );
 
     m_scene = new WGEScene();
     m_scene->setDataVariance( osg::Object::DYNAMIC );
-    m_glWidget->getViewer()->getView()->requestContinuousUpdate( false );
-    m_glWidget->getViewer()->setScene( m_scene );
-
-    m_layout->addWidget( m_glWidget.get() );
-
-    panel->setLayout( m_layout );
-
-    setWidget( panel );
+    getGLWidget()->getViewer()->getView()->requestContinuousUpdate( false );
+    getGLWidget()->getViewer()->setScene( m_scene );
 }
 
 WQtNavGLWidget::~WQtNavGLWidget()
 {
-    if ( m_propWidget )
+    for( std::map< boost::shared_ptr< WPropertyBase >, WPropertyIntWidget* >::iterator it = propertyWidgetMap.begin();
+         it != propertyWidgetMap.end();
+         ++it )
     {
-        delete m_propWidget;
+        if( it->second != 0 )
+        {
+            delete it->second;
+        }
     }
 }
 
@@ -80,17 +68,21 @@ void WQtNavGLWidget::setSliderTitle( std::string title )
     m_sliderTitle = QString( title.c_str() );
 }
 
-boost::shared_ptr<WQtGLWidget>WQtNavGLWidget::getGLWidget()
+void WQtNavGLWidget::setSliderProperty( boost::shared_ptr< WPropertyBase > prop )
 {
-    return m_glWidget;
+    WPropertyIntWidget* propWidget;
+    propWidget = new WPropertyIntWidget( prop->toPropInt(), NULL, parentWidget() );
+    propertyWidgetMap[prop] = propWidget;
+    m_layout->addWidget( propWidget );
+    m_layout->setStretchFactor( getGLWidget().get(), 1 );
+    m_layout->setStretchFactor( propWidget, 0 );
 }
 
-void WQtNavGLWidget::setSliderProperty( WPropInt prop )
+void WQtNavGLWidget::removeSliderProperty( boost::shared_ptr< WPropertyBase > prop )
 {
-    m_propWidget = new WPropertyIntWidget( prop, NULL, parentWidget() );
-    m_layout->addWidget( m_propWidget );
-
-    m_layout->setStretchFactor( m_glWidget.get(), 1 );
-    m_layout->setStretchFactor( m_propWidget, 0 );
+    WPropertyIntWidget* propWidget = propertyWidgetMap[prop];
+    m_layout->removeWidget( propWidget );
+    delete propWidget;
+    propertyWidgetMap.erase( prop );
 }
 

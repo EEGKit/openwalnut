@@ -30,7 +30,8 @@
 #include <vector>
 #include "WRecording.h"
 #include "../common/WPrototyped.h"
-#include "../common/math/WPosition.h"
+#include "../common/math/linearAlgebra/WLinearAlgebra.h"
+#include "WExportDataHandler.h"
 
 
 ///======================================
@@ -40,22 +41,22 @@ typedef double WDummyType;
 /**
  * An incomplete implementation to store information about electrodes of EEG data
  */
-class WEEGElectrodeObject
+class OWDATAHANDLER_EXPORT WEEGElectrodeObject // NOLINT
 {
 public:
     /**
      * Contructor taking the position of the elctrode.
      * \param position The position of the electrode in world space.
      */
-    explicit WEEGElectrodeObject( wmath::WPosition position );
+    explicit WEEGElectrodeObject( WPosition position );
 
     /**
      * Returns the position of the electrode.
      */
-    wmath::WPosition getPosition() const;
+    WPosition getPosition() const;
 protected:
 private:
-    wmath::WPosition m_position; //!< Position of the electrode in space
+    WPosition m_position; //!< Position of the electrode in space
     // TODO(wiebel): The following is suggested in the
     // eemagine design document
     // WColor color;
@@ -85,7 +86,7 @@ typedef std::vector< std::pair< std::string, std::string > > WEEGChannelLabels;
  * Contains EEG recording data.
  * \ingroup dataHandler
  */
-class WEEG : public WRecording
+class OWDATAHANDLER_EXPORT WEEG : public WRecording // NOLINT
 {
 public:
 
@@ -139,7 +140,7 @@ public:
      * Return the position of the sensor for a certain channel.
      * \param channelId id of channel beeing inspected.
      */
-    wmath::WPosition getChannelPosition( size_t channelId ) const;
+    WPosition getChannelPosition( size_t channelId ) const;
 
     /**
      * Determines whether this dataset can be used as a texture.
@@ -239,7 +240,7 @@ inline std::string WEEG::getChannelLabel( size_t channelId ) const
     return  m_channelLabels[channelId].first;
 }
 
-inline wmath::WPosition WEEG::getChannelPosition( size_t channelId ) const
+inline WPosition WEEG::getChannelPosition( size_t channelId ) const
 {
     return  m_electrodeLibrary[channelId].getPosition();
 }

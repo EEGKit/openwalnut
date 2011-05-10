@@ -35,8 +35,9 @@ boost::shared_ptr< WPrototyped > WDataSetRawHARDI::m_prototype = boost::shared_p
 
 WDataSetRawHARDI::WDataSetRawHARDI( boost::shared_ptr< WValueSetBase > newValueSet,
                                     boost::shared_ptr< WGrid > newGrid,
-                                    boost::shared_ptr< std::vector< wmath::WVector3D > > newGradients )
-    : WDataSetSingle( newValueSet, newGrid ), m_gradients( newGradients )
+                                    boost::shared_ptr< std::vector< WVector3d > > newGradients,
+                                    double diffusionBValue )
+    : WDataSetSingle( newValueSet, newGrid ), m_gradients( newGradients ), m_diffusionBValue( diffusionBValue )
 {
     WAssert( newValueSet, "No value set given." );
     WAssert( newGrid, "No grid given." );
@@ -54,6 +55,21 @@ WDataSetRawHARDI::~WDataSetRawHARDI()
 {
 }
 
+WDataSetSingle::SPtr WDataSetRawHARDI::clone( boost::shared_ptr< WValueSetBase > newValueSet ) const
+{
+    return WDataSetSingle::SPtr( new WDataSetRawHARDI( newValueSet, getGrid(), m_gradients, getDiffusionBValue() ) );
+}
+
+WDataSetSingle::SPtr WDataSetRawHARDI::clone( boost::shared_ptr< WGrid > newGrid ) const
+{
+    return WDataSetSingle::SPtr( new WDataSetRawHARDI( getValueSet(), newGrid, m_gradients, getDiffusionBValue() ) );
+}
+
+WDataSetSingle::SPtr WDataSetRawHARDI::clone() const
+{
+    return WDataSetSingle::SPtr( new WDataSetRawHARDI( getValueSet(), getGrid(), m_gradients, getDiffusionBValue() ) );
+}
+
 boost::shared_ptr< WPrototyped > WDataSetRawHARDI::getPrototype()
 {
     if ( !m_prototype )
@@ -64,13 +80,23 @@ boost::shared_ptr< WPrototyped > WDataSetRawHARDI::getPrototype()
     return m_prototype;
 }
 
-const wmath::WVector3D& WDataSetRawHARDI::getGradient( size_t index ) const
+const WVector3d& WDataSetRawHARDI::getGradient( size_t index ) const
 {
 #ifdef DEBUG
   return m_gradients->at( index );
 #else
   return (*m_gradients)[ index ];
 #endif
+}
+
+std::vector< WVector3d > const& WDataSetRawHARDI::getOrientations() const
+{
+    return *m_gradients;
+}
+
+double WDataSetRawHARDI::getDiffusionBValue() const
+{
+  return m_diffusionBValue;
 }
 
 std::size_t WDataSetRawHARDI::getNumberOfMeasurements() const

@@ -30,16 +30,17 @@
 
 #include <boost/thread.hpp>
 
-#include "../common/math/WPosition.h"
+#include "../common/math/linearAlgebra/WLinearAlgebra.h"
 #include "WPickHandler.h"
 #include "WGEViewer.h"
 
 #include "WROI.h"
+#include "WExportWGE.h"
 
 /**
  * A box representing a region of interest.
  */
-class WROIBox : public WROI
+class WGE_EXPORT WROIBox : public WROI
 {
 public:
     /**
@@ -47,29 +48,29 @@ public:
      * \param minPos Left, lower, front corner. Minimal x, y and z coordinates.
      * \param maxPos Right, upper, back corner. Maximal x, y and z coordinates.
      */
-    WROIBox(  wmath::WPosition minPos, wmath::WPosition maxPos );
+    WROIBox(  WPosition minPos, WPosition maxPos );
 
     virtual ~WROIBox();
 
     /**
      * Get the corner of the box that has minimal x, y and z values
      */
-    wmath::WPosition getMinPos() const;
+    WPosition getMinPos() const;
 
     /**
      * Get the corner of the box that has maximal x, y and z values
      */
-    wmath::WPosition getMaxPos() const;
+    WPosition getMaxPos() const;
 
     /**
-     * setter
-     * \param color
+     * Setter for standard color
+     * \param color The new color.
      */
     void setColor( osg::Vec4 color );
 
     /**
-     * setter
-     * \param color
+     * Setter for color in negated state
+     * \param color The new color.
      */
     void setNotColor( osg::Vec4 color );
 
@@ -78,12 +79,12 @@ private:
     static size_t maxBoxId; //!< Current maximum boxId over all boxes.
     size_t boxId; //!< Id of the current box.
 
-    wmath::WPosition m_minPos; //!< The minimum position of the box
-    wmath::WPosition m_maxPos; //!< The maximum position of the box
+    WPosition m_minPos; //!< The minimum position of the box
+    WPosition m_maxPos; //!< The maximum position of the box
     bool m_isPicked; //!< Indicates whether the box is currently picked or not.
-    wmath::WPosition m_pickedPosition; //!< Caches the old picked position to a allow for cmoparison
-    wmath::WVector3D m_pickNormal; //!< Store the normal that occured when the pick action was started.
-    std::pair< float, float > m_oldPixelPosition; //!< Caches the old picked position to a allow for cmoparison
+    WPosition m_pickedPosition; //!< Caches the old picked position to a allow for cmoparison
+    WVector3d m_pickNormal; //!< Store the normal that occured when the pick action was started.
+    WVector2d m_oldPixelPosition; //!< Caches the old picked position to a allow for cmoparison
     boost::shared_mutex m_updateLock; //!< Lock to prevent concurrent threads trying to update the osg node
     osg::ref_ptr< osg::Geometry > m_surfaceGeometry; //!< store this pointer for use in updates
 

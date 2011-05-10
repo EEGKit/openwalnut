@@ -27,14 +27,12 @@
 
 #include <utility>
 
+#include "../../common/WBoundingBox.h"
 #include "../../common/math/WMatrix.h"
-#include "../../common/math/WPosition.h"
-#include "../../common/math/WVector3D.h"
+#include "../../common/math/linearAlgebra/WLinearAlgebra.h"
 
 #include "WTalairachConverter.h"
 
-using wmath::WMatrix;
-using wmath::WVector3D;
 
 typedef enum
 {
@@ -57,7 +55,7 @@ public:
      * \param origin offset to point of origin
      * \param scale voxel size
      */
-    WCoordConverter( WMatrix<double> rotMat, WVector3D origin = WVector3D( 0, 0 , 0 ), WVector3D scale = WVector3D( 1.0, 1.0 , 1.0 ) );
+    WCoordConverter( WMatrix<double> rotMat, WVector3d origin = WVector3d( 0, 0 , 0 ), WVector3d scale = WVector3d( 1.0, 1.0 , 1.0 ) );
 
     /**
      * destructor
@@ -71,27 +69,27 @@ public:
      *
      * \return converted vector
      */
-    WVector3D operator()( WVector3D in );
+    WVector3d operator()( WVector3d in );
 
     /**
      * Transforms world coordinates.
      * \param point The point which will be transformed.
      */
-    wmath::WVector3D worldCoordTransformed( wmath::WPosition point );
+    WVector3d worldCoordTransformed( WPosition point );
 
     /**
-     * getter for bounding box
+     * Gets the bounding box
      *
-     * \return the bounding box
+     * \return The axis aligned bounding box
      */
-    std::pair< wmath::WPosition, wmath::WPosition > getBoundingBox();
+    WBoundingBox getBoundingBox();
 
     /**
-     * setter for boundign box of the volume
+     * Sets the bounding box of the volume.
      *
-     * \param boundingBox
+     * \param boundingBox The axis aligned bounding box.
      */
-    void setBoundingBox( std::pair< wmath::WPosition, wmath::WPosition > boundingBox );
+    void setBoundingBox( WBoundingBox boundingBox );
 
     /**
      * setter for coordinate system mode
@@ -131,30 +129,30 @@ public:
     /**
      * transforms a vector from the world coordinate system to the canonical system
      * \param in vector to transform
-     * \return WVector3D the transformed vector
+     * \return WVector3d the transformed vector
      */
-    WVector3D w2c( WVector3D in );
+    WVector3d w2c( WVector3d in );
 
     /**
      * transforms a vector from the  canonical to the world coordinate system system
      * \param in vector to transform
-     * \return WVector3D the transformed vector
+     * \return WVector3d the transformed vector
      */
-    WVector3D c2w( WVector3D in );
+    WVector3d c2w( WVector3d in );
 
     /**
      * transforms a vector from the world coordinate system to the talairach system
      * \param in vector to transform
-     * \return WVector3D the transformed vector
+     * \return WVector3d the transformed vector
      */
-    WVector3D w2t( WVector3D in );
+    WVector3d w2t( WVector3d in );
 
     /**
      * transforms a vector from the canonical system to the world coordinate system
      * \param in vector to transform
-     * \return WVector3D the transformed vector
+     * \return WVector3d the transformed vector
      */
-    WVector3D t2w( WVector3D in );
+    WVector3d t2w( WVector3d in );
 
     /**
      * setter for the talairach converter pointer
@@ -168,16 +166,15 @@ public:
      */
     boost::shared_ptr<WTalairachConverter> getTalairachConverter();
 
-
 protected:
 private:
-    wmath::WMatrix<double> m_rotMat; //!< the rotation matrix to use
+    WMatrix<double> m_rotMat; //!< the rotation matrix to use
 
-    wmath::WVector3D m_origin; //!< the offset to the point of origin
+    WVector3d m_origin; //!< the offset to the point of origin
 
-    wmath::WVector3D m_scale; //!< scaling of voxels
+    WVector3d m_scale; //!< scaling of voxels
 
-    std::pair< wmath::WPosition, wmath::WPosition >m_boundingBox; //!< bounding box of the wholy volume as provided by the dataset
+    WBoundingBox m_boundingBox; //!< bounding box of the wholy volume as provided by the dataset
 
     coordinateSystemMode m_coordinateSystemMode; //!< the currently selected coordinate system mode
 

@@ -25,18 +25,30 @@
 #ifndef WCONDITION_H
 #define WCONDITION_H
 
+#include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 #include <boost/signals2/signal.hpp>
 #include <boost/thread.hpp>
+
+#include "WExportCommon.h"
 
 /**
  * Class to encapsulate boost::condition_variable_any. You may use it to efficiently wait for events (a condition comes true). It
  * is a very simple implementation. It might be extended easily. Timed wait functions and so on.
  */
-class WCondition
+class OWCOMMON_EXPORT WCondition // NOLINT
 {
     friend class WCondition_test;
 public:
+    /**
+     * Shared pointer type for WCondition.
+     */
+    typedef boost::shared_ptr< WCondition > SPtr;
+
+    /**
+     * Const shared pointer type for WCondition.
+     */
+    typedef boost::shared_ptr< const WCondition > ConstSPtr;
 
     /**
      * Default constructor.

@@ -36,6 +36,7 @@
 #include "../common/WSharedSequenceContainer.h"
 
 #include "WDataSet.h"
+#include "WExportDataHandler.h"
 
 class WSubject;
 
@@ -46,7 +47,7 @@ class WSubject;
  *
  * \ingroup dataHandler
  */
-class WDataHandler
+class OWDATAHANDLER_EXPORT WDataHandler // NOLINT
 {
 /**
  * Only UnitTests may be friends.
@@ -63,7 +64,7 @@ public:
     /**
      * The alias for a shared container.
      */
-    typedef WSharedSequenceContainer< boost::shared_ptr< WSubject >, SubjectContainerType > SubjectSharedContainerType;
+    typedef WSharedSequenceContainer< SubjectContainerType > SubjectSharedContainerType;
 
     /**
      * Iterator for subjects.
@@ -91,24 +92,6 @@ public:
      * \return the instance.
      */
     static boost::shared_ptr< WDataHandler > getDataHandler();
-
-    // TODO(all): the following two methods are only useful with our current single-subject stuff. You should consider redesigning
-    // it in conjunction with the multi subject stuff.
-    /**
-     * Register a dataset to the "UNKNOWN" subject. This is a convenience class which is useful as long as we do not have proper
-     * multi subject facilities.
-     *
-     * \param dataset the dataset to register.
-     */
-    static void registerDataSet( boost::shared_ptr< WDataSet > dataset );
-
-    /**
-     * Deregister a dataset to the "UNKNOWN" subject. This is a convenience class which is useful as long as we do not have proper
-     * multi subject facilities.
-     *
-     * \param dataset the dataset to deregister.
-     */
-    static void deregisterDataSet( boost::shared_ptr< WDataSet > dataset );
 
     /**
      * Insert a new subject referenced by a pointer.

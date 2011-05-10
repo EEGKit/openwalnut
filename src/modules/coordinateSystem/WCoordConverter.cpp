@@ -24,14 +24,13 @@
 
 #include <utility>
 
+#include "../../common/WBoundingBox.h"
 #include "../../common/math/WLinearAlgebraFunctions.h"
 
 #include "WCoordConverter.h"
 
-using wmath::WMatrix;
-using wmath::WVector3D;
 
-WCoordConverter::WCoordConverter( WMatrix<double> rotMat, WVector3D origin, WVector3D scale ) :
+WCoordConverter::WCoordConverter( WMatrix<double> rotMat, WVector3d origin, WVector3d scale ) :
     m_rotMat( rotMat ),
     m_origin( origin ),
     m_scale( scale ),
@@ -43,25 +42,25 @@ WCoordConverter::~WCoordConverter()
 {
 }
 
-WVector3D WCoordConverter::operator()( WVector3D in )
+WVector3d WCoordConverter::operator()( WVector3d in )
 {
-    WVector3D out( in );
+    WVector3d out( in );
     return out;
 }
 
-std::pair< wmath::WPosition, wmath::WPosition > WCoordConverter::getBoundingBox()
+WBoundingBox WCoordConverter::getBoundingBox()
 {
     return m_boundingBox;
 }
 
-void WCoordConverter::setBoundingBox( std::pair< wmath::WPosition, wmath::WPosition > boundingBox )
+void WCoordConverter::setBoundingBox( WBoundingBox boundingBox )
 {
     m_boundingBox = boundingBox;
 }
 
-wmath::WVector3D WCoordConverter::worldCoordTransformed( wmath::WPosition point )
+WVector3d WCoordConverter::worldCoordTransformed( WPosition point )
 {
-    wmath::WVector3D r( wmath::transformPosition3DWithMatrix4D( m_rotMat, point ) );
+    WVector3d r( transformPosition3DWithMatrix4D( m_rotMat, point ) );
     return r;
 }
 
@@ -83,11 +82,11 @@ int WCoordConverter::numberToCsX( int number )
             return number;
             break;
         case CS_CANONICAL:
-            return static_cast<int>( m_boundingBox.second[0] - number );
+            return static_cast<int>( m_boundingBox.xMax() - number );
             break;
         case CS_TALAIRACH:
         {
-            WVector3D tmp( number, 0.0, 0.0 );
+            WVector3d tmp( number, 0.0, 0.0 );
             return static_cast<int>( w2t( tmp )[1] + 0.5 );
         }
             break;
@@ -105,11 +104,11 @@ int WCoordConverter::numberToCsY( int number )
             return number;
             break;
         case CS_CANONICAL:
-            return static_cast<int>( number - m_boundingBox.first[1] );
+            return static_cast<int>( number - m_boundingBox.yMin() );
             break;
         case CS_TALAIRACH:
         {
-            WVector3D tmp( 0.0, number, 0.0 );
+            WVector3d tmp( 0.0, number, 0.0 );
             return static_cast<int>( w2t( tmp )[0] + 0.5 );
         }
             break;
@@ -127,11 +126,11 @@ int WCoordConverter::numberToCsZ( int number )
             return number;
             break;
         case CS_CANONICAL:
-            return static_cast<int>( number - m_boundingBox.first[2] );
+            return static_cast<int>( number - m_boundingBox.zMin() );
             break;
         case CS_TALAIRACH:
         {
-            WVector3D tmp( 0.0, 0.0, number );
+            WVector3d tmp( 0.0, 0.0, number );
             return static_cast<int>( w2t( tmp )[2] + 0.5 );
         }
             break;
@@ -151,23 +150,23 @@ boost::shared_ptr<WTalairachConverter> WCoordConverter::getTalairachConverter()
     return m_talairachConverter;
 }
 
-WVector3D WCoordConverter::w2c( WVector3D in )
+WVector3d WCoordConverter::w2c( WVector3d in )
 {
-    return WVector3D( in[1], m_boundingBox.second[0] - in[0], in[2] );
+    return WVector3d( in[1], m_boundingBox.xMax() - in[0], in[2] );
 }
 
-WVector3D WCoordConverter::c2w( WVector3D in )
+WVector3d WCoordConverter::c2w( WVector3d in )
 {
-    return WVector3D( m_boundingBox.second[0] - in[1], in[0] , in[2] );
+    return WVector3d( m_boundingBox.xMax() - in[1], in[0] , in[2] );
 }
 
 
-WVector3D WCoordConverter::w2t( WVector3D in )
+WVector3d WCoordConverter::w2t( WVector3d in )
 {
     return m_talairachConverter->Canonical2Talairach( w2c( in ) );
 }
 
-WVector3D WCoordConverter::t2w( WVector3D in )
+WVector3d WCoordConverter::t2w( WVector3d in )
 {
     return c2w( m_talairachConverter->ACPC2Canonical( m_talairachConverter->Talairach2ACPC( in ) ) );
 }

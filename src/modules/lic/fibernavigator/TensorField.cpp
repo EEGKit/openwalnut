@@ -11,7 +11,7 @@
 #include "TensorField.h"
 #include "../fantom/FVector.h"
 #include "../../../common/WAssert.h"
-#include "../../../common/math/WPosition.h"
+#include "../../../common/math/linearAlgebra/WLinearAlgebra.h"
 #include "../../../dataHandler/WDataSetVector.h"
 #include "../../../dataHandler/WGridRegular3D.h"
 
@@ -48,9 +48,10 @@ FTensor TensorField::getInterpolatedVector(float x, float y, float z)
     WAssert( grid,  "This data set has a grid whose type is not yet supported for interpolation." );
     WAssert( ( m_vectors->getValueSet()->order() == 1 &&  m_vectors->getValueSet()->dimension() == 3 ),
              "Only implemented for 3D Vectors so far." );
-    wmath::WPosition pos( x, y, z );
+    WPosition pos( x, y, z );
     WAssert( grid->encloses( pos ), "Grid does not enclose position to interpolate" );
-    std::vector< size_t > vertexIds = grid->getCellVertexIds( grid->getCellId( pos ) );
+    bool isInside = true; // TODO(all): check for isInside here. How will we handle it?
+    std::vector< size_t > vertexIds = grid->getCellVertexIds( grid->getCellId( pos, &isInside ) );
 
     float xMult = x - (int)x;
     float yMult = y - (int)y;

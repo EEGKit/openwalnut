@@ -31,7 +31,6 @@
 
 #include "../WValue.h"
 
-using wmath::WValue;
 
 /**
  * Testsuite for WValue.
@@ -642,6 +641,30 @@ public:
         std::stringstream ss;
         ss << val;
         TS_ASSERT_EQUALS( ss.str(), expected );
+    }
+
+    /**
+     * Test the mean calculation.
+     */
+    void testMean( void )
+    {
+        WValue< double > val( 3 );
+        val[0] = 1.0;
+        val[1] = 2.0;
+        val[2] = 3.0;
+        TS_ASSERT_EQUALS( val.mean(), 2.0 );
+    }
+
+    /**
+     * Test the median calculation.
+     */
+    void testMedian( void )
+    {
+        WValue< double > val( 3 );
+        val[0] = 1.0;
+        val[1] = 2.0;
+        val[2] = 3.0;
+        TS_ASSERT_EQUALS( val.mean(), 2.0 );
     }
 };
 

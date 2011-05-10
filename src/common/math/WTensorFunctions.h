@@ -25,18 +25,60 @@
 #ifndef WTENSORFUNCTIONS_H
 #define WTENSORFUNCTIONS_H
 
-#include <vector>
+#include <algorithm>
 #include <cmath>
+#include <complex>
+#include <iostream>
+#include <utility>
+#include <vector>
 
-#include "WVector3D.h"
-#include "WTensor.h"
-#include "WTensorSym.h"
-#include "WCompileTimeFunctions.h"
+#include <boost/array.hpp>
+
 #include "../WAssert.h"
 #include "../WLimits.h"
+#include "WCompileTimeFunctions.h"
+#include "WTensor.h"
+#include "WTensorSym.h"
+#include "linearAlgebra/WLinearAlgebra.h"
 
-namespace wmath
+/**
+ * An eigensystem has all eigenvalues as well as its corresponding eigenvectors. A RealEigenSystem is an EigenSystem where all
+ * eigenvalues are real and not complex.
+ */
+typedef boost::array< std::pair< double, WVector3d >, 3 > RealEigenSystem;
+
+/**
+ * An eigensystem has all eigenvalues as well its corresponding eigenvectors.
+ */
+typedef boost::array< std::pair< std::complex< double >, WVector3d >, 3 > EigenSystem;
+
+std::ostream& operator<<( std::ostream& os, const RealEigenSystem& sys )
 {
+    os << sys[0].first << ", " << sys[0].second << std::endl;
+    os << sys[1].first << ", " << sys[1].second << std::endl;
+    os << sys[2].first << ", " << sys[2].second << std::endl;
+    return os;
+}
+
+namespace
+{
+    void sortRealEigenSystem( RealEigenSystem* es )
+    {
+        if( ( *es )[0].first > ( *es )[2].first )
+        {
+            std::swap( ( *es )[0], ( *es )[2] );
+        }
+        if( ( *es )[0].first > ( *es )[1].first )
+        {
+            std::swap( ( *es )[0], ( *es )[1] );
+        }
+        if( ( *es )[1].first > ( *es )[2].first )
+        {
+            std::swap( ( *es )[1], ( *es )[2] );
+        }
+    }
+}
+
 /**
  * Compute all eigenvalues as well as the corresponding eigenvectors of a
  * symmetric real Matrix.
@@ -44,14 +86,12 @@ namespace wmath
  * \note Data_T must be castable to double.
  *
  * \param[in] mat A real symmetric matrix.
- * \param[out] eigenValues A pointer to a vector of eigenvalues.
- * \param[out] eigenVectors A pointer to a vector of eigenvectors.
+ * \param[out] RealEigenSystem A pointer to an RealEigenSystem.
  */
 template< typename Data_T >
-void jacobiEigenvector3D( WTensorSym< 2, 3, Data_T > const& mat,
-                          std::vector< Data_T >* eigenValues,
-                          std::vector< WVector3D >* eigenVectors )
+void jacobiEigenvector3D( WTensorSym< 2, 3, Data_T > const& mat, RealEigenSystem* es )
 {
+    RealEigenSystem& result = *es; // alias for the result
     WTensorSym< 2, 3, Data_T > in( mat );
     WTensor< 2, 3, Data_T > ev;
     ev( 0, 0 ) = ev( 1, 1 ) = ev( 2, 2 ) = 1.0;
@@ -74,16 +114,19 @@ void jacobiEigenvector3D( WTensorSym< 2, 3, Data_T > const& mat,
             }
         }
 
-        if( fabs( in( p, q ) ) == 0.0 )
+        // Note: If all non diagonal elements sum up to nearly zero, we may quit already!
+        // Thereby the chosen threshold 1.0e-50 was taken arbitrarily and is just a guess.
+        if( std::abs( in( 0, 1 ) ) + std::abs( in( 0, 2 ) ) + std::abs( in( 1, 2 ) ) < 1.0e-50 )
         {
             for( int i = 0; i < 3; ++i )
             {
-                eigenValues->at( i ) = in( i, i );
+                result[i].first = in( i, i );
                 for( int j = 0; j < 3; ++j )
                 {
-                    eigenVectors->at( i )[ j ] = static_cast< double >( ev( j, i ) );
+                    result[i].second[j] = static_cast< double >( ev( j, i ) );
                 }
             }
+            sortRealEigenSystem( es );
             return;
         }
 
@@ -119,7 +162,6 @@ void jacobiEigenvector3D( WTensorSym< 2, 3, Data_T > const& mat,
         {
             ++k;
         }
-        WAssert( k < 3, "" );
 
         Data_T u = ( 1.0 - c ) / s;
 
@@ -151,10 +193,10 @@ void jacobiEigenvector3D( WTensorSym< 2, 3, Data_T > const& mat,
 
 /**
  * Calculate eigenvectors via the characteristic polynomial. This is essentially the same
- * function as in the gpu glyph shaders. This is for 3 dimensions only.
+ * function as in the GPU glyph shaders. This is for 3 dimensions only.
  *
  * \param m The symmetric matrix to calculate the eigenvalues from.
- * \return A std::vector of 3 eigenvalues in descending order.
+ * \return A std::vector of 3 eigenvalues in descending order (of their magnitude).
  */
 std::vector< double > getEigenvaluesCardano( WTensorSym< 2, 3 > const& m );
 
@@ -194,7 +236,62 @@ WTensor< 2, dim, Data_T > operator * ( TensorType1< 2, dim, Data_T > const& one,
     return res;
 }
 
-// do not implement operator + here, a class member implementation should be faster
-} // namespace wmath
+/**
+ * Evaluate a spherical function represented by a symmetric 4th-order tensor for a given gradient.
+ *
+ * \tparam Data_T The integral type used to store the tensor elements.
+ *
+ * \param tens The tensor representing the spherical function.
+ * \param gradient The normalized vector that represents the gradient direction.
+ *
+ * \note If the gradient is not normalized, the result is undefined.
+ */
+template< typename Data_T >
+double evaluateSphericalFunction( WTensorSym< 4, 3, Data_T > const& tens, WVector3d const& gradient )
+{
+    // use symmetry to reduce computation overhead
+    // temporaries for some of the gradient element multiplications could further reduce
+    // computation time
+    return gradient[ 0 ] * gradient[ 0 ] * gradient[ 0 ] * gradient[ 0 ] * tens( 0, 0, 0, 0 )
+         + gradient[ 1 ] * gradient[ 1 ] * gradient[ 1 ] * gradient[ 1 ] * tens( 1, 1, 1, 1 )
+         + gradient[ 2 ] * gradient[ 2 ] * gradient[ 2 ] * gradient[ 2 ] * tens( 2, 2, 2, 2 )
+         + static_cast< Data_T >( 4 ) *
+         ( gradient[ 0 ] * gradient[ 0 ] * gradient[ 0 ] * gradient[ 1 ] * tens( 0, 0, 0, 1 )
+         + gradient[ 0 ] * gradient[ 0 ] * gradient[ 0 ] * gradient[ 2 ] * tens( 0, 0, 0, 2 )
+         + gradient[ 1 ] * gradient[ 1 ] * gradient[ 1 ] * gradient[ 0 ] * tens( 1, 1, 1, 0 )
+         + gradient[ 2 ] * gradient[ 2 ] * gradient[ 2 ] * gradient[ 0 ] * tens( 2, 2, 2, 0 )
+         + gradient[ 1 ] * gradient[ 1 ] * gradient[ 1 ] * gradient[ 2 ] * tens( 1, 1, 1, 2 )
+         + gradient[ 2 ] * gradient[ 2 ] * gradient[ 2 ] * gradient[ 1 ] * tens( 2, 2, 2, 1 ) )
+         + static_cast< Data_T >( 12 ) *
+         ( gradient[ 2 ] * gradient[ 1 ] * gradient[ 0 ] * gradient[ 0 ] * tens( 2, 1, 0, 0 )
+         + gradient[ 0 ] * gradient[ 2 ] * gradient[ 1 ] * gradient[ 1 ] * tens( 0, 2, 1, 1 )
+         + gradient[ 0 ] * gradient[ 1 ] * gradient[ 2 ] * gradient[ 2 ] * tens( 0, 1, 2, 2 ) )
+         + static_cast< Data_T >( 6 ) *
+         ( gradient[ 0 ] * gradient[ 0 ] * gradient[ 1 ] * gradient[ 1 ] * tens( 0, 0, 1, 1 )
+         + gradient[ 0 ] * gradient[ 0 ] * gradient[ 2 ] * gradient[ 2 ] * tens( 0, 0, 2, 2 )
+         + gradient[ 1 ] * gradient[ 1 ] * gradient[ 2 ] * gradient[ 2 ] * tens( 1, 1, 2, 2 ) );
+}
+
+/**
+ * Evaluate a spherical function represented by a symmetric 2nd-order tensor for a given gradient.
+ *
+ * \tparam Data_T The integral type used to store the tensor elements.
+ *
+ * \param tens The tensor representing the spherical function.
+ * \param gradient The normalized vector that represents the gradient direction.
+ *
+ * \note If the gradient is not normalized, the result is undefined.
+ */
+template< typename Data_T >
+double evaluateSphericalFunction( WTensorSym< 2, 3, Data_T > const& tens, WVector3d const& gradient )
+{
+    return gradient[ 0 ] * gradient[ 0 ] * tens( 0, 0 )
+         + gradient[ 1 ] * gradient[ 1 ] * tens( 1, 1 )
+         + gradient[ 2 ] * gradient[ 2 ] * tens( 2, 2 )
+         + static_cast< Data_T >( 2 ) *
+         ( gradient[ 0 ] * gradient[ 1 ] * tens( 0, 1 )
+         + gradient[ 0 ] * gradient[ 2 ] * tens( 0, 2 )
+         + gradient[ 1 ] * gradient[ 2 ] * tens( 1, 2 ) );
+}
 
 #endif  // WTENSORFUNCTIONS_H

@@ -25,6 +25,10 @@
 #include <list>
 #include <string>
 
+// Use filesystem version 2 for compatibility with newer boost versions.
+#ifndef BOOST_FILESYSTEM_VERSION
+    #define BOOST_FILESYSTEM_VERSION 2
+#endif
 #include <boost/filesystem.hpp>
 
 #include "exceptions/WPropertyNameMalformed.h"
@@ -45,8 +49,8 @@ WPropertyBase::WPropertyBase( std::string name, std::string description ):
     // check name validity
     if ( ( m_name.find( std::string( "/" ) ) != std::string::npos ) || m_name.empty() )
     {
-        throw WPropertyNameMalformed( "Property name \"" + name +
-                                      "\" is malformed. Do not use slashes (\"/\") or empty strings in property names." );
+        throw WPropertyNameMalformed( std::string( "Property name \"" + name +
+                                      "\" is malformed. Do not use slashes (\"/\") or empty strings in property names." ) );
     }
 }
 
@@ -154,6 +158,11 @@ WPropPosition WPropertyBase::toPropPosition()
 WPropGroup WPropertyBase::toPropGroup()
 {
     return boost::shared_static_cast< WPVGroup >( shared_from_this() );
+}
+
+WPropMatrix4X4 WPropertyBase::toPropMatrix4X4()
+{
+    return boost::shared_static_cast< WPVMatrix4X4 >( shared_from_this() );
 }
 
 WPropTrigger WPropertyBase::toPropTrigger()

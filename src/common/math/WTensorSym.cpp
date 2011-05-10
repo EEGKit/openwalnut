@@ -22,5 +22,15 @@
 //
 //---------------------------------------------------------------------------
 
-
+#include "../exceptions/WPreconditionNotMet.h"
+#include "WMath.h"
 #include "WTensorSym.h"
+
+std::size_t calcSupersymmetricTensorMultiplicity( std::size_t order, std::size_t numZeros, std::size_t numOnes, std::size_t numTwos )
+{
+    WPrecondEquals( order, numZeros + numOnes + numTwos );
+    return factorial( order )
+       / ( factorial( numZeros )
+         * factorial( numOnes )
+         * factorial( numTwos ) );
+}

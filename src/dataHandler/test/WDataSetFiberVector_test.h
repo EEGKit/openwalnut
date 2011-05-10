@@ -31,7 +31,7 @@
 #include <cxxtest/TestSuite.h>
 
 #include "../WDataSetFiberVector.h"
-#include "../../common/math/WPosition.h"
+#include "../../common/math/linearAlgebra/WLinearAlgebra.h"
 
 /**
  * Unit tests our fiber dataset class
@@ -44,8 +44,6 @@ public:
      */
     void setUp( void )
     {
-        using wmath::WPosition;
-        using wmath::WFiber;
         using std::vector;
         m_somefibs = boost::shared_ptr< vector< WFiber > >( new vector< WFiber > );
         vector< WPosition > points;
@@ -62,8 +60,6 @@ public:
      */
     void testBasicAccessAndCreation( void )
     {
-        using wmath::WPosition;
-        using wmath::WFiber;
         std::vector< WPosition > points;
         points.push_back( WPosition( 0., 0., 1. ) );
         points.push_back( WPosition( 0., 0., 2. ) );
@@ -73,7 +69,7 @@ public:
         TS_ASSERT_EQUALS( d[2], expected );
     }
 private:
-    boost::shared_ptr< std::vector< wmath::WFiber > > m_somefibs; //!< Default fiber dataset
+    boost::shared_ptr< std::vector< WFiber > > m_somefibs; //!< Default fiber dataset
 };
 
 #endif  // WDATASETFIBERVECTOR_TEST_H

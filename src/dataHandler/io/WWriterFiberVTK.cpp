@@ -25,6 +25,10 @@
 #include <fstream>
 #include <string>
 
+// Use filesystem version 2 for compatibility with newer boost versions.
+#ifndef BOOST_FILESYSTEM_VERSION
+    #define BOOST_FILESYSTEM_VERSION 2
+#endif
 #include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -38,6 +42,10 @@ WWriterFiberVTK::WWriterFiberVTK( const boost::filesystem::path& path, bool over
     : WWriter( path.file_string(), overwrite )
 {
 }
+void WWriterFiberVTK::writeFibs( boost::shared_ptr< const WDataSetFibers > fiberDS ) const
+{
+    writeFibs( boost::shared_ptr< WDataSetFiberVector >( new WDataSetFiberVector( fiberDS ) ) );
+}
 
 void WWriterFiberVTK::writeFibs( boost::shared_ptr< const WDataSetFiberVector > fiberDS ) const
 {
@@ -45,19 +53,22 @@ void WWriterFiberVTK::writeFibs( boost::shared_ptr< const WDataSetFiberVector > 
     fstream out( m_fname.c_str(), fstream::out | fstream::in | fstream::trunc );
     if( !out || out.bad() )
     {
-        throw WDHIOFailure( "Invalid file, or permission: " + m_fname );
+        throw WDHIOFailure( std::string( "Invalid file, or permission: " + m_fname ) );
     }
-    out << "# vtk DataFile Version 3.0" << std::endl;
-    out << "Fibers from OpenWalnut" << std::endl;
-    out << "BINARY" << std::endl;
-    out << "DATASET POLYDATA" << std::endl;
+    // We use '\n' as line delimiter so also files written under windows (having '\r\n' as delimtier) may be read anywhere
+    char lineDelimiter = '\n';
+
+    out << "# vtk DataFile Version 3.0" << lineDelimiter;
+    out << "Fibers from OpenWalnut" << lineDelimiter;
+    out << "BINARY" << lineDelimiter;
+    out << "DATASET POLYDATA" << lineDelimiter;
     unsigned int numPoints = 0;
     unsigned int numLines = fiberDS->size();
     for( size_t i = 0; i < fiberDS->size(); ++i )
     {
         numPoints += (*fiberDS)[i].size();
     }
-    out << "POINTS " << numPoints << " float" << std::endl;
+    out << "POINTS " << numPoints << " float" << lineDelimiter;
     unsigned int *rawLineData = new unsigned int[numPoints + numLines];
     float *rawPointData = new float[numPoints * 3];
 
@@ -65,11 +76,11 @@ void WWriterFiberVTK::writeFibs( boost::shared_ptr< const WDataSetFiberVector > 
     unsigned int lnsPosOffset = 0;
     for( size_t i = 0; i < fiberDS->size(); ++i )
     {
-        const wmath::WFiber &fib = (*fiberDS)[i];
+        const WFiber &fib = (*fiberDS)[i];
         rawLineData[lnsPosOffset++] = static_cast< unsigned int >( fib.size() );
         for( size_t j = 0; j < fib.size(); ++j )
         {
-            const wmath::WPosition &point = fib[j];
+            const WPosition &point = fib[j];
             WAssert( pntPosOffset % 3 == 0, "(pOff % 3) was not equal to 0" );
             WAssert( pntPosOffset / 3 < numPoints, "pntPosOffset is to large." );
             rawLineData[lnsPosOffset++] = static_cast< unsigned int >( pntPosOffset / 3 );
@@ -79,12 +90,12 @@ void WWriterFiberVTK::writeFibs( boost::shared_ptr< const WDataSetFiberVector > 
             WAssert( pntPosOffset < ( ( numPoints * 3 ) + 1 ), "pOff < #pts" );
         }
     }
-    wiotools::switchByteOrderOfArray< float >( rawPointData, numPoints * 3 );
-    wiotools::switchByteOrderOfArray< unsigned int >( rawLineData, numLines + numPoints );
+    switchByteOrderOfArray< float >( rawPointData, numPoints * 3 );
+    switchByteOrderOfArray< unsigned int >( rawLineData, numLines + numPoints );
     out.write( reinterpret_cast< char* >( rawPointData ), sizeof( float ) * numPoints * 3 );
-    out << std::endl;
-    out << "LINES " << numLines << " " << numPoints + numLines << std::endl;
+    out << lineDelimiter;
+    out << "LINES " << numLines << " " << numPoints + numLines << lineDelimiter;
     out.write( reinterpret_cast< char* >( rawLineData ), sizeof( unsigned int ) * ( numPoints + numLines ) );
-    out << std::endl;
+    out << lineDelimiter;
     out.close();
 }

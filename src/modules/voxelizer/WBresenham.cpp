@@ -28,10 +28,12 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include "../../dataHandler/WGridRegular3D.h"
 #include "../../common/math/WLine.h"
-#include "../../common/math/WPosition.h"
+#include "../../common/math/linearAlgebra/WLinearAlgebra.h"
 #include "../../common/math/WValue.h"
+#include "../../common/WAssert.h"
+#include "../../common/WLogger.h"
+#include "../../dataHandler/WGridRegular3D.h"
 #include "WBresenham.h"
 
 WBresenham::WBresenham( boost::shared_ptr< WGridRegular3D > grid, bool antialiased )
@@ -44,14 +46,17 @@ WBresenham::~WBresenham()
 {
 }
 
-void WBresenham::raster( const wmath::WLine& line )
+void WBresenham::raster( const WLine& line )
 {
     // lock the parameterization list for reading
     boost::shared_lock< boost::shared_mutex > lock =  boost::shared_lock< boost::shared_mutex >( m_parameterizationsLock );
 
     newLine( line );
 
-    assert( line.size() > 1 );
+    if( line.size() < 1 )
+    {
+        wlog::debug( "WBresenham" ) << "Tried to raster an empty line!, skipped.";
+    }
     for( size_t i = 1; i < line.size(); ++i )
     {
         newSegment( line[i-1], line[i] );
@@ -61,11 +66,11 @@ void WBresenham::raster( const wmath::WLine& line )
     lock.unlock();
 }
 
-void WBresenham::rasterSegment( const wmath::WPosition& start, const wmath::WPosition& end )
+void WBresenham::rasterSegment( const WPosition& start, const WPosition& end )
 {
     int i;
-    wmath::WValue< int > gridStartPos = m_grid->getVoxelCoord( start );
-    wmath::WValue< int > gridEndPos = m_grid->getVoxelCoord( end );
+    WValue< int > gridStartPos = m_grid->getVoxelCoord( start );
+    WValue< int > gridEndPos = m_grid->getVoxelCoord( end );
     int dx = gridEndPos[0] - gridStartPos[0];
     int dy = gridEndPos[1] - gridStartPos[1];
     int dz = gridEndPos[2] - gridStartPos[2];
@@ -79,7 +84,7 @@ void WBresenham::rasterSegment( const wmath::WPosition& start, const wmath::WPos
     int dx2 = l << 1;
     int dy2 = m << 1;
     int dz2 = n << 1;
-    wmath::WValue< int > voxel = gridStartPos;
+    WValue< int > voxel = gridStartPos;
 
     if( ( l >= m ) && ( l >= n ) )
     {
@@ -152,13 +157,13 @@ void WBresenham::rasterSegment( const wmath::WPosition& start, const wmath::WPos
 }
 
 std::vector< double > WBresenham::computeDistances( const size_t voxelNum,
-                                                    const wmath::WPosition& start,
-                                                    const wmath::WPosition& end ) const
+                                                    const WPosition& start,
+                                                    const WPosition& end ) const
 {
-    wmath::WPosition u = end - start;
-    u.normalize();
+    WPosition u = end - start;
+    u = normalize( u );
 
-    std::vector< wmath::WPosition > x;
+    std::vector< WPosition > x;
     x.reserve( 7 );
     x.push_back( m_grid->getPosition( voxelNum ) - start );
     x.push_back( m_grid->getPosition( voxelNum + 1 ) - start );
@@ -174,13 +179,19 @@ std::vector< double > WBresenham::computeDistances( const size_t voxelNum,
     // now calculate distance from x to the line given via start and end
     for( size_t i = 0; i < x.size(); ++i )
     {
-        wmath::WPosition lot = u.dotProduct( x[i] ) * u; // lot == perpendicular
-        result.push_back( std::abs( ( x[i] - lot ).norm() ) );
+        WPosition lot = dot( u, x[i] ) * u; // lot == perpendicular
+        result.push_back( std::abs( length( x[i] - lot ) ) );
     }
     return result;
 }
 
-void WBresenham::markVoxel( const wmath::WValue< int >& voxel, const int axis, const wmath::WPosition& start, const wmath::WPosition& end )
+double WBresenham::composeValue( double newValue, double existingValue ) const
+{
+    return std::max( newValue, existingValue );
+    // return newValue + existingValue;
+}
+
+void WBresenham::markVoxel( const WValue< int >& voxel, const int axis, const WPosition& start, const WPosition& end )
 {
     size_t nbX  = m_grid->getNbCoordsX();
     size_t nbXY = m_grid->getNbCoordsX() * m_grid->getNbCoordsY();
@@ -193,7 +204,7 @@ void WBresenham::markVoxel( const wmath::WValue< int >& voxel, const int axis, c
     if( m_antialiased )
     {
         distances = computeDistances( idx, start, end );
-        m_values[ idx ] = filter( distances[0] );
+        m_values[ idx ] = composeValue( filter( distances[0] ), m_values[ idx ] );
         parameterizeVoxel( voxel, idx, axis, m_values[ idx ], start, end );
     }
     else
@@ -224,14 +235,14 @@ void WBresenham::markVoxel( const wmath::WValue< int >& voxel, const int axis, c
         return;
     }
 
-    assert( distances.size() == 7 );
+    WAssert( distances.size() == 7, "There is an invalid number of precomputed antialiased voxels" );
     switch( axis )
     {
         case 0 :
-                m_values[ idx + nbX ] = std::max( filter( distances[3] ), m_values[ idx + nbX ] );
-                m_values[ idx - nbX ] = std::max( filter( distances[4] ), m_values[ idx - nbX ] );
-                m_values[ idx + nbXY ] = std::max( filter( distances[5] ), m_values[ idx + nbXY ] );
-                m_values[ idx - nbXY ] = std::max( filter( distances[6] ), m_values[ idx - nbXY ] );
+                m_values[ idx + nbX ] = composeValue( filter( distances[3] ), m_values[ idx + nbX ] );
+                m_values[ idx - nbX ] = composeValue( filter( distances[4] ), m_values[ idx - nbX ] );
+                m_values[ idx + nbXY ] = composeValue( filter( distances[5] ), m_values[ idx + nbXY ] );
+                m_values[ idx - nbXY ] = composeValue( filter( distances[6] ), m_values[ idx - nbXY ] );
 
                 parameterizeVoxel( voxel, idx + nbX, axis, m_values[ idx + nbX ], start, end );
                 parameterizeVoxel( voxel, idx - nbX, axis, m_values[ idx - nbX ], start, end );
@@ -240,10 +251,10 @@ void WBresenham::markVoxel( const wmath::WValue< int >& voxel, const int axis, c
 
                 break;
         case 1 :
-                m_values[ idx + 1 ] = std::max( filter( distances[1] ), m_values[ idx + 1 ] );
-                m_values[ idx - 1 ] = std::max( filter( distances[2] ), m_values[ idx - 1 ] );
-                m_values[ idx + nbXY ] = std::max( filter( distances[5] ), m_values[ idx + nbXY ] );
-                m_values[ idx - nbXY ] = std::max( filter( distances[6] ), m_values[ idx - nbXY ] );
+                m_values[ idx + 1 ] = composeValue( filter( distances[1] ), m_values[ idx + 1 ] );
+                m_values[ idx - 1 ] = composeValue( filter( distances[2] ), m_values[ idx - 1 ] );
+                m_values[ idx + nbXY ] = composeValue( filter( distances[5] ), m_values[ idx + nbXY ] );
+                m_values[ idx - nbXY ] = composeValue( filter( distances[6] ), m_values[ idx - nbXY ] );
 
                 parameterizeVoxel( voxel, idx + 1, axis, m_values[ idx + 1 ], start, end );
                 parameterizeVoxel( voxel, idx - 1, axis, m_values[ idx - 1 ], start, end );
@@ -252,24 +263,23 @@ void WBresenham::markVoxel( const wmath::WValue< int >& voxel, const int axis, c
 
                 break;
         case 2 :
-                m_values[ idx + 1 ] = std::max( filter( distances[1] ), m_values[ idx + 1 ] );
-                m_values[ idx - 1 ] = std::max( filter( distances[2] ), m_values[ idx - 1 ] );
-                m_values[ idx + nbX ] = std::max( filter( distances[3] ), m_values[ idx + nbX ] );
-                m_values[ idx - nbX ] = std::max( filter( distances[4] ), m_values[ idx - nbX ] );
-
+                m_values[ idx + 1 ] = composeValue( filter( distances[1] ), m_values[ idx + 1 ] );
+                m_values[ idx - 1 ] = composeValue( filter( distances[2] ), m_values[ idx - 1 ] );
+                m_values[ idx + nbX ] = composeValue( filter( distances[3] ), m_values[ idx + nbX ] );
+                m_values[ idx - nbX ] = composeValue( filter( distances[4] ), m_values[ idx - nbX ] );
                 parameterizeVoxel( voxel, idx + 1, axis, m_values[ idx + 1 ], start, end );
                 parameterizeVoxel( voxel, idx - 1, axis, m_values[ idx - 1 ], start, end );
                 parameterizeVoxel( voxel, idx + nbX, axis, m_values[ idx + nbX ], start, end );
                 parameterizeVoxel( voxel, idx - nbX, axis, m_values[ idx - nbX ], start, end );
 
                 break;
-        default : assert( 0 && "Invalid axis selected for marking a voxel" );
+        default : WAssert( 0, "Invalid axis selected for marking a voxel" );
     }
 }
 
 double WBresenham::filter( const double distance ) const
 {
-    assert( distance >= 0 && "Negative distances are forbidden" );
+    WAssert( distance >= 0, "Negative distances are forbidden" );
     if( distance > 1 )
     {
         return 0.0;

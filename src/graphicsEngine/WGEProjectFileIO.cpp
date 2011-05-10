@@ -32,6 +32,7 @@
 
 #include "../common/WLogger.h"
 #include "WGraphicsEngine.h"
+#include "WGEViewer.h"
 
 #include "WGEProjectFileIO.h"
 
@@ -232,7 +233,6 @@ void WGEProjectFileIO::save( std::ostream& output ) // NOLINT
               std::endl;
 
     // grab the main camera
-    // TODO(ebaum): extend to all views
     osg::ref_ptr< osg::Camera > cam = WGraphicsEngine::getGraphicsEngine()->getViewer()->getCamera();
     osg::ref_ptr< osgGA::MatrixManipulator > mani = WGraphicsEngine::getGraphicsEngine()->getViewer()->getCameraManipulator();
     std::string name = WGraphicsEngine::getGraphicsEngine()->getViewer()->getName();

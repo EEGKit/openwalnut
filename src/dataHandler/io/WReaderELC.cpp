@@ -32,7 +32,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
 
-#include "../../common/math/WPosition.h"
+#include "../../common/math/linearAlgebra/WLinearAlgebra.h"
 #include "../../common/WLogger.h"
 #include "../../common/WStringUtils.h"
 #include "../exceptions/WDHIOFailure.h"
@@ -53,7 +53,7 @@ boost::shared_ptr< WEEGPositionsLibrary > WReaderELC::read()
     ifs.open( m_fname.c_str(), std::ifstream::in );
     if( !ifs || ifs.bad() )
     {
-        throw WDHNoSuchFile( "Problem loading file " + m_fname + ". Probably file not found." );
+        throw WDHNoSuchFile( std::string( "Problem loading file " + m_fname + ". Probably file not found." ) );
     }
 
     std::string line;
@@ -62,7 +62,7 @@ boost::shared_ptr< WEEGPositionsLibrary > WReaderELC::read()
         std::getline( ifs, line );
         if( !ifs.good() )
         {
-            throw WDHIOFailure( "Unexpected end of file " + m_fname );
+            throw WDHIOFailure( std::string( "Unexpected end of file " + m_fname ) );
         }
     }
 
@@ -74,19 +74,19 @@ boost::shared_ptr< WEEGPositionsLibrary > WReaderELC::read()
         std::getline( ifs, line );
         if( !ifs.good() )
         {
-            throw WDHIOFailure( "Unexpected end of file " + m_fname );
+            throw WDHIOFailure( std::string( "Unexpected end of file " + m_fname ) );
         }
     }
 
     std::size_t posCounter = 0;
-    std::vector< wmath::WPosition > positions;
+    std::vector< WPosition > positions;
     positions.reserve( numPositions );
     while( posCounter != numPositions && ifs.good() && line.substr( 0, 6 ) != "Labels" )  // run through all positions
     {
         std::getline( ifs, line );
         if( !ifs.good() )
         {
-            throw WDHIOFailure( "Unexpected end of file " + m_fname );
+            throw WDHIOFailure( std::string( "Unexpected end of file " + m_fname ) );
         }
         else
         {
@@ -97,13 +97,13 @@ boost::shared_ptr< WEEGPositionsLibrary > WReaderELC::read()
             double posX = boost::lexical_cast< double >( posTokens.at( posTokens.size() - 3 ) );
             double posY = boost::lexical_cast< double >( posTokens.at( posTokens.size() - 2 ) );
             double posZ = boost::lexical_cast< double >( posTokens.at( posTokens.size() - 1 ) );
-            positions.push_back( wmath::WPosition( posX, posY, posZ ) );
+            positions.push_back( WPosition( posX, posY, posZ ) );
         }
     }
 
     if( positions.size() != numPositions )
     {
-        throw WDHParseError( "Could not find correct number of Positions regarding to NumberPositions statement in file " + m_fname );
+        throw WDHParseError( std::string( "Could not find correct number of Positions regarding to NumberPositions statement in file " + m_fname ) );
     }
 
     while( ifs.good() && line.substr( 0, 6 )  != "Labels" )  // go to line before start of labels
@@ -111,18 +111,18 @@ boost::shared_ptr< WEEGPositionsLibrary > WReaderELC::read()
         std::getline( ifs, line );
         if( !ifs.good() )
         {
-            throw WDHIOFailure( "Unexpected end of file " + m_fname );
+            throw WDHIOFailure( std::string( "Unexpected end of file " + m_fname ) );
         }
     }
 
     std::size_t labelCounter = 0;
-    std::map< std::string, wmath::WPosition > positionsMap;
+    std::map< std::string, WPosition > positionsMap;
     while( labelCounter != numPositions && ifs.good() ) // run through all labels
     {
         std::getline( ifs, line );
         if( ifs.fail() )
         {
-            throw WDHIOFailure( "Unexpected end of file " + m_fname );
+            throw WDHIOFailure( std::string( "Unexpected end of file " + m_fname ) );
         }
         else
         {
@@ -137,12 +137,12 @@ boost::shared_ptr< WEEGPositionsLibrary > WReaderELC::read()
 
     if( positionsMap.size() != numPositions )
     {
-        throw WDHParseError( "Could not find correct number of Labels regarding to NumberPositions statement in file " + m_fname );
+        throw WDHParseError( std::string( "Could not find correct number of Labels regarding to NumberPositions statement in file " + m_fname ) );
     }
 
     ifs.close();
 
-    for( std::map< std::string, wmath::WPosition >::const_iterator iter = positionsMap.begin(); iter != positionsMap.end(); ++iter )
+    for( std::map< std::string, WPosition >::const_iterator iter = positionsMap.begin(); iter != positionsMap.end(); ++iter )
     {
         wlog::debug( "WReaderELC" ) << iter->first << ": " << iter->second;
     }

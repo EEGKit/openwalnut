@@ -22,6 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
+#include <iostream>
 #include <set>
 
 #include <osg/ShapeDrawable>
@@ -39,7 +40,7 @@ WGEGroupNode::WGEGroupNode():
 
     // setup an update callback
     m_nodeUpdater = osg::ref_ptr< SafeUpdaterCallback >( new SafeUpdaterCallback() );
-    setUpdateCallback( m_nodeUpdater );
+    addUpdateCallback( m_nodeUpdater );
 
     osg::Matrix m;
     m.makeIdentity();
@@ -54,7 +55,7 @@ WGEGroupNode::~WGEGroupNode()
 void WGEGroupNode::insert( osg::ref_ptr< osg::Node > node )
 {
     boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_childOperationQueueLock );
-    m_childOperationQueue.push( ChildOperation( true, node ) );
+    m_childOperationQueue.push( boost::shared_ptr< ChildOperation >( new ChildOperation( INSERT, node ) ) );
     m_childOperationQueueDirty = true;
     lock.unlock();
 }
@@ -62,7 +63,15 @@ void WGEGroupNode::insert( osg::ref_ptr< osg::Node > node )
 void WGEGroupNode::remove( osg::ref_ptr< osg::Node > node )
 {
     boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_childOperationQueueLock );
-    m_childOperationQueue.push( ChildOperation( false, node ) );
+    m_childOperationQueue.push( boost::shared_ptr< ChildOperation >( new ChildOperation( REMOVE, node ) ) );
+    m_childOperationQueueDirty = true;
+    lock.unlock();
+}
+
+void WGEGroupNode::remove_if( boost::shared_ptr< WGEGroupNode::NodePredicate > predicate )
+{
+    boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_childOperationQueueLock );
+    m_childOperationQueue.push( boost::shared_ptr< ChildOperation >( new ChildOperation( REMOVE_IF, predicate ) ) );
     m_childOperationQueueDirty = true;
     lock.unlock();
 }
@@ -70,7 +79,8 @@ void WGEGroupNode::remove( osg::ref_ptr< osg::Node > node )
 void WGEGroupNode::clear()
 {
     boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_childOperationQueueLock );
-    m_childOperationQueue.push( ChildOperation( false, osg::ref_ptr< osg::Node >() ) ); // this encodes the remove all feature
+    m_childOperationQueue.push( boost::shared_ptr< ChildOperation >( new ChildOperation( CLEAR, osg::ref_ptr< osg::Node >() ) ) );
+    // this encodes the remove all feature
     m_childOperationQueueDirty = true;
     lock.unlock();
 }
@@ -91,20 +101,38 @@ void WGEGroupNode::SafeUpdaterCallback::operator()( osg::Node* node, osg::NodeVi
         while ( !rootNode->m_childOperationQueue.empty() )
         {
             // remove or insert or remove all?
-            if ( ( !rootNode->m_childOperationQueue.front().first ) && ( !rootNode->m_childOperationQueue.front().second ) )
+            if ( rootNode->m_childOperationQueue.front()->m_operation == INSERT )
+            {
+                // add specified child
+                rootNode->addChild( rootNode->m_childOperationQueue.front()->m_item );
+            }
+
+            if ( rootNode->m_childOperationQueue.front()->m_operation == REMOVE )
+            {
+                // remove specified child
+                rootNode->removeChild( rootNode->m_childOperationQueue.front()->m_item );
+            }
+
+            if ( rootNode->m_childOperationQueue.front()->m_operation == REMOVE_IF )
+            {
+                // remove children where m_predicate is true
+                for ( size_t i = 0; i < rootNode->getNumChildren(); )
+                {
+                    if ( ( *rootNode->m_childOperationQueue.front()->m_predicate )( rootNode->getChild( i ) ) )
+                    {
+                        // remove item but do not increment index
+                        rootNode->removeChild( i );
+                    }
+
+                    // this was not removed. Go to next one.
+                    ++i;
+                }
+            }
+
+            if ( rootNode->m_childOperationQueue.front()->m_operation == CLEAR )
             {
                 // remove all
                 rootNode->removeChild( 0, rootNode->getNumChildren() );
-            }
-            else if ( rootNode->m_childOperationQueue.front().first )
-            {
-                // add specified child
-                rootNode->addChild( rootNode->m_childOperationQueue.front().second );
-            }
-            else
-            {
-                // remove specified child
-                rootNode->removeChild( rootNode->m_childOperationQueue.front().second );
             }
 
             // pop item

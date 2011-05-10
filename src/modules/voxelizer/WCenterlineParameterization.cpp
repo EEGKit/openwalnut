@@ -27,7 +27,7 @@
 
 #include "WCenterlineParameterization.h"
 
-WCenterlineParameterization::WCenterlineParameterization( boost::shared_ptr< WGridRegular3D > grid, boost::shared_ptr< wmath::WFiber > centerline ):
+WCenterlineParameterization::WCenterlineParameterization( boost::shared_ptr< WGridRegular3D > grid, boost::shared_ptr< WFiber > centerline ):
     WRasterParameterization( grid ),
     m_paramValues( grid->size(), 0.0 ),
     m_paramFinalValues( grid->size(), 0.0 ),
@@ -46,11 +46,15 @@ WCenterlineParameterization::~WCenterlineParameterization()
 
 boost::shared_ptr< WDataSetScalar > WCenterlineParameterization::getDataSet()
 {
-    boost::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 0, 1, m_paramFinalValues, W_DT_DOUBLE ) );
+    boost::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 0,
+                                                                                1,
+                                                                                boost::shared_ptr< std::vector< double > >(
+                                                                                    new std::vector< double >( m_paramFinalValues ) ),
+                                                                                W_DT_DOUBLE ) );
     return boost::shared_ptr< WDataSetScalar >( new WDataSetScalar( valueSet, m_grid ) );
 }
 
-namespace
+namespace wcp // WCenterlineParameterization
 {
     size_t index( int x, int y, int z, boost::shared_ptr< WGridRegular3D > grid )
     {
@@ -68,9 +72,12 @@ namespace
         return x + y * nbX + z * nbXY;
     }
 
+    /**
+     * Neighborhood position
+     */
     typedef struct
     {
-        size_t indices[27];
+        size_t indices[27]; //!< The indices of the neighbors.
     }
     Neighbourhood;
 
@@ -111,13 +118,13 @@ namespace
     }
 }
 
-void WCenterlineParameterization::parameterizeVoxel( const wmath::WValue< int >& voxel, size_t /*voxelIdx*/, const int /*axis*/,
+void WCenterlineParameterization::parameterizeVoxel( const WValue< int >& voxel, size_t /*voxelIdx*/, const int /*axis*/,
                                                       const double /*value*/,
-                                                      const wmath::WPosition& /*start*/,
-                                                      const wmath::WPosition& /*end*/ )
+                                                      const WPosition& /*start*/,
+                                                      const WPosition& /*end*/ )
 {
     // update a 27 neighbourhood
-    Neighbourhood n = neighbourhood( voxel[0], voxel[1], voxel[2], m_grid );
+    wcp::Neighbourhood n = wcp::neighbourhood( voxel[0], voxel[1], voxel[2], m_grid );
 
     // now update the neighbourhood
     for ( unsigned int i = 0; i < 27; ++i )
@@ -136,17 +143,17 @@ void WCenterlineParameterization::parameterizeVoxel( const wmath::WValue< int >&
     }
 }
 
-void WCenterlineParameterization::newLine( const wmath::WLine& line )
+void WCenterlineParameterization::newLine( const WLine& line )
 {
     // do nothing here
     WRasterParameterization::newLine( line );
 }
 
-void WCenterlineParameterization::newSegment( const wmath::WPosition& start, const wmath::WPosition& end )
+void WCenterlineParameterization::newSegment( const WPosition& start, const WPosition& end )
 {
     double curLength = 0.0;                     // the accumulated length along the centerline
-    double bestDistStart = ( m_centerline->at( 0 ) - start ).norm();       // the currently best distance to the start point
-    double bestDistEnd   = ( m_centerline->at( 0 ) - end   ).norm();       // the currently best distance to the end point
+    double bestDistStart = length( m_centerline->at( 0 ) - start );       // the currently best distance to the start point
+    double bestDistEnd   = length( m_centerline->at( 0 ) - end   );       // the currently best distance to the end point
 
     // the currently best parameter of the centerline for this line segment
     m_currentStartParameter = 0.0;
@@ -155,16 +162,16 @@ void WCenterlineParameterization::newSegment( const wmath::WPosition& start, con
     // for this line segment, find the best matching vertex in the centerline
     for( size_t i = 1; i < m_centerline->size(); ++i )
     {
-        curLength += ( m_centerline->at( i ) - m_centerline->at( i - 1 ) ).norm();
+        curLength += length( m_centerline->at( i ) - m_centerline->at( i - 1 ) );
 
         // compare current distance
-        double curDist = ( m_centerline->at( i ) - start ).norm();
+        double curDist = length( m_centerline->at( i ) - start );
         if ( bestDistStart >= curDist )
         {
             bestDistStart = curDist;
             m_currentStartParameter = curLength;
         }
-        curDist = ( m_centerline->at( i ) - end ).norm();
+        curDist = length( m_centerline->at( i ) - end );
         if ( bestDistEnd >= curDist )
         {
             bestDistEnd = curDist;
@@ -187,7 +194,7 @@ void WCenterlineParameterization::finished()
         {
             for ( size_t z = 0; z < m_grid->getNbCoordsZ(); ++z )
             {
-                size_t idx = index( x, y, z, m_grid );
+                size_t idx = wcp::index( x, y, z, m_grid );
 
                 // copy
                 m_paramFinalValues[ idx ] = m_paramValues[ idx ];
@@ -198,7 +205,7 @@ void WCenterlineParameterization::finished()
                     m_paramSetValues[ idx ] = true;
 
                     // find maximum in neighbourhood
-                    Neighbourhood n = neighbourhood( x, y, z, m_grid );
+                    wcp::Neighbourhood n = wcp::neighbourhood( x, y, z, m_grid );
 
                     double maxVal = m_paramValues[ n.indices[ 0 ] ];
                     for ( unsigned int i = 1; i < 27; ++i )

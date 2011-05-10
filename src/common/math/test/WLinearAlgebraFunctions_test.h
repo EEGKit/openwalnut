@@ -30,12 +30,12 @@
 #include <cxxtest/TestSuite.h>
 
 #include "../../WException.h"
+#include "../../WLimits.h"
 #include "../WLinearAlgebraFunctions.h"
 #include "../WMatrix.h"
-#include "../WVector3D.h"
-#include "WVector3DTraits.h"
+#include "../linearAlgebra/WLinearAlgebra.h"
+#include "WVector3dTraits.h"
 
-using wmath::WMatrix;
 /**
  * Tests for WMatrix.
  */
@@ -48,8 +48,8 @@ public:
      */
     void testMatrixVectorMultiply( void )
     {
-        wmath::WVector3D v( 9, 10, 11 );
-        wmath::WMatrix< double > m( 3, 3 );
+        WVector3d v( 9, 10, 11 );
+        WMatrix< double > m( 3, 3 );
         int i = 0;
         for( size_t r = 0; r < 3; ++r)
         {
@@ -58,8 +58,8 @@ public:
                 m( r, c ) = i;
             }
         }
-        wmath::WVector3D result = wmath::multMatrixWithVector3D( m, v );
-        wmath::WVector3D expected( 32, 122, 212 );
+        WVector3d result = multMatrixWithVector3D( m, v );
+        WVector3d expected( 32, 122, 212 );
         TS_ASSERT_EQUALS( result, expected );
     }
 
@@ -69,7 +69,7 @@ public:
     void test3x3MatrixInversion( void )
     {
         int i = 0;
-        wmath::WMatrix< double > m( 3, 3 );
+        WMatrix< double > m( 3, 3 );
         for( size_t r = 0; r < 3; ++r)
         {
             for( size_t c = 0; c < 3; ++c, ++i )
@@ -78,7 +78,7 @@ public:
             }
         }
         m( 2, 1 ) = 8;
-        wmath::WMatrix< double > expected( 3, 3 );
+        WMatrix< double > expected( 3, 3 );
         expected( 0, 0 ) = 1./6 *  -8;
         expected( 0, 1 ) = 1./6 *   8;
         expected( 0, 2 ) = 1./6 *  -3;
@@ -88,7 +88,7 @@ public:
         expected( 2, 0 ) = 1./6 *   0;
         expected( 2, 1 ) = 1./6 *   6;
         expected( 2, 2 ) = 1./6 *  -3;
-        TS_ASSERT_EQUALS( wmath::invertMatrix3x3( m ), expected );
+        TS_ASSERT_EQUALS( invertMatrix3x3( m ), expected );
     }
 
     /**
@@ -97,7 +97,7 @@ public:
     void test3x3MatrixInversionOnSingularMatrix( void )
     {
         int i = 0;
-        wmath::WMatrix< double > m( 3, 3 );
+        WMatrix< double > m( 3, 3 );
         for( size_t r = 0; r < 3; ++r)
         {
             for( size_t c = 0; c < 3; ++c, ++i )
@@ -105,7 +105,7 @@ public:
                 m( r, c ) = i;
             }
         }
-        TS_ASSERT_THROWS( wmath::invertMatrix3x3( m ), WException& e );
+        TS_ASSERT_THROWS( invertMatrix3x3( m ), WException& e );
         // ATTENTION we can't compare the messages from WAssert since there is now a path string in side which is different on any developers machine
         //           "Assertion failed: det != 0 (in file /home/lmath/repos/OpenWalnut/src/common/math/WLinearAlgebraFunctions.cpp at line 71),....
     }
@@ -115,7 +115,7 @@ public:
      */
     void test4x4Inverse()
     {
-        wmath::WMatrix<double> m( 4, 4 );
+        WMatrix<double> m( 4, 4 );
 
         for( size_t r = 0; r < 4; ++r)
         {
@@ -127,11 +127,11 @@ public:
         m( 2, 2 ) = 12;
         m( 3, 3 ) = 15;
 
-        wmath::WMatrix<double> m_inv = wmath::invertMatrix4x4( m );
+        WMatrix<double> m_inv = invertMatrix4x4( m );
 
-        wmath::WMatrix<double> id = wmath::WMatrix<double>( 4, 4 ).makeIdentity();
+        WMatrix<double> id = WMatrix<double>( 4, 4 ).makeIdentity();
 
-        wmath::WMatrix<double> m_m_inv = m * m_inv;
+        WMatrix<double> m_m_inv = m * m_inv;
 
         TS_ASSERT( m_m_inv == id );
     }
@@ -141,11 +141,11 @@ public:
      */
     void testLinearIndependeceOfTwoVectors( void )
     {
-        wmath::WVector3D u( 1, 0, 0 );
-        wmath::WVector3D v( 0, 1, 0 );
-        TS_ASSERT( wmath::linearIndependent( u, v ) );
-        TS_ASSERT( wmath::linearIndependent( v, u ) );
-        TS_ASSERT( !wmath::linearIndependent( v, v ) );
+        WVector3d u( 1, 0, 0 );
+        WVector3d v( 0, 1, 0 );
+        TS_ASSERT( linearIndependent( u, v ) );
+        TS_ASSERT( linearIndependent( v, u ) );
+        TS_ASSERT( !linearIndependent( v, v ) );
     }
 
     /**
@@ -153,11 +153,11 @@ public:
      */
     void testLinearIndependeceOfTheNullVector( void )
     {
-        wmath::WVector3D u( 0, 0, 0 );
-        wmath::WVector3D v( 0, 0, 1 );
-        TS_ASSERT( !wmath::linearIndependent( u, v ) );
-        TS_ASSERT( !wmath::linearIndependent( v, u ) );
-        TS_ASSERT( !wmath::linearIndependent( u, u ) );
+        WVector3d u( 0, 0, 0 );
+        WVector3d v( 0, 0, 1 );
+        TS_ASSERT( !linearIndependent( u, v ) );
+        TS_ASSERT( !linearIndependent( v, u ) );
+        TS_ASSERT( !linearIndependent( u, u ) );
     }
 
     /**
@@ -165,15 +165,115 @@ public:
      */
     void testLinearIndependenceOnNumericalStability( void )
     {
-        wmath::WVector3D u( wlimits::FLT_EPS, wlimits::FLT_EPS, wlimits::FLT_EPS );
-        wmath::WVector3D v( wlimits::FLT_EPS, wlimits::FLT_EPS, 1 );
-        TS_ASSERT( !wmath::linearIndependent( u, v ) );
-        TS_ASSERT( !wmath::linearIndependent( v, u ) );
-        TS_ASSERT( !wmath::linearIndependent( u, u ) );
-        u[0] = wlimits::FLT_EPS * 2;
-        TS_ASSERT( wmath::linearIndependent( u, v ) );
-        TS_ASSERT( wmath::linearIndependent( v, u ) );
-        TS_ASSERT( !wmath::linearIndependent( u, u ) );
+        WVector3d u( wlimits::DBL_EPS, wlimits::DBL_EPS, wlimits::DBL_EPS );
+        WVector3d v( wlimits::DBL_EPS, wlimits::DBL_EPS, 1 );
+        TS_ASSERT( !linearIndependent( u, v ) );
+        TS_ASSERT( !linearIndependent( v, u ) );
+        TS_ASSERT( !linearIndependent( u, u ) );
+        u[0] = wlimits::DBL_EPS * 2;
+        TS_ASSERT( linearIndependent( u, v ) );
+        TS_ASSERT( linearIndependent( v, u ) );
+        TS_ASSERT( !linearIndependent( u, u ) );
+    }
+
+    /**
+     * Test SVD calculation
+     */
+    void testComputeSVD( void )
+    {
+            const size_t nbRows = 3, nbCols = 3;
+            const double a = 1.2, b = 2.3, c = 3.4,
+                         d = 4.5, e = 5.6, f = 6.7,
+                         g = 3.4, h = 1.2, i = 7.0;
+            WMatrix_2 A( nbRows, nbCols );
+            A( 0, 0 ) = a;
+            A( 0, 1 ) = b;
+            A( 0, 2 ) = c;
+            A( 1, 0 ) = d;
+            A( 1, 1 ) = e;
+            A( 1, 2 ) = f;
+            A( 2, 0 ) = g;
+            A( 2, 1 ) = h;
+            A( 2, 2 ) = i;
+            WMatrix_2 U( A.rows(), A.cols() );
+            WMatrix_2 V( A.cols(), A.cols() );
+            WVector_2 Svec( A.cols() );
+            computeSVD( A, U, V, Svec );
+            WMatrix_2 S( Svec.size(), Svec.size() );
+            S.setZero();
+            for ( int i = 0; i < Svec.size(); ++i )
+            {
+                S( i, i ) = Svec( i );
+            }
+
+            WMatrix_2 A2( U*S*V.transpose() );
+
+            for ( int row = 0; row < A.rows(); ++row )
+            {
+                for ( int col = 0; col < A.cols(); ++col )
+                {
+                    TS_ASSERT_DELTA( A( row, col ), A2( row, col ), 0.0001 );
+                }
+            }
+    }
+
+    /**
+     * Test pseudoInverse calculation
+     */
+    void testPseudoInverse( void )
+    {
+        {
+            const size_t nbRows = 3, nbCols = 3;
+            const double a = 1.2, b = 2.3, c = 3.4,
+                         d = 4.5, e = 5.6, f = 6.7,
+                         g = 3.4, h = 1.2, i = 7.0;
+            WMatrix_2 A( nbRows, nbCols );
+
+            A( 0, 0 ) = a;
+            A( 0, 1 ) = b;
+            A( 0, 2 ) = c;
+            A( 1, 0 ) = d;
+            A( 1, 1 ) = e;
+            A( 1, 2 ) = f;
+            A( 2, 0 ) = g;
+            A( 2, 1 ) = h;
+            A( 2, 2 ) = i;
+            WMatrix_2 Ainvers( pseudoInverse( A ) );
+            WMatrix_2 I( A*Ainvers );
+
+            for ( int row = 0; row < I.rows(); row++ )
+            {
+                for ( int col = 0; col < I.cols(); col++ )
+                {
+                    if ( row == col )
+                    {
+                        TS_ASSERT_DELTA( I( row, col ), 1.0, 0.0001 );
+                    }
+                    else
+                    {
+                        TS_ASSERT_DELTA( I( row, col ), 0.0, 0.0001 );
+                    }
+                }
+            }
+        }
+        {
+            WMatrix_2 m( 6, 6 );
+            for( int j = 0; j < 6; ++j )
+            {
+                for( int i = 0; i < 6; ++i )
+                {
+                    m( i, j ) = pow( i + 1, j );
+                }
+            }
+            m = m * pseudoInverse( m );
+            for( int j = 0; j < 6; ++j )
+            {
+                for( int i = 0; i < 6; ++i )
+                {
+                    TS_ASSERT_DELTA( m( i, j ), i == j ? 1.0 : 0.0, 0.0001 );
+                }
+            }
+        }
     }
 };
 

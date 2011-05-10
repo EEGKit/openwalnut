@@ -39,12 +39,15 @@
 #include "axial.xpm"
 #include "cor.xpm"
 #include "sag.xpm"
+#include "camera.xpm"
 
 #include "box.xpm"
-#include "question.xpm"
 #include "o.xpm"
+#include "question.xpm"
 
 #include "moduleBusy.xpm"
 #include "moduleCrashed.xpm"
+
+#include "tango/preferences-system.xpm"
 
 #endif  // WICONS_H

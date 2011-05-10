@@ -22,19 +22,21 @@
 //
 //---------------------------------------------------------------------------
 
+#include <algorithm>
 #include <string>
+#include <vector>
 
-#include <osg/ShapeDrawable>
-#include <osg/Group>
 #include <osg/Geode>
+#include <osg/Group>
 #include <osg/Material>
+#include <osg/ShapeDrawable>
 #include <osg/StateAttribute>
 
-#include "../../kernel/WKernel.h"
 #include "../../common/WColor.h"
-
+#include "../../kernel/WKernel.h"
+#include "../../kernel/WSelectionManager.h"
 #include "WMVectorPlot.h"
-#include "vectorplot.xpm"
+#include "WMVectorPlot.xpm"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMVectorPlot )
@@ -42,7 +44,6 @@ W_LOADABLE_MODULE( WMVectorPlot )
 WMVectorPlot::WMVectorPlot():
     WModule()
 {
-    m_shader = osg::ref_ptr< WShader > ( new WShader( "WMVectorPlot", m_localPath ) );
 }
 
 WMVectorPlot::~WMVectorPlot()
@@ -84,35 +85,37 @@ void WMVectorPlot::connectors()
 
 void WMVectorPlot::properties()
 {
-    m_xPos           = m_properties->addProperty( "X Pos of the slice", "Description.", 80 );
-    m_yPos           = m_properties->addProperty( "Y Pos of the slice", "Description.", 100 );
-    m_zPos           = m_properties->addProperty( "Z Pos of the slice", "Description.", 80 );
+    m_xSlice           = m_properties->addProperty( "X Pos of the slice", "Description.", 80. );
+    m_ySlice           = m_properties->addProperty( "Y Pos of the slice", "Description.", 100. );
+    m_zSlice           = m_properties->addProperty( "Z Pos of the slice", "Description.", 80. );
 
-    m_xPos->setHidden( true );
-    m_yPos->setHidden( true );
-    m_zPos->setHidden( true );
+    m_xSlice->setHidden( true );
+    m_ySlice->setHidden( true );
+    m_zSlice->setHidden( true );
 
     m_projectOnSlice = m_properties->addProperty( "Projection",
                                                    "If active, the vectors are projected into the surface "
                                                    "used to place them. Thus their "
                                                    "representation is tangential to the surface.",
                                                    false );
-    m_coloringMode   = m_properties->addProperty( "Direction Coloring",
+    m_coloringMode   = m_properties->addProperty( "Direction coloring",
                                                    "Draw each vector in a color indicating its direction. ", false );
     m_aColor         = m_properties->addProperty( "Color",
                                                    "This color is used if direction coloring is deactivated.",
                                                    WColor( 1.0, 0.0, 0.0, 1.0 ) );
 
-    m_showonX        = m_properties->addProperty( "Show Sagittal", "Show vectors on sagittal slice.", true );
-    m_showonY        = m_properties->addProperty( "Show Coronal", "Show vectors on coronal slice.", true );
-    m_showonZ        = m_properties->addProperty( "Show Axial", "Show vectors on axial slice.", true );
+    m_showOnSagittal        = m_properties->addProperty( "Show sagittal", "Show vectors on sagittal slice.", true );
+    m_showOnCoronal        = m_properties->addProperty( "Show coronal", "Show vectors on coronal slice.", true );
+    m_showOnAxial        = m_properties->addProperty( "Show axial", "Show vectors on axial slice.", true );
 
-    m_xPos->setMin( 0 );
-    m_xPos->setMax( 160 );
-    m_yPos->setMin( 0 );
-    m_yPos->setMax( 200 );
-    m_zPos->setMin( 0 );
-    m_zPos->setMax( 160 );
+    m_xSlice->setMin( 0 );
+    m_xSlice->setMax( 160 );
+    m_ySlice->setMin( 0 );
+    m_ySlice->setMax( 200 );
+    m_zSlice->setMin( 0 );
+    m_zSlice->setMax( 160 );
+
+    WModule::properties();
 }
 
 void WMVectorPlot::moduleMain()
@@ -122,11 +125,11 @@ void WMVectorPlot::moduleMain()
 
     ready();
 
-    while ( !m_shutdownFlag() )
+    while( !m_shutdownFlag() )
     {
         m_moduleState.wait();
 
-        if ( m_shutdownFlag() )
+        if( m_shutdownFlag() )
         {
             break;
         }
@@ -138,12 +141,12 @@ void WMVectorPlot::moduleMain()
         bool dataChanged = ( m_dataSet != newDataSet );
         bool dataValid   = ( newDataSet );
 
-        if ( dataChanged && dataValid )
+        if( dataChanged && dataValid )
         {
             m_dataSet = newDataSet;
         }
 
-        if ( m_xPos->changed() || m_yPos->changed() || m_zPos->changed() )
+        if( m_xSlice->changed() || m_ySlice->changed() || m_zSlice->changed() )
         {
             osg::ref_ptr< osg::Geode > newRootNode = new osg::Geode();
 
@@ -157,8 +160,9 @@ void WMVectorPlot::moduleMain()
 
             m_rootNode = newRootNode;
             m_rootNode->setNodeMask( m_active->get() ? 0xFFFFFFFF : 0x0 );
-            m_rootNode->addUpdateCallback( new SafeUpdateCallback( this ) );
+            m_rootNode->addUpdateCallback( new WGEFunctorCallback< osg::Node >( boost::bind( &WMVectorPlot::updateCallback, this ) ) );
 
+            m_shader = osg::ref_ptr< WGEShader > ( new WGEShader( "WMVectorPlot", m_localPath ) );
             m_shader->apply( m_rootNode );
 
             WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_rootNode );
@@ -174,22 +178,24 @@ osg::ref_ptr<osg::Geometry> WMVectorPlot::buildPlotSlices()
     boost::shared_ptr< WProgress > progress = boost::shared_ptr< WProgress >( new WProgress( "Vector Plot", 4 ) );
     m_progress->addSubProgress( progress );
 
-    wmath::WPosition current = WKernel::getRunningKernel()->getSelectionManager()->getCrosshair()->getPosition();
-
-    int xPos = current[0];
-    int yPos = current[1];
-    int zPos = current[2];
-
-    m_xPos->set( xPos );
-    m_yPos->set( yPos );
-    m_zPos->set( zPos );
+    WPosition current = WKernel::getRunningKernel()->getSelectionManager()->getCrosshair()->getPosition();
 
     boost::shared_ptr< WGridRegular3D > grid = boost::shared_dynamic_cast< WGridRegular3D >( m_dataSet->getGrid() );
     boost::shared_ptr< WValueSet< float > > vals = boost::shared_dynamic_cast< WValueSet<float> >( m_dataSet->getValueSet() );
 
-    m_xPos->setMax( grid->getNbCoordsX() );
-    m_yPos->setMax( grid->getNbCoordsY() );
-    m_zPos->setMax( grid->getNbCoordsZ() );
+    m_xSlice->setMax( grid->getNbCoordsX() - 1 );
+    m_ySlice->setMax( grid->getNbCoordsY() - 1 );
+    m_zSlice->setMax( grid->getNbCoordsZ() - 1 );
+
+    WPosition texPos = grid->worldCoordToTexCoord( current );
+    double xSlice = texPos[0] * grid->getNbCoordsX() - 0.5;
+    double ySlice = texPos[1] * grid->getNbCoordsY() - 0.5;
+    double zSlice = texPos[2] * grid->getNbCoordsZ() - 0.5;
+
+    m_xSlice->set( xSlice );
+    m_ySlice->set( ySlice );
+    m_zSlice->set( zSlice );
+
 
 
     // When working with the OpenSceneGraph, always use ref_ptr to store pointers to OSG objects. This allows OpenSceneGraph to manage
@@ -200,60 +206,62 @@ osg::ref_ptr<osg::Geometry> WMVectorPlot::buildPlotSlices()
     ref_ptr< osg::Vec4Array > colors = ref_ptr< osg::Vec4Array >( new osg::Vec4Array );
     ref_ptr< osg::Geometry > geometry = ref_ptr< osg::Geometry >( new osg::Geometry );
 
-    WColor c = m_aColor->get( true );
-    osg::Vec4 cc( c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha() );
+    WColor color = m_aColor->get( true );
 
-    if ( ( ( *m_dataSet ).getValueSet()->order() == 1 ) && ( ( *m_dataSet ).getValueSet()->dimension() == 3 )
+    if( ( ( *m_dataSet ).getValueSet()->order() == 1 ) && ( ( *m_dataSet ).getValueSet()->dimension() == 3 )
             && ( ( *m_dataSet ).getValueSet()->getDataType() == 16 ) )
     {
-        int maxX = m_xPos->getMax()->getMax();
-        int maxY = m_yPos->getMax()->getMax();
-        int maxZ = m_zPos->getMax()->getMax();
+        int maxX = m_xSlice->getMax()->getMax();
+        int maxY = m_ySlice->getMax()->getMax();
+        int maxZ = m_zSlice->getMax()->getMax();
+        int nbX = maxX + 1;
+        int nbY = maxY + 1;
+        int nbZ = maxZ + 1;
 
-        if ( m_showonZ->get( true ) )
+        if( m_showOnAxial->get( true ) )
         {
-            for ( int x = 0; x < maxX; ++x )
+            for( int x = 0; x < nbX; ++x )
             {
-                for ( int y = 0; y < maxY; ++y )
+                for( int y = 0; y < nbY; ++y )
                 {
-                    float xx = vals->getScalar( ( x + y * maxX + zPos * maxX * maxY ) * 3 ) / 2.;
-                    float yy = vals->getScalar( ( x + y * maxX + zPos * maxX * maxY ) * 3 + 1 ) / 2.;
-                    float zz = vals->getScalar( ( x + y * maxX + zPos * maxX * maxY ) * 3 + 2 ) / 2.;
+                    float vecCompX = vals->getScalar( ( x + y * nbX + zSlice * nbX * nbY ) * 3 ) / 2.;
+                    float vecCompY = vals->getScalar( ( x + y * nbX + zSlice * nbX * nbY ) * 3 + 1 ) / 2.;
+                    float vecCompZ = vals->getScalar( ( x + y * nbX + zSlice * nbX * nbY ) * 3 + 2 ) / 2.;
 
-                    if ( !m_projectOnSlice->get( true ) )
+                    if( !m_projectOnSlice->get( true ) )
                     {
-                        vertices->push_back( osg::Vec3( x + 0.5f - xx, y + 0.5f - yy, zPos + 0.5f - zz ) );
-                        vertices->push_back( osg::Vec3( x + 0.5f + xx, y + 0.5f + yy, zPos + 0.5f + zz ) );
-                        if ( m_coloringMode->get( true ) )
+                        vertices->push_back( osg::Vec3( x - vecCompX, y - vecCompY, zSlice - vecCompZ ) );
+                        vertices->push_back( osg::Vec3( x + vecCompX, y + vecCompY, zSlice + vecCompZ ) );
+                        if( m_coloringMode->get( true ) )
                         {
-                            colors->push_back( osg::Vec4( fabs( xx ), fabs( yy ), fabs( zz ), 1.0 ) );
-                            colors->push_back( osg::Vec4( fabs( xx ), fabs( yy ), fabs( zz ), 1.0 ) );
+                            colors->push_back( osg::Vec4( fabs( vecCompX ), fabs( vecCompY ), fabs( vecCompZ ), 1.0 ) );
+                            colors->push_back( osg::Vec4( fabs( vecCompX ), fabs( vecCompY ), fabs( vecCompZ ), 1.0 ) );
                         }
                         else
                         {
-                            colors->push_back( cc );
-                            colors->push_back( cc );
+                            colors->push_back( color );
+                            colors->push_back( color );
                         }
                     }
                     else
                     {
-                        vertices->push_back( osg::Vec3( x + 0.5f - xx, y + 0.5f - yy, zPos + 0.4f ) );
-                        vertices->push_back( osg::Vec3( x + 0.5f + xx, y + 0.5f + yy, zPos + 0.4f ) );
-                        vertices->push_back( osg::Vec3( x + 0.5f - xx, y + 0.5f - yy, zPos + 0.6f ) );
-                        vertices->push_back( osg::Vec3( x + 0.5f + xx, y + 0.5f + yy, zPos + 0.6f ) );
-                        if ( m_coloringMode->get( true ) )
+                        vertices->push_back( osg::Vec3( x - vecCompX, y - vecCompY, zSlice - 0.01f ) );
+                        vertices->push_back( osg::Vec3( x + vecCompX, y + vecCompY, zSlice - 0.01f ) );
+                        vertices->push_back( osg::Vec3( x - vecCompX, y - vecCompY, zSlice + 0.01f ) );
+                        vertices->push_back( osg::Vec3( x + vecCompX, y + vecCompY, zSlice + 0.01f ) );
+                        if( m_coloringMode->get( true ) )
                         {
-                            colors->push_back( osg::Vec4( fabs( xx ), fabs( yy ), fabs( zz ), 1.0 ) );
-                            colors->push_back( osg::Vec4( fabs( xx ), fabs( yy ), fabs( zz ), 1.0 ) );
-                            colors->push_back( osg::Vec4( fabs( xx ), fabs( yy ), fabs( zz ), 1.0 ) );
-                            colors->push_back( osg::Vec4( fabs( xx ), fabs( yy ), fabs( zz ), 1.0 ) );
+                            colors->push_back( osg::Vec4( fabs( vecCompX ), fabs( vecCompY ), fabs( vecCompZ ), 1.0 ) );
+                            colors->push_back( osg::Vec4( fabs( vecCompX ), fabs( vecCompY ), fabs( vecCompZ ), 1.0 ) );
+                            colors->push_back( osg::Vec4( fabs( vecCompX ), fabs( vecCompY ), fabs( vecCompZ ), 1.0 ) );
+                            colors->push_back( osg::Vec4( fabs( vecCompX ), fabs( vecCompY ), fabs( vecCompZ ), 1.0 ) );
                         }
                         else
                         {
-                            colors->push_back( cc );
-                            colors->push_back( cc );
-                            colors->push_back( cc );
-                            colors->push_back( cc );
+                            colors->push_back( color );
+                            colors->push_back( color );
+                            colors->push_back( color );
+                            colors->push_back( color );
                         }
                     }
                 }
@@ -262,50 +270,50 @@ osg::ref_ptr<osg::Geometry> WMVectorPlot::buildPlotSlices()
 
         ++*progress;
 
-        if ( m_showonY->get( true ) )
+        if( m_showOnCoronal->get( true ) )
         {
-            for ( int x = 0; x < maxX; ++x )
+            for( int x = 0; x < nbX; ++x )
             {
-                for ( int z = 0; z < maxZ; ++z )
+                for( int z = 0; z < nbZ; ++z )
                 {
-                    float xx = vals->getScalar( ( x + yPos * maxX + z * maxX * maxY ) * 3 ) / 2.;
-                    float yy = vals->getScalar( ( x + yPos * maxX + z * maxX * maxY ) * 3 + 1 ) / 2.;
-                    float zz = vals->getScalar( ( x + yPos * maxX + z * maxX * maxY ) * 3 + 2 ) / 2.;
+                    float vecCompX = vals->getScalar( ( x + ySlice * nbX + z * nbX * nbY ) * 3 ) / 2.;
+                    float vecCompY = vals->getScalar( ( x + ySlice * nbX + z * nbX * nbY ) * 3 + 1 ) / 2.;
+                    float vecCompZ = vals->getScalar( ( x + ySlice * nbX + z * nbX * nbY ) * 3 + 2 ) / 2.;
 
-                    if ( !m_projectOnSlice->get( true ) )
+                    if( !m_projectOnSlice->get( true ) )
                     {
-                        vertices->push_back( osg::Vec3( x + 0.5f - xx, yPos + 0.5f - yy, z + 0.5f - zz ) );
-                        vertices->push_back( osg::Vec3( x + 0.5f + xx, yPos + 0.5f + yy, z + 0.5f + zz ) );
-                        if ( m_coloringMode->get( true ) )
+                        vertices->push_back( osg::Vec3( x - vecCompX, ySlice - vecCompY, z - vecCompZ ) );
+                        vertices->push_back( osg::Vec3( x + vecCompX, ySlice + vecCompY, z + vecCompZ ) );
+                        if( m_coloringMode->get( true ) )
                         {
-                            colors->push_back( osg::Vec4( fabs( xx ), fabs( yy ), fabs( zz ), 1.0 ) );
-                            colors->push_back( osg::Vec4( fabs( xx ), fabs( yy ), fabs( zz ), 1.0 ) );
+                            colors->push_back( osg::Vec4( fabs( vecCompX ), fabs( vecCompY ), fabs( vecCompZ ), 1.0 ) );
+                            colors->push_back( osg::Vec4( fabs( vecCompX ), fabs( vecCompY ), fabs( vecCompZ ), 1.0 ) );
                         }
                         else
                         {
-                            colors->push_back( cc );
-                            colors->push_back( cc );
+                            colors->push_back( color );
+                            colors->push_back( color );
                         }
                     }
                     else
                     {
-                        vertices->push_back( osg::Vec3( x + 0.5f - xx, yPos + 0.4f, z + 0.5f - zz ) );
-                        vertices->push_back( osg::Vec3( x + 0.5f + xx, yPos + 0.4f, z + 0.5f + zz ) );
-                        vertices->push_back( osg::Vec3( x + 0.5f - xx, yPos + 0.6f, z + 0.5f - zz ) );
-                        vertices->push_back( osg::Vec3( x + 0.5f + xx, yPos + 0.6f, z + 0.5f + zz ) );
-                        if ( m_coloringMode->get( true ) )
+                        vertices->push_back( osg::Vec3( x - vecCompX, ySlice - 0.01f, z - vecCompZ ) );
+                        vertices->push_back( osg::Vec3( x + vecCompX, ySlice - 0.01f, z + vecCompZ ) );
+                        vertices->push_back( osg::Vec3( x - vecCompX, ySlice + 0.01f, z - vecCompZ ) );
+                        vertices->push_back( osg::Vec3( x + vecCompX, ySlice + 0.01f, z + vecCompZ ) );
+                        if( m_coloringMode->get( true ) )
                         {
-                            colors->push_back( osg::Vec4( fabs( xx ), fabs( yy ), fabs( zz ), 1.0 ) );
-                            colors->push_back( osg::Vec4( fabs( xx ), fabs( yy ), fabs( zz ), 1.0 ) );
-                            colors->push_back( osg::Vec4( fabs( xx ), fabs( yy ), fabs( zz ), 1.0 ) );
-                            colors->push_back( osg::Vec4( fabs( xx ), fabs( yy ), fabs( zz ), 1.0 ) );
+                            colors->push_back( osg::Vec4( fabs( vecCompX ), fabs( vecCompY ), fabs( vecCompZ ), 1.0 ) );
+                            colors->push_back( osg::Vec4( fabs( vecCompX ), fabs( vecCompY ), fabs( vecCompZ ), 1.0 ) );
+                            colors->push_back( osg::Vec4( fabs( vecCompX ), fabs( vecCompY ), fabs( vecCompZ ), 1.0 ) );
+                            colors->push_back( osg::Vec4( fabs( vecCompX ), fabs( vecCompY ), fabs( vecCompZ ), 1.0 ) );
                         }
                         else
                         {
-                            colors->push_back( cc );
-                            colors->push_back( cc );
-                            colors->push_back( cc );
-                            colors->push_back( cc );
+                            colors->push_back( color );
+                            colors->push_back( color );
+                            colors->push_back( color );
+                            colors->push_back( color );
                         }
                     }
                 }
@@ -314,50 +322,50 @@ osg::ref_ptr<osg::Geometry> WMVectorPlot::buildPlotSlices()
 
         ++*progress;
 
-        if ( m_showonX->get( true ) )
+        if( m_showOnSagittal->get( true ) )
         {
-            for ( int y = 0; y < maxY; ++y )
+            for( int y = 0; y < nbY; ++y )
             {
-                for ( int z = 0; z < maxZ; ++z )
+                for( int z = 0; z < nbZ; ++z )
                 {
-                    float xx = vals->getScalar( ( xPos + y * maxX + z * maxX * maxY ) * 3 ) / 2.;
-                    float yy = vals->getScalar( ( xPos + y * maxX + z * maxX * maxY ) * 3 + 1 ) / 2.;
-                    float zz = vals->getScalar( ( xPos + y * maxX + z * maxX * maxY ) * 3 + 2 ) / 2.;
+                    float vecCompX = vals->getScalar( ( xSlice + y * nbX + z * nbX * nbY ) * 3 ) / 2.;
+                    float vecCompY = vals->getScalar( ( xSlice + y * nbX + z * nbX * nbY ) * 3 + 1 ) / 2.;
+                    float vecCompZ = vals->getScalar( ( xSlice + y * nbX + z * nbX * nbY ) * 3 + 2 ) / 2.;
 
-                    if ( !m_projectOnSlice->get( true ) )
+                    if( !m_projectOnSlice->get( true ) )
                     {
-                        vertices->push_back( osg::Vec3( xPos + 0.5f + xx, y + 0.5f + yy, z + 0.5f + zz ) );
-                        vertices->push_back( osg::Vec3( xPos + 0.5f - xx, y + 0.5f - yy, z + 0.5f - zz ) );
-                        if ( m_coloringMode->get( true ) )
+                        vertices->push_back( osg::Vec3( xSlice + vecCompX, y + vecCompY, z + vecCompZ ) );
+                        vertices->push_back( osg::Vec3( xSlice - vecCompX, y - vecCompY, z - vecCompZ ) );
+                        if( m_coloringMode->get( true ) )
                         {
-                            colors->push_back( osg::Vec4( fabs( xx ), fabs( yy ), fabs( zz ), 1.0 ) );
-                            colors->push_back( osg::Vec4( fabs( xx ), fabs( yy ), fabs( zz ), 1.0 ) );
+                            colors->push_back( osg::Vec4( fabs( vecCompX ), fabs( vecCompY ), fabs( vecCompZ ), 1.0 ) );
+                            colors->push_back( osg::Vec4( fabs( vecCompX ), fabs( vecCompY ), fabs( vecCompZ ), 1.0 ) );
                         }
                         else
                         {
-                            colors->push_back( cc );
-                            colors->push_back( cc );
+                            colors->push_back( color );
+                            colors->push_back( color );
                         }
                     }
                     else
                     {
-                        vertices->push_back( osg::Vec3( xPos + 0.4f, y + 0.5f + yy, z + 0.5f + zz ) );
-                        vertices->push_back( osg::Vec3( xPos + 0.4f, y + 0.5f - yy, z + 0.5f - zz ) );
-                        vertices->push_back( osg::Vec3( xPos + 0.6f, y + 0.5f + yy, z + 0.5f + zz ) );
-                        vertices->push_back( osg::Vec3( xPos + 0.6f, y + 0.5f - yy, z + 0.5f - zz ) );
-                        if ( m_coloringMode->get( true ) )
+                        vertices->push_back( osg::Vec3( xSlice - 0.01f, y + vecCompY, z + vecCompZ ) );
+                        vertices->push_back( osg::Vec3( xSlice - 0.01f, y - vecCompY, z - vecCompZ ) );
+                        vertices->push_back( osg::Vec3( xSlice + 0.01f, y + vecCompY, z + vecCompZ ) );
+                        vertices->push_back( osg::Vec3( xSlice + 0.01f, y - vecCompY, z - vecCompZ ) );
+                        if( m_coloringMode->get( true ) )
                         {
-                            colors->push_back( osg::Vec4( fabs( xx ), fabs( yy ), fabs( zz ), 1.0 ) );
-                            colors->push_back( osg::Vec4( fabs( xx ), fabs( yy ), fabs( zz ), 1.0 ) );
-                            colors->push_back( osg::Vec4( fabs( xx ), fabs( yy ), fabs( zz ), 1.0 ) );
-                            colors->push_back( osg::Vec4( fabs( xx ), fabs( yy ), fabs( zz ), 1.0 ) );
+                            colors->push_back( osg::Vec4( fabs( vecCompX ), fabs( vecCompY ), fabs( vecCompZ ), 1.0 ) );
+                            colors->push_back( osg::Vec4( fabs( vecCompX ), fabs( vecCompY ), fabs( vecCompZ ), 1.0 ) );
+                            colors->push_back( osg::Vec4( fabs( vecCompX ), fabs( vecCompY ), fabs( vecCompZ ), 1.0 ) );
+                            colors->push_back( osg::Vec4( fabs( vecCompX ), fabs( vecCompY ), fabs( vecCompZ ), 1.0 ) );
                         }
                         else
                         {
-                            colors->push_back( cc );
-                            colors->push_back( cc );
-                            colors->push_back( cc );
-                            colors->push_back( cc );
+                            colors->push_back( color );
+                            colors->push_back( color );
+                            colors->push_back( color );
+                            colors->push_back( color );
                         }
                     }
                 }
@@ -366,7 +374,10 @@ osg::ref_ptr<osg::Geometry> WMVectorPlot::buildPlotSlices()
 
         ++*progress;
 
-        for ( size_t i = 0; i < vertices->size(); ++i )
+        // Transform the vertices according to the matrix given in the grid.
+        transformVerts( vertices );
+
+        for( size_t i = 0; i < vertices->size(); ++i )
         {
             osg::DrawElementsUInt* line = new osg::DrawElementsUInt( osg::PrimitiveSet::LINES, 0 );
             line->push_back( i );
@@ -386,28 +397,26 @@ osg::ref_ptr<osg::Geometry> WMVectorPlot::buildPlotSlices()
 }
 
 
-void WMVectorPlot::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisitor* nv )
+void WMVectorPlot::updateCallback()
 {
-    wmath::WPosition current = WKernel::getRunningKernel()->getSelectionManager()->getCrosshair()->getPosition();
-    wmath::WPosition old( m_module->m_xPos->get(), m_module->m_yPos->get(), m_module->m_zPos->get() );
+    WPosition current = WKernel::getRunningKernel()->getSelectionManager()->getCrosshair()->getPosition();
 
-    if ( ( old != current ) || m_module->m_coloringMode->changed() || m_module->m_aColor->changed() || m_module->m_projectOnSlice->changed() ||
-            m_module->m_showonX->changed() || m_module->m_showonY->changed() || m_module->m_showonZ->changed() )
+    if( ( m_oldPos != current ) || m_coloringMode->changed() || m_aColor->changed() || m_projectOnSlice->changed() ||
+            m_showOnSagittal->changed() || m_showOnCoronal->changed() || m_showOnAxial->changed() )
     {
-        osg::ref_ptr<osg::Drawable> old = osg::ref_ptr<osg::Drawable>( m_module->m_rootNode->getDrawable( 0 ) );
-        m_module->m_rootNode->removeDrawable( old );
-        m_module->m_rootNode->addDrawable( m_module->buildPlotSlices() );
+        m_oldPos = current; // for next run
+        osg::ref_ptr<osg::Drawable> old = osg::ref_ptr<osg::Drawable>( m_rootNode->getDrawable( 0 ) );
+        m_rootNode->removeDrawable( old );
+        m_rootNode->addDrawable( buildPlotSlices() );
     }
-
-    traverse( node, nv );
 }
 
 
 void WMVectorPlot::activate()
 {
-    if ( m_rootNode )   // always ensure the root node exists
+    if( m_rootNode )   // always ensure the root node exists
     {
-        if ( m_active->get() )
+        if( m_active->get() )
         {
             m_rootNode->setNodeMask( 0xFFFFFFFF );
         }
@@ -421,3 +430,20 @@ void WMVectorPlot::activate()
     WModule::activate();
 }
 
+void WMVectorPlot::transformVerts( osg::ref_ptr< osg::Vec3Array > verts )
+{
+    WMatrix< double > mat = boost::shared_dynamic_cast< WGridRegular3D >( m_dataSet->getGrid() )->getTransformationMatrix();
+
+    for( size_t i = 0; i < verts->size(); ++i )
+    {
+        std::vector< double > resultPos4D( 4 );
+        resultPos4D[0] = mat( 0, 0 ) * ( *verts )[i][0] + mat( 0, 1 ) * ( *verts )[i][1] + mat( 0, 2 ) * ( *verts )[i][2] + mat( 0, 3 ) * 1;
+        resultPos4D[1] = mat( 1, 0 ) * ( *verts )[i][0] + mat( 1, 1 ) * ( *verts )[i][1] + mat( 1, 2 ) * ( *verts )[i][2] + mat( 1, 3 ) * 1;
+        resultPos4D[2] = mat( 2, 0 ) * ( *verts )[i][0] + mat( 2, 1 ) * ( *verts )[i][1] + mat( 2, 2 ) * ( *verts )[i][2] + mat( 2, 3 ) * 1;
+        resultPos4D[3] = mat( 3, 0 ) * ( *verts )[i][0] + mat( 3, 1 ) * ( *verts )[i][1] + mat( 3, 2 ) * ( *verts )[i][2] + mat( 3, 3 ) * 1;
+
+        ( *verts )[i][0] = resultPos4D[0] / resultPos4D[3];
+        ( *verts )[i][1] = resultPos4D[1] / resultPos4D[3];
+        ( *verts )[i][2] = resultPos4D[2] / resultPos4D[3];
+    }
+}

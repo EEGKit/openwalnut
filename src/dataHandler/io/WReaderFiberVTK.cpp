@@ -30,6 +30,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "../../common/WIOTools.h"
+#include "../../common/WLimits.h"
 #include "../../common/WAssert.h"
 #include "../../common/WLogger.h"
 #include "../../common/WStringUtils.h"
@@ -50,22 +51,15 @@ WReaderFiberVTK::~WReaderFiberVTK() throw()
 
 boost::shared_ptr< WDataSetFibers > WReaderFiberVTK::read()
 {
-    try
+    m_ifs = boost::shared_ptr< std::ifstream >( new std::ifstream() );
+    m_ifs->open( m_fname.c_str(), std::ifstream::in | std::ifstream::binary );
+    if( !m_ifs || m_ifs->bad() )
     {
-        m_ifs = boost::shared_ptr< std::ifstream >( new std::ifstream() );
-        m_ifs->open( m_fname.c_str(), std::ifstream::in | std::ifstream::binary );
-        if( !m_ifs || m_ifs->bad() )
-        {
-            throw WDHIOFailure( "internal error while opening" );
-        }
-        readHeader();
-        readPoints();
-        readLines();
+        throw WDHIOFailure( std::string( "internal error while opening" ) );
     }
-    catch( WDHException e )
-    {
-        wlog::error( "WReaderFiberVTK" ) << "Abort loading VTK fiber file: " << m_fname << ", due to: " << e.what();
-    }
+    readHeader();
+    readPoints();
+    readLines();
 
     boost::shared_ptr< WDataSetFibers > fibers = boost::shared_ptr< WDataSetFibers >( new WDataSetFibers( m_points,
                                                                                                           m_fiberStartIndices,
@@ -117,7 +111,7 @@ void WReaderFiberVTK::readPoints()
     std::vector< std::string > tokens = string_utils::tokenize( line );
     if( tokens.size() != 3 || string_utils::toLower( tokens.at( 2 ) ) != "float" )
     {
-        throw WDHParseError( "Invalid POINTS declaration: " + line + ", expected float." );
+        throw WDHParseError( std::string( "Invalid POINTS declaration: " + line + ", expected float." ) );
     }
 
     size_t numPoints = getLexicalCast< size_t >( tokens.at( 1 ), "Invalid number of points" );
@@ -125,10 +119,11 @@ void WReaderFiberVTK::readPoints()
     float *pointData = new float[ 3 * numPoints ];
     m_ifs->read( reinterpret_cast< char* >( pointData ), 3 * sizeof( float ) * numPoints );
 
-    wiotools::switchByteOrderOfArray( pointData, 3 * numPoints ); // all 4 bytes of each float are in wrong order we need to reorder them
+    switchByteOrderOfArray( pointData, 3 * numPoints ); // all 4 bytes of each float are in wrong order we need to reorder them
 
     m_points = boost::shared_ptr< std::vector< float > >( new std::vector< float >( pointData, pointData + 3 * numPoints ) );
 
+    WAssert( m_points->size() % 3 == 0, "Number of floats for coordinates not dividable by three." );
     delete[] pointData;
 
     // since we know here the size of the vector we may allocate it right here
@@ -146,7 +141,7 @@ void WReaderFiberVTK::readLines()
     std::vector< std::string > tokens = string_utils::tokenize( line );
     if( tokens.size() != 3 || string_utils::toUpper( tokens.at( 0 ) ) != "LINES" )
     {
-        throw WDHException( "Invalid VTK LINES declaration: " + line );
+        throw WDHException( std::string( "Invalid VTK LINES declaration: " + line ) );
     }
     size_t numLines = getLexicalCast< size_t >( tokens.at( 1 ), "Invalid number of lines in LINES delclaration" );
     size_t linesSize = getLexicalCast< size_t >( tokens.at( 2 ), "Invalid size of lines in LINES delclaration" );
@@ -154,7 +149,7 @@ void WReaderFiberVTK::readLines()
     uint32_t *lineData = new uint32_t[ linesSize ];
     m_ifs->read( reinterpret_cast<char*>( lineData ), linesSize * sizeof( uint32_t ) );
 
-    wiotools::switchByteOrderOfArray( lineData, linesSize );
+    switchByteOrderOfArray( lineData, linesSize );
 
     m_fiberStartIndices = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t > );
     m_fiberLengths = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t > );
@@ -189,15 +184,17 @@ std::string WReaderFiberVTK::getLine( const std::string& desc )
     std::string line;
     try
     {
-        std::getline( *m_ifs, line );
+        // we use '\n' as line termination under every platform so our files (which are most likely to be generated on Unix systems)
+        // can be read from all platforms not having those line termination symbols like e.g. windows ('\r\n').
+        std::getline( *m_ifs, line, '\n' );
     }
     catch( const std::ios_base::failure &e )
     {
-        throw WDHIOFailure( "IO error while " + desc + " of VTK fiber file: " + m_fname + ", " + e.what() );
+        throw WDHIOFailure( std::string( "IO error while " + desc + " of VTK fiber file: " + m_fname + ", " + e.what() ) );
     }
     if( !m_ifs->good() )
     {
-        throw WDHParseError( "Unexpected end of VTK fiber file: " + m_fname );
+        throw WDHParseError( std::string( "Unexpected end of VTK fiber file: " + m_fname ) );
     }
     return line;
 }

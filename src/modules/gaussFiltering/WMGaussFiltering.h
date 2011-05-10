@@ -36,7 +36,7 @@
 #include "../../kernel/WModule.h"
 #include "../../kernel/WModuleInputData.h"
 
-#include "../../common/math/WVector3D.h"
+#include "../../common/math/linearAlgebra/WLinearAlgebra.h"
 
 #include "../../dataHandler/WDataSetScalar.h"
 
@@ -44,7 +44,7 @@
  * Gauss filtering for WDataSetScalar
  *
  * \problem It works only on double value sets so far.
- * \reminder The boundary values will not be touched an considered to be zero.
+ * \reminder The boundary values will not be touched and considered to be zero.
  *
  * \ingroup modules
  */
@@ -150,7 +150,7 @@ private:
      * Run the 1D Gaussian filter over the field
      * \param newVals result of the filtering
      * \param vals the values to work on
-     * \param prog the progess used for this filter iteration
+     * \param prog the progress used for this filter iteration
      * \param Nx dimension along the filter
      * \param Ny first dimension perpendicular to the filter
      * \param Nz second dimension perpendicular to the filter
@@ -169,7 +169,7 @@ private:
      * Run the 1D Gaussian filter over the field
      * \param newVals result of the filtering
      * \param vals the values to work on
-     * \param prog the progess used for this filter iteration
+     * \param prog the progress used for this filter iteration
      * \param Nx dimension along the filter
      * \param Ny first dimension perpendicular to the filter
      * \param Nz second dimension perpendicular to the filter

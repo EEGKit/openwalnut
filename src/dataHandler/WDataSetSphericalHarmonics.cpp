@@ -24,10 +24,12 @@
 
 #include <stdint.h>
 
+#include <cmath>
 #include <string>
 #include <vector>
 
 #include "../common/WAssert.h"
+#include "../common/math/linearAlgebra/WLinearAlgebra.h"
 #include "WDataSetSingle.h"
 #include "WDataSetSphericalHarmonics.h"
 
@@ -36,12 +38,11 @@ boost::shared_ptr< WPrototyped > WDataSetSphericalHarmonics::m_prototype = boost
 
 WDataSetSphericalHarmonics::WDataSetSphericalHarmonics( boost::shared_ptr< WValueSetBase > newValueSet,
                                                         boost::shared_ptr< WGrid > newGrid ) :
-    WDataSetSingle( newValueSet, newGrid )
+    WDataSetSingle( newValueSet, newGrid ), m_valueSet( newValueSet )
 {
-    m_valueSet = boost::shared_dynamic_cast< WValueSet<double> >( newValueSet );
+    m_gridRegular3D = boost::shared_dynamic_cast< WGridRegular3D >( newGrid );
     WAssert( newValueSet, "No value set given." );
     WAssert( newGrid, "No grid given." );
-    WAssert( m_valueSet, "No WValueSet<double given." );
 }
 
 WDataSetSphericalHarmonics::WDataSetSphericalHarmonics()
@@ -51,6 +52,21 @@ WDataSetSphericalHarmonics::WDataSetSphericalHarmonics()
 
 WDataSetSphericalHarmonics::~WDataSetSphericalHarmonics()
 {
+}
+
+WDataSetSingle::SPtr WDataSetSphericalHarmonics::clone( boost::shared_ptr< WValueSetBase > newValueSet ) const
+{
+    return WDataSetSingle::SPtr( new WDataSetSphericalHarmonics( newValueSet, getGrid() ) );
+}
+
+WDataSetSingle::SPtr WDataSetSphericalHarmonics::clone( boost::shared_ptr< WGrid > newGrid ) const
+{
+    return WDataSetSingle::SPtr( new WDataSetSphericalHarmonics( getValueSet(), newGrid ) );
+}
+
+WDataSetSingle::SPtr WDataSetSphericalHarmonics::clone() const
+{
+    return WDataSetSingle::SPtr( new WDataSetSphericalHarmonics( getValueSet(), getGrid() ) );
 }
 
 boost::shared_ptr< WPrototyped > WDataSetSphericalHarmonics::getPrototype()
@@ -63,25 +79,27 @@ boost::shared_ptr< WPrototyped > WDataSetSphericalHarmonics::getPrototype()
     return m_prototype;
 }
 
-wmath::WSymmetricSphericalHarmonic WDataSetSphericalHarmonics::interpolate( const wmath::WPosition& pos, bool* success ) const
+WSymmetricSphericalHarmonic WDataSetSphericalHarmonics::interpolate( const WPosition& pos, bool* success ) const
 {
-    boost::shared_ptr< WGridRegular3D > grid = boost::shared_dynamic_cast< WGridRegular3D >( m_grid );
+    *success = m_gridRegular3D->encloses( pos );
 
-    *success = grid->encloses( pos );
+    bool isInside = true;
+    size_t cellId = m_gridRegular3D->getCellId( pos, &isInside );
 
-    if( !*success )
+    if( !isInside )
     {
-        return wmath::WSymmetricSphericalHarmonic();
+        *success = false;
+        return WSymmetricSphericalHarmonic();
     }
 
     // ids of vertices for interpolation
-    std::vector< size_t > vertexIds = grid->getCellVertexIds( grid->getCellId( pos ) );
+    std::vector< size_t > vertexIds = m_gridRegular3D->getCellVertexIds( cellId );
 
-    wmath::WPosition localPos = pos - grid->getPosition( vertexIds[0] );
+    WPosition localPos = pos - m_gridRegular3D->getPosition( vertexIds[0] );
 
-    double lambdaX = localPos[0] / grid->getOffsetX();
-    double lambdaY = localPos[1] / grid->getOffsetY();
-    double lambdaZ = localPos[2] / grid->getOffsetZ();
+    double lambdaX = localPos[0] / m_gridRegular3D->getOffsetX();
+    double lambdaY = localPos[1] / m_gridRegular3D->getOffsetY();
+    double lambdaZ = localPos[2] / m_gridRegular3D->getOffsetZ();
     std::vector< double > h( 8 );
 //         lZ     lY
 //         |      /
@@ -102,21 +120,21 @@ wmath::WSymmetricSphericalHarmonic WDataSetSphericalHarmonics::interpolate( cons
     h[7] = (     lambdaX ) * (     lambdaY ) * (     lambdaZ );
 
     // take
-    wmath::WValue< double > interpolatedCoefficients( m_valueSet->dimension() );
+    WVector_2 interpolatedCoefficients( m_valueSet->dimension() );
     for( size_t i = 0; i < 8; ++i )
     {
-        interpolatedCoefficients += h[i] * m_valueSet->getWValue( vertexIds[i] );
+        interpolatedCoefficients += h[i] * m_valueSet->getWVector( vertexIds[i] );
     }
 
     *success = true;
 
-    return wmath::WSymmetricSphericalHarmonic( interpolatedCoefficients );
+    return WSymmetricSphericalHarmonic( interpolatedCoefficients );
 }
 
-wmath::WSymmetricSphericalHarmonic WDataSetSphericalHarmonics::getSphericalHarmonicAt( size_t index ) const
+WSymmetricSphericalHarmonic WDataSetSphericalHarmonics::getSphericalHarmonicAt( size_t index ) const
 {
-    if ( index < m_valueSet->size() ) return wmath::WSymmetricSphericalHarmonic( m_valueSet->getWValue( index ) );
-    return wmath::WSymmetricSphericalHarmonic();
+    if ( index < m_valueSet->size() ) return WSymmetricSphericalHarmonic( m_valueSet->getWVector( index ) );
+    return WSymmetricSphericalHarmonic();
 }
 
 const std::string WDataSetSphericalHarmonics::getName() const
@@ -128,3 +146,9 @@ const std::string WDataSetSphericalHarmonics::getDescription() const
 {
     return "Contains factors for spherical harmonics.";
 }
+
+bool WDataSetSphericalHarmonics::isTexture() const
+{
+    return false;
+}
+
