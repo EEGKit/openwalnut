@@ -45,6 +45,7 @@
 #include "../../graphicsEngine/shaders/WGEShader.h"
 #include "../../graphicsEngine/shaders/WGEShaderDefineOptions.h"
 #include "../../graphicsEngine/shaders/WGEShaderPropertyDefineOptions.h"
+#include "../../graphicsEngine/shaders/WGEShaderPropertyDefine.h"
 #include "../../graphicsEngine/postprocessing/WGEPostprocessingNode.h"
 #include "../../graphicsEngine/WGERequirement.h"
 #include "../../graphicsEngine/callbacks/WGENodeMaskCallback.h"
@@ -121,6 +122,11 @@ void WMIsosurfaceRaytracer::properties()
     m_stepCount->setMin( 1 );
     m_stepCount->setMax( 1000 );
 
+    m_epsilon       = m_properties->addProperty( "Epsilon",           "The value defines the precision of iso-value checking. The lower the "
+                                                                      "value, the higher the precision.", 0.1 );
+    m_epsilon->setMin( 0.0 );
+    m_epsilon->setMax( 1.0 );
+
     m_alpha         = m_properties->addProperty( "Opacity %",        "The opacity in %. Transparency = 1 - Opacity.", 1.0 );
     m_alpha->setMin( 0.0 );
     m_alpha->setMax( 1.0 );
@@ -159,6 +165,9 @@ void WMIsosurfaceRaytracer::moduleMain()
     );
     m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
         new WGEShaderPropertyDefineOptions< WPropBool >( m_stochasticJitter, "STOCHASTICJITTER_DISABLED", "STOCHASTICJITTER_ENABLED" ) )
+    );
+    m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
+        new WGEShaderPropertyDefine< WPropDouble >( "ISO_EPSILON", m_epsilon ) )
     );
     m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
         new WGEShaderPropertyDefineOptions< WPropBool >( m_phongShading, "PHONGSHADING_DISABLED", "PHONGSHADING_ENABLED" ) )
@@ -254,7 +263,7 @@ void WMIsosurfaceRaytracer::moduleMain()
             cube->asTransform()->getChild( 0 )->setName( "_DVR Proxy Cube" ); // Be aware that this name is used in the pick handler.
                                                                               // because of the underscore in front it won't be picked
             // we also set the grid's transformation here
-            rootNode->setMatrix( wge::toOSGMatrix( grid->getTransformationMatrix() ) );
+            rootNode->setMatrix( static_cast< WMatrix4d >( grid->getTransform() ) );
 
             // bind the texture to the node
             osg::StateSet* rootState = cube->getOrCreateStateSet();

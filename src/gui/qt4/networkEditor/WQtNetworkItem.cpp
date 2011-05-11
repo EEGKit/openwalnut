@@ -82,6 +82,8 @@ WQtNetworkItem::~WQtNetworkItem()
     {
         delete port;
     }
+    delete m_text;
+    //delete m_subtitle;
 }
 
 int WQtNetworkItem::type() const
@@ -231,6 +233,11 @@ QList< WQtNetworkInputPort *> WQtNetworkItem::getInPorts()
 QList< WQtNetworkOutputPort *> WQtNetworkItem::getOutPorts()
 {
     return m_outPorts;
+}
+
+WNetworkLayoutItem * WQtNetworkItem::getLayoutItem()
+{
+    return m_layoutItem;
 }
 
 void WQtNetworkItem::fitLook()
@@ -423,3 +430,4 @@ bool WQtNetworkItem::advance()
 
     return true;
 }
+

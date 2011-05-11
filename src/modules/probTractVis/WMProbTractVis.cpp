@@ -97,11 +97,16 @@ const std::string WMProbTractVis::getDescription() const
 
 void WMProbTractVis::connectors()
 {
-    // Put the code for your connectors here. See "src/modules/template/" for an extensively documented example.
+    // Tractography works with scalar datasets
+    m_input = boost::shared_ptr< WModuleInputData < WDataSetScalar  > >(
+        new WModuleInputData< WDataSetScalar >( shared_from_this(), "probTract",
+                                                "The probabilistic tractogram as a scalar dataset." ) );
 
-    m_input = WModuleInputForwardData < WDataSetScalar >::createAndAdd( shared_from_this(),
-                                                                       "probTractInput",
-                                                                       "The probabilistic tractogram as scalar dataset." );
+    // As properties, every connector needs to be added to the list of connectors.
+    addConnector( m_input );
+
+    // TODO (aberres): maybe more input data? need t1 image for context info later
+
     m_gradients = WModuleInputData< WDataSetVector >::createAndAdd( shared_from_this(), "gradients", "The gradient field of the dataset to display" );
 
     WModule::connectors();
@@ -140,12 +145,12 @@ void WMProbTractVis::properties()
     m_stochasticJitter = m_properties->addProperty( "Stochastic Jitter", "Improves image quality at low sampling rates but introduces slight "
                                                                          "noise effect.", true );
 
-    m_borderClip = m_properties->addProperty( "Border Clip", "If enabled, a certain area on the volume boundary can be clipped. This is useful "
-                                                             "for noise and non-peeled data but will consume a lot of GPU power.", false );
+//    m_borderClip = m_properties->addProperty( "Border Clip", "If enabled, a certain area on the volume boundary can be clipped. This is useful "
+//                                                             "for noise and non-peeled data but will consume a lot of GPU power.", false );
 
-    m_borderClipDistance = m_properties->addProperty( "Border Clip Distance", "The distance that should be ignored.", 0.05 );
-    m_borderClipDistance->setMin( 0.0 );
-    m_borderClipDistance->setMax( 0.1 );
+//    m_borderClipDistance = m_properties->addProperty( "Border Clip Distance", "The distance that should be ignored.", 0.05 );
+//    m_borderClipDistance->setMin( 0.0 );
+//    m_borderClipDistance->setMax( 0.1 );
 
     WModule::properties();
 }
@@ -153,6 +158,7 @@ void WMProbTractVis::properties()
 void WMProbTractVis::requirements()
 {
     // Put the code for your requirements here. See "src/modules/template/" for an extensively documented example.
+    m_requirements.push_back( new WGERequirement() );
 }
 
 void WMProbTractVis::moduleMain()
@@ -169,9 +175,9 @@ void WMProbTractVis::moduleMain()
         new WGEShaderPropertyDefineOptions< WPropBool >( m_phongShading, "PHONGSHADING_DISABLED", "PHONGSHADING_ENABLED" ) )
     );
     WGEShaderDefineSwitch::SPtr gradTexEnableDefine = m_shader->setDefine( "GRADIENTTEXTURE_DISABLED" );
-    m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
-        new WGEShaderPropertyDefineOptions< WPropBool >( m_borderClip, "BORDERCLIP_DISABLED", "BORDERCLIP_ENABLED" ) )
-    );
+//    m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
+//        new WGEShaderPropertyDefineOptions< WPropBool >( m_borderClip, "BORDERCLIP_DISABLED", "BORDERCLIP_ENABLED" ) )
+//    );
 
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_input->getDataChangedCondition() );
@@ -255,7 +261,7 @@ void WMProbTractVis::moduleMain()
             cube->asTransform()->getChild( 0 )->setName( "_DVR Proxy Cube" ); // Be aware that this name is used in the pick handler.
                                                                               // because of the underscore in front it won't be picked
             // we also set the grid's transformation here
-            rootNode->setMatrix( wge::toOSGMatrix( grid->getTransformationMatrix() ) );
+            rootNode->setMatrix( static_cast< WMatrix4d >( grid->getTransform() ) );
 
             // bind the texture to the node
             osg::StateSet* rootState = cube->getOrCreateStateSet();
@@ -271,7 +277,7 @@ void WMProbTractVis::moduleMain()
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_steps", m_stepCount ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_alpha", m_alpha ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_colormapRatio", m_colormapRatio ) );
-            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_borderClipDistance", m_borderClipDistance ) );
+//            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_borderClipDistance", m_borderClipDistance ) );
             // Stochastic jitter?
             const size_t size = 64;
             osg::ref_ptr< WGETexture2D > randTex = wge::genWhiteNoiseTexture( size, size, 1 );
@@ -292,7 +298,8 @@ void WMProbTractVis::moduleMain()
             {
                 gradTexEnableDefine->setActive( false ); // disable gradient texture
             }
-            WGEColormapping::apply( cube, grid->getTransformationMatrix(), m_shader, 3 );
+//            WGEColormapping::apply( cube, grid->getTransformationMatrix(), m_shader, 3 );
+            WGEColormapping::apply( cube, m_shader );
 
             // update node
             debugLog() << "Adding new rendering.";

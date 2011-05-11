@@ -28,6 +28,7 @@
 #include <map>
 #include <string>
 #include <algorithm>
+#include <functional>
 #include <vector>
 
 #include <boost/signals2/signal.hpp>
@@ -35,10 +36,10 @@
 
 #include <osg/Node>
 
-#include "../common/WLogger.h"
+#include "../common/WBoundingBox.h"
 #include "../common/WSharedSequenceContainer.h"
 #include "../common/WSharedAssociativeContainer.h"
-#include "../common/math/WMatrix4x4.h"
+#include "../common/math/linearAlgebra/WLinearAlgebra.h"
 
 #include "callbacks/WGEFunctorCallback.h"
 
@@ -111,7 +112,7 @@ public:
      * specify any kind of texture coordinates as long as you use this matrix to transform them to the right space.
      * \param startTexUnit the first texture unit allowed to be used
      */
-    static void apply( osg::ref_ptr< osg::Node > node, WMatrix4x4 preTransform = WMatrix4x4::identity(),
+    static void apply( osg::ref_ptr< osg::Node > node, WMatrix4d preTransform = WMatrix4d::identity(),
                        osg::ref_ptr< WGEShader > shader = osg::ref_ptr< WGEShader >(), size_t startTexUnit = 0 );
 
     /**
@@ -177,6 +178,13 @@ public:
     bool moveDown( osg::ref_ptr< WGETexture3D > texture );
 
     /**
+     * Counts the number of textures in the colormapper.
+     *
+     * \return the number of textures.
+     */
+    size_t size() const;
+
+    /**
      * Possible signals that can be subscribed for being notified about texture list changes.
      */
     typedef enum
@@ -225,6 +233,22 @@ public:
      */
     TextureContainerType::ReadTicket getReadTicket();
 
+    /**
+     * This returns the bounding box of all the data textures. This is very useful if you implement an universal color-mapped exploration tool.
+     * It returns a copy of the current bounding box. Please note that this can change any moment.
+     *
+     * \return the bounding box.
+     */
+    WBoundingBox getBoundingBox() const;
+
+    /**
+     * Returns the condition firing if the texture list changes (sort, replace, add or remove). If you are interested in a certain event only,
+     * use \ref subscribeSignal.
+     *
+     * \return the change condition
+     */
+    WCondition::SPtr getChangeCondition() const;
+
 protected:
 
     /**
@@ -242,7 +266,7 @@ protected:
      * specified, a default shader is used.
      * \param startTexUnit the first texture unit allowed to be used
      */
-    void applyInst( osg::ref_ptr< osg::Node > node, WMatrix4x4 preTransform = WMatrix4x4::identity(),
+    void applyInst( osg::ref_ptr< osg::Node > node, WMatrix4d preTransform = WMatrix4d::identity(),
                     osg::ref_ptr< WGEShader > shader = osg::ref_ptr< WGEShader >(), size_t startTexUnit = 0 );
 
     /**
@@ -307,13 +331,14 @@ private:
     {
         bool   m_rebind;        //!< true if the node has not been callback'ed before
         size_t m_texUnitStart;  //!< the start index of the texture unit to use
-        WMatrix4x4 m_preTransform; //!< matrix used for transforming arbitrary texture coordinates to the proper space.
+        WMatrix4d m_preTransform; //!< matrix used for transforming arbitrary texture coordinates to the proper space.
     };
 
     /**
      * The alias for a shared container with a set of node-nodeInfo pairs
      */
-    typedef WSharedAssociativeContainer< std::map< osg::Node*, NodeInfo* > > NodeInfoContainerType;
+    typedef WSharedAssociativeContainer< std::map< osg::Node*, NodeInfo*, std::less< osg::Node* >,
+                                                   Eigen::aligned_allocator< std::pair< osg::Node*, NodeInfo > > > > NodeInfoContainerType;
 
     /**
      * This map is needed to keep track of several node specific settings
@@ -339,6 +364,16 @@ private:
      * Called whenever the texture list got resorted
      */
     boost::signals2::signal< void( void ) > m_sortSignal;
+
+    /**
+     * The bounding box of all the textures.
+     */
+    WSharedObject< WBoundingBox > m_boundingBox;
+
+    /**
+     * Updates the bounding box information. This is called for every write-update in m_textures.
+     */
+    void updateBounds();
 };
 
 template < typename Comparator >

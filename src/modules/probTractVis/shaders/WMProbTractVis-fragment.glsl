@@ -35,17 +35,7 @@
 // Used in vertex and fragment shader
 /////////////////////////////////////////////////////////////////////////////
 
-// The ray's starting point in texture space
-varying vec3 v_rayStart;
-
-// The ray direction in texture space
-varying vec3 v_ray;
-
-// the Surface normal at this point
-varying vec3 v_normal;
-
-// The isovalue scaled using texture scaling information to [0,1]
-varying float v_isovalue;
+#include "WMProbTractVis-varyings.glsl"
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
@@ -70,12 +60,12 @@ uniform int u_texture1SizeX;
 uniform sampler3D u_gradientsSampler;
 #endif
 
-#ifdef BORDERCLIP_ENABLED
-/**
- * The distance before the entry/exit point that should be clipped.
- */
-uniform float u_borderClipDistance = 0.05;
-#endif
+//#ifdef BORDERCLIP_ENABLED
+///**
+// * The distance before the entry/exit point that should be clipped.
+// */
+//uniform float u_borderClipDistance = 0.05;
+//#endif
 
 // The amount of deviation tolerated for the isovalue
 uniform float u_isovaltolerance;
@@ -174,9 +164,13 @@ void main()
     // current value inside the data, will be set dynamically
     float curValue;
 
-#ifdef STOCHASTICJIBBER_ENABLED
-        float jitter = 10.0;
-        vec3 curPoint = v_rayStart + v_ray + (v_ray * stepDistance * jitter)
+#ifdef STOCHASTICJITTER_ENABLED
+    // stochastic jittering can help to void these ugly wood-grain artifacts with larger sampling distances but might
+    // introduce some noise artifacts.
+    float jitter = 0.5 - texture2D( u_texture1Sampler, gl_FragCoord.xy / u_texture1SizeX ).r;
+    // the point along the ray in cube coordinates
+    vec3 curPoint = v_rayStart + v_ray + (v_ray * stepDistance * jitter);
+    vec3 rayStart = curPoint;
 #else
     // current point in texture space + v_ray
     vec3 curPoint = v_rayStart + v_ray;
@@ -188,7 +182,7 @@ void main()
         curValue = texture3D( u_texture0Sampler, curPoint ).r;
 
         // is it the isovalue?
-        if( abs( curValue - v_isovalue) < u_isovaltolerance )
+        if( abs( curValue - v_isovalue ) < u_isovaltolerance )
         {
             // we need the depth value of the current point inside the cube -> standard pipeline
 

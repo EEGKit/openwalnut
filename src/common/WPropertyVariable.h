@@ -33,6 +33,10 @@
 #include <vector>
 #include <set>
 
+// Use filesystem version 2 for compatibility with newer boost versions.
+#ifndef BOOST_FILESYSTEM_VERSION
+    #define BOOST_FILESYSTEM_VERSION 2
+#endif
 #include <boost/filesystem.hpp>
 #include <boost/thread.hpp>
 #include <boost/lexical_cast.hpp>
@@ -584,14 +588,12 @@ bool WPropertyVariable< T >::setAsString( std::string value )
     {
         // use the helper class which can handle different kinds of properties for us
         PROPERTY_TYPE_HELPER::WStringConversion< T > h = PROPERTY_TYPE_HELPER::WStringConversion< T >();
-        WFlag< T >::set( h.create( WFlag< T >::get(), value ) );
+        return WFlag< T >::set( h.create( WFlag< T >::get(), value ) );
     }
     catch( const boost::bad_lexical_cast &e )
     {
         return false;
     }
-
-    return true;
 }
 
 template < typename T >

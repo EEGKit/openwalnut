@@ -22,5 +22,16 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WMatrix4x4.h"
+#ifndef WPOSITION_H
+#define WPOSITION_H
+
+#include "WVectorFixed.h"
+
+/**
+ * \class WPosition
+ * This only is a 3d double vector.
+ */
+typedef WVector3d WPosition;
+
+#endif  // WPOSITION_H
 

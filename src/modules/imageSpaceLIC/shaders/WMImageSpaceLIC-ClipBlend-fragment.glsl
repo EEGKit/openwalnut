@@ -24,6 +24,8 @@
 
 #version 120
 
+#include "WGEUtils.glsl"
+
 /**
  * The texture Unit for the advection texture
  */
@@ -79,6 +81,13 @@ void main()
     float u_contrastingS = u_useHighContrast ? 64.0 : 2.5;
     float u_contrastingP = u_useHighContrast ? 8 : 2.5;
     vec3 plainColor = u_cmapRatio * cmap + ( 1.0 - u_cmapRatio ) * vec3( u_contrastingS * pow( advected, u_contrastingP ) );
+
+    // MPI Paper Hack: {
+    // plainColor = u_cmapRatio * cmap;
+    // plainColor += 1.5*( 1.0 - u_cmapRatio ) * vec3( u_contrastingS * pow( advected, u_contrastingP ), 0.0, 0.0 );
+    // if ( isZero( cmap.r, 0.1 ) )
+    //     discard;
+    // }
 
     gl_FragColor = vec4(
         ( vec3( edge ) + plainColor ) // plain color mapped advection texture with edges

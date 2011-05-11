@@ -22,17 +22,16 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WPOSITION_H
-#define WPOSITION_H
+#version 120
 
-#include "WVector3D.h"
+#include "WGEColormapping-fragment.glsl"
 
 /**
- * \class WPosition
- * The file %WPosition.h just includes %WVector3D.h.
- * There is "typedef WVector3D WPosition;" in %WVector3D.h.
- * WPosition such is just another name for WVector3D to indicate the specific use
- * for positions in some places.
+ * Applies colormapping.
  */
+void main()
+{
+    vec4 cmap = colormapping();
+    gl_FragColor = cmap;
+}
 
-#endif  // WPOSITION_H

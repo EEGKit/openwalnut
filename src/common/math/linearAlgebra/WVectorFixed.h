@@ -22,26 +22,28 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WPOSITION_TEST_H
-#define WPOSITION_TEST_H
+#ifndef WVECTORFIXED_H
+#define WVECTORFIXED_H
 
-#include <cxxtest/TestSuite.h>
-#include "../WPosition.h"
+// defined in WMatrixFixed
+#include "WMatrixFixed.h"
 
-/**
- * Testsuite for WPosition.
- */
-class WPositionTest : public CxxTest::TestSuite
-{
-public:
-    /**
-     * Tests nothing as WPosition is only an alias for WVector3D.
-     * See the tests for WVector3D for methods testing the behavior.
-     */
-    void testNothing( void )
-    {
-        TS_TRACE( "Nothing to test for WPosition. See the tests of WVector3D." );
-    }
-};
+// Here: only some typedefs for vectors get defined
 
-#endif  // WPOSITION_TEST_H
+// Double vectors
+typedef WMatrixFixed< double, 2, 1 > WVector2d;
+typedef WMatrixFixed< double, 3, 1 > WVector3d;
+typedef WMatrixFixed< double, 4, 1 > WVector4d;
+typedef WMatrixFixed< double, 1, 2 > WVectorRow2d;
+typedef WMatrixFixed< double, 1, 3 > WVectorRow3d;
+typedef WMatrixFixed< double, 1, 4 > WVectorRow4d;
+
+// Float vectors
+typedef WMatrixFixed< float, 2, 1 > WVector2f;
+typedef WMatrixFixed< float, 3, 1 > WVector3f;
+typedef WMatrixFixed< float, 4, 1 > WVector4f;
+typedef WMatrixFixed< float, 1, 2 > WVectorRow2f;
+typedef WMatrixFixed< float, 1, 3 > WVectorRow3f;
+typedef WMatrixFixed< float, 1, 4 > WVectorRow4f;
+
+#endif  // WVECTORFIXED_H

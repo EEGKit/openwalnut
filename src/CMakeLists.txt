@@ -7,6 +7,9 @@ IF( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
 ENDIF()
 
 
+IF( CMAKE_GENERATOR MATCHES "Visual Studio" )
+    ADD_DEFINITIONS( -DEIGEN_DONT_VECTORIZE -DEIGEN_DONT_ALIGN -DEIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT )
+ENDIF()
 
 # append search path for FindModules:
 #------------------------------------
@@ -38,7 +41,7 @@ ENDIF()
 OPTION( OW_BUILD_AS_ONE_BIG_FILE "Build every library as one big cpp" OFF )
 INCLUDE( FindPythonInterp )
 
-# define libnames 
+# define libnames
 SET( OWCommonName "OWcommon" )
 SET( OWDatahandlerName "OWdataHandler" )
 SET( OWgeName "OWge" )
@@ -272,6 +275,7 @@ ADD_EXECUTABLE( walnut OpenWalnut.cpp version.h )
 TARGET_LINK_LIBRARIES( walnut ${OWKernelName} ${OWDatahandlerName} ${OWguiName} ${OWguiqt4Name} ${OWCommonName} ${OWgeName} ${Boost_LIBRARIES} )
 
 IF(MSVC_IDE)
+    ADD_DEFINITIONS( -DEIGEN_DONT_VECTORIZE -DEIGEN_DONT_ALIGN -DEIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT )
     SET_TARGET_PROPERTIES( walnut PROPERTIES DEBUG_POSTFIX "d")
     SET_TARGET_PROPERTIES( walnut PROPERTIES PREFIX "../")
 ENDIF(MSVC_IDE)
@@ -297,7 +301,9 @@ add_custom_target( fontsDirectoryConfiguration
 #---------- OpenWalnut help -------------
 ADD_CUSTOM_TARGET( onlineHelp
     ALL
-    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/gui/qt4/OpenWalnutHelp.html ${PROJECT_BINARY_DIR}/share/OpenWalnut
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/../doc/user/help/OpenWalnutHelp.html ${PROJECT_BINARY_DIR}/share/OpenWalnut
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/../doc/user/help/images/ ${PROJECT_BINARY_DIR}/share/OpenWalnut/images
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/gui/icons/ ${PROJECT_BINARY_DIR}/share/OpenWalnut/icons
     COMMENT "Copy online help"
 )
 

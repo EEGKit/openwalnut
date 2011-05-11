@@ -119,7 +119,7 @@ private:
     * Scalar dataset representing the probability field either in real numbers in [0,1], or gray values, or the
     * connectivity score (#visits per voxel).
     */
-    boost::shared_ptr< WModuleInputForwardData< WDataSetScalar > > m_input;
+    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_input;
 
     /**
      * The gradient field input
@@ -174,12 +174,12 @@ private:
     /**
      * If true, a certain border area can be clipped. Very useful for non-peeled noisy data.
      */
-    WPropBool m_borderClip;
+//    WPropBool m_borderClip;
 
     /**
      * The distance used for clipping.
      */
-    WPropDouble m_borderClipDistance;
+//    WPropDouble m_borderClipDistance;
 
     /**
      * A condition used to notify about changes in several properties.

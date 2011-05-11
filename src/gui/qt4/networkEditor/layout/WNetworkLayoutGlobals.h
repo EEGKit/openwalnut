@@ -22,41 +22,12 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WVECTOR3DTRAITS_H
-#define WVECTOR3DTRAITS_H
+#ifndef WNETWORKLAYOUTGLOBALS_H
+#define WNETWORKLAYOUTGLOBALS_H
 
-#include <sstream>
+// The size of the grid
+#define WNETWORKLAYOUT_GRIDSIZE 240
 
-#include <cxxtest/TestSuite.h>
-#include <cxxtest/ValueTraits.h>
+#endif  // WNETWORKLAYOUTGLOBALS_H
 
-#include "../../test/WTraitsBase.h"
-#include "../WVector3D.h"
 
-#ifdef CXXTEST_RUNNING
-namespace CxxTest
-{
-CXXTEST_TEMPLATE_INSTANTIATION
-/**
- * Enables better UnitTest OutPut if something fails with WFibers, so you see
- * immedeatly what is failing.
- */
-class ValueTraits< WVector3D > : public WTraitsBase
-{
-public:
-    /**
-     * Constructor for class allowing usable output of WVector3D in tests
-     *
-     * \param m the WVector to print
-     */
-    explicit ValueTraits( const WVector3D &m )
-    {
-        std::stringstream tmp;
-        tmp.precision( 16 );
-        tmp << "WVector3D( " << m[0] << " " << m[1] << " " << m[2] << " )";
-        m_s = tmp.str();
-    }
-};
-}
-#endif  // CXXTEST_RUNNING
-#endif  // WVECTOR3DTRAITS_H
