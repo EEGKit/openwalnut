@@ -98,12 +98,8 @@ const std::string WMProbTractVis::getDescription() const
 void WMProbTractVis::connectors()
 {
     // Tractography works with scalar datasets
-    m_input = boost::shared_ptr< WModuleInputData < WDataSetScalar  > >(
-        new WModuleInputData< WDataSetScalar >( shared_from_this(), "probTract",
-                                                "The probabilistic tractogram as a scalar dataset." ) );
-
-    // As properties, every connector needs to be added to the list of connectors.
-    addConnector( m_input );
+    m_input = WModuleInputData < WDataSetScalar >::createAndAdd( shared_from_this(), "probTract",
+                                                "The probabilistic tractogram as a scalar dataset." );
 
     // TODO (aberres): maybe more input data? need t1 image for context info later
 
@@ -187,7 +183,7 @@ void WMProbTractVis::moduleMain()
     ready();
     debugLog() << "Module is now ready.";
 
-        // create the root node containing the transformation and geometry
+    // create the root node containing the transformation and geometry
     osg::ref_ptr< WGEGroupNode > rootNode = new WGEGroupNode();
 
     // create the post-processing node which actually does the nice stuff to the rendered image
@@ -230,7 +226,7 @@ void WMProbTractVis::moduleMain()
             rootNode->clear();
         }
 
-                // m_isoColor or shading changed
+        // m_isoColor or shading changed
         if ( m_isoColor->changed() )
         {
             // a new color requires the proxy geometry to be rebuild as we store it as color in this geometry
@@ -242,8 +238,10 @@ void WMProbTractVis::moduleMain()
         {
             debugLog() << "Data changed. Uploading new data as texture.";
 
+            // set isovalue range to that of dataset
             m_isoValue->setMin( dataSet->getTexture2()->minimum()->get() );
             m_isoValue->setMax( dataSet->getTexture2()->scale()->get() + dataSet->getTexture2()->minimum()->get() );
+            // set the isovalue to the middle of the range
             m_isoValue->set( dataSet->getTexture2()->minimum()->get() + ( 0.5 * dataSet->getTexture2()->scale()->get() ) );
 
             // First, grab the grid
@@ -278,6 +276,7 @@ void WMProbTractVis::moduleMain()
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_alpha", m_alpha ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_colormapRatio", m_colormapRatio ) );
 //            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_borderClipDistance", m_borderClipDistance ) );
+
             // Stochastic jitter?
             const size_t size = 64;
             osg::ref_ptr< WGETexture2D > randTex = wge::genWhiteNoiseTexture( size, size, 1 );
@@ -298,6 +297,7 @@ void WMProbTractVis::moduleMain()
             {
                 gradTexEnableDefine->setActive( false ); // disable gradient texture
             }
+
 //            WGEColormapping::apply( cube, grid->getTransformationMatrix(), m_shader, 3 );
             WGEColormapping::apply( cube, m_shader );
 
@@ -305,6 +305,7 @@ void WMProbTractVis::moduleMain()
             debugLog() << "Adding new rendering.";
             rootNode->clear();
             rootNode->insert( cube );
+
             // insert root node if needed. This way, we ensure that the root node gets added only if the proxy cube has been added AND the bbox
             // can be calculated properly by the OSG to ensure the proxy cube is centered in the scene if no other item has been added earlier.
             if ( !postNodeInserted )

@@ -200,9 +200,17 @@ void main()
             // 4. shading
             // find normal for a headlight in world coordinates
             vec3 normal = ( gl_ModelViewMatrix * vec4( getNormal( curPoint ), 0.0 ) ).xyz;
+            #ifdef WGE_POSTPROCESSING_ENABLED
+                wge_FragNormal = textureNormalize( normal );
+            #endif
 
             // full brightness
-            float light = 1.0; //TODO
+            float light = 1.0;
+            #ifdef PHONGSHADING_ENABLED
+                // only calculate the phong illumination only if needed
+                light = blinnPhongIlluminationIntensity( normalize( normal ) );
+            #endif
+
 
             // 5. set colour
             // mix color with colormap
