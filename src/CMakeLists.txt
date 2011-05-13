@@ -281,7 +281,7 @@ IF(MSVC_IDE)
 ENDIF(MSVC_IDE)
 
 #---------- Shaders -------------
-option( OW_COPY_SHADERS "This enables copying shaders with every make call." ON )
+option( OW_COPY_SHADERS "This enables copying shaders with every make call." OFF )
 if( OW_COPY_SHADERS )
   add_custom_target( shaderDirectoryConfiguration
     ALL

@@ -44,8 +44,9 @@ uniform float u_texture0Scale;
 // minimum value in texture. Needed for descaling.
 uniform float u_texture0Min;
 
-// The isovalue to use.
+// The isovalues to use.
 uniform float u_isovalue;
+uniform float u_isovalue2;
 
 /////////////////////////////////////////////////////////////////////////////
 // Attributes
@@ -66,8 +67,9 @@ void main()
 {
     colormapping();
 
-    // scale isovalue to equal the texture data scaling.
+    // scale isovalues to equal the texture data scaling.
     v_isovalue = ( u_isovalue - u_texture0Min ) / u_texture0Scale;
+    v_isovalue2 = ( u_isovalue2 - u_texture0Min ) / u_texture0Scale;
 
     // for easy access to texture coordinates
     gl_TexCoord[0] = gl_MultiTexCoord0;

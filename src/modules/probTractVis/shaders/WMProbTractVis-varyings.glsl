@@ -36,6 +36,7 @@ varying vec3 v_ray;
 // the Surface normal at this point
 varying vec3 v_normal;
 
-// The isovalue scaled using texture scaling information to [0,1]
+// The isovalues scaled using texture scaling information to [0,1]
 varying float v_isovalue;
+varying float v_isovalue2;
 

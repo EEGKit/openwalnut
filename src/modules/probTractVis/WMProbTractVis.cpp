@@ -115,20 +115,27 @@ void WMProbTractVis::properties()
 
     m_isoValue      = m_properties->addProperty( "Isovalue",         "The isovalue used whenever the isosurface Mode is turned on.",
                                                                       128.0 );
-    m_isoValueTolerance = m_properties->addProperty( "Isovalue tolerance", "The amount of deviation tolerated for the isovalue", 0.05 );
-    m_isoValueTolerance->setMax( 0.5 );
-
     m_isoColor      = m_properties->addProperty( "Iso color",        "The color to blend the isosurface with.", WColor( 0.6, 0.0, 1.0, 1.0 ),
                       m_propCondition );
+    m_alpha         = m_properties->addProperty( "Opacity %",        "The opacity in %. Transparency = 1 - Opacity.", 0.7 );
+    m_alpha->setMin( 0.0 );
+    m_alpha->setMax( 1.0 );
+
+    m_isoValue2      = m_properties->addProperty( "Isovalue 2",         "The isovalue used whenever the isosurface Mode is turned on.",
+                                                                      128.0 );
+    m_isoColor2      = m_properties->addProperty( "Iso color 2",        "The color to blend the isosurface with.", WColor( 1.0, 0.6, 0.0, 1.0 ),
+                      m_propCondition );
+    m_alpha2         = m_properties->addProperty( "Opacity 2 %",        "The opacity in %. Transparency = 1 - Opacity.", 0.7 );
+    m_alpha2->setMin( 0.0 );
+    m_alpha2->setMax( 1.0 );
+
+    m_isoValueTolerance = m_properties->addProperty( "Isovalue tolerance", "The amount of deviation tolerated for the isovalue", 0.05 );
+    m_isoValueTolerance->setMax( 0.5 );
 
     m_stepCount     = m_properties->addProperty( "Step count",       "The number of steps to walk along the ray during raycasting. A low value "
                                                                       "may cause artifacts whilst a high value slows down rendering.", 250 );
     m_stepCount->setMin( 1 );
     m_stepCount->setMax( 1000 );
-
-    m_alpha         = m_properties->addProperty( "Opacity %",        "The opacity in %. Transparency = 1 - Opacity.", 0.7 );
-    m_alpha->setMin( 0.0 );
-    m_alpha->setMax( 1.0 );
 
     m_colormapRatio = m_properties->addProperty( "Colormap Ratio",   "The intensity of the colormap in contrast to surface shading.", 0.5 );
     m_colormapRatio->setMin( 0.0 );
@@ -227,7 +234,7 @@ void WMProbTractVis::moduleMain()
         }
 
         // m_isoColor or shading changed
-        if ( m_isoColor->changed() )
+        if ( m_isoColor->changed() || m_isoColor2->changed() )
         {
             // a new color requires the proxy geometry to be rebuild as we store it as color in this geometry
             dataUpdated = true;
@@ -243,6 +250,13 @@ void WMProbTractVis::moduleMain()
             m_isoValue->setMax( dataSet->getTexture2()->scale()->get() + dataSet->getTexture2()->minimum()->get() );
             // set the isovalue to the middle of the range
             m_isoValue->set( dataSet->getTexture2()->minimum()->get() + ( 0.5 * dataSet->getTexture2()->scale()->get() ) );
+
+            // set isovalue range to that of dataset
+            m_isoValue2->setMin( dataSet->getTexture2()->minimum()->get() );
+            m_isoValue2->setMax( dataSet->getTexture2()->scale()->get() + dataSet->getTexture2()->minimum()->get() );
+            // set the isovalue to the middle of the range
+            m_isoValue2->set( dataSet->getTexture2()->minimum()->get() + ( 0.2 * dataSet->getTexture2()->scale()->get() ) );
+
 
             // First, grab the grid
             boost::shared_ptr< WGridRegular3D > grid = boost::shared_dynamic_cast< WGridRegular3D >( dataSet->getGrid() );
@@ -271,9 +285,11 @@ void WMProbTractVis::moduleMain()
             ////////////////////////////////////////////////////////////////////////////////////////////////////
 
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalue", m_isoValue ) );
+            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalue2", m_isoValue2 ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovaltolerance", m_isoValueTolerance ) );
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_steps", m_stepCount ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_alpha", m_alpha ) );
+            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_alpha2", m_alpha2 ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_colormapRatio", m_colormapRatio ) );
 //            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_borderClipDistance", m_borderClipDistance ) );
 

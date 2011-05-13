@@ -73,8 +73,9 @@ uniform float u_isovaltolerance;
 // The number of steps to use.
 uniform int u_steps;
 
-// The alpha value to set
+// The alpha values to set
 uniform float u_alpha;
+uniform float u_alpha2;
 
 // the ratio between normal color and the colormapping color.
 uniform float u_colormapRatio;
@@ -146,7 +147,7 @@ vec3 getNormal( in vec3 position )
 void main()
 {
     // rgba, set for all points
-    // gl_Color is set via the colour picking widget
+    // gl_Color is set via the color picking widget
     // u_alpha can be modified by the opacity slider (uniform variable u_alpha)
     wge_FragColor = vec4 ( gl_Color.rgb, u_alpha );
 
@@ -181,8 +182,19 @@ void main()
         // get current value
         curValue = texture3D( u_texture0Sampler, curPoint ).r;
 
+        bool val1ok = false;
+        bool val2ok = false;
+
         // is it the isovalue?
         if( abs( curValue - v_isovalue ) < u_isovaltolerance )
+        {
+            val1ok = true;
+        }
+        if( abs( curValue - v_isovalue2 ) < u_isovaltolerance )
+        {
+            val2ok = true;
+        }
+        if( val1ok || val2ok )
         {
             // we need the depth value of the current point inside the cube -> standard pipeline
 
@@ -211,13 +223,24 @@ void main()
                 light = blinnPhongIlluminationIntensity( normalize( normal ) );
             #endif
 
+            vec4 color;
 
-            // 5. set colour
+            // 5. set color
             // mix color with colormap
-            vec4 color = mix( colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y
+            if( val1ok )
+            {
+                color = mix( colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y
                                                   * u_texture0SizeY, curPoint.z * u_texture0SizeZ, 1.0 ) ),
                               vec4( gl_Color.rgb, u_alpha ),
                               1.0 - u_colormapRatio );
+            }
+            if( val2ok )
+            {
+                color = mix( colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y
+                                                  * u_texture0SizeY, curPoint.z * u_texture0SizeZ, 1.0 ) ),
+                              vec4( gl_Color.rgb, u_alpha2 ),
+                              1.0 - u_colormapRatio );
+            }
 
             // 6: the final color construction
             wge_FragColor = vec4( light * color.rgb, color.a );

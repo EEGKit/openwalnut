@@ -132,6 +132,11 @@ private:
     WPropDouble m_isoValue;
 
     /**
+     * The Isovalue for the second isosurface
+     */
+    WPropDouble m_isoValue2;
+
+    /**
      * The deviation tolerated for the m_isoValue.
      */
     WPropDouble m_isoValueTolerance;
@@ -142,6 +147,11 @@ private:
     WPropColor m_isoColor;
 
     /**
+     * The color used for the second surface.
+     */
+    WPropColor m_isoColor2;
+
+    /**
      * The number of steps to walk along the ray.
      */
     WPropInt m_stepCount;
@@ -150,6 +160,11 @@ private:
      * The alpha transparency used for the rendering
      */
     WPropDouble m_alpha;
+
+    /**
+     * The alpha transparency for the second surface
+     */
+    WPropDouble m_alpha2;
 
     /**
      * The ratio between colormap and normal surface color.
