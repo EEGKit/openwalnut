@@ -28,44 +28,191 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
 
+#include "WDataSetVisitor.h"
+
+class WValueSetBase
+{
+public:
+    /**
+     * Convenience typedef for a boost::shared_ptr< WValueSet<...> >.
+     */
+    typedef boost::shared_ptr< WValueSetBase > SPtr;
+
+    /**
+     * Convenience typedef for a boost::shared_ptr< const WValueSet<...> >.
+     */
+    typedef boost::shared_ptr< const WValueSetBase > ConstSPtr;
+
+    /**
+     * Constructor to create an empty value-set. Instantiating this class directly is quite useless as it does not store any data. Derive from
+     * it.
+     *
+     * \param elements the number of elements to be used.
+     */
+    explicit WValueSetBase( size_t elements ):
+        m_elements( elements )
+    {
+        // initialize
+    }
+
+    /**
+     * Destructor.
+     */
+    virtual ~WValueSetBase()
+    {
+        // clean-up
+    }
+
+    /**
+     * Returns the size of the valueset. It is the number of elements in it.
+     *
+     * \return number of elements
+     */
+    size_t size() const
+    {
+        return m_elements;
+    }
+
+    /**
+     * Function calling an operator to unveil the real value-type stored in the value-set.
+     *
+     * \param f functor.
+     */
+    virtual void dispatch( const WDataSetVisitorDispatcher& f ) const = 0;
+
+    /**
+     * Function calling an operator to unveil the real value-type stored in the value-set.
+     *
+     * \param f functor.
+     */
+    virtual void dispatch( WDataSetVisitorDispatcher& f ) = 0;
+
+private:
+    /**
+     * The number of elements in the data array.
+     */
+    size_t m_elements;
+};
+
 /**
  * TODO(ebaum): write.
  */
-template< typename StructuralT >
-class WValueSet
+template< typename ValueT >
+class WValueSetTyped: public WValueSetBase
 {
 public:
 
     /**
      * The real type used for storing the values.
      */
-    typedef StructuralT StructuralType;
+    typedef ValueT ValueType;
+
+    /**
+     * Convenience typedef for a boost::shared_ptr< WValueSetTyped<...> >.
+     */
+    typedef boost::shared_ptr< WValueSetTyped< ValueType > > SPtr;
+
+    /**
+     * Convenience typedef for a boost::shared_ptr< const WValueSetTyped<...> >.
+     */
+    typedef boost::shared_ptr< const WValueSetTyped< ValueType > > ConstSPtr;
+
+    /**
+     * Default constructor. This knows the real value-type and provides the needed mechanism to unveil it to an specified operator.
+     *
+     * \param elements number of elements in the array
+     */
+    explicit WValueSetTyped( size_t elements ):
+        WValueSetBase( elements )
+    {
+        // initialize
+    }
+
+    /**
+     * Destructor.
+     */
+    virtual ~WValueSetTyped()
+    {
+        // clean-up
+    }
+
+    /**
+     * Function calling an operator to unveil the real value-type stored in the value-set.
+     *
+     * \param f functor.
+     */
+    virtual void dispatch( const WDataSetVisitorDispatcher& f ) const
+    {
+        f.operator()< ValueType >();
+    }
+
+    /**
+     * Function calling an operator to unveil the real value-type stored in the value-set.
+     *
+     * \param f functor.
+     */
+    virtual void dispatch( WDataSetVisitorDispatcher& f )
+    {
+        f.operator()< ValueType >();
+    }
+
+    /**
+     * Provides access to an item at a given index. For your value-set, implement this function!
+     *
+     * \param index the index to access
+     *
+     * \return the value at index.
+     */
+    const ValueType& operator[]( size_t index ) const = 0;
+
+    /**
+     * Provides access to an item at a given index. For your value-set, implement this function!
+     *
+     * \param index the index to access
+     *
+     * \return the value at index.
+     */
+    ValueType& operator[]( size_t index ) = 0;
+
+protected:
+private:
+};
+
+/**
+ *
+ *
+ * @tparam ValueT
+ */
+template< typename ValueT >
+class WValueSet: public WValueSetTyped< ValueT >
+{
+public:
+
+    /**
+     * The real type used for storing the values.
+     */
+    typedef ValueT ValueType;
 
     /**
      * Convenience typedef for a boost::shared_ptr< WValueSet<...> >.
      */
-    typedef boost::shared_ptr< WValueSet< StructuralType > > SPtr;
+    typedef boost::shared_ptr< WValueSet< ValueType > > SPtr;
 
     /**
      * Convenience typedef for a boost::shared_ptr< const WValueSet<...> >.
      */
-    typedef boost::shared_ptr< const WValueSet< StructuralType > > ConstSPtr;
+    typedef boost::shared_ptr< const WValueSet< ValueType > > ConstSPtr;
 
     /**
-     * Default constructor. Creates an instance of WValueSet and allocates the needed memory. It uses the specified sample (structural type)
-     * to create correct real types. The specified number of samples is mandatory. This information is normally retrieved in the WValueMapper
-     * and provided for construction.
+     * Default constructor. This knows the real value-type and provides the needed mechanism to unveil it to an specified operator. It
+     * additionally stores data as array in memory. If you want to write your own value-set, derive from WValueSetTyped.
      *
-     * \tparam SampleT The type of the sample. Determines real type of data array.
      * \param elements number of elements in the array
-     * \param sample the sample. See SampleT.
      */
-    template< typename SampleT >
-    WValueSet( size_t elements, const SampleT& sample ):
-        m_elements( elements )
+    explicit WValueSet( size_t elements ):
+        WValueSetTyped< ValueType >( elements )
     {
-        // Initialize
-        //StructuralType::BySample( sample )
+        // initialize
     }
 
     /**
@@ -76,21 +223,41 @@ public:
         // clean-up
     }
 
+    /**
+     * Provides access to an item at a given index.
+     *
+     * \param index the index to access
+     *
+     * \return the value at index.
+     */
+    const ValueType& operator[]( size_t index ) const
+    {
+        return m_data.operator[]( index );
+    }
+
+    /**
+     * Provides access to an item at a given index.
+     *
+     * \param index the index to access
+     *
+     * \return the value at index.
+     */
+    ValueType& operator[]( size_t index )
+    {
+        return m_data.operator[]( index );
+    }
+
 protected:
 private:
-
     /**
      * The plain data. Since the destruction is handled by boost::shared_array, m_data can be distributed along several copies of the valueset
      * instance which created it. This is a very often needed feature, since we want to keep several WValueSets and Grid in different
      * combinations.
      */
-    boost::shared_array< double > m_data;
-
-    /**
-     * The number of elements in the data array.
-     */
-    size_t m_elements;
+    boost::shared_array< ValueType > m_data;
 };
+
+
 
 #endif  // WVALUESET_H
 

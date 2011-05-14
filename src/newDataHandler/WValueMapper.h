@@ -27,6 +27,7 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include "WDataSetVisitor.h"
 #include "WValueSet.h"
 
 /**
@@ -41,7 +42,6 @@ template< typename GridT, typename StructuralT >
 class WValueMapper
 {
 public:
-
     /**
      * The Grid type.
      */
@@ -55,7 +55,7 @@ public:
     /**
      * The type of the value set with the specified structural type
      */
-    typedef WValueSet< StructuralType > ValueSetType;
+    typedef WValueSetBase ValueSetBaseType;
 
     /**
      * Convenience typedef for a boost::shared_ptr< WValueMapper<...> >.
@@ -79,7 +79,7 @@ public:
     template< typename SampleT >
     WValueMapper( typename GridType::ConstSPtr grid, const SampleT& sample ):
         m_grid( grid ),
-        m_valueSet( typename ValueSetType::ConstSPtr( new ValueSetType( grid->size(), sample ) ) )
+        m_valueSet( typename ValueSetBaseType::ConstSPtr( new WValueSet< SampleT >( grid->size() ) ) )
     {
         // Initialize
     }
@@ -103,8 +103,65 @@ public:
         return m_grid;
     }
 
-protected:
+    /**
+     * Applies the given visitor. It therefore uses the value-set's dispatch mechanism to call a WDataSetVisitorDispatcher, which, in turn, calls
+     * the WDataSetVisitor.
+     *
+     * \param visitor the visitor to apply.
+     */
+    void applyVisitor( WDataSetVisitor& visitor ) const
+    {
+        // do a double dispatch. The Value-set calls the WDataSetVisitorDispatcher. This unveils the real value-type. The dispatcher then calls
+        // the WDataSetVisitor instance.
+        WDataSetVisitorDispatcher d( visitor );
+        // the dispatch function calls the const operator() in d for us. We do not need to further handle const-ness here.
+        m_valueSet->dispatch( d );
+    }
 
+    /**
+     * Applies the given visitor. It therefore uses the value-set's dispatch mechanism to call a WDataSetVisitorDispatcher, which, in turn, calls
+     * the WDataSetVisitor.
+     *
+     * \param visitor the visitor to apply.
+     */
+    void applyVisitor( WDataSetVisitor& visitor )
+    {
+        // do a double dispatch. The Value-set calls the WDataSetVisitorDispatcher. This unveils the real value-type. The dispatcher then calls
+        // the WDataSetVisitor instance.
+        WDataSetVisitorDispatcher d( visitor );
+        m_valueSet->dispatch( d );
+    }
+
+    /**
+     * Applies the given visitor. It therefore uses the value-set's dispatch mechanism to call a WDataSetVisitorDispatcher, which, in turn, calls
+     * the WDataSetVisitor.
+     *
+     * \param visitor the visitor to apply.
+     */
+    void applyVisitor( WDataSetVisitor* visitor ) const
+    {
+        // do a double dispatch. The Value-set calls the WDataSetVisitorDispatcher. This unveils the real value-type. The dispatcher then calls
+        // the WDataSetVisitor instance.
+        WDataSetVisitorDispatcher d( &visitor );
+        // the dispatch function calls the const operator() in d for us. We do not need to further handle const-ness here.
+        m_valueSet->dispatch( d );
+    }
+
+    /**
+     * Applies the given visitor. It therefore uses the value-set's dispatch mechanism to call a WDataSetVisitorDispatcher, which, in turn, calls
+     * the WDataSetVisitor.
+     *
+     * \param visitor the visitor to apply.
+     */
+    void applyVisitor( WDataSetVisitor* visitor )
+    {
+        // do a double dispatch. The Value-set calls the WDataSetVisitorDispatcher. This unveils the real value-type. The dispatcher then calls
+        // the WDataSetVisitor instance.
+        WDataSetVisitorDispatcher d( &visitor );
+        m_valueSet->dispatch( d );
+    }
+
+protected:
 private:
 
     /**
@@ -115,7 +172,7 @@ private:
     /**
      * The value-set.
      */
-    typename ValueSetType::ConstSPtr m_valueSet;
+    typename ValueSetBaseType::ConstSPtr m_valueSet;
 };
 
 #endif  // WVALUEMAPPER_H

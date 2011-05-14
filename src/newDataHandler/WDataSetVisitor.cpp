@@ -22,29 +22,5 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WSCALARSTRUCTURAL_H
-#define WSCALARSTRUCTURAL_H
-
-#include <boost/mpl/vector.hpp>
-
-#include "WParameterTypes.h"
-
-/**
- * Structural type, representing a single scalar value. The only parameter of a scalar type is its integral type.
- */
-class WScalarStructural
-{
-    /**
-     * A type-vector containing all the needed parameters for this structural type. Extend this to your needs.
-     */
-    typedef boost::mpl::vector< IntegralVariant > ParameterVector;   // NOLINT - no this is not a std::vector and we do not need to include <vector>.
-
-    template< typename ParameterVector >
-    struct ToRealType
-    {
-        typedef typename boost::mpl::at< ParameterVector, boost::mpl::size_t< 0 > >::type Type;
-    };
-};
-
-#endif  // WSCALARSTRUCTURAL_H
+#include "WDataSetVisitor.h"
 
