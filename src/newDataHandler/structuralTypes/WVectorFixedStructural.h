@@ -25,6 +25,10 @@
 #ifndef WVECTORFIXEDSTRUCTURAL_H
 #define WVECTORFIXEDSTRUCTURAL_H
 
+#include <boost/static_assert.hpp>
+#include <boost/mpl/assert.hpp>
+#include <boost/mpl/contains.hpp>
+
 #include "WStructuralTypes.h"
 #include "WParameterTypes.h"
 
@@ -77,6 +81,22 @@ public:
         // get the variant for the integral type. This is the first element in the ParameterVector
         s.getVariant() = typename SampleT::ValueType();
         return s;
+    }
+
+    /**
+     * This function checks for validity of a given sample type. It ensures that the given vector has the same dimension as the structural type.
+     *
+     * \tparam SampleT the type to check
+     *
+     * \return true if valid
+     */
+    template< typename SampleT >
+    static bool ValidateType( const SampleT& /* sample */ )
+    {
+        // only accept these integral types
+        BOOST_MPL_ASSERT( ( boost::mpl::contains< WIntegralTypesVector, SampleT > ) );
+        BOOST_STATIC_ASSERT( Dimension == SampleT::NbRows );
+        return true;
     }
 };
 

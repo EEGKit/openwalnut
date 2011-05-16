@@ -29,32 +29,57 @@
 
 #include <boost/variant.hpp>
 #include <boost/mpl/size_t.hpp>
+#include <boost/mpl/vector.hpp>
 
 /**
  * The possible integral types that are allowed in our structural types.
  */
-typedef boost::variant< uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, uint64_t, int64_t, float, double > WIntegralVariant;
+typedef boost::mpl::vector< uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, uint64_t, int64_t, float, double > WIntegralTypesVector;
 
 /**
  * Natural numbers as MPL types.
  */
-typedef boost::variant< boost::mpl::size_t< 0 >, boost::mpl::size_t< 1 >, boost::mpl::size_t< 2 >,
-                        boost::mpl::size_t< 3 >, boost::mpl::size_t< 4 >, boost::mpl::size_t< 5 >,
-                        boost::mpl::size_t< 6 >, boost::mpl::size_t< 7 >, boost::mpl::size_t< 8 >,
-                        boost::mpl::size_t< 9 > > WNaturalNumbersVariant;
+typedef boost::mpl::vector< boost::mpl::size_t< 0 >, boost::mpl::size_t< 1 >, boost::mpl::size_t< 2 >,
+                            boost::mpl::size_t< 3 >, boost::mpl::size_t< 4 >, boost::mpl::size_t< 5 >,
+                            boost::mpl::size_t< 6 >, boost::mpl::size_t< 7 >, boost::mpl::size_t< 8 >,
+                            boost::mpl::size_t< 9 > > WNaturalNumbersTypeVector;
 
-typedef boost::variant< boost::mpl::size_t< 1 >, boost::mpl::size_t< 2 >,
-                        boost::mpl::size_t< 3 >, boost::mpl::size_t< 4 >, boost::mpl::size_t< 5 >,
-                        boost::mpl::size_t< 6 >, boost::mpl::size_t< 7 >, boost::mpl::size_t< 8 >,
-                        boost::mpl::size_t< 9 > > WNaturalNumbersNoZeroVariant;
+/**
+ * Natural numbers as MPL types without 0.
+ */
+typedef boost::mpl::vector<                          boost::mpl::size_t< 1 >, boost::mpl::size_t< 2 >,
+                            boost::mpl::size_t< 3 >, boost::mpl::size_t< 4 >, boost::mpl::size_t< 5 >,
+                            boost::mpl::size_t< 6 >, boost::mpl::size_t< 7 >, boost::mpl::size_t< 8 >,
+                            boost::mpl::size_t< 9 > > WNaturalNumbersNoZeroTypeVector;
+
+/**
+ * Even natural numbers.
+ */
+typedef boost::mpl::vector< boost::mpl::size_t< 0 >, boost::mpl::size_t< 2 >, boost::mpl::size_t< 4 >,
+                            boost::mpl::size_t< 6 >, boost::mpl::size_t< 8 >, boost::mpl::size_t< 10 >,
+                            boost::mpl::size_t< 12 >, boost::mpl::size_t< 14 >, boost::mpl::size_t< 16 > > WEvenNumbersTypeVector;
+
+
+/**
+ * Construct the variant from above vector for allowed integral types.
+ */
+typedef boost::make_variant_over< WIntegralTypesVector >::type WIntegralVariant;
+
+/**
+ * Natural numbers as MPL types.
+ */
+typedef boost::make_variant_over< WNaturalNumbersTypeVector >::type WNaturalNumbersVariant;
+
+/**
+ * Natural numbers without 0.
+ */
+typedef boost::make_variant_over< WNaturalNumbersNoZeroTypeVector >::type WNaturalNumbersNoZeroVariant;
 
 /**
  * Even numbers as MPL types.
  * This is needed as orders for tensors.
  */
-typedef boost::variant< boost::mpl::size_t< 0 >, boost::mpl::size_t< 2 >, boost::mpl::size_t< 4 >,
-                        boost::mpl::size_t< 6 >, boost::mpl::size_t< 8 >, boost::mpl::size_t< 10 >,
-                        boost::mpl::size_t< 12 >, boost::mpl::size_t< 14 >, boost::mpl::size_t< 16 > > WEvenNumbersVariant;
+typedef boost::make_variant_over< WEvenNumbersTypeVector > WEvenNumbersVariant;
 
 /**
  * Use even numbers as allowed orders for symmetric spherical harmonic and tensor types.

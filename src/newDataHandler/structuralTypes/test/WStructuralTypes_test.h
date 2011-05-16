@@ -25,6 +25,10 @@
 #ifndef WSTRUCTURALTYPES_TEST_H
 #define WSTRUCTURALTYPES_TEST_H
 
+#include <boost/static_assert.hpp>
+#include <boost/mpl/assert.hpp>
+#include <boost/mpl/contains.hpp>
+
 #include <cxxtest/TestSuite.h>
 
 #include "../WVectorFixedStructural.h"
@@ -107,6 +111,13 @@ public:
     template< typename SampleT >
     static bool ValidateType( const SampleT& /* sample */ )
     {
+        // only accept these integral types
+        BOOST_MPL_ASSERT( ( boost::mpl::contains< WIntegralTypesVector, typename SampleT::IntegralType > ) );
+        BOOST_MPL_ASSERT( ( boost::mpl::contains< WNaturalNumbersTypeVector, boost::mpl::size_t< SampleT::TheSize > > ) );
+
+        // we should do this statically using:
+        // BOOST_STATIC_ASSERT( SampleT::TheSize != 0 );
+        // but we want to test reaction later to invalid samples, so do at runtime:
         return ( SampleT::TheSize != 0 );
     }
 };

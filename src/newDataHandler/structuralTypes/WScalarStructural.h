@@ -25,6 +25,10 @@
 #ifndef WSCALARSTRUCTURAL_H
 #define WSCALARSTRUCTURAL_H
 
+#include <boost/static_assert.hpp>
+#include <boost/mpl/assert.hpp>
+#include <boost/mpl/contains.hpp>
+
 #include "WStructuralTypes.h"
 #include "WParameterTypes.h"
 
@@ -72,6 +76,21 @@ public:
         // get the variant for the integral type. This is the first element in the ParameterVector
         s.getVariant() = SampleT();
         return s;
+    }
+
+    /**
+     * This function checks for validity of a given sample type.
+     *
+     * \tparam SampleT the type to check
+     *
+     * \return true if valid
+     */
+    template< typename SampleT >
+    static bool ValidateType( const SampleT& /* sample */ )
+    {
+        // only accept these integral types
+        BOOST_MPL_ASSERT( ( boost::mpl::contains< WIntegralTypesVector, SampleT > ) );
+        return true;
     }
 };
 

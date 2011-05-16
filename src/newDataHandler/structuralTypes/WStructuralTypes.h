@@ -25,6 +25,9 @@
 #ifndef WSTRUCTURALTYPES_H
 #define WSTRUCTURALTYPES_H
 
+#include <boost/static_assert.hpp>
+#include <boost/mpl/assert.hpp>
+#include <boost/mpl/contains.hpp>
 #include <boost/mpl/at.hpp>
 #include <boost/mpl/pop_front.hpp>
 #include <boost/mpl/size.hpp>
@@ -337,7 +340,8 @@ public:
 
     /**
      * This function checks for validity of a given sample type. You have several possibilities here to check. You can do compile-time check
-     * using external classes which are specialized for certain allowed/disallowed types. You can also do runtime checks.
+     * using external classes which are specialized for certain allowed/disallowed types. You should use the BOOST_MPL_ASSERT and
+     * BOOST_STATIC_ASSERT functionality very intensively here. You can also do runtime checks.
      *
      * \tparam SampleT the type to check
      *
@@ -347,7 +351,7 @@ public:
     static bool ValidateType( const SampleT& /* sample */ )
     {
         // if some SampleT does not provide the following information, this method will not compile. -> sample type is invalid.
-        typedef typename SampleT::ValueType I;
+        BOOST_MPL_ASSERT( ( boost::mpl::contains< WIntegralTypesVector, typename SampleT::ValueType > ) );
         size_t r = SampleT::NbRows;
 
         // you can also write a template class with size_t argument which is specialized for it to be 1.:
@@ -361,7 +365,7 @@ public:
         //
         // To check, use typedef tester< SampleT::NbCols >::valid;
 
-        // runtime-checks are possible too but are not recommended.
+        // runtime-checks are possible too but are not recommended, since they, in most cases, can be done statically too.
         return ( SampleT::NbCols == 1 );
     }
 };
