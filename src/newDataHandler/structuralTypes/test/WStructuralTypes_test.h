@@ -52,7 +52,7 @@ public:
     /**
      * The size of the thing.
      */
-    typedef boost::mpl::size_t< Size > TheSize;
+    static const size_t TheSize = Size;
 };
 
 /**
@@ -93,7 +93,7 @@ public:
     {
         WStructuralTypeStore< ParameterVector > s;
         s.getVariant() = typename SampleT::IntegralType();
-        s.next().getVariant() = typename SampleT::TheSize();
+        s.next().getVariant() = boost::mpl::size_t< SampleT::TheSize >();
         return s;
     }
 };

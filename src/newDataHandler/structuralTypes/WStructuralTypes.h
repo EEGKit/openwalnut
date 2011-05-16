@@ -330,7 +330,7 @@ public:
         s.getVariant() = typename SampleT::IntegralType();
 
         // the second variant is the size variant. Use next() to get the variant for the second item.
-        s.next().getVariant() = typename SampleT::TheSize();
+        s.next().getVariant() = SampleT::NbRows;
         return s;
     }
 };

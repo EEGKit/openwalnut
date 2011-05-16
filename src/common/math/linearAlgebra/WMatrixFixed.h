@@ -172,6 +172,16 @@ public:
 
     /**
      * The number of rows.
+     */
+    static const size_t NbRows = Rows;
+
+    /**
+     * The number of cols.
+     */
+    static const size_t NbCols = Cols;
+
+    /**
+     * The number of rows.
      *
      * \return the number of rows.
      */
