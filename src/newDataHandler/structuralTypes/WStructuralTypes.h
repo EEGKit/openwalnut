@@ -1,4 +1,3 @@
-
 //---------------------------------------------------------------------------
 //
 // Project: OpenWalnut ( http://www.openwalnut.org )
@@ -94,7 +93,7 @@ class WStructuralTypeStore< ParameterVector, true >
 template< typename StructuralT,
           typename FunctorT,
           typename ParameterVector = typename StructuralT::ParameterVector,
-          typename ResolvedTypeVector = mpl::vector<> >
+          typename ResolvedTypeVector = mpl::vector<> >  // NOLINT - No, this is not a std::vector
 class WStructuralTypeResolution: public boost::static_visitor<>
 {
 public:

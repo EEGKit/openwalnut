@@ -39,7 +39,7 @@ public:
     /**
      * The vector storing the compile-time parameters of the real-type.
      */
-    typedef boost::mpl::vector< IntegralVariant > ParameterVector;
+    typedef boost::mpl::vector< IntegralVariant > ParameterVector;  // NOLINT - No, this is not a std::vector
 
     /**
      * Template to convert the structural type to the real-type with a given list of compile-time parameters as mpl::vector.
