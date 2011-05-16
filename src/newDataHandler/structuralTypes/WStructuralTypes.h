@@ -311,7 +311,7 @@ public:
     };
 
     /**
-     * This function is the inverse of ToRealType. It creates an structural type sample instance describing the real type's compile time parameter
+     * This function is the inverse of ToRealType. It creates an structural type sample instance describing the real type's compile time parameters
      * according to the ParameterVector. It therefore uses the \ref WStructuralTypeStore class. It provides the variants for each item in
      * ParameterVector, which need to be initialized with the real template types of SampleT.
      *

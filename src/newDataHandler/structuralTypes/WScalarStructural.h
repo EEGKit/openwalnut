@@ -25,25 +25,54 @@
 #ifndef WSCALARSTRUCTURAL_H
 #define WSCALARSTRUCTURAL_H
 
-#include <boost/mpl/vector.hpp>
-
+#include "WStructuralTypes.h"
 #include "WParameterTypes.h"
 
 /**
- * Structural type, representing a single scalar value. The only parameter of a scalar type is its integral type.
+ * Structural type, representing a single scalar value. The only parameter of a scalar type is its integral type. For details, have a look at
+ * \ref WStructuralTypeExample.
+ *
+ * \see WStructuralTypeExample
  */
 class WScalarStructural
 {
+public:
     /**
-     * A type-vector containing all the needed parameters for this structural type. Extend this to your needs.
+     * A type-vector containing all the needed parameters for this structural type. In this case, only the integral type variant
      */
-    typedef boost::mpl::vector< WIntegralVariant > ParameterVector;   // NOLINT - no this is not a std::vector and we do not need to include <vector>.
+    typedef boost::mpl::vector< WIntegralVariant > ParameterVector;   // NOLINT - no this is not a std::vector
 
+    /**
+     * Converts the structural type to the real type by using the resolved types vector.
+     *
+     * \tparam RealParameterVector resolved types. Defines the real type
+     */
     template< typename RealParameterVector >
     struct ToRealType
     {
-        typedef typename boost::mpl::at< RealParameterVector, boost::mpl::size_t< 0 > >::type Type;
+        /**
+         * This typedef reconstructs the real type.
+         */
+        typedef typename mpl::at< RealParameterVector, mpl::size_t< 0 > >::type Type;
     };
+
+    /**
+     * This function is the inverse of ToRealType. It creates an structural type sample instance describing the real type's compile time parameters.
+     *
+     * \tparam SampleT the sample of real type to convert to a structural type sample.
+     *
+     * \return the sample.
+     */
+    template< typename SampleT >
+    static WStructuralTypeStore< ParameterVector > FromRealType( const SampleT& /* sample */ )
+    {
+        // First: create the StructuralTypeStore
+        WStructuralTypeStore< ParameterVector > s;
+
+        // get the variant for the integral type. This is the first element in the ParameterVector
+        s.getVariant() = SampleT();
+        return s;
+    }
 };
 
 #endif  // WSCALARSTRUCTURAL_H

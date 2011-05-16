@@ -27,6 +27,10 @@
 
 #include <cxxtest/TestSuite.h>
 
+#include "../WVectorFixedStructural.h"
+#include "../WMatrixFixedStructural.h"
+#include "../WScalarStructural.h"
+
 #include "../WStructuralTypes.h"
 #include "../WParameterTypes.h"
 
@@ -224,6 +228,20 @@ public:
         const PR prConstOther_2( psOther_2, fConstOther );
         prConstOther_2.resolve();
         TS_ASSERT( fConstOther.getReturnValue() != 1 );
+    }
+
+    /**
+     * Test the default structural types.
+     */
+    void testInstantiationOfStructuralTypes()
+    {
+        typedef WStructuralTypeStore< WScalarStructural::ParameterVector > PSScalar;
+        typedef WStructuralTypeStore< WVectorFixedStructural< 4 >::ParameterVector > PSVector;
+        typedef WStructuralTypeStore< WMatrixFixedStructural< 5, 6 >::ParameterVector > PSMatrix;
+
+        PSScalar ps1 = WScalarStructural::FromRealType( 1.0 );
+        PSVector ps2 = WVectorFixedStructural< 4 >::FromRealType( WVector4d() );
+        PSMatrix ps3 = WMatrixFixedStructural< 6, 5 >::FromRealType( WMatrixFixed< double, 6, 5 >() );
     }
 };
 

@@ -25,7 +25,60 @@
 #ifndef WMATRIXFIXEDSTRUCTURAL_H
 #define WMATRIXFIXEDSTRUCTURAL_H
 
+#include "WStructuralTypes.h"
 #include "WParameterTypes.h"
+
+#include "../../common/math/linearAlgebra/WMatrixFixed.h"
+
+/**
+ * Structural type, representing a matrix of fixed size. The only parameter of this type is its integral type. For details, have a look at
+ * \ref WStructuralTypeExample.
+ *
+ * \see WStructuralTypeExample
+ *
+ * \tparam Dimension the dimension of the vector.
+ */
+template< size_t Rows, size_t Cols >
+class WMatrixFixedStructural
+{
+public:
+    /**
+     * A type-vector containing all the needed parameters for this structural type. In this case, only the integral type variant
+     */
+    typedef boost::mpl::vector< WIntegralVariant > ParameterVector;   // NOLINT - no this is not a std::vector
+
+    /**
+     * Converts the structural type to the real type by using the resolved types vector.
+     *
+     * \tparam RealParameterVector resolved types. Defines the real type
+     */
+    template< typename RealParameterVector >
+    struct ToRealType
+    {
+        /**
+         * This typedef reconstructs the real type.
+         */
+        typedef WMatrixFixed< typename mpl::at< RealParameterVector, mpl::size_t< 0 > >::type, Rows, Cols > Type;
+    };
+
+    /**
+     * This function is the inverse of ToRealType. It creates an structural type sample instance describing the real type's compile time parameters.
+     *
+     * \tparam SampleT the sample of real type to convert to a structural type sample.
+     *
+     * \return the sample.
+     */
+    template< typename SampleT >
+    static WStructuralTypeStore< ParameterVector > FromRealType( const SampleT& /* sample */ )
+    {
+        // First: create the StructuralTypeStore
+        WStructuralTypeStore< ParameterVector > s;
+
+        // get the variant for the integral type. This is the first element in the ParameterVector
+        s.getVariant() = typename SampleT::ValueType();
+        return s;
+    }
+};
 
 #endif  // WMATRIXFIXEDSTRUCTURAL_H
 
