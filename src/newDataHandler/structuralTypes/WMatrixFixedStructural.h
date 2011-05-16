@@ -94,7 +94,7 @@ public:
     static bool ValidateType( const SampleT& /* sample */ )
     {
         // only accept these integral types
-        BOOST_MPL_ASSERT( ( boost::mpl::contains< WIntegralTypesVector, SampleT > ) );
+        BOOST_MPL_ASSERT( ( boost::mpl::contains< WIntegralTypesVector, typename SampleT::ValueType > ) );
         BOOST_STATIC_ASSERT( Rows == SampleT::NbRows );
         BOOST_STATIC_ASSERT( Cols == SampleT::NbCols );
         return true;

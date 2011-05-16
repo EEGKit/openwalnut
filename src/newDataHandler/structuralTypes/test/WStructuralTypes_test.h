@@ -275,6 +275,9 @@ public:
     {
         TS_ASSERT( TestStructuralType::ValidateType( TestRealType< double, 5 >() ) );
         TS_ASSERT( !TestStructuralType::ValidateType( TestRealType< double, 0 >() ) );
+
+        // this should not compile:
+        // WMatrixFixedStructural< 6, 5 >::ValidateType( WMatrixFixed< double, 2,1 >() );
     }
 
 };
