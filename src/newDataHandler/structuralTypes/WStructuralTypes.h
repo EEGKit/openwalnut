@@ -261,6 +261,7 @@ private:
  *  - ParameterVector: describing the compile-time parameters of the real type.
  *  - ToRealType: to convert the structural type to the real type if the parameter types are knwon
  *  - FromRealType: to create a structural type sample if an real type sample is known.
+ *  - ValidateType: to check whether a given sample can be represented by this structural type
  *
  * \note Never use this class directly. It won't compile as we only use some forward declarations.
  */
@@ -332,6 +333,36 @@ public:
         // the second variant is the size variant. Use next() to get the variant for the second item.
         s.next().getVariant() = SampleT::NbRows;
         return s;
+    }
+
+    /**
+     * This function checks for validity of a given sample type. You have several possibilities here to check. You can do compile-time check
+     * using external classes which are specialized for certain allowed/disallowed types. You can also do runtime checks.
+     *
+     * \tparam SampleT the type to check
+     *
+     * \return true if valid
+     */
+    template< typename SampleT >
+    static bool ValidateType( const SampleT& /* sample */ )
+    {
+        // if some SampleT does not provide the following information, this method will not compile. -> sample type is invalid.
+        typedef typename SampleT::ValueType I;
+        size_t r = SampleT::NbRows;
+
+        // you can also write a template class with size_t argument which is specialized for it to be 1.:
+        //
+        // template< size_t ColCount >
+        // struct tester{};
+        //
+        // Then specialize towards the only valid case:
+        // template<>
+        // struct tester< 1 >{ typedef bool valid; };
+        //
+        // To check, use typedef tester< SampleT::NbCols >::valid;
+
+        // runtime-checks are possible too but are not recommended.
+        return ( SampleT::NbCols == 1 );
     }
 };
 

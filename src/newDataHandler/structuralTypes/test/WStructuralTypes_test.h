@@ -96,6 +96,19 @@ public:
         s.next().getVariant() = boost::mpl::size_t< SampleT::TheSize >();
         return s;
     }
+
+    /**
+     * Tests validity of the given type.
+     *
+     * \tparam SampleT sample type to check
+     *
+     * \return true if valid.
+     */
+    template< typename SampleT >
+    static bool ValidateType( const SampleT& /* sample */ )
+    {
+        return ( SampleT::TheSize != 0 );
+    }
 };
 
 /**
@@ -243,6 +256,16 @@ public:
         PSVector ps2 = WVectorFixedStructural< 4 >::FromRealType( WVector4d() );
         PSMatrix ps3 = WMatrixFixedStructural< 6, 5 >::FromRealType( WMatrixFixed< double, 6, 5 >() );
     }
+
+    /**
+     * Test the default structural types.
+     */
+    void testValidationOfStructuralTypes()
+    {
+        TS_ASSERT( TestStructuralType::ValidateType( TestRealType< double, 5 >() ) );
+        TS_ASSERT( !TestStructuralType::ValidateType( TestRealType< double, 0 >() ) );
+    }
+
 };
 
 #endif  // WSTRUCTURALTYPES_TEST_H
