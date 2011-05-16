@@ -286,6 +286,8 @@ void WMProbTractVis::moduleMain()
 
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalue", m_isoValue ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalue2", m_isoValue2 ) );
+            rootState->addUniform( new WGEPropertyUniform< WPropColor >( "u_isocolor", m_isoColor) );
+            rootState->addUniform( new WGEPropertyUniform< WPropColor >( "u_isocolor2", m_isoColor2) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovaltolerance", m_isoValueTolerance ) );
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_steps", m_stepCount ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_alpha", m_alpha ) );

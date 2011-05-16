@@ -80,6 +80,10 @@ uniform float u_alpha2;
 // the ratio between normal color and the colormapping color.
 uniform float u_colormapRatio;
 
+// The isocolors to use.
+uniform vec4 u_isocolor;
+uniform vec4 u_isocolor2;
+
 /////////////////////////////////////////////////////////////////////////////
 // Attributes
 /////////////////////////////////////////////////////////////////////////////
@@ -150,6 +154,8 @@ void main()
     // gl_Color is set via the color picking widget
     // u_alpha can be modified by the opacity slider (uniform variable u_alpha)
     wge_FragColor = vec4 ( gl_Color.rgb, u_alpha );
+//    gl_FragData[0] = vec4 ( u_isocolor.rgb, u_alpha );
+//    gl_FragData[1] = vec4 ( u_isocolor2.rgb, u_alpha2 );
 
     // 1.0 = back 0.0 front
     // fragment depth needed for postprocessing
@@ -231,14 +237,14 @@ void main()
             {
                 color = mix( colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y
                                                   * u_texture0SizeY, curPoint.z * u_texture0SizeZ, 1.0 ) ),
-                              vec4( gl_Color.rgb, u_alpha ),
+                              vec4( u_isocolor.rgb, u_alpha2 ),
                               1.0 - u_colormapRatio );
             }
             if( val2ok )
             {
                 color = mix( colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y
                                                   * u_texture0SizeY, curPoint.z * u_texture0SizeZ, 1.0 ) ),
-                              vec4( gl_Color.rgb, u_alpha2 ),
+                              vec4( u_isocolor2.rgb, u_alpha2 ),
                               1.0 - u_colormapRatio );
             }
 
