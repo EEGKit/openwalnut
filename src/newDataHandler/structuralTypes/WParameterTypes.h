@@ -33,7 +33,7 @@
 /**
  * The possible integral types that are allowed in our structural types.
  */
-typedef boost::variant< uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, uint64_t, int64_t, float, double > IntegralVariant;
+typedef boost::variant< uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, uint64_t, int64_t, float, double > WIntegralVariant;
 
 /**
  * Natural numbers as MPL types.
@@ -41,7 +41,12 @@ typedef boost::variant< uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, u
 typedef boost::variant< boost::mpl::size_t< 0 >, boost::mpl::size_t< 1 >, boost::mpl::size_t< 2 >,
                         boost::mpl::size_t< 3 >, boost::mpl::size_t< 4 >, boost::mpl::size_t< 5 >,
                         boost::mpl::size_t< 6 >, boost::mpl::size_t< 7 >, boost::mpl::size_t< 8 >,
-                        boost::mpl::size_t< 9 > > NaturalNumbersVariant;
+                        boost::mpl::size_t< 9 > > WNaturalNumbersVariant;
+
+typedef boost::variant< boost::mpl::size_t< 1 >, boost::mpl::size_t< 2 >,
+                        boost::mpl::size_t< 3 >, boost::mpl::size_t< 4 >, boost::mpl::size_t< 5 >,
+                        boost::mpl::size_t< 6 >, boost::mpl::size_t< 7 >, boost::mpl::size_t< 8 >,
+                        boost::mpl::size_t< 9 > > WNaturalNumbersNoZeroVariant;
 
 /**
  * Even numbers as MPL types.
@@ -49,12 +54,12 @@ typedef boost::variant< boost::mpl::size_t< 0 >, boost::mpl::size_t< 1 >, boost:
  */
 typedef boost::variant< boost::mpl::size_t< 0 >, boost::mpl::size_t< 2 >, boost::mpl::size_t< 4 >,
                         boost::mpl::size_t< 6 >, boost::mpl::size_t< 8 >, boost::mpl::size_t< 10 >,
-                        boost::mpl::size_t< 12 >, boost::mpl::size_t< 14 >, boost::mpl::size_t< 16 > > EvenNumbersVariant;
+                        boost::mpl::size_t< 12 >, boost::mpl::size_t< 14 >, boost::mpl::size_t< 16 > > WEvenNumbersVariant;
 
 /**
  * Use even numbers as allowed orders for symmetric spherical harmonic and tensor types.
  */
-typedef EvenNumbersVariant SymmetricOrderVariant;
+typedef WEvenNumbersVariant SymmetricOrderVariant;
 
 #endif  // WPARAMETERTYPES_H
 

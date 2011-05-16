@@ -37,12 +37,12 @@ class WScalarStructural
     /**
      * A type-vector containing all the needed parameters for this structural type. Extend this to your needs.
      */
-    typedef boost::mpl::vector< IntegralVariant > ParameterVector;   // NOLINT - no this is not a std::vector and we do not need to include <vector>.
+    typedef boost::mpl::vector< WIntegralVariant > ParameterVector;   // NOLINT - no this is not a std::vector and we do not need to include <vector>.
 
-    template< typename ParameterVector >
+    template< typename RealParameterVector >
     struct ToRealType
     {
-        typedef typename boost::mpl::at< ParameterVector, boost::mpl::size_t< 0 > >::type Type;
+        typedef typename boost::mpl::at< RealParameterVector, boost::mpl::size_t< 0 > >::type Type;
     };
 };
 
