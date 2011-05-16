@@ -204,15 +204,8 @@ public:
 
         // Create a structural type instance and initialize its variants
         PS psUint8 = TestStructuralType::FromRealType( TestRealType< uint8_t, 4 >() );
-
-
-        PS psDouble_5;
-        psDouble_5.getVariant() = double();
-        psDouble_5.next().getVariant() = boost::mpl::size_t< 5 >();
-
-        PS psOther_2;
-        psOther_2.getVariant() = float();
-        psOther_2.next().getVariant() = boost::mpl::size_t< 2 >();
+        PS psDouble_5 = TestStructuralType::FromRealType( TestRealType< double, 5 >() );
+        PS psOther_2 = TestStructuralType::FromRealType( TestRealType< float, 2 >() );
 
         // Do resolution
         PR prUint8( psUint8, fUint8 );
