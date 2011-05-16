@@ -52,7 +52,6 @@ public:
      *
      * \tparam ValueType the real type stored in the value-set.
      *
-     * \param sample a sample of the real-type. Can be ignored.
      */
     template< typename ValueType >
     void operator()( ValueType /* sample */ )
