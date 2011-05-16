@@ -73,20 +73,6 @@ public:
         return m_elements;
     }
 
-    /**
-     * Function calling an operator to unveil the real value-type stored in the value-set.
-     *
-     * \param f functor.
-     */
-    virtual void dispatch( const WDataSetVisitorDispatcher& f ) const = 0;
-
-    /**
-     * Function calling an operator to unveil the real value-type stored in the value-set.
-     *
-     * \param f functor.
-     */
-    virtual void dispatch( WDataSetVisitorDispatcher& f ) = 0;
-
 private:
     /**
      * The number of elements in the data array.
@@ -134,26 +120,6 @@ public:
     virtual ~WValueSetTyped()
     {
         // clean-up
-    }
-
-    /**
-     * Function calling an operator to unveil the real value-type stored in the value-set.
-     *
-     * \param f functor.
-     */
-    virtual void dispatch( const WDataSetVisitorDispatcher& f ) const
-    {
-        f.operator()< ValueType >();
-    }
-
-    /**
-     * Function calling an operator to unveil the real value-type stored in the value-set.
-     *
-     * \param f functor.
-     */
-    virtual void dispatch( WDataSetVisitorDispatcher& f )
-    {
-        f.operator()< ValueType >();
     }
 
     /**

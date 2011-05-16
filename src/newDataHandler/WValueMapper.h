@@ -27,7 +27,6 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include "WDataSetVisitor.h"
 #include "WValueSet.h"
 
 /**
@@ -101,64 +100,6 @@ public:
     typename GridType::ConstSPtr getGrid() const
     {
         return m_grid;
-    }
-
-    /**
-     * Applies the given visitor. It therefore uses the value-set's dispatch mechanism to call a WDataSetVisitorDispatcher, which, in turn, calls
-     * the WDataSetVisitor.
-     *
-     * \param visitor the visitor to apply.
-     */
-    void applyVisitor( WDataSetVisitor& visitor ) const
-    {
-        // do a double dispatch. The Value-set calls the WDataSetVisitorDispatcher. This unveils the real value-type. The dispatcher then calls
-        // the WDataSetVisitor instance.
-        WDataSetVisitorDispatcher d( visitor );
-        // the dispatch function calls the const operator() in d for us. We do not need to further handle const-ness here.
-        m_valueSet->dispatch( d );
-    }
-
-    /**
-     * Applies the given visitor. It therefore uses the value-set's dispatch mechanism to call a WDataSetVisitorDispatcher, which, in turn, calls
-     * the WDataSetVisitor.
-     *
-     * \param visitor the visitor to apply.
-     */
-    void applyVisitor( WDataSetVisitor& visitor )
-    {
-        // do a double dispatch. The Value-set calls the WDataSetVisitorDispatcher. This unveils the real value-type. The dispatcher then calls
-        // the WDataSetVisitor instance.
-        WDataSetVisitorDispatcher d( visitor );
-        m_valueSet->dispatch( d );
-    }
-
-    /**
-     * Applies the given visitor. It therefore uses the value-set's dispatch mechanism to call a WDataSetVisitorDispatcher, which, in turn, calls
-     * the WDataSetVisitor.
-     *
-     * \param visitor the visitor to apply.
-     */
-    void applyVisitor( WDataSetVisitor* visitor ) const
-    {
-        // do a double dispatch. The Value-set calls the WDataSetVisitorDispatcher. This unveils the real value-type. The dispatcher then calls
-        // the WDataSetVisitor instance.
-        WDataSetVisitorDispatcher d( &visitor );
-        // the dispatch function calls the const operator() in d for us. We do not need to further handle const-ness here.
-        m_valueSet->dispatch( d );
-    }
-
-    /**
-     * Applies the given visitor. It therefore uses the value-set's dispatch mechanism to call a WDataSetVisitorDispatcher, which, in turn, calls
-     * the WDataSetVisitor.
-     *
-     * \param visitor the visitor to apply.
-     */
-    void applyVisitor( WDataSetVisitor* visitor )
-    {
-        // do a double dispatch. The Value-set calls the WDataSetVisitorDispatcher. This unveils the real value-type. The dispatcher then calls
-        // the WDataSetVisitor instance.
-        WDataSetVisitorDispatcher d( &visitor );
-        m_valueSet->dispatch( d );
     }
 
 protected:

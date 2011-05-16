@@ -1,5 +1,7 @@
 FILE( GLOB_RECURSE NEWDATAHANDLER_SRC "*.cpp" "*.h" )
 
+ADD_SUBDIRECTORY( structuralTypes )
+
 ADD_LIBRARY( OWnewDataHandler ${NEWDATAHANDLER_SRC} )
 TARGET_LINK_LIBRARIES( OWnewDataHandler OWcommon ${Boost_LIBRARIES} )
 

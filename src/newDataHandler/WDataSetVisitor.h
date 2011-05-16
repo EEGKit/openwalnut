@@ -25,127 +25,44 @@
 #ifndef WDATASETVISITOR_H
 #define WDATASETVISITOR_H
 
-#include <boost/mpl/vector.hpp>
-#include <boost/mpl/pop_front.hpp>
-#include <boost/mpl/size_t.hpp>
-#include <boost/mpl/size.hpp>
-#include <boost/variant.hpp>
-#include <boost/variant/static_visitor.hpp>
-
 #include "structuralTypes/WStructuralTypes.h"
 
-namespace mpl = boost::mpl;
-
-template< typename ParameterVector,
-          bool IsEmpty = mpl::empty< ParameterVector >::value
-        >
-class ParameterStore: public ParameterStore< typename mpl::template pop_front< ParameterVector >::type >
-{
-public:
-    typedef typename mpl::front< ParameterVector >::type VariantType;
-    VariantType m_variant;
-};
-
-template< typename ParameterVector >
-class ParameterStore< ParameterVector, true >
-{
-    // terminates recursive element-pop from ParameterVector
-};
-
-template< typename StructuralT,
-          typename FunctorT,
-          typename ParameterVector = typename StructuralT::ParameterVector,
-          typename ResolvedTypeVector = mpl::vector<> >
-class ParameterResolution: public boost::static_visitor<>
-{
-public:
-    typedef typename mpl::template pop_front< ParameterVector >::type RemainingParameterVector;
-    typedef typename mpl::front< ParameterVector >::type VariantType;
-    typedef ParameterStore< ParameterVector > CurrentParameterStore;
-    typedef ParameterStore< RemainingParameterVector > RemainingParameterStore;
-
-    const CurrentParameterStore& m_parameters;
-    FunctorT& m_functor;
-
-    ParameterResolution( const CurrentParameterStore& parameters, FunctorT& functor ):
-        m_parameters( parameters ),
-        m_functor( functor )
-    {
-    }
-
-    template < typename RealT >
-    void operator()( const RealT& /* x */ ) const
-    {
-        // now we know the real type of the variant for the first element in the given vector
-        typedef typename mpl::push_back< ResolvedTypeVector, RealT >::type NextResolvedTypeVector;
-        typedef ParameterResolution< StructuralT, FunctorT, RemainingParameterVector, NextResolvedTypeVector > NextResolutionLevel;
-
-        NextResolutionLevel next( static_cast< const RemainingParameterStore& >( m_parameters ), m_functor );
-        next.applyFunction( typename mpl::empty< RemainingParameterVector >::type() );
-    }
-
-    void applyFunction( mpl::bool_< true >  /* empty */ ) const
-    {
-        // time to create the real type from the resolved types
-        typedef typename StructuralT::template ToRealType< ResolvedTypeVector >::Type RealType;
-        // call the actual functor:
-        m_functor( RealType() );
-    }
-
-    void applyFunction( mpl::bool_< false > /* empty */ ) const
-    {
-        boost::apply_visitor( *this, const_cast< VariantType& >( m_parameters.m_variant ) );
-    }
-
-    void resolv() const
-    {
-        applyFunction( mpl::bool_< false >() );
-    }
-};
-
-
-
-
-class WDataSetVisitor;
-
 /**
- * This functor is used to unveil the real value-type in a value-set. Its purpose is to allow the value-mapper to apply a function with the real
- * value-type and grid-type. This class handles this and forwards the call to the visiting class. The name is telling. This class dispatches the
- * WDataSetVisitor through the WValueSetTyped::unveilValueType mechanism.
+ * Visitor base class. Derive your own visitor from this class and specify your own class as this class' template parameter. It uses the CRTP
+ * pattern to implement compile-time polymorphism. This class provides additional useful members with getters which might come in handy to the
+ * developer. Your visitor-class needs to implement the operator().
+ *
+ * \note currently, this class is empty but provides some flexibility later on.
+ *
+ * \tparam VisitorT your visitor class. Do class MyVisitor: public WDataSetVisitor< MyVisitor >.
  */
-class WDataSetVisitorDispatcher
+template< typename VisitorT >
+class WDataSetVisitor
 {
 public:
-    template< typename VisitorType >
-    explicit WDataSetVisitorDispatcher( VisitorType& visitor )
-        //:        m_visitor( visitor )
+    WDataSetVisitor()
     {
         // intialize
     }
 
     /**
-     * Operator getting called by WValueSet::unveilValueType. The template parameter then is the correct value-type of the value-set calling it.
+     * Operator called by the \ref WStructuralTypeResolution mechanism. Its template parameter is the real type in the value-set. This operator
+     * creates pointers to the correct value-set and grid and initializes access-classes and forwards the call to the derived visitor , which
+     * then can use them to interact with the data-set.
      *
-     * \tparam ValueType the callers real value-type
+     * \tparam ValueType the real type stored in the value-set.
+     *
+     * \param sample a sample of the real-type. Can be ignored.
      */
     template< typename ValueType >
-    void operator()()
+    void operator()( ValueType /* sample */ )
     {
-        // unveiled real value-type in typename ValueType
-    }
+        // TODO(all): implement me
 
-    /**
-     * Operator getting called by WValueSet::unveilValueType. The template parameter then is the correct value-type of the value-set calling it.
-     *
-     * \tparam ValueType the callers real value-type
-     */
-    template< typename ValueType >
-    void operator()() const
-    {
-        // unveiled real value-type in typename ValueType
+        // call VisitorT::operator() with the proper parameters
+        // static_cast< VisitorT >( *this )( PARAMETERS );
     }
 };
-
 
 #endif  // WDATASETVISITOR_H
 
