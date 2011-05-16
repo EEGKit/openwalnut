@@ -279,7 +279,6 @@ public:
         // this should not compile:
         // WMatrixFixedStructural< 6, 5 >::ValidateType( WMatrixFixed< double, 2,1 >() );
     }
-
 };
 
 #endif  // WSTRUCTURALTYPES_TEST_H
