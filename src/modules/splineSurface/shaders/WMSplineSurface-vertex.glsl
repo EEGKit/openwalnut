@@ -2,7 +2,7 @@
 //
 // Project: OpenWalnut ( http://www.openwalnut.org )
 //
-// Copyright 2009 OpenWalnut Community, BSV-Leipzig and CNCF-CBS
+// Copyright 2009 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
 // For more information see http://www.openwalnut.org/copying
 //
 // This file is part of OpenWalnut.
@@ -22,12 +22,21 @@
 //
 //---------------------------------------------------------------------------
 
+#version 120
+
 #include "WGEColormapping-vertex.glsl"
+
+// The surface normal
+varying vec3 v_normal;
 
 void main()
 {
     // prepare colormapping
     colormapping();
 
+    // prepare light
+    v_normal = gl_NormalMatrix * gl_Normal;
+
+    gl_FrontColor = gl_Color;
     gl_Position = ftransform();
 }

@@ -30,6 +30,7 @@
 #include <cxxtest/TestSuite.h>
 
 #include "../../../common/WLimits.h"
+#include "../../../common/WLogger.h"
 #include "../../test/WDataSetFiberVectorTraits.h"
 #include "../WFiberCluster.h"
 
@@ -88,23 +89,13 @@ public:
     void testCenterLine( void )
     {
         WFiber expected;
-        expected.push_back( WPosition( 0,                                                                                           1, 0 ) );
-#ifndef _MSC_VER
-        expected.push_back( WPosition( ( ( 9.0 - 3 * std::sqrt( 2 ) ) / 4.0 - 1.0 ) / 2.0 + 1,                                    1.5, 0 ) );
-        expected.push_back( WPosition( ( ( 9.0 - 3 * std::sqrt( 2 ) ) / 4.0 + ( 5 + std::sqrt( 2 ) ) / 4.0 - 2.0 ) / 2.0 + 2,     1.5, 0 ) );
-        expected.push_back( WPosition( ( ( 9.0 - 3 * std::sqrt( 2 ) ) / 4.0 + 2 * ( 5 + std::sqrt( 2 ) ) / 4.0 - 3.0 ) / 2.0 + 3, 1.5, 0 ) );
-        expected.push_back( WPosition( 5,                                                                                         1.5, 0 ) );
-#else
-        expected.push_back( WPosition( ( ( 9.0 - 3 * std::sqrt( static_cast< double >( 2 ) ) ) / 4.0 - 1.0 ) / 2.0 + 1,
-            1.5, 0 ) );
-        expected.push_back( WPosition( ( ( 9.0 - 3 * std::sqrt( static_cast< double >( 2 ) ) ) / 4.0
-            + ( 5 + std::sqrt( static_cast< double >( 2 ) ) ) / 4.0 - 2.0 ) / 2.0 + 2, 1.5, 0 ) );
-        expected.push_back( WPosition( ( ( 9.0 - 3 * std::sqrt( static_cast< double >( 2 ) ) ) / 4.0
-            + 2 * ( 5 + std::sqrt( static_cast< double >( 2 ) ) ) / 4.0 - 3.0 ) / 2.0 + 3, 1.5, 0 ) );
-        expected.push_back( WPosition( 5,                                                                                         1.5, 0 ) );
-#endif
+        expected.push_back( WPosition( 0,                                                                                               1, 0 ) );
+        expected.push_back( WPosition( ( ( 9.0 - 3 * std::sqrt( 2.0 ) ) / 4.0 - 1.0 ) / 2.0 + 1,                                      1.5, 0 ) );
+        expected.push_back( WPosition( ( ( 9.0 - 3 * std::sqrt( 2.0 ) ) / 4.0 + ( 5 + std::sqrt( 2.0 ) ) / 4.0 - 2.0 ) / 2.0 + 2,     1.5, 0 ) );
+        expected.push_back( WPosition( ( ( 9.0 - 3 * std::sqrt( 2.0 ) ) / 4.0 + 2 * ( 5 + std::sqrt( 2.0 ) ) / 4.0 - 3.0 ) / 2.0 + 3, 1.5, 0 ) );
+        expected.push_back( WPosition( 5,                                                                                             1.5, 0 ) );
         m_cluster->generateCenterLine();
-        assert_equals_delta( *m_cluster->getCenterLine(), expected, wlimits::FLT_EPS ); // decrese precision since it fails occasionally
+        assert_equals_delta( *m_cluster->getCenterLine(), expected, wlimits::FLT_EPS );
         std::cout << *m_cluster->getDataSetReference() << std::endl;
     }
 
@@ -361,8 +352,7 @@ public:
 
 private:
     /**
-     * TS_ASSERT_DELTA needs the operator+, operator- and operator< to be implemented especially for WPositions the operator< and operator +
-     * makes not really sense. Hence I implemented an assert by my one, giving reasonable out put.
+     * Compares to point sequences (aka lines) with a given delta.
      *
      * \param first First line to compare with
      * \param second Second line to compare with
