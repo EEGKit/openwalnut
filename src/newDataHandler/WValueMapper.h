@@ -28,6 +28,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "WValueSet.h"
+#include "WDataSetVisitor.h"
 #include "structuralTypes/WStructuralTypes.h"
 
 /**
@@ -56,6 +57,11 @@ public:
      * The type of the value set with the specified structural type
      */
     typedef WValueSetBase ValueSetBaseType;
+
+    /**
+     * The value-mapper to which this class can be applied.
+     */
+    typedef WValueMapper< GridType, StructuralType > ValueMapperType;
 
     /**
      * Convenience typedef for a boost::shared_ptr< WValueMapper<...> >.
@@ -104,17 +110,60 @@ public:
         return m_grid;
     }
 
+    /**
+     * Applies the specified visitor to the data and resolves the correct type. The visitor you specify needs to match certain requirements. Have
+     * a look at \ref WDataSetVisitor for details.
+     *
+     * \tparam VisitorT the type of the visitor.
+     * \param visitor the visitor instance.
+     */
     template< typename VisitorT >
-    void applyVisitor(  VisitorT* visitor ) const
+    void applyVisitor( VisitorT* visitor ) const
     {
-        typedef WStructuralTypeResolution< StructuralType,  typename VisitorT::DataSetVisitorType > TypeResolution;
-        //visitor->setValueMapper( this );
-        TypeResolution tr( m_structuralTypeSample, visitor );
+        // the visitor is not called directly. Its done by WDataSetVisitor which acts as dispatcher.
+        typedef const WDataSetVisitor< const ValueMapperType, VisitorT > DataSetVisitorType;
+        // forward. The DataSetVisitorType is const here
+        applyVisitorImpl< DataSetVisitorType >( visitor, this );
+    }
+
+    /**
+     * Applies the specified visitor to the data and resolves the correct type. The visitor you specify needs to match certain requirements. Have
+     * a look at \ref WDataSetVisitor for details.
+     *
+     * \tparam VisitorT the type of the visitor.
+     * \param visitor the visitor instance.
+     */
+    template< typename VisitorT >
+    void applyVisitor( VisitorT* visitor )
+    {
+        // the visitor is not called directly. Its done by WDataSetVisitor which acts as dispatcher.
+        typedef WDataSetVisitor< ValueMapperType, VisitorT > DataSetVisitorType;
+        // forward. The DataSetVisitorType is non-const here
+        applyVisitorImpl< DataSetVisitorType >( visitor, this );
+    }
+
+private:
+
+    /**
+     * Does type resolution and utilizes the WDataSetVisitor to apply user defined-visitors.
+     *
+     * \tparam DataSetVisitorType the WDataSetVisitor instance. Can be const of the ValueMapper should be const during visit.
+     *
+     * \param visitor the user defined visitor
+     * \param correctThis the this pointer as const or non-const pointer, depending on  DataSetVisitorType::ValueMapperType.
+     */
+    template< typename DataSetVisitorType >
+    void applyVisitorImpl( typename DataSetVisitorType::VisitorType* visitor, typename DataSetVisitorType::ValueMapperType* correctThis ) const
+    {
+        // the visitor is not called directly. Its done by WDataSetVisitor which acts as dispatcher.
+        DataSetVisitorType visitDispacher( visitor, correctThis );
+
+        // now, use the type resolution mechanism to call the correct WDataSetVisitor operator.
+        typedef WStructuralTypeResolution< StructuralType, DataSetVisitorType > TypeResolution;
+        TypeResolution tr( m_structuralTypeSample, &visitDispacher );
         tr.resolve();
     }
 
-protected:
-private:
     /**
      * The sample representing the real type of the data inside. This is needed for applying the visitor.
      */

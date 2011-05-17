@@ -147,16 +147,26 @@ public:
 /**
  * Simple functor class to test WDataSetVisitor. It therefore provides several operator() to check that the correct one is called.
  */
-class TestVisitor: public WDataSetVisitor< TestGrid, TestStructuralType, TestVisitor >
+class TestVisitor
 {
 public:
     /**
      * Constructor.
      */
     TestVisitor():
-        WDataSetVisitor(),
         m_returnValue( 0 )
     {
+    }
+
+    /**
+     * Operator called by resolving mechanism. Const version. Should never be called.
+     *
+     * \tparam T the real type.
+     */
+    template< typename T >
+    void operator()( T /* x */ ) const
+    {
+        m_returnValue = 1;
     }
 
     /**
@@ -167,7 +177,7 @@ public:
     template< typename T >
     void operator()( T /* x */ )
     {
-        m_returnValue = 1;
+        m_returnValue = 2;
     }
 
     /**
@@ -177,7 +187,7 @@ public:
      */
     void operator()( TestRealType< double, 3 > /* x */ )
     {
-        m_returnValue = 2;
+        m_returnValue = 3;
     }
 
     /**
@@ -210,15 +220,36 @@ public:
     void testVisit()
     {
         // we need a value mapper instance
-        typedef WValueMapper< TestVisitor::GridType, TestVisitor::StructuralType > ValueMapper;
-        TestVisitor::GridType::SPtr grid = TestVisitor::GridType::SPtr( new TestVisitor::GridType() );
+        typedef WValueMapper< TestGrid, TestStructuralType > ValueMapper;
+
+        TestGrid::SPtr grid = TestGrid::SPtr( new TestGrid() );
         ValueMapper::SPtr vm = ValueMapper::SPtr( new ValueMapper( grid, TestRealType< double, 3 >() ) );
 
         // create our visitor
         TestVisitor* visitor = new TestVisitor();
         vm->applyVisitor( visitor );
 
-        TS_ASSERT( visitor->getReturnValue() == 2 )
+        TS_ASSERT( visitor->getReturnValue() == 3 );
+        delete visitor;
+    }
+
+    /**
+     * Test to ensure that const valuemapper instances do not call any const operator() in the visitor.
+     */
+    void testVisitForConstValueMapper()
+    {
+        // we need a value mapper instance
+        typedef WValueMapper< TestGrid, TestStructuralType > ValueMapper;
+
+        TestGrid::SPtr grid = TestGrid::SPtr( new TestGrid() );
+        ValueMapper::ConstSPtr vm = ValueMapper::ConstSPtr( new ValueMapper( grid, TestRealType< double, 3 >() ) );
+
+        // create our visitor
+        TestVisitor* visitor = new TestVisitor();
+        vm->applyVisitor( visitor );
+
+        TS_ASSERT( visitor->getReturnValue() == 3 );
+        delete visitor;
     }
 };
 

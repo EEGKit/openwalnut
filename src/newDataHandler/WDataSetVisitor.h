@@ -25,39 +25,19 @@
 #ifndef WDATASETVISITOR_H
 #define WDATASETVISITOR_H
 
-#include "WValueMapper.h"
-
-/**
- * Visitor base class. Derive your own visitor from this class and specify your own class as this class' template parameter. It uses the CRTP
- * pattern to implement compile-time polymorphism. This class provides additional useful members with getters which might come in handy to the
- * developer. Your visitor-class needs to implement the operator().
- *
- * \note currently, this class is empty but provides some flexibility later on.
- *
- * \tparam VisitorT your visitor class. Do class MyVisitor: public WDataSetVisitor< SomeGridType, SomeStructuralType, MyVisitor >.
- * \tparam GridT the same grid type as the DataSethas.
- * \tparam StructuralT the same structural type as the DataSet has.
- */
-template< typename GridT, typename StructuralT, typename VisitorT >
+template< typename ValueMapperT, typename VisitorT >
 class WDataSetVisitor
 {
 public:
-
-    /**
-     * We need the value-mapper as friend to allow him to set several internal variables which are not allowed to be set by others, especially
-     * VisitorT.
-     */
-    template< typename, typename > friend class WValueMapper;
-
     /**
      * Grid type.
      */
-    typedef GridT GridType;
+    typedef typename ValueMapperT::GridType GridType;
 
     /**
      * Structural type.
      */
-    typedef StructuralT StructuralType;
+    typedef typename ValueMapperT::StructuralType StructuralType;
 
     /**
      * The type of the visitor.
@@ -65,13 +45,31 @@ public:
     typedef VisitorT VisitorType;
 
     /**
+     * The value-mapper to which this class can be applied.
+     */
+    typedef ValueMapperT ValueMapperType;
+
+    /**
      * My own type.
      */
-    typedef WDataSetVisitor< GridType, StructuralType, VisitorType > DataSetVisitorType;
+    typedef WDataSetVisitor< ValueMapperType, VisitorType > DataSetVisitorType;
+
+    /**
+     * Construct new visitor, dispatching the visit call to the specified visitor.
+     *
+     * \param visitor the visitor to call
+     * \param valuemapper the valuemapper to which this dispatcher is applied.
+     */
+    WDataSetVisitor( VisitorType* visitor, ValueMapperType* valuemapper ):
+        m_visitor( visitor ),
+        m_valueMapper( valuemapper )
+    {
+        // initialize
+    }
 
     /**
      * Operator called by the \ref WStructuralTypeResolution mechanism. Its template parameter is the real type in the value-set. This operator
-     * creates pointers to the correct value-set and grid and initializes access-classes and forwards the call to the derived visitor , which
+     * creates pointers to the correct value-set and grid and initializes access-classes and forwards the call to the visitor, which
      * then can use them to interact with the data-set.
      *
      * \tparam ValueType the real type stored in the value-set.
@@ -80,16 +78,15 @@ public:
     void operator()( ValueType /* sample */ )
     {
         // Construct the needed access objects here
-
+        // TODO(all): use some access object? some super duper iterator=
 
         // call VisitorT::operator() with the proper parameters
-        VisitorT* v = static_cast< VisitorT* >( this );
-        v->operator()( ValueType() );
+        m_visitor->operator()( ValueType() );
     }
 
     /**
      * Operator called by the \ref WStructuralTypeResolution mechanism. Its template parameter is the real type in the value-set. This operator
-     * creates pointers to the correct value-set and grid and initializes access-classes and forwards the call to the derived visitor , which
+     * creates pointers to the correct value-set and grid and initializes access-classes and forwards the call to the visitor, which
      * then can use them to interact with the data-set.
      *
      * \note this is the const version. As we do not want the
@@ -99,23 +96,28 @@ public:
     void operator()( ValueType /* sample */ ) const
     {
         // Construct the needed access objects here
+        // TODO(all): use some access object? some super duper iterator=
 
+        // NOTE: we never call the operator() const of VisitorT here. VisitorT is non const -> m_visitor is always non const (only the pointer is
+        // const in this operator). This allows the programmer to write its own nice visitor which has always the rights to write its own members
+        // even if called for a const dataset. We transport the const information by providing only a const reference to the dataset (access
+        // object) to the operator.
 
         // call VisitorT::operator() with the proper parameters
-        //VisitorT* v = static_cast< VisitorT* >( this );
-        //v->operator()( ValueType() );
+        m_visitor->operator()( ValueType() );
     }
 
 private:
 
-    typedef WValueMapper< GridType, StructuralType > ValueMapperType;
+    /**
+     * The visitor instance.
+     */
+    VisitorType* m_visitor;
 
+    /**
+     * The instance of the actual value mapper.
+     */
     ValueMapperType* m_valueMapper;
-
-    void setValueMapper( const ValueMapperType* valuemapper )
-    {
-        m_valueMapper = valuemapper;
-    }
 };
 
 #endif  // WDATASETVISITOR_H
