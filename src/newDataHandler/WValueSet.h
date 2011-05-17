@@ -78,11 +78,6 @@ private:
     size_t m_elements;
 };
 
-/**
- *
- *
- * @tparam ValueT
- */
 template< typename ValueT >
 class WValueSet: public WValueSetBase
 {

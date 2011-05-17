@@ -29,12 +29,13 @@
 
 #include "WValueSet.h"
 #include "WDataSetVisitor.h"
+#include "WDataSetAccessor.h"
 #include "structuralTypes/WStructuralTypes.h"
 
 /**
  * The value-mapper class. It handles the grid and value-sets and their interaction. It provides interfaces for accessing and processing them.
  * The WValueMapper does not know the real integral type or other value-type specifics. It only knows the structural type. If you want your own
- * WDataSet2 types, you should probably modify WDataSet2. It is an interface/adapter to this class.
+ * WDataSet types, you should probably modify WDataSet. It is an interface/adapter to this class.
  *
  * \tparam GridT The grid type to use.
  * \tparam StructuralT The structural type to use.
@@ -43,6 +44,8 @@ template< typename GridT, typename StructuralT >
 class WValueMapper
 {
 public:
+    template< typename, typename > friend class WDataSetVisitor;
+
     /**
      * The Grid type.
      */
@@ -86,7 +89,7 @@ public:
     WValueMapper( typename GridType::ConstSPtr grid, const SampleT& sample ):
         m_structuralTypeSample( StructuralT::FromRealType( sample ) ),
         m_grid( grid ),
-        m_valueSet( typename ValueSetBaseType::ConstSPtr( new WValueSet< SampleT >( grid->size() ) ) )
+        m_valueSet( typename ValueSetBaseType::SPtr( new WValueSet< SampleT >( grid->size() ) ) )
     {
         // Initialize
     }
@@ -142,6 +145,80 @@ public:
         applyVisitorImpl< DataSetVisitorType >( visitor, this );
     }
 
+protected:
+
+    /**
+     * Returns the value-set base instance as pointer.
+     *
+     * \return WValueSetBase instance
+     */
+    ValueSetBaseType::SPtr getValueSetBase()
+    {
+        return m_valueSet;
+    }
+
+    /**
+     * Returns the value-set base instance as const pointer.
+     *
+     * \return WValueSetBase instance
+     */
+    ValueSetBaseType::ConstSPtr getValueSetBase() const
+    {
+        return m_valueSet;
+    }
+
+    /**
+     * Returns the value-set instance as pointer with the specified value-type.
+     *
+     * \return WValueSet instance with specified type. NULL if specified type is wrong.
+     */
+    template < typename ValueT >
+    typename WValueSet< ValueT >::SPtr getValueSet()
+    {
+        return boost::shared_dynamic_cast< WValueSet< ValueT > >( m_valueSet );
+    }
+
+    /**
+     * Returns the value-set instance as const pointer with the specified value-type.
+     *
+     * \return WValueSet instance with specified type. NULL if specified type is wrong.
+     */
+    template < typename ValueT >
+    typename WValueSet< ValueT >::ConstSPtr getValueSet() const
+    {
+        return boost::shared_dynamic_cast< WValueSet< ValueT > >( m_valueSet );
+    }
+
+    /**
+     * Create an accessor object of given type. The type you specify here should allow non-const access to the data. Thy AccessorT needs a
+     * constructor which accepts GridType::ConstSPtr and WValueSet< SomeType >::SPtr.
+     *
+     * \tparam AccessorT some Type allowing non-const access to the data.
+     *
+     * \return the accessor instance.
+     */
+    template < typename AccessorT >
+    AccessorT createAccessor()
+    {
+        AccessorT ac( getGrid(), getValueSet< typename AccessorT::ValueType >() );
+        return ac;
+    }
+
+    /**
+     * Create an accessor object of given type. The type you specify here should dis-allow non-const access to the data. Thy ConstAccessorT needs a
+     * constructor which accepts GridType::ConstSPtr and WValueSet< SomeType >::ConstSPtr.
+     *
+     * \tparam ConstAccessorT some Type allowing only const access to the data.
+     *
+     * \return the accessor instance.
+     */
+    template < typename ConstAccessorT >
+    ConstAccessorT createAccessor() const
+    {
+        ConstAccessorT ac( getGrid(), getValueSet< typename ConstAccessorT::ValueType >() );
+        return ac;
+    }
+
 private:
 
     /**
@@ -177,7 +254,7 @@ private:
     /**
      * The value-set.
      */
-    typename ValueSetBaseType::ConstSPtr m_valueSet;
+    typename ValueSetBaseType::SPtr m_valueSet;
 };
 
 #endif  // WVALUEMAPPER_H

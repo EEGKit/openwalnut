@@ -25,6 +25,10 @@
 #ifndef WDATASETVISITOR_H
 #define WDATASETVISITOR_H
 
+template< typename > class WValueSet;
+template< typename, typename > class WDataSetAccessor;
+template< typename, typename > class WDataSetAccessorConst;
+
 template< typename ValueMapperT, typename VisitorT >
 class WDataSetVisitor
 {
@@ -55,7 +59,8 @@ public:
     typedef WDataSetVisitor< ValueMapperType, VisitorType > DataSetVisitorType;
 
     /**
-     * Construct new visitor, dispatching the visit call to the specified visitor.
+     * Construct new visitor, dispatching the visit call to the specified visitor. The WDataSetVisitor does not take ownership of the specified
+     * pointers and does not free them upon destruction.
      *
      * \param visitor the visitor to call
      * \param valuemapper the valuemapper to which this dispatcher is applied.
@@ -79,9 +84,10 @@ public:
     {
         // Construct the needed access objects here
         // TODO(all): use some access object? some super duper iterator=
+        typedef WDataSetAccessor< GridType, ValueType > AccessorType;
 
         // call VisitorT::operator() with the proper parameters
-        m_visitor->operator()( ValueType() );
+        m_visitor->operator()( m_valueMapper->template createAccessor< AccessorType >() );
     }
 
     /**
@@ -103,8 +109,10 @@ public:
         // even if called for a const dataset. We transport the const information by providing only a const reference to the dataset (access
         // object) to the operator.
 
+        // to aware constness, use a special access object here
+        typedef WDataSetAccessorConst< GridType, ValueType > AccessorType;
         // call VisitorT::operator() with the proper parameters
-        m_visitor->operator()( ValueType() );
+        m_visitor->operator()( m_valueMapper->template createAccessor< AccessorType >() );
     }
 
 private:

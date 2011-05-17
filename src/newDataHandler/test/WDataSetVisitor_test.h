@@ -185,9 +185,19 @@ public:
      *
      * \tparam T the real type.
      */
-    void operator()( TestRealType< double, 3 > /* x */ )
+    void operator()( WDataSetAccessor< TestGrid, TestRealType< double, 3 > > /* x */ )
     {
         m_returnValue = 3;
+    }
+
+    /**
+     * Operator called by resolving mechanism if the valuemapper was const.
+     *
+     * \tparam T the real type.
+     */
+    void operator()( WDataSetAccessorConst< TestGrid, TestRealType< double, 3 > > /* x */ )
+    {
+        m_returnValue = 4;
     }
 
     /**
@@ -248,7 +258,8 @@ public:
         TestVisitor* visitor = new TestVisitor();
         vm->applyVisitor( visitor );
 
-        TS_ASSERT( visitor->getReturnValue() == 3 );
+        // this should have called the WDataSetAccessorConst specialization
+        TS_ASSERT( visitor->getReturnValue() == 4 );
         delete visitor;
     }
 };
