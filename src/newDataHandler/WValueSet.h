@@ -28,6 +28,9 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
 
+/**
+ * The valueset base class. This class contains only the base information needed: its size. It represents the actual date that resides <b>somewhere</b>. The derived classes can then handle storage.
+ */
 class WValueSetBase
 {
 public:
@@ -78,6 +81,12 @@ private:
     size_t m_elements;
 };
 
+/**
+ * This is a simple class handling storage of values in memory. It is typed according to the values it stores. Be aware, that this class deletes
+ * its stored values upon destruction. If you want to share the values among several classes/functions, use a const shared pointer.
+ *
+ * \tparam ValueT the real type of the values.
+ */
 template< typename ValueT >
 class WValueSet: public WValueSetBase
 {
@@ -105,7 +114,8 @@ public:
      * \param elements number of elements in the array
      */
     explicit WValueSet( size_t elements ):
-        WValueSetBase( elements )
+        WValueSetBase( elements ),
+        m_data( new ValueType[ elements ] )
     {
         // initialize
     }
@@ -116,6 +126,7 @@ public:
     virtual ~WValueSet()
     {
         // clean-up
+        delete m_data;
     }
 
     /**
@@ -127,7 +138,7 @@ public:
      */
     const ValueType& operator[]( size_t index ) const
     {
-        return m_data.operator[]( index );
+        return m_data[ index ];
     }
 
     /**
@@ -139,20 +150,16 @@ public:
      */
     ValueType& operator[]( size_t index )
     {
-        return m_data.operator[]( index );
+        return m_data[ index ];
     }
 
 protected:
 private:
     /**
-     * The plain data. Since the destruction is handled by boost::shared_array, m_data can be distributed along several copies of the valueset
-     * instance which created it. This is a very often needed feature, since we want to keep several WValueSets and Grid in different
-     * combinations.
+     * The plain data. Created on construction and deleted on destruction.
      */
-    boost::shared_array< ValueType > m_data;
+    ValueType* m_data;
 };
-
-
 
 #endif  // WVALUESET_H
 
