@@ -28,8 +28,6 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
 
-#include "WDataSetVisitor.h"
-
 class WValueSetBase
 {
 public:
@@ -81,76 +79,12 @@ private:
 };
 
 /**
- * TODO(ebaum): write.
- */
-template< typename ValueT >
-class WValueSetTyped: public WValueSetBase
-{
-public:
-
-    /**
-     * The real type used for storing the values.
-     */
-    typedef ValueT ValueType;
-
-    /**
-     * Convenience typedef for a boost::shared_ptr< WValueSetTyped<...> >.
-     */
-    typedef boost::shared_ptr< WValueSetTyped< ValueType > > SPtr;
-
-    /**
-     * Convenience typedef for a boost::shared_ptr< const WValueSetTyped<...> >.
-     */
-    typedef boost::shared_ptr< const WValueSetTyped< ValueType > > ConstSPtr;
-
-    /**
-     * Default constructor. This knows the real value-type and provides the needed mechanism to unveil it to an specified operator.
-     *
-     * \param elements number of elements in the array
-     */
-    explicit WValueSetTyped( size_t elements ):
-        WValueSetBase( elements )
-    {
-        // initialize
-    }
-
-    /**
-     * Destructor.
-     */
-    virtual ~WValueSetTyped()
-    {
-        // clean-up
-    }
-
-    /**
-     * Provides access to an item at a given index. For your value-set, implement this function!
-     *
-     * \param index the index to access
-     *
-     * \return the value at index.
-     */
-    const ValueType& operator[]( size_t index ) const = 0;
-
-    /**
-     * Provides access to an item at a given index. For your value-set, implement this function!
-     *
-     * \param index the index to access
-     *
-     * \return the value at index.
-     */
-    ValueType& operator[]( size_t index ) = 0;
-
-protected:
-private:
-};
-
-/**
  *
  *
  * @tparam ValueT
  */
 template< typename ValueT >
-class WValueSet: public WValueSetTyped< ValueT >
+class WValueSet: public WValueSetBase
 {
 public:
 
@@ -176,7 +110,7 @@ public:
      * \param elements number of elements in the array
      */
     explicit WValueSet( size_t elements ):
-        WValueSetTyped< ValueType >( elements )
+        WValueSetBase( elements )
     {
         // initialize
     }

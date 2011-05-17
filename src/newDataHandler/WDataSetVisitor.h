@@ -25,7 +25,7 @@
 #ifndef WDATASETVISITOR_H
 #define WDATASETVISITOR_H
 
-#include "structuralTypes/WStructuralTypes.h"
+#include "WValueMapper.h"
 
 /**
  * Visitor base class. Derive your own visitor from this class and specify your own class as this class' template parameter. It uses the CRTP
@@ -34,16 +34,40 @@
  *
  * \note currently, this class is empty but provides some flexibility later on.
  *
- * \tparam VisitorT your visitor class. Do class MyVisitor: public WDataSetVisitor< MyVisitor >.
+ * \tparam VisitorT your visitor class. Do class MyVisitor: public WDataSetVisitor< SomeGridType, SomeStructuralType, MyVisitor >.
+ * \tparam GridT the same grid type as the DataSethas.
+ * \tparam StructuralT the same structural type as the DataSet has.
  */
-template< typename VisitorT >
+template< typename GridT, typename StructuralT, typename VisitorT >
 class WDataSetVisitor
 {
 public:
-    WDataSetVisitor()
-    {
-        // intialize
-    }
+
+    /**
+     * We need the value-mapper as friend to allow him to set several internal variables which are not allowed to be set by others, especially
+     * VisitorT.
+     */
+    template< typename, typename > friend class WValueMapper;
+
+    /**
+     * Grid type.
+     */
+    typedef GridT GridType;
+
+    /**
+     * Structural type.
+     */
+    typedef StructuralT StructuralType;
+
+    /**
+     * The type of the visitor.
+     */
+    typedef VisitorT VisitorType;
+
+    /**
+     * My own type.
+     */
+    typedef WDataSetVisitor< GridType, StructuralType, VisitorType > DataSetVisitorType;
 
     /**
      * Operator called by the \ref WStructuralTypeResolution mechanism. Its template parameter is the real type in the value-set. This operator
@@ -51,15 +75,46 @@ public:
      * then can use them to interact with the data-set.
      *
      * \tparam ValueType the real type stored in the value-set.
-     *
      */
     template< typename ValueType >
     void operator()( ValueType /* sample */ )
     {
-        // TODO(all): implement me
+        // Construct the needed access objects here
+
 
         // call VisitorT::operator() with the proper parameters
-        // static_cast< VisitorT >( *this )( PARAMETERS );
+        VisitorT* v = static_cast< VisitorT* >( this );
+        v->operator()( ValueType() );
+    }
+
+    /**
+     * Operator called by the \ref WStructuralTypeResolution mechanism. Its template parameter is the real type in the value-set. This operator
+     * creates pointers to the correct value-set and grid and initializes access-classes and forwards the call to the derived visitor , which
+     * then can use them to interact with the data-set.
+     *
+     * \note this is the const version. As we do not want the
+     * \tparam ValueType the real type stored in the value-set.
+     */
+    template< typename ValueType >
+    void operator()( ValueType /* sample */ ) const
+    {
+        // Construct the needed access objects here
+
+
+        // call VisitorT::operator() with the proper parameters
+        //VisitorT* v = static_cast< VisitorT* >( this );
+        //v->operator()( ValueType() );
+    }
+
+private:
+
+    typedef WValueMapper< GridType, StructuralType > ValueMapperType;
+
+    ValueMapperType* m_valueMapper;
+
+    void setValueMapper( const ValueMapperType* valuemapper )
+    {
+        m_valueMapper = valuemapper;
     }
 };
 

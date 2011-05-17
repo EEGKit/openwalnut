@@ -236,20 +236,20 @@ public:
         PS psOther_2 = TestStructuralType::FromRealType( TestRealType< float, 2 >() );
 
         // Do resolution
-        PR prUint8( psUint8, fUint8 );
+        PR prUint8( psUint8, &fUint8 );
         prUint8.resolve();
         TS_ASSERT( fUint8.getReturnValue() == 4 );
 
-        PR prDouble_5( psDouble_5, fDouble_5 );
+        PR prDouble_5( psDouble_5, &fDouble_5 );
         prDouble_5.resolve();
         TS_ASSERT( fDouble_5.getReturnValue() == 3 );
 
-        PR prOther_2( psOther_2, fOther_2 );
+        PR prOther_2( psOther_2, &fOther_2 );
         prOther_2.resolve();
         TS_ASSERT( fOther_2.getReturnValue() == 5 );
 
         // a const resolver needs to call the non-const operator
-        const PR prConstOther_2( psOther_2, fConstOther );
+        const PR prConstOther_2( psOther_2, &fConstOther );
         prConstOther_2.resolve();
         TS_ASSERT( fConstOther.getReturnValue() != 1 );
     }

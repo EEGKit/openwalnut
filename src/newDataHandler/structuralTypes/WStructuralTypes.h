@@ -183,7 +183,7 @@ public:
      * \param parameters the parameter store. Use the structural type to create this from a sample.
      * \param functor the functor to call.
      */
-    WStructuralTypeResolution( const CurrentParameterStore& parameters, FunctorT& functor ):
+    WStructuralTypeResolution( const CurrentParameterStore& parameters, FunctorT* functor ):
         m_parameters( parameters ),
         m_functor( functor )
     {
@@ -225,7 +225,7 @@ public:
         // time to create the real type from the resolved types
         typedef typename StructuralT::template ToRealType< ResolvedTypeVector >::Type RealType;
         // call the actual functor:
-        m_functor( RealType() );
+        ( *m_functor )( RealType() );
     }
 
     /**
@@ -235,7 +235,7 @@ public:
     void applyFunction( mpl::bool_< false > /* empty */ ) const
     {
         // let boost's visiting mechanism do the job
-        boost::apply_visitor( *this, const_cast< VariantType& >( m_parameters.m_variant ) );
+        boost::apply_visitor( *this, m_parameters.m_variant );
     }
 
 private:
@@ -247,7 +247,7 @@ private:
     /**
      * The functor to call.
      */
-    FunctorT& m_functor;
+    FunctorT* m_functor;
 };
 
 // ----------------------------------------------------------------------------------

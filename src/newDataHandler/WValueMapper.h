@@ -28,6 +28,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "WValueSet.h"
+#include "structuralTypes/WStructuralTypes.h"
 
 /**
  * The value-mapper class. It handles the grid and value-sets and their interaction. It provides interfaces for accessing and processing them.
@@ -77,6 +78,7 @@ public:
      */
     template< typename SampleT >
     WValueMapper( typename GridType::ConstSPtr grid, const SampleT& sample ):
+        m_structuralTypeSample( StructuralT::FromRealType( sample ) ),
         m_grid( grid ),
         m_valueSet( typename ValueSetBaseType::ConstSPtr( new WValueSet< SampleT >( grid->size() ) ) )
     {
@@ -102,8 +104,21 @@ public:
         return m_grid;
     }
 
+    template< typename VisitorT >
+    void applyVisitor(  VisitorT* visitor ) const
+    {
+        typedef WStructuralTypeResolution< StructuralType,  typename VisitorT::DataSetVisitorType > TypeResolution;
+        //visitor->setValueMapper( this );
+        TypeResolution tr( m_structuralTypeSample, visitor );
+        tr.resolve();
+    }
+
 protected:
 private:
+    /**
+     * The sample representing the real type of the data inside. This is needed for applying the visitor.
+     */
+    WStructuralTypeStore< typename StructuralType::ParameterVector > m_structuralTypeSample;
 
     /**
      * The grid in which the data exists.
