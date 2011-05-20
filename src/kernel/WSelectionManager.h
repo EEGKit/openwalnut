@@ -92,12 +92,6 @@ public:
 
     /**
      * getter
-     * \return texture
-     */
-    osg::ref_ptr< osg::Texture3D > getTexture();
-
-    /**
-     * getter
      * \return grid
      */
     boost::shared_ptr< WGridRegular3D >getGrid();
@@ -127,40 +121,40 @@ public:
     void setTextureOpacity( float value );
 
     /**
-     * setter
+     * setter. These props automatically update the crosshair position
      * \param prop
      */
-    void setPropAxialPos( WPropInt prop );
+    void setPropAxialPos( WPropDouble prop );
 
     /**
-     * setter
+     * setter. These props automatically update the crosshair position
      * \param prop
      */
-    void setPropCoronalPos( WPropInt prop );
+    void setPropCoronalPos( WPropDouble prop );
 
     /**
-     * setter
+     * setter. These props automatically update the crosshair position
      * \param prop
      */
-    void setPropSagittalPos( WPropInt prop );
+    void setPropSagittalPos( WPropDouble prop );
 
     /**
      * getter
      * \return property
      */
-    WPropInt getPropAxialPos();
+    WPropDouble getPropAxialPos();
 
     /**
      * getter
      * \return property
      */
-    WPropInt getPropCoronalPos();
+    WPropDouble getPropCoronalPos();
 
     /**
      * getter
      * \return property
      */
-    WPropInt getPropSagittalPos();
+    WPropDouble getPropSagittalPos();
 
     /**
      * setter for the shader index to be used with the custom texture
@@ -176,23 +170,42 @@ public:
 
 protected:
 private:
+    /**
+     * Updates the crosshair position
+     */
+    void updateCrosshairPosition();
+
     boost::shared_ptr< WCrosshair >m_crosshair; //!< stores pointer to crosshair
 
     /**
      * Axial slice position.
      */
-    WPropInt m_axialPos;
+    WPropDouble m_axialPos;
 
     /**
      * Coronal slice position.
      */
-    WPropInt m_coronalPos;
+    WPropDouble m_coronalPos;
 
     /**
      * Sagittal slice position.
      */
-    WPropInt m_sagittalPos;
+    WPropDouble m_sagittalPos;
 
+    /**
+     * The connection for the axial property
+     */
+    boost::signals2::connection m_axialUpdateConnection;
+
+    /**
+     * The connection for the coronal property
+     */
+    boost::signals2::connection m_coronalUpdateConnection;
+
+    /**
+     * The connection for the sagittal property
+     */
+    boost::signals2::connection m_sagittalUpdateConnection;
 
     WPaintMode m_paintMode; //!< stores the currently selected paint mode
 

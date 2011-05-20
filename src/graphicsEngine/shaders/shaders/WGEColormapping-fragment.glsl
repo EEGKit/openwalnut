@@ -27,14 +27,14 @@
 
 #version 120
 
-#include "WGEColorMaps.glsl"
+#include "WGEColorMapsImproved.glsl"
 
 #include "WGEColormapping-uniforms.glsl"
 #include "WGEColormapping-varyings.glsl"
 
 /**
- * This method applies a colormap to the specified value an mixes it with the specified color. It uses the proper colormap and is able to unscale
- * values if needed.
+ * This method applies a colormap to the specified value an mixes it with the specified color. It uses the proper colormap and is able to
+ * unscale values if needed. It uses real compositing.
  *
  * \param color this color gets mixed using alpha value with the new colormap color
  * \param sampler the texture sampler to use
@@ -48,9 +48,17 @@
 void colormap( inout vec4 color, in sampler3D sampler, in vec3 coord, float minV, float scaleV, float thresholdV, float alpha, int cmap,
                bool active )
 {
-    // get the value
-    vec4 value = texture3D( sampler, coord );
-    colormap( color, value, minV, scaleV, thresholdV, alpha, cmap, active );
+    // get the value and descale it
+    vec3 value = texture3D( sampler, coord ).rgb;
+
+    // let someone else apply the colormap
+    vec4 src = colormap( value, minV, scaleV, thresholdV, alpha, cmap, active );
+
+    // compositing:
+    // associated colors needed
+    src.rgb *= src.a;
+    // apply compositing (front to back with associated colors)
+    color = ( 1.0 - src.a ) * color + src;
 }
 
 /**
@@ -58,14 +66,14 @@ void colormap( inout vec4 color, in sampler3D sampler, in vec3 coord, float minV
  * Be aware that this only works with the WGEColormapping class. If you are using real geometry use the other colormapping call. This version
  * takes a unit-cube texture coordinate which gets translated to the right coordinate space of the texture.
  *
- * \note if your are using this method, the call to colormapping() inside your vertex shader is NOT needed.
+ * \note If your are using this method, the call to colormapping() inside your vertex shader is NOT needed.
  *
  * \param texcoord the texture coordinate in the bounding box space of the data
  * \return the final color determined by the user defined colormapping
  */
 vec4 colormapping( vec4 texcoord )
 {
-    vec4 finalColor = vec4( 0.0, 0.0, 0.0, 1.0 );
+    vec4 finalColor = vec4( 0.0, 0.0, 0.0, 0.0 );
 
     // ColormapPreTransform is a mat4 defined by OpenWalnut before compilation
     vec4 t = ColormapPreTransform * texcoord;
@@ -119,13 +127,13 @@ vec4 colormapping( vec4 texcoord )
  * Calculates the final colormapping. Call this from your fragment shader. A call to colormapping() from within the vertex shader is also needed.
  * Be aware that this only works with the WGEColormapping class. This version uses the interpolated texture coordinate from the vertex shader. Be
  * yourself aware that this should be used only for geometry based data. If you are using raytracing-like techniques where only texture
- * coordinates of the proxy geometry is available, use the colormapping( vec3 ) call instead.
+ * coordinates of the proxy geometry are available, use the colormapping( vec3 ) call instead.
  *
  * \return the final color determined by the user defined colormapping
  */
 vec4 colormapping()
 {
-    vec4 finalColor = vec4( 0.0, 0.0, 0.0, 1.0 );
+    vec4 finalColor = vec4( 0.0, 0.0, 0.0, 0.0 );
 
     // back to front compositing
 #ifdef Colormap7Enabled

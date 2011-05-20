@@ -161,6 +161,11 @@ private:
         bool m_isPicked;
 
         /**
+         * This uniform is used to inform the shader about current pick-state
+         */
+        osg::ref_ptr< osg::Uniform > m_pickUniform;
+
+        /**
          * The stored pixel position of a previous drag event.
          */
         WVector2d m_oldPixelPosition;
@@ -190,6 +195,8 @@ private:
      * The Geode containing all the slices and the mesh
      */
     osg::ref_ptr< WGEManagedGroupNode > m_output;
+
+    WPropBool    m_noTransparency;  //!< if true, the whole slices are shown.
 
     WPropGroup    m_sliceGroup; //!< the group contains several slice properties
 

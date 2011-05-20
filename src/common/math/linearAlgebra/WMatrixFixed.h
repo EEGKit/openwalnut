@@ -252,7 +252,7 @@ public:
      * \param m the matrix to copy
      */
     template< typename RHSValueT, ValueStoreTemplate RHSValueStoreT >
-    explicit WMatrixFixed( const WMatrixFixed< RHSValueT, Rows, Cols, RHSValueStoreT >& m )     // NOLINT - we do not want it explicit
+    WMatrixFixed( const WMatrixFixed< RHSValueT, Rows, Cols, RHSValueStoreT >& m )     // NOLINT - we do not want it explicit
     {
         setValues( m.m_values );
     }
@@ -736,7 +736,8 @@ public:
     WMatrixFixed< typename WTypeTraits::TypePromotion< ValueT, RHSValueT >::Result, Rows, Cols, ValueStoreT >
     operator/( const RHSValueT& rhs ) const
     {
-        return operator*( RHSValueT( 1 ) / rhs );
+        typedef typename WTypeTraits::TypePromotion< ValueT, RHSValueT >::Result ResultT;
+        return operator*( ResultT( 1 ) / static_cast< ResultT >( rhs ) );
     }
 
     /**
@@ -997,11 +998,11 @@ public:
     bool operator==( const WMatrixFixed< RHSValueT, Rows, Cols, RHSValueStoreT >& rhs ) const throw()
     {
         bool eq = true;
-        for ( size_t row = 0; row < Rows; ++row )
+        for ( size_t row = 0; eq && ( row < Rows ); ++row )
         {
-            for ( size_t col = 0; col < Cols; ++col )
+            for ( size_t col = 0; eq && ( col < Cols ); ++col )
             {
-                eq &= ( operator()( row, col ) == rhs( row, col ) );
+                eq = eq && ( operator()( row, col ) == rhs( row, col ) );
             }
         }
         return eq;
@@ -1018,15 +1019,17 @@ public:
     template< typename RHSValueT, ValueStoreTemplate RHSValueStoreT >
     bool operator<( const WMatrixFixed< RHSValueT, Rows, Cols, RHSValueStoreT >& rhs ) const throw()
     {
-        bool less = true;
-        for ( size_t row = 0; row < Rows; ++row )
+        bool eq = true;
+        bool result = true;
+        for ( size_t row = 0; eq && ( row < Rows ); ++row )
         {
-            for ( size_t col = 0; col < Cols; ++col )
+            for ( size_t col = 0; eq && ( col < Cols ); ++col )
             {
-                less &= ( operator()( row, col ) < rhs( row, col ) );
+                eq = eq && ( operator()( row, col ) == rhs( row, col ) );
+                result = ( operator()( row, col ) < rhs( row, col ) );
             }
         }
-        return less;
+        return result;
     }
 
     /**

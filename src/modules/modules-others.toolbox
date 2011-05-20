@@ -33,7 +33,6 @@ ADD_SUBDIRECTORY( scalarSegmentation )
 ADD_SUBDIRECTORY( splineSurface )
 ADD_SUBDIRECTORY( subtractDataSetScalar )
 ADD_SUBDIRECTORY( surfaceParameterAnimator )
-ADD_SUBDIRECTORY( textureMapper )
 ADD_SUBDIRECTORY( vectorOperator )
 
 IF( OPENCL_FOUND )

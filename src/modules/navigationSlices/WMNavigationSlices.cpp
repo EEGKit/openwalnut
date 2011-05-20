@@ -31,10 +31,13 @@
 #include "../../graphicsEngine/WGEGeodeUtils.h"
 #include "../../graphicsEngine/callbacks/WGELinearTranslationCallback.h"
 #include "../../graphicsEngine/callbacks/WGENodeMaskCallback.h"
+#include "../../graphicsEngine/callbacks/WGEPropertyUniformCallback.h"
+#include "../../graphicsEngine/callbacks/WGEShaderAnimationCallback.h"
 #include "../../graphicsEngine/shaders/WGEPropertyUniform.h"
 #include "../../graphicsEngine/shaders/WGEShader.h"
 #include "../../graphicsEngine/shaders/WGEShaderDefineOptions.h"
 #include "../../graphicsEngine/shaders/WGEShaderPropertyDefineOptions.h"
+#include "../../kernel/WSelectionManager.h"
 #include "../../graphicsEngine/WGraphicsEngine.h"
 #include "../../kernel/WKernel.h"
 
@@ -67,7 +70,7 @@ const char** WMNavigationSlices::getXPMIcon() const
 
 const std::string WMNavigationSlices::getName() const
 {
-    return "Navigation Slices 2";
+    return "Navigation Slices";
 }
 
 const std::string WMNavigationSlices::getDescription() const
@@ -84,6 +87,9 @@ void WMNavigationSlices::connectors()
 
 void WMNavigationSlices::properties()
 {
+    m_noTransparency  = m_properties->addProperty( "No Transparency", "If checked, transparency is not used. This will show the complete slices.",
+                                                   false );
+
     m_sliceGroup      = m_properties->addPropertyGroup( "Slices",  "Slice Options." );
 
     // enable slices
@@ -212,6 +218,20 @@ void WMNavigationSlices::initOSG()
     // Done
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+    osg::ref_ptr< osg::StateSet > state = m_output->getOrCreateStateSet();
+    state->setMode( GL_BLEND, osg::StateAttribute::ON );
+    state->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
+
+    // we want some nice animations: add timer
+    osg::ref_ptr< osg::Uniform > animationUniform = new osg::Uniform( "u_timer", 0 );
+    state->addUniform( animationUniform );
+    animationUniform->setUpdateCallback( new WGEShaderAnimationCallback() );
+
+    // transparency property
+    osg::ref_ptr< osg::Uniform > transparencyUniform = new osg::Uniform( "u_noTransparency", false );
+    state->addUniform( transparencyUniform );
+    transparencyUniform->setUpdateCallback( new WGEPropertyUniformCallback< WPropBool >( m_noTransparency ) );
+
     // add the transformation nodes to the output group
     m_output->insert( mX );
     m_output->insert( mY );
@@ -222,12 +242,14 @@ void WMNavigationSlices::initOSG()
 WMNavigationSlices::PickCallback::PickCallback( osg::ref_ptr< osg::Node > node, WPropDouble property, bool negateDirection ):
     m_node( node ),
     m_property( property ),
+    m_pickUniform( new osg::Uniform( "u_picked", 0.0f ) ),
     m_dir( negateDirection ? -1.0 : 1.0 )
 {
     boost::shared_ptr< WGraphicsEngine > ge = WGraphicsEngine::getGraphicsEngine();
     boost::shared_ptr< WGEViewer > viewer = ge->getViewerByName( "main" );
     m_camera = viewer->getCamera();
     m_pickConnection = viewer->getPickHandler()->getPickSignal()->connect( boost::bind( &WMNavigationSlices::PickCallback::pick, this, _1 ) );
+    node->getOrCreateStateSet()->addUniform( m_pickUniform );
 }
 
 void WMNavigationSlices::PickCallback::pick( WPickInfo pickInfo )
@@ -253,10 +275,12 @@ void WMNavigationSlices::PickCallback::pick( WPickInfo pickInfo )
         // this might have initialized dragging. Keep track of old position
         m_oldPixelPosition = newPixelPos;
         m_isPicked = true;
+        m_pickUniform->set( 1.0f );
     }
     else    // someone else got picked.
     {
         m_isPicked = false;
+        m_pickUniform->set( 0.0f );
     }
 }
 
@@ -278,6 +302,11 @@ void WMNavigationSlices::moduleMain()
 
     // we need to be informed if the bounding box of the volume containing all the data changes.
     m_moduleState.add( WGEColormapping::instance()->getChangeCondition() );
+
+    // Forward position to selection manager.
+    WKernel::getRunningKernel()->getSelectionManager()->setPropSagittalPos( m_xPos );
+    WKernel::getRunningKernel()->getSelectionManager()->setPropCoronalPos( m_yPos );
+    WKernel::getRunningKernel()->getSelectionManager()->setPropAxialPos( m_zPos );
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Main loop
