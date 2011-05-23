@@ -126,7 +126,7 @@ public:
     virtual ~WValueSet()
     {
         // clean-up
-        delete m_data;
+        delete[] m_data;
     }
 
     /**
