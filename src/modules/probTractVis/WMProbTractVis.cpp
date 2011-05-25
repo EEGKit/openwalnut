@@ -109,9 +109,11 @@ void WMProbTractVis::connectors()
 }
 
 void WMProbTractVis::properties()
-{
+{    
     // Initialize the properties
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+
+//    m_colors        = m_properties->addProperty( "Iso colors",       "Up to four iso colors.",  );
 
     m_isoValue      = m_properties->addProperty( "Isovalue",         "The isovalue used whenever the isosurface Mode is turned on.",
                                                                       128.0 );
@@ -148,13 +150,6 @@ void WMProbTractVis::properties()
     m_stochasticJitter = m_properties->addProperty( "Stochastic Jitter", "Improves image quality at low sampling rates but introduces slight "
                                                                          "noise effect.", true );
 
-//    m_borderClip = m_properties->addProperty( "Border Clip", "If enabled, a certain area on the volume boundary can be clipped. This is useful "
-//                                                             "for noise and non-peeled data but will consume a lot of GPU power.", false );
-
-//    m_borderClipDistance = m_properties->addProperty( "Border Clip Distance", "The distance that should be ignored.", 0.05 );
-//    m_borderClipDistance->setMin( 0.0 );
-//    m_borderClipDistance->setMax( 0.1 );
-
     WModule::properties();
 }
 
@@ -178,9 +173,6 @@ void WMProbTractVis::moduleMain()
         new WGEShaderPropertyDefineOptions< WPropBool >( m_phongShading, "PHONGSHADING_DISABLED", "PHONGSHADING_ENABLED" ) )
     );
     WGEShaderDefineSwitch::SPtr gradTexEnableDefine = m_shader->setDefine( "GRADIENTTEXTURE_DISABLED" );
-//    m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
-//        new WGEShaderPropertyDefineOptions< WPropBool >( m_borderClip, "BORDERCLIP_DISABLED", "BORDERCLIP_ENABLED" ) )
-//    );
 
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_input->getDataChangedCondition() );
@@ -286,14 +278,14 @@ void WMProbTractVis::moduleMain()
 
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalue", m_isoValue ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalue2", m_isoValue2 ) );
-            rootState->addUniform( new WGEPropertyUniform< WPropColor >( "u_isocolor", m_isoColor) );
+            rootState->addUniform( new WGEPropertyUniform< WPropColor >( "u_isocolor", m_isoColor ) );
             rootState->addUniform( new WGEPropertyUniform< WPropColor >( "u_isocolor2", m_isoColor2) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovaltolerance", m_isoValueTolerance ) );
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_steps", m_stepCount ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_alpha", m_alpha ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_alpha2", m_alpha2 ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_colormapRatio", m_colormapRatio ) );
-//            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_borderClipDistance", m_borderClipDistance ) );
+
 
             // Stochastic jitter?
             const size_t size = 64;

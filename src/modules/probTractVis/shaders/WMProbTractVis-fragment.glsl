@@ -60,13 +60,6 @@ uniform int u_texture1SizeX;
 uniform sampler3D u_gradientsSampler;
 #endif
 
-//#ifdef BORDERCLIP_ENABLED
-///**
-// * The distance before the entry/exit point that should be clipped.
-// */
-//uniform float u_borderClipDistance = 0.05;
-//#endif
-
 // The amount of deviation tolerated for the isovalue
 uniform float u_isovaltolerance;
 
@@ -150,13 +143,6 @@ vec3 getNormal( in vec3 position )
  */
 void main()
 {
-    // rgba, set for all points
-    // gl_Color is set via the color picking widget
-    // u_alpha can be modified by the opacity slider (uniform variable u_alpha)
-    wge_FragColor = vec4 ( gl_Color.rgb, u_alpha );
-//    gl_FragData[0] = vec4 ( u_isocolor.rgb, u_alpha );
-//    gl_FragData[1] = vec4 ( u_isocolor2.rgb, u_alpha2 );
-
     // 1.0 = back 0.0 front
     // fragment depth needed for postprocessing
     gl_FragDepth = 1.0; //TODO
@@ -165,8 +151,7 @@ void main()
     float maxDistance = 0.0;
     // findRayEnd also sets the maxDistance
     vec3 rayEnd = findRayEnd( maxDistance );
-    float stepDistance = maxDistance / float( u_steps ); 
-    //gl_FragData[0] = vec4 ( rayEnd, u_alpha );
+    float stepDistance = maxDistance / float( u_steps );
 
     // current value inside the data, will be set dynamically
     float curValue;
@@ -188,19 +173,8 @@ void main()
         // get current value
         curValue = texture3D( u_texture0Sampler, curPoint ).r;
 
-        bool val1ok = false;
-        bool val2ok = false;
-
         // is it the isovalue?
         if( abs( curValue - v_isovalue ) < u_isovaltolerance )
-        {
-            val1ok = true;
-        }
-        if( abs( curValue - v_isovalue2 ) < u_isovaltolerance )
-        {
-            val2ok = true;
-        }
-        if( val1ok || val2ok )
         {
             // we need the depth value of the current point inside the cube -> standard pipeline
 
@@ -229,24 +203,16 @@ void main()
                 light = blinnPhongIlluminationIntensity( normalize( normal ) );
             #endif
 
-            vec4 color;
+            vec4 color = vec4( u_isocolor.rgb, u_alpha );
 
             // 5. set color
             // mix color with colormap
-            if( val1ok )
-            {
-                color = mix( colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y
-                                                  * u_texture0SizeY, curPoint.z * u_texture0SizeZ, 1.0 ) ),
-                              vec4( u_isocolor.rgb, u_alpha2 ),
-                              1.0 - u_colormapRatio );
-            }
-            if( val2ok )
-            {
-                color = mix( colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y
-                                                  * u_texture0SizeY, curPoint.z * u_texture0SizeZ, 1.0 ) ),
-                              vec4( u_isocolor2.rgb, u_alpha2 ),
-                              1.0 - u_colormapRatio );
-            }
+            color = mix( colormapping( vec4( curPoint.x * u_texture0SizeX,
+                                             curPoint.y * u_texture0SizeY,
+                                             curPoint.z * u_texture0SizeZ,
+                                             1.0 ) ),
+                          vec4( u_isocolor.rgb, u_alpha ),
+                          1.0 - u_colormapRatio );
 
             // 6: the final color construction
             wge_FragColor = vec4( light * color.rgb, color.a );

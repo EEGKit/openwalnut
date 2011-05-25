@@ -48,10 +48,6 @@ uniform float u_texture0Min;
 uniform float u_isovalue;
 uniform float u_isovalue2;
 
-//// The isocolors to use.
-//uniform float u_isocolor;
-//uniform float u_isocolor2;
-
 /////////////////////////////////////////////////////////////////////////////
 // Attributes
 /////////////////////////////////////////////////////////////////////////////
@@ -89,6 +85,6 @@ void main()
 
     // Simply project the vertex
     gl_Position = ftransform();
-    gl_FrontColor = gl_Color;
+    gl_FrontColor = gl_Color;//TODO
 }
 
