@@ -31,11 +31,11 @@
 #include <osg/Node>
 #include <osg/Uniform>
 
-#include "../../graphicsEngine/shaders/WGEShader.h"
+#include "../../core/graphicsEngine/shaders/WGEShader.h"
 
-#include "../../kernel/WModule.h"
-#include "../../kernel/WModuleInputData.h"
-#include "../../kernel/WModuleOutputData.h"
+#include "../../core/kernel/WModule.h"
+#include "../../core/kernel/WModuleInputData.h"
+#include "../../core/kernel/WModuleOutputData.h"
 
 //may need forward declaration later
 class WDataSetVector;
