@@ -109,7 +109,7 @@ void WMProbTractVis::connectors()
 }
 
 void WMProbTractVis::properties()
-{    
+{
     // Initialize the properties
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
 
@@ -258,6 +258,18 @@ void WMProbTractVis::moduleMain()
                 continue;
             }
 
+//            WMatrixFixed< double, 4, 4 > m_matrix = WMatrixFixed< double, 4, 4 >();
+//            WMatrixFixed< double, 4, 1 > vec1 = WMatrixFixed< double, 4, 1 >( 1.0, 0.9, 0.8, 1.0 );
+//            WMatrixFixed< double, 4, 1 > vec2 = WMatrixFixed< double, 4, 1 >( 0.7, 0.6, 0.5, 1.0 );
+//            WMatrixFixed< double, 4, 1 > vec3 = WMatrixFixed< double, 4, 1 >( 0.4, 0.3, 0.2, 1.0 );
+//            WMatrixFixed< double, 4, 1 > vec4 = WMatrixFixed< double, 4, 1 >( 0.1, 0.0, 0.7, 1.0 );
+//            m_matrix.setRowVector( 0, vec1 );
+//            m_matrix.setRowVector( 1, vec2 );
+//            m_matrix.setRowVector( 2, vec3 );
+//            m_matrix.setRowVector( 3, vec4 );
+//            WMatrixFixed< double, 4, 1 > vec1b = m_matrix.getColumnVector( size_t( 2 ) );
+//            debugLog() << vec1b.at(0,0) << "|" << vec1b.at(1,0) << "|" << vec1b.at(2,0) << "|" << vec1b.at(3,0);
+
             // use the OSG Shapes, create unit cube
             WBoundingBox bb( WPosition( 0.0, 0.0, 0.0 ),
                 WPosition( grid->getNbCoordsX() - 1, grid->getNbCoordsY() - 1, grid->getNbCoordsZ() - 1 ) );
@@ -279,7 +291,7 @@ void WMProbTractVis::moduleMain()
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalue", m_isoValue ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalue2", m_isoValue2 ) );
             rootState->addUniform( new WGEPropertyUniform< WPropColor >( "u_isocolor", m_isoColor ) );
-            rootState->addUniform( new WGEPropertyUniform< WPropColor >( "u_isocolor2", m_isoColor2) );
+            rootState->addUniform( new WGEPropertyUniform< WPropColor >( "u_isocolor2", m_isoColor2 ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovaltolerance", m_isoValueTolerance ) );
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_steps", m_stepCount ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_alpha", m_alpha ) );

@@ -133,7 +133,8 @@ ELSE()
         ## The following allows us to prevent cyclic dependencies even on linux
         SET( CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined -Wl,--allow-shlib-undefined" CACHE STRING "" FORCE )
     ENDIF()
-    SET( CMAKE_CXX_FLAGS_RELEASE "-O3" CACHE STRING "" FORCE )
+    SET( CMAKE_CXX_FLAGS_RELEASE "-O0" CACHE STRING "" FORCE ) # ohne optimierung 
+    # SET( CMAKE_CXX_FLAGS_RELEASE "-O3" CACHE STRING "" FORCE ) # mit optimierung 
     SET( CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG -O0" CACHE STRING "" FORCE )
 ENDIF()
 SET( CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -DDEBUG -O2" CACHE STRING "" FORCE )
