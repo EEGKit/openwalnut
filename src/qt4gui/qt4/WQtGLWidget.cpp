@@ -40,19 +40,20 @@
 #include "core/kernel/WKernel.h"
 
 #ifndef __APPLE__
-#ifndef _MSC_VER
-#include <osgViewer/api/X11/GraphicsWindowX11>
-typedef osgViewer::GraphicsWindowX11::WindowData WindowData;
-#else
-#include <osgViewer/api/Win32/GraphicsWindowWin32>
-typedef osgViewer::GraphicsWindowWin32::WindowData WindowData;
-#endif
+    #ifndef _WIN32
+        #include <osgViewer/api/X11/GraphicsWindowX11>
+        typedef osgViewer::GraphicsWindowX11::WindowData WindowData;
+    #else
+        #include <osgViewer/api/Win32/GraphicsWindowWin32>
+        typedef osgViewer::GraphicsWindowWin32::WindowData WindowData;
+    #endif
 #endif
 
-WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::ProjectionMode projectionMode, const QGLWidget * shareWidget ):
-#ifndef _MSC_VER
-    QGLWidget( getDefaultFormat(), parent, shareWidget ),
+#ifndef _WIN32
+WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::ProjectionMode projectionMode, const QWidget* shareWidget ):
+    QGLWidget( getDefaultFormat(), parent, dynamic_cast< const QGLWidget* >( shareWidget ) ),
 #else
+WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::ProjectionMode projectionMode, const QWidget* ):
     QWidget( parent ),
 #endif
       m_nameOfViewer( nameOfViewer ),
@@ -139,7 +140,7 @@ boost::shared_ptr< WGEViewer > WQtGLWidget::getViewer() const
 
 void WQtGLWidget::paintEvent( QPaintEvent* /*event*/ )
 {
-    if ( m_firstPaint )
+    if( m_firstPaint )
     {
         // it is important to let the GE know that there now is an completely initialized widget -> allowing GE startup to complete
         // This is needed as on some machines, the OSG crashes if the GL widget is not fully initialized.

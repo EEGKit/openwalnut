@@ -64,30 +64,12 @@ WQtPropertyGroupWidget::WQtPropertyGroupWidget( WPropGroup group, QWidget* paren
     r.reset();
     // NOTE: a simple setHidden( group->isHidden() ) causes the QWidgets to popup if hidden is false. This is why we set hidden only if it really
     // is needed
-    if ( hide )
+    if( hide )
     {
         setHidden( true );
     }
     // setup the update callback
     m_connection = m_group->getUpdateCondition()->subscribeSignal( boost::bind( &WQtPropertyGroupWidget::propertyChangeNotifier, this ) );
-}
-
-WQtPropertyGroupWidget::WQtPropertyGroupWidget( std::string name, QWidget* parent  )
-    : QWidget( parent ),
-    m_name( name.c_str() ),
-    m_numberOfWidgets( 0 ),
-    m_group()
-{
-    // note: never do layouts as none pointers
-    // on destruction of a widget it will try to delete them which will cause crashes
-    m_pageLayout = new QVBoxLayout();
-    m_pageLayout->setMargin( WGLOBAL_MARGIN );
-    m_pageLayout->setSpacing( WGLOBAL_SPACING );
-
-    m_controlLayout = new QGridLayout();
-    m_controlLayout->setMargin( WGLOBAL_MARGIN );
-    m_controlLayout->setSpacing( WGLOBAL_SPACING );
-    m_pageLayout->addLayout( m_controlLayout );
 }
 
 WQtPropertyGroupWidget::~WQtPropertyGroupWidget()
@@ -104,7 +86,7 @@ void WQtPropertyGroupWidget::propertyChangeNotifier()
 bool WQtPropertyGroupWidget::event( QEvent* event )
 {
     // a property changed
-    if ( event->type() == WQT_PROPERTY_CHANGED_EVENT )
+    if( event->type() == WQT_PROPERTY_CHANGED_EVENT )
     {
         WProperties::PropertySharedContainerType::ReadTicket r = m_group->getReadTicket();
         setHidden( r->get().empty() | m_group->isHidden() );
@@ -199,7 +181,7 @@ void WQtPropertyGroupWidget::addGroup( WQtPropertyGroupWidget* widget, bool asSc
     grid->setSpacing( WGLOBAL_SPACING );
 
     group->setLayout( grid );
-    if ( asScrollArea )
+    if( asScrollArea )
     {
         scrollArea = new QScrollArea();
         scrollArea->setWidget( group );
@@ -235,7 +217,7 @@ void WQtPropertyGroupWidget::addGroup( WQtPropertyGroupWidget* widget, bool asSc
     connect( boxTitle, SIGNAL( toggled( bool ) ), group, SLOT( setVisible( bool ) ) );
 
     // create a body widget
-    if ( asScrollArea )
+    if( asScrollArea )
     {
         boxLayout->addWidget( scrollArea, 1, 0 );
     }

@@ -139,6 +139,7 @@ void WMainWindow::setupGUI()
     addDockWidget( Qt::RightDockWidgetArea, m_controlPanel );
 
     m_glDock = new QMainWindow();
+    m_glDock->setObjectName( "GLDock" );
     m_glDock->setDockOptions( QMainWindow::AnimatedDocks |  QMainWindow::AllowNestedDocks | QMainWindow::AllowTabbedDocks );
     m_glDock->setDocumentMode( true );
     setCentralWidget( m_glDock );
@@ -148,6 +149,7 @@ void WMainWindow::setupGUI()
     m_glDock->addDockWidget( Qt::RightDockWidgetArea, mainGLDock );
 
     m_permanentToolBar = new WQtToolBar( "Permanent Toolbar", this );
+    addToolBar( Qt::TopToolBarArea, m_permanentToolBar );
 
     // Set the style of the toolbar
     // NOTE: this only works if the toolbar is used with QActions instead of buttons and other widgets
@@ -272,36 +274,23 @@ void WMainWindow::setupGUI()
         bool hideWidget;
         if( !( WPreferences::getPreference( "qt4gui.hideAxial", &hideWidget ) && hideWidget) )
         {
-#ifndef _MSC_VER
             m_navAxial = boost::shared_ptr< WQtNavGLWidget >( new WQtNavGLWidget( "Axial View", "Axial View", this, "Axial Slice",
                                                                                   m_mainGLWidget.get() ) );
-#else
-            m_navAxial = boost::shared_ptr< WQtNavGLWidget >( new WQtNavGLWidget( "Axial View", "Axial View", this, "Axial Slice" ) );
-#endif
             m_navAxial->setFeatures( QDockWidget::AllDockWidgetFeatures );
             m_glDock->addDockWidget( Qt::LeftDockWidgetArea, m_navAxial.get() );
         }
         if( !( WPreferences::getPreference( "qt4gui.hideCoronal", &hideWidget ) && hideWidget) )
         {
-#ifndef _MSC_VER
             m_navCoronal = boost::shared_ptr< WQtNavGLWidget >( new WQtNavGLWidget( "Coronal View", "Coronal View", this, "Coronal Slice",
                                                                                     m_mainGLWidget.get() ) );
-#else
-            m_navCoronal = boost::shared_ptr< WQtNavGLWidget >( new WQtNavGLWidget( "Coronal View", "Coronal View", this, "Coronal Slice" ) );
-#endif
             m_navCoronal->setFeatures( QDockWidget::AllDockWidgetFeatures );
             m_glDock->addDockWidget( Qt::LeftDockWidgetArea, m_navCoronal.get() );
         }
         if( !( WPreferences::getPreference( "qt4gui.hideSagittal", &hideWidget ) && hideWidget) )
         {
-#ifndef _MSC_VER
             m_navSagittal =
                 boost::shared_ptr< WQtNavGLWidget >( new WQtNavGLWidget( "Sagittal View", "Sagittal View", this, "Sagittal Slice",
                                                                          m_mainGLWidget.get() ) );
-#else
-            m_navSagittal =
-                boost::shared_ptr< WQtNavGLWidget >( new WQtNavGLWidget( "Sagittal View", "Sagittal View", this, "Sagittal Slice" ) );
-#endif
             m_navSagittal->setFeatures( QDockWidget::AllDockWidgetFeatures );
             m_glDock->addDockWidget( Qt::LeftDockWidgetArea, m_navSagittal.get() );
         }
@@ -333,10 +322,11 @@ void WMainWindow::setupGUI()
         }
     }
 
+    // Temporarily disabled. We need a proper command prompt implementation first.
     // create command prompt toolbar
-    m_commandPrompt = new WQtCommandPromptToolbar( "Command Prompt", this );
-    addToolBar( Qt::TopToolBarArea, m_commandPrompt );
-    this->addAction( m_commandPrompt->toggleViewAction() );  // this enables the action even if the menu bar is invisible
+    // m_commandPrompt = new WQtCommandPromptToolbar( "Command Prompt", this );
+    // addToolBar( Qt::TopToolBarArea, m_commandPrompt );
+    // this->addAction( m_commandPrompt->toggleViewAction() );  // this enables the action even if the menu bar is invisible
 
     // setup permanent toolbar
     m_permanentToolBar->addAction( m_loadButton );
@@ -347,8 +337,6 @@ void WMainWindow::setupGUI()
     m_permanentToolBar->addAction( resetButton );
     m_permanentToolBar->addAction( roiButton );
     m_permanentToolBar->addSeparator();
-
-    addToolBar( Qt::TopToolBarArea, m_permanentToolBar );
 
     // after creating the GUI, restore its saved state
     restoreSavedState();
@@ -426,7 +414,7 @@ void WMainWindow::moduleSpecificSetup( boost::shared_ptr< WModule > module )
         {
             // it is a dataset single
             // load a nav slice module if a WDataSetSingle is available!?
-            if ( !m_navSlicesAlreadyLoaded )
+            if( !m_navSlicesAlreadyLoaded )
             {
                 autoAdd( module, "Navigation Slices" );
                 m_navSlicesAlreadyLoaded = true;
@@ -616,7 +604,7 @@ void WMainWindow::projectSave( const std::vector< boost::shared_ptr< WProjectFil
     {
         std::string filename = ( *constIterator ).toStdString();
         // append owp if not existent
-        if ( filename.rfind( ".owp" ) == std::string::npos )
+        if( filename.rfind( ".owp" ) == std::string::npos )
         {
             filename += ".owp";
         }
@@ -1038,14 +1026,14 @@ void WMainWindow::restoreSavedState()
     // should we do it?
     bool saveStateEnabled = true;
     WPreferences::getPreference( "qt4gui.saveState", &saveStateEnabled );
-    if ( !saveStateEnabled )
+    if( !saveStateEnabled )
     {
         return;
     }
 
     // the state name postfix allows especially developers to have multiple OW with different GUI settings.
     std::string stateName = "";
-    if ( WPreferences::getPreference( "qt4gui.stateNamePostfix", &stateName ) )
+    if( WPreferences::getPreference( "qt4gui.stateNamePostfix", &stateName ) )
     {
         stateName = "-" + stateName;
     }
@@ -1065,13 +1053,13 @@ void WMainWindow::saveWindowState()
     // should we do it?
     bool saveStateEnabled = true;
     WPreferences::getPreference( "qt4gui.saveState", &saveStateEnabled );
-    if ( !saveStateEnabled )
+    if( !saveStateEnabled )
     {
         return;
     }
 
     std::string stateName = "";
-    if ( WPreferences::getPreference( "qt4gui.stateNamePostfix", &stateName ) )
+    if( WPreferences::getPreference( "qt4gui.stateNamePostfix", &stateName ) )
     {
         stateName = "-" + stateName;
     }

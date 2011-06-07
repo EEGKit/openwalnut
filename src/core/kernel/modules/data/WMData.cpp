@@ -35,7 +35,7 @@
 #include "../../../dataHandler/WDataSetVector.h"
 #include "../../../dataHandler/WSubject.h"
 #include "../../../dataHandler/WDataHandler.h"
-#include "../../../dataHandler/WDataTexture3D_2.h"
+#include "../../../dataHandler/WDataTexture3D.h"
 #include "../../../dataHandler/WEEG2.h"
 #include "../../../dataHandler/exceptions/WDHException.h"
 #include "../../../dataHandler/io/WReaderBiosig.h"
@@ -93,7 +93,7 @@ boost::shared_ptr< WDataSet > WMData::getDataSet()
 
 void WMData::setFilename( boost::filesystem::path fname )
 {
-    if ( !m_fileNameSet )
+    if( !m_fileNameSet )
     {
         m_fileNameSet = true;
         m_fileName = fname;
@@ -149,15 +149,15 @@ void WMData::propertyChanged( boost::shared_ptr< WPropertyBase > property )
 {
     if( m_isTexture )
     {
-        if ( property == m_active )
+        if( property == m_active )
         {
             // forward to texture
-            m_dataSet->getTexture2()->active()->set( m_active->get( true ) );
+            m_dataSet->getTexture()->active()->set( m_active->get( true ) );
         }
     }
     else
     {
-        if ( property == m_active )
+        if( property == m_active )
         {
             if( m_active->get() )
             {
@@ -188,7 +188,7 @@ void WMData::moduleMain()
     m_dataName->set( fileName );
 
     // remove the path up to the file name and set it as a convenient name for this module instance
-    if ( fileName != "" )
+    if( fileName != "" )
     {
         m_runtimeName->set( string_utils::tokenize( fileName, "/" ).back() );
     }
@@ -224,23 +224,23 @@ void WMData::moduleMain()
                 case W_DT_UNSIGNED_CHAR:
                 case W_DT_INT16:
                 case W_DT_SIGNED_INT:
-                    m_dataSet->getTexture2()->colormap()->set(
-                        m_dataSet->getTexture2()->colormap()->get().newSelector( WItemSelector::IndexList( 1, 0 ) )
+                    m_dataSet->getTexture()->colormap()->set(
+                        m_dataSet->getTexture()->colormap()->get().newSelector( WItemSelector::IndexList( 1, 0 ) )
                     );
                     break;
                 case W_DT_FLOAT:
                 case W_DT_DOUBLE:
                     if( boost::shared_dynamic_cast< WDataSetVector >( m_dataSet ) )
                     {
-                        m_dataSet->getTexture2()->colormap()->set(
-                            m_dataSet->getTexture2()->colormap()->get().newSelector( WItemSelector::IndexList( 1, 6 ) )
+                        m_dataSet->getTexture()->colormap()->set(
+                            m_dataSet->getTexture()->colormap()->get().newSelector( WItemSelector::IndexList( 1, 6 ) )
                         );
-                        m_dataSet->getTexture2()->interpolation()->set( false );
+                        m_dataSet->getTexture()->interpolation()->set( false );
                     }
                     else
                     {
-                        m_dataSet->getTexture2()->colormap()->set(
-                            m_dataSet->getTexture2()->colormap()->get().newSelector( WItemSelector::IndexList( 1, 5 ) )
+                        m_dataSet->getTexture()->colormap()->set(
+                            m_dataSet->getTexture()->colormap()->get().newSelector( WItemSelector::IndexList( 1, 5 ) )
                         );
                     }
                     break;
@@ -291,11 +291,11 @@ void WMData::moduleMain()
     m_active->getCondition()->subscribeSignal( boost::bind( &WMData::propertyChanged, this, m_active ) );
 
     // textures also provide properties
-    if ( m_dataSet->isTexture() )
+    if( m_dataSet->isTexture() )
     {
-        WGEColormapping::registerTexture( m_dataSet->getTexture2(), m_runtimeName->get() );
-        m_properties->addProperty( m_dataSet->getTexture2()->getProperties() );
-        m_infoProperties->addProperty( m_dataSet->getTexture2()->getInformationProperties() );
+        WGEColormapping::registerTexture( m_dataSet->getTexture(), m_runtimeName->get() );
+        m_properties->addProperty( m_dataSet->getTexture()->getProperties() );
+        m_infoProperties->addProperty( m_dataSet->getTexture()->getInformationProperties() );
     }
 
     // notify
@@ -318,11 +318,11 @@ void WMData::moduleMain()
             if( m_dataSet && m_isTexture )
             {
                 // remove dataset from datahandler
-                if ( m_dataSet->isTexture() )
+                if( m_dataSet->isTexture() )
                 {
-                    m_properties->removeProperty( m_dataSet->getTexture2()->getProperties() );
-                    m_infoProperties->removeProperty( m_dataSet->getTexture2()->getInformationProperties() );
-                    WGEColormapping::deregisterTexture( m_dataSet->getTexture2() );
+                    m_properties->removeProperty( m_dataSet->getTexture()->getProperties() );
+                    m_infoProperties->removeProperty( m_dataSet->getTexture()->getInformationProperties() );
+                    WGEColormapping::deregisterTexture( m_dataSet->getTexture() );
                 }
             }
 
@@ -356,20 +356,20 @@ void WMData::moduleMain()
 
                 if( m_isTexture )
                 {
-                    WGEColormapping::registerTexture( m_dataSet->getTexture2(), m_runtimeName->get() );
-                    m_properties->addProperty( m_dataSet->getTexture2()->getProperties() );
-                    m_infoProperties->addProperty( m_dataSet->getTexture2()->getInformationProperties() );
+                    WGEColormapping::registerTexture( m_dataSet->getTexture(), m_runtimeName->get() );
+                    m_properties->addProperty( m_dataSet->getTexture()->getProperties() );
+                    m_infoProperties->addProperty( m_dataSet->getTexture()->getInformationProperties() );
                 }
             }
         }
     }
 
     // remove dataset from datahandler
-    if ( m_dataSet->isTexture() )
+    if( m_dataSet->isTexture() )
     {
-        m_properties->removeProperty( m_dataSet->getTexture2()->getProperties() );
-        m_infoProperties->removeProperty( m_dataSet->getTexture2()->getInformationProperties() );
-        WGEColormapping::deregisterTexture( m_dataSet->getTexture2() );
+        m_properties->removeProperty( m_dataSet->getTexture()->getProperties() );
+        m_infoProperties->removeProperty( m_dataSet->getTexture()->getInformationProperties() );
+        WGEColormapping::deregisterTexture( m_dataSet->getTexture() );
     }
 }
 

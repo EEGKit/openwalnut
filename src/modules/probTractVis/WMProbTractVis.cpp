@@ -38,7 +38,7 @@
 #include "../../core/dataHandler/WDataSetScalar.h"
 // TODO(aberres): check which ones are needed
 #include "../../core/dataHandler/WDataSetVector.h"
-#include "../../core/dataHandler/WDataTexture3D_2.h"
+#include "../../core/dataHandler/WDataTexture3D.h"
 #include "../../core/graphicsEngine/WGEColormapping.h"
 #include "../../core/graphicsEngine/WGEGeodeUtils.h"
 #include "../../core/graphicsEngine/WGEManagedGroupNode.h"
@@ -238,16 +238,16 @@ void WMProbTractVis::moduleMain()
             debugLog() << "Data changed. Uploading new data as texture.";
 
             // set isovalue range to that of dataset
-            m_isoValue->setMin( dataSet->getTexture2()->minimum()->get() );
-            m_isoValue->setMax( dataSet->getTexture2()->scale()->get() + dataSet->getTexture2()->minimum()->get() );
+            m_isoValue->setMin( dataSet->getTexture()->minimum()->get() );
+            m_isoValue->setMax( dataSet->getTexture()->scale()->get() + dataSet->getTexture()->minimum()->get() );
             // set the isovalue to the middle of the range
-            m_isoValue->set( dataSet->getTexture2()->minimum()->get() + ( 0.5 * dataSet->getTexture2()->scale()->get() ) );
+            m_isoValue->set( dataSet->getTexture()->minimum()->get() + ( 0.5 * dataSet->getTexture()->scale()->get() ) );
 
             // set isovalue range to that of dataset
-            m_isoValue2->setMin( dataSet->getTexture2()->minimum()->get() );
-            m_isoValue2->setMax( dataSet->getTexture2()->scale()->get() + dataSet->getTexture2()->minimum()->get() );
+            m_isoValue2->setMin( dataSet->getTexture()->minimum()->get() );
+            m_isoValue2->setMax( dataSet->getTexture()->scale()->get() + dataSet->getTexture()->minimum()->get() );
             // set the isovalue to the middle of the range
-            m_isoValue2->set( dataSet->getTexture2()->minimum()->get() + ( 0.2 * dataSet->getTexture2()->scale()->get() ) );
+            m_isoValue2->set( dataSet->getTexture()->minimum()->get() + ( 0.2 * dataSet->getTexture()->scale()->get() ) );
 
 
             // First, grab the grid
@@ -281,7 +281,7 @@ void WMProbTractVis::moduleMain()
 
             // bind the texture to the node
             osg::StateSet* rootState = cube->getOrCreateStateSet();
-            osg::ref_ptr< WGETexture3D > texture3D = dataSet->getTexture2();
+            osg::ref_ptr< WGETexture3D > texture3D = dataSet->getTexture();
             texture3D->bind( cube );
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -311,7 +311,7 @@ void WMProbTractVis::moduleMain()
                 debugLog() << "Uploading specified gradient field.";
 
                 // bind the texture to the node
-                osg::ref_ptr< WDataTexture3D_2 > gradTexture3D = gradients->getTexture2();
+                osg::ref_ptr< WDataTexture3D > gradTexture3D = gradients->getTexture();
                 wge::bindTexture( cube, gradTexture3D, 2, "u_gradients" );
                 gradTexEnableDefine->setActive( true );
             }

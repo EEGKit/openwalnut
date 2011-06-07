@@ -103,7 +103,7 @@ WGraphicsEngine::~WGraphicsEngine()
 
 boost::shared_ptr< WGraphicsEngine > WGraphicsEngine::getGraphicsEngine()
 {
-    if ( !m_instance )
+    if( !m_instance )
     {
         m_instance = boost::shared_ptr< WGraphicsEngine >( new WGraphicsEngine() );
     }
@@ -166,12 +166,26 @@ boost::shared_ptr< WGEViewer > WGraphicsEngine::getViewer()
 
 bool WGraphicsEngine::isRunning()
 {
-    if ( !m_instance )
+    if( !m_instance )
     {
         return false;
     }
 
     return m_instance->m_running;
+}
+
+bool WGraphicsEngine::waitForStartupComplete()
+{
+    if( !m_instance )
+    {
+        return false;
+    }
+
+    // this ensures that the startup is completed if returning.
+    m_instance->m_startThreadingCondition.wait();
+
+    // did something went wrong? Ensure by checking if really running.
+    return isRunning();
 }
 
 void WGraphicsEngine::threadMain()

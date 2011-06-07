@@ -57,7 +57,7 @@ float clipIfValue( in float valueDescaled, in float clipValue )
  */
 float clipZero( in float valueDescaled, in float minV )
 {
-    if ( minV > 0.0 )
+    if( minV > 0.0 )
     {
         return clipIfValue( valueDescaled, minV );
     }
@@ -82,15 +82,19 @@ float clipZero( in vec3 valueDescaled )
  *
  * \param valueDescaled the descaled data. Scalar or vector.
  * \param colormap if this is a vector colormap, thresholding is done using vector length.
+ * \param thresholdV the descaled threshold value
+ * \param thresholdEnabled flag denoting whether to use thresholding or not
  *
  * \return 0.0 if clipped
  */
-float clipThreshold( in vec3 valueDescaled, in int colormap, in float thresholdV )
+float clipThreshold( in vec3 valueDescaled, in int colormap, in float thresholdV, in bool thresholdEnabled )
 {
     float isVec = float( colormap == 6 );
-    return isVec * clamp( sign( length( valueDescaled ) - thresholdV ), 0.0, 1.0 )
+
+    return max( 1.0 - float( thresholdEnabled ),
+            isVec * clamp( sign( length( valueDescaled ) - thresholdV ), 0.0, 1.0 )
                 +
-          ( 1.0 - isVec ) * clamp( sign( valueDescaled.r - ( thresholdV - 0.001 ) ), 0.0, 1.0 );
+          ( 1.0 - isVec ) * clamp( sign( valueDescaled.r - ( thresholdV - 0.001 ) ), 0.0, 1.0 ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -180,11 +184,11 @@ vec4 hotIron( in float value )
     float colorValue = value * 8.0;
     int sel = int( floor( colorValue ) );
 
-    if ( sel >= 8 )
+    if( sel >= 8 )
     {
         return color0;
     }
-    else if ( sel < 0 )
+    else if( sel < 0 )
     {
         return color0;
     }
@@ -192,35 +196,35 @@ vec4 hotIron( in float value )
     {
         colorValue -= float( sel );
 
-        if ( sel < 1 )
+        if( sel < 1 )
         {
             return ( color1 * colorValue + color0 * ( 1.0 - colorValue ) );
         }
-        else if ( sel < 2 )
+        else if( sel < 2 )
         {
             return ( color2 * colorValue + color1 * ( 1.0 - colorValue ) );
         }
-        else if ( sel < 3 )
+        else if( sel < 3 )
         {
             return ( color3 * colorValue + color2 * ( 1.0 - colorValue ) );
         }
-        else if ( sel < 4 )
+        else if( sel < 4 )
         {
             return ( color4 * colorValue + color3 * ( 1.0 - colorValue ) );
         }
-        else if ( sel < 5 )
+        else if( sel < 5 )
         {
             return ( color5 * colorValue + color4 * ( 1.0 - colorValue ) );
         }
-        else if ( sel < 6 )
+        else if( sel < 6 )
         {
             return ( color6 * colorValue + color5 * ( 1.0 - colorValue ) );
         }
-        else if ( sel < 7 )
+        else if( sel < 7 )
         {
             return ( color7 * colorValue + color6 * ( 1.0 - colorValue ) );
         }
-        else if ( sel < 8 )
+        else if( sel < 8 )
         {
             return ( color8 * colorValue + color7 * ( 1.0 - colorValue ) );
         }
@@ -246,23 +250,23 @@ vec4 rainbow( in float value )
 
     int iq = int( mod( i, 6.0 ) );
 
-    if ( ( iq == 0 ) || ( iq == 6 ) )
+    if( ( iq == 0 ) || ( iq == 6 ) )
     {
         return vec4( 1.0, f, 0.0, 1.0 );
     }
-    else if ( iq == 1 )
+    else if( iq == 1 )
     {
         return vec4( q, 1.0, 0.0, 1.0 );
     }
-    else if ( iq == 2 )
+    else if( iq == 2 )
     {
         return vec4( 0.0, 1.0, f, 1.0 );
     }
-    else if ( iq == 3 )
+    else if( iq == 3 )
     {
         return vec4( 0.0, q, 1.0, 1.0 );
     }
-    else if ( iq == 4 )
+    else if( iq == 4 )
     {
         return vec4( f, 0.0, 1.0, 1.0 );
     }
@@ -347,62 +351,62 @@ vec4 atlas( in float value )
     float b = 0.0;
     float mult = 1.0;
 
-    if ( val == 0.0 )
+    if( val == 0.0 )
     {
         return vec4( vec3( 0.0 ), 1.0 );
     }
 
-    if ( isBitSet( val, 0.0 ) )
+    if( isBitSet( val, 0.0 ) )
     {
         b = 1.0;
     }
-    if ( isBitSet( val, 1.0 ) )
+    if( isBitSet( val, 1.0 ) )
     {
         g = 1.0;
     }
-    if ( isBitSet( val, 2.0 ) )
+    if( isBitSet( val, 2.0 ) )
     {
         r = 1.0;
     }
-    if ( isBitSet( val, 3.0 ) )
+    if( isBitSet( val, 3.0 ) )
     {
         mult -= 0.15;
-        if ( r < 1.0 && g < 1.0 && b < 1.0 )
+        if( r < 1.0 && g < 1.0 && b < 1.0 )
         {
             r = 1.0;
             g = 1.0;
         }
     }
-    if ( isBitSet( val, 4.0 ) )
+    if( isBitSet( val, 4.0 ) )
     {
         mult -= 0.15;
-        if ( r < 1.0 && g < 1.0 && b < 1.0 )
+        if( r < 1.0 && g < 1.0 && b < 1.0 )
         {
             b = 1.0;
             g = 1.0;
         }
     }
-    if ( isBitSet( val, 5.0 ) )
+    if( isBitSet( val, 5.0 ) )
     {
         mult -= 0.15;
-        if ( r < 1.0 && g < 1.0 && b < 1.0 )
+        if( r < 1.0 && g < 1.0 && b < 1.0 )
         {
             r = 1.0;
             b = 1.0;
         }
     }
-    if ( isBitSet( val, 6.0 ) )
+    if( isBitSet( val, 6.0 ) )
     {
         mult -= 0.15;
-        if ( r < 1.0 && g < 1.0 && b < 1.0 )
+        if( r < 1.0 && g < 1.0 && b < 1.0 )
         {
             g = 1.0;
         }
     }
-    if ( isBitSet( val, 7.0 ) )
+    if( isBitSet( val, 7.0 ) )
     {
         mult -= 0.15;
-        if ( r < 1.0 && g < 1.0 && b < 1.0 )
+        if( r < 1.0 && g < 1.0 && b < 1.0 )
         {
             r = 1.0;
         }
@@ -428,10 +432,11 @@ vec4 atlas( in float value )
  * \param minV the minimum of the original value
  * \param scaleV the scaler used to downscale the original value to [0-1]
  * \param thresholdV a threshold in original space (you need to downscale it to [0-1] if you want to use it to scaled values.
+ * \param thresholdEnabled a flag denoting whether threshold-based clipping should be done or not
  * \param alpha the alpha blending value
  * \param colormap the colormap index to use
  */
-vec4 colormap( in vec3 value, float minV, float scaleV, float thresholdV, float alpha, int colormap, bool active )
+vec4 colormap( in vec3 value, float minV, float scaleV, float thresholdV, bool thresholdEnabled, float alpha, int colormap, bool active )
 {
     // descale value
     vec3 valueDescaled = vec3( minV ) + ( value * scaleV );
@@ -441,27 +446,27 @@ vec4 colormap( in vec3 value, float minV, float scaleV, float thresholdV, float 
     float clip = clipZero( valueDescaled.r, minV );
 
     // negative to positive shading in red-blue
-    if ( colormap == 1 )
+    if( colormap == 1 )
     {
         cmapped = rainbow( value.r );
     }
-    else if ( colormap == 2 )
+    else if( colormap == 2 )
     {
         cmapped = hotIron( value.r );
     }
-    else if ( colormap == 3 )
+    else if( colormap == 3 )
     {
         cmapped = negative2positive( valueDescaled.r, minV, scaleV );
     }
-    else if ( colormap == 4 )
+    else if( colormap == 4 )
     {
         cmapped = atlas( value.r );
     }
-    else if ( colormap == 5 )
+    else if( colormap == 5 )
     {
         cmapped = blueGreenPurple( value.r );
     }
-    else if ( colormap == 6 )
+    else if( colormap == 6 )
     {
         cmapped = vector( valueDescaled, minV, scaleV );
         clip = clipZero( valueDescaled );   // vectors get clipped by their length
@@ -471,7 +476,7 @@ vec4 colormap( in vec3 value, float minV, float scaleV, float thresholdV, float 
     return vec4( cmapped.rgb, cmapped.a *           // did the colormap use a alpha value?
                               alpha *               // did the user specified an alpha?
                               clip *                // value clip?
-                              clipThreshold( valueDescaled, colormap, thresholdV ) * // clip due to threshold?
+                              clipThreshold( valueDescaled, colormap, thresholdV, thresholdEnabled ) * // clip due to threshold?
                               float( active ) );    // is it active?
 }
 

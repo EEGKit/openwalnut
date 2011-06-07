@@ -39,12 +39,13 @@ WLogStream::WLogStream( std::ostream& output, LogLevel logLevel, std::string for
 void WLogStream::printEntry( const WLogEntry& entry )
 {
     // level test
-    if ( m_logLevel > entry.getLogLevel() )
+    if( m_logLevel > entry.getLogLevel() )
     {
         return;
     }
 
     m_output << entry.getLogString( m_format, m_color );
+    m_output.flush();
 }
 
 void WLogStream::setLogLevel( LogLevel logLevel )
