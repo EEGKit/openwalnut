@@ -145,7 +145,7 @@ void main()
 {
     // 1.0 = back 0.0 front
     // fragment depth needed for postprocessing
-    gl_FragDepth = 1.0; //TODO
+    gl_FragDepth = 1.0; //TODO(aberres): adapt?
 
     // want to find out the maximal distance we have to evaluate and the end of our ray
     float maxDistance = 0.0;
@@ -161,7 +161,7 @@ void main()
     // introduce some noise artifacts.
     float jitter = 0.5 - texture2D( u_texture1Sampler, gl_FragCoord.xy / u_texture1SizeX ).r;
     // the point along the ray in cube coordinates
-    vec3 curPoint = v_rayStart + v_ray + (v_ray * stepDistance * jitter);
+    vec3 curPoint = v_rayStart + v_ray + ( v_ray * stepDistance * jitter );
     vec3 rayStart = curPoint;
 #else
     // current point in texture space + v_ray
@@ -227,10 +227,10 @@ void main()
             curPoint += stepDistance * v_ray;
         }
     }
-	    // debug by using graphical output
-	    // want to know current depth value
-	    // need return to display this
-	    // gl_FragData[0] = vec4(curPointProjected.z,0,0,1);
-		// return;
+    // debug by using graphical output
+    // want to know current depth value
+    // need return to display this
+    // gl_FragData[0] = vec4(curPointProjected.z,0,0,1);
+    // return;
 }
 

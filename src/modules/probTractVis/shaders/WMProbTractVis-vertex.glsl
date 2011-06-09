@@ -85,6 +85,6 @@ void main()
 
     // Simply project the vertex
     gl_Position = ftransform();
-    gl_FrontColor = gl_Color;//TODO
+    gl_FrontColor = gl_Color;
 }
 

@@ -101,7 +101,7 @@ void WMProbTractVis::connectors()
     m_input = WModuleInputData < WDataSetScalar >::createAndAdd( shared_from_this(), "probTract",
                                                 "The probabilistic tractogram as a scalar dataset." );
 
-    // TODO (aberres): maybe more input data? need t1 image for context info later
+    // TODO(aberres): maybe more input data? need t1 image for context info later
 
     m_gradients = WModuleInputData< WDataSetVector >::createAndAdd( shared_from_this(), "gradients", "The gradient field of the dataset to display" );
 
@@ -264,11 +264,7 @@ void WMProbTractVis::moduleMain()
 //            WMatrixFixed< double, 4, 1 > vec3 = WMatrixFixed< double, 4, 1 >( 0.4, 0.3, 0.2, 1.0 );
 //            WMatrixFixed< double, 4, 1 > vec4 = WMatrixFixed< double, 4, 1 >( 0.1, 0.0, 0.7, 1.0 );
 //            m_matrix.setRowVector( 0, vec1 );
-//            m_matrix.setRowVector( 1, vec2 );
-//            m_matrix.setRowVector( 2, vec3 );
-//            m_matrix.setRowVector( 3, vec4 );
-//            WMatrixFixed< double, 4, 1 > vec1b = m_matrix.getColumnVector( size_t( 2 ) );
-//            debugLog() << vec1b.at(0,0) << "|" << vec1b.at(1,0) << "|" << vec1b.at(2,0) << "|" << vec1b.at(3,0);
+//            WMatrixFixed< double, 4, 1 > vec1b = m_matrix.getRowVector( size_t( 0 ) );
 
             // use the OSG Shapes, create unit cube
             WBoundingBox bb( WPosition( 0.0, 0.0, 0.0 ),
@@ -336,7 +332,6 @@ void WMProbTractVis::moduleMain()
                 WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( postNode );
             }
         }
-
     }
 
     // At this point, the container managing this module signalled to shutdown. The main loop has ended and you should clean up. Always remove

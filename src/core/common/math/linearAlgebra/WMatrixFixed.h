@@ -388,7 +388,7 @@ public:
       *
       * \return the row as a vector
       */
-    WMatrixFixed< ValueT, Cols, 1, ValueStoreT > getRowVector( size_t index )
+    const WMatrixFixed< ValueT, Cols, 1, ValueStoreT > getRowVector( size_t index )
     {
         WMatrixFixed< ValueT, Cols, 1 > result;
         for( size_t col = 0; col < Cols; col++ )
@@ -414,7 +414,7 @@ public:
     {
         for( size_t row = 0; row < Rows; row++ )
         {
-            at( row, index ) = vec ( row, 0 );
+            at( row, index ) = vec( row, 0 );
         }
     }
 
@@ -425,9 +425,9 @@ public:
       *
       * \return the column as a vector
       */
-    WMatrixFixed< ValueType, Rows, 1 > getColumnVector( size_t index )
+    const WMatrixFixed< ValueT, Rows, 1 > getColumnVector( size_t index )
     {
-        WMatrixFixed< ValueType, Rows, 1 > result;
+        WMatrixFixed< ValueT, Rows, 1 > result;
         for( size_t row = 0; row < Rows; row++ )
         {
             result( row, 0 ) = at( row, index );
