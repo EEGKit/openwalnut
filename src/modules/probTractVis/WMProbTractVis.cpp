@@ -30,6 +30,8 @@
 #include <osg/Material>
 #include <osg/ShapeDrawable>
 #include <osg/StateAttribute>
+#include <osg/Matrixd>
+#include <osg/Vec4>
 #include <boost/lexical_cast.hpp>
 
 
@@ -115,21 +117,24 @@ void WMProbTractVis::properties()
 
 //    m_colors        = m_properties->addProperty( "Iso colors",       "Up to four iso colors.",  );
 
-    m_isoValue      = m_properties->addProperty( "Isovalue",         "The isovalue used whenever the isosurface Mode is turned on.",
-                                                                      128.0 );
-    m_isoColor      = m_properties->addProperty( "Iso color",        "The color to blend the isosurface with.", WColor( 0.6, 0.0, 1.0, 1.0 ),
+//    m_isoValue      = m_properties->addProperty( "Isovalue",         "The isovalue used whenever the isosurface Mode is turned on.",
+//                                                                      128.0 );
+
+    // TODO(aberres): find what to do with the cube (it uses m_isoColor)
+    m_isoColor      = m_properties->addProperty( "Iso color",        "The color to blend the isosurface with.", WColor( 1.0, 1.0, 1.0, 1.0 ),
                       m_propCondition );
+
     m_alpha         = m_properties->addProperty( "Opacity %",        "The opacity in %. Transparency = 1 - Opacity.", 0.7 );
     m_alpha->setMin( 0.0 );
     m_alpha->setMax( 1.0 );
 
-    m_isoValue2      = m_properties->addProperty( "Isovalue 2",         "The isovalue used whenever the isosurface Mode is turned on.",
-                                                                      128.0 );
-    m_isoColor2      = m_properties->addProperty( "Iso color 2",        "The color to blend the isosurface with.", WColor( 1.0, 0.6, 0.0, 1.0 ),
-                      m_propCondition );
-    m_alpha2         = m_properties->addProperty( "Opacity 2 %",        "The opacity in %. Transparency = 1 - Opacity.", 0.7 );
-    m_alpha2->setMin( 0.0 );
-    m_alpha2->setMax( 1.0 );
+//    m_isoValue2      = m_properties->addProperty( "Isovalue 2",         "The isovalue used whenever the isosurface Mode is turned on.",
+//                                                                      128.0 );
+//    m_isoColor2      = m_properties->addProperty( "Iso color 2",        "The color to blend the isosurface with.", WColor( 1.0, 0.6, 0.0, 1.0 ),
+//                      m_propCondition );
+//    m_alpha2         = m_properties->addProperty( "Opacity 2 %",        "The opacity in %. Transparency = 1 - Opacity.", 0.7 );
+//    m_alpha2->setMin( 0.0 );
+//    m_alpha2->setMax( 1.0 );
 
     m_isoValueTolerance = m_properties->addProperty( "Isovalue tolerance", "The amount of deviation tolerated for the isovalue", 0.05 );
     m_isoValueTolerance->setMax( 0.5 );
@@ -225,30 +230,29 @@ void WMProbTractVis::moduleMain()
             rootNode->clear();
         }
 
-        // m_isoColor or shading changed
-        if ( m_isoColor->changed() || m_isoColor2->changed() )
-        {
-            // a new color requires the proxy geometry to be rebuild as we store it as color in this geometry
-            dataUpdated = true;
-        }
+//        // m_isoColor or shading changed
+//        if ( m_isoColor->changed() || m_isoColor2->changed() )
+//        {
+//            // a new color requires the proxy geometry to be rebuild as we store it as color in this geometry
+//            dataUpdated = true;
+//        }
 
                 // As the data has changed, we need to recreate the texture.
         if ( dataUpdated && dataValid )
         {
             debugLog() << "Data changed. Uploading new data as texture.";
 
-            // set isovalue range to that of dataset
-            m_isoValue->setMin( dataSet->getTexture()->minimum()->get() );
-            m_isoValue->setMax( dataSet->getTexture()->scale()->get() + dataSet->getTexture()->minimum()->get() );
-            // set the isovalue to the middle of the range
-            m_isoValue->set( dataSet->getTexture()->minimum()->get() + ( 0.5 * dataSet->getTexture()->scale()->get() ) );
+//            // set isovalue range to that of dataset
+//            m_isoValue->setMin( dataSet->getTexture()->minimum()->get() );
+//            m_isoValue->setMax( dataSet->getTexture()->scale()->get() + dataSet->getTexture()->minimum()->get() );
+//            // set the isovalue to the middle of the range
+//            m_isoValue->set( dataSet->getTexture()->minimum()->get() + ( 0.5 * dataSet->getTexture()->scale()->get() ) );
 
-            // set isovalue range to that of dataset
-            m_isoValue2->setMin( dataSet->getTexture()->minimum()->get() );
-            m_isoValue2->setMax( dataSet->getTexture()->scale()->get() + dataSet->getTexture()->minimum()->get() );
-            // set the isovalue to the middle of the range
-            m_isoValue2->set( dataSet->getTexture()->minimum()->get() + ( 0.2 * dataSet->getTexture()->scale()->get() ) );
-
+//            // set isovalue range to that of dataset
+//            m_isoValue2->setMin( dataSet->getTexture()->minimum()->get() );
+//            m_isoValue2->setMax( dataSet->getTexture()->scale()->get() + dataSet->getTexture()->minimum()->get() );
+//            // set the isovalue to the middle of the range
+//            m_isoValue2->set( dataSet->getTexture()->minimum()->get() + ( 0.2 * dataSet->getTexture()->scale()->get() ) );
 
             // First, grab the grid
             boost::shared_ptr< WGridRegular3D > grid = boost::shared_dynamic_cast< WGridRegular3D >( dataSet->getGrid() );
@@ -258,13 +262,29 @@ void WMProbTractVis::moduleMain()
                 continue;
             }
 
-//            WMatrixFixed< double, 4, 4 > m_matrix = WMatrixFixed< double, 4, 4 >();
-//            WMatrixFixed< double, 4, 1 > vec1 = WMatrixFixed< double, 4, 1 >( 1.0, 0.9, 0.8, 1.0 );
-//            WMatrixFixed< double, 4, 1 > vec2 = WMatrixFixed< double, 4, 1 >( 0.7, 0.6, 0.5, 1.0 );
-//            WMatrixFixed< double, 4, 1 > vec3 = WMatrixFixed< double, 4, 1 >( 0.4, 0.3, 0.2, 1.0 );
-//            WMatrixFixed< double, 4, 1 > vec4 = WMatrixFixed< double, 4, 1 >( 0.1, 0.0, 0.7, 1.0 );
-//            m_matrix.setRowVector( 0, vec1 );
-//            WMatrixFixed< double, 4, 1 > vec1b = m_matrix.getRowVector( size_t( 0 ) );
+            // choose four isocolors and save them as rows in a matrix
+            WMatrixFixed< double, 4, 4 > m_isoCols = WMatrixFixed< double, 4, 4 >();
+            WMatrixFixed< double, 4, 1 > darkRed = WMatrixFixed< double, 4, 1 >( 0.5, 0.0, 0.0, 1.0 );
+            WMatrixFixed< double, 4, 1 > orange = WMatrixFixed< double, 4, 1 >( 1.0, 0.5, 0.0, 1.0 );
+            WMatrixFixed< double, 4, 1 > blue = WMatrixFixed< double, 4, 1 >( 0.0, 0.0, 1.0, 1.0 );
+            WMatrixFixed< double, 4, 1 > green = WMatrixFixed< double, 4, 1 >( 0.0, 1.0, 0.0, 1.0 );
+            m_isoCols.setRowVector( 0, darkRed );
+            m_isoCols.setRowVector( 1, orange );
+            m_isoCols.setRowVector( 2, blue );
+            m_isoCols.setRowVector( 3, green );
+            osg::Matrixd m_cols = osg::Matrixd( m_isoCols );
+
+            // determine minimum isovalue and range of isovalues in dataset
+            float isoMin = dataSet->getTexture()->minimum()->get();
+            float isoRange = dataSet->getTexture()->scale()->get();
+
+            // choose four isovalues and set them as values of a vector
+            // use % of range to set isovalues
+            WMatrixFixed< double, 4, 1 > m_isoVals = WMatrixFixed< double, 4, 1 >( isoMin + 0.55 * isoRange,
+                                                                                   isoMin + 0.40 * isoRange,
+                                                                                   isoMin + 0.20 * isoRange,
+                                                                                   isoMin + 0.12 * isoRange );
+            osg::Vec4 m_vals = osg::Vec4( m_isoVals );
 
             // use the OSG Shapes, create unit cube
             WBoundingBox bb( WPosition( 0.0, 0.0, 0.0 ),
@@ -284,15 +304,17 @@ void WMProbTractVis::moduleMain()
             // setup all those uniforms and additional textures
             ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalue", m_isoValue ) );
-            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalue2", m_isoValue2 ) );
-            rootState->addUniform( new WGEPropertyUniform< WPropColor >( "u_isocolor", m_isoColor ) );
-            rootState->addUniform( new WGEPropertyUniform< WPropColor >( "u_isocolor2", m_isoColor2 ) );
+//            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalue", m_isoValue ) );
+//            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalue2", m_isoValue2 ) );
+//            rootState->addUniform( new WGEPropertyUniform< WPropColor >( "u_isocolor", m_isoColor ) );
+//            rootState->addUniform( new WGEPropertyUniform< WPropColor >( "u_isocolor2", m_isoColor2 ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovaltolerance", m_isoValueTolerance ) );
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_steps", m_stepCount ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_alpha", m_alpha ) );
-            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_alpha2", m_alpha2 ) );
+//            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_alpha2", m_alpha2 ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_colormapRatio", m_colormapRatio ) );
+            rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isocolors", m_cols ) ) );
+            rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isovalues", m_vals ) ) );
 
 
             // Stochastic jitter?

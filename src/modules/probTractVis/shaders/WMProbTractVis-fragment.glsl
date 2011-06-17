@@ -76,6 +76,7 @@ uniform float u_colormapRatio;
 // The isocolors to use.
 uniform vec4 u_isocolor;
 uniform vec4 u_isocolor2;
+uniform mat4 u_isocolors;
 
 /////////////////////////////////////////////////////////////////////////////
 // Attributes
@@ -138,43 +139,15 @@ vec3 getNormal( in vec3 position )
     return sign( dot( grad, -v_ray ) ) * grad;
 }
 
-/**
- * Main entry point of the fragment shader.
- */
-void main()
+void rayTrace( vec3 curPoint, float isovalue, vec4 isocolor, float stepDistance )
 {
-    // 1.0 = back 0.0 front
-    // fragment depth needed for postprocessing
-    gl_FragDepth = 1.0; //TODO(aberres): adapt?
-
-    // want to find out the maximal distance we have to evaluate and the end of our ray
-    float maxDistance = 0.0;
-    // findRayEnd also sets the maxDistance
-    vec3 rayEnd = findRayEnd( maxDistance );
-    float stepDistance = maxDistance / float( u_steps );
-
-    // current value inside the data, will be set dynamically
-    float curValue;
-
-#ifdef STOCHASTICJITTER_ENABLED
-    // stochastic jittering can help to void these ugly wood-grain artifacts with larger sampling distances but might
-    // introduce some noise artifacts.
-    float jitter = 0.5 - texture2D( u_texture1Sampler, gl_FragCoord.xy / u_texture1SizeX ).r;
-    // the point along the ray in cube coordinates
-    vec3 curPoint = v_rayStart + v_ray + ( v_ray * stepDistance * jitter );
-    vec3 rayStart = curPoint;
-#else
-    // current point in texture space + v_ray
-    vec3 curPoint = v_rayStart + v_ray;
-#endif
-
     for( int i = 1; i < u_steps; i++ )
     {
         // get current value
-        curValue = texture3D( u_texture0Sampler, curPoint ).r;
+        float curValue = texture3D( u_texture0Sampler, curPoint ).r;
 
         // is it the isovalue?
-        if( abs( curValue - v_isovalue ) < u_isovaltolerance )
+        if( abs( curValue - isovalue ) < u_isovaltolerance )
         {
             // we need the depth value of the current point inside the cube -> standard pipeline
 
@@ -193,29 +166,29 @@ void main()
             // find normal for a headlight in world coordinates
             vec3 normal = ( gl_ModelViewMatrix * vec4( getNormal( curPoint ), 0.0 ) ).xyz;
             #ifdef WGE_POSTPROCESSING_ENABLED
-                wge_FragNormal = textureNormalize( normal );
+            wge_FragNormal = textureNormalize( normal );
             #endif
 
             // full brightness
             float light = 1.0;
             #ifdef PHONGSHADING_ENABLED
-                // only calculate the phong illumination only if needed
-                light = blinnPhongIlluminationIntensity( normalize( normal ) );
+            // only calculate the phong illumination only if needed
+            light = blinnPhongIlluminationIntensity( normalize( normal ) );
             #endif
 
-            vec4 color = vec4( u_isocolor.rgb, u_alpha );
+//            vec4 color = vec4( isocolor.rgb, u_alpha );
 
             // 5. set color
             // mix color with colormap
-            color = mix( colormapping( vec4( curPoint.x * u_texture0SizeX,
-                                             curPoint.y * u_texture0SizeY,
-                                             curPoint.z * u_texture0SizeZ,
-                                             1.0 ) ),
-                          vec4( u_isocolor.rgb, u_alpha ),
-                          1.0 - u_colormapRatio );
+            vec4 color = mix( colormapping( vec4( curPoint.x * u_texture0SizeX,
+                                                  curPoint.y * u_texture0SizeY,
+                                                  curPoint.z * u_texture0SizeZ,
+                                                  1.0 ) ),
+                              vec4( isocolor.rgb, u_alpha ),
+                              1.0 - u_colormapRatio );
 
             // 6: the final color construction
-            wge_FragColor = vec4( light * color.rgb, color.a );
+            wge_FragColor = vec4( light * color.rgb, u_alpha );
 
             break;
         }
@@ -227,6 +200,46 @@ void main()
             curPoint += stepDistance * v_ray;
         }
     }
+}
+
+/**
+ * Main entry point of the fragment shader.
+ */
+void main()
+{
+    // 1.0 = back, 0.0 = front
+    // fragment depth needed for postprocessing
+    wge_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+    gl_FragDepth = 1.0; //TODO(aberres): adapt?
+
+    // want to find out the maximal distance we have to evaluate and the end of our ray
+    float maxDistance = 0.0;
+    // findRayEnd also sets the maxDistance
+    vec3 rayEnd = findRayEnd( maxDistance );
+    float stepDistance = maxDistance / float( u_steps );
+
+    #ifdef STOCHASTICJITTER_ENABLED
+    // stochastic jittering can help to void these ugly wood-grain artifacts with larger sampling distances but might
+    // introduce some noise artifacts.
+    float jitter = 0.5 - texture2D( u_texture1Sampler, gl_FragCoord.xy / u_texture1SizeX ).r;
+    // the point along the ray in cube coordinates
+    vec3 curPoint = v_rayStart + v_ray + ( v_ray * stepDistance * jitter );
+    vec3 rayStart = curPoint;
+    #else
+    // current point in texture space + v_ray
+    vec3 curPoint = v_rayStart + v_ray;
+    #endif
+
+    float isovalue;
+    vec4 isocolor;
+
+    for( int j = 0; j < 2; j++ )
+    {
+        isovalue = v_isovalues[j];
+        isocolor = vec4( u_isocolors[j][0], u_isocolors[j][1], u_isocolors[j][2], u_alpha );
+        rayTrace( curPoint, isovalue, isocolor, stepDistance );
+    }
+
     // debug by using graphical output
     // want to know current depth value
     // need return to display this
