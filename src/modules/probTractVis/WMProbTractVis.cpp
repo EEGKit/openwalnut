@@ -266,8 +266,8 @@ void WMProbTractVis::moduleMain()
             WMatrixFixed< double, 4, 4 > m_isoCols = WMatrixFixed< double, 4, 4 >();
             WMatrixFixed< double, 4, 1 > darkRed = WMatrixFixed< double, 4, 1 >( 0.5, 0.0, 0.0, 1.0 );
             WMatrixFixed< double, 4, 1 > orange = WMatrixFixed< double, 4, 1 >( 1.0, 0.5, 0.0, 1.0 );
-            WMatrixFixed< double, 4, 1 > blue = WMatrixFixed< double, 4, 1 >( 0.0, 0.0, 1.0, 1.0 );
-            WMatrixFixed< double, 4, 1 > green = WMatrixFixed< double, 4, 1 >( 0.0, 1.0, 0.0, 1.0 );
+            WMatrixFixed< double, 4, 1 > blue = WMatrixFixed< double, 4, 1 >( 0.0, 0.0, 0.7, 1.0 );
+            WMatrixFixed< double, 4, 1 > green = WMatrixFixed< double, 4, 1 >( 0.0, 0.7, 0.0, 1.0 );
             m_isoCols.setRowVector( 0, darkRed );
             m_isoCols.setRowVector( 1, orange );
             m_isoCols.setRowVector( 2, blue );

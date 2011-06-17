@@ -188,7 +188,10 @@ void rayTrace( vec3 curPoint, float isovalue, vec4 isocolor, float stepDistance 
                               1.0 - u_colormapRatio );
 
             // 6: the final color construction
-            wge_FragColor = vec4( light * color.rgb, u_alpha );
+//            wge_FragColor = vec4( light * color.rgb, color.a );
+            // alpha blending of background (old FragColor) and foreground (new color)
+            wge_FragColor = vec4( ( light * color.a * color.rgb + ( 1 - color.a ) * wge_FragColor.rgb * wge_FragColor.a ) / color.a,
+                                  color.a + ( 1 - color.a ) * wge_FragColor.a );
 
             break;
         }
@@ -209,8 +212,9 @@ void main()
 {
     // 1.0 = back, 0.0 = front
     // fragment depth needed for postprocessing
-    wge_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
     gl_FragDepth = 1.0; //TODO(aberres): adapt?
+    // need initial FragColor for color construction later (step 6 in rayTrace()
+    wge_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );
 
     // want to find out the maximal distance we have to evaluate and the end of our ray
     float maxDistance = 0.0;
@@ -233,7 +237,8 @@ void main()
     float isovalue;
     vec4 isocolor;
 
-    for( int j = 0; j < 2; j++ )
+    // for each isosurface, set the isovalue + isocolor and call the raytracer
+    for( int j = 1; j < 4; j += 2 )
     {
         isovalue = v_isovalues[j];
         isocolor = vec4( u_isocolors[j][0], u_isocolors[j][1], u_isocolors[j][2], u_alpha );
