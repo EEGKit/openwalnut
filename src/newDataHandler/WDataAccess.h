@@ -27,6 +27,10 @@
 
 template< typename > class WValueSet;
 
+/**
+ * Provides functions for random access to the data of a dataset as well as
+ * functions that provide different kinds of iterator ranges. Every grid needs to specialize this.
+ */
 template< typename GridT, typename ValueT >
 class WDataAccess
 {
@@ -54,7 +58,7 @@ public:
         // do something
     }
 
-public:
+private:
     /**
      * The grid instance
      */
@@ -66,6 +70,10 @@ public:
     typename WValueSet< ValueType >::SPtr m_valueSet;
 };
 
+/**
+ * Provides functions for random access to the data of a CONST dataset as well as
+ * functions that provide different kinds of const-iterator ranges. Every grid needs to specialize this.
+ */
 template< typename GridT, typename ValueT >
 class WDataAccessConst
 {
@@ -93,7 +101,7 @@ public:
         // do something
     }
 
-public:
+private:
     /**
      * The grid instance
      */

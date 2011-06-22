@@ -26,8 +26,10 @@
 #define WGRIDREGULAR3D2_H
 
 #include <boost/array.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "WIndexMap.h"
+#include "WDataAccess.h"
 
 // this is a simple regular grid
 
@@ -43,6 +45,10 @@
 class WGridRegular3D2
 {
 public:
+
+    //! A shared pointer to the const version of this grid type.
+    typedef boost::shared_ptr< WGridRegular3D2 const > ConstSPtr;
+
     /**
      * Construct an axis-aligned grid from the number of voxels as well as data points per axis.
      *
@@ -107,6 +113,9 @@ private:
 // ########################################### WIndexMap for this grid #######################################################
 // maybe move this to its own header
 
+/**
+ * WIndexMap specialization for WGridRegular3D2.
+ */
 template<>
 class WIndexMap< WGridRegular3D2 >
 {
@@ -158,6 +167,142 @@ boost::array< std::size_t, 3 > WIndexMap< WGridRegular3D2 >::getVoxelCoords( WGr
     res[ 1 ] = res[ 1 ] % grid.getNbVoxelsX();
 
     return res;
+}
+
+// ########################################### WDataAccess for this grid #######################################################
+
+/**
+ * WDataAccess specialization for WGridRegular3D2.
+ */
+template< typename ValueT >
+class WDataAccess< WGridRegular3D2, ValueT >
+{
+public:
+
+    /**
+     * The grid type.
+     */
+    typedef WGridRegular3D2 GridType;
+
+    /**
+     * The type of the values in the dataset
+     */
+    typedef ValueT ValueType;
+
+    /**
+     * The type of the index mapper.
+     */
+    typedef WIndexMap< WGridRegular3D2 > IndexMapType;
+
+    /**
+     * Constructs access object. Requires the valueset and grid.
+     *
+     * \param grid the grid needed to access the data
+     * \param valueSet the values
+     */
+    WDataAccess( typename GridType::ConstSPtr grid, typename WValueSet< ValueType >::SPtr valueSet ):
+        m_grid( grid ),
+        m_valueSet( valueSet )
+    {
+    }
+
+    /**
+     * Get the data at a given position.
+     *
+     * \param x The number of the voxel in x-direction.
+     * \param y The number of the voxel in y-direction.
+     * \param z The number of the voxel in z-direction.
+     *
+     * \return A reference to the data.
+     */
+    ValueT& getAt( std::size_t x, std::size_t y, std::size_t z );
+
+private:
+
+    /**
+     * The grid instance
+     */
+    typename GridType::ConstSPtr m_grid;
+
+    /**
+     * The valueset.
+     */
+    typename WValueSet< ValueType >::SPtr m_valueSet;
+};
+
+template< typename ValueT >
+ValueT& WDataAccess< WGridRegular3D2, ValueT >::getAt( std::size_t x, std::size_t y, std::size_t z )
+{
+    std::size_t index = IndexMapType::getVoxelIndex( *m_grid.get(), x, y, z );
+    return m_valueSet->operator[] ( index );
+}
+
+// ########################################### WDataAccessConst for this grid #######################################################
+
+/**
+ * WDataAccessConst specialization for WGridRegular3D2.
+ */
+template< typename ValueT >
+class WDataAccessConst< WGridRegular3D2, ValueT >
+{
+public:
+
+    /**
+     * The grid type.
+     */
+    typedef WGridRegular3D2 GridType;
+
+    /**
+     * The type of the values in the dataset
+     */
+    typedef ValueT ValueType;
+
+    /**
+     * The type of the index mapper.
+     */
+    typedef WIndexMap< WGridRegular3D2 > IndexMapType;
+
+    /**
+     * Constructs access object. Requires the valueset and grid.
+     *
+     * \param grid the grid needed to access the data
+     * \param valueSet the values
+     */
+    WDataAccessConst( typename GridType::ConstSPtr grid, typename WValueSet< ValueType >::SPtr valueSet ):
+        m_grid( grid ),
+        m_valueSet( valueSet )
+    {
+    }
+
+    /**
+     * Get the data at a given position.
+     *
+     * \param x The number of the voxel in x-direction.
+     * \param y The number of the voxel in y-direction.
+     * \param z The number of the voxel in z-direction.
+     *
+     * \return A reference to the data.
+     */
+    ValueT const& getAt( std::size_t x, std::size_t y, std::size_t z ) const;
+
+private:
+
+    /**
+     * The grid instance
+     */
+    typename GridType::ConstSPtr m_grid;
+
+    /**
+     * The valueset.
+     */
+    typename WValueSet< ValueType >::ConstSPtr m_valueSet;
+};
+
+template< typename ValueT >
+ValueT const& WDataAccessConst< WGridRegular3D2, ValueT >::getAt( std::size_t x, std::size_t y, std::size_t z ) const
+{
+    std::size_t index = IndexMapType::getVoxelIndex( *m_grid.get(), x, y, z );
+    return m_valueSet->operator[] ( index );
 }
 
 #endif  // WGRIDREGULAR3D2_H
