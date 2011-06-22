@@ -185,7 +185,7 @@ public:
      *
      * \tparam T the real type.
      */
-    void operator()( WDataSetAccessor< TestGrid, TestRealType< double, 3 > > /* x */ )
+    void operator()( WDataAccess< TestGrid, TestRealType< double, 3 > > /* x */ )
     {
         m_returnValue = 3;
     }
@@ -195,7 +195,7 @@ public:
      *
      * \tparam T the real type.
      */
-    void operator()( WDataSetAccessorConst< TestGrid, TestRealType< double, 3 > > /* x */ )
+    void operator()( WDataAccessConst< TestGrid, TestRealType< double, 3 > > /* x */ )
     {
         m_returnValue = 4;
     }
@@ -258,7 +258,7 @@ public:
         TestVisitor* visitor = new TestVisitor();
         vm->applyVisitor( visitor );
 
-        // this should have called the WDataSetAccessorConst specialization
+        // this should have called the WDataAccessConst specialization
         TS_ASSERT( visitor->getReturnValue() == 4 );
         delete visitor;
     }

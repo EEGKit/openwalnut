@@ -29,7 +29,7 @@
 
 #include "WValueSet.h"
 #include "WDataSetVisitor.h"
-#include "WDataSetAccessor.h"
+#include "WDataAccess.h"
 #include "structuralTypes/WStructuralTypes.h"
 
 /**

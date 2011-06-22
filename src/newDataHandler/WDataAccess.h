@@ -22,13 +22,13 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WDATASETACCESSOR_H
-#define WDATASETACCESSOR_H
+#ifndef WDATAACCESS_H
+#define WDATAACCESS_H
 
 template< typename > class WValueSet;
 
 template< typename GridT, typename ValueT >
-class WDataSetAccessor
+class WDataAccess
 {
 public:
     /**
@@ -47,7 +47,7 @@ public:
      * \param grid the grid needed to access the data
      * \param valueSet the values
      */
-    WDataSetAccessor( typename GridType::ConstSPtr grid, typename WValueSet< ValueType >::SPtr valueSet ):
+    WDataAccess( typename GridType::ConstSPtr grid, typename WValueSet< ValueType >::SPtr valueSet ):
         m_grid( grid ),
         m_valueSet( valueSet )
     {
@@ -67,7 +67,7 @@ public:
 };
 
 template< typename GridT, typename ValueT >
-class WDataSetAccessorConst
+class WDataAccessConst
 {
 public:
     /**
@@ -86,7 +86,7 @@ public:
      * \param grid the grid needed to access the data
      * \param valueSet the values
      */
-    WDataSetAccessorConst( typename GridType::ConstSPtr grid, typename WValueSet< ValueType >::ConstSPtr valueSet ):
+    WDataAccessConst( typename GridType::ConstSPtr grid, typename WValueSet< ValueType >::ConstSPtr valueSet ):
         m_grid( grid ),
         m_valueSet( valueSet )
     {
@@ -105,5 +105,5 @@ public:
     typename WValueSet< ValueType >::ConstSPtr m_valueSet;
 };
 
-#endif  // WDATASETACCESSOR_H
+#endif  // WDATAACCESS_H
 

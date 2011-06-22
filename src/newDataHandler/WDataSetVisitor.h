@@ -26,8 +26,8 @@
 #define WDATASETVISITOR_H
 
 template< typename > class WValueSet;
-template< typename, typename > class WDataSetAccessor;
-template< typename, typename > class WDataSetAccessorConst;
+template< typename, typename > class WDataAccess;
+template< typename, typename > class WDataAccessConst;
 
 template< typename ValueMapperT, typename VisitorT >
 class WDataSetVisitor
@@ -84,7 +84,7 @@ public:
     {
         // Construct the needed access objects here
         // TODO(all): use some access object? some super duper iterator=
-        typedef WDataSetAccessor< GridType, ValueType > AccessorType;
+        typedef WDataAccess< GridType, ValueType > AccessorType;
 
         // call VisitorT::operator() with the proper parameters
         m_visitor->operator()( m_valueMapper->template createAccessor< AccessorType >() );
@@ -110,7 +110,7 @@ public:
         // object) to the operator.
 
         // to aware constness, use a special access object here
-        typedef WDataSetAccessorConst< GridType, ValueType > AccessorType;
+        typedef WDataAccessConst< GridType, ValueType > AccessorType;
         // call VisitorT::operator() with the proper parameters
         m_visitor->operator()( m_valueMapper->template createAccessor< AccessorType >() );
     }
