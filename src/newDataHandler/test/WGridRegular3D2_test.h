@@ -42,11 +42,11 @@ public:
     {
         WGridRegular3D2 g( 3, 4, 5 );
 
-        TS_ASSERT_EQUALS( 4, g.getVoxelIndex( 1, 1, 0 ) );
-        TS_ASSERT_EQUALS( 28, g.getVoxelIndex( 1, 1, 2 ) );
-        TS_ASSERT_EQUALS( g.numVoxels() - 1, g.getVoxelIndex( 2, 3, 4 ) );
+        TS_ASSERT_EQUALS( 4, WIndexMap< WGridRegular3D2 >::getVoxelIndex( g, 1, 1, 0 ) );
+        TS_ASSERT_EQUALS( 28, WIndexMap< WGridRegular3D2 >::getVoxelIndex( g, 1, 1, 2 ) );
+        TS_ASSERT_EQUALS( g.numVoxels() - 1, WIndexMap< WGridRegular3D2 >::getVoxelIndex( g, 2, 3, 4 ) );
 
-        boost::array< std::size_t, 3 > coords = g.getVoxelCoords( 28 );
+        boost::array< std::size_t, 3 > coords = WIndexMap< WGridRegular3D2 >::getVoxelCoords( g, 28 );
         TS_ASSERT_EQUALS( coords[ 0 ], 1 );
         TS_ASSERT_EQUALS( coords[ 1 ], 1 );
         TS_ASSERT_EQUALS( coords[ 2 ], 2 );

@@ -27,6 +27,8 @@
 
 #include <boost/array.hpp>
 
+#include "WIndexMap.h"
+
 // this is a simple regular grid
 
 // TODO( reichenbach ):
@@ -60,57 +62,35 @@ public:
      *
      * \return The number of voxels in this grid.
      */
-    std::size_t numVoxels();
-
-    /**
-     * Get the index of the voxel from some voxel coordinates.
-     *
-     * \param x The number of the voxel in x-direction.
-     * \param y The number of the voxel in y-direction.
-     * \param z The number of the voxel in z-direction.
-     *
-     * \return The index of the voxel.
-     */
-    std::size_t getVoxelIndex( std::size_t x, std::size_t y, std::size_t z );
-
-    /**
-     * Get the voxel coords from its index.
-     *
-     * \param index The voxel's index.
-     *
-     * \return An array containing the x, y and z coordinates of the voxel or an undefined result if index >= numVoxels().
-     *
-     * \note In debug mode, an exception gets thrown if index >= numVoxels().
-     */
-    boost::array< std::size_t, 3 > getVoxelCoords( std::size_t index );
+    std::size_t numVoxels() const;
 
     /**
      * Returns the number of voxels in x-direction.
      *
      * \return The number of voxels in x-direction.
      */
-    std::size_t getNbVoxelsX();
+    std::size_t getNbVoxelsX() const;
 
     /**
      * Returns the number of voxels in y-direction.
      *
      * \return The number of voxels in y-direction.
      */
-    std::size_t getNbVoxelsY();
+    std::size_t getNbVoxelsY() const;
 
     /**
      * Returns the number of voxels in z-direction.
      *
      * \return The number of voxels in z-direction.
      */
-    std::size_t getNbVoxelsZ();
+    std::size_t getNbVoxelsZ() const;
 
     /**
      * Returns an array containing the number of voxels for each axis.
      *
      * \return An array containing the number of voxels in x-, y- and z-directions respectively.
      */
-    boost::array< std::size_t, 3 > getNbVoxelsXYZ();
+    boost::array< std::size_t, 3 > getNbVoxelsXYZ() const;
 
 private:
 
@@ -123,5 +103,61 @@ private:
     //! The number of voxels or data points in z-direction.
     std::size_t m_coordsZ;
 };
+
+// ########################################### WIndexMap for this grid #######################################################
+// maybe move this to its own header
+
+template<>
+class WIndexMap< WGridRegular3D2 >
+{
+public:
+
+    /**
+     * Get the index of the voxel from some voxel coordinates.
+     *
+     * \param x The number of the voxel in x-direction.
+     * \param y The number of the voxel in y-direction.
+     * \param z The number of the voxel in z-direction.
+     *
+     * \return The index of the voxel.
+     */
+    static std::size_t getVoxelIndex( WGridRegular3D2 const& grid, std::size_t x, std::size_t y, std::size_t z );
+    // the voxel coords in the function above may need to be changed to a single parameter
+
+    // note: we may need this to calculate positions for iterators
+    /**
+     * Get the voxel coords from its index.
+     *
+     * \param index The voxel's index.
+     *
+     * \return An array containing the x, y and z coordinates of the voxel or an undefined result if index >= numVoxels().
+     *
+     * \note In debug mode, an exception gets thrown if index >= numVoxels().
+     */
+    static boost::array< std::size_t, 3 > getVoxelCoords( WGridRegular3D2 const& grid, std::size_t index );
+};
+
+std::size_t WIndexMap< WGridRegular3D2 >::getVoxelIndex( WGridRegular3D2 const& grid, std::size_t x, std::size_t y, std::size_t z )
+{
+    return x + y * grid.getNbVoxelsX() + z * grid.getNbVoxelsX() * grid.getNbVoxelsY();
+}
+
+boost::array< std::size_t, 3 > WIndexMap< WGridRegular3D2 >::getVoxelCoords( WGridRegular3D2 const& grid, std::size_t index )
+{
+#ifdef _DEBUG
+    WAssert( index < grid.numVoxels(), "The index was too large for this grid." );
+#endif
+
+    boost::array< std::size_t, 3 > res;
+
+    std::size_t xy = grid.getNbVoxelsX() * grid.getNbVoxelsY();
+
+    res[ 2 ] = index / xy;
+    res[ 1 ] = index % xy;
+    res[ 0 ] = res[ 1 ] / grid.getNbVoxelsX();
+    res[ 1 ] = res[ 1 ] % grid.getNbVoxelsX();
+
+    return res;
+}
 
 #endif  // WGRIDREGULAR3D2_H

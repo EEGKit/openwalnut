@@ -22,46 +22,18 @@
 //
 //---------------------------------------------------------------------------
 
-#include "../common/WAssert.h"
+#ifndef WINDEXMAP_H
+#define WINDEXMAP_H
 
-#include "WGridRegular3D2.h"
+// TODO( reichenbach ): maybe add a base class?
 
-WGridRegular3D2::WGridRegular3D2( std::size_t nx, std::size_t ny, std::size_t nz )
-    : m_coordsX( nx ),
-      m_coordsY( ny ),
-      m_coordsZ( nz )
+/**
+ * This class defines functions that convert from grid indices or coordinates to data indices and
+ * needs to be specialized for every grid type.
+ */ 
+template< typename GridT >
+class WIndexMap
 {
-}
+};
 
-WGridRegular3D2::~WGridRegular3D2()
-{
-}
-
-std::size_t WGridRegular3D2::numVoxels() const
-{
-    return m_coordsX * m_coordsY * m_coordsZ;
-}
-
-std::size_t WGridRegular3D2::getNbVoxelsX() const
-{
-    return m_coordsX;
-}
-
-std::size_t WGridRegular3D2::getNbVoxelsY() const
-{
-    return m_coordsY;
-}
-
-std::size_t WGridRegular3D2::getNbVoxelsZ() const
-{
-    return m_coordsZ;
-}
-
-boost::array< std::size_t, 3 > WGridRegular3D2::getNbVoxelsXYZ() const
-{
-    boost::array< std::size_t, 3 > res;
-    res[ 0 ] = m_coordsX;
-    res[ 1 ] = m_coordsY;
-    res[ 2 ] = m_coordsZ;
-    return res;
-}
+#endif  // WINDEXMAP_H
