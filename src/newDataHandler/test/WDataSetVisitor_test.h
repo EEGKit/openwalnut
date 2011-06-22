@@ -31,7 +31,7 @@
 
 #include "../structuralTypes/WParameterTypes.h"
 #include "../WDataSetVisitor.h"
-#include "../WValueMapper.h"
+#include "../WStillNeedsAName.h"
 
 /**
  * A simple type for testing which gets mapped by TestStructuralType.
@@ -230,7 +230,7 @@ public:
     void testVisit()
     {
         // we need a value mapper instance
-        typedef WValueMapper< TestGrid, TestStructuralType > ValueMapper;
+        typedef WStillNeedsAName< TestGrid, TestStructuralType > ValueMapper;
 
         TestGrid::SPtr grid = TestGrid::SPtr( new TestGrid() );
         ValueMapper::SPtr vm = ValueMapper::SPtr( new ValueMapper( grid, TestRealType< double, 3 >() ) );
@@ -249,7 +249,7 @@ public:
     void testVisitForConstValueMapper()
     {
         // we need a value mapper instance
-        typedef WValueMapper< TestGrid, TestStructuralType > ValueMapper;
+        typedef WStillNeedsAName< TestGrid, TestStructuralType > ValueMapper;
 
         TestGrid::SPtr grid = TestGrid::SPtr( new TestGrid() );
         ValueMapper::ConstSPtr vm = ValueMapper::ConstSPtr( new ValueMapper( grid, TestRealType< double, 3 >() ) );

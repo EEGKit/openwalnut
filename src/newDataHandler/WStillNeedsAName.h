@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WVALUEMAPPER_H
-#define WVALUEMAPPER_H
+#ifndef WSTILLNEEDSANAME_H
+#define WSTILLNEEDSANAME_H
 
 #include <boost/shared_ptr.hpp>
 
@@ -34,14 +34,14 @@
 
 /**
  * The value-mapper class. It handles the grid and value-sets and their interaction. It provides interfaces for accessing and processing them.
- * The WValueMapper does not know the real integral type or other value-type specifics. It only knows the structural type. If you want your own
+ * The WStillNeedsAName does not know the real integral type or other value-type specifics. It only knows the structural type. If you want your own
  * WDataSet types, you should probably modify WDataSet. It is an interface/adapter to this class.
  *
  * \tparam GridT The grid type to use.
  * \tparam StructuralT The structural type to use.
  */
 template< typename GridT, typename StructuralT >
-class WValueMapper
+class WStillNeedsAName
 {
 public:
     template< typename, typename > friend class WDataSetVisitor;
@@ -64,29 +64,29 @@ public:
     /**
      * The value-mapper to which this class can be applied.
      */
-    typedef WValueMapper< GridType, StructuralType > ValueMapperType;
+    typedef WStillNeedsAName< GridType, StructuralType > ValueMapperType;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< WValueMapper<...> >.
+     * Convenience typedef for a boost::shared_ptr< WStillNeedsAName<...> >.
      */
-    typedef boost::shared_ptr< WValueMapper< GridType, StructuralType > > SPtr;
+    typedef boost::shared_ptr< WStillNeedsAName< GridType, StructuralType > > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WValueMapper<...> >.
+     * Convenience typedef for a boost::shared_ptr< const WStillNeedsAName<...> >.
      */
-    typedef boost::shared_ptr< const WValueMapper< GridType, StructuralType > > ConstSPtr;
+    typedef boost::shared_ptr< const WStillNeedsAName< GridType, StructuralType > > ConstSPtr;
 
     /**
-     * Creates instance of WValueMapper. It uses a sample to determine the correct WValueSet type. The value of the sample is completely
+     * Creates instance of WStillNeedsAName. It uses a sample to determine the correct WValueSet type. The value of the sample is completely
      * unimportant. You can simply use the default constructor. Depending on the ValueSet, the memory is allocated for the data and you can
      * afterwards use the visitor scheme to fill it.
      *
      * \tparam SampleT Sample type.
      * \param grid the grid to use.
-     * \param sample a sample. Needed to determine the real type of the values in this WValueMapper.
+     * \param sample a sample. Needed to determine the real type of the values in this WStillNeedsAName.
      */
     template< typename SampleT >
-    WValueMapper( typename GridType::ConstSPtr grid, const SampleT& sample ):
+    WStillNeedsAName( typename GridType::ConstSPtr grid, const SampleT& sample ):
         m_structuralTypeSample( StructuralT::FromRealType( sample ) ),
         m_grid( grid ),
         m_valueSet( typename ValueSetBaseType::SPtr( new WValueSet< SampleT >( grid->size() ) ) )
@@ -98,7 +98,7 @@ public:
      * Destructor. Cleans up. Please note, that the destruction does not necessarily removes the Grid and Data instances as they are
      * reference counted.
      */
-    virtual ~WValueMapper()
+    virtual ~WStillNeedsAName()
     {
         // Cleans up.
     }
@@ -257,5 +257,5 @@ private:
     typename ValueSetBaseType::SPtr m_valueSet;
 };
 
-#endif  // WVALUEMAPPER_H
+#endif  // WSTILLNEEDSANAME_H
 

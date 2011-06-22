@@ -27,14 +27,14 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include "WValueMapper.h"
+#include "WStillNeedsAName.h"
 #include "WValueSet.h"
 
 /**
  * The DataSet class. This class handles all which is needed for keeping data. It provides interfaces to apply visitor functions to it and to
  * process data. Please note, that the Grid is const after creation of the instance. The WDataSet disguises the real integral type and uses
  * structural types, describing other properties of the real type. This way, we do not need to completely specify the real integral types or
- * orders, dimensions and so on. Basically, this class can be seen as interface to WValueMapper.
+ * orders, dimensions and so on. Basically, this class can be seen as interface to WStillNeedsAName.
  *
  * \note If you want to add new DataSets, please specialize this class for your types. If you use a completely custom type, where no structural
  * type has been specified yet, have a look at the WXXXStructural.h files for an example.
@@ -58,17 +58,17 @@ public:
     typedef StructuralT StructuralType;
 
     /**
-     * The type of the WValueMapper.
+     * The type of the WStillNeedsAName.
      */
-    typedef WValueMapper< GridType, StructuralType > ValueMapperType;
+    typedef WStillNeedsAName< GridType, StructuralType > ValueMapperType;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< WValueMapper<...> >.
+     * Convenience typedef for a boost::shared_ptr< WStillNeedsAName<...> >.
      */
     typedef boost::shared_ptr< WDataSet< GridType, StructuralType > > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WValueMapper<...> >.
+     * Convenience typedef for a boost::shared_ptr< const WStillNeedsAName<...> >.
      */
     typedef boost::shared_ptr< const WDataSet< GridType, StructuralType > > ConstSPtr;
 
@@ -79,7 +79,7 @@ public:
      *
      * \tparam SampleT Sample type.
      * \param grid the grid to use.
-     * \param sample a sample. Needed to determine the real type of the values in this WValueMapper.
+     * \param sample a sample. Needed to determine the real type of the values in this WStillNeedsAName.
      */
     template< typename SampleT >
     WDataSet( const GridType& grid, const SampleT& sample ):
@@ -111,7 +111,7 @@ protected:
 private:
 
     /**
-     * The WValueMapper. This instance is responsible for handling the grid and values properly.
+     * The WStillNeedsAName. This instance is responsible for handling the grid and values properly.
      */
     typename ValueMapperType::SPtr m_valuemapper;
 };
