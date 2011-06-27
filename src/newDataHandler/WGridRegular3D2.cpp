@@ -42,6 +42,11 @@ std::size_t WGridRegular3D2::numVoxels() const
     return m_coordsX * m_coordsY * m_coordsZ;
 }
 
+std::size_t WGridRegular3D2::size() const
+{
+    return numVoxels();
+}
+
 std::size_t WGridRegular3D2::getNbVoxelsX() const
 {
     return m_coordsX;

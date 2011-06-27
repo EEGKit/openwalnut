@@ -71,6 +71,14 @@ public:
     std::size_t numVoxels() const;
 
     /**
+     * Returns the number of data points for this grid which equals the number of voxels.
+     *
+     * \return The number of data points in this grid.
+     */
+    // note: needed by several templates
+    std::size_t size() const;
+
+    /**
      * Returns the number of voxels in x-direction.
      *
      * \return The number of voxels in x-direction.

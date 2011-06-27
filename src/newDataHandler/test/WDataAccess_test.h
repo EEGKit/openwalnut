@@ -33,6 +33,67 @@
 #include "../structuralTypes/WScalarStructural.h"
 
 /**
+ * A visitor that test random access to dataset voxels.
+ */
+class TestVisitorSetValue
+{
+public:
+
+    /**
+     * Operator called by resolving mechanism.
+     *
+     * \tparam T the real type.
+     */
+    template< typename T >
+    void operator()( WDataAccess< WGridRegular3D2, T > access )
+    {
+        access.getAt( 1, 1, 1 ) = static_cast< T >( 1.0 );
+    }
+};
+
+/**
+ * A visitor that reads a value from a data voxel.
+ */
+class TestVisitorGetValue
+{
+public:
+
+    /**
+     * Constructor.
+     */
+    TestVisitorGetValue()
+        : m_result()
+    {
+    }
+
+    /**
+     * Operator called by resolving mechanism.
+     *
+     * \tparam T the real type.
+     */
+    template< typename T >
+    void operator()( WDataAccess< WGridRegular3D2, T > access )
+    {
+        m_result = static_cast< double >( access.getAt( 1, 1, 1 ) );
+    }
+
+    /**
+     * Get the resulting value.
+     *
+     * \return The value read from the voxel.
+     */
+    double getResult() const
+    {
+        return m_result;
+    }
+
+private:
+
+    //! The value read from the voxel.
+    double m_result;
+};
+
+/**
  * Test functionality of WDataAccess.
  */
 class WDataAccessTest : public CxxTest::TestSuite
@@ -44,6 +105,21 @@ public:
      */
     void testRandomAccess()
     {
+        typedef WStillNeedsAName< WGridRegular3D2, WScalarStructural > ValueMapper;
+        boost::shared_ptr< WGridRegular3D2 > g( new WGridRegular3D2( 3, 3, 3 ) );
+
+        ValueMapper::SPtr vm = ValueMapper::SPtr( new ValueMapper( g, double() ) );
+
+        TestVisitorSetValue* visitor = new TestVisitorSetValue();
+        vm->applyVisitor( visitor );
+
+        TestVisitorGetValue* visitor2 = new TestVisitorGetValue();
+        vm->applyVisitor( visitor2 );
+
+        TS_ASSERT_EQUALS( visitor2->getResult(), 1.0 );
+
+        delete visitor;
+        delete visitor2;
     }
 };
 
