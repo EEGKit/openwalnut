@@ -437,6 +437,7 @@ void WGETexture< TextureType >::setupProperties( double scale, double min )
     m_colorMapSelectionsList->addItem( "Atlas", "" );
     m_colorMapSelectionsList->addItem( "Blue-Green-Purple", "" );
     m_colorMapSelectionsList->addItem( "Vector", "" );
+    m_colorMapSelectionsList->addItem( "Nested", "" );
 
     m_colorMap = m_properties->addProperty( "Colormap", "The colormap of this texture.", m_colorMapSelectionsList->getSelectorFirst() );
     WPropertyHelper::PC_SELECTONLYONE::addTo( m_colorMap );

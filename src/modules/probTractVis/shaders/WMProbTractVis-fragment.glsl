@@ -139,7 +139,7 @@ vec3 getNormal( in vec3 position )
     return sign( dot( grad, -v_ray ) ) * grad;
 }
 
-void rayTrace( vec3 curPoint, float isovalue, vec4 isocolor, float stepDistance )
+void rayTrace( in vec3 curPoint, in float isovalue, in vec4 isocolor, in float stepDistance )
 {
     for( int i = 1; i < u_steps; i++ )
     {
@@ -176,22 +176,20 @@ void rayTrace( vec3 curPoint, float isovalue, vec4 isocolor, float stepDistance 
             light = blinnPhongIlluminationIntensity( normalize( normal ) );
             #endif
 
-//            vec4 color = vec4( isocolor.rgb, u_alpha );
 
             // 5. set color
+            // get color from colormap (alpha is set to one since we use the isovalue's alpha value here)
+            vec4 mapcolor = colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y * u_texture0SizeY, curPoint.z * u_texture0SizeZ, 1 ) );
             // mix color with colormap
-            vec4 color = mix( colormapping( vec4( curPoint.x * u_texture0SizeX,
-                                                  curPoint.y * u_texture0SizeY,
-                                                  curPoint.z * u_texture0SizeZ,
-                                                  1.0 ) ),
-                              vec4( isocolor.rgb, u_alpha ),
-                              1.0 - u_colormapRatio );
+            vec4 color = mix( mapcolor, isocolor, 1 - u_colormapRatio );
+            color.a = isocolor.a;
 
             // 6: the final color construction
-//            wge_FragColor = vec4( light * color.rgb, color.a );
             // alpha blending of background (old FragColor) and foreground (new color)
-            wge_FragColor = vec4( ( light * color.a * color.rgb + ( 1 - color.a ) * wge_FragColor.rgb * wge_FragColor.a ) / color.a,
-                                  color.a + ( 1 - color.a ) * wge_FragColor.a );
+            // (1-alpha)*fragcol*fragalpha + alpha*light*col
+            wge_FragColor.rgb = mix( wge_FragColor.rgb * wge_FragColor.a, light * color.rgb, color.a );
+            // (1-alpha)*fragcol + alpha*1
+            wge_FragColor.a = mix( wge_FragColor.a, 1, color.a );
 
             break;
         }
@@ -238,7 +236,7 @@ void main()
     vec4 isocolor;
 
     // for each isosurface, set the isovalue + isocolor and call the raytracer
-    for( int j = 1; j < 4; j += 2 )
+    for( int j = 0; j < 4; j += 2 )
     {
         isovalue = v_isovalues[j];
         isocolor = vec4( u_isocolors[j][0], u_isocolors[j][1], u_isocolors[j][2], u_alpha );

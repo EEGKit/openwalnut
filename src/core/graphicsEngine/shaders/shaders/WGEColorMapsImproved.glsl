@@ -321,7 +321,7 @@ vec4 blueGreenPurple( in float value )
 
 
 /**
- * Checks wether a bit is set. This is done in this function since the &-operator is not available in GLSL 1.20 and GLSL 1.30 is problematic on
+ * Checks whether a bit is set. This is done in this function since the &-operator is not available in GLSL 1.20 and GLSL 1.30 is problematic on
  * Mac OS 10.6.*
  *
  * \note Remove this function and replace its calls with bitwise operations as soon as there on all platforms available.
@@ -470,6 +470,10 @@ vec4 colormap( in vec3 value, float minV, float scaleV, float thresholdV, bool t
     {
         cmapped = vector( valueDescaled, minV, scaleV );
         clip = clipZero( valueDescaled );   // vectors get clipped by their length
+    }
+    else if( colormap == 7 )
+    {
+        cmapped = grayscale( value ); //TODO(aberres): adapt to own colourmap + add function
     }
 
     // build final color

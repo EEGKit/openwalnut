@@ -93,8 +93,7 @@ const std::string WMProbTractVis::getDescription() const
 {
     // Specify your module description here. Be detailed. This text is read by the user.
     // See "src/modules/template/" for an extensively documented example.
-    return "Someone should add some documentation here. "
-    "Probably the best person would be the modules's creator, i.e. \"aberres\"";
+    return "Visualise probablistic tracts with context.";
 }
 
 void WMProbTractVis::connectors()
