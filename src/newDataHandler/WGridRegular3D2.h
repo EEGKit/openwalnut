@@ -25,11 +25,17 @@
 #ifndef WGRIDREGULAR3D2_H
 #define WGRIDREGULAR3D2_H
 
+#include <utility> // for std::pair
+
 #include <boost/array.hpp>
 #include <boost/shared_ptr.hpp>
 
+// for tie( x, y ) = ... ; included here so it can be used where this grid is used
+#include <boost/tuple/tuple.hpp>
+
 #include "WIndexMap.h"
 #include "WDataAccess.h"
+#include "WVoxelIterator.h"
 
 // this is a simple regular grid
 
@@ -37,6 +43,9 @@
 // - more constructors
 // - add transform
 // - ....
+
+// puts boost::tie in our namespace
+using boost::tie;
 
 /**
  * A regular 3D grid that maps from its axis-parallel grid space to the world space.
@@ -48,6 +57,12 @@ public:
 
     //! A shared pointer to the const version of this grid type.
     typedef boost::shared_ptr< WGridRegular3D2 const > ConstSPtr;
+
+    //! A shared pointer to this grid type.
+    typedef boost::shared_ptr< WGridRegular3D2 > SPtr;
+
+    //! The type used to index voxels in this grid.
+    typedef boost::array< std::size_t, 3 > VoxelIndex;
 
     /**
      * Construct an axis-aligned grid from the number of voxels as well as data points per axis.
@@ -124,6 +139,7 @@ private:
 /**
  * WIndexMap specialization for WGridRegular3D2.
  */
+// see WIndexMap decl for complete doc
 template<>
 class WIndexMap< WGridRegular3D2 >
 {
@@ -132,6 +148,17 @@ public:
     /**
      * Get the index of the voxel from some voxel coordinates.
      *
+     * \param grid The grid.
+     * \param idx The coords of the voxel.
+     *
+     * \return The index of the voxel.
+     */
+    static std::size_t getVoxelIndex( WGridRegular3D2 const& grid, WGridRegular3D2::VoxelIndex const& idx );
+
+    /**
+     * Get the index of the voxel from some voxel coordinates.
+     *
+     * \param grid The grid.
      * \param x The number of the voxel in x-direction.
      * \param y The number of the voxel in y-direction.
      * \param z The number of the voxel in z-direction.
@@ -139,19 +166,21 @@ public:
      * \return The index of the voxel.
      */
     static std::size_t getVoxelIndex( WGridRegular3D2 const& grid, std::size_t x, std::size_t y, std::size_t z );
-    // the voxel coords in the function above may need to be changed to a single parameter
 
     // note: we may need this to calculate positions for iterators
     /**
      * Get the voxel coords from its index.
      *
+     * \param grid The grid.
      * \param index The voxel's index.
      *
      * \return An array containing the x, y and z coordinates of the voxel or an undefined result if index >= numVoxels().
      *
      * \note In debug mode, an exception gets thrown if index >= numVoxels().
      */
-    static boost::array< std::size_t, 3 > getVoxelCoords( WGridRegular3D2 const& grid, std::size_t index );
+    static WGridRegular3D2::VoxelIndex getVoxelCoords( WGridRegular3D2 const& grid, std::size_t index );
+
+    // note that the valueset index calculation from voxel indices does not have to be injective (though it is in this case)
 };
 
 std::size_t WIndexMap< WGridRegular3D2 >::getVoxelIndex( WGridRegular3D2 const& grid, std::size_t x, std::size_t y, std::size_t z )
@@ -159,13 +188,18 @@ std::size_t WIndexMap< WGridRegular3D2 >::getVoxelIndex( WGridRegular3D2 const& 
     return x + y * grid.getNbVoxelsX() + z * grid.getNbVoxelsX() * grid.getNbVoxelsY();
 }
 
-boost::array< std::size_t, 3 > WIndexMap< WGridRegular3D2 >::getVoxelCoords( WGridRegular3D2 const& grid, std::size_t index )
+std::size_t WIndexMap< WGridRegular3D2 >::getVoxelIndex( WGridRegular3D2 const& grid, WGridRegular3D2::VoxelIndex const& idx )
+{
+    return idx[ 0 ] + idx[ 1 ] * grid.getNbVoxelsX() + idx[ 2 ] * grid.getNbVoxelsX() * grid.getNbVoxelsY();
+}
+
+WGridRegular3D2::VoxelIndex WIndexMap< WGridRegular3D2 >::getVoxelCoords( WGridRegular3D2 const& grid, std::size_t index )
 {
 #ifdef _DEBUG
     WAssert( index < grid.numVoxels(), "The index was too large for this grid." );
 #endif
 
-    boost::array< std::size_t, 3 > res;
+    WGridRegular3D2::VoxelIndex res;
 
     std::size_t xy = grid.getNbVoxelsX() * grid.getNbVoxelsY();
 
@@ -187,20 +221,18 @@ class WDataAccess< WGridRegular3D2, ValueT >
 {
 public:
 
-    /**
-     * The grid type.
-     */
+    //! The grid type.
     typedef WGridRegular3D2 GridType;
 
-    /**
-     * The type of the values in the dataset
-     */
+    //! The type of the values in the dataset
     typedef ValueT ValueType;
 
-    /**
-     * The type of the index mapper.
-     */
+    //! The type of the index mapper.
     typedef WIndexMap< WGridRegular3D2 > IndexMapType;
+
+    //! A type for voxel iterators.
+    typedef WVoxelIterator< WGridRegular3D2, ValueT > VoxelIterator;
+
 
     /**
      * Constructs access object. Requires the valueset and grid.
@@ -225,6 +257,26 @@ public:
      */
     ValueT& getAt( std::size_t x, std::size_t y, std::size_t z );
 
+    /**
+     * Get the data at a given position.
+     *
+     * \param vox The coods of the voxel in grid-space.
+     *
+     * \return A reference to the data.
+     */
+    ValueT& getAt( WGridRegular3D2::VoxelIndex const& vox );
+
+    /**
+     * Get a voxel iterator range. Use this to iterator all voxels in a dataset.
+     *
+     * \return Begin and end iterators in a std::pair.
+     */
+    std::pair< VoxelIterator, VoxelIterator > voxels()
+    {
+        return std::make_pair( VoxelIterator( m_grid.get(), m_valueSet.get(), 0 ),
+                               VoxelIterator( m_grid.get(), m_valueSet.get(), m_grid->numVoxels() ) );
+    }
+
 private:
 
     /**
@@ -239,10 +291,19 @@ private:
 };
 
 template< typename ValueT >
+ValueT& WDataAccess< WGridRegular3D2, ValueT >::getAt( WGridRegular3D2::VoxelIndex const& vox )
+{
+    // we use the index map to convert from grid space to valueset index
+    std::size_t index = IndexMapType::getVoxelIndex( *m_grid.get(), vox );
+    return m_valueSet->operator[] ( index );
+}
+
+template< typename ValueT >
 ValueT& WDataAccess< WGridRegular3D2, ValueT >::getAt( std::size_t x, std::size_t y, std::size_t z )
 {
-    std::size_t index = IndexMapType::getVoxelIndex( *m_grid.get(), x, y, z );
-    return m_valueSet->operator[] ( index );
+    WGridRegular3D2::VoxelIndex vox = { { x, y, z } }; // NOLINT not a line for every brace
+    // as above
+    return getAt( vox );
 }
 
 // ########################################### WDataAccessConst for this grid #######################################################
@@ -293,6 +354,15 @@ public:
      */
     ValueT const& getAt( std::size_t x, std::size_t y, std::size_t z ) const;
 
+    /**
+     * Get the data at a given position.
+     *
+     * \param vox The coods of the voxel in grid-space.
+     *
+     * \return A reference to the data.
+     */
+    ValueT const& getAt( WGridRegular3D2::VoxelIndex const& vox ) const;
+
 private:
 
     /**
@@ -307,10 +377,18 @@ private:
 };
 
 template< typename ValueT >
+ValueT const& WDataAccessConst< WGridRegular3D2, ValueT >::getAt( WGridRegular3D2::VoxelIndex const& vox ) const
+{
+    std::size_t index = IndexMapType::getVoxelIndex( *m_grid.get(), vox );
+    return m_valueSet->operator[] ( index );
+}
+
+template< typename ValueT >
 ValueT const& WDataAccessConst< WGridRegular3D2, ValueT >::getAt( std::size_t x, std::size_t y, std::size_t z ) const
 {
-    std::size_t index = IndexMapType::getVoxelIndex( *m_grid.get(), x, y, z );
-    return m_valueSet->operator[] ( index );
+    WGridRegular3D2::VoxelIndex vox = { { x, y, z } }; // NOLINT not a line for every brace
+    // as above
+    return getAt( vox );
 }
 
 #endif  // WGRIDREGULAR3D2_H

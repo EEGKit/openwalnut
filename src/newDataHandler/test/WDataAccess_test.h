@@ -33,7 +33,7 @@
 #include "../structuralTypes/WScalarStructural.h"
 
 /**
- * A visitor that test random access to dataset voxels.
+ * A visitor that tests random access to dataset voxels.
  */
 class TestVisitorSetValue
 {
@@ -43,6 +43,8 @@ public:
      * Operator called by resolving mechanism.
      *
      * \tparam T the real type.
+     *
+     * \param access The access object for dataset access.
      */
     template< typename T >
     void operator()( WDataAccess< WGridRegular3D2, T > access )
@@ -70,6 +72,8 @@ public:
      * Operator called by resolving mechanism.
      *
      * \tparam T the real type.
+     *
+     * \param access The access object for dataset access.
      */
     template< typename T >
     void operator()( WDataAccess< WGridRegular3D2, T > access )
