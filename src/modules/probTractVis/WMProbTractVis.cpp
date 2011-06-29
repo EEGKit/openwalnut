@@ -231,29 +231,17 @@ void WMProbTractVis::moduleMain()
             rootNode->clear();
         }
 
-//        // m_isoColor or shading changed
-//        if ( m_isoColor->changed() || m_isoColor2->changed() )
-//        {
-//            // a new color requires the proxy geometry to be rebuild as we store it as color in this geometry
-//            dataUpdated = true;
-//        }
+        // m_isoColor or shading changed
+        if ( m_isoColor1->changed() || m_isoColor2->changed() || m_isoColor3->changed() || m_isoColor4->changed()  )
+        {
+            // a new color requires the proxy geometry to be rebuild as we store it as color in this geometry
+            dataUpdated = true;
+        }
 
                 // As the data has changed, we need to recreate the texture.
         if ( dataUpdated && dataValid )
         {
             debugLog() << "Data changed. Uploading new data as texture.";
-
-//            // set isovalue range to that of dataset
-//            m_isoValue->setMin( dataSet->getTexture()->minimum()->get() );
-//            m_isoValue->setMax( dataSet->getTexture()->scale()->get() + dataSet->getTexture()->minimum()->get() );
-//            // set the isovalue to the middle of the range
-//            m_isoValue->set( dataSet->getTexture()->minimum()->get() + ( 0.5 * dataSet->getTexture()->scale()->get() ) );
-
-//            // set isovalue range to that of dataset
-//            m_isoValue2->setMin( dataSet->getTexture()->minimum()->get() );
-//            m_isoValue2->setMax( dataSet->getTexture()->scale()->get() + dataSet->getTexture()->minimum()->get() );
-//            // set the isovalue to the middle of the range
-//            m_isoValue2->set( dataSet->getTexture()->minimum()->get() + ( 0.2 * dataSet->getTexture()->scale()->get() ) );
 
             // First, grab the grid
             boost::shared_ptr< WGridRegular3D > grid = boost::shared_dynamic_cast< WGridRegular3D >( dataSet->getGrid() );
@@ -276,8 +264,8 @@ void WMProbTractVis::moduleMain()
             osg::Matrixd m_cols = osg::Matrixd( m_isoCols );
 
             // determine minimum isovalue and range of isovalues in dataset
-            float isoMin = dataSet->getTexture()->minimum()->get();
-            float isoRange = dataSet->getTexture()->scale()->get();
+            double isoMin = dataSet->getTexture()->minimum()->get();
+            double isoRange = dataSet->getTexture()->scale()->get();
 
             // choose four isovalues and set them as values of a vector
             // use % of range to set isovalues
@@ -286,6 +274,15 @@ void WMProbTractVis::moduleMain()
                                                                                    isoMin + 0.20 * isoRange,
                                                                                    isoMin + 0.12 * isoRange );
             osg::Vec4 m_vals = osg::Vec4( m_isoVals );
+
+            // determine an alpha for each isocolor based on its isovalue
+            // hightest value = 1, lowest value = 0
+            WMatrixFixed< double, 4, 1 > m_isoAlphas;
+            for( size_t i = 0; i < 4; i++ )
+            {
+                m_isoAlphas.at( i, size_t( 0 ) ) = ( m_isoVals.at( i, size_t( 0 ) ) - isoMin ) / isoRange;
+            }
+            osg::Vec4 m_alphas = osg::Vec4( m_isoAlphas );
 
             // use the OSG Shapes, create unit cube
             WBoundingBox bb( WPosition( 0.0, 0.0, 0.0 ),
@@ -311,7 +308,7 @@ void WMProbTractVis::moduleMain()
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_colormapRatio", m_colormapRatio ) );
             rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isocolors", m_cols ) ) );
             rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isovalues", m_vals ) ) );
-
+            rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isoalphas", m_alphas ) ) );
 
             // Stochastic jitter?
             const size_t size = 64;

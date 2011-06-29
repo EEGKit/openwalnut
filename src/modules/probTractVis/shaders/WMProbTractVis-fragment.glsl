@@ -68,6 +68,7 @@ uniform int u_steps;
 
 // The alpha values to set
 uniform float u_alpha;
+uniform vec4 u_isoalphas;
 
 // the ratio between normal color and the colormapping color.
 uniform float u_colormapRatio;
@@ -185,7 +186,7 @@ void rayTrace( in vec3 curPoint, in float isovalue, in vec4 isocolor, in float s
             // alpha blending of background (old FragColor) and foreground (new color)
             // (1-alpha)*fragcol*fragalpha + alpha*light*col
             wge_FragColor.rgb = mix( wge_FragColor.rgb * wge_FragColor.a, light * color.rgb, color.a );
-            // (1-alpha)*fragcol + alpha*1
+            // (1-alpha)*fragalpha + alpha*1
             wge_FragColor.a = mix( wge_FragColor.a, 1, color.a );
 
             break;
@@ -209,7 +210,7 @@ void main()
     // fragment depth needed for postprocessing
     gl_FragDepth = 1.0; //TODO(aberres): adapt?
     // need initial FragColor for color construction later (step 6 in rayTrace()
-    wge_FragColor = vec4( 1.0, 1.0, 1.0, u_alpha );
+    wge_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );
 
     // want to find out the maximal distance we have to evaluate and the end of our ray
     float maxDistance = 0.0;
@@ -233,10 +234,10 @@ void main()
     vec4 isocolor;
 
     // for each isosurface, set the isovalue + isocolor and call the raytracer
-    for( int j = 1; j < 4; j += 2 )
+    for( int j = 0; j < 4; j += 1 )
     {
         isovalue = v_isovalues[j];
-        isocolor = vec4( u_isocolors[j].rgb, u_alpha );
+        isocolor = vec4( u_isocolors[j].rgb, u_isoalphas[j] );
         rayTrace( curPoint, isovalue, isocolor, stepDistance );
     }
 
