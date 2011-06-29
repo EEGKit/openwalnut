@@ -45,8 +45,6 @@ uniform float u_texture0Scale;
 uniform float u_texture0Min;
 
 // The isovalues to use.
-uniform float u_isovalue;
-uniform float u_isovalue2;
 uniform vec4 u_isovalues;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -69,16 +67,10 @@ void main()
     colormapping();
 
     // scale isovalues to equal the texture data scaling.
-    v_isovalue = ( u_isovalue - u_texture0Min ) / u_texture0Scale;
-    v_isovalue2 = ( u_isovalue2 - u_texture0Min ) / u_texture0Scale;
-//    for( int i = 0; i < 4; i++ )
-//    {
-//        v_isovalues( i ) = ( u_isovalues( i ) - u_texture0Min ) / u_texture0Scale;
-//    }
-    v_isovalues.x = ( u_isovalues.x - u_texture0Min ) / u_texture0Scale;
-    v_isovalues.y = ( u_isovalues.y - u_texture0Min ) / u_texture0Scale;
-    v_isovalues.z = ( u_isovalues.z - u_texture0Min ) / u_texture0Scale;
-    v_isovalues.w = ( u_isovalues.w - u_texture0Min ) / u_texture0Scale;
+    for( int i = 0; i < 4; i++ )
+    {
+        v_isovalues[i] = ( u_isovalues[i] - u_texture0Min ) / u_texture0Scale;
+    }
 
     // for easy access to texture coordinates
     gl_TexCoord[0] = gl_MultiTexCoord0;

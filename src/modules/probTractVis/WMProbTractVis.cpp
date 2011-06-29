@@ -120,8 +120,10 @@ void WMProbTractVis::properties()
 //                                                                      128.0 );
 
     // TODO(aberres): find what to do with the cube (it uses m_isoColor)
-    m_isoColor      = m_properties->addProperty( "Iso color",        "The color to blend the isosurface with.", WColor( 1.0, 1.0, 1.0, 1.0 ),
-                      m_propCondition );
+    m_isoColor1      = m_properties->addProperty( "Iso color 1", "The color to blend the isosurface with.", WColor( 0.5, 0.0, 0.0, 1.0 ), m_propCondition );
+    m_isoColor2      = m_properties->addProperty( "Iso color 2", "The color to blend the isosurface with.", WColor( 1.0, 0.5, 0.0, 1.0 ), m_propCondition );
+    m_isoColor3      = m_properties->addProperty( "Iso color 3", "The color to blend the isosurface with.", WColor( 0.0, 0.5, 0.7, 1.0 ), m_propCondition );
+    m_isoColor4      = m_properties->addProperty( "Iso color 4", "The color to blend the isosurface with.", WColor( 0.0, 0.7, 0.0, 1.0 ), m_propCondition );
 
     m_alpha         = m_properties->addProperty( "Opacity %",        "The opacity in %. Transparency = 1 - Opacity.", 0.7 );
     m_alpha->setMin( 0.0 );
@@ -261,16 +263,16 @@ void WMProbTractVis::moduleMain()
                 continue;
             }
 
-            // choose four isocolors and save them as rows in a matrix
+            // get the four picked isocolors and save them as rows in a matrix
             WMatrixFixed< double, 4, 4 > m_isoCols = WMatrixFixed< double, 4, 4 >();
-            WMatrixFixed< double, 4, 1 > darkRed = WMatrixFixed< double, 4, 1 >( 0.5, 0.0, 0.0, 1.0 );
-            WMatrixFixed< double, 4, 1 > orange = WMatrixFixed< double, 4, 1 >( 1.0, 0.5, 0.0, 1.0 );
-            WMatrixFixed< double, 4, 1 > blue = WMatrixFixed< double, 4, 1 >( 0.0, 0.0, 0.7, 1.0 );
-            WMatrixFixed< double, 4, 1 > green = WMatrixFixed< double, 4, 1 >( 0.0, 0.7, 0.0, 1.0 );
-            m_isoCols.setRowVector( 0, darkRed );
-            m_isoCols.setRowVector( 1, orange );
-            m_isoCols.setRowVector( 2, blue );
-            m_isoCols.setRowVector( 3, green );
+            WMatrixFixed< double, 4, 1 > col1( m_isoColor1->get() );
+            WMatrixFixed< double, 4, 1 > col2( m_isoColor2->get() );
+            WMatrixFixed< double, 4, 1 > col3( m_isoColor3->get() );
+            WMatrixFixed< double, 4, 1 > col4( m_isoColor4->get() );
+            m_isoCols.setRowVector( 0, col1 );
+            m_isoCols.setRowVector( 1, col2 );
+            m_isoCols.setRowVector( 2, col3 );
+            m_isoCols.setRowVector( 3, col4 );
             osg::Matrixd m_cols = osg::Matrixd( m_isoCols );
 
             // determine minimum isovalue and range of isovalues in dataset
@@ -288,7 +290,7 @@ void WMProbTractVis::moduleMain()
             // use the OSG Shapes, create unit cube
             WBoundingBox bb( WPosition( 0.0, 0.0, 0.0 ),
                 WPosition( grid->getNbCoordsX() - 1, grid->getNbCoordsY() - 1, grid->getNbCoordsZ() - 1 ) );
-            osg::ref_ptr< osg::Node > cube = wge::generateSolidBoundingBoxNode( bb, m_isoColor->get( true ) );
+            osg::ref_ptr< osg::Node > cube = wge::generateSolidBoundingBoxNode( bb, m_isoColor1->get( true ) );
             cube->asTransform()->getChild( 0 )->setName( "_DVR Proxy Cube" ); // Be aware that this name is used in the pick handler.
                                                                               // because of the underscore in front it won't be picked
             // we also set the grid's transformation here
@@ -303,14 +305,9 @@ void WMProbTractVis::moduleMain()
             // setup all those uniforms and additional textures
             ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalue", m_isoValue ) );
-//            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalue2", m_isoValue2 ) );
-//            rootState->addUniform( new WGEPropertyUniform< WPropColor >( "u_isocolor", m_isoColor ) );
-//            rootState->addUniform( new WGEPropertyUniform< WPropColor >( "u_isocolor2", m_isoColor2 ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovaltolerance", m_isoValueTolerance ) );
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_steps", m_stepCount ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_alpha", m_alpha ) );
-//            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_alpha2", m_alpha2 ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_colormapRatio", m_colormapRatio ) );
             rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isocolors", m_cols ) ) );
             rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isovalues", m_vals ) ) );

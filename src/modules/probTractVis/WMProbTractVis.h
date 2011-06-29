@@ -144,12 +144,23 @@ private:
     /**
      * The color used when in isosurface mode for blending.
      */
-    WPropColor m_isoColor;
+    WPropColor m_isoColor1;
 
-//    /**
-//     * The color used for the second surface.
-//     */
-//    WPropColor m_isoColor2;
+    /**
+     * The color used for the second surface.
+     */
+    WPropColor m_isoColor2;
+
+    /**
+     * The color used for the second surface.
+     */
+    WPropColor m_isoColor3;
+
+    /**
+     * The color used for the second surface.
+     */
+    WPropColor m_isoColor4;
+
 
 //    WPropMatrix4X4 m_colors;
 
