@@ -413,7 +413,7 @@ public:
 
         dtv.setVoxel( 2, 1, 2 );
         vmconst->applyVisitor( &dtv );
-        TS_ASSERT_EQUALS( dtv.getValue(), 123 );        
+        TS_ASSERT_EQUALS( dtv.getValue(), 123 );
     }
 };
 
