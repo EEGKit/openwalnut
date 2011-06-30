@@ -42,6 +42,10 @@ class WIndexMap;
 // a forward declaration for the test
 class WVoxelIteratorTest;
 
+// forward the const version of the voxel iterator
+template< typename GridT, typename ValueT >
+class WVoxelIteratorConst;
+
 /**
  * A class for iterating voxels of a dataset. Provides operations for incrementing, decrementing, data access and so on,
  * similar to the std containers' iterators.
@@ -74,6 +78,9 @@ public:
     // the test is a friend
     friend class WVoxelIteratorTest;
 
+    // the const version is also a friend
+    friend class WVoxelIteratorConst< GridT, T >;
+
     //! A typedef for the grid's type.
     typedef GridT GridType;
 
@@ -105,7 +112,7 @@ public:
      *
      * \param vi The iterator to copy from.
      */
-    explicit WVoxelIterator( WVoxelIterator const& vi )
+    WVoxelIterator( WVoxelIterator const& vi ) // NOLINT not explicit ( std::make_pair won't work )
         : m_grid( vi.m_grid ),
           m_valueSet( vi.m_valueSet ),
           m_index( vi.m_index )
@@ -138,6 +145,36 @@ public:
     {
         --m_index;
         return *this;
+    }
+
+    /**
+     * Increment an iterator. If the iterator is valid, it will point to the next element
+     * after beeing incremented (or it will be an end iterator if it was the last voxel).
+     *
+     * Incrementing an end iterator or an invalid iterator yields undefined behavior.
+     *
+     * \return The iterator before incrementing.
+     */
+    WVoxelIterator operator++( int )
+    {
+        WVoxelIterator vi = *this;
+        ++m_index;
+        return vi;
+    }
+
+    /**
+     * Decrement an iterator. If the iterator is valid, it will point to the previous element
+     * after beeing decremented (or it will be an  iterator to the last voxel if it was the end iterator).
+     *
+     * Decrementing a begin iterator or an invalid iterator yields undefined behavior.
+     *
+     * \return The iterator before decrementing.
+     */
+    WVoxelIterator operator--( int )
+    {
+        WVoxelIterator vi = *this;
+        --m_index;
+        return vi;
     }
 
     /**
@@ -198,6 +235,30 @@ public:
     }
 
     /**
+     * Compares iterators. Comparing two invalid iterators yields undefined behavior.
+     *
+     * \param vi The iterator to compare to.
+     *
+     * \return true, if the iterators point to the same voxel of the same dataset.
+     */
+    bool operator==( WVoxelIteratorConst< GridT, T > const& vi ) const
+    {
+        return m_grid == vi.m_grid && m_valueSet == vi.m_valueSet && m_index == vi.m_index;
+    }
+
+    /**
+     * Compares iterators. Comparing two invalid iterators yields undefined behavior.
+     *
+     * \param vi The iterator to compare to.
+     *
+     * \return true, if the iterators do not point to the same voxel of the same dataset.
+     */
+    bool operator!=( WVoxelIteratorConst< GridT, T > const& vi ) const
+    {
+        return m_grid != vi.m_grid || m_valueSet != vi.m_valueSet || m_index != vi.m_index;
+    }
+
+    /**
      * Returns a void const* that can be used for tests like
      * ' if( it ) { doSth() } ' ('it' beeing a WVoxelIterator). Use this to test
      * if the iterator is valid, i.e. it points to a dataset. You still need to test against the end iterator
@@ -241,6 +302,279 @@ private:
 
     //! The values.
     WValueSet< T >* m_valueSet; // the valueset is not const for the non-const iterator
+
+    //! The current voxel.
+    std::size_t m_index;
+};
+
+// ############################################# const version ##################################################
+
+/**
+ * This is the const version of the voxel iterator class.
+ */
+template< typename GridT, typename T >
+class WVoxelIteratorConst
+{
+public:
+
+    // the test is a friend
+    friend class WVoxelIteratorTest;
+
+    // the non-const version is also a friend
+    friend class WVoxelIterator< GridT, T >;
+
+    //! A typedef for the grid's type.
+    typedef GridT GridType;
+
+    // The data access is a friend so it can create iterators using the non-default constructor.
+    template< typename GridTT, typename ValueT >
+    friend class WDataAccess;
+
+    // The const data access is a friend so it can create iterators using the non-default constructor.
+    template< typename GridTT, typename ValueT >
+    friend class WDataAccessConst;
+
+    /**
+     * Default constructor, create an invalid iterator.
+     */
+    WVoxelIteratorConst()
+        : m_grid( NULL ),
+          m_valueSet( NULL ),
+          m_index( 0 )
+    {
+    }
+
+    /**
+     * Destructor.
+     */
+    ~WVoxelIteratorConst()
+    {
+        // do not(!!!) delete m_grid
+        // do not(!!!) delete m_valueSet
+    }
+
+    /**
+     * Copy construction.
+     *
+     * \param vi The iterator to copy from.
+     */
+    WVoxelIteratorConst( WVoxelIteratorConst const& vi )  // NOLINT not explicit ( std::make_pair won't work )
+        : m_grid( vi.m_grid ),
+          m_valueSet( vi.m_valueSet ),
+          m_index( vi.m_index )
+    {
+    }
+
+    /**
+     * Copy construction from non-const iterator.
+     *
+     * \param vi The iterator to copy from.
+     */
+    WVoxelIteratorConst( WVoxelIterator< GridT, T > const& vi )  // NOLINT not explicit ( std::make_pair won't work )
+        : m_grid( vi.m_grid ),
+          m_valueSet( vi.m_valueSet ),
+          m_index( vi.m_index )
+    {
+    }
+
+    /**
+     * A special copy operator that allows copying from a non-const iterator.
+     *
+     * \param vi The iterator to copy from.
+     *
+     * \return *this.
+     */
+    WVoxelIteratorConst& operator==( WVoxelIterator< GridT, T > const& vi )
+    {
+        m_grid = vi.m_grid;
+        m_valueSet = vi.m_valueSet;
+        m_index = vi.m_index;
+        return *this;
+    }
+
+    /**
+     * Increment an iterator. If the iterator is valid, it will point to the next element
+     * after beeing incremented (or it will be an end iterator if it was the last voxel).
+     *
+     * Incrementing an end iterator or an invalid iterator yields undefined behavior.
+     *
+     * \return *this.
+     */
+    WVoxelIteratorConst operator++()
+    {
+        ++m_index;
+        return *this;
+    }
+
+    /**
+     * Decrement an iterator. If the iterator is valid, it will point to the previous element
+     * after beeing decremented (or it will be an  iterator to the last voxel if it was the end iterator).
+     *
+     * Decrementing a begin iterator or an invalid iterator yields undefined behavior.
+     *
+     * \return *this.
+     */
+    WVoxelIteratorConst operator--()
+    {
+        --m_index;
+        return *this;
+    }
+
+    /**
+     * Increment an iterator. If the iterator is valid, it will point to the next element
+     * after beeing incremented (or it will be an end iterator if it was the last voxel).
+     *
+     * Incrementing an end iterator or an invalid iterator yields undefined behavior.
+     *
+     * \return The iterator before incrementing.
+     */
+    WVoxelIteratorConst operator++( int )
+    {
+        WVoxelIteratorConst vi = *this;
+        ++m_index;
+        return vi;
+    }
+
+    /**
+     * Decrement an iterator. If the iterator is valid, it will point to the previous element
+     * after beeing decremented (or it will be an  iterator to the last voxel if it was the end iterator).
+     *
+     * Decrementing a begin iterator or an invalid iterator yields undefined behavior.
+     *
+     * \return The iterator before decrementing.
+     */
+    WVoxelIteratorConst operator--( int )
+    {
+        WVoxelIteratorConst vi = *this;
+        --m_index;
+        return vi;
+    }
+
+    /**
+     * Accesses the data for the voxel the iterator is currently pointing to. In debug mode, the iterator will be tested and
+     * access via invalid or end iterators will yield a WException. When build for release, there is no such test!
+     *
+     * \return A reference to the data for the voxel the iterator currently points to.
+     */
+    // TODO( reichenbach ): add a WInvalidIteratorException and a WNoValidVoxel(name?)Exception
+    T const& operator*() const
+    {
+#ifdef _DEBUG
+        if( !m_grid || !m_valueSet )
+        {
+            throw WException( "Trying element access with invalid iterator." );
+        }
+        if( m_index >= m_grid->numVoxels() )
+        {
+            throw WException( "Trying element access with end iterator." );
+        }
+#endif
+        return m_valueSet->operator[]( m_index );
+    }
+
+    /**
+     * Get the voxel coordinates of the voxel the iterator points to.
+     *
+     * \return The voxel's coords in the grid.
+     */
+    typename GridType::VoxelIndex operator() () const
+    {
+        // the index will be tested by getVoxelCoords
+        return WIndexMap< GridType >::getVoxelCoords( m_index );
+    }
+
+    /**
+     * Compares iterators. Comparing two invalid iterators yields undefined behavior.
+     *
+     * \param vi The iterator to compare to.
+     *
+     * \return true, if the iterators point to the same voxel of the same dataset.
+     */
+    bool operator==( WVoxelIteratorConst const& vi ) const
+    {
+        return m_grid == vi.m_grid && m_valueSet == vi.m_valueSet && m_index == vi.m_index;
+    }
+
+    /**
+     * Compares iterators. Comparing two invalid iterators yields undefined behavior.
+     *
+     * \param vi The iterator to compare to.
+     *
+     * \return true, if the iterators do not point to the same voxel of the same dataset.
+     */
+    bool operator!=( WVoxelIteratorConst const& vi ) const
+    {
+        return m_grid != vi.m_grid || m_valueSet != vi.m_valueSet || m_index != vi.m_index;
+    }
+
+    /**
+     * Compares iterators. Comparing two invalid iterators yields undefined behavior.
+     *
+     * \param vi The iterator to compare to.
+     *
+     * \return true, if the iterators point to the same voxel of the same dataset.
+     */
+    bool operator==( WVoxelIterator< GridT, T > const& vi ) const
+    {
+        return m_grid == vi.m_grid && m_valueSet == vi.m_valueSet && m_index == vi.m_index;
+    }
+
+    /**
+     * Compares iterators. Comparing two invalid iterators yields undefined behavior.
+     *
+     * \param vi The iterator to compare to.
+     *
+     * \return true, if the iterators do not point to the same voxel of the same dataset.
+     */
+    bool operator!=( WVoxelIterator< GridT, T > const& vi ) const
+    {
+        return m_grid != vi.m_grid || m_valueSet != vi.m_valueSet || m_index != vi.m_index;
+    }
+
+    /**
+     * Returns a void const* that can be used for tests like
+     * ' if( it ) { doSth() } ' ('it' beeing a WVoxelIterator). Use this to test
+     * if the iterator is valid, i.e. it points to a dataset. You still need to test against the end iterator
+     * before accessing data.
+     *
+     * \return NULL if the iterator is invalid, something else if it is not.
+     */
+    operator void const*() const
+    {
+        if( m_grid && m_valueSet )
+        {
+            return reinterpret_cast< void const* >( 1 );
+        }
+        else
+        {
+            return NULL;
+        }
+    }
+
+protected:
+
+    /**
+     * Constructor that can only be used by the data access object. Used to create iterators pointing to
+     * a dataset. This is the only way to construct valid iterators from scratch. (You can still copy iterators.)
+     *
+     * \param grid The grid of the dataset pointed to by this iterator.
+     * \param valueSet The respective valueset.
+     * \param idx The index of the voxel that is currently pointed to.
+     */
+    WVoxelIteratorConst( GridT const* grid, WValueSet< T > const* valueSet, std::size_t idx )
+        : m_grid( grid ),
+          m_valueSet( valueSet ),
+          m_index( idx )
+    {
+    }
+
+private:
+
+    //! The grid.
+    GridT const* m_grid;
+
+    //! The values.
+    WValueSet< T > const* m_valueSet;
 
     //! The current voxel.
     std::size_t m_index;

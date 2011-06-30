@@ -130,6 +130,20 @@ public:
     }
 
     /**
+     * The operator called when visiting the dataset, version for const datasets.
+     * Stores the value of the voxel at position m_index + 100 in m_value.
+     *
+     * \tparam T The type of the data in the provided dataset.
+     *
+     * \param access The access object for the provided dataset.
+     */
+    template< typename T >
+    void operator() ( WDataAccessConst< WGridRegular3D2, T > access )
+    {
+        m_value = 100.0 + access.getAt( m_index );
+    }
+
+    /**
      * Sets the voxel coords.
      *
      * \param x The coords on the x-axis.
@@ -178,7 +192,7 @@ public:
         // create an invalid iterator
         TS_ASSERT_THROWS_NOTHING( VI() );
 
-        WVoxelIterator< WGridRegular3D2, double > vi;
+        VI vi;
 
         // it should be invalid
         TS_ASSERT( !vi );
@@ -189,7 +203,33 @@ public:
 
         TS_ASSERT_THROWS_NOTHING( VI( &g, &vs, 0 ) );
 
-        WVoxelIterator< WGridRegular3D2, double > vo( &g, &vs, 0 );
+        VI vo( &g, &vs, 0 );
+
+        TS_ASSERT( vo );
+    }
+
+    /**
+     * Test const iter construction.
+     */
+    void testConstructionConst()
+    {
+        typedef WVoxelIteratorConst< WGridRegular3D2, double > VI;
+
+        // create an invalid iterator
+        TS_ASSERT_THROWS_NOTHING( VI() );
+
+        VI vi;
+
+        // it should be invalid
+        TS_ASSERT( !vi );
+
+        // now create a valid iterator
+        WGridRegular3D2 g( 3, 3, 3 );
+        WValueSet< double > vs( 27 );
+
+        TS_ASSERT_THROWS_NOTHING( VI( &g, &vs, 0 ) );
+
+        VI vo( &g, &vs, 0 );
 
         TS_ASSERT( vo );
     }
@@ -230,6 +270,41 @@ public:
     }
 
     /**
+     * Test incementing and decrementing const iterators.
+     */
+    void testIncDecrConst()
+    {
+        WGridRegular3D2 g( 3, 3, 3 );
+        WValueSet< double > vs( 27 );
+
+        WVoxelIteratorConst< WGridRegular3D2, double > vi( &g, &vs, 0 );
+
+        WVoxelIteratorConst< WGridRegular3D2, double > begin = vi;
+        WVoxelIteratorConst< WGridRegular3D2, double > end( &g, &vs, 27 );
+
+        for( int i = 0; i < 27; ++i )
+        {
+            ++vi;
+            TS_ASSERT( vi != begin );
+            TS_ASSERT( !( vi == begin ) );
+        }
+
+        TS_ASSERT( vi == end );
+
+        for( int i = 0; i < 27; ++i )
+        {
+            --vi;
+        }
+
+        TS_ASSERT( vi == begin );
+
+        ++vi;
+        ++begin;
+
+        TS_ASSERT( vi == begin );
+    }
+
+    /**
      * Test self-assignment of voxel iterators.
      */
     void testSelfAssignment()
@@ -240,6 +315,10 @@ public:
         WVoxelIterator< WGridRegular3D2, double > vi( &g, &vs, 0 );
 
         TS_ASSERT_THROWS_NOTHING( vi = vi );
+
+        WVoxelIterator< WGridRegular3D2, double > vic( &g, &vs, 0 );
+
+        TS_ASSERT_THROWS_NOTHING( vic = vic );
     }
 
     /**
@@ -259,6 +338,34 @@ public:
         TS_ASSERT_EQUALS( visitor->getCount(), 27 );
 
         delete visitor;
+    }
+
+    /**
+     * Test copying and comparing of const and non-const iterators.
+     */
+    void testCopyAndCompare()
+    {
+        WGridRegular3D2 g( 3, 3, 3 );
+        WValueSet< double > vs( 27 );
+
+        WVoxelIterator< WGridRegular3D2, double > vi( &g, &vs, 0 );
+
+        // copy constructor
+        WVoxelIteratorConst< WGridRegular3D2, double > vic( vi );
+
+        TS_ASSERT( vic );
+        TS_ASSERT( vic == vi );
+
+        WVoxelIteratorConst< WGridRegular3D2, double > vid;
+        vid = vi++;
+
+        TS_ASSERT( vid );
+        TS_ASSERT( vid == vic );
+
+        vid++;
+        TS_ASSERT( vid == vi );
+
+        TS_ASSERT( vid != vic );
     }
 
     /**
@@ -292,6 +399,21 @@ public:
         dtv.setVoxel( 2, 1, 2 );
         vm->applyVisitor( &dtv );
         TS_ASSERT_EQUALS( dtv.getValue(), 23 );
+
+        // test const version, should return 100 + the value
+        ValueMapper::ConstSPtr vmconst = vm;
+
+        dtv.setVoxel( 0, 0, 0 );
+        vmconst->applyVisitor( &dtv );
+        TS_ASSERT_EQUALS( dtv.getValue(), 100 );
+
+        dtv.setVoxel( 1, 2, 0 );
+        vmconst->applyVisitor( &dtv );
+        TS_ASSERT_EQUALS( dtv.getValue(), 107 );
+
+        dtv.setVoxel( 2, 1, 2 );
+        vmconst->applyVisitor( &dtv );
+        TS_ASSERT_EQUALS( dtv.getValue(), 123 );        
     }
 };
 

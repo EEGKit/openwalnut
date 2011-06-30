@@ -224,7 +224,7 @@ public:
     //! The grid type.
     typedef WGridRegular3D2 GridType;
 
-    //! The type of the values in the dataset
+    //! The type of the values in the dataset.
     typedef ValueT ValueType;
 
     //! The type of the index mapper.
@@ -267,7 +267,7 @@ public:
     ValueT& getAt( WGridRegular3D2::VoxelIndex const& vox );
 
     /**
-     * Get a voxel iterator range. Use this to iterator all voxels in a dataset.
+     * Get a voxel iterator range. Use this to iterate all voxels in a dataset.
      *
      * \return Begin and end iterators in a std::pair.
      */
@@ -316,20 +316,17 @@ class WDataAccessConst< WGridRegular3D2, ValueT >
 {
 public:
 
-    /**
-     * The grid type.
-     */
+    //! The grid type.
     typedef WGridRegular3D2 GridType;
 
-    /**
-     * The type of the values in the dataset
-     */
+    //! The type of the values in the dataset.
     typedef ValueT ValueType;
 
-    /**
-     * The type of the index mapper.
-     */
+    //! The type of the index mapper.
     typedef WIndexMap< WGridRegular3D2 > IndexMapType;
+
+    //! A type for voxel iterators.
+    typedef WVoxelIteratorConst< WGridRegular3D2, ValueT > VoxelIterator;
 
     /**
      * Constructs access object. Requires the valueset and grid.
@@ -337,7 +334,7 @@ public:
      * \param grid the grid needed to access the data
      * \param valueSet the values
      */
-    WDataAccessConst( typename GridType::ConstSPtr grid, typename WValueSet< ValueType >::SPtr valueSet ):
+    WDataAccessConst( typename GridType::ConstSPtr grid, typename WValueSet< ValueType >::ConstSPtr valueSet ):
         m_grid( grid ),
         m_valueSet( valueSet )
     {
@@ -362,6 +359,17 @@ public:
      * \return A reference to the data.
      */
     ValueT const& getAt( WGridRegular3D2::VoxelIndex const& vox ) const;
+
+    /**
+     * Get a voxel iterator range. Use this to iterate all voxels in a dataset.
+     *
+     * \return Begin and end iterators in a std::pair.
+     */
+    std::pair< VoxelIterator, VoxelIterator > voxels()
+    {
+        return std::make_pair( VoxelIterator( m_grid.get(), m_valueSet.get(), 0 ),
+                               VoxelIterator( m_grid.get(), m_valueSet.get(), m_grid->numVoxels() ) );
+    }
 
 private:
 
