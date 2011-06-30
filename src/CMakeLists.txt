@@ -82,11 +82,13 @@ ENDIF()
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 # mimic layout of install dir for build:
-SET( OW_CONFIG_DIR_RELATIVE "etc/OpenWalnut" )
+SET( OW_CONFIG_DIR_RELATIVE "share/openwalnut" )
 SET( OW_CONFIG_DIR ${PROJECT_BINARY_DIR}/${OW_CONFIG_DIR_RELATIVE} )
-SET( OW_SHARE_DIR_RELATIVE "share/OpenWalnut" )
+SET( OW_SHARE_DIR_RELATIVE "share/openwalnut" )
 SET( OW_SHARE_DIR ${PROJECT_BINARY_DIR}/${OW_SHARE_DIR_RELATIVE} )
-SET( OW_DOC_DIR_RELATIVE "share/doc/OpenWalnut" )
+SET( OW_MAN_DIR_RELATIVE "share/man" )
+SET( OW_MAN_DIR "${PROJECT_BINARY_DIR}/share/man" )
+SET( OW_DOC_DIR_RELATIVE "share/doc/openwalnut" )
 SET( OW_DOC_DIR ${PROJECT_BINARY_DIR}/${OW_DOC_DIR_RELATIVE} )
 SET( OW_RUNTIME_DIR_RELATIVE "bin" )
 SET( OW_RUNTIME_DIR ${PROJECT_BINARY_DIR}/${OW_RUNTIME_DIR_RELATIVE} )
@@ -94,7 +96,7 @@ SET( OW_LIBRARY_DIR_RELATIVE "lib" )
 SET( OW_LIBRARY_DIR ${PROJECT_BINARY_DIR}/${OW_LIBRARY_DIR_RELATIVE} )
 SET( OW_ARCHIVE_DIR_RELATIVE "lib" )
 SET( OW_ARCHIVE_DIR ${PROJECT_BINARY_DIR}/${OW_ARCHIVE_DIR_RELATIVE} )
-SET( OW_MODULE_DIR_RELATIVE "lib/OpenWalnut" )
+SET( OW_MODULE_DIR_RELATIVE "lib/openwalnut" )
 SET( OW_MODULE_DIR ${PROJECT_BINARY_DIR}/${OW_MODULE_DIR_RELATIVE} )
 
 # set our paths for install targets
@@ -159,27 +161,44 @@ IF( NOT CMAKE_HOST_SYSTEM MATCHES "Windows" )
     OPTION( OW_LINK_SHADERS "If turned on, shaders do not get copied. They get linked. This is a nice option for developers." OFF )
 ENDIF()
 
+# Provide several options to control some aspects of resource copy.
+OPTION( OW_PACKAGE_BUILD "Enable this to get fine-grained control over several resources and files getting installed. This is very handy for package building." OFF )
+IF( OW_PACKAGE_BUILD )
+    OPTION( OW_PACKAGE_NOCOPY_LICENSE "Disable to copy our licensing information. Enabling this can be useful for package maintainer since several packaging systems have their own licence mechanism (i.e. Debian)." OFF )
+    OPTION( OW_PACKAGE_NOLINK_OPENTHREADS "Enable this to avoid linking OpenThreads. On some systems, OpenSceneGraph already is linked against it and thus linking OpenThreads to OW is not needed (Debian and Ubuntu for example)." OFF )
+ENDIF()
+
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 # The walnut executable should print the revision/tag
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Generate needed headers
 # NOTE: add a line ADD_DEPENDENCIES( XYZ OW_generate_version_header ) to your target XYZ if you need the header!
-SET( OW_VERSION_HEADER ${PROJECT_SOURCE_DIR}/WVersion.h )
+SET( OW_VERSION_HEADER_DIRECTORY ${PROJECT_BINARY_DIR}/versionHeader )
+SET( OW_VERSION_HEADER ${OW_VERSION_HEADER_DIRECTORY}/WVersion.h )
+# to allow all those targets to find the header:
+INCLUDE_DIRECTORIES( ${OW_VERSION_HEADER_DIRECTORY} )
+# Setup the target
 SETUP_VERSION_HEADER( ${OW_VERSION_HEADER} )
 
 # Set the OW version string. This can be used by others for setting target versions during compilation.
-GET_VERSION_STRING( dummy OW_VERSION "0.0.0 " )
+GET_VERSION_STRING( dummy OW_VERSION "1.0.0 " )
 IF( NOT DEFINED OW_VERSION )
     # CMake does not like unset variables for target properties.
-    SET( OW_VERSION "0.0.0" )
+    SET( OW_VERSION "1.0.0" )
 ENDIF()
+
+# We need a SOVERSION too. This somehow describes the API compatibility. We use the major number here.
+SPLIT_VERSION_STRING( ${OW_VERSION} OW_VERSION_MAJOR OW_VERSION_MINOR OW_VERSION_PATCH )
+SET( OW_SOVERSION ${OW_VERSION_MAJOR} )
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 #
 # REQUIRED third party libs
 #
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+# NOTE: please also have a look in src/ext/CMakeLists.txt. Other third-party libs might be searched there.
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------
 # Boost, at least 1.39
@@ -221,10 +240,72 @@ IF( CMAKE_GENERATOR MATCHES "Visual Studio" )
     SET ( CMAKE_PREFIX_PATH "$ENV{ProgramFiles}/OpenSceneGraph" )
   ENDIF()
 ENDIF()
-FIND_PACKAGE( OpenSceneGraph ${MIN_OSG_VERSION} REQUIRED osgDB osgUtil osgGA osgViewer osgSim osgWidget osgText OpenThreads )
+FIND_PACKAGE( OpenSceneGraph ${MIN_OSG_VERSION} REQUIRED osgDB osgUtil osgGA osgViewer osgSim osgWidget osgText )
 
-# include the header paths
-INCLUDE_DIRECTORIES( ${OPENSCENEGRAPH_INCLUDE_DIRS} )
+# If the user did not disable license-copying, do it
+# NOTE: use this "double-negative" to use the fact that undefined variables yield FALSE.
+IF( OW_PACKAGE_NOLINK_OPENTHREADS )
+    # NOTE: this is a hack to remove the openthread lib from the list of OSG libs. It gets automatically added by the current
+    #       find script but it is not really needed on some systems (since they provide an osg lib which already is linked against this.).
+    FOREACH( osglib ${OPENSCENEGRAPH_LIBRARIES} )
+        STRING( REGEX MATCH ".*OpenThreads.*" IsExcluded "${osglib}" )
+        IF( IsExcluded )
+            LIST( REMOVE_ITEM OPENSCENEGRAPH_LIBRARIES ${osglib} )
+        ENDIF( IsExcluded )
+    ENDFOREACH()
+ENDIF()
+
+# -----------------------------------------------------------------------------------------------------------------------------------------------
+# NiftiLib, at least 2.0.0
+# See  http://niftilib.sourceforge.net
+
+# we provide the niftilib in ext. If it is found on the system, the system version is used
+SET( OWExtNiftiIOName  "openwalnut_niftiio" )
+SET( OWExtNiftiZNZName  "openwalnut_niftiznz" )
+
+FIND_PACKAGE( niftilib QUIET )
+IF( NIFTILIB_FOUND )
+    MESSAGE( STATUS "Using system installed nifitlib." )
+    INCLUDE_DIRECTORIES( ${NIFTILIB_INCLUDE_DIR} )
+    SET( OWExtNiftiIOName  ${NIFTILIB_LIBRARY} )
+ELSE()
+    INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/ext/nifti )
+    ADD_SUBDIRECTORY( ext/nifti )
+ENDIF()
+
+# -----------------------------------------------------------------------------------------------------------------------------------------------
+# BioSig, at least 0.84
+# See http://biosig.sourceforge.net
+
+# we provide the biosig in ext. If it is found on the system, the system version is used
+SET( OWExtBioSigName "openwalnut_biosig" )
+
+FIND_PACKAGE( biosig QUIET )
+IF( BIOSIG_FOUND )
+    MESSAGE( STATUS "Using system installed biosig." )
+    INCLUDE_DIRECTORIES( ${BIOSIG_INCLUDE_DIR} )
+    SET( OWExtBioSigName  ${BIOSIG_LIBRARY} )
+ELSE()
+    IF( NOT CMAKE_GENERATOR MATCHES "Visual Studio" )
+        INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/ext/biosig )
+        ADD_SUBDIRECTORY( ext/biosig )
+    ELSE ()
+        INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/ext/biosigWin )
+        ADD_SUBDIRECTORY( ext/biosigWin )
+    ENDIF()
+ENDIF()
+
+# -----------------------------------------------------------------------------------------------------------------------------------------------
+# Eigen3, at least 3.0.0
+# See http://eigen.tuxfamily.org
+
+FIND_PACKAGE( eigen3 QUIET )
+IF( EIGEN3_FOUND )
+    MESSAGE( STATUS "Using system installed eigen3." )
+    INCLUDE_DIRECTORIES( ${EIGEN3_INCLUDE_DIR} )
+ELSE()
+    INCLUDE_DIRECTORIES( "${PROJECT_SOURCE_DIR}/ext/eigen3" )
+ENDIF()
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 #
@@ -273,13 +354,52 @@ ADD_CUSTOM_TARGET( vtest
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 #
-# Resource Copy
+# Resource/Doc Copy
 #  - This simply copies the structure from ../resources to the build directory
+#  - Additonaly takes care that the user doc and manual pages get placed where they belong.
 #
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Setup everything in ../resources
 SETUP_RESOURCES()
+SETUP_ADDITIONAL_FILES( ${OW_DOC_DIR_RELATIVE} 
+                        "SHARE"
+                        "${PROJECT_SOURCE_DIR}/../README"
+                        "${PROJECT_SOURCE_DIR}/../AUTHORS"
+                        "${PROJECT_SOURCE_DIR}/../CONTRIBUTORS"
+                      )
+
+# If the user did not disable license-copying, do it
+# NOTE: use this "double-negative" to use the fact that undefined variables yield FALSE.
+IF( NOT OW_PACKAGE_NOCOPY_LICENSE )
+    SETUP_ADDITIONAL_FILES( ${OW_DOC_DIR_RELATIVE} 
+                            "SHARE"
+                            "${PROJECT_SOURCE_DIR}/../COPYING"
+                            "${PROJECT_SOURCE_DIR}/../COPYING.LESSER"
+                          )
+ENDIF()
+
+# also copy all the user documentation we have
+SETUP_ADDITIONAL_DIRECTORY( ${OW_DOC_DIR_RELATIVE}
+                            ${PROJECT_SOURCE_DIR}/../doc/user/
+                            "SHARE"
+                            TRUE    # this denotes that the contents of doc/user should be copied instead of user directly
+                          )  
+SETUP_ADDITIONAL_DIRECTORY( ${OW_MAN_DIR_RELATIVE}
+                            ${PROJECT_SOURCE_DIR}/../doc/man/
+                            "SHARE"
+                            TRUE    # this denotes that the contents of doc/man should be copied instead of user directly
+                          )
+
+# copy our debug utilities. This is only useful if compiled debug or RelWithDebInfo
+IF( NOT cmake_build_type_tolower STREQUAL "release" )
+    # NOTE: DO NOT add and install target here. Debugging tools are not useful and wished in an OpenWalnut installation.
+    ADD_CUSTOM_TARGET( CopyDebugUtilities
+        ALL
+        COMMAND ${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/../tools/debugging" "${PROJECT_BINARY_DIR}/"
+        COMMENT "Copying debug utilities"
+    )
+ENDIF()
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 #
@@ -385,19 +505,17 @@ INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/ext )
 INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR} )
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------
-# OWext
+# external libs
 
-SET( OWExtNiftiName "OWext_niftiio" )
-SET( OWExtEEPName "OWext_eep" )
-SET( OWExtBioSigName "OWext_biosig" )
+SET( OWExtEEPName    "openwalnut_eep" )
 
 # build external libs in ext/
 ADD_SUBDIRECTORY( ext ) # The needed external libraries
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------
-# OWcore
+# openwalnut core library
 
-SET( OWCoreName "OWcore" )
+SET( OWCoreName "openwalnut" )
 
 # build core
 ADD_SUBDIRECTORY( core )
@@ -406,7 +524,7 @@ ADD_SUBDIRECTORY( core )
 # QT4 Walnut binary
 
 SET( OWQt4GuiName "qt4gui" )
-SET( OWBinaryName "walnut" )
+SET( OWBinaryName "openwalnut-qt4" )
 
 # build core
 ADD_SUBDIRECTORY( qt4gui )

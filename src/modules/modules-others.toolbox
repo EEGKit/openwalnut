@@ -36,6 +36,7 @@ ADD_MODULE( splineSurface )
 ADD_MODULE( subtractDataSetScalar )
 ADD_MODULE( surfaceParameterAnimator )
 ADD_MODULE( vectorOperator )
+ADD_MODULE( webglSupport )
    
 IF( Teem_FOUND )
     ADD_MODULE( teemGlyphs ${Teem_LIBRARIES} )

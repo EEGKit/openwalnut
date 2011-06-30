@@ -73,6 +73,7 @@ INSTALL( TARGETS ${BinName}
                 PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
                             GROUP_READ GROUP_EXECUTE
                             WORLD_READ WORLD_EXECUTE
+         COMPONENT "RUNTIME"
         )
 
 # TODO(all): comment this stuff. I do not know what the purpose is
@@ -92,16 +93,12 @@ SETUP_TESTS( "${TARGET_TEST_FILES}" "${BinName}" "" )
 # Copy local resources
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Copy the help documents. This is not in the resource directory since it is qt4gui specific, so we need to copy it.
-ADD_CUSTOM_TARGET( help
-    ALL
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/../doc/user/help/ ${OW_DOC_DIR}/${LibName}/
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/icons/ ${OW_DOC_DIR}/${LibName}/icons
-    COMMENT "Copy the GUI Documentation"
-)
-# Also create an install target for this
-INSTALL( DIRECTORY ${PROJECT_SOURCE_DIR}/../doc/user/help/ DESTINATION ${OW_DOC_DIR_RELATIVE}/${LibName} )
-INSTALL( DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/icons DESTINATION ${OW_DOC_DIR_RELATIVE}/${LibName} )
+# Our user-help needs the icons too. Copy them.
+SETUP_ADDITIONAL_DIRECTORY( "${OW_DOC_DIR_RELATIVE}/${LibName}/icons"
+                            "${CMAKE_CURRENT_SOURCE_DIR}/icons"
+                            "SHARE"
+                            FALSE   # this denoted that the whole directory icons should be copied instead of its contents
+                          )
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 # Style Checker
@@ -110,4 +107,4 @@ INSTALL( DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/icons DESTINATION ${OW_DOC_DIR_RE
 # setup the stylechecker. Ignore the platform specific stuff.
 SETUP_STYLECHECKER( "${BinName}"
                     "${TARGET_CPP_FILES};${TARGET_H_FILES};${TARGET_TEST_FILES};${TARGET_GLSL_FILES}"  # add all these files to the stylechecker
-                    ".*/version\\.h" )                                                                 # exlude some ugly files
+                    "" )                                                                               # exlude some ugly files

@@ -43,8 +43,8 @@
 #include <osg/Matrixd>
 
 // Needed for conversion: Eigen3 Types
-#include "ext/Eigen/Core"
-#include "ext/Eigen/LU" // needed for the inverse() function
+#include <Eigen/Core>
+#include <Eigen/LU>  // needed for the inverse() function
 
 #include "../../WDefines.h"
 #include "../../WStringUtils.h"
@@ -388,7 +388,7 @@ public:
       *
       * \return the row as a vector
       */
-    WMatrixFixed< ValueT, Cols, 1 > getRowVector( size_t index ) const
+    WMatrixFixed< ValueT, Cols, 1, ValueStoreT > getRowVector( size_t index ) const
     {
         WMatrixFixed< ValueT, Cols, 1 > result;
         for( size_t col = 0; col < Cols; col++ )

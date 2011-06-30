@@ -132,7 +132,8 @@ FUNCTION( SETUP_TESTS _TEST_FILES _TEST_TARGET )
             # for each fixture, copy to build dir
             FOREACH( FixtureDir ${FixturePaths} )
                 # we need a unique name for each fixture dir as target
-                STRING( REGEX REPLACE "[^A-Za-z0-9]" "" FixtureDirEscaped "${FixtureDir}" )
+                FILE_TO_TARGETSTRING( ${FixtureDir} FixtureDirEscaped )
+
                 # finally, create the copy target
                 ADD_CUSTOM_TARGET( ${_TEST_TARGET}_CopyFixtures_${FixtureDirEscaped}
                     COMMAND ${CMAKE_COMMAND} -E copy_directory "${FixtureDir}" "${FixtureTargetDirectory}"
@@ -150,7 +151,8 @@ ENDFUNCTION( SETUP_TESTS )
 # _Shaders list of shaders
 # _TargetDir the directory where to put the shaders. Relative to ${PROJECT_BINARY_DIR} and install dir. You should avoid ".." stuff. This can
 # break the install targets
-FUNCTION( SETUP_SHADERS _Shaders _TargetDir )
+# _Component the name of the install component
+FUNCTION( SETUP_SHADERS _Shaders _TargetDir _Component )
     # only if we are allowed to
     IF( OW_HANDLE_SHADERS )
         EXECUTE_PROCESS( COMMAND ${CMAKE_COMMAND} -E make_directory ${_TargetDir} )
@@ -172,7 +174,9 @@ FUNCTION( SETUP_SHADERS _Shaders _TargetDir )
 
         # now add install targets for each shader. All paths are relative to the current source dir.
         FOREACH( fname ${_Shaders} )
-            INSTALL( FILES ${fname} DESTINATION ${_TargetDir} )
+            INSTALL( FILES ${fname} DESTINATION ${_TargetDir} 
+                                    COMPONENT ${_Component}
+                   )
         ENDFOREACH( fname )
     ENDIF( OW_HANDLE_SHADERS )
 ENDFUNCTION( SETUP_SHADERS )
@@ -242,12 +246,76 @@ FUNCTION( SETUP_RESOURCES )
     # Also specify install target
     INSTALL( DIRECTORY ${ResourcesPath}
              DESTINATION "."
+             COMPONENT "SHARE"
              PATTERN "bin/*"            # binaries need to be executable
                  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
                              GROUP_READ GROUP_EXECUTE
                              WORLD_READ WORLD_EXECUTE
              )
+
 ENDFUNCTION( SETUP_RESOURCES )
+
+# This function eases the process of copying and installing additional files which not reside in the resource path.
+# It creates a target (ALL is depending on it) AND the INSTALL operation.
+# _destination where to put them. This MUST be relative to the build dir and install dir.
+# _component the name of the component for these files
+# _OTHERS you can add an arbitrary list of additional arguments which represent the files to copy.
+FUNCTION( SETUP_ADDITIONAL_FILES _destination _component )
+    FOREACH( _file ${ARGN} )
+        FILE_TO_TARGETSTRING( ${_file} fileTarget )
+
+        # add a copy target
+        ADD_CUSTOM_TARGET( CopyAdditionalFile_${fileTarget}
+            ALL
+            COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_BINARY_DIR}/${_destination}/"
+            COMMAND ${CMAKE_COMMAND} -E copy "${_file}" "${PROJECT_BINARY_DIR}/${_destination}/"
+            COMMENT "Copying file ${_file}"
+        )
+
+        # add a INSTALL operation for this file
+        INSTALL( FILES ${_file} DESTINATION ${_destination}
+                                COMPONENT ${_component}
+               )
+    ENDFOREACH() 
+ENDFUNCTION( SETUP_ADDITIONAL_FILES )
+
+# This function copies a given directory or its contents to the specified destination. Since cmake is quite strange in handling directories
+# somehow, we needed to trick here. 
+# _destination where to put the directory/its contents. Realtive to build dir and install dir.
+# _directory the directory to copy
+# _component the name of the component for these files
+# _contents if TRUE, the contents of _directory are copied into _destination. If FALSE, _destination as-is is copied to _destination/.. (sorry
+#           for this weird stuff. Complain at cmake mailing list ;-))
+FUNCTION( SETUP_ADDITIONAL_DIRECTORY _destination _directory _component _contents )
+    # create a nice target name
+    FILE_TO_TARGETSTRING( ${_directory} directoryTarget )
+
+    # add a copy target
+    # this copies the CONTENTS of the specified directory into the specified destination dir.
+    # NOTE: cmake -E says, that copying a directory with the copy command is pssible. But on my system it isn't.
+    ADD_CUSTOM_TARGET( CopyAdditionalDirectory_${directoryTarget}
+        ALL
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_BINARY_DIR}/${_destination}/"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory "${_directory}" "${PROJECT_BINARY_DIR}/${_destination}"
+        COMMENT "Copying directory ${_directory}"
+    )
+
+    # we need to distinquish here whether the user wants to copy the contents of the specified directory or the whole directory.
+    # NOTE: unfortunately, the semantics of cmake -E and INSTALL are different. We need to fix this with this hack.
+    IF( _contents )
+        # OK, the user wants us to copy the contents of the specified _directory INTO the dpecified destination
+        SET(  InstallDestination "${_destination}" )
+    ELSE()
+        # see "cmake -E " for help. The copy_directory copies its contents and copy copies the directory as is.
+        SET(  InstallDestination "${_destination}/../" )
+    ENDIF()
+
+    # add a INSTALL operation for this file
+    INSTALL( DIRECTORY ${_directory}
+             DESTINATION ${InstallDestination}
+             COMPONENT ${_component}
+           )
+ENDFUNCTION( SETUP_ADDITIONAL_DIRECTORY )
 
 # This function tries to find a proper version string. It therefore uses the file src/../VERSION and mercurial. If the file exists and is not
 # empty, the contents of it get combined with the mercurial results if mercurial is installed. If not, only the file content will be used. If
@@ -315,10 +383,15 @@ ENDFUNCTION( GET_VERSION_STRING )
 #
 # _OW_VERSION_HEADER the filename where to store the header. Should be absolute.
 FUNCTION( SETUP_VERSION_HEADER _OW_VERSION_HEADER )
+    # This ensures that an nonexisting .hg/dirstate file won't cause a compile error (do not know how to make target)
+    SET( HG_DEP "" )
+    IF( EXISTS ${PROJECT_SOURCE_DIR}/../.hg/dirstate )
+        SET( HG_DEP ${PROJECT_SOURCE_DIR}/../.hg/dirstate )
+    ENDIF()
 
     # The file WVersion.* needs the version definition.
     ADD_CUSTOM_COMMAND( OUTPUT ${_OW_VERSION_HEADER}
-                        DEPENDS ${PROJECT_SOURCE_DIR}/../VERSION ${PROJECT_SOURCE_DIR}/../.hg/dirstate
+                        DEPENDS ${PROJECT_SOURCE_DIR}/../VERSION ${HG_DEP}
                         COMMAND ${CMAKE_COMMAND} -D PROJECT_SOURCE_DIR:STRING=${PROJECT_SOURCE_DIR} -D HEADER_FILENAME:STRING=${_OW_VERSION_HEADER} -P BuildVersionHeader.cmake
                         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/../tools/cmake/
                         COMMENT "Creating Version Header ${_OW_VERSION_HEADER}."
