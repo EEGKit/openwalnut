@@ -114,31 +114,11 @@ void WMProbTractVis::properties()
     // Initialize the properties
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
 
-//    m_colors        = m_properties->addProperty( "Iso colors",       "Up to four iso colors.",  );
-
-//    m_isoValue      = m_properties->addProperty( "Isovalue",         "The isovalue used whenever the isosurface Mode is turned on.",
-//                                                                      128.0 );
-
     // TODO(aberres): find what to do with the cube (it uses m_isoColor)
     m_isoColor1      = m_properties->addProperty( "Iso color 1", "The color to blend the isosurface with.", WColor( 0.5, 0.0, 0.0, 1.0 ), m_propCondition );
     m_isoColor2      = m_properties->addProperty( "Iso color 2", "The color to blend the isosurface with.", WColor( 1.0, 0.5, 0.0, 1.0 ), m_propCondition );
     m_isoColor3      = m_properties->addProperty( "Iso color 3", "The color to blend the isosurface with.", WColor( 0.0, 0.5, 0.7, 1.0 ), m_propCondition );
     m_isoColor4      = m_properties->addProperty( "Iso color 4", "The color to blend the isosurface with.", WColor( 0.0, 0.7, 0.0, 1.0 ), m_propCondition );
-
-    m_alpha         = m_properties->addProperty( "Opacity %",        "The opacity in %. Transparency = 1 - Opacity.", 0.7 );
-    m_alpha->setMin( 0.0 );
-    m_alpha->setMax( 1.0 );
-
-//    m_isoValue2      = m_properties->addProperty( "Isovalue 2",         "The isovalue used whenever the isosurface Mode is turned on.",
-//                                                                      128.0 );
-//    m_isoColor2      = m_properties->addProperty( "Iso color 2",        "The color to blend the isosurface with.", WColor( 1.0, 0.6, 0.0, 1.0 ),
-//                      m_propCondition );
-//    m_alpha2         = m_properties->addProperty( "Opacity 2 %",        "The opacity in %. Transparency = 1 - Opacity.", 0.7 );
-//    m_alpha2->setMin( 0.0 );
-//    m_alpha2->setMax( 1.0 );
-
-    m_isoValueTolerance = m_properties->addProperty( "Isovalue tolerance", "The amount of deviation tolerated for the isovalue", 0.05 );
-    m_isoValueTolerance->setMax( 0.5 );
 
     m_stepCount     = m_properties->addProperty( "Step count",       "The number of steps to walk along the ray during raycasting. A low value "
                                                                       "may cause artifacts whilst a high value slows down rendering.", 250 );
@@ -148,6 +128,15 @@ void WMProbTractVis::properties()
     m_colormapRatio = m_properties->addProperty( "Colormap Ratio",   "The intensity of the colormap in contrast to surface shading.", 0.5 );
     m_colormapRatio->setMin( 0.0 );
     m_colormapRatio->setMax( 1.0 );
+
+    m_isoValueTolerance = m_properties->addProperty( "Isovalue tolerance", "The amount of deviation tolerated for the isovalue", 0.05 );
+    m_isoValueTolerance->setMax( 0.5 );
+
+    m_alpha         = m_properties->addProperty( "Opacity %",        "The opacity in %. Transparency = 1 - Opacity.", 0.7 );
+    m_alpha->setMin( 0.0 );
+    m_alpha->setMax( 1.0 );
+
+    m_manualAlpha = m_properties->addProperty( "Manual Alpha", "Lets user use the slider to set a global alpha rather than computing it automatically.", false );
 
     m_phongShading  = m_properties->addProperty( "Phong Shading", "If enabled, Phong shading gets applied on a per-pixel basis.", true );
 
@@ -177,6 +166,9 @@ void WMProbTractVis::moduleMain()
     );
     m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
         new WGEShaderPropertyDefineOptions< WPropBool >( m_phongShading, "PHONGSHADING_DISABLED", "PHONGSHADING_ENABLED" ) )
+    );
+    m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
+        new WGEShaderPropertyDefineOptions< WPropBool >( m_manualAlpha, "MANUALALPHA_DISABLED", "MANUALALPHA_ENABLED" ) )
     );
     WGEShaderDefineSwitch::SPtr gradTexEnableDefine = m_shader->setDefine( "GRADIENTTEXTURE_DISABLED" );
 
@@ -252,6 +244,7 @@ void WMProbTractVis::moduleMain()
             }
 
             // get the four picked isocolors and save them as rows in a matrix
+            // the innermost isosurface (highest probability) has to be first (in -> out compositing)!
             WMatrixFixed< double, 4, 4 > m_isoCols = WMatrixFixed< double, 4, 4 >();
             WMatrixFixed< double, 4, 1 > col1( m_isoColor1->get() );
             WMatrixFixed< double, 4, 1 > col2( m_isoColor2->get() );
@@ -269,6 +262,7 @@ void WMProbTractVis::moduleMain()
 
             // choose four isovalues and set them as values of a vector
             // use % of range to set isovalues
+            // the largest probability has to be first (in -> out compositing)!
             WMatrixFixed< double, 4, 1 > m_isoVals = WMatrixFixed< double, 4, 1 >( isoMin + 0.55 * isoRange,
                                                                                    isoMin + 0.40 * isoRange,
                                                                                    isoMin + 0.20 * isoRange,

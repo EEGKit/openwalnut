@@ -234,10 +234,16 @@ void main()
     vec4 isocolor;
 
     // for each isosurface, set the isovalue + isocolor and call the raytracer
-    for( int j = 0; j < 4; j += 1 )
+    for( int j = 0; j < 4; j += 2 )
     {
         isovalue = v_isovalues[j];
+        #ifdef MANUALALPHA_ENABLED
+        // use slider to define global alpha for all surfaces
+        isocolor = vec4( u_isocolors[j].rgb, u_alpha );
+        #else
+        // use value-dependent alpha
         isocolor = vec4( u_isocolors[j].rgb, u_isoalphas[j] );
+        #endif
         rayTrace( curPoint, isovalue, isocolor, stepDistance );
     }
 

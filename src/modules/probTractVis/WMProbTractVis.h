@@ -126,16 +126,6 @@ private:
      */
     boost::shared_ptr< WModuleInputData< WDataSetVector > > m_gradients;
 
-//    /**
-//     * The Isovalue used in the case m_isoSurface is true.
-//     */
-//    WPropDouble m_isoValue;
-
-//    /**
-//     * The Isovalue for the second isosurface
-//     */
-//    WPropDouble m_isoValue2;
-
     /**
      * The deviation tolerated for the m_isoValue.
      */
@@ -174,11 +164,6 @@ private:
      */
     WPropDouble m_alpha;
 
-//    /**
-//     * The alpha transparency for the second surface
-//     */
-//    WPropDouble m_alpha2;
-
     /**
      * The ratio between colormap and normal surface color.
      */
@@ -198,6 +183,12 @@ private:
      * If true, the ray-tracer uses stochastic jitter to improve image quality.
      */
     WPropBool m_stochasticJitter;
+
+    /**
+     * If true, the shader uses the manual alpha slider.
+     * Otherwise it uses automatic, isovalue-dependent alpha for the surfaces.
+     */
+    WPropBool m_manualAlpha;
 
     /**
      * A condition used to notify about changes in several properties.
