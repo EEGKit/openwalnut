@@ -39,6 +39,8 @@
 #include "core/graphicsEngine/WGECamera.h"
 #include "core/graphicsEngine/WGEViewer.h"
 
+class WSettingAction;
+
 /**
  * A widget containing an open gl display area. This initializes OpenGL context and adds a view to the
  * engine.
@@ -46,7 +48,7 @@
  */
 // NOTE: to make this work with MOC, the defines must be set before MOC runs (ensured in Build system)
 class WQtGLWidget: public
-#ifndef _MSC_VER
+#ifndef _WIN32
     QGLWidget
 #else
     QWidget
@@ -66,7 +68,7 @@ public:
      * \return
      */
     explicit WQtGLWidget( std::string nameOfViewer, QWidget* parent = 0,
-        WGECamera::ProjectionMode projectionMode = WGECamera::ORTHOGRAPHIC, const QGLWidget * shareWidget = 0 );
+        WGECamera::ProjectionMode projectionMode = WGECamera::ORTHOGRAPHIC, const QWidget * shareWidget = 0 );
 
     /**
      * Destructor.
@@ -95,12 +97,6 @@ public:
     void setCameraManipulator( CameraManipulators manipulator );
 
     /**
-     * Sets the background color of the widget.
-     * \param bgColor the new backgorund color
-     */
-    void setBgColor( const WColor& bgColor );
-
-    /**
      * Returns the actually set camera manipulator.
      *
      * \return the manipulator.
@@ -120,6 +116,20 @@ public:
      * \return the format descriptor
      */
     static const QGLFormat getDefaultFormat();
+
+    /**
+     * Returns the setting for throwing.
+     *
+     * \return the setting
+     */
+    WSettingAction* getThrowingSetting() const;
+
+    /**
+     * Returns the action used to configure the background color of this widget.
+     *
+     * \return the action.
+     */
+    QAction* getBackgroundColorAction() const;
 
 public slots:
     /**
@@ -244,6 +254,37 @@ private:
      * Holds the recommended size for the widget
      */
     QSize m_recommendedSize;
+
+    /**
+     * This flag is set to true if the first paint call occured. See the paint method for details.
+     */
+    bool m_firstPaint;
+
+    /**
+     * The setting specifying whether the viewer's camera can be thrown.
+     */
+    WSettingAction* m_allowThrowSetting;
+
+    /**
+     * Action to trigger some colordialog for background-color-selection.
+     */
+    QAction* m_changeBGColorAction;
+
+private slots:
+    /**
+     * Function to handle updates in the setting \ref m_allowThrowSetting.
+     */
+    void updateThrowing();
+
+    /**
+     * Asks user for a new color for this widget.
+     */
+    void changeBGColor();
+
+    /**
+     * Updates the color of this widget according to the current settings.
+     */
+    void updateViewerBackground();
 };
 
 #endif  // WQTGLWIDGET_H

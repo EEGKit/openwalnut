@@ -26,9 +26,10 @@
 #include <string>
 #include <vector>
 
+#include <boost/regex.hpp>
+
 #include "../common/WIOTools.h"
 #include "../common/WPathHelper.h"
-#include "../common/WPreferences.h"
 #include "../common/WSharedLib.h"
 
 #include "WKernel.h"
@@ -69,8 +70,19 @@ void WModuleLoader::load( WSharedAssociativeContainer< std::set< boost::shared_p
         std::string relPath = i->path().file_string();
         relPath.erase( 0, dir.file_string().length() + 1 ); // NOTE: +1 because we want to remove the "/" too
 
-        // is it a lib?
-        if( !boost::filesystem::is_directory( *i ) && ( suffix == WSharedLib::getSystemSuffix() ) &&
+        // is it a lib? Use a regular expression to check this
+        // NOTE:: the double \\ is needed to escape the escape char
+        #ifdef __WIN32__
+            static const boost::regex CheckLibMMP( "^.*\\" + WSharedLib::getSystemSuffix() +"$" );
+        #elif __APPLE__
+            static const boost::regex CheckLibMMP( "^.*\\.[0-9]+\\.[0-9]+\\.[0-9]+\\" + WSharedLib::getSystemSuffix() + "$" );
+        #else
+            static const boost::regex CheckLibMMP( "^.*\\" + WSharedLib::getSystemSuffix() + "\\.[0-9]+\\.[0-9]+\\.[0-9]+$" );
+        #endif
+        boost::smatch matches;
+
+        if( !boost::filesystem::is_directory( *i ) &&
+            ( boost::regex_match( i->path().string(), matches, CheckLibMMP ) ) &&
             ( stem.compare( 0, getModulePrefix().length(), getModulePrefix() ) == 0 )
 #ifdef _MSC_VER
             && supposedFilename == isFileName
@@ -100,14 +112,14 @@ void WModuleLoader::load( WSharedAssociativeContainer< std::set< boost::shared_p
                 else
                 {
                     // yes, add it to the list of prototypes
-                    for ( WModuleList::const_iterator iter = m.begin(); iter != m.end(); ++iter )
+                    for( WModuleList::const_iterator iter = m.begin(); iter != m.end(); ++iter )
                     {
                         ( *iter )->setLocalPath( i->path().parent_path() );
                         ticket->get().insert( *iter );
                         m_libs.push_back( l );
                     }
 
-                    wlog::info( "Module Loader" ) << "Loaded " << m.size() << " modules from " << relPath;
+                    wlog::debug( "Module Loader" ) << "Loaded " << m.size() << " modules from " << relPath;
                 }
 
                 // lib gets closed if l looses focus
@@ -118,7 +130,7 @@ void WModuleLoader::load( WSharedAssociativeContainer< std::set< boost::shared_p
                                                      "Module Loader", LL_ERROR );
             }
         }
-        else if ( ( level == 0 ) && boost::filesystem::is_directory( *i ) )     // this only traverses down one level
+        else if( ( level == 0 ) && boost::filesystem::is_directory( *i ) )     // this only traverses down one level
         {
             // if it a dir -> traverse down
             load( ticket, *i, level + 1 );
@@ -131,12 +143,12 @@ void WModuleLoader::load( WSharedAssociativeContainer< std::set< boost::shared_p
     std::vector< boost::filesystem::path > allPaths = WPathHelper::getAllModulePaths();
 
     // go through each of the paths
-    for ( std::vector< boost::filesystem::path >::const_iterator path = allPaths.begin(); path != allPaths.end(); ++path )
+    for( std::vector< boost::filesystem::path >::const_iterator path = allPaths.begin(); path != allPaths.end(); ++path )
     {
         WLogger::getLogger()->addLogMessage( "Searching modules in \"" + ( *path ).file_string() + "\".", "Module Loader", LL_INFO );
 
         // does the directory exist?
-        if ( !boost::filesystem::is_directory( *path ) || !boost::filesystem::exists( *path ) )
+        if( !boost::filesystem::is_directory( *path ) || !boost::filesystem::exists( *path ) )
         {
             WLogger::getLogger()->addLogMessage( "Searching modules in \"" + ( *path ).file_string() +
                                                  "\" failed. It is not a directory or does not exist." +

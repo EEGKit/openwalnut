@@ -26,17 +26,13 @@
 
 #include <QtGui/QAction>
 
+#include "WMainWindow.h"
+
 #include "WQtToolBar.h"
 
-WQtToolBar::WQtToolBar( const QString & title, QWidget* parent )
-    : QToolBar( title, parent )
+WQtToolBar::WQtToolBar( const QString & title, WMainWindow* parent )
+    : WQtToolBarBase( title, parent )
 {
-    setObjectName( title );
-
-    this->setAllowedAreas( Qt::AllToolBarAreas );
-
-    setMinimumWidth( 60 );
-    setMinimumHeight( 40 );
 }
 
 WQtToolBar::~WQtToolBar()
@@ -54,7 +50,7 @@ void WQtToolBar::clearButtons()
     clear();
 
     // iterate all items and delete them
-    for ( std::list< QAction* >::iterator it = m_actions.begin(); it != m_actions.end(); ++it )
+    for( std::list< QAction* >::iterator it = m_actions.begin(); it != m_actions.end(); ++it )
     {
         delete ( *it );
     }

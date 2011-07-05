@@ -42,7 +42,6 @@
 #include "../common/WColor.h"
 #include "../common/WLogger.h"
 #include "../common/WPathHelper.h"
-#include "../common/WPreferences.h"
 #include "../common/math/linearAlgebra/WLinearAlgebra.h"
 #include "WGEViewer.h"
 #include "exceptions/WGEInitFailed.h"
@@ -69,25 +68,6 @@ WGraphicsEngine::WGraphicsEngine():
 #ifndef __APPLE__
     // initialize OSG render window
     m_viewer = osg::ref_ptr<osgViewer::CompositeViewer>( new osgViewer::CompositeViewer() );
-
-    // ThreadingModel: enum with the following possibilities
-    //
-    //  SingleThreaded
-    //  CullDrawThreadPerContext
-    //  ThreadPerContext
-    //  DrawThreadPerContext
-    //  CullThreadPerCameraDrawThreadPerContext
-    //  ThreadPerCamera
-    //  AutomaticSelection
-    bool multiThreadedViewers = true;
-    if( WPreferences::getPreference( "ge.multiThreadedViewers", &multiThreadedViewers ) && !multiThreadedViewers )
-    {
-        m_viewer->setThreadingModel( osgViewer::Viewer::SingleThreaded );
-    }
-    else
-    {
-        m_viewer->setThreadingModel( osgViewer::Viewer::CullThreadPerCameraDrawThreadPerContext );
-    }
 #endif
 
     // initialize members
@@ -100,10 +80,41 @@ WGraphicsEngine::~WGraphicsEngine()
     WLogger::getLogger()->addLogMessage( "Shutting down Graphics Engine", "GE", LL_INFO );
 }
 
+void WGraphicsEngine::setMultiThreadedViews( bool enable )
+{
+#ifndef __APPLE__
+    // ThreadingModel: enum with the following possibilities
+    //
+    //  SingleThreaded
+    //  CullDrawThreadPerContext
+    //  ThreadPerContext
+    //  DrawThreadPerContext
+    //  CullThreadPerCameraDrawThreadPerContext
+    //  ThreadPerCamera
+    //  AutomaticSelection
+    if( !enable )
+    {
+        m_viewer->setThreadingModel( osgViewer::Viewer::SingleThreaded );
+    }
+    else
+    {
+        m_viewer->setThreadingModel( osgViewer::Viewer::CullThreadPerCameraDrawThreadPerContext );
+    }
+#endif
+}
+
+bool WGraphicsEngine::isMultiThreadedViews() const
+{
+#ifndef __APPLE__
+    return ( osgViewer::Viewer::SingleThreaded != m_viewer->getThreadingModel() );
+#endif
+    // on mac, this always is false currently
+    return false;
+}
 
 boost::shared_ptr< WGraphicsEngine > WGraphicsEngine::getGraphicsEngine()
 {
-    if ( !m_instance )
+    if( !m_instance )
     {
         m_instance = boost::shared_ptr< WGraphicsEngine >( new WGraphicsEngine() );
     }
@@ -166,7 +177,7 @@ boost::shared_ptr< WGEViewer > WGraphicsEngine::getViewer()
 
 bool WGraphicsEngine::isRunning()
 {
-    if ( !m_instance )
+    if( !m_instance )
     {
         return false;
     }
@@ -174,11 +185,27 @@ bool WGraphicsEngine::isRunning()
     return m_instance->m_running;
 }
 
+bool WGraphicsEngine::waitForStartupComplete()
+{
+    if( !m_instance )
+    {
+        return false;
+    }
+
+    // this ensures that the startup is completed if returning.
+    m_instance->m_startThreadingCondition.wait();
+
+    // did something went wrong? Ensure by checking if really running.
+    return isRunning();
+}
+
 void WGraphicsEngine::threadMain()
 {
     WLogger::getLogger()->addLogMessage( "Starting Graphics Engine", "GE", LL_INFO );
 
 #ifndef __APPLE__
+    // NOTE: this is needed here since the viewer might start without any widgets being initialized properly.
+    m_startThreadingCondition.wait();
     m_running = true;
     m_viewer->startThreading();
     m_viewer->run();
@@ -193,6 +220,11 @@ void WGraphicsEngine::notifyStop()
 #ifndef __APPLE__
     m_viewer->setDone( true );
 #endif
+}
+
+void WGraphicsEngine::finalizeStartup()
+{
+    m_startThreadingCondition.notify();
 }
 
 void WGraphicsEngine::requestShaderReload()

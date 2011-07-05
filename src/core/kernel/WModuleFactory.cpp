@@ -33,7 +33,6 @@
 #include "combiner/WApplyCombiner.h"
 #include "exceptions/WPrototypeNotUnique.h"
 #include "exceptions/WPrototypeUnknown.h"
-#include "modules/data/WMData.h" // this is the ONLY module with a special meaning. Everyone knowing the factory also knows this
 #include "WModule.h"
 #include "WModuleCombiner.h"
 #include "WModuleFactory.h"
@@ -61,9 +60,6 @@ void WModuleFactory::load()
     // operation must be exclusive
     PrototypeSharedContainerType::WriteTicket m_prototypeAccess = m_prototypes.getWriteTicket();
 
-    // These modules need to be added by hand. They are special, obviously.
-    m_prototypeAccess->get().insert( boost::shared_ptr< WModule >( new WMData() ) );
-
     // Load the dynamic modules here:
     m_moduleLoader.load( m_prototypeAccess );
 
@@ -78,10 +74,10 @@ void WModuleFactory::load()
     for( PrototypeContainerConstIteratorType listIter = l->get().begin(); listIter != l->get().end();
             ++listIter )
     {
-        WLogger::getLogger()->addLogMessage( "Initializing module prototype: \"" + ( *listIter )->getName() + "\"", "ModuleFactory", LL_INFO );
+        WLogger::getLogger()->addLogMessage( "Initializing module prototype: \"" + ( *listIter )->getName() + "\"", "ModuleFactory", LL_DEBUG );
 
         // that should not happen. Names should not occur multiple times since they are unique
-        if ( names.count( ( *listIter )->getName() ) )
+        if( names.count( ( *listIter )->getName() ) )
         {
             throw WPrototypeNotUnique( std::string( "Module \"" + ( *listIter )->getName()
                                                     + "\" is not unique. Modules have to have a unique name." ) );
@@ -112,7 +108,7 @@ boost::shared_ptr< WModule > WModuleFactory::create( boost::shared_ptr< WModule 
     PrototypeSharedContainerType::ReadTicket l = m_prototypes.getReadTicket();
 
     // ensure this one is a prototype and nothing else
-    if ( !checkPrototype( prototype, l ) )
+    if( !checkPrototype( prototype, l ) )
     {
         throw WPrototypeUnknown( std::string( "Could not clone module \"" + prototype->getName() + "\" since it is no prototype." ) );
     }
@@ -135,7 +131,7 @@ void WModuleFactory::initializeModule( boost::shared_ptr< WModule > module )
 
 boost::shared_ptr< WModuleFactory > WModuleFactory::getModuleFactory()
 {
-    if ( !m_instance )
+    if( !m_instance )
     {
         m_instance = boost::shared_ptr< WModuleFactory >( new WModuleFactory() );
     }
@@ -154,7 +150,7 @@ const boost::shared_ptr< WModule > WModuleFactory::isPrototypeAvailable( std::st
     for( std::set< boost::shared_ptr< WModule > >::const_iterator listIter = l->get().begin(); listIter != l->get().end();
             ++listIter )
     {
-        if ( ( *listIter )->getName() == name )
+        if( ( *listIter )->getName() == name )
         {
             ret = ( *listIter );
             break;
@@ -169,7 +165,7 @@ const boost::shared_ptr< WModule > WModuleFactory::getPrototypeByName( std::stri
     boost::shared_ptr< WModule > ret = isPrototypeAvailable( name );
 
     // if not found -> throw
-    if ( ret == boost::shared_ptr< WModule >() )
+    if( ret == boost::shared_ptr< WModule >() )
     {
         throw WPrototypeUnknown( std::string( "Could not find prototype \"" + name + "\"." ) );
     }
@@ -180,6 +176,26 @@ const boost::shared_ptr< WModule > WModuleFactory::getPrototypeByName( std::stri
 const boost::shared_ptr< WModule > WModuleFactory::getPrototypeByInstance( boost::shared_ptr< WModule > instance )
 {
     return getPrototypeByName( instance->getName() );
+}
+
+std::vector< WModule::ConstSPtr > WModuleFactory::getPrototypesByType( MODULE_TYPE type )
+{
+    std::vector< WModule::ConstSPtr > ret;
+
+    // for this a read lock is sufficient, gets unlocked if it looses scope
+    PrototypeSharedContainerType::ReadTicket l = m_prototypes.getReadTicket();
+
+    // find first and only prototype (ensured during load())
+    for( std::set< boost::shared_ptr< WModule > >::const_iterator listIter = l->get().begin(); listIter != l->get().end();
+            ++listIter )
+    {
+        if( ( *listIter )->getType() == type )
+        {
+            ret.push_back( *listIter );
+        }
+    }
+
+    return ret;
 }
 
 WModuleFactory::PrototypeSharedContainerType::ReadTicket WModuleFactory::getPrototypes() const
@@ -214,7 +230,7 @@ WCombinerTypes::WCompatiblesList WModuleFactory::getCompatiblePrototypes( boost:
     }
 
     // if NULL was specified, only return all modules without any inputs
-    if ( module )
+    if( module )
     {
         // go through every prototype
         for( PrototypeContainerConstIteratorType listIter = l->get().begin(); listIter != l->get().end();
@@ -223,7 +239,7 @@ WCombinerTypes::WCompatiblesList WModuleFactory::getCompatiblePrototypes( boost:
             WCombinerTypes::WOneToOneCombiners lComp = WApplyCombiner::createCombinerList< WApplyCombiner >( module, ( *listIter ) );
 
             // add the group
-            if ( lComp.size() != 0 )
+            if( lComp.size() != 0 )
             {
                 compatibles.push_back( WCombinerTypes::WCompatiblesGroup( ( *listIter ), lComp ) );
             }

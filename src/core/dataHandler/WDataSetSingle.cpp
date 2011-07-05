@@ -28,7 +28,7 @@
 #include "../common/WAssert.h"
 #include "../common/WException.h"
 #include "../common/WPrototyped.h"
-#include "WDataTexture3D_2.h"
+#include "WDataTexture3D.h"
 #include "WGrid.h"
 #include "WGridRegular3D.h"
 #include "WValueSet.h"
@@ -55,9 +55,9 @@ WDataSetSingle::WDataSetSingle( boost::shared_ptr< WValueSetBase > newValueSet,
 
     // technically this should be placed into the WDataSetScalar, WDataSetVector and so on
     boost::shared_ptr< WGridRegular3D > regGrid = boost::shared_dynamic_cast< WGridRegular3D >( m_grid );
-    if ( regGrid )
+    if( regGrid )
     {
-        m_texture = osg::ref_ptr< WDataTexture3D_2 >( new WDataTexture3D_2( m_valueSet, regGrid ) );
+        m_texture = osg::ref_ptr< WDataTexture3D >( new WDataTexture3D( m_valueSet, regGrid ) );
     }
 }
 
@@ -105,7 +105,7 @@ bool WDataSetSingle::isTexture() const
     return m_texture;
 }
 
-osg::ref_ptr< WDataTexture3D_2 > WDataSetSingle::getTexture2() const
+osg::ref_ptr< WDataTexture3D > WDataSetSingle::getTexture() const
 {
     return m_texture;
 }
@@ -123,7 +123,7 @@ const std::string WDataSetSingle::getDescription() const
 
 boost::shared_ptr< WPrototyped > WDataSetSingle::getPrototype()
 {
-    if ( !m_prototype )
+    if( !m_prototype )
     {
         m_prototype = boost::shared_ptr< WPrototyped >( new WDataSetSingle() );
     }

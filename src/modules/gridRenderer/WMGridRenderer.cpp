@@ -40,7 +40,6 @@
 #include "core/dataHandler/WGridRegular3D.h"
 #include "core/graphicsEngine/WGEGeodeUtils.h"
 #include "core/graphicsEngine/callbacks/WGENodeMaskCallback.h"
-#include "core/kernel/modules/data/WMData.h"
 #include "core/kernel/WKernel.h"
 #include "WMGridRenderer.h"
 #include "WMGridRenderer.xpm"
@@ -113,7 +112,7 @@ void WMGridRenderer::moduleMain()
         }
 
         WGridRegular3D::SPtr regGrid = boost::shared_dynamic_cast< WGridRegular3D >( dataSet->getGrid() );
-        if ( !regGrid )
+        if( !regGrid )
         {
             // the data has no regular 3d grid.
             errorLog() << "Dataset does not contain a regular 3D grid.";
@@ -122,7 +121,7 @@ void WMGridRenderer::moduleMain()
         }
 
         // create the new grid node if it not exists
-        if ( !m_gridNode )
+        if( !m_gridNode )
         {
             m_gridNode = new WGEGridNode( regGrid );
             m_gridNode->addUpdateCallback( new WGENodeMaskCallback( m_active ) );
@@ -177,25 +176,25 @@ void WMGridRenderer::properties()
 void WMGridRenderer::updateNode( WPropertyBase::SPtr property )
 {
     // only update if there is a grid node
-    if ( !m_gridNode )
+    if( !m_gridNode )
     {
         return;
     }
 
     // color of bbox changed
-    if ( property == m_bboxColor )
+    if( property == m_bboxColor )
     {
         m_gridNode->setBBoxColor( *m_bboxColor );
     }
 
     // color of grid changed
-    if ( property == m_gridColor )
+    if( property == m_gridColor )
     {
         m_gridNode->setGridColor( *m_gridColor );
     }
 
     // mode changed
-    if ( property == m_mode )
+    if( property == m_mode )
     {
         WItemSelector s = m_mode->get( true );
 

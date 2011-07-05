@@ -37,7 +37,7 @@
 #include "core/common/math/WMath.h"
 #include "core/common/math/WPlane.h"
 #include "core/dataHandler/WDataHandler.h"
-#include "core/dataHandler/WDataTexture3D_2.h"
+#include "core/dataHandler/WDataTexture3D.h"
 #include "core/dataHandler/WGridRegular3D.h"
 #include "core/graphicsEngine/WGEColormapping.h"
 #include "core/graphicsEngine/WGEGeodeUtils.h"
@@ -174,7 +174,7 @@ void WMImageSpaceLIC::initOSG( boost::shared_ptr< WGridRegular3D > grid, boost::
     // remove the old slices
     m_output->clear();
 
-    if ( mesh && !m_useSlices->get( true ) )
+    if( mesh && !m_useSlices->get( true ) )
     {
         // we have a mesh and want to use it
         // create geometry and geode
@@ -203,7 +203,7 @@ void WMImageSpaceLIC::initOSG( boost::shared_ptr< WGridRegular3D > grid, boost::
         surfaceGeode->addDrawable( surfaceGeometry );
         m_output->insert( surfaceGeode );
     }
-    else if ( !mesh && !m_useSlices->get( true ) )
+    else if( !mesh && !m_useSlices->get( true ) )
     {
         warnLog() << "No surface connected to input but surface render mode enabled. Nothing rendered.";
     }
@@ -379,13 +379,13 @@ void WMImageSpaceLIC::moduleMain()
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // main loop
-    while ( !m_shutdownFlag() )
+    while( !m_shutdownFlag() )
     {
         debugLog() << "Waiting ...";
         m_moduleState.wait();
 
         // woke up since the module is requested to finish?
-        if ( m_shutdownFlag() )
+        if( m_shutdownFlag() )
         {
             break;
         }
@@ -400,7 +400,7 @@ void WMImageSpaceLIC::moduleMain()
         bool dataValid = ( dataSetVec || dataSetScal );
 
         // is data valid? If not, remove graphics
-        if ( !dataValid )
+        if( !dataValid )
         {
             debugLog() << "Resetting.";
             WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( offscreen );
@@ -408,7 +408,7 @@ void WMImageSpaceLIC::moduleMain()
         }
 
         // something interesting for us?
-        if ( dataValid && !dataUpdated && !propertyUpdated )
+        if( dataValid && !dataUpdated && !propertyUpdated )
         {
             continue;
         }
@@ -418,7 +418,7 @@ void WMImageSpaceLIC::moduleMain()
         WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( offscreen );
 
         // prefer vector dataset if existing
-        if ( dataSetVec )
+        if( dataSetVec )
         {
             debugLog() << "Using vector data";
 
@@ -431,9 +431,9 @@ void WMImageSpaceLIC::moduleMain()
 
             // prepare offscreen render chain
             availableDataDefines->activateOption( 1 );  // vector input
-            transformation->bind( dataSetVec->getTexture2(), 0 );
+            transformation->bind( dataSetVec->getTexture(), 0 );
         }
-        else if ( dataSetScal )
+        else if( dataSetScal )
         {
             debugLog() << "Using scalar data";
 
@@ -446,7 +446,7 @@ void WMImageSpaceLIC::moduleMain()
 
             // prepare offscreen render chain
             availableDataDefines->activateOption( 0 );  // scalar input
-            transformation->bind( dataSetScal->getTexture2(), 0 );
+            transformation->bind( dataSetScal->getTexture(), 0 );
         }
 
         debugLog() << "Done";

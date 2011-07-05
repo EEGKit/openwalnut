@@ -70,13 +70,6 @@ public:
     static boost::filesystem::path getAppPath();
 
     /**
-     * The path of the configuration file walnut.cfg. Always use this file to parse configurations.
-     *
-     * \return the config file.
-     */
-    static boost::filesystem::path getConfigFile();
-
-    /**
      * The path where font files reside in.
      *
      * \return the font path.
@@ -133,7 +126,7 @@ public:
     static boost::filesystem::path getModulePath();
 
     /**
-     * This returns a list of search paths for modules. This list is defined by the "modules.path" - option in walnut.cfg. All of these
+     * This returns a list of search paths for modules. This list is defined by the environment variable "OW_MODULE_PATH". All of these
      * directories CAN contain modules. On startup, they get searched in the specified order.
      *
      * \return list of search paths for modules
@@ -155,6 +148,13 @@ public:
     static boost::filesystem::path getSharePath();
 
     /**
+     * The path where the doc files reside in.
+     *
+     * \return the doc file path.
+     */
+    static boost::filesystem::path getDocPath();
+
+    /**
      * The path where the config files reside in.
      *
      * \return the config file path.
@@ -171,7 +171,8 @@ protected:
 private:
 
     /**
-     * Application path. NOT the path of the binary. The binary path is m_appPath+"/walnut".
+     * Application path. NOT the path of the binary. The application path is the directory in which the binary is placed.
+     * The binary path is m_appPath+"/openwalnut".
      */
     boost::filesystem::path m_appPath;
 
@@ -179,6 +180,11 @@ private:
      * The path where all the shared files reside in.
      */
     boost::filesystem::path m_sharePath;
+
+    /**
+     * The path where all the documentation files reside in.
+     */
+    boost::filesystem::path m_docPath;
 
     /**
      * The path where all the config files reside in.

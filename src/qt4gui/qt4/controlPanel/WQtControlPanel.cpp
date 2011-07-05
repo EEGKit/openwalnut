@@ -36,9 +36,9 @@
 #include <QtGui/QSplitter>
 
 #include "core/common/WLogger.h"
-#include "core/common/WPreferences.h"
+#include "core/common/WPredicateHelper.h"
 #include "core/dataHandler/WDataSet.h"
-#include "core/kernel/modules/data/WMData.h"
+#include "core/kernel/WDataModule.h"
 #include "core/kernel/WKernel.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleContainer.h"
@@ -56,6 +56,7 @@
 #include "../WMainWindow.h"
 #include "../WQt4Gui.h"
 #include "../WQtCombinerActionList.h"
+#include "../WQtModuleExcluder.h"
 #include "WQtBranchTreeItem.h"
 #include "WQtColormapper.h"
 
@@ -98,19 +99,25 @@ WQtControlPanel::WQtControlPanel( WMainWindow* parent )
     m_moduleTreeWidget->addAction( separator );
 
     m_deleteModuleAction = new QAction( WQt4Gui::getMainWindow()->getIconManager()->getIcon( "remove" ), "Remove Module", m_moduleTreeWidget );
-
     {
         // Set the key for removing modules
-        std::string deleteKey = "";
-        WPreferences::getPreference( "qt4gui.deleteModuleKey", &deleteKey );
-        if( deleteKey == "" )
-        {
-            deleteKey = "Backspace";
-        }
-        m_deleteModuleAction->setShortcut( QKeySequence( QString::fromStdString( deleteKey ) ) );
+        m_deleteModuleAction->setShortcutContext( Qt::WidgetShortcut );
+        m_deleteModuleAction->setShortcut( QKeySequence( "Delete" ) );
+        m_deleteModuleAction->setIconVisibleInMenu( true );
     }
     connect( m_deleteModuleAction, SIGNAL( triggered() ), this, SLOT( deleteModuleTreeItem() ) );
     m_moduleTreeWidget->addAction( m_deleteModuleAction );
+
+    // a separator to clean up the tree widget's context menu
+    m_moduleTreeWidget->addAction( separator );
+
+    // add an entry for those who search their module without luck
+    m_missingModuleAction = new QAction( WQt4Gui::getMainWindow()->getIconManager()->getIcon( "missingModule" ), "Missing Module?",
+                                          m_moduleTreeWidget );
+    m_missingModuleAction->setToolTip( "Having trouble finding your module? This opens the module configuration, which allows you to define the "
+                                       "modules that should be shown or hidden." );
+    m_missingModuleAction->setIconVisibleInMenu( true );
+    m_moduleTreeWidget->addAction( m_missingModuleAction );
 
     // the network editor also needs the context menu
     // TODO(rfrohl): context menu gets not opened if a graphicitem is clicked. This should be fixed.
@@ -118,7 +125,10 @@ WQtControlPanel::WQtControlPanel( WMainWindow* parent )
     m_mainWindow->getNetworkEditor()->addAction( m_connectWithPrototypeAction );
     m_mainWindow->getNetworkEditor()->addAction( m_connectWithModuleAction );
     m_mainWindow->getNetworkEditor()->addAction( m_disconnectAction );
+    m_mainWindow->getNetworkEditor()->addAction( separator );
     m_mainWindow->getNetworkEditor()->addAction( m_deleteModuleAction );
+    m_mainWindow->getNetworkEditor()->addAction( separator );
+    m_mainWindow->getNetworkEditor()->addAction( m_missingModuleAction );
 
     m_colormapper = new WQtColormapper( m_mainWindow );
     m_colormapper->setToolTip( "Reorder the textures." );
@@ -134,7 +144,7 @@ WQtControlPanel::WQtControlPanel( WMainWindow* parent )
     m_roiDock->setObjectName( "ROI Dock" );
     m_roiTreeWidget = new WQtTreeWidget();
     m_roiTreeWidget->setToolTip( "Regions of intrest (ROIs) for selecting fiber  clusters. Branches are combined using logic <b>or</b>, "
-"inside the branches the ROIs are combined using logic <b>and</b>." );
+                                 "inside the branches the ROIs are combined using logic <b>and</b>." );
     m_roiTreeWidget->setHeaderLabel( QString( "ROIs" ) );
     m_roiTreeWidget->setHeaderHidden( true );
     m_roiTreeWidget->setDragEnabled( true );
@@ -142,6 +152,9 @@ WQtControlPanel::WQtControlPanel( WMainWindow* parent )
     m_roiTreeWidget->setDropIndicatorShown( true );
     m_roiTreeWidget->setDragDropMode( QAbstractItemView::InternalMove );
     m_roiDock->setWidget( m_roiTreeWidget );
+
+    m_moduleExcluder = new WQtModuleExcluder( parent );
+    connect( m_missingModuleAction, SIGNAL( triggered( bool ) ), m_moduleExcluder, SLOT( configure() ) );
 
     m_layout = new QVBoxLayout();
     m_layout->addWidget( m_tabWidget );
@@ -160,17 +173,16 @@ WQtControlPanel::WQtControlPanel( WMainWindow* parent )
 
     connectSlots();
 
+    // similar to the module delete action: a ROI delete action
+    m_deleteRoiAction = new QAction( WQt4Gui::getMainWindow()->getIconManager()->getIcon( "remove" ), "Remove ROI", m_roiTreeWidget );
     {
-        // Set the key for removing ROIs and connect the event
-        std::string deleteKey = "";
-        WPreferences::getPreference( "qt4gui.deleteROIKey", &deleteKey );
-        if( deleteKey == "" )
-        {
-            deleteKey = "Delete";
-        }
-        QShortcut* shortcut = new QShortcut( QKeySequence( QString::fromStdString( deleteKey ) ), m_roiTreeWidget );
-        connect( shortcut, SIGNAL( activated() ), this, SLOT( deleteROITreeItem() ) );
+        // Set the key for removing modules
+        m_deleteRoiAction->setShortcutContext( Qt::WidgetShortcut );
+        m_deleteRoiAction->setShortcut( QKeySequence( "Delete" ) );
+        m_deleteRoiAction->setIconVisibleInMenu( true );
     }
+    connect( m_deleteRoiAction, SIGNAL( triggered() ), this, SLOT( deleteROITreeItem() ) );
+    m_roiTreeWidget->addAction( m_deleteModuleAction );
 }
 
 WQtControlPanel::~WQtControlPanel()
@@ -179,6 +191,8 @@ WQtControlPanel::~WQtControlPanel()
 
 void WQtControlPanel::connectSlots()
 {
+    // if the user changes some white/blacklist setting: update.
+    connect( m_moduleExcluder, SIGNAL( updated() ), this, SLOT( selectTreeItem() ) );
     connect( m_moduleTreeWidget, SIGNAL( itemSelectionChanged() ), this, SLOT( selectTreeItem() ) );
     connect( m_moduleTreeWidget, SIGNAL( itemClicked( QTreeWidgetItem*, int ) ), this, SLOT( changeTreeItem( QTreeWidgetItem*, int ) ) );
     connect( m_moduleTreeWidget, SIGNAL( itemClicked( QTreeWidgetItem*, int ) ),  m_roiTreeWidget, SLOT( clearSelection() ) );
@@ -206,10 +220,10 @@ WQtSubjectTreeItem* WQtControlPanel::addSubject( std::string name )
 
 bool WQtControlPanel::event( QEvent* event )
 {
-    if ( event->type() == WQT_ROI_ASSOC_EVENT )
+    if( event->type() == WQT_ROI_ASSOC_EVENT )
     {
         WRoiAssocEvent* e2 = dynamic_cast< WRoiAssocEvent* >( event );     // NOLINT
-        if ( e2 )
+        if( e2 )
         {
             addRoi( e2->getRoi() );
             WLogger::getLogger()->addLogMessage( "Inserting ROI to control panel.", "ControlPanel", LL_DEBUG );
@@ -230,18 +244,18 @@ bool WQtControlPanel::event( QEvent* event )
     }
 
     // a module got associated with the root container -> add it to the list
-    if ( event->type() == WQT_ASSOC_EVENT )
+    if( event->type() == WQT_ASSOC_EVENT )
     {
         // convert event to assoc event
         WModuleAssocEvent* e1 = dynamic_cast< WModuleAssocEvent* >( event );     // NOLINT
-        if ( e1 )
+        if( e1 )
         {
             WLogger::getLogger()->addLogMessage( "Inserting module " + e1->getModule()->getName() + " to control panel.",
                                                  "ControlPanel", LL_DEBUG );
 
             // finally add the module
             // TODO(schurade): is this differentiation between data and "normal" modules really needed?
-            if ( boost::shared_dynamic_cast< WMData >( e1->getModule() ).get() )
+            if( boost::shared_dynamic_cast< WDataModule >( e1->getModule() ).get() )
             {
                 addDataset( e1->getModule(), 0 );
             }
@@ -254,11 +268,11 @@ bool WQtControlPanel::event( QEvent* event )
     }
 
     // a module changed its state to "ready" -> activate it in control panel
-    if ( event->type() == WQT_READY_EVENT )
+    if( event->type() == WQT_READY_EVENT )
     {
         // convert event to assoc event
         WModuleReadyEvent* e = dynamic_cast< WModuleReadyEvent* >( event );     // NOLINT
-        if ( !e )
+        if( !e )
         {
             // this should never happen, since the type is set to WQT_READY_EVENT.
             WLogger::getLogger()->addLogMessage( "Event is not an WModueReadyEvent although its type claims it. Ignoring event.",
@@ -272,7 +286,7 @@ bool WQtControlPanel::event( QEvent* event )
 
         // search all the item matching the module
         std::list< WQtTreeItem* > items = findItemsByModule( e->getModule() );
-        for ( std::list< WQtTreeItem* >::const_iterator iter = items.begin(); iter != items.end(); ++iter )
+        for( std::list< WQtTreeItem* >::const_iterator iter = items.begin(); iter != items.end(); ++iter )
         {
             ( *iter )->setSelected( true );
             ( *iter )->setDisabled( false );
@@ -284,10 +298,10 @@ bool WQtControlPanel::event( QEvent* event )
     }
 
     // a module tree item was connected to another one
-    if ( event->type() == WQT_MODULE_CONNECT_EVENT )
+    if( event->type() == WQT_MODULE_CONNECT_EVENT )
     {
         WModuleConnectEvent* e = dynamic_cast< WModuleConnectEvent* >( event );     // NOLINT
-        if ( !e )
+        if( !e )
         {
             // this should never happen, since the type is set to WQT_MODULE_CONNECT_EVENT.
             WLogger::getLogger()->addLogMessage( "Event is not an WModuleConnectEvent although its type claims it. Ignoring event.",
@@ -304,7 +318,7 @@ bool WQtControlPanel::event( QEvent* event )
         // at this moment items for each input connector are inside the tree.
         // search the items not yet associated with some other module for the first item
         std::list< WQtTreeItem* > items = findItemsByModule( mIn, m_tiModules );
-        for ( std::list< WQtTreeItem* >::const_iterator iter = items.begin(); iter != items.end(); ++iter )
+        for( std::list< WQtTreeItem* >::const_iterator iter = items.begin(); iter != items.end(); ++iter )
         {
             ( *iter )->setHidden( false );
             ( *iter )->setHandledInput( e->getInput()->getName() );
@@ -312,11 +326,11 @@ bool WQtControlPanel::event( QEvent* event )
 
             // move it to the module with the involved output
             std::list< WQtTreeItem* > possibleParents = findItemsByModule( mOut );
-            for ( std::list< WQtTreeItem* >::const_iterator parIter = possibleParents.begin(); parIter != possibleParents.end(); ++parIter )
+            for( std::list< WQtTreeItem* >::const_iterator parIter = possibleParents.begin(); parIter != possibleParents.end(); ++parIter )
             {
                 // remove child from tiModules
                 m_tiModules->removeChild( *iter );
-                if ( !( *parIter )->isHidden() )
+                if( !( *parIter )->isHidden() )
                 {
                     ( *parIter )->addChild( *iter );
                     ( *parIter )->setExpanded( true );
@@ -330,10 +344,10 @@ bool WQtControlPanel::event( QEvent* event )
     }
 
     // a module tree item was disconnected from another one
-    if ( event->type() == WQT_MODULE_DISCONNECT_EVENT )
+    if( event->type() == WQT_MODULE_DISCONNECT_EVENT )
     {
         WModuleDisconnectEvent* e = dynamic_cast< WModuleDisconnectEvent* >( event );     // NOLINT
-        if ( !e )
+        if( !e )
         {
             // this should never happen, since the type is set to WQT_MODULE_DISCONNECT_EVENT.
             WLogger::getLogger()->addLogMessage( "Event is not an WModuleDisconnectEvent although its type claims it. Ignoring event.",
@@ -350,13 +364,13 @@ bool WQtControlPanel::event( QEvent* event )
         // at this moment items for each input connector are inside the tree.
         // search all items an find those containing a children which belongs to the connection input
         std::list< WQtTreeItem* > items = findItemsByModule( mOut );
-        for ( std::list< WQtTreeItem* >::const_iterator iter = items.begin(); iter != items.end(); ++iter )
+        for( std::list< WQtTreeItem* >::const_iterator iter = items.begin(); iter != items.end(); ++iter )
         {
             // each of them can contain a child with the involved input
             std::list< WQtTreeItem* > childs = findItemsByModule( mIn, *iter );
-            for ( std::list< WQtTreeItem* >::const_iterator citer = childs.begin(); citer != childs.end(); ++citer )
+            for( std::list< WQtTreeItem* >::const_iterator citer = childs.begin(); citer != childs.end(); ++citer )
             {
-                if ( ( *citer )->getHandledInput() == e->getInput()->getName() )
+                if( ( *citer )->getHandledInput() == e->getInput()->getName() )
                 {
                     ( *iter )->removeChild( *citer );
 
@@ -372,21 +386,21 @@ bool WQtControlPanel::event( QEvent* event )
         // we need to ensure that at least one item for mIn is visible somewhere
         items = findItemsByModule( mIn );
         bool oneVisible = false;
-        for ( std::list< WQtTreeItem* >::const_iterator iter = items.begin(); iter != items.end(); ++iter )
+        for( std::list< WQtTreeItem* >::const_iterator iter = items.begin(); iter != items.end(); ++iter )
         {
             oneVisible = oneVisible || !( *iter )->isHidden();
         }
-        if ( !oneVisible )
+        if( !oneVisible )
         {
             ( *items.begin() )->setHidden( false );
         }
     }
 
     // a module tree item should be deleted
-    if ( event->type() == WQT_MODULE_DELETE_EVENT )
+    if( event->type() == WQT_MODULE_DELETE_EVENT )
     {
         WModuleDeleteEvent* e = dynamic_cast< WModuleDeleteEvent* >( event );
-        if ( !e )
+        if( !e )
         {
             // this should never happen, since the type is set to WQT_MODULE_DELETE_EVENT.
             WLogger::getLogger()->addLogMessage( "Event is not an WModuleDeleteEvent although its type claims it. Ignoring event.",
@@ -404,7 +418,7 @@ bool WQtControlPanel::event( QEvent* event )
 
         // ref count != 1? (only if there are now tree items left)
         bool lastTreeItem = !findItemsByModule( module ).size();
-        if ( lastTreeItem && ( module.use_count() != 1 ) )
+        if( lastTreeItem && ( module.use_count() != 1 ) )
         {
             wlog::error( "ControlPanel" ) << "Removed module has strange usage count: " << module.use_count() << ". Should be 1 here. " <<
                                               "Module reference is held by someone else.";
@@ -415,10 +429,10 @@ bool WQtControlPanel::event( QEvent* event )
     }
 
     // a module was removed from the container
-    if ( event->type() == WQT_MODULE_REMOVE_EVENT )
+    if( event->type() == WQT_MODULE_REMOVE_EVENT )
     {
         WModuleRemovedEvent* e = dynamic_cast< WModuleRemovedEvent* >( event );
-        if ( !e )
+        if( !e )
         {
             // this should never happen, since the type is set to WQT_MODULE_REMOVE_EVENT.
             WLogger::getLogger()->addLogMessage( "Event is not an WModuleRemovedEvent although its type claims it. Ignoring event.",
@@ -428,7 +442,7 @@ bool WQtControlPanel::event( QEvent* event )
 
         // iterate tree items and find proper one
         std::list< WQtTreeItem* > items = findItemsByModule( e->getModule() );
-        for ( std::list< WQtTreeItem* >::const_iterator iter = items.begin(); iter != items.end(); ++iter )
+        for( std::list< WQtTreeItem* >::const_iterator iter = items.begin(); iter != items.end(); ++iter )
         {
             ( *iter )->gotRemoved();
         }
@@ -453,24 +467,24 @@ std::list< WQtTreeItem* > WQtControlPanel::findItemsByModule( boost::shared_ptr<
 
     // iterate tree items and find proper one
     QTreeWidgetItemIterator it( where );
-    while ( *it )
+    while( *it )
     {
         WQtTreeItem* item = dynamic_cast< WQtTreeItem* >( *it );
         boost::shared_ptr< WModule > itemModule = boost::shared_ptr< WModule >();
-        if ( item )
+        if( item )
         {
             itemModule = item->getModule();
         }
 
         // if the pointer is NULL the item was none of the above
-        if ( !itemModule.get() )
+        if( !itemModule.get() )
         {
             ++it;
             continue;
         }
 
         // we found it
-        if ( module == itemModule )
+        if( module == itemModule )
         {
             l.push_back( item );
         }
@@ -509,7 +523,7 @@ WQtModuleTreeItem* WQtControlPanel::addModule( boost::shared_ptr< WModule > modu
     m_moduleTreeWidget->setCurrentItem( NULL );
     bool firstItem = true;
     WModule::InputConnectorList cons = module->getInputConnectors();
-    for ( WModule::InputConnectorList::const_iterator iter = cons.begin(); iter != cons.end(); ++iter )
+    for( WModule::InputConnectorList::const_iterator iter = cons.begin(); iter != cons.end(); ++iter )
     {
         // every module gets added to tiModules first. The connection events then move these things to the right parent
         item = m_tiModules->addModuleItem( module );
@@ -517,7 +531,7 @@ WQtModuleTreeItem* WQtControlPanel::addModule( boost::shared_ptr< WModule > modu
         item->setExpanded( true );
 
         // all but the first item get hidden by default. They get visible after a connection event has been fired
-        if ( !firstItem )
+        if( !firstItem )
         {
             item->setHidden( true );
         }
@@ -526,7 +540,7 @@ WQtModuleTreeItem* WQtControlPanel::addModule( boost::shared_ptr< WModule > modu
     }
 
     // this module has not inputs. So we simply add it to the tiModules
-    if ( firstItem )
+    if( firstItem )
     {
         item = m_tiModules->addModuleItem( module );
         item->setDisabled( true );
@@ -548,14 +562,14 @@ void WQtControlPanel::addRoi( osg::ref_ptr< WROI > roi )
     {
         branchItem = dynamic_cast< WQtBranchTreeItem* >( m_tiRois->child( branchID ) );
         // if branch == roi branch
-        if ( branchItem->getBranch() == WKernel::getRunningKernel()->getRoiManager()->getBranch( roi ) )
+        if( branchItem->getBranch() == WKernel::getRunningKernel()->getRoiManager()->getBranch( roi ) )
         {
             found = true;
             break;
         }
     }
 
-    if ( !found )
+    if( !found )
     {
         branchItem = m_tiRois->addBranch( WKernel::getRunningKernel()->getRoiManager()->getBranch( roi ) );
     }
@@ -593,11 +607,11 @@ void WQtControlPanel::removeRoi( osg::ref_ptr< WROI > roi )
 
 boost::shared_ptr< WModule > WQtControlPanel::getSelectedModule()
 {
-    if ( m_moduleTreeWidget->selectedItems().at( 0 )->type() == 1 )
+    if( m_moduleTreeWidget->selectedItems().at( 0 )->type() == 1 )
     {
         return ( static_cast< WQtDatasetTreeItem* >( m_moduleTreeWidget->selectedItems().at( 0 ) )->getModule() );
     }
-    else if ( m_moduleTreeWidget->selectedItems().at( 0 )->type() == 3 )
+    else if( m_moduleTreeWidget->selectedItems().at( 0 )->type() == 3 )
     {
         return ( static_cast< WQtModuleTreeItem* >( m_moduleTreeWidget->selectedItems().at( 0 ) )->getModule() );
     }
@@ -607,7 +621,7 @@ boost::shared_ptr< WModule > WQtControlPanel::getSelectedModule()
 
 void WQtControlPanel::selectTreeItem()
 {
-    if ( m_ignoreSelectionChange )
+    if( m_ignoreSelectionChange )
     {
         return;
     }
@@ -616,7 +630,7 @@ void WQtControlPanel::selectTreeItem()
     boost::shared_ptr< WProperties > props;
     boost::shared_ptr< WProperties > infoProps;
 
-    if ( m_moduleTreeWidget->selectedItems().size() != 0  )
+    if( m_moduleTreeWidget->selectedItems().size() != 0  )
     {
         // TODO(schurade): qt doc says clear() doesn't delete tabs so this is possibly a memory leak
         m_tabWidget->clear();
@@ -642,7 +656,7 @@ void WQtControlPanel::selectTreeItem()
             case DATASET:
                 module = ( static_cast< WQtDatasetTreeItem* >( m_moduleTreeWidget->selectedItems().at( 0 ) ) )->getModule();
                 // crashed modules should not provide any props
-                if ( module->isCrashed()() )
+                if( module->isCrashed()() )
                 {
                     return;
                 }
@@ -652,7 +666,7 @@ void WQtControlPanel::selectTreeItem()
                 createCompatibleButtons( module );
 
                 {
-                    boost::shared_ptr< WMData > dataModule = boost::shared_dynamic_cast< WMData >( module );
+                    boost::shared_ptr< WDataModule > dataModule = boost::shared_dynamic_cast< WDataModule >( module );
 
                     // if the selected module contains a texture, select the corresponding texture in the texture sorter.
                     if( dataModule )
@@ -675,14 +689,14 @@ void WQtControlPanel::selectTreeItem()
                     // Set the ignore flag to avoid that this method gets called several times
                     m_ignoreSelectionChange = true;
                     std::list< WQtTreeItem* > items = findItemsByModule( module );
-                    for ( std::list< WQtTreeItem* >::const_iterator iter = items.begin(); iter != items.end(); ++iter )
+                    for( std::list< WQtTreeItem* >::const_iterator iter = items.begin(); iter != items.end(); ++iter )
                     {
                         ( *iter )->setSelected( true );
                     }
                     m_ignoreSelectionChange = false;
 
                     // crashed modules should not provide any props
-                    if ( module->isCrashed()() )
+                    if( module->isCrashed()() )
                     {
                         return;
                     }
@@ -723,7 +737,7 @@ void WQtControlPanel::selectRoiTreeItem()
     boost::shared_ptr< WModule > module;
     boost::shared_ptr< WProperties > props;
 
-    if ( m_roiTreeWidget->selectedItems().size() != 0  )
+    if( m_roiTreeWidget->selectedItems().size() != 0  )
     {
         switch ( m_roiTreeWidget->selectedItems().at( 0 )->type() )
         {
@@ -747,7 +761,7 @@ void WQtControlPanel::selectRoiTreeItem()
         }
     }
 
-    if ( m_roiTreeWidget->selectedItems().size() == 1 && m_roiTreeWidget->selectedItems().at( 0 )->type() == ROI )
+    if( m_roiTreeWidget->selectedItems().size() == 1 && m_roiTreeWidget->selectedItems().at( 0 )->type() == ROI )
     {
         osg::ref_ptr< WROI > roi = ( static_cast< WQtRoiTreeItem* >( m_roiTreeWidget->selectedItems().at( 0 ) ) )->getRoi();
         roi->getProperties()->getProperty( "active" )->toPropBool()->set( m_roiTreeWidget->selectedItems().at( 0 )->checkState( 0 ) );
@@ -765,8 +779,8 @@ void WQtControlPanel::selectDataModule( boost::shared_ptr< WDataSet > dataSet )
     {
         if( dynamic_cast< WQtDatasetTreeItem* >( *it ) )
         {
-            boost::shared_ptr< WMData > dataModule;
-            dataModule = boost::shared_dynamic_cast< WMData >( ( dynamic_cast< WQtDatasetTreeItem* >( *it ) )->getModule() );
+            boost::shared_ptr< WDataModule > dataModule;
+            dataModule = boost::shared_dynamic_cast< WDataModule >( ( dynamic_cast< WQtDatasetTreeItem* >( *it ) )->getModule() );
             if( dataModule )
             {
                 if( dataModule->getDataSet() == dataSet )
@@ -794,7 +808,7 @@ void WQtControlPanel::setNewActiveModule( boost::shared_ptr< WModule > module )
     // NOTE: this handles null pointers properly.
     createCompatibleButtons( module );
 
-    if ( module )
+    if( module )
     {
         createCompatibleButtons( module );
         buildPropTab( module->getProperties(), module->getInformationProperties() );
@@ -804,7 +818,7 @@ void WQtControlPanel::setNewActiveModule( boost::shared_ptr< WModule > module )
 WQtPropertyGroupWidget*  WQtControlPanel::buildPropWidget( boost::shared_ptr< WProperties > props )
 {
     WQtPropertyGroupWidget* tab = new WQtPropertyGroupWidget( props );
-    if ( props.get() )
+    if( props.get() )
     {
         // read lock, gets unlocked upon destruction (out of scope)
         WProperties::PropertySharedContainerType::ReadTicket propAccess = props->getProperties();
@@ -812,7 +826,7 @@ WQtPropertyGroupWidget*  WQtControlPanel::buildPropWidget( boost::shared_ptr< WP
         tab->setName( QString::fromStdString( props->getName() ) );
 
         // iterate all properties.
-        for ( WProperties::PropertyConstIterator iter = propAccess->get().begin(); iter != propAccess->get().end(); ++iter )
+        for( WProperties::PropertyConstIterator iter = propAccess->get().begin(); iter != propAccess->get().end(); ++iter )
         {
             switch ( ( *iter )->getType() )
             {
@@ -864,26 +878,32 @@ void WQtControlPanel::buildPropTab( boost::shared_ptr< WProperties > props, boos
 {
     WQtPropertyGroupWidget* tab = NULL;
     WQtPropertyGroupWidget* infoTab = NULL;
-    if ( props )
+    if( props )
     {
         tab = buildPropWidget( props );
-        tab->setName( "Settings" );
+        if ( tab )
+        {
+            tab->setName( "Settings" );
+        }
     }
-    if ( infoProps )
+    if( infoProps )
     {
         infoTab = buildPropWidget( infoProps );
-        infoTab->setName( "Information" );
+        if ( infoTab )
+        {
+            infoTab->setName( "Information" );
+        }
     }
 
     int infoIdx = addTabWidgetContent( infoTab );
     int propIdx = addTabWidgetContent( tab );
 
     // select the property widget preferably
-    if ( propIdx != -1 )
+    if( propIdx != -1 )
     {
         m_tabWidget->setCurrentIndex( propIdx );
     }
-    else if ( infoIdx != -1 )
+    else if( infoIdx != -1 )
     {
         m_tabWidget->setCurrentIndex( infoIdx );
     }
@@ -899,7 +919,7 @@ void deepDeleteActionList( QList< QAction* >& l )   // NOLINT   - we need the no
     // traverse
     for( QList< QAction* >::iterator it = l.begin(); it != l.end(); ++it )
     {
-        if ( ( *it )->menu() )
+        if( ( *it )->menu() )
         {
             // recursively remove sub-menu items
             QList< QAction* > subs = ( *it )->menu()->actions();
@@ -922,11 +942,12 @@ void WQtControlPanel::createCompatibleButtons( boost::shared_ptr< WModule > modu
 
     // acquire new action lists
     m_connectWithPrototypeActionList = WQtCombinerActionList( this, m_mainWindow->getIconManager(),
-                                                              WModuleFactory::getModuleFactory()->getCompatiblePrototypes( module ) );
+                                                              WModuleFactory::getModuleFactory()->getCompatiblePrototypes( module ),
+                                                              m_moduleExcluder );
     m_connectWithModuleActionList = WQtCombinerActionList( this, m_mainWindow->getIconManager(),
                                                            WKernel::getRunningKernel()->getRootContainer()->getPossibleConnections( module ),
-                                                           true, true );
-    if ( module )
+                                                           0, true );
+    if( module )
     {
         m_disconnectActionList = WQtCombinerActionList( this, m_mainWindow->getIconManager(), module->getPossibleDisconnections() );
     }
@@ -966,7 +987,7 @@ void WQtControlPanel::createCompatibleButtons( boost::shared_ptr< WModule > modu
 void WQtControlPanel::changeTreeItem( QTreeWidgetItem* item, int /* column */ )
 {
     WQtTreeItem* witem = dynamic_cast< WQtTreeItem* >( item );
-    if ( witem )
+    if( witem )
     {
         witem->handleCheckStateChange();
     }
@@ -974,8 +995,13 @@ void WQtControlPanel::changeTreeItem( QTreeWidgetItem* item, int /* column */ )
 
 int WQtControlPanel::addTabWidgetContent( WQtPropertyGroupWidget* content )
 {
-    if ( !content || content->isEmpty() )
+    if( !content || content->isEmpty() )
     {
+        // we destroy the widget if we not use it to avoid empty widgets popping up
+        if ( content )
+        {
+            delete content;
+        }
         return -1;
     }
 
@@ -989,9 +1015,9 @@ int WQtControlPanel::addTabWidgetContent( WQtPropertyGroupWidget* content )
 int WQtControlPanel::getFirstSubject()
 {
     int c = 0;
-    for ( int i = 0; i < m_moduleTreeWidget->topLevelItemCount() ; ++i )
+    for( int i = 0; i < m_moduleTreeWidget->topLevelItemCount() ; ++i )
     {
-        if ( m_moduleTreeWidget->topLevelItem( i )->type() == SUBJECT )
+        if( m_moduleTreeWidget->topLevelItem( i )->type() == SUBJECT )
         {
             break;
         }
@@ -1003,11 +1029,11 @@ int WQtControlPanel::getFirstSubject()
 osg::ref_ptr< WROI > WQtControlPanel::getSelectedRoi()
 {
     osg::ref_ptr< WROI > roi;
-    if ( m_roiTreeWidget->selectedItems().count() == 0 )
+    if( m_roiTreeWidget->selectedItems().count() == 0 )
     {
         return roi;
     }
-    if ( m_roiTreeWidget->selectedItems().at( 0 )->type() == ROI )
+    if( m_roiTreeWidget->selectedItems().at( 0 )->type() == ROI )
     {
         roi =( static_cast< WQtRoiTreeItem* >( m_roiTreeWidget->selectedItems().at( 0 ) ) )->getRoi();
     }
@@ -1017,19 +1043,19 @@ osg::ref_ptr< WROI > WQtControlPanel::getSelectedRoi()
 osg::ref_ptr< WROI > WQtControlPanel::getFirstRoiInSelectedBranch()
 {
     osg::ref_ptr< WROI >roi;
-    if ( m_roiTreeWidget->selectedItems().count() == 0 )
+    if( m_roiTreeWidget->selectedItems().count() == 0 )
     {
         return roi;
     }
-    if ( m_roiTreeWidget->selectedItems().at( 0 )->type() == ROI )
+    if( m_roiTreeWidget->selectedItems().at( 0 )->type() == ROI )
     {
         WQtBranchTreeItem* branch = ( static_cast< WQtBranchTreeItem* >( m_roiTreeWidget->selectedItems().at( 0 )->parent() ) );
         roi =( static_cast< WQtRoiTreeItem* >( branch->child( 0 ) ) )->getRoi();
     }
-    if ( m_roiTreeWidget->selectedItems().at( 0 )->type() == ROIBRANCH )
+    if( m_roiTreeWidget->selectedItems().at( 0 )->type() == ROIBRANCH )
     {
         WQtBranchTreeItem* branch = ( static_cast< WQtBranchTreeItem* >( m_roiTreeWidget->selectedItems().at( 0 ) ) );
-        if ( branch->childCount() > 0 )
+        if( branch->childCount() > 0 )
         {
             roi =( static_cast< WQtRoiTreeItem* >( branch->child( 0 ) ) )->getRoi();
         }
@@ -1055,9 +1081,9 @@ void WQtControlPanel::deleteModuleTreeItem()
     // TODO(rfrohl): check if there is a better way to check for focus
     if( m_moduleTreeWidget->hasFocus() )
     {
-        if ( m_moduleTreeWidget->selectedItems().count() > 0 )
+        if( m_moduleTreeWidget->selectedItems().count() > 0 )
         {
-            if ( ( m_moduleTreeWidget->selectedItems().at( 0 )->type() == MODULE ) ||
+            if( ( m_moduleTreeWidget->selectedItems().at( 0 )->type() == MODULE ) ||
                     ( m_moduleTreeWidget->selectedItems().at( 0 )->type() == DATASET ) )
             {
                 // remove from the container. It will create a new event in the GUI after it has been removed which is then handled by the tree item.
@@ -1070,7 +1096,7 @@ void WQtControlPanel::deleteModuleTreeItem()
             }
         }
     }
-    else if ( m_mainWindow->getNetworkEditor()->isActiveWindow() )
+    else if( m_mainWindow->getNetworkEditor()->isActiveWindow() )
     {
         m_mainWindow->getNetworkEditor()->deleteSelectedItems();
     }
@@ -1079,22 +1105,22 @@ void WQtControlPanel::deleteModuleTreeItem()
 void WQtControlPanel::deleteROITreeItem()
 {
     osg::ref_ptr< WROI >roi;
-    if ( m_roiTreeWidget->selectedItems().count() > 0 )
+    if( m_roiTreeWidget->selectedItems().count() > 0 )
     {
-        if ( m_roiTreeWidget->selectedItems().at( 0 )->type() == ROIBRANCH )
+        if( m_roiTreeWidget->selectedItems().at( 0 )->type() == ROIBRANCH )
         {
             roi = getFirstRoiInSelectedBranch();
-            if ( roi )
+            if( roi )
             {
                 WKernel::getRunningKernel()->getRoiManager()->removeBranch( roi );
             }
             delete m_roiTreeWidget->selectedItems().at( 0 );
         }
 
-        else if ( m_roiTreeWidget->selectedItems().at( 0 )->type() == ROI )
+        else if( m_roiTreeWidget->selectedItems().at( 0 )->type() == ROI )
         {
             roi =( static_cast< WQtRoiTreeItem* >( m_roiTreeWidget->selectedItems().at( 0 ) ) )->getRoi();
-            if ( roi )
+            if( roi )
             {
                 WKernel::getRunningKernel()->getRoiManager()->removeRoi( roi );
                 // Removing the roi from the tree widget is also done by WROIManagerFibers::removeRoi().
@@ -1129,3 +1155,12 @@ QDockWidget* WQtControlPanel::getColormapperDock() const
     return m_colormapper;
 }
 
+WQtModuleExcluder& WQtControlPanel::getModuleExcluder() const
+{
+    return *m_moduleExcluder;
+}
+
+QAction* WQtControlPanel::getMissingModuleAction() const
+{
+    return m_missingModuleAction;
+}

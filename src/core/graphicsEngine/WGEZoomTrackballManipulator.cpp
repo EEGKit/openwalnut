@@ -22,7 +22,6 @@
 //
 //---------------------------------------------------------------------------
 
-#include "../common/WPreferences.h"
 #include "WGEZoomTrackballManipulator.h"
 #include "WGraphicsEngine.h"
 
@@ -33,7 +32,6 @@ WGEZoomTrackballManipulator::WGEZoomTrackballManipulator():
     m_paintMode( 0 )
 {
     setTrackballSize( .3 ); // changes the effect of a mouse move for rotation
-    WPreferences::getPreference( "ge.zoomTrackballManipulator.allowThrow", &m_allowThrow );
 }
 
 void WGEZoomTrackballManipulator::setByMatrix( const osg::Matrixd& matrix )
@@ -80,7 +78,7 @@ bool WGEZoomTrackballManipulator::zoom( const osgGA::GUIEventAdapter& ea, osgGA:
             zoomDelta = 0.05;
         }
 
-        if (zoomDelta != 0.0)
+        if(zoomDelta != 0.0)
         {
             m_zoom *= 1.0 + zoomDelta;
             us.requestRedraw();
@@ -109,7 +107,7 @@ bool WGEZoomTrackballManipulator::zoom( const osgGA::GUIEventAdapter& ea, osgGA:
         }
     }
 
-    if (zoomDelta != 0.0)
+    if(zoomDelta != 0.0)
     {
         m_zoom *= 1.0 + zoomDelta;
         us.requestRedraw();
@@ -136,13 +134,13 @@ bool WGEZoomTrackballManipulator::handle( const osgGA::GUIEventAdapter& ea, osgG
     }
     // NOTE: we need to ignore the right mouse-button drag! This manipulates the underlying Trackball Manipulator while, at the same time, is
     // used for moving ROIS! Zooming is done using Scroll Wheel or +/- keys.
-    else if ( ( ea.getEventType() == osgGA::GUIEventAdapter::DRAG ) || ( ea.getEventType() == osgGA::GUIEventAdapter::PUSH ) )
+    else if( ( ea.getEventType() == osgGA::GUIEventAdapter::DRAG ) || ( ea.getEventType() == osgGA::GUIEventAdapter::PUSH ) )
     {
-        if ( ea.getButtonMask() == osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON )
+        if( ea.getButtonMask() == osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON )
         {
             return true;
         }
-        else if (  ( ea.getButtonMask() == osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON ) && ( m_paintMode == 1 ) )
+        else if(  ( ea.getButtonMask() == osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON ) && ( m_paintMode == 1 ) )
         {
             return true;
         }
@@ -161,3 +159,14 @@ void WGEZoomTrackballManipulator::setPaintMode( int mode )
 {
     m_paintMode = mode;
 }
+
+void WGEZoomTrackballManipulator::setThrow( bool allowThrow )
+{
+    m_allowThrow = allowThrow;
+}
+
+bool WGEZoomTrackballManipulator::getThrow() const
+{
+    return m_allowThrow;
+}
+

@@ -26,6 +26,7 @@
 #include <iostream>
 
 #include <QtGui/QKeyEvent>
+#include <QtGui/QColorDialog>
 
 #include "WQtGLWidget.h"
 #include "WQtGLWidget.moc"
@@ -33,30 +34,36 @@
 #include "core/common/WConditionOneShot.h"
 #include "core/common/WFlag.h"
 #include "core/common/WLogger.h"
+#include "core/common/WColor.h"
 #include "core/graphicsEngine/WGE2DManipulator.h"
 #include "core/graphicsEngine/WGEViewer.h"
 #include "core/graphicsEngine/WGEZoomTrackballManipulator.h"
 #include "core/graphicsEngine/WGraphicsEngine.h"
 #include "core/kernel/WKernel.h"
 
+#include "WSettingAction.h"
+#include "WMainWindow.h"
+
 #ifndef __APPLE__
-#ifndef _MSC_VER
-#include <osgViewer/api/X11/GraphicsWindowX11>
-typedef osgViewer::GraphicsWindowX11::WindowData WindowData;
-#else
-#include <osgViewer/api/Win32/GraphicsWindowWin32>
-typedef osgViewer::GraphicsWindowWin32::WindowData WindowData;
-#endif
+    #ifndef _WIN32
+        #include <osgViewer/api/X11/GraphicsWindowX11>
+        typedef osgViewer::GraphicsWindowX11::WindowData WindowData;
+    #else
+        #include <osgViewer/api/Win32/GraphicsWindowWin32>
+        typedef osgViewer::GraphicsWindowWin32::WindowData WindowData;
+    #endif
 #endif
 
-WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::ProjectionMode projectionMode, const QGLWidget * shareWidget ):
-#ifndef _MSC_VER
-    QGLWidget( getDefaultFormat(), parent, shareWidget ),
+#ifndef _WIN32
+WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::ProjectionMode projectionMode, const QWidget* shareWidget ):
+    QGLWidget( getDefaultFormat(), parent, dynamic_cast< const QGLWidget* >( shareWidget ) ),
 #else
+WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::ProjectionMode projectionMode, const QWidget* ):
     QWidget( parent ),
 #endif
       m_nameOfViewer( nameOfViewer ),
-      m_recommendedSize()
+      m_recommendedSize(),
+      m_firstPaint( true )
 {
     m_recommendedSize.setWidth( 200 );
     m_recommendedSize.setHeight( 200 );
@@ -85,6 +92,21 @@ WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::
     connect( &m_Timer, SIGNAL( timeout() ), this, SLOT( updateGL() ) );
     m_Timer.start( 10 );
 #endif
+
+    // set bg color
+    updateViewerBackground();
+    // this action manages the above settings
+    m_changeBGColorAction = new QAction( QString::fromStdString( nameOfViewer ), parent );
+    connect( m_changeBGColorAction, SIGNAL( triggered( bool ) ), this, SLOT( changeBGColor() ) );
+
+    // enable throwing of wanted
+    m_allowThrowSetting = new WSettingAction( parent, std::string( "qt4gui/" ) + nameOfViewer + std::string( "/allowThrow" ),
+                                                      "Camera Throwing",
+                                                      "If enabled, the camera can be thrown. Try it by dragging the camera. "
+                                                      "The camera then continues the movement.",
+                                                      false );
+    connect( m_allowThrowSetting, SIGNAL( change( bool ) ), this, SLOT( updateThrowing() ) );
+    updateThrowing();
 }
 
 WQtGLWidget::~WQtGLWidget()
@@ -121,11 +143,6 @@ void WQtGLWidget::setCameraManipulator( WQtGLWidget::CameraManipulators manipula
     }
 }
 
-void WQtGLWidget::setBgColor( const WColor& bgColor )
-{
-    m_Viewer->setBgColor( bgColor );
-}
-
 WQtGLWidget::CameraManipulators WQtGLWidget::getCameraManipulators()
 {
     return m_CurrentManipulator;
@@ -138,7 +155,13 @@ boost::shared_ptr< WGEViewer > WQtGLWidget::getViewer() const
 
 void WQtGLWidget::paintEvent( QPaintEvent* /*event*/ )
 {
-    // m_Viewer->paint();
+    if( m_firstPaint )
+    {
+        // it is important to let the GE know that there now is an completely initialized widget -> allowing GE startup to complete
+        // This is needed as on some machines, the OSG crashes if the GL widget is not fully initialized.
+        m_firstPaint = false;
+        WKernel::getRunningKernel()->getGraphicsEngine()->finalizeStartup();
+    }
 }
 
 #ifdef __APPLE__
@@ -288,5 +311,41 @@ const QGLFormat WQtGLWidget::getDefaultFormat()
     QGLFormat format;
     format.setSwapInterval( 1 );    // according to Qt Doc, this should enable VSync. But it doesn't.
     return format;
+}
+
+void WQtGLWidget::updateThrowing()
+{
+    WGEZoomTrackballManipulator* manipulator = dynamic_cast< WGEZoomTrackballManipulator* >( m_Viewer->getCameraManipulator().get() );
+    if( manipulator )
+    {
+        manipulator->setThrow( m_allowThrowSetting->get() );
+    }
+}
+
+WSettingAction* WQtGLWidget::getThrowingSetting() const
+{
+    return m_allowThrowSetting;
+}
+
+QAction* WQtGLWidget::getBackgroundColorAction() const
+{
+    return m_changeBGColorAction;
+}
+
+void WQtGLWidget::updateViewerBackground()
+{
+    QColor bg = WMainWindow::getSettings().value( QString( "qt4gui/" ) + QString::fromStdString( m_nameOfViewer ) + QString( "/BGColor" ),
+                                                  QColor( 255, 255, 255, 255 ) ).value< QColor >();
+    m_Viewer->setBgColor( WColor( bg.redF(), bg.greenF(), bg.blueF(), 1.0 ) );
+}
+
+void WQtGLWidget::changeBGColor()
+{
+    QColor bgOld = WMainWindow::getSettings().value( QString( "qt4gui/" ) + QString::fromStdString( m_nameOfViewer ) + QString( "/BGColor" ),
+                                                  QColor( 255, 255, 255, 255 ) ).value< QColor >();
+    QColor bg = QColorDialog::getColor( bgOld, this );
+    WMainWindow::getSettings().setValue( QString( "qt4gui/" ) + QString::fromStdString( m_nameOfViewer ) + QString( "/BGColor" ), bg );
+
+    updateViewerBackground();
 }
 

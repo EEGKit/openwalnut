@@ -28,16 +28,19 @@
 
 #include "exceptions/WGEInitFailed.h"
 
-WGEGraphicsWindow::WGEGraphicsWindow( osg::ref_ptr<osg::Referenced> wdata,
+WGEGraphicsWindow::WGEGraphicsWindow( osg::ref_ptr<osg::Referenced>
+     #ifndef __APPLE__
+        wdata  // this parameter is only needed on non-mac
+     #endif
+        ,
                                             int x,
                                             int y,
                                             int width,
                                             int height )
 {
 #ifndef __APPLE__
-    m_WindowData = wdata;
-
     // initialize context
+    m_WindowData = wdata;
     try
     {
         createContext( x, y, width, height );
@@ -48,7 +51,8 @@ WGEGraphicsWindow::WGEGraphicsWindow( osg::ref_ptr<osg::Referenced> wdata,
         throw WGEInitFailed( "Initialization of OpenGL graphics context failed." );
     }
 #else
-    m_GraphicsWindow( new osgViewer::GraphicsWindowEmbedded( x, y, width, height ) );
+    m_GraphicsWindow = osg::ref_ptr<osgViewer::GraphicsWindow>(
+            static_cast<osgViewer::GraphicsWindow*>( new osgViewer::GraphicsWindowEmbedded( x, y, width, height ) ) );
 #endif
 }
 
@@ -71,7 +75,7 @@ void WGEGraphicsWindow::createContext( int x, int y, int width, int height )
 
     // ensure correct $DISPLAY variable
     traits->readDISPLAY();
-    if ( traits->displayNum < 0 )
+    if( traits->displayNum < 0 )
     {
         traits->displayNum = 0;
     }

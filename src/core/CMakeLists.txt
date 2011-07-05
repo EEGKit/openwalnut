@@ -47,10 +47,26 @@ ENDIF()
 COLLECT_COMPILE_FILES( "${CMAKE_CURRENT_SOURCE_DIR}" TARGET_CPP_FILES TARGET_H_FILES TARGET_TEST_FILES )
 
 # Setup the target
-ADD_LIBRARY( ${LibName} SHARED ${TARGET_CPP_FILES} ${TARGET_H_FILES} )
-TARGET_LINK_LIBRARIES( ${LibName} ${OWExtBioSigName} ${OWExtEEPName} ${OWExtNiftiName}
-                                  ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${OPENGL_gl_LIBRARY} ${OPENSCENEGRAPH_LIBRARIES} 
+ADD_LIBRARY( ${LibName} SHARED ${TARGET_CPP_FILES} ${TARGET_H_FILES} ${OW_VERSION_HEADER} )
+TARGET_LINK_LIBRARIES( ${LibName} ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${OPENGL_gl_LIBRARY} ${OPENSCENEGRAPH_LIBRARIES}
                      )
+
+# Tell CMake that someone creates this file for us. See doc of SETUP_VERSION_HEADER in BuildUtils.cmake for details why this is needed.
+# NOTE: this needs to be placed AFTER ADD_EXECUTABLE or ADD_LIBRARY
+SETUP_USE_VERSION_HEADER( ${LibName} )
+
+# Set the version of the library.
+SET_TARGET_PROPERTIES( ${LibName} PROPERTIES 
+                       VERSION ${OW_VERSION} 
+                       SOVERSION ${OW_SOVERSION}
+)
+
+# Do not forget the install targets
+SETUP_LIB_INSTALL( ${LibName} ${OW_LIBRARY_DIR_RELATIVE} "CORE" )
+
+# Core contains the headers which are needed for any developer release. Install them.
+# NOTE: do not use ${TARGET_H_FILES}. The command requires a list
+SETUP_DEV_INSTALL( ${LibName} ${OW_LIBRARY_DIR_RELATIVE} TARGET_H_FILES "include/openwalnut/core" "CORE_DEV" )
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 # Test Setup
@@ -60,11 +76,67 @@ TARGET_LINK_LIBRARIES( ${LibName} ${OWExtBioSigName} ${OWExtEEPName} ${OWExtNift
 SETUP_TESTS( "${TARGET_TEST_FILES}" "${LibName}" "" )
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
+# Doxygen Release documentation
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+# NOTE: this full documentation also includes call/caller graphs, colaboration graphs and nicer inheritance graphs
+# but needs "dot" from graphviz to render them.
+SET( DEVDOC_DIR "${PROJECT_SOURCE_DIR}/../doc/core/html" )
+ADD_CUSTOM_TARGET( core_devdoc
+                   COMMAND doxygen ${PROJECT_SOURCE_DIR}/../doc/core/doxygenConfig
+                   COMMAND chmod -R g+r ${DEVDOC_DIR}
+                   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/..
+                   COMMENT "Build verbose doxygen documentation for core"
+                   VERBATIM
+                 )
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
+# Copy local resources
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+# copy our own resources
+IF( NOT OW_PACKAGE_NOCOPY_COREFONTS )
+    SETUP_RESOURCES( "core" "CORE" )
+ELSE()
+    # This is a hack which is quite debian specific. We do this here to avoid font duplicates since the ttf-liberation fonts are already
+    # available on Debian. If you need to modify this for another packaging thingy, please let me know (ebaum@informatik.uni-leipzig.d). We then
+    # should find a generic solution.
+    IF( OW_PACKAGE_PACKAGER STREQUAL "deb" )
+        INSTALL( CODE "MESSAGE( \"INSTALL: Symlinking fonts to \${CMAKE_INSTALL_PREFIX}/share/openwalnut/fonts.\" )"
+                COMPONENT "CORE" )
+        INSTALL( CODE "EXECUTE_PROCESS( COMMAND ${CMAKE_COMMAND} -E make_directory \${CMAKE_INSTALL_PREFIX}/share/openwalnut/fonts )"
+                COMPONENT "CORE" ) 
+        INSTALL( CODE "EXECUTE_PROCESS( COMMAND ${CMAKE_COMMAND} -E create_symlink /usr/share/fonts/truetype/ttf-liberation/LiberationMono-Bold.ttf \${CMAKE_INSTALL_PREFIX}/share/openwalnut/fonts/arial.ttf )"
+                COMPONENT "CORE" )
+        INSTALL( CODE "EXECUTE_PROCESS( COMMAND ${CMAKE_COMMAND} -E create_symlink /usr/share/fonts/truetype/ttf-liberation/LiberationMono-Bold.ttf \${CMAKE_INSTALL_PREFIX}/share/openwalnut/fonts/Bold.ttf )"
+                COMPONENT "CORE" )
+        INSTALL( CODE "EXECUTE_PROCESS( COMMAND ${CMAKE_COMMAND} -E create_symlink /usr/share/fonts/truetype/ttf-liberation/LiberationMono-Italic.ttf \${CMAKE_INSTALL_PREFIX}/share/openwalnut/fonts/Italic.ttf )"
+                COMPONENT "CORE" )
+        INSTALL( CODE "EXECUTE_PROCESS( COMMAND ${CMAKE_COMMAND} -E create_symlink /usr/share/fonts/truetype/ttf-liberation/LiberationMono-Regular.ttf \${CMAKE_INSTALL_PREFIX}/share/openwalnut/fonts/Regular.ttf )"
+                COMPONENT "CORE" )
+    ELSE()
+        MESSAGE( STATUS "Warning: You enabled \"OW_PACKAGE_NOCOPY_COREFONTS\" but packager unknown." ) 
+    ENDIF()
+ENDIF()
+
+# where to put doc files?
+# NOTE: the doc path should match the SONAME of lib. Use this command to query a proper name:
+# objdump -p libopenwalnut.so | sed -n -e's/^[[:space:]]*SONAME[[:space:]]*//p' | sed -e's/\([0-9]\)\.so\./\1-/; s/\.so\.//'
+SET( OW_DOC_DIR_RELATIVE "share/doc/libopenwalnut1" )
+SETUP_COMMON_DOC( ${OW_DOC_DIR_RELATIVE} "CORE" )
+
+# Also add an install target for this
+INSTALL( DIRECTORY ${DEVDOC_DIR} 
+         DESTINATION ${OW_DOC_DIR_RELATIVE}
+         COMPONENT "CORE_DOC"
+       )
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
 # Copy Shaders
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 COLLECT_SHADER_FILES( ${CMAKE_CURRENT_SOURCE_DIR} TARGET_GLSL_FILES )
-SETUP_SHADERS( "${TARGET_GLSL_FILES}" "${OW_SHARE_DIR}/shaders" )
+SETUP_SHADERS( "${TARGET_GLSL_FILES}" "${OW_SHARE_DIR_RELATIVE}/shaders" "CORE" )
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 # Style Checker
@@ -73,4 +145,5 @@ SETUP_SHADERS( "${TARGET_GLSL_FILES}" "${OW_SHARE_DIR}/shaders" )
 # setup the stylechecker. Ignore the platform specific stuff.
 SETUP_STYLECHECKER( "${LibName}"
                     "${TARGET_CPP_FILES};${TARGET_H_FILES};${TARGET_TEST_FILES};${TARGET_GLSL_FILES}"  # add all these files to the stylechecker
-                    ".*platformDependent\\/visualStudio\\/.*" )                                        # exlude some ugly files
+                    "" )                                        # exlude some ugly files
+

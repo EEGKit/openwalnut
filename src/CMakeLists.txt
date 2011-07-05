@@ -23,7 +23,7 @@
 #---------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
-# 
+#
 # General CMake Setup
 #
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -37,27 +37,18 @@ IF( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
 ENDIF()
 
 # append search path for FindModules:
-LIST( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../tools/CMakeModules )
+LIST( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../tools/cmake )
 # here, we have certain utilities. For example ASSERT_GE_VERSION which ensures a specific minimum version
-INCLUDE( ${PROJECT_SOURCE_DIR}/../tools/CMakeModules/Utils.cmake )
+INCLUDE( ${CMAKE_MODULE_PATH}/Utils.cmake )
 
-# mimic layout of install dir for build:
-SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin )
-SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib )
-SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib )
-SET( OW_CONFIG_DIR ${PROJECT_BINARY_DIR}/etc/OpenWalnut )
-SET( OW_SHARE_DIR ${PROJECT_BINARY_DIR}/share/OpenWalnut )
+# These scripts contains all the needed tools to setup the build
+INCLUDE( ${CMAKE_MODULE_PATH}/BuildUtils.cmake )
+INCLUDE( ${CMAKE_MODULE_PATH}/BuildModuleUtils.cmake )
 
 # CMAKE automatism to select static vs. shared building:
 IF( NOT CMAKE_GENERATOR MATCHES "Visual Studio" )
   OPTION( BUILD_SHARED_LIBS "Build shared libs" ON )
   MARK_AS_ADVANCED( BUILD_SHARED_LIBS )
-ENDIF()
-
-# Visual Studio version prior to 2010 do not provide stdint.h and inttypes.h
-# TODO(all): WTF!?
-IF( CMAKE_GENERATOR MATCHES "Visual Studio" )
-  INCLUDE_DIRECTORIES( "${PROJECT_SOURCE_DIR}/common/platformDependent/visualStudio/" )
 ENDIF()
 
 # The build types
@@ -78,7 +69,37 @@ IF( NOT cmake_build_type_tolower STREQUAL "debug" AND
 ENDIF()
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
-# 
+#
+# Install/Target-dir Options
+#  - NOTE: in our setup, build dir structure and install structure are the same
+#
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+# mimic layout of install dir for build:
+
+# these dirs are the same for all parts of OW
+SET( OW_RUNTIME_DIR_RELATIVE "bin" )
+SET( OW_RUNTIME_DIR ${PROJECT_BINARY_DIR}/${OW_RUNTIME_DIR_RELATIVE} )
+SET( OW_LIBRARY_DIR_RELATIVE "lib" )
+SET( OW_LIBRARY_DIR ${PROJECT_BINARY_DIR}/${OW_LIBRARY_DIR_RELATIVE} )
+SET( OW_ARCHIVE_DIR_RELATIVE "lib" )
+SET( OW_ARCHIVE_DIR ${PROJECT_BINARY_DIR}/${OW_ARCHIVE_DIR_RELATIVE} )
+SET( OW_MODULE_DIR_RELATIVE "lib/openwalnut" )
+SET( OW_MODULE_DIR ${PROJECT_BINARY_DIR}/${OW_MODULE_DIR_RELATIVE} )
+SET( OW_MAN_DIR_RELATIVE "share/man" )
+SET( OW_MAN_DIR "${PROJECT_BINARY_DIR}/share/man" )
+
+# One could also define this for every part of OW, but it does not make sense. It is "share" because it is shared among the different parts
+SET( OW_SHARE_DIR_RELATIVE "share/openwalnut" )
+SET( OW_SHARE_DIR ${PROJECT_BINARY_DIR}/${OW_SHARE_DIR_RELATIVE} )
+
+# set our paths for install targets
+SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OW_RUNTIME_DIR} )
+SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OW_LIBRARY_DIR} )
+SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OW_ARCHIVE_DIR} )
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
+#
 # Compilation Options
 #
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -120,20 +141,61 @@ SET( CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -DDEBUG -O2" CACHE STRING "" FORCE )
 ADD_DEFINITIONS( -DEIGEN_DONT_VECTORIZE -DEIGEN_DONT_ALIGN -DEIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT )
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
-# 
+#
 # OpenWalnut specific options
 #
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 
-# other options 
+# other options
 OPTION( OW_HANDLE_SHADERS "This ensures that shaders are available in build directory after build." ON )
-OPTION( OW_LINK_SHADERS "If turned on, shaders do not get copied. They get linked. This is a nice option for developers." OFF )
+
+# sorry, linking not available properly on windows, Cygwin supports this but we do not want special rules for thousands of environments.
+# ==> keep it clean
+IF( NOT CMAKE_HOST_SYSTEM MATCHES "Windows" )
+    OPTION( OW_LINK_SHADERS "If turned on, shaders do not get copied. They get linked. This is a nice option for developers." OFF )
+ENDIF()
+
+# Provide several options to control some aspects of resource copy.
+OPTION( OW_PACKAGE_BUILD "Enable this to get fine-grained control over several resources and files getting installed. This is very handy for package building." OFF )
+IF( OW_PACKAGE_BUILD )
+    SET( OW_PACKAGE_PACKAGER "cpack" CACHE STRING "Package builder. Set this to enable packager-specific options during install." )
+
+    OPTION( OW_PACKAGE_NOCOPY_LICENSE "Disable to copy our licensing information. Enabling this can be useful for package maintainer since several packaging systems have their own licence mechanism (i.e. Debian)." OFF )
+    OPTION( OW_PACKAGE_NOLINK_OPENTHREADS "Enable this to avoid linking OpenThreads. On some systems, OpenSceneGraph already is linked against it and thus linking OpenThreads to OW is not needed (Debian and Ubuntu for example)." OFF )
+    OPTION( OW_PACKAGE_NOCOPY_COREFONTS "Enable this if you have liberation fonts installed on your system. They will be linked. If disabled, our fonts are copied." OFF )
+ENDIF()
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
-# 
+# The openwalnut executable should print the revision/tag
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Generate needed headers
+# NOTE: add a line ADD_DEPENDENCIES( XYZ OW_generate_version_header ) to your target XYZ if you need the header!
+SET( OW_VERSION_HEADER_DIRECTORY ${PROJECT_BINARY_DIR}/versionHeader )
+SET( OW_VERSION_HEADER ${OW_VERSION_HEADER_DIRECTORY}/WVersion.h )
+# to allow all those targets to find the header:
+INCLUDE_DIRECTORIES( ${OW_VERSION_HEADER_DIRECTORY} )
+# Setup the target
+SETUP_VERSION_HEADER( ${OW_VERSION_HEADER} )
+
+# Set the OW version string. This can be used by others for setting target versions during compilation.
+GET_VERSION_STRING( dummy OW_VERSION "1.0.0 " )
+IF( NOT DEFINED OW_VERSION )
+    # CMake does not like unset variables for target properties.
+    SET( OW_VERSION "1.0.0" )
+ENDIF()
+
+# We need a SOVERSION too. This somehow describes the API compatibility. We use the major number here.
+SPLIT_VERSION_STRING( ${OW_VERSION} OW_VERSION_MAJOR OW_VERSION_MINOR OW_VERSION_PATCH )
+SET( OW_SOVERSION ${OW_VERSION_MAJOR} )
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
+#
 # REQUIRED third party libs
 #
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+# NOTE: please also have a look in src/ext/CMakeLists.txt. Other third-party libs might be searched there.
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------
 # Boost, at least 1.39
@@ -143,9 +205,7 @@ OPTION( OW_LINK_SHADERS "If turned on, shaders do not get copied. They get linke
 # grep -i include `find . -type f` | grep boost | awk '{print $2}' | sort | uniq
 
 # find the boost packages
-FIND_PACKAGE( Boost REQUIRED program_options thread filesystem date_time system signals regex )
-# we need at least 1.39
-ASSERT_GE_VERSION( "Boost" "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" 1.39.0 )
+FIND_PACKAGE( Boost 1.39.0 REQUIRED program_options thread filesystem date_time system signals regex )
 
 # Setup boost options
 SET( Boost_USE_MULTITHREAD ON )
@@ -177,13 +237,32 @@ IF( CMAKE_GENERATOR MATCHES "Visual Studio" )
     SET ( CMAKE_PREFIX_PATH "$ENV{ProgramFiles}/OpenSceneGraph" )
   ENDIF()
 ENDIF()
-FIND_PACKAGE( OpenSceneGraph ${MIN_OSG_VERSION} REQUIRED osgDB osgUtil osgGA osgViewer osgSim osgWidget osgText OpenThreads )
+FIND_PACKAGE( OpenSceneGraph ${MIN_OSG_VERSION} REQUIRED osgDB osgUtil osgGA osgViewer osgSim osgWidget osgText )
 
-# include the header paths
-INCLUDE_DIRECTORIES( ${OPENSCENEGRAPH_INCLUDE_DIRS} )
+# If the user did not disable license-copying, do it
+# NOTE: use this "double-negative" to use the fact that undefined variables yield FALSE.
+IF( OW_PACKAGE_NOLINK_OPENTHREADS )
+    # NOTE: this is a hack to remove the openthread lib from the list of OSG libs. It gets automatically added by the current
+    #       find script but it is not really needed on some systems (since they provide an osg lib which already is linked against this.).
+    FOREACH( osglib ${OPENSCENEGRAPH_LIBRARIES} )
+        STRING( REGEX MATCH ".*OpenThreads.*" IsExcluded "${osglib}" )
+        IF( IsExcluded )
+            LIST( REMOVE_ITEM OPENSCENEGRAPH_LIBRARIES ${osglib} )
+        ENDIF( IsExcluded )
+    ENDFOREACH()
+ENDIF()
+
+# -----------------------------------------------------------------------------------------------------------------------------------------------
+# Eigen3, at least 3.0.0
+# See http://eigen.tuxfamily.org
+
+FIND_PACKAGE( eigen3 REQUIRED )
+IF( EIGEN3_FOUND )
+    INCLUDE_DIRECTORIES( ${EIGEN3_INCLUDE_DIR} )
+ENDIF()
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
-# 
+#
 # OPTIONAL third party libs
 #  - include only libs you need in the OW framework
 #
@@ -192,7 +271,7 @@ INCLUDE_DIRECTORIES( ${OPENSCENEGRAPH_INCLUDE_DIRS} )
 # NOTE: please add only libs which are used in core! If you need a third party lib for your module, include it in your module's CMakeLists!
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
-# 
+#
 # Unit Testing
 #
 #  - We use cxxtest. See http://cxxtest.tigris.org
@@ -201,13 +280,13 @@ INCLUDE_DIRECTORIES( ${OPENSCENEGRAPH_INCLUDE_DIRS} )
 
 # Try to find it
 FIND_PACKAGE( CxxTest QUIET )
-MARK_AS_ADVANCED( CXXTEST_PERL_TESTGEN_EXECUTABLE )
-   
+
 # If it is found, and OW_USE_TESTS is on, build the tests and activate CMake's test mechanisms
 IF( CXXTEST_FOUND )
   # To enable testing
   OPTION( OW_USE_TESTS "This enables compilation of tests" ON )
-  INCLUDE_DIRECTORIES( ${CXXTEST_INCLUDE_DIR} )
+  INCLUDE_DIRECTORIES( ${CXXTEST_INCLUDE_DIRS} )
+  INCLUDE_DIRECTORIES( ${CXXTEST_INCLUDE_DIR} ) # NOTE: old FindCXXTest versions used this name
   IF( OW_USE_TESTS )
     SET( OW_COMPILE_TESTS ON ) #We need this variable because this is tested more often.
     # Package settings:
@@ -228,37 +307,34 @@ ADD_CUSTOM_TARGET( vtest
                  )
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
-# 
-# Resource Copy
-#  - This simply copies the structure from ../resources to the build directory
+#
+# Resource/Doc Copy
+#  - Resource copy is done by the OW parts. This just copies additional helpers
 #
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 
-# as all the resources with the correct directory structure reside in ../resources, this target is very easy to handle
-SET( ResourcesPath "${PROJECT_SOURCE_DIR}/../resources" )
-ADD_CUSTOM_TARGET( ResourceConfiguration
-    ALL
-    COMMAND ${CMAKE_COMMAND} -E copy_directory "${ResourcesPath}" "${PROJECT_BINARY_DIR}/"
-    COMMENT "Copying resources to build directory"
-)
-
-# this is done once -> create one default walnut.cfg
-IF( NOT EXISTS ${OW_CONFIG_DIR}/walnut.cfg )
-    CONFIGURE_FILE( ${PROJECT_SOURCE_DIR}/../resources/etc/OpenWalnut/walnut.cfg.official ${OW_CONFIG_DIR}/walnut.cfg COPYONLY )
-    MESSAGE( STATUS "Copied walnut.cfg.official to ${OW_CONFIG_DIR}/walnut.cfg" )
+# copy our debug utilities. This is only useful if compiled debug or RelWithDebInfo
+IF( NOT cmake_build_type_tolower STREQUAL "release" )
+    # NOTE: DO NOT add and install target here. Debugging tools are not useful and wished in an OpenWalnut installation.
+    ADD_CUSTOM_TARGET( CopyDebugUtilities
+        ALL
+        COMMAND ${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/../tools/debugging" "${PROJECT_BINARY_DIR}/"
+        COMMENT "Copying debug utilities"
+    )
 ENDIF()
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
-# 
-# Num Cores 
+#
+# Num Cores
 #  - Number of paralelle operations on this machine
 #  - Needed by several of our following targets
 #
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 
+# TODO(ebaum): use try_run for this
 # Determines the number of cores available on this machine
 IF( NOT CMAKE_GENERATOR MATCHES "Visual Studio" )
-    SET( NUM_CORES_SOURCE_DIR ${PROJECT_SOURCE_DIR}/../tools/numCores )
+    SET( NUM_CORES_SOURCE_DIR ${CMAKE_MODULE_PATH}/numCores )
     SET( NUM_CORES_BINARY_DIR ${PROJECT_BINARY_DIR}/numCores )
     SET( NUM_CORES_BINARY ${NUM_CORES_BINARY_DIR}/numCores )
     ADD_CUSTOM_TARGET( numCores
@@ -270,7 +346,7 @@ IF( NOT CMAKE_GENERATOR MATCHES "Visual Studio" )
 ENDIF()
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
-# 
+#
 # Documentation
 #  - Call doxygen here
 #
@@ -285,18 +361,8 @@ ADD_CUSTOM_TARGET( doc
                    VERBATIM
                  )
 
-# NOTE: this full documentation also includes call/caller graphs, colaboration graphs and nicer inheritance graphs
-# but needs "dot" from graphviz to render them.
-ADD_CUSTOM_TARGET( fulldoc
-                   COMMAND doxygen ${PROJECT_SOURCE_DIR}/../doc/developer/doxygenConfigFull
-                   COMMAND chmod -R g+r ${PROJECT_SOURCE_DIR}/../doc/developer/htmlFull
-                   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/..
-                   COMMENT "Build verbose doxygen documentation"
-                   VERBATIM
-                 )
-
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
-# 
+#
 # Style
 #  - We use brainlint for this
 #
@@ -306,7 +372,7 @@ ADD_CUSTOM_TARGET( fulldoc
 ADD_CUSTOM_TARGET( stylecheck DEPENDS numCores )
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
-# 
+#
 # Convenience targets
 #
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -334,49 +400,74 @@ ADD_CUSTOM_TARGET( many
                    COMMENT "Make many special make targets in combination."
                  )
 
+# some convenience install targets:
+ADD_CUSTOM_TARGET( list_install_tarets
+                   COMMAND echo The following components can be installed:
+                   COMMAND echo " * install - install everything."
+                   COMMAND echo " * install_runtime - install only openwalnut-qt4."
+                   COMMAND echo " * install_lib - install only libopenwalnut."
+                   COMMAND echo " * install_modules - install only the compiled modules."
+                   COMMAND echo " * install_dev - install the development headers for libopenwalnut."
+                   COMMAND echo " * install_devdoc - install the development documentation for libopenwalnut."
+                   COMMENT "List installation targets."
+                 )
+
+# install targets for different parts
+ADD_CUSTOM_TARGET( install_runtime
+                    ${CMAKE_COMMAND}
+                        -DCOMPONENT=QT4GUI
+                        -P ${CMAKE_BINARY_DIR}/cmake_install.cmake
+                 )
+ADD_CUSTOM_TARGET( install_lib
+                    ${CMAKE_COMMAND}
+                        -DCOMPONENT=CORE
+                        -P ${CMAKE_BINARY_DIR}/cmake_install.cmake
+                    ${CMAKE_COMMAND}
+                        -DCOMPONENT=EXT
+                        -P ${CMAKE_BINARY_DIR}/cmake_install.cmake
+                 )
+ADD_CUSTOM_TARGET( install_modules
+                    ${CMAKE_COMMAND}
+                        -DCOMPONENT=MODULES
+                        -P ${CMAKE_BINARY_DIR}/cmake_install.cmake
+                 )
+ADD_CUSTOM_TARGET( install_dev
+                    ${CMAKE_COMMAND}
+                        -DCOMPONENT=CORE_DEV
+                        -P ${CMAKE_BINARY_DIR}/cmake_install.cmake
+                 )
+ADD_CUSTOM_TARGET( install_devdoc
+                    ${CMAKE_COMMAND}
+                        -DCOMPONENT=CORE_DOC
+                        -P ${CMAKE_BINARY_DIR}/cmake_install.cmake
+                    DEPENDS core_devdoc
+                 )
+
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
-# 
+#
 # Compilation Targets
-#  - The GUI + OpenWalnut.cpp ==> walnut binary
+#  - The GUI + OpenWalnut.cpp ==> openwalnut binary
 #  - Ext ==> libOWext_*
 #  - All the others ==> libOWcore
 #
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 
-# This script contains all the needed tools to setup the build
-INCLUDE( ${PROJECT_SOURCE_DIR}/../tools/CMakeModules/BuildUtils.cmake )
-INCLUDE( ${PROJECT_SOURCE_DIR}/../tools/CMakeModules/BuildModuleUtils.cmake )
-
-# libcnt needs absolute inclusion somewhere
-INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/ext/libeep )
-INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/ext )
-
 # to allow non-core code to access core and ext absolutely
 INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR} )
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------
-# OWext
+# openwalnut core library
 
-SET( OWExtNiftiName "OWext_niftiio" )
-SET( OWExtEEPName "OWext_eep" )
-SET( OWExtBioSigName "OWext_biosig" )
-
-# build external libs in ext/
-ADD_SUBDIRECTORY( ext ) # The needed external libraries
-
-# -----------------------------------------------------------------------------------------------------------------------------------------------
-# OWcore
-
-SET( OWCoreName "OWcore" )
+SET( OWCoreName "openwalnut" )
 
 # build core
 ADD_SUBDIRECTORY( core )
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------
-# QT4 Walnut binary
+# QT4 OpenWalnut binary
 
 SET( OWQt4GuiName "qt4gui" )
-SET( OWBinaryName "walnut" )
+SET( OWBinaryName "openwalnut-qt4" )
 
 # build core
 ADD_SUBDIRECTORY( qt4gui )
@@ -384,9 +475,57 @@ ADD_SUBDIRECTORY( qt4gui )
 # -----------------------------------------------------------------------------------------------------------------------------------------------
 # Modules
 
-# where to put the modules by default?
-SET( OWModuleTargetDir ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/OpenWalnut )
-
 # build modules
 ADD_SUBDIRECTORY( modules )
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
+#
+# Advanced variables
+#  - Here, we mark all variables advanced which are from mandatory dependencies.
+#
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+# NOTE: sorry but this is needed since those vars spam the ccmake. The user should find the important options fast!
+
+# Remove all of them
+MARK_AS_ADVANCED( FORCE QT_QMAKE_EXECUTABLE )
+   
+MARK_AS_ADVANCED( FORCE OSG_INCLUDE_DIR )
+MARK_AS_ADVANCED( FORCE OSG_LIBRARY )
+MARK_AS_ADVANCED( FORCE OSG_LIBRARY_DEBUG )
+MARK_AS_ADVANCED( FORCE OSGDB_INCLUDE_DIR )
+MARK_AS_ADVANCED( FORCE OSGDB_LIBRARY )
+MARK_AS_ADVANCED( FORCE OSGDB_LIBRARY_DEBUG )
+MARK_AS_ADVANCED( FORCE OSGGA_INCLUDE_DIR )
+MARK_AS_ADVANCED( FORCE OSGGA_LIBRARY )
+MARK_AS_ADVANCED( FORCE OSGGA_LIBRARY_DEBUG )
+MARK_AS_ADVANCED( FORCE OSGSIM_INCLUDE_DIR )
+MARK_AS_ADVANCED( FORCE OSGSIM_LIBRARY )
+MARK_AS_ADVANCED( FORCE OSGSIM_LIBRARY_DEBUG )
+MARK_AS_ADVANCED( FORCE OSGUTIL_INCLUDE_DIR )
+MARK_AS_ADVANCED( FORCE OSGUTIL_LIBRARY )
+MARK_AS_ADVANCED( FORCE OSGUTIL_LIBRARY_DEBUG )
+MARK_AS_ADVANCED( FORCE OSGTEXT_INCLUDE_DIR )
+MARK_AS_ADVANCED( FORCE OSGTEXT_LIBRARY )
+MARK_AS_ADVANCED( FORCE OSGTEXT_LIBRARY_DEBUG )
+MARK_AS_ADVANCED( FORCE OSGWIDGET_INCLUDE_DIR )
+MARK_AS_ADVANCED( FORCE OSGWIDGET_LIBRARY )
+MARK_AS_ADVANCED( FORCE OSGWIDGET_LIBRARY_DEBUG )
+MARK_AS_ADVANCED( FORCE OSGVIEWER_INCLUDE_DIR )
+MARK_AS_ADVANCED( FORCE OSGVIEWER_LIBRARY )
+MARK_AS_ADVANCED( FORCE OSGVIEWER_LIBRARY_DEBUG )
+
+MARK_AS_ADVANCED( FORCE OPENTHREADS_INCLUDE_DIR )
+MARK_AS_ADVANCED( FORCE OPENTHREADS_LIBRARY )
+MARK_AS_ADVANCED( FORCE OPENTHREADS_LIBRARY_DEBUG )
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
+#
+# CPack - Packaging
+#  - TGZ, Deb, RPM
+#
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+# for package setup:
+INCLUDE( ${CMAKE_MODULE_PATH}/Packaging.cmake )
 

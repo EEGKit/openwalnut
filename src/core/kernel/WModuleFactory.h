@@ -33,7 +33,6 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
-#include "modules/data/WMData.h" // this is the ONLY module with a special meaning. Every one knowing the factory also knows this
 #include "../common/WSharedAssociativeContainer.h"
 #include "WModuleCombinerTypes.h"
 #include "WModule.h"
@@ -126,6 +125,15 @@ public:
     const boost::shared_ptr< WModule > getPrototypeByInstance( boost::shared_ptr< WModule > instance );
 
     /**
+     * Finds a prototype using an type.
+     *
+     * \param type the type of module.
+     *
+     * \return the prototypes as list.
+     */
+    std::vector< WModule::ConstSPtr > getPrototypesByType( MODULE_TYPE type );
+
+    /**
      * This method gives read access to the list of all prototypes.
      *
      * \return the read ticket for the prototype list
@@ -197,7 +205,7 @@ protected:
 private:
 
     /**
-     * Loader class managing dynamically loaded modules in open walnut.
+     * Loader class managing dynamically loaded modules in OpenWalnut.
      */
     WModuleLoader m_moduleLoader;
 

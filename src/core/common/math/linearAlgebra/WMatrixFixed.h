@@ -43,8 +43,8 @@
 #include <osg/Matrixd>
 
 // Needed for conversion: Eigen3 Types
-#include "ext/Eigen/Core"
-#include "ext/Eigen/LU" // needed for the inverse() function
+#include <Eigen/Core>
+#include <Eigen/LU>  // needed for the inverse() function
 
 #include "../../WDefines.h"
 #include "../../WStringUtils.h"
@@ -111,9 +111,9 @@ public:
     template < typename RHSValueT, ValueStoreTemplate RHSValueStoreT >
     ValueStore< ValueT, Rows, Cols >& operator=( RHSValueStoreT< RHSValueT, Rows, Cols > const& rhs )
     {
-        for ( size_t row = 0; row < Rows; ++row )
+        for( size_t row = 0; row < Rows; ++row )
         {
-            for ( size_t col = 0; col < Cols; ++col )
+            for( size_t col = 0; col < Cols; ++col )
             {
                 operator()( row, col ) = rhs( row, col );
             }
@@ -201,9 +201,9 @@ public:
     WMatrixFixed()
     {
         // initialize to zero
-        for ( size_t row = 0; row < Rows; ++row )
+        for( size_t row = 0; row < Rows; ++row )
         {
-            for ( size_t col = 0; col < Cols; ++col )
+            for( size_t col = 0; col < Cols; ++col )
             {
                 operator()( row, col ) = ValueT( 0 );
             }
@@ -265,22 +265,11 @@ public:
     static MatrixType identity()
     {
         MatrixType m = zero();
-        for ( size_t i = 0; i < std::min( Rows, Cols ); ++i )
+        for( size_t i = 0; i < std::min( Rows, Cols ); ++i )
         {
             m( i, i ) = ValueT( 1 );
         }
         return m;
-    }
-
-    /**
-     * Returns an identity matrix.
-     * \deprecated just for compatibility with eigen3 types.
-     *
-     * \return identity
-     */
-    OW_API_DEPRECATED static MatrixType Identity()
-    {
-        return identity();
     }
 
     /**
@@ -291,25 +280,14 @@ public:
     static MatrixType zero()
     {
         MatrixType m;
-        for ( size_t row = 0; row < Rows; ++row )
+        for( size_t row = 0; row < Rows; ++row )
         {
-            for ( size_t col = 0; col < Cols; ++col )
+            for( size_t col = 0; col < Cols; ++col )
             {
                 m( row, col ) = ValueT( 0 );
             }
         }
         return m;
-    }
-
-    /**
-     * Returns an zero-initialized matrix.
-     * \deprecated just for compatibility with eigen3 types.
-     *
-     * \return zero initialized matrix.
-     */
-    OW_API_DEPRECATED static MatrixType Zero()
-    {
-        return zero();
     }
 
     /**
@@ -355,18 +333,18 @@ public:
                                                                                                             size_t colOffset = 0 )
     {
         MatrixType result;
-        for ( size_t row = 0; row < Rows; ++row )
+        for( size_t row = 0; row < Rows; ++row )
         {
-            for ( size_t col = 0; col < Cols; ++col )
+            for( size_t col = 0; col < Cols; ++col )
             {
-                if ( ( row >= rowOffset ) && ( col >= colOffset ) )
+                if( ( row >= rowOffset ) && ( col >= colOffset ) )
                 {
                     // find the correct index in the src matrix
                     size_t srcRow = row - rowOffset;
                     size_t srcCol = col - colOffset;
 
                     // is this a valid index?
-                    if ( ( srcRow < RHSRows ) && ( srcCol < RHSCols ) )
+                    if( ( srcRow < RHSRows ) && ( srcCol < RHSCols ) )
                     {
                         result( row, col ) = src( srcRow, srcCol );
                     }
@@ -384,6 +362,80 @@ public:
         return result;
     }
 
+    /**
+      * Set a row to a specific vector.
+      *
+      * \tparam RHSValueT Value type of the given matrix
+      * \tparam ValueStoreT Value store of the given matrix
+      *
+      * \param index the index of the row you want to set
+      * \param vec the values to set for the row
+      *
+      */
+    template< typename RHSValueT, ValueStoreTemplate RHSValueStoreT >
+    void  setRowVector( size_t index, const WMatrixFixed< RHSValueT, Rows, 1, RHSValueStoreT >& vec )
+    {
+        for( size_t col = 0; col < Cols; col++ )
+        {
+            at( index, col ) = vec( col, 0 );
+        }
+    }
+
+    /**
+      * Get a vector containing a specific row
+      *
+      * \param index the index of the row
+      *
+      * \return the row as a vector
+      */
+    WMatrixFixed< ValueT, Cols, 1, ValueStoreT > getRowVector( size_t index ) const
+    {
+        WMatrixFixed< ValueT, Cols, 1 > result;
+        for( size_t col = 0; col < Cols; col++ )
+        {
+            result( col, 0 ) = at( index, col );
+        }
+
+        return result;
+    }
+
+    /**
+      * Set a column to a specific vector.
+      *
+      * \tparam RHSValueT Value type of the given matrix
+      * \tparam ValueStoreT Value store of the given matrix
+      *
+      * \param index the index of the column you want to set
+      * \param vec the values to set for the column
+      *
+      */
+    template< typename RHSValueT, ValueStoreTemplate RHSValueStoreT >
+    void  setColumnVector( size_t index, const WMatrixFixed< RHSValueT, Rows, 1, RHSValueStoreT >& vec )
+    {
+        for( size_t row = 0; row < Rows; row++ )
+        {
+            at( row, index ) = vec( row, 0 );
+        }
+    }
+
+    /**
+      * Get a vector containing a specific column
+      *
+      * \param index the index of the column
+      *
+      * \return the column as a vector
+      */
+    WMatrixFixed< ValueT, Rows, 1 > getColumnVector( size_t index ) const
+    {
+        WMatrixFixed< ValueT, Rows, 1 > result;
+        for( size_t row = 0; row < Rows; row++ )
+        {
+            result( row, 0 ) = at( row, index );
+        }
+
+        return result;
+    }
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Conversion
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -396,9 +448,9 @@ public:
     operator Eigen::Matrix< ValueT, Rows, Cols >() const
     {
         Eigen::Matrix< ValueT, Rows, Cols > m;
-        for ( size_t row = 0; row < Rows; ++row )
+        for( size_t row = 0; row < Rows; ++row )
         {
-            for ( size_t col = 0; col < Cols; ++col )
+            for( size_t col = 0; col < Cols; ++col )
             {
                 m( row, col ) = operator()( row, col );
             }
@@ -489,9 +541,9 @@ public:
         BOOST_STATIC_ASSERT( Cols == 4 );
 
         osg::Matrixd m2;
-        for ( size_t row = 0; row < 4; ++row )
+        for( size_t row = 0; row < 4; ++row )
         {
-            for ( size_t col = 0; col < 4; ++col )
+            for( size_t col = 0; col < 4; ++col )
             {
                 m2( row, col ) = operator()( row, col );
             }
@@ -538,9 +590,9 @@ public:
      */
     WMatrixFixed( const Eigen::Matrix< ValueT, Rows, Cols >& m )    // NOLINT - we do not want it explicit
     {
-        for ( size_t row = 0; row < Rows; ++row )
+        for( size_t row = 0; row < Rows; ++row )
         {
-            for ( size_t col = 0; col < Cols; ++col )
+            for( size_t col = 0; col < Cols; ++col )
             {
                 operator()( row, col ) = m( row, col );
             }
@@ -557,9 +609,9 @@ public:
         BOOST_STATIC_ASSERT( Rows == 4 );
         BOOST_STATIC_ASSERT( Cols == 4 );
 
-        for ( size_t row = 0; row < 4; ++row )
+        for( size_t row = 0; row < 4; ++row )
         {
-            for ( size_t col = 0; col < 4; ++col )
+            for( size_t col = 0; col < 4; ++col )
             {
                 operator()( row, col ) = m( row, col );
             }
@@ -606,7 +658,7 @@ public:
         BOOST_STATIC_ASSERT( Rows == 4 );
         BOOST_STATIC_ASSERT( Cols == 1 );
 
-        operator[]( 0 ) = m[1];
+        operator[]( 0 ) = m[0];
         operator[]( 1 ) = m[1];
         operator[]( 2 ) = m[2];
         operator[]( 3 ) = m[3];
@@ -622,7 +674,7 @@ public:
         BOOST_STATIC_ASSERT( Rows == 4 );
         BOOST_STATIC_ASSERT( Cols == 1 );
 
-        operator[]( 0 ) = m[1];
+        operator[]( 0 ) = m[0];
         operator[]( 1 ) = m[1];
         operator[]( 2 ) = m[2];
         operator[]( 3 ) = m[3];
@@ -704,9 +756,9 @@ public:
     operator*( const RHSValueT& rhs ) const
     {
         WMatrixFixed< typename WTypeTraits::TypePromotion< ValueT, RHSValueT >::Result, Rows, Cols, ValueStoreT > m;
-        for ( size_t row = 0; row < Rows; ++row )
+        for( size_t row = 0; row < Rows; ++row )
         {
-            for ( size_t col = 0; col < Cols; ++col )
+            for( size_t col = 0; col < Cols; ++col )
             {
                 m( row, col ) = operator()( row, col ) * rhs;
             }
@@ -763,9 +815,9 @@ public:
         operator+( const WMatrixFixed< RHSValueT, Rows, Cols, RHSValueStoreT >& rhs ) const
     {
         WMatrixFixed< typename WTypeTraits::TypePromotion< ValueT, RHSValueT >::Result, Rows, Cols, ValueStoreT > m;
-        for ( size_t row = 0; row < Rows; ++row )
+        for( size_t row = 0; row < Rows; ++row )
         {
-            for ( size_t col = 0; col < Cols; ++col )
+            for( size_t col = 0; col < Cols; ++col )
             {
                 m( row, col ) = operator()( row, col ) + rhs( row, col );
             }
@@ -796,9 +848,9 @@ public:
         operator-( const WMatrixFixed< RHSValueT, Rows, Cols, RHSValueStoreT >& rhs ) const
     {
         WMatrixFixed< typename WTypeTraits::TypePromotion< ValueT, RHSValueT >::Result, Rows, Cols, ValueStoreT > m;
-        for ( size_t row = 0; row < Rows; ++row )
+        for( size_t row = 0; row < Rows; ++row )
         {
-            for ( size_t col = 0; col < Cols; ++col )
+            for( size_t col = 0; col < Cols; ++col )
             {
                 m( row, col ) = operator()( row, col ) - rhs( row, col );
             }
@@ -881,7 +933,7 @@ public:
      */
     ValueT& at( size_t row, size_t col ) throw( WOutOfBounds )
     {
-        if ( ( row >= Rows ) || ( col >= Cols ) )
+        if( ( row >= Rows ) || ( col >= Cols ) )
         {
             throw WOutOfBounds( "Index pair (" + boost::lexical_cast< std::string >( row ) + ", " + boost::lexical_cast< std::string >( col ) +
                                 ") is invalid for " + boost::lexical_cast< std::string >( Rows ) + "x" + boost::lexical_cast< std::string >( Cols ) +
@@ -901,7 +953,7 @@ public:
      */
     const ValueT& at( size_t row, size_t col ) const throw( WOutOfBounds )
     {
-        if ( ( row >= Rows ) || ( col >= Cols ) )
+        if( ( row >= Rows ) || ( col >= Cols ) )
         {
             throw WOutOfBounds( "Index pair (" + boost::lexical_cast< std::string >( row ) + ", " + boost::lexical_cast< std::string >( col ) +
                                 ") is invalid for " + boost::lexical_cast< std::string >( Rows ) + "x" + boost::lexical_cast< std::string >( Cols ) +
@@ -998,9 +1050,9 @@ public:
     bool operator==( const WMatrixFixed< RHSValueT, Rows, Cols, RHSValueStoreT >& rhs ) const throw()
     {
         bool eq = true;
-        for ( size_t row = 0; eq && ( row < Rows ); ++row )
+        for( size_t row = 0; eq && ( row < Rows ); ++row )
         {
-            for ( size_t col = 0; eq && ( col < Cols ); ++col )
+            for( size_t col = 0; eq && ( col < Cols ); ++col )
             {
                 eq = eq && ( operator()( row, col ) == rhs( row, col ) );
             }
@@ -1021,9 +1073,9 @@ public:
     {
         bool eq = true;
         bool result = true;
-        for ( size_t row = 0; eq && ( row < Rows ); ++row )
+        for( size_t row = 0; eq && ( row < Rows ); ++row )
         {
-            for ( size_t col = 0; eq && ( col < Cols ); ++col )
+            for( size_t col = 0; eq && ( col < Cols ); ++col )
             {
                 eq = eq && ( operator()( row, col ) == rhs( row, col ) );
                 result = ( operator()( row, col ) < rhs( row, col ) );
@@ -1180,7 +1232,7 @@ template< typename ValueT, ValueStoreTemplate ValueStoreT, size_t Rows >
 ValueT length2( const WMatrixFixed< ValueT, Rows, 1, ValueStoreT >& a )
 {
     ValueT r = ValueT();
-    for ( size_t i = 0; i < Rows; ++i )
+    for( size_t i = 0; i < Rows; ++i )
     {
         r += a( i, 0 ) * a( i, 0 );
     }
@@ -1201,7 +1253,7 @@ template< typename ValueT, ValueStoreTemplate ValueStoreT, size_t Cols >
 ValueT length2( const WMatrixFixed< ValueT, 1, Cols, ValueStoreT >& a )
 {
     ValueT r = ValueT();
-    for ( size_t i = 0; i < Cols; ++i )
+    for( size_t i = 0; i < Cols; ++i )
     {
         r += a( 0, i ) * a( 0, i );
     }
@@ -1322,9 +1374,9 @@ template< typename ValueT, size_t Rows, size_t Cols, ValueStoreTemplate ValueSto
 std::ostream& operator<<( std::ostream& out, const WMatrixFixed< ValueT, Rows, Cols, ValueStoreT >& m )
 {
     // NOTE if you change this operator, also change operator >>
-    for ( size_t row = 0; row < m.getRows(); ++row )
+    for( size_t row = 0; row < m.getRows(); ++row )
     {
-        for ( size_t col = 0; col < m.getColumns(); ++col )
+        for( size_t col = 0; col < m.getColumns(); ++col )
         {
             out << m( row, col ) << ";";
         }

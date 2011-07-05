@@ -45,6 +45,7 @@
 #include <osgViewer/Viewer>
 
 #include "../common/WThreadedRunner.h"
+#include "../common/WConditionOneShot.h"
 #include "../common/WColor.h"
 #include "../common/math/linearAlgebra/WLinearAlgebra.h"
 #include "WGEGraphicsWindow.h"
@@ -144,6 +145,32 @@ public:
      */
     static bool isRunning();
 
+    /**
+     * Waits for the GE to come up. Fails if engine is not started.
+     *
+     * \return true if engine now running
+     */
+    static bool waitForStartupComplete();
+
+    /**
+     * Function notifies the viewer threads (if any) to start. This should only be called AFTER the OpenGL widgets/windows have been initialized.
+     */
+    void finalizeStartup();
+
+    /**
+     * Enables multithreaded view. This MUST be called before run(). On Mac, this has no function.
+     *
+     * \param enable true if multithreaded
+     */
+    void setMultiThreadedViews( bool enable = true );
+
+    /**
+     * Checks whether the viewers work multithreaded.
+     *
+     * \return true if multithreaded
+     */
+    bool isMultiThreadedViews() const;
+
 protected:
 
     /**
@@ -196,6 +223,11 @@ private:
      * True if graphics engine is running.
      */
     bool m_running;
+
+    /**
+     * This condition is fired externally if all the GUI startup is done to ensure all OGL stuff is initialized prior to OSG threading startup.
+     */
+    WConditionOneShot m_startThreadingCondition;
 };
 
 /**
