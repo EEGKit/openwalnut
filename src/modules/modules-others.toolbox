@@ -32,6 +32,7 @@ ADD_MODULE( splineSurface )
 ADD_MODULE( subtractDataSetScalar )
 ADD_MODULE( surfaceParameterAnimator )
 ADD_MODULE( webglSupport )
+ADD_MODULE( oCLgauss ${OPENCL_LIBRARY} )
 
 IF( Teem_FOUND )
     ADD_MODULE( teemGlyphs ${Teem_LIBRARIES} )
