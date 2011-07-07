@@ -60,8 +60,11 @@ uniform int u_texture1SizeX;
 uniform sampler3D u_gradientsSampler;
 #endif
 
+// The number of surfaces being drawn
+uniform int u_surfCount;
+
 // The amount of deviation tolerated for the isovalue
-uniform float u_isovaltolerance;
+uniform float u_isovalTolerance;
 
 // The number of steps to use.
 uniform int u_steps;
@@ -145,7 +148,7 @@ void rayTrace( in vec3 curPoint, in float isovalue, in vec4 isocolor, in float s
         float curValue = texture3D( u_texture0Sampler, curPoint ).r;
 
         // is it the isovalue?
-        if( abs( curValue - isovalue ) < u_isovaltolerance )
+        if( abs( curValue - isovalue ) < u_isovalTolerance )
         {
             // we need the depth value of the current point inside the cube -> standard pipeline
 
@@ -234,7 +237,7 @@ void main()
     vec4 isocolor;
 
     // for each isosurface, set the isovalue + isocolor and call the raytracer
-    for( int j = 0; j < 4; j += 2 )
+    for( int j = 0; j < u_surfCount; j++ )
     {
         isovalue = v_isovalues[j];
         #ifdef MANUALALPHA_ENABLED

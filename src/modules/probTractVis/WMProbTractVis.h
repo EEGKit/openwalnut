@@ -127,6 +127,11 @@ private:
     boost::shared_ptr< WModuleInputData< WDataSetVector > > m_gradients;
 
     /**
+     * The number of isosurfaces drawn.
+     */
+    WPropInt m_surfCount;
+
+    /**
      * The deviation tolerated for the m_isoValue.
      */
     WPropDouble m_isoValueTolerance;

@@ -114,6 +114,10 @@ void WMProbTractVis::properties()
     // Initialize the properties
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
 
+    m_surfCount= m_properties->addProperty( "Surface count", "Number of isosurfaces drawn", 2 );
+    m_surfCount->setMin( 0 );
+    m_surfCount->setMax( 4 );
+
     // TODO(aberres): find what to do with the cube (it uses m_isoColor)
     m_isoColor1      = m_properties->addProperty( "Iso color 1", "The color to blend the isosurface with.", WColor( 0.5, 0.0, 0.0, 1.0 ), m_propCondition );
     m_isoColor2      = m_properties->addProperty( "Iso color 2", "The color to blend the isosurface with.", WColor( 1.0, 0.5, 0.0, 1.0 ), m_propCondition );
@@ -132,11 +136,11 @@ void WMProbTractVis::properties()
     m_isoValueTolerance = m_properties->addProperty( "Isovalue tolerance", "The amount of deviation tolerated for the isovalue", 0.05 );
     m_isoValueTolerance->setMax( 0.5 );
 
+    m_manualAlpha = m_properties->addProperty( "Manual Alpha", "Lets user use the slider to set a global alpha rather than computing it automatically.", false );
+
     m_alpha         = m_properties->addProperty( "Opacity %",        "The opacity in %. Transparency = 1 - Opacity.", 0.7 );
     m_alpha->setMin( 0.0 );
     m_alpha->setMax( 1.0 );
-
-    m_manualAlpha = m_properties->addProperty( "Manual Alpha", "Lets user use the slider to set a global alpha rather than computing it automatically.", false );
 
     m_phongShading  = m_properties->addProperty( "Phong Shading", "If enabled, Phong shading gets applied on a per-pixel basis.", true );
 
@@ -224,7 +228,7 @@ void WMProbTractVis::moduleMain()
         }
 
         // m_isoColor or shading changed
-        if ( m_isoColor1->changed() || m_isoColor2->changed() || m_isoColor3->changed() || m_isoColor4->changed()  )
+        if ( m_isoColor1->changed() || m_isoColor2->changed() || m_isoColor3->changed() || m_isoColor4->changed() )//|| m_surfCount->changed() )
         {
             // a new color requires the proxy geometry to be rebuild as we store it as color in this geometry
             dataUpdated = true;
@@ -295,8 +299,8 @@ void WMProbTractVis::moduleMain()
             ////////////////////////////////////////////////////////////////////////////////////////////////////
             // setup all those uniforms and additional textures
             ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovaltolerance", m_isoValueTolerance ) );
+            rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_surfCount", m_surfCount ) );
+            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalTolerance", m_isoValueTolerance ) );
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_steps", m_stepCount ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_alpha", m_alpha ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_colormapRatio", m_colormapRatio ) );
