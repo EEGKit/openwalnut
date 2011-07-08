@@ -111,10 +111,20 @@ private:
      *  @return the id 
      *  @param clSelectedPlatformID         OpenCL platform ID  */
     cl_int oclGetPlatformID(cl_platform_id* clSelectedPlatformID);
-
-    /** helper for loading cl-file
-     */
-    char* file_contents(const char *filename, int *length);
+    
+    /** OpenCL parameters */
+    cl_platform_id platform;
+    cl_context context;
+    cl_command_queue queue;
+    cl_device_id device;
+    cl_program program;
+    size_t program_length;  
+    cl_kernel kernel;
+    cl_mem gol_d;
+    cl_mem res_d;
+    
+    int* gol_h;
+    int* res_h;
     
     /**
      * A condition used to notify about changes in several properties.

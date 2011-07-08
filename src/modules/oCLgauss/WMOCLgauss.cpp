@@ -25,17 +25,23 @@
 
 // C/C++ headers
 #include <string>
+//#include <cstdlib> 
 
 // OpenCL 
-#include "CL/opencl.h"
-#include "CL/cl.h"
+#if defined __APPLE__ || defined(MACOSX)
+#include <OpenCL/opencl.h>
+#else
+#include <CL/opencl.h>
+#endif
 
 // OpenWalnut 
 #include "core/kernel/WKernel.h"
+#include "core/common/WIOTools.h"
 #include "WMOCLgauss.xpm" // Please put a real icon here.
 
 // ocl helpers
 //#include "WMOCLgaussutil.h"
+
 
 // own header
 #include "WMOCLgauss.h"
@@ -53,6 +59,14 @@ WMOCLgauss::WMOCLgauss():
 WMOCLgauss::~WMOCLgauss()
 {
     // Cleanup!
+    delete[] gol_h;
+    delete[] res_h;
+    clReleaseKernel(kernel);
+    clReleaseCommandQueue(queue);
+    clReleaseContext(context);
+    clReleaseMemObject(gol_d);
+    clReleaseMemObject(res_d);
+
     removeConnectors();
 }
 
@@ -85,7 +99,7 @@ void WMOCLgauss::connectors()
             new WModuleInputData<WDataSetScalar> ( shared_from_this(), "in",
                     "The dataset to filter" ) );
     addConnector( m_input ); // add it to the list of connectors..
-
+    
     // output
     m_output = boost::shared_ptr<WModuleOutputData<WDataSetScalar> >(
             new WModuleOutputData<WDataSetScalar> ( shared_from_this(), "out",
@@ -117,117 +131,67 @@ void WMOCLgauss::moduleMain()
     m_moduleState.add( m_input->getDataChangedCondition() );
     m_moduleState.add( m_propCondition );
 
-    cl_int error = 0;   // Used to handle error codes
-    cl_platform_id platform;
-    cl_context context;
-    cl_command_queue queue;
-    cl_device_id device;
-
-    // Platform
-    error = oclGetPlatformID(&platform);
-    debugLog() << "init platform id: " << oclErrorString(error); 
-    // Device
-    error = clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, 1, &device, NULL);
-    debugLog() << "init device ids: " << oclErrorString(error); 
-    // Context
-    context = clCreateContext(0, 1, &device, NULL, NULL, &error);
-    debugLog() << "creating context: " << oclErrorString(error); 
-    // Command-queue
-    queue = clCreateCommandQueue(context, device, 0, &error);
-    debugLog() << "creating command queue: " << oclErrorString(error); 
-
-    const int size = 1234567;
-    float* src_a_h = new float[size];
-    float* src_b_h = new float[size];
-    float* res_h = new float[size];
+    cl_int error = 0;  //Used to handle error codes
+    std::string path;
+    std::string cSourceCL;
+    
+    const int num = 3200;
+    const int size = num*num;
+    gol_h = new int[size];
+    res_h = new int[size];
     // Initialize both vectors
     for (int i = 0; i < size; i++) {
-       src_a_h[i] = src_b_h[i] = (float) i;
+       gol_h[i] = (rand()%10 > 8)?1:0;
+       res_h[i] = 0;
     }
-
-    const int mem_size = sizeof(float)*size;
-    // Allocates a buffer of size mem_size and copies mem_size bytes from src_a_h
-    cl_mem src_a_d = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, mem_size, src_a_h, &error);
-    cl_mem src_b_d = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, mem_size, src_b_h, &error);
-    cl_mem res_d = clCreateBuffer(context, CL_MEM_WRITE_ONLY, mem_size, NULL, &error);
-    debugLog() << "mem allocated "; 
     
-    // Creates the program
-    int pl;
-    cl_program program;
-    size_t program_length;    
-    std::string path("/local/sommer/OpenWalnut/src/modules/oCLgauss");//CL_SOURCE_DIR is set in the CMakeLists.txt
-    path += "/" + std::string("gauss.cl");
-    char* cSourceCL = file_contents(path.c_str(), &pl); //file_contents is helper function, it loads the contents of the file at the given path
-    program_length = (size_t)pl;
+    int* zwischen = new int[size];
 
-    // create the program
+    const int mem_size = sizeof(int)*size;
+
+
+    std::stringstream lStream;
+    int max_x = 8;
+    int max_y = 80;
+    debugLog() << "";
+    for(int x=0;x<max_x;x++){
+      std::stringstream lStream;
+      for(int y=0;y<max_y;y++){
+        if (gol_h[num*y+x]==0) { lStream << "-";}
+        if (gol_h[num*y+x]==1) { lStream << "X";}
+      }
+      debugLog() << lStream.str();
+    }
+    debugLog() <<"";
+    
+    
+    // OpenCL Init
+    // Platform
+    error = oclGetPlatformID(&platform);
+    if (error != CL_SUCCESS) { errorLog() << "OpenCL error while getting platform id: " << oclErrorString(error); }
+    // Device
+    error = clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, 1, &device, NULL);
+    if (error != CL_SUCCESS) { errorLog() << "OpenCL error while getting device ids: " << oclErrorString(error); }
+    // Context
+    context = clCreateContext(0, 1, &device, NULL, NULL, &error);
+    if (error != CL_SUCCESS) { errorLog() << "OpenCL error while creating context: " << oclErrorString(error); }
+    // Command-queue
+    queue = clCreateCommandQueue(context, device, 0, &error);
+    if (error != CL_SUCCESS) { errorLog() << "OpenCL error while creating command queue: " << oclErrorString(error); }  
+    // Creates the program 
+    path = "/local/sommer/openwalnut/src/modules/oCLgauss/gauss.cl";//CL_SOURCE_DIR is to be set in the CMakeLists.txt 
+    cSourceCL = readFileIntoString( path );
+    program_length = (size_t)(cSourceCL.length());
     program = clCreateProgramWithSource(context, 1, (const char **) &cSourceCL, &program_length, &error);
-    debugLog() << "clCreateProgramWithSource: " << oclErrorString(error);
-
+    if (error != CL_SUCCESS) { errorLog() << "OpenCL error while clCreateProgramWithSource: " << oclErrorString(error); }
     // Builds the program
     error = clBuildProgram(program, 1, &device, NULL, NULL, NULL);
-    debugLog() << "build program: " << oclErrorString(error); 
-
-    /*// Shows the log
-    char* build_log;
-    size_t log_size;
-    // First call to know the proper size
-    clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, 0, NULL, &log_size);
-    build_log = new char[log_size+1];
-    // Second call to get the log
-    clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, log_size, build_log, NULL);
-    build_log[log_size] = '\0';
-    debugLog() << "build LOG: " <<build_log;
-    delete[] build_log;*/
-
+    if (error != CL_SUCCESS) { errorLog() << "OpenCL error while building program: " << oclErrorString(error); }
     // Extracting the kernel
-    cl_kernel vector_add_k = clCreateKernel(program, "vector_add_gpu", &error);
-    debugLog() << "extracting kernel: " << oclErrorString(error); 
-
-    // parameters
-    error = clSetKernelArg(vector_add_k, 0, sizeof(cl_mem), &src_a_d);
-    debugLog() << "enqueueing parameters: " << oclErrorString(error);
-    error = clSetKernelArg(vector_add_k, 1, sizeof(cl_mem), &src_b_d);
-    debugLog() << "enqueueing parameters: " << oclErrorString(error);
-    error = clSetKernelArg(vector_add_k, 2, sizeof(cl_mem), &res_d);
-    debugLog() << "enqueueing parameters: " << oclErrorString(error);
-    error = clSetKernelArg(vector_add_k, 3, sizeof(size), &size);
-    debugLog() << "enqueueing parameters: " << oclErrorString(error);
+    kernel = clCreateKernel(program, "clkernel", &error);
+    if (error != CL_SUCCESS) { errorLog() << "OpenCL error while extracting kernel: " << oclErrorString(error); }
     
-    // Launching kernel
-    const size_t local_ws = 512;  // Number of work-items per work-group
-    size_t gws = size;
-    if ((int)size % (int)local_ws != 0)
-      { gws = size + local_ws - ((int)size % (int)local_ws); }// Total number of work-items
-    const size_t global_ws = gws;
-    error = clEnqueueNDRangeKernel(queue, vector_add_k, 1, NULL, &global_ws, &local_ws, 0, NULL, NULL);
-    debugLog() << "launching kernel: " << oclErrorString(error);
     
-    // Reading back
-    float* check = new float[size];
-    error = clEnqueueReadBuffer(queue, res_d, CL_TRUE, 0, mem_size, check, 0, NULL, NULL);
-    debugLog() << "reading back: " << oclErrorString(error);
-
-    debugLog() << "";
-    for (int i = 0; i < size; i++) { res_h[i] = src_a_h[i] + src_b_h[i]; }
-    debugLog() << res_h[177];
-    debugLog() << check[177];
-    debugLog() <<"";
-
-    
-    // Cleaning up
-    delete[] src_a_h;
-    delete[] src_b_h;
-    delete[] res_h;
-    delete[] check;
-    clReleaseKernel(vector_add_k);
-    clReleaseCommandQueue(queue);
-    clReleaseContext(context);
-    clReleaseMemObject(src_a_d);
-    clReleaseMemObject(src_b_d);
-    clReleaseMemObject(res_d);
-
     // signal ready state
     ready();
 
@@ -239,7 +203,7 @@ void WMOCLgauss::moduleMain()
     {
         // Now, the moduleState variable comes into play. The module can wait for the condition, which gets fired whenever the input receives data
         // or an property changes. The main loop now waits until something happens.
-        debugLog() << "Waiting ...";
+        debugLog() << "OCLgauss Waiting ...";
         m_moduleState.wait();
 
         // woke up since the module is requested to finish
@@ -249,7 +213,57 @@ void WMOCLgauss::moduleMain()
         }
         
         // 4. ?
-        
+        if( m_iterations->changed() )
+        {
+            // a changed number of iteration also requires recalculation
+            iterations = m_iterations->get( true );
+            //dataChanged = ( iterations >= 1 );
+
+            if( iterations > 0 ){
+              for(int i=0;i<size;i++){ zwischen[i] = gol_h[i]; }
+              for(int i=0;i<iterations;i++){
+
+                // Allocates a buffer of size mem_size and copies mem_size bytes from src_a_h
+                gol_d = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, mem_size, zwischen, &error);
+                res_d = clCreateBuffer(context, CL_MEM_WRITE_ONLY, mem_size, NULL, &error);
+                if (error != CL_SUCCESS) { errorLog() << "OpenCL error while allocating device memory "; }
+                // parameters
+                error = clSetKernelArg(kernel, 0, sizeof(cl_mem), &gol_d);
+                if (error != CL_SUCCESS) { errorLog() << "OpenCL error while enqueueing parameters: " << oclErrorString(error);    }
+                error = clSetKernelArg(kernel, 1, sizeof(cl_mem), &res_d);
+                if (error != CL_SUCCESS) { errorLog() << "OpenCL error while enqueueing parameters: " << oclErrorString(error); }
+                error = clSetKernelArg(kernel, 2, sizeof(num), &num);
+                if (error != CL_SUCCESS) { errorLog() << "OpenCL error while enqueueing parameters: " << oclErrorString(error); }
+
+
+                // Launching kernel
+                const size_t local_ws = 512;  // Number of work-items per work-group
+                size_t gws = size;
+                if ((int)size % (int)local_ws != 0)
+                  { gws = size + local_ws - ((int)size % (int)local_ws); }// Total number of work-items
+                const size_t global_ws = gws;
+                error = clEnqueueNDRangeKernel(queue, kernel, 1, NULL, &global_ws, &local_ws, 0, NULL, NULL);
+                if (error != CL_SUCCESS) { errorLog() << "launching kernel: " << oclErrorString(error); }
+                // Reading back
+                error = clEnqueueReadBuffer(queue, res_d, CL_TRUE, 0, mem_size, zwischen, 0, NULL, NULL);
+                if (error != CL_SUCCESS) { errorLog() << "OpenCL error while reading back: " << oclErrorString(error); }
+                    clReleaseMemObject(gol_d);
+                    clReleaseMemObject(res_d);
+
+              }
+              for(int i=0;i<size;i++){ res_h[i] = zwischen[i]; }
+            }
+            debugLog() << "" << "Spielfeld nach " << iterations << " Iterationen";
+            for(int x=0;x<max_x;x++){
+              std::stringstream lStream;
+              for(int y=0;y<max_y;y++){
+                if (res_h[num*y+x]==0) { lStream << "-";}
+                if (res_h[num*y+x]==1) { lStream << "X";}
+              }
+              debugLog() << lStream.str();
+            }
+            debugLog() <<"";
+        } // m_iterations->changed()
         // 5. profit!
         
         // filling m_output
@@ -412,25 +426,3 @@ cl_int WMOCLgauss::oclGetPlatformID(cl_platform_id* clSelectedPlatformID)
     return CL_SUCCESS;
 }
 
-
-char* WMOCLgauss::file_contents(const char *filename, int *length)
-{
-    FILE *f = fopen(filename, "r");
-    void *buffer;
-
-    if (!f) {
-        fprintf(stderr, "Unable to open %s for reading\n", filename);
-        return NULL;
-    }
-
-    fseek(f, 0, SEEK_END);
-    *length = ftell(f);
-    fseek(f, 0, SEEK_SET);
-
-    buffer = malloc(*length+1);
-    *length = fread(buffer, 1, *length, f);
-    fclose(f);
-    ((char*)buffer)[*length] = '\0';
-
-    return (char*)buffer;
-}
