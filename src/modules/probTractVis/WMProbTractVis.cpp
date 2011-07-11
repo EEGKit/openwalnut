@@ -91,9 +91,7 @@ const std::string WMProbTractVis::getName() const
 
 const std::string WMProbTractVis::getDescription() const
 {
-    // Specify your module description here. Be detailed. This text is read by the user.
-    // See "src/modules/template/" for an extensively documented example.
-    return "Visualise probablistic tracts with context.";
+    return "Visualize probablistic tracts using multiple isosurfaces and isovalue-dependent alpha.";
 }
 
 void WMProbTractVis::connectors()
@@ -101,8 +99,6 @@ void WMProbTractVis::connectors()
     // Tractography works with scalar datasets
     m_input = WModuleInputData < WDataSetScalar >::createAndAdd( shared_from_this(), "probTract",
                                                 "The probabilistic tractogram as a scalar dataset." );
-
-    // TODO(aberres): maybe more input data? need t1 image for context info later
 
     m_gradients = WModuleInputData< WDataSetVector >::createAndAdd( shared_from_this(), "gradients", "The gradient field of the dataset to display" );
 
@@ -144,10 +140,10 @@ void WMProbTractVis::properties()
 
     m_phongShading  = m_properties->addProperty( "Phong Shading", "If enabled, Phong shading gets applied on a per-pixel basis.", true );
 
-    m_cortexMode    = m_properties->addProperty( "Emphasize Cortex", "Emphasize the Cortex while inner parts ar not that well lighten.", false );
-
     m_stochasticJitter = m_properties->addProperty( "Stochastic Jitter", "Improves image quality at low sampling rates but introduces slight "
                                                                          "noise effect.", true );
+
+    m_cortexMode    = m_properties->addProperty( "Emphasize Cortex", "Emphasize the Cortex while inner parts ar not that well lighten.", false );
 
     WModule::properties();
 }

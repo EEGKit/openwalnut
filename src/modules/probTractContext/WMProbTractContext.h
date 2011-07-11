@@ -22,49 +22,41 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WMPROBTRACTVIS_H
-#define WMPROBTRACTVIS_H
+#ifndef WMPROBTRACTCONTEXT_H
+#define WMPROBTRACTCONTEXT_H
 
 #include <string>
 
 #include <osg/Geode>
-#include <osg/Node>
-#include <osg/Uniform>
 
-#include "../../core/graphicsEngine/shaders/WGEShader.h"
+#include <boost/shared_ptr.hpp>
 
 #include "../../core/kernel/WModule.h"
+#include "../../core/kernel/WModuleContainer.h"
 #include "../../core/kernel/WModuleInputData.h"
 #include "../../core/kernel/WModuleOutputData.h"
+#include "../../core/kernel/WModuleInputForwardData.h"
+#include "../../core/kernel/WModuleOutputForwardData.h"
+#include "../../core/dataHandler/WDataSetScalar.h"
 
-//may need forward declaration later
-class WDataSetVector;
-class WDataSetScalar;
-
-/**
- * Someone should add some documentation here.
- * Probably the best person would be the module's
- * creator, i.e. "berres".
- *
- * This is only an empty template for a new module. For
- * an example module containing many interesting concepts
- * and extensive documentation have a look at "src/modules/template"
+/** 
+ * This module provides context for modules such as WMProbTractVis.
  *
  * \ingroup modules
  */
-class WMProbTractVis: public WModule
+class WMProbTractContext: public WModuleContainer
 {
 public:
 
     /**
      *
      */
-    WMProbTractVis();
+    WMProbTractContext();
 
     /**
      *
      */
-    virtual ~WMProbTractVis();
+    virtual ~WMProbTractContext();
 
     /**
      * Gives back the name of this module.
@@ -115,39 +107,11 @@ protected:
 
 
 private:
-    /**
-    * Scalar dataset representing the probability field either in real numbers in [0,1], or gray values, or the
-    * connectivity score (#visits per voxel).
-    */
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_input;
+    boost::shared_ptr< WModule > m_ptvModule;  //!< The ProbTractVis module used in this container
 
-    boost::shared_ptr< WModuleInputData< WDataSetVector > > m_gradients; //!< The gradient field input
-
-    WPropInt m_surfCount; //!< The number of isosurfaces drawn.
-
-    WPropColor m_isoColor1; //!< The color used for the first isosurface.
-    WPropColor m_isoColor2; //!< The color used for the second isosurface.
-    WPropColor m_isoColor3; //!< The color used for the third isosurface.
-    WPropColor m_isoColor4; //!< The color used for the fourth isosurface.
-
-    WPropInt m_stepCount; //!< The number of steps to walk along the ray.
-
-    WPropDouble m_colormapRatio; //!< The ratio between colormap and normal surface color.
-
-    WPropDouble m_isoValueTolerance; //!< The deviation tolerated for the m_isoValue.
-
-    WPropBool m_manualAlpha; //!< If true, the manual alpha slider is used rather than automatic, isovalue-dependent alpha.
-    WPropDouble m_alpha; //!< The alpha transparency used for manual alpha.
-
-    WPropBool m_phongShading; //!< If true, per-pixel-phong shading is applied to the surface.
-
-    WPropBool m_stochasticJitter; //!< If true, the ray-tracer uses stochastic jitter to improve image quality.
-
-    WPropBool m_cortexMode; //!< Some special coloring mode emphasizing the cortex.
-
-    boost::shared_ptr< WCondition > m_propCondition; //!< A condition used to notify about changes in several properties.
-
-    osg::ref_ptr< WGEShader > m_shader; //!< The shader.
+    WPropDouble m_axial; //!< Axial NavSlice position.
+    WPropDouble m_coronal; //!< Coronal NavSlice position.
+    WPropDouble m_sagittal; //!< Sagittal NavSlice position.
 };
 
-#endif  // WMPROBTRACTVIS_H
+#endif  // WMPROBTRACTCONTEXT_H
