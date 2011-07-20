@@ -37,10 +37,12 @@
 
 #include "../../core/common/WColor.h"
 #include "../../core/common/WPropertyHelper.h"
+
 #include "../../core/dataHandler/WDataSetScalar.h"
-// TODO(aberres): check which ones are needed
 #include "../../core/dataHandler/WDataSetVector.h"
 #include "../../core/dataHandler/WDataTexture3D.h"
+
+// TODO(aberres): check which ones are needed
 #include "../../core/graphicsEngine/WGEColormapping.h"
 #include "../../core/graphicsEngine/WGEGeodeUtils.h"
 #include "../../core/graphicsEngine/WGEManagedGroupNode.h"
@@ -53,8 +55,10 @@
 #include "../../core/graphicsEngine/postprocessing/WGEPostprocessingNode.h"
 #include "../../core/graphicsEngine/WGERequirement.h"
 #include "../../core/graphicsEngine/callbacks/WGENodeMaskCallback.h"
+
 #include "../../core/kernel/WKernel.h"
 #include "../../core/kernel/WModuleInputForwardData.h"
+
 #include "WMProbTractVis.xpm"
 
 #include "WMProbTractVis.h"
@@ -110,17 +114,17 @@ void WMProbTractVis::properties()
     // Initialize the properties
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
 
-    m_surfCount= m_properties->addProperty( "Surface count", "Number of isosurfaces drawn", 2 );
+    m_surfCount= m_properties->addProperty( "Surface Count", "Number of isosurfaces drawn", 2 );
     m_surfCount->setMin( 0 );
     m_surfCount->setMax( 4 );
 
-    // TODO(aberres): find what to do with the cube (it uses m_isoColor)
-    m_isoColor1      = m_properties->addProperty( "Iso color 1", "The color to blend the isosurface with.", WColor( 0.5, 0.0, 0.0, 1.0 ), m_propCondition );
-    m_isoColor2      = m_properties->addProperty( "Iso color 2", "The color to blend the isosurface with.", WColor( 1.0, 0.5, 0.0, 1.0 ), m_propCondition );
-    m_isoColor3      = m_properties->addProperty( "Iso color 3", "The color to blend the isosurface with.", WColor( 0.0, 0.5, 0.7, 1.0 ), m_propCondition );
-    m_isoColor4      = m_properties->addProperty( "Iso color 4", "The color to blend the isosurface with.", WColor( 0.0, 0.7, 0.0, 1.0 ), m_propCondition );
+    // TODO(aberres): find what to do with the cube (it uses m_isoColor1)
+    m_isoColor1      = m_properties->addProperty( "Iso Color 1", "The color to blend the isosurface with.", WColor( 0.5, 0.0, 0.0, 1.0 ), m_propCondition );
+    m_isoColor2      = m_properties->addProperty( "Iso Color 2", "The color to blend the isosurface with.", WColor( 1.0, 0.5, 0.0, 1.0 ), m_propCondition );
+    m_isoColor3      = m_properties->addProperty( "Iso Color 3", "The color to blend the isosurface with.", WColor( 0.0, 0.5, 0.7, 1.0 ), m_propCondition );
+    m_isoColor4      = m_properties->addProperty( "Iso Color 4", "The color to blend the isosurface with.", WColor( 0.0, 0.7, 0.0, 1.0 ), m_propCondition );
 
-    m_stepCount     = m_properties->addProperty( "Step count",       "The number of steps to walk along the ray during raycasting. A low value "
+    m_stepCount     = m_properties->addProperty( "Step Count",       "The number of steps to walk along the ray during raycasting. A low value "
                                                                       "may cause artifacts whilst a high value slows down rendering.", 250 );
     m_stepCount->setMin( 1 );
     m_stepCount->setMax( 1000 );
@@ -129,8 +133,8 @@ void WMProbTractVis::properties()
     m_colormapRatio->setMin( 0.0 );
     m_colormapRatio->setMax( 1.0 );
 
-    m_isoValueTolerance = m_properties->addProperty( "Isovalue tolerance", "The amount of deviation tolerated for the isovalue", 0.05 );
-    m_isoValueTolerance->setMax( 0.5 );
+    m_isoEpsilon = m_properties->addProperty( "Isovalue Tolerance", "The amount of deviation tolerated for the isovalue", 0.05 );
+    m_isoEpsilon->setMax( 0.5 );
 
     m_manualAlpha = m_properties->addProperty( "Manual Alpha", "Lets user use the slider to set a global alpha rather than computing it automatically.", false );
 
@@ -138,12 +142,10 @@ void WMProbTractVis::properties()
     m_alpha->setMin( 0.0 );
     m_alpha->setMax( 1.0 );
 
-    m_phongShading  = m_properties->addProperty( "Phong Shading", "If enabled, Phong shading gets applied on a per-pixel basis.", true );
+    m_phong  = m_properties->addProperty( "Phong Shading", "If enabled, Phong shading gets applied on a per-pixel basis.", true );
 
-    m_stochasticJitter = m_properties->addProperty( "Stochastic Jitter", "Improves image quality at low sampling rates but introduces slight "
+    m_jitter = m_properties->addProperty( "Stochastic Jitter", "Improves image quality at low sampling rates but introduces slight "
                                                                          "noise effect.", true );
-
-    m_cortexMode    = m_properties->addProperty( "Emphasize Cortex", "Emphasize the Cortex while inner parts ar not that well lighten.", false );
 
     WModule::properties();
 }
@@ -159,13 +161,10 @@ void WMProbTractVis::moduleMain()
     // the WGEShader can take the name of any glsl shader (without extension) in the shaders folder
     m_shader = osg::ref_ptr< WGEShader > ( new WGEShader( "WMProbTractVis", m_localPath ) );
     m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
-        new WGEShaderPropertyDefineOptions< WPropBool >( m_cortexMode, "CORTEXMODE_DISABLED", "CORTEXMODE_ENABLED" ) )
+        new WGEShaderPropertyDefineOptions< WPropBool >( m_jitter, "STOCHASTICJITTER_DISABLED", "STOCHASTICJITTER_ENABLED" ) )
     );
     m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
-        new WGEShaderPropertyDefineOptions< WPropBool >( m_stochasticJitter, "STOCHASTICJITTER_DISABLED", "STOCHASTICJITTER_ENABLED" ) )
-    );
-    m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
-        new WGEShaderPropertyDefineOptions< WPropBool >( m_phongShading, "PHONGSHADING_DISABLED", "PHONGSHADING_ENABLED" ) )
+        new WGEShaderPropertyDefineOptions< WPropBool >( m_phong, "PHONGSHADING_DISABLED", "PHONGSHADING_ENABLED" ) )
     );
     m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
         new WGEShaderPropertyDefineOptions< WPropBool >( m_manualAlpha, "MANUALALPHA_DISABLED", "MANUALALPHA_ENABLED" ) )
@@ -296,7 +295,7 @@ void WMProbTractVis::moduleMain()
             // setup all those uniforms and additional textures
             ////////////////////////////////////////////////////////////////////////////////////////////////////
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_surfCount", m_surfCount ) );
-            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalTolerance", m_isoValueTolerance ) );
+            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalTolerance", m_isoEpsilon ) );
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_steps", m_stepCount ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_alpha", m_alpha ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_colormapRatio", m_colormapRatio ) );
@@ -324,9 +323,9 @@ void WMProbTractVis::moduleMain()
             {
                 gradTexEnableDefine->setActive( false ); // disable gradient texture
             }
-
-//            WGEColormapping::apply( cube, grid->getTransformationMatrix(), m_shader, 3 );
-            WGEColormapping::apply( cube, m_shader );
+            //TODO(aberres): why?
+            WGEColormapping::apply( cube, m_shader, 3 );
+//            WGEColormapping::apply( cube, m_shader );
 
             // update node
             debugLog() << "Adding new rendering.";

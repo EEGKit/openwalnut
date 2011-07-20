@@ -123,6 +123,10 @@ private:
 
     boost::shared_ptr< WModuleInputData< WDataSetVector > > m_gradients; //!< The gradient field input
 
+    osg::ref_ptr< WGEShader > m_shader; //!< The shader.
+
+    boost::shared_ptr< WCondition > m_propCondition; //!< A condition used to notify about changes in several properties.
+
     WPropInt m_surfCount; //!< The number of isosurfaces drawn.
 
     WPropColor m_isoColor1; //!< The color used for the first isosurface.
@@ -134,20 +138,16 @@ private:
 
     WPropDouble m_colormapRatio; //!< The ratio between colormap and normal surface color.
 
-    WPropDouble m_isoValueTolerance; //!< The deviation tolerated for the m_isoValue.
+    WPropDouble m_isoEpsilon; //!< The deviation tolerated for the m_isoValue.
 
     WPropBool m_manualAlpha; //!< If true, the manual alpha slider is used rather than automatic, isovalue-dependent alpha.
     WPropDouble m_alpha; //!< The alpha transparency used for manual alpha.
 
-    WPropBool m_phongShading; //!< If true, per-pixel-phong shading is applied to the surface.
+    WPropBool m_phong; //!< If true, per-pixel-phong shading is applied to the surface.
 
-    WPropBool m_stochasticJitter; //!< If true, the ray-tracer uses stochastic jitter to improve image quality.
+    WPropBool m_jitter; //!< If true, the ray-tracer uses stochastic jitter to improve image quality.
 
     WPropBool m_cortexMode; //!< Some special coloring mode emphasizing the cortex.
-
-    boost::shared_ptr< WCondition > m_propCondition; //!< A condition used to notify about changes in several properties.
-
-    osg::ref_ptr< WGEShader > m_shader; //!< The shader.
 };
 
 #endif  // WMPROBTRACTVIS_H
