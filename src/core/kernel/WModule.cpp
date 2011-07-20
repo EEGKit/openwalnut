@@ -221,6 +221,11 @@ void WModule::activate()
 {
 }
 
+std::string WModule::deprecated() const
+{
+    return "";
+}
+
 void WModule::initialize()
 {
     // doing it twice is not allowed
@@ -516,7 +521,7 @@ void WModule::threadMain()
 {
 #ifdef __linux__
     // set the name of the thread. This name is shown by the "top", for example.
-    prctl( PR_SET_NAME, ( "walnut (" + getName() + ")" ).c_str() );
+    prctl( PR_SET_NAME, ( "openwalnut (" + getName() + ")" ).c_str() );
 #endif
 
     try
@@ -593,5 +598,15 @@ void WModule::setLocalPath( boost::filesystem::path path )
 boost::filesystem::path WModule::getLocalPath() const
 {
     return m_localPath;
+}
+
+bool WModule::isDeprecated() const
+{
+    return !deprecated().empty();
+}
+
+std::string WModule::getDeprecationMessage() const
+{
+    return deprecated();
 }
 

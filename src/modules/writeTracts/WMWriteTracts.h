@@ -113,6 +113,15 @@ private:
     bool saveJsonTriangles() const;
 
     /**
+     * Saves the fiber tracts as POVRAY SDL.
+     *
+     * \param fibers the fibers to write
+     *
+     * \return true if successful.
+     */
+    bool savePOVRay( boost::shared_ptr< const WDataSetFibers > fibers ) const;
+
+    /**
      * Input connector for writing the tracts out of a WFiberCluster to a file.
      */
     boost::shared_ptr< WModuleInputData< const WFiberCluster > > m_clusterIC;
@@ -134,6 +143,26 @@ private:
      * Selection property for file types
      */
     WPropSelection m_fileTypeSelection;
+
+    /**
+     * Groups all the options for the povray exporter.
+     */
+    WPropGroup m_povrayOptions;
+
+    /**
+     * Enables radiosity renderer in povray
+     */
+    WPropBool m_povrayRadiosity;
+
+    /**
+     * The tube diameter in povray export
+     */
+    WPropDouble m_povrayTubeDiameter;
+
+    /**
+     * Handles updates in filetype property. Used to hide and unhide certain property groups.
+     */
+    void fileTypeChanged();
 };
 
 #endif  // WMWRITETRACTS_H

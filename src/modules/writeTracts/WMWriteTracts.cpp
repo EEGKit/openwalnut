@@ -76,14 +76,27 @@ void WMWriteTracts::properties()
     m_run      = m_properties->addProperty( "Save", "Start saving", WPVBaseTypes::PV_TRIGGER_READY );
 
     m_fileTypeSelectionsList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
-    m_fileTypeSelectionsList->addItem( "VTK fib", "" );
+    m_fileTypeSelectionsList->addItem( "VTK fib", "Stores the fibers in the VTK line format." );
     m_fileTypeSelectionsList->addItem( "json", "" );
     m_fileTypeSelectionsList->addItem( "json2", "" );
     m_fileTypeSelectionsList->addItem( "json triangles", "" );
+    m_fileTypeSelectionsList->addItem( "POVRay Cylinders", "Stores the fibers as cylinders in a POVRay SDL file." );
 
-    m_fileTypeSelection = m_properties->addProperty( "File type",  "file type.", m_fileTypeSelectionsList->getSelectorFirst() );
-       WPropertyHelper::PC_SELECTONLYONE::addTo( m_fileTypeSelection );
+    m_fileTypeSelection = m_properties->addProperty( "File type",  "file type.", m_fileTypeSelectionsList->getSelectorFirst(),
+        boost::bind( &WMWriteTracts::fileTypeChanged, this )
+    );
+    WPropertyHelper::PC_SELECTONLYONE::addTo( m_fileTypeSelection );
 
+    m_povrayOptions = m_properties->addPropertyGroup( "POVRay Options", "Options for the POVRay Exporter." );
+    //m_povrayOptions->setHidden( true );
+    m_povrayTubeDiameter = m_povrayOptions->addProperty( "Tube Diameter",
+                                  "The tube diameter. Each fibers is represented as a tube with spheres as connections between them",
+                                  0.25 );
+    m_povrayTubeDiameter->setMin( 0.001 );
+    m_povrayTubeDiameter->setMax( 2.0 );
+    m_povrayRadiosity = m_povrayOptions->addProperty( "Enable Radiosity",
+                                  "Enable POVRay's radiosity renderer. Creates more realistic lighting but is very slow.",
+                                  false );
 
     WModule::properties();
 }
@@ -131,6 +144,12 @@ void WMWriteTracts::moduleMain()
                     break;
                 case 3:
                     saveJsonTriangles();
+                    break;
+                case 4:
+                        if( m_tractIC->getData() )
+                        {
+                            savePOVRay( m_tractIC->getData() );
+                        }
                     break;
                 default:
                     debugLog() << "this shouldn't be reached";
@@ -439,11 +458,208 @@ bool WMWriteTracts::saveJsonTriangles() const
         }
     }
 
-
-
     dataFile <<  "\n}";
 
     dataFile.close();
     WLogger::getLogger()->addLogMessage( "saving done", "Write Tracts", LL_DEBUG );
     return true;
 }
+
+bool WMWriteTracts::savePOVRay( boost::shared_ptr< const WDataSetFibers > fibers ) const
+{
+    // open file
+    boost::filesystem::path meshFile( m_savePath->get() );
+    std::string fnPath = meshFile.parent_path().string();
+    std::string fnBase = meshFile.stem();
+    std::string fnExt = meshFile.extension();
+
+    // construct the filenames
+    // the meshfile
+    std::string fnMesh = fnBase + ".mesh" + fnExt;
+    std::string fnScene = fnBase + ".scene" + fnExt;
+
+    // absolute paths
+    std::string fnMeshAbs = fnPath + "/" + fnMesh;
+    std::string fnSceneAbs = fnPath + "/" + fnScene;
+
+    debugLog() << "Opening " << fnMeshAbs << " for writing the mesh data.";
+    std::ofstream dataFile( fnMeshAbs.c_str(), std::ios_base::binary );
+    if ( !dataFile )
+    {
+        errorLog() << "Opening " << fnMeshAbs << " failed.";
+        return false;
+    }
+
+    // needed arrays for iterating the fibers
+    WDataSetFibers::IndexArray  fibStart = fibers->getLineStartIndexes();
+    WDataSetFibers::LengthArray fibLen   = fibers->getLineLengths();
+    WDataSetFibers::VertexArray fibVerts = fibers->getVertices();
+    WDataSetFibers::TangentArray fibTangents = fibers->getTangents();
+
+    // get current color scheme - the mode is important as it defines the number of floats in the color array per vertex.
+    WDataSetFibers::ColorScheme::ColorMode fibColorMode = fibers->getColorScheme()->getMode();
+    debugLog() << "Color mode is " << fibColorMode << ".";
+    WDataSetFibers::ColorArray  fibColors = fibers->getColorScheme()->getColor();
+
+    boost::shared_ptr< WProgress > progress1 = boost::shared_ptr< WProgress >( new WProgress( "Converting fibers", fibStart->size() ) );
+    m_progress->addSubProgress( progress1 );
+
+    // for each fiber:
+    debugLog() << "Iterating over all fibers.";
+
+    // find min and max
+    double minX = wlimits::MAX_DOUBLE;
+    double minY = wlimits::MAX_DOUBLE;
+    double minZ = wlimits::MAX_DOUBLE;
+    double maxX = wlimits::MIN_DOUBLE;
+    double maxY = wlimits::MIN_DOUBLE;
+    double maxZ = wlimits::MIN_DOUBLE;
+
+    size_t currentStart = 0;
+    for( size_t fidx = 0; fidx < fibStart->size(); fidx += 1 )
+    {
+        ++*progress1;
+
+        // the start vertex index
+        size_t sidx = fibStart->at( fidx ) * 3;
+        size_t csidx = fibStart->at( fidx ) * fibColorMode;
+
+        // the length of the fiber
+        size_t len = fibLen->at( fidx );
+
+        // walk along the fiber
+        WVector3d lastvert( fibVerts->at( sidx ),
+                            fibVerts->at( sidx + 1 ),
+                            fibVerts->at( sidx + 2 ) );
+        for( size_t k = 1; k < len; ++k )
+        {
+            // grab vector and color
+            WVector3d vert( fibVerts->at( ( 3 * k ) + sidx ),
+                            fibVerts->at( ( 3 * k ) + sidx + 1 ),
+                            fibVerts->at( ( 3 * k ) + sidx + 2 ) );
+            WColor color( fibColors->at( ( fibColorMode * k ) + csidx + ( 0 % fibColorMode ) ),
+                          fibColors->at( ( fibColorMode * k ) + csidx + ( 1 % fibColorMode ) ),
+                          fibColors->at( ( fibColorMode * k ) + csidx + ( 2 % fibColorMode ) ),
+                          ( fibColorMode == WDataSetFibers::ColorScheme::RGBA ) ?
+                            fibColors->at( ( fibColorMode * k ) + csidx + ( 3 % fibColorMode ) ) : 1.0 );
+
+            if( vert.x() > maxX )
+                maxX = vert.x();
+            if( vert.y() > maxY )
+                maxY = vert.y();
+            if( vert.z() > maxZ )
+                maxZ = vert.z();
+            if( vert.x() < minX )
+                minX = vert.x();
+            if( vert.y() < minY )
+                minY = vert.y();
+            if( vert.z() < minZ )
+                minZ = vert.z();
+
+            // write it in POVRay style
+            dataFile << "cylinder" << std::endl <<
+                        "{" << std::endl <<
+                        " <" << lastvert.x() << "," << lastvert.y() << "," << lastvert.z() << ">," <<
+                          "<" << vert.x() << "," << vert.y() << "," << vert.z() << ">," << m_povrayTubeDiameter->get() << std::endl <<
+                        " pigment{color rgb <" << color.x() << "," << color.y() << "," << color.z() << ">}" << std::endl <<
+                        " transform MoveToCenter" << std::endl <<
+                        "}" << std::endl;
+            dataFile << "sphere {" << std::endl <<
+                        " <" << vert.x() << "," << vert.y() << "," << vert.z() << ">,"  << m_povrayTubeDiameter->get() << std::endl <<
+                        " pigment{ color rgb <" << color.x() << "," << color.y() << "," << color.z() << ">}" << std::endl <<
+                        " transform MoveToCenter" << std::endl <<
+                        "}" << std::endl;
+
+            lastvert = vert;
+        }
+        currentStart += len;
+    }
+
+    double sizeX = maxX - minX;
+    double sizeY = maxY - minY;
+    double sizeZ = maxZ - minZ;
+    double mX = minX + ( sizeX / 2.0 );
+    double mY = minY + ( sizeY / 2.0 );
+    double mZ = minZ + ( sizeZ / 2.0 );
+
+    // done writing mesh. Close
+    infoLog() << "Done. Closing " << fnMesh << ".";
+    dataFile.close();
+    progress1->finish();
+
+    debugLog() << "Opening " << fnSceneAbs << " for writing.";
+    std::ofstream dataFileScene( fnSceneAbs.c_str(), std::ios_base::binary );
+    if ( !dataFileScene )
+    {
+        errorLog() << "Opening " << fnSceneAbs << " failed.";
+        return false;
+    }
+
+    // write some head data
+    dataFileScene << "#version 3.6;" << std::endl << std::endl;
+
+    if( m_povrayRadiosity->get() )
+    {
+        dataFileScene << "global_settings {" << std::endl <<
+        " ambient_light 0" << std::endl << std::endl <<
+        " radiosity {" << std::endl <<
+        "  pretrace_start 0.08" << std::endl <<
+        "  pretrace_end   0.005" << std::endl <<
+        "  count 350" << std::endl <<
+        "  error_bound 0.15" << std::endl <<
+        "  recursion_limit 2" << std::endl <<
+        " }"  << std::endl <<
+        "}" << std::endl << std::endl;
+    }
+
+    dataFileScene << "#default{" << std::endl <<
+                   " finish{" << std::endl <<
+                   "  ambient 0" << std::endl <<
+                   "  phong 1" << std::endl <<
+                   //"  reflection 0.9yy " << std::endl <<
+                   " }" << std::endl <<
+                   "}" << std::endl << std::endl;
+
+    // save camera and add a light
+    double camX = 0;
+    double camY = sizeY;
+    double camZ = 0;
+
+    dataFileScene << "#declare MoveToCenter = transform{ translate < " << -mX << ", " << -mY << ", " << -mZ << " > };" << std::endl;
+    dataFileScene << "#declare CamPosition = < " << camX << ", " << camY << ", " << camZ << " >;" << std::endl << std::endl;
+
+    // this camera should produce a direct front view. The user surely needs to modify the camera
+    dataFileScene << "camera {" << std::endl <<
+                "  location CamPosition" << std::endl <<
+                "  right 1.33*x" << std::endl <<
+                "  up y " << std::endl <<
+                "  // angle 45 " << std::endl <<
+                "  look_at  < 0, 0, 0 >" << std::endl <<
+                "}" << std::endl << std::endl;
+    // headlight
+    dataFileScene << "light_source {" << std::endl <<
+                     "  CamPosition" << std::endl <<
+                     "  color rgb <1.0, 1.0, 1.0>" << std::endl <<
+                     "}" << std::endl << std::endl;
+
+    // do not forget the mesh
+    dataFileScene << "#include \"" << fnMesh << "\"" << std::endl;
+
+    // done. Close
+    infoLog() << "Done.";
+    dataFileScene.close();
+    return true;
+}
+
+void WMWriteTracts::fileTypeChanged()
+{
+    if( m_fileTypeSelection->get().getItemIndexOfSelected( 0 ) == 4 )
+    {
+        m_povrayOptions->setHidden( false );
+    }
+    else
+    {
+        m_povrayOptions->setHidden( true );
+    }
+}
+

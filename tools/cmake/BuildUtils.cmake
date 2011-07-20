@@ -35,12 +35,30 @@ FUNCTION( COLLECT_COMPILE_FILES _DirString _CPPFiles _HFiles _TestFiles )
     FILE( GLOB_RECURSE H_FILES   ${_DirString}/*.h )
     FILE( GLOB_RECURSE TEST_FILES   ${_DirString}/*_test.h )
 
-    # the test directories should be excluded from normal compilation completely
+    # exclude some special dirs
     FOREACH( file ${H_FILES} )
+        # the test directories should be excluded from normal compilation completely
         STRING( REGEX MATCH "^.*\\/test\\/.*" IsTest "${file}" )
+        # ext sources should be build seperatly 
+        STRING( REGEX MATCH "^.*\\/ext\\/.*" IsExternal "${file}" )
         IF( IsTest )
             LIST( REMOVE_ITEM H_FILES ${file} )
-        ENDIF( IsTest )
+        ENDIF()
+        IF( IsExternal )
+            LIST( REMOVE_ITEM H_FILES ${file} )
+        ENDIF()
+    ENDFOREACH( file )
+    FOREACH( file ${CPP_FILES} )
+        # the test directories should be excluded from normal compilation completely
+        STRING( REGEX MATCH "^.*\\/test\\/.*" IsTest "${file}" )
+        # ext sources should be build seperatly 
+        STRING( REGEX MATCH "^.*\\/ext\\/.*" IsExternal "${file}" )
+        IF( IsTest )
+            LIST( REMOVE_ITEM CPP_FILES ${file} )
+        ENDIF()
+        IF( IsExternal )
+            LIST( REMOVE_ITEM CPP_FILES ${file} )
+        ENDIF()
     ENDFOREACH( file )
 
     SET( ${_CPPFiles} "${CPP_FILES}" PARENT_SCOPE )
@@ -222,7 +240,7 @@ FUNCTION( SETUP_STYLECHECKER _TargetName _CheckFiles _Excludes )
 
     # add a new target for this lib
     ADD_CUSTOM_TARGET( stylecheck_${_TargetName}
-                       COMMAND  cat ${BrainLinterListFile} | xargs ${XARGS_OPTIONS} ${PROJECT_SOURCE_DIR}/../tools/brainlint.py ${STYLECHECK_OPTIONS} 2>&1 | grep -iv 'Total errors found: 0$$' | cat
+                       COMMAND  cat ${BrainLinterListFile} | xargs ${XARGS_OPTIONS} ${PROJECT_SOURCE_DIR}/../tools/style/brainlint/brainlint.py ${STYLECHECK_OPTIONS} 2>&1 | grep -iv 'Total errors found: 0$$' | cat
                        DEPENDS numCores
                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                        COMMENT "Check if ${_TargetName} complies to CodingStandard"
@@ -234,10 +252,12 @@ ENDFUNCTION( SETUP_STYLECHECKER )
 
 # This function handles local resources needed for program execution. Place your resources in "${CMAKE_CURRENT_SOURCE_DIR}/../resources/". They
 # get copied to the build directory and a proper install target is provided too
-FUNCTION( SETUP_RESOURCES )
+# _component the component to which the resources belong
+# _resource the exact resource under resources-directory
+FUNCTION( SETUP_RESOURCES _resource _component )
     # as all the resources with the correct directory structure reside in ../resources, this target is very easy to handle
-    SET( ResourcesPath "${CMAKE_CURRENT_SOURCE_DIR}/../resources/" )
-    ADD_CUSTOM_TARGET( ResourceConfiguration
+    SET( ResourcesPath "${PROJECT_SOURCE_DIR}/../resources/${_resource}/" )
+    ADD_CUSTOM_TARGET( ResourceConfiguration_${_component}
         ALL
         COMMAND ${CMAKE_COMMAND} -E copy_directory "${ResourcesPath}" "${PROJECT_BINARY_DIR}/"
         COMMENT "Copying resources to build directory"
@@ -246,7 +266,7 @@ FUNCTION( SETUP_RESOURCES )
     # Also specify install target
     INSTALL( DIRECTORY ${ResourcesPath}
              DESTINATION "."
-             COMPONENT "SHARE"
+             COMPONENT ${_component}
              PATTERN "bin/*"            # binaries need to be executable
                  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
                              GROUP_READ GROUP_EXECUTE
@@ -254,6 +274,28 @@ FUNCTION( SETUP_RESOURCES )
              )
 
 ENDFUNCTION( SETUP_RESOURCES )
+
+# This function copies the typical source docs (README, AUTHORS, CONTRIBUTORS and Licence files to the specified directory.
+# _component the component to which the resources belong
+# _targetDirRelative the relative target dir.
+FUNCTION( SETUP_COMMON_DOC _target _component )
+    SETUP_ADDITIONAL_FILES( ${_target} 
+                            ${_component}
+                            "${PROJECT_SOURCE_DIR}/../README"
+                            "${PROJECT_SOURCE_DIR}/../AUTHORS"
+                            "${PROJECT_SOURCE_DIR}/../CONTRIBUTORS"
+                          )
+
+    # If the user did not disable license-copying, do it
+    # NOTE: use this "double-negative" to use the fact that undefined variables yield FALSE.
+    IF( NOT OW_PACKAGE_NOCOPY_LICENSE )
+        SETUP_ADDITIONAL_FILES( ${_target} 
+                                ${_component}
+                                "${PROJECT_SOURCE_DIR}/../COPYING"
+                                "${PROJECT_SOURCE_DIR}/../COPYING.LESSER"
+                              )
+    ENDIF()
+ENDFUNCTION( SETUP_COMMON_DOC )
 
 # This function eases the process of copying and installing additional files which not reside in the resource path.
 # It creates a target (ALL is depending on it) AND the INSTALL operation.
@@ -265,7 +307,7 @@ FUNCTION( SETUP_ADDITIONAL_FILES _destination _component )
         FILE_TO_TARGETSTRING( ${_file} fileTarget )
 
         # add a copy target
-        ADD_CUSTOM_TARGET( CopyAdditionalFile_${fileTarget}
+        ADD_CUSTOM_TARGET( CopyAdditionalFile_${fileTarget}_${_component}
             ALL
             COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_BINARY_DIR}/${_destination}/"
             COMMAND ${CMAKE_COMMAND} -E copy "${_file}" "${PROJECT_BINARY_DIR}/${_destination}/"
@@ -293,7 +335,7 @@ FUNCTION( SETUP_ADDITIONAL_DIRECTORY _destination _directory _component _content
     # add a copy target
     # this copies the CONTENTS of the specified directory into the specified destination dir.
     # NOTE: cmake -E says, that copying a directory with the copy command is pssible. But on my system it isn't.
-    ADD_CUSTOM_TARGET( CopyAdditionalDirectory_${directoryTarget}
+    ADD_CUSTOM_TARGET( CopyAdditionalDirectory_${directoryTarget}_${_component}
         ALL
         COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_BINARY_DIR}/${_destination}/"
         COMMAND ${CMAKE_COMMAND} -E copy_directory "${_directory}" "${PROJECT_BINARY_DIR}/${_destination}"
@@ -317,13 +359,71 @@ FUNCTION( SETUP_ADDITIONAL_DIRECTORY _destination _directory _component _content
            )
 ENDFUNCTION( SETUP_ADDITIONAL_DIRECTORY )
 
+# Function to setup and library install target. It contains all the permission and namelink magic needed.
+# _libName the library to install (needs to be a targed added with ADD_LIBRARY).
+# _targetRelative the relative target dir. You should use OW_LIBRARY_DIR_RELATIVE in most cases
+# _component the name of the component to which the lib belongs. If you use some strange things here, consider updating the package configuration
+#            too as it uses these components
+FUNCTION( SETUP_LIB_INSTALL _libName _targetRelative _component )
+    # NOTE: we need two separate install targets here since the namelink to the lib (libopenwalnut.so -> linopenwalnut.so.1.2.3) is only needed
+    # in the DEV release. Have a look at NAMELINK_SKIP and NAMELINK_ONLY
+    INSTALL( TARGETS ${_libName}
+                ARCHIVE # NOTE: this is needed on windows
+                    DESTINATION ${_targetRelative} 
+                    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
+                                GROUP_READ GROUP_EXECUTE  
+                                WORLD_READ WORLD_EXECUTE
+                LIBRARY # NOTE: this is needed for all the others
+                    DESTINATION ${_targetRelative}
+                    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                                GROUP_READ GROUP_EXECUTE
+                                WORLD_READ WORLD_EXECUTE
+                    NAMELINK_SKIP
+             COMPONENT ${_component}
+    )
+ENDFUNCTION( SETUP_LIB_INSTALL )
+
+# Function which handles typical "developer" install targets. It creates the symlink (namelink) for the lib and copies the headers to some
+# include directory.
+# _libName the devel target for this lib (needs to be a target name created with ADD_LIBRARY)
+# _targetRelative the relative path to the lib
+# _headers a list of headers. (Lists are ;-separated). This function strips CMAKE_CURRENT_SOURCE_DIR from each path!
+# _headerTargetRelative relative target dir for the includes
+# _component the name of the component.
+FUNCTION( SETUP_DEV_INSTALL _libName _targetRelative _headers _headerTargetRelative _component )
+    INSTALL( TARGETS ${_libName}
+                ARCHIVE # NOTE: this is needed on windows
+                    DESTINATION ${_targetRelative} 
+                    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
+                                GROUP_READ GROUP_EXECUTE  
+                                WORLD_READ WORLD_EXECUTE
+                LIBRARY # NOTE: this is needed for all the others
+                    DESTINATION ${_targetRelative}
+                    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                                GROUP_READ GROUP_EXECUTE
+                                WORLD_READ WORLD_EXECUTE
+                    NAMELINK_ONLY
+             COMPONENT ${_component}
+    )
+
+    # we want to copy the headers to. Unfortunately, cmake's install command does not preserver the directory structure.
+    FOREACH( _header ${${_headers}} )
+        STRING( REGEX MATCH "(.*)[/\\]" directory ${_header} )
+        STRING( REPLACE "${CMAKE_CURRENT_SOURCE_DIR}" "" directoryRelative ${directory} )
+        INSTALL( FILES ${_header} 
+                    DESTINATION ${_headerTargetRelative}/${directoryRelative}
+                    COMPONENT ${_component}
+               )
+    ENDFOREACH()
+ENDFUNCTION( SETUP_DEV_INSTALL )
+
 # This function tries to find a proper version string. It therefore uses the file src/../VERSION and mercurial. If the file exists and is not
 # empty, the contents of it get combined with the mercurial results if mercurial is installed. If not, only the file content will be used. If
 # both methods fail, a default string is used.
 # _version the returned version string
-# _file_version returns only the version loaded from the version file. This is useful to set CMake version info for release compilation
+# _api_version returns only the API-version loaded from the version file. This is useful to set CMake version info for release compilation
 # _default a default string you specify if all version check methods fail
-FUNCTION( GET_VERSION_STRING _version _file_version _default )
+FUNCTION( GET_VERSION_STRING _version _api_version )
     # Undef the OW_VERSION variable
     UNSET( OW_VERSION_HG )
     UNSET( OW_VERSION_FILE )
@@ -334,7 +434,7 @@ FUNCTION( GET_VERSION_STRING _version _file_version _default )
         # Read the version file
         FILE( READ ${OW_VERSION_FILENAME} OW_VERSION_FILE_CONTENT )
         # The first regex will mathc 
-        STRING(REGEX REPLACE ".*[^#]VERSION=([0-9]+\\.[0-9]+\\.[0-9]+).*" "\\1"  OW_VERSION_FILE  ${OW_VERSION_FILE_CONTENT} ) 
+        STRING( REGEX REPLACE ".*[^#]VERSION=([0-9]+\\.[0-9]+\\.[0-9]+(\\+hgX?[0-9]*)?).*" "\\1"  OW_VERSION_FILE  ${OW_VERSION_FILE_CONTENT} ) 
         STRING( COMPARE EQUAL ${OW_VERSION_FILE} ${OW_VERSION_FILE_CONTENT}  OW_VERSION_FILE_INVALID )
         IF( OW_VERSION_FILE_INVALID )
             UNSET( OW_VERSION_FILE )
@@ -345,31 +445,33 @@ FUNCTION( GET_VERSION_STRING _version _file_version _default )
         IF( OW_VERSION_FILE STREQUAL "" )
             UNSET( OW_VERSION_FILE )
         ENDIF()
-
-        # set the return parameter too
-        SET( ${_file_version} ${OW_VERSION_FILE} PARENT_SCOPE )
+    ENDIF()
+    # if the version file could not be parsed, print error
+    IF( NOT OW_VERSION_FILE )
+        MESSAGE( FATAL_ERROR "Could not parse \"${PROJECT_SOURCE_DIR}/../VERSION\"." )
     ENDIF()
 
     # Use hg to query version information.
     # -> the nice thing is: if hg is not available, no compilation errors anymore
     # NOTE: it is run insde the project source directory
-    EXECUTE_PROCESS( COMMAND hg parents --template "{rev}:{node|short} {branches} {tags}" OUTPUT_VARIABLE OW_VERSION_HG RESULT_VARIABLE hgParentsRetVar 
+    EXECUTE_PROCESS( COMMAND hg parents --template "{rev}" OUTPUT_VARIABLE OW_VERSION_HG RESULT_VARIABLE hgParentsRetVar 
                      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
                     )
     IF( NOT ${hgParentsRetVar} STREQUAL 0 )
         UNSET( OW_VERSION_HG )
-    ENDIF()
-
-    # Use the version strings and set them as #define
-    IF( DEFINED OW_VERSION_HG AND DEFINED OW_VERSION_FILE )
-        SET( ${_version} "${OW_VERSION_FILE} - ${OW_VERSION_HG}" PARENT_SCOPE )
-    ELSEIF( DEFINED OW_VERSION_FILE )
-        SET( ${_version} "${OW_VERSION_FILE}" PARENT_SCOPE )
-    ELSEIF( DEFINED OW_VERSION_HG )
-        SET( ${_version} "${OW_VERSION_HG}" PARENT_SCOPE )
+        # be more nice if we do not find mercruial version. The simply strip the +hg tag.
+        STRING( REGEX REPLACE "\\+hg" "" OW_VERSION ${OW_VERSION_FILE} )
     ELSE()
-        SET( ${_version} ${_default} PARENT_SCOPE )
+        # if we have the mercurial info -> complement the version string
+        STRING( REGEX REPLACE "hgX" "hg${OW_VERSION_HG}" OW_VERSION ${OW_VERSION_FILE} )
     ENDIF()
+  
+    SET( ${_version} ${OW_VERSION} PARENT_SCOPE )
+
+    # we need to separate the API version too. This basically is the same as the release version, but without the HG statement
+    STRING( REGEX REPLACE "([0-9]+\\.[0-9]+\\.[0-9]).*" "\\1"  OW_API_VERSION ${OW_VERSION} ) 
+    SET( ${_api_version} ${OW_API_VERSION} PARENT_SCOPE )
+
 ENDFUNCTION( GET_VERSION_STRING )
 
 # This functions adds a custom target for generating the specified version header. This is very useful if you want to include build-time version
