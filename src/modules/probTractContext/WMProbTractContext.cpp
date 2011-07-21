@@ -112,7 +112,7 @@ void WMProbTractContext::properties()
     // Initialize the properties
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
 
-    m_isoValue = m_properties->addProperty( "Isovalue", "The isovalue used for the context.", 128.0 );
+    m_isoValue = m_properties->addProperty( "Isovalue", "The isovalue used for the context.", 80.0 );
 
     m_isoColor = m_properties->addProperty( "Iso Color", "The color to blend the isosurface with.", WColor( 1.0, 1.0, 1.0, 1.0 ), m_propCondition );
 
