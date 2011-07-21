@@ -270,6 +270,7 @@ void WMProbTractContext::moduleMain()
             rootState->addUniform( new WGEPropertyUniform< WPropColor >( "u_isocolor", m_isoColor ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalue", m_isoValue ) );
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_steps", m_stepCount ) );
+            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_alpha", m_alpha ) );
 //            rootState->addUniform( new WGEPropertyUniform< WProp >( "u_", m_ ) );
 
             // Stochastic jitter?
