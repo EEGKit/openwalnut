@@ -32,8 +32,13 @@
 #include <osg/StateAttribute>
 #include <boost/lexical_cast.hpp>
 
+#include "../../core/common/WColor.h"
+#include "../../core/common/WPropertyHelper.h"
+
 #include "../../core/dataHandler/WDataSetScalar.h"
 #include "../../core/dataHandler/WDataTexture3D.h"
+#include "../../core/dataHandler/WGridRegular3D.h"
+#include "../../core/dataHandler/WSubject.h"
 
 // TODO(aberres): check which ones are needed
 #include "../../core/graphicsEngine/WGEColormapping.h"
@@ -135,8 +140,8 @@ void WMProbTractContext::moduleMain()
     boost::shared_ptr< WProperties > visProps = m_visModule->getProperties();
 
     // step count
-    m_stepCount = visProps->getProperty( "Step Count" )->toPropDouble();
-//    m_stepCount->set( 250 );
+    m_stepCount = visProps->getProperty( "Step Count" )->toPropInt();
+    m_stepCount->set( 250 );
     m_stepCount->setMin( 1 );
     m_stepCount->setMax( 1000 );
     m_properties->addProperty( m_stepCount );
@@ -264,7 +269,7 @@ void WMProbTractContext::moduleMain()
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_sagittal", m_sagittal ) );
             rootState->addUniform( new WGEPropertyUniform< WPropColor >( "u_isocolor", m_isoColor ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalue", m_isoValue ) );
-//            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_steps", m_stepCount ) );
+            rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_steps", m_stepCount ) );
 //            rootState->addUniform( new WGEPropertyUniform< WProp >( "u_", m_ ) );
 
             // Stochastic jitter?
