@@ -180,7 +180,7 @@ void rayTrace( in vec3 curPoint, in float isovalue, in vec4 isocolor, in float s
 
             // 5. set color
             // get color from colormap (alpha is set to one since we use the isovalue's alpha value here)
-            vec4 mapcolor = colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y * u_texture0SizeY, curPoint.z * u_texture0SizeZ, 1 ) );
+            vec4 mapcolor = colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y * u_texture0SizeY, curPoint.z * u_texture0SizeZ, isocolor.a ) );
             // mix color with colormap
             vec4 color = mix( mapcolor, isocolor, 1 - u_colormapRatio );
             color.a = isocolor.a;
@@ -242,7 +242,7 @@ void main()
         isovalue = v_isovalues[j];
         #ifdef MANUALALPHA_ENABLED
         // use slider to define global alpha for all surfaces
-        isocolor = vec4( u_isocolors[j].rgb, u_alpha );
+        isocolor = u_isocolors[j];
         #else
         // use value-dependent alpha
         isocolor = vec4( u_isocolors[j].rgb, u_isoalphas[j] );

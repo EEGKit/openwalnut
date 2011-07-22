@@ -183,7 +183,7 @@ void rayTrace( in vec3 curPoint, in float stepDistance )
             float factor = abs( dot( v_ray, normal ) / ( length( v_ray ) * length( normal ) ) );
 
             // 5. set color
-            vec4 color = vec4( u_isocolor.r * factor, u_isocolor.g * factor, u_isocolor.b * factor, 1 - factor );
+            vec4 color = vec4( u_isocolor.rgb * factor, 1 - factor );
 
 //                    mix(
 //                colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y * u_texture0SizeY, curPoint.z * u_texture0SizeZ, 1.0 ) ),

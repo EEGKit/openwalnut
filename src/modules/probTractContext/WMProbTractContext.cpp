@@ -112,9 +112,14 @@ void WMProbTractContext::properties()
     // Initialize the properties
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
 
-    m_isoValue = m_properties->addProperty( "Isovalue", "The isovalue used for the context.", 80.0 );
+    // Will set the isovalue to a value within the dataset in the moduleMain.
+    m_isoValue = m_properties->addProperty( "Isovalue", "The isovalue used for the context.", 100.0 );
 
     m_isoColor = m_properties->addProperty( "Iso Color", "The color to blend the isosurface with.", WColor( 1.0, 1.0, 1.0, 1.0 ), m_propCondition );
+
+    m_alpha  = m_properties->addProperty( "Opacity %",        "The opacity in %. Transparency = 1 - Opacity.", 0.7 );
+    m_alpha->setMin( 0.0 );
+    m_alpha->setMax( 1.0 );
 
     WModule::properties();
 }
@@ -146,15 +151,9 @@ void WMProbTractContext::moduleMain()
     m_stepCount->setMax( 1000 );
     m_properties->addProperty( m_stepCount );
 
-    // alpha
-    m_alpha = visProps->getProperty( "Opacity %" )->toPropDouble();
-    m_alpha->setMin( 0.0 );
-    m_alpha->setMax( 1.0 );
-    m_properties->addProperty( m_alpha );
-
     // phong shading
     m_phong = visProps->getProperty( "Phong Shading" )->toPropBool();
-    m_phong->set( true );
+    m_phong->set( false );
     m_properties->addProperty( m_phong );
 
     // stochastic jitter
@@ -188,7 +187,7 @@ void WMProbTractContext::moduleMain()
     osg::ref_ptr< WGEPostprocessingNode > postNode = new WGEPostprocessingNode(
                 WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()
                 );
-    postNode->setEnabled( false );  // do not use it by default
+    postNode->setEnabled( true );  // do not use it by default
     postNode->addUpdateCallback( new WGENodeMaskCallback( m_active ) ); // disable the postNode with m_active
 
     // provide the properties of the post-processor to the user
@@ -232,7 +231,7 @@ void WMProbTractContext::moduleMain()
             // adapt shader to dataset's isovalues
             m_isoValue->setMin( dataSet->getTexture()->minimum()->get() );
             m_isoValue->setMax( dataSet->getTexture()->scale()->get() + dataSet->getTexture()->minimum()->get() );
-            m_isoValue->set( dataSet->getTexture()->minimum()->get() + ( 0.5 * dataSet->getTexture()->scale()->get() ) );
+            m_isoValue->set( dataSet->getTexture()->minimum()->get() + ( 0.3 * dataSet->getTexture()->scale()->get() ) );
 
             // get NavSlice positions
             m_axial = WKernel::getRunningKernel()->getSelectionManager()->getPropAxialPos();

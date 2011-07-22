@@ -114,17 +114,17 @@ void WMProbTractVis::properties()
     // Initialize the properties
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
 
-    m_surfCount= m_properties->addProperty( "Surface Count", "Number of isosurfaces drawn", 2 );
+    m_surfCount = m_properties->addProperty( "Surface Count", "Number of isosurfaces drawn", 2 );
     m_surfCount->setMin( 0 );
     m_surfCount->setMax( 4 );
 
     // TODO(aberres): find what to do with the cube (it uses m_isoColor1)
-    m_isoColor1      = m_properties->addProperty( "Iso Color 1", "The color to blend the isosurface with.", WColor( 0.5, 0.0, 0.0, 1.0 ), m_propCondition );
-    m_isoColor2      = m_properties->addProperty( "Iso Color 2", "The color to blend the isosurface with.", WColor( 1.0, 0.5, 0.0, 1.0 ), m_propCondition );
-    m_isoColor3      = m_properties->addProperty( "Iso Color 3", "The color to blend the isosurface with.", WColor( 0.0, 0.5, 0.7, 1.0 ), m_propCondition );
-    m_isoColor4      = m_properties->addProperty( "Iso Color 4", "The color to blend the isosurface with.", WColor( 0.0, 0.7, 0.0, 1.0 ), m_propCondition );
+    m_isoColor1 = m_properties->addProperty( "Iso Color 1", "The color for the innermost surface.", WColor( 0.5, 0.0, 0.0, 1.0 ), m_propCondition );
+    m_isoColor2 = m_properties->addProperty( "Iso Color 2", "The color for the second surface.", WColor( 1.0, 0.5, 0.0, 0.7 ), m_propCondition );
+    m_isoColor3 = m_properties->addProperty( "Iso Color 3", "The color for the third surface.", WColor( 0.0, 0.5, 0.7, 0.5 ), m_propCondition );
+    m_isoColor4 = m_properties->addProperty( "Iso Color 4", "The color for the fourth surface.", WColor( 0.0, 0.7, 0.0, 0.3 ), m_propCondition );
 
-    m_stepCount     = m_properties->addProperty( "Step Count",       "The number of steps to walk along the ray during raycasting. A low value "
+    m_stepCount = m_properties->addProperty( "Step Count",       "The number of steps to walk along the ray during raycasting. A low value "
                                                                       "may cause artifacts whilst a high value slows down rendering.", 250 );
     m_stepCount->setMin( 1 );
     m_stepCount->setMax( 1000 );
@@ -137,10 +137,6 @@ void WMProbTractVis::properties()
     m_isoEpsilon->setMax( 0.5 );
 
     m_manualAlpha = m_properties->addProperty( "Manual Alpha", "Lets user use the slider to set a global alpha rather than computing it automatically.", false );
-
-    m_alpha         = m_properties->addProperty( "Opacity %",        "The opacity in %. Transparency = 1 - Opacity.", 0.7 );
-    m_alpha->setMin( 0.0 );
-    m_alpha->setMax( 1.0 );
 
     m_phong  = m_properties->addProperty( "Phong Shading", "If enabled, Phong shading gets applied on a per-pixel basis.", true );
 
@@ -253,7 +249,7 @@ void WMProbTractVis::moduleMain()
             m_isoCols.setRowVector( 1, col2 );
             m_isoCols.setRowVector( 2, col3 );
             m_isoCols.setRowVector( 3, col4 );
-            osg::Matrixd m_cols = osg::Matrixd( m_isoCols );
+            m_cols = osg::Matrixd( m_isoCols );
 
             // determine minimum isovalue and range of isovalues in dataset
             double isoMin = dataSet->getTexture()->minimum()->get();
@@ -266,7 +262,7 @@ void WMProbTractVis::moduleMain()
                                                                                    isoMin + 0.40 * isoRange,
                                                                                    isoMin + 0.20 * isoRange,
                                                                                    isoMin + 0.12 * isoRange );
-            osg::Vec4 m_vals = osg::Vec4( m_isoVals );
+            m_vals = osg::Vec4( m_isoVals );
 
             // determine an alpha for each isocolor based on its isovalue
             // hightest value = 1, lowest value = 0
@@ -275,7 +271,7 @@ void WMProbTractVis::moduleMain()
             {
                 m_isoAlphas.at( i, size_t( 0 ) ) = ( m_isoVals.at( i, size_t( 0 ) ) - isoMin ) / isoRange;
             }
-            osg::Vec4 m_alphas = osg::Vec4( m_isoAlphas );
+            m_alphas = osg::Vec4( m_isoAlphas );
 
             // use the OSG Shapes, create unit cube
             WBoundingBox bb( WPosition( 0.0, 0.0, 0.0 ),
@@ -297,7 +293,6 @@ void WMProbTractVis::moduleMain()
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_surfCount", m_surfCount ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalTolerance", m_isoEpsilon ) );
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_steps", m_stepCount ) );
-            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_alpha", m_alpha ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_colormapRatio", m_colormapRatio ) );
             rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isocolors", m_cols ) ) );
             rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isovalues", m_vals ) ) );
