@@ -79,6 +79,12 @@ uniform float u_colormapRatio;
 // The isocolors to use.
 uniform mat4 u_isocolors;
 
+float maxDistance;
+float stepDistance;
+
+mat4x3 toYCbCr;
+mat4x3 toRGB;
+
 /////////////////////////////////////////////////////////////////////////////
 // Attributes
 /////////////////////////////////////////////////////////////////////////////
@@ -117,11 +123,6 @@ vec3 findRayEnd( out float d )
     return p + ( r * d );
 }
 
-float pointDistance( vec3 p1, vec3 p2 )
-{
-    return length( p1 - p2 );
-}
-
 /**
  * Returns the gradient vector at the given position.
  *
@@ -140,7 +141,7 @@ vec3 getNormal( in vec3 position )
     return sign( dot( grad, -v_ray ) ) * grad;
 }
 
-void rayTrace( in vec3 curPoint, in float isovalue, in vec4 isocolor, in float stepDistance )
+void rayTrace( in vec3 curPoint, in float isovalue, in vec4 isocolor )
 {
     for( int i = 1; i < u_steps; i++ )
     {
@@ -183,6 +184,43 @@ void rayTrace( in vec3 curPoint, in float isovalue, in vec4 isocolor, in float s
             vec4 mapcolor = colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y * u_texture0SizeY, curPoint.z * u_texture0SizeZ, isocolor.a ) );
             // mix color with colormap
             vec4 color = mix( mapcolor, isocolor, 1 - u_colormapRatio );
+//            // to hsv
+//            float d = max( color.rgb ) - min( color.rgb );
+////            vec3 hsv;
+//            float v = max( color.rgb );
+//            float s = sign( v ) * d / v;
+//            float h = ( 1 - d )                   * 0                                      + // r = g = b
+//                      ( 1 - sign( v - color.r ) ) * 60 *       ( color.g - color.b ) / d   + // max = r
+//                      ( 1 - sign( v - color.g ) ) * 60 * ( 2 + ( color.b - color.r ) / d ) + // max = g
+//                      ( 1 - sign( v - color.b ) ) * 60 * ( 4 + ( color.r - color.g ) / d );  // max = b
+//            // scale saturation
+//            s = log( i * stepDistance / maxDistance );
+//            // to rgb
+//            float hi = floor( h / 60 );
+//            float f = h / 60 - hi;
+//            float p = v * ( 1 - s );
+//            float q = v * ( 1 - s * f );
+//            float t = v * ( 1 - s * ( 1 - f ) );
+
+//            color.rgb = ( 1 - sign( abs( 0 - hi ) )   * vec3( v, t, p ) + // hi = 0
+//                        ( 1 - sign( abs( 1 - hi ) ) ) * vec3( q, v, p ) + // hi = 1
+//                        ( 1 - sign( abs( 2 - hi ) ) ) * vec3( p, v, t ) + // hi = 2
+//                        ( 1 - sign( abs( 3 - hi ) ) ) * vec3( p, q, v ) + // hi = 3
+//                        ( 1 - sign( abs( 4 - hi ) ) ) * vec3( t, p, v ) + // hi = 4
+//                        ( 1 - sign( abs( 5 - hi ) ) ) * vec3( v, p, q ) + // hi = 5
+//                        ( 1 - sign( abs( 6 - hi ) )   * vec3( v, t, p );  // hi = 6
+
+            float t = stepDistance * i / maxDistance;
+//            float t = stepDistance * ( u_steps - i ) / maxDistance;
+//            vec3 col;
+//            col.x = toYCbCr[0] * color.r;
+//            col.y = toYCbCr[1] * color.g;
+//            col.z = toYCbCr[2] * color.b;
+
+//            col.yz = col.yz * log ( t );
+
+//            color.r = toRGB[0]
+            color.rgb = exp( t * 1.1 ) * color.rgb;
             color.a = isocolor.a;
 
             // 6: the final color construction
@@ -216,10 +254,10 @@ void main()
     wge_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );
 
     // want to find out the maximal distance we have to evaluate and the end of our ray
-    float maxDistance = 0.0;
+    maxDistance = 0.0;
     // findRayEnd also sets the maxDistance
     vec3 rayEnd = findRayEnd( maxDistance );
-    float stepDistance = maxDistance / float( u_steps );
+    stepDistance = maxDistance / float( u_steps );
 
     #ifdef STOCHASTICJITTER_ENABLED
     // stochastic jittering can help to void these ugly wood-grain artifacts with larger sampling distances but might
@@ -235,6 +273,14 @@ void main()
 
     float isovalue;
     vec4 isocolor;
+
+    toYCbCr = mat4x3( 1.00000000e+00,  -1.21889419e-06,   1.40199959e+00,  -1.79455791e+02,
+                      1.00000000e+00,  -3.44135678e-01,  -7.14136156e-01,   1.35458795e+02,
+                      1.00000000e+00,   1.77200007e+00,   4.06298063e-07,  -2.26816060e+02 );
+
+    toRGB = mat4x3(  0.299,     0.587,     0.114,     0.0,
+                    -0.168736, -0.331264,  0.5,       128.0,
+                     0.5,      -0.418688, -0.081312,  128.0 );
 
     // for each isosurface, set the isovalue + isocolor and call the raytracer
     for( int j = 0; j < u_surfCount; j++ )

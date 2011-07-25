@@ -80,6 +80,9 @@ uniform float u_axial;
 uniform float u_coronal;
 uniform float u_sagittal;
 
+float maxDistance;
+float stepDistance;
+
 /////////////////////////////////////////////////////////////////////////////
 // Attributes
 /////////////////////////////////////////////////////////////////////////////
@@ -178,12 +181,18 @@ void rayTrace( in vec3 curPoint, in float stepDistance )
             light = blinnPhongIlluminationIntensity( normalize( normal ) );
             #endif
 
+            // 5. set color
             // calculate factor containing the absolute value of cos(alpha)
             // where alpha is the angle between view vector and normal
             float factor = abs( dot( v_ray, normal ) / ( length( v_ray ) * length( normal ) ) );
-
-            // 5. set color
+            // using the factor results in a shaded line drawing of the brain
             vec4 color = vec4( u_isocolor.rgb * factor, 1 - factor );
+            // now we want tht frontmost part to be transparent in general
+            float t = smoothstep( ( stepDistance * i - 0.25 * maxDistance ) / maxDistance,
+                                  ( stepDistance * i + 0.25 * maxDistance ) / maxDistance,
+                                  stepDistance * i / maxDistance);
+            float u = pow( stepDistance * i / maxDistance, 0.75 );
+            color.a = color.a * u;
 
 //                    mix(
 //                colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y * u_texture0SizeY, curPoint.z * u_texture0SizeZ, 1.0 ) ),
@@ -217,10 +226,10 @@ void main()
     wge_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );
 
     // want to find out the maximal distance we have to evaluate and the end of our ray
-    float maxDistance = 0.0;
+    maxDistance = 0.0;
     // findRayEnd also sets the maxDistance
     vec3 rayEnd = findRayEnd( maxDistance );
-    float stepDistance = maxDistance / float( u_steps );
+    stepDistance = maxDistance / float( u_steps );
 
     #ifdef STOCHASTICJITTER_ENABLED
     // stochastic jittering can help to void these ugly wood-grain artifacts with larger sampling distances but might
