@@ -188,16 +188,11 @@ void rayTrace( in vec3 curPoint, in float stepDistance )
             // using the factor results in a shaded line drawing of the brain
             vec4 color = vec4( u_isocolor.rgb * factor, 1 - factor );
             // now we want tht frontmost part to be transparent in general
-            float t = smoothstep( ( stepDistance * i - 0.25 * maxDistance ) / maxDistance,
-                                  ( stepDistance * i + 0.25 * maxDistance ) / maxDistance,
-                                  stepDistance * i / maxDistance);
-            float u = pow( stepDistance * i / maxDistance, 0.75 );
-            color.a = color.a * u;
-
-//                    mix(
-//                colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y * u_texture0SizeY, curPoint.z * u_texture0SizeZ, 1.0 ) ),
-//                vec4( u_isocolor.rgb, u_alpha ),
-//                1.0 - u_colormapRatio );
+//            float t = smoothstep( ( stepDistance * i - 0.25 * maxDistance ) / maxDistance,
+//                                  ( stepDistance * i + 0.25 * maxDistance ) / maxDistance,
+//                                  stepDistance * i / maxDistance);
+            float t = pow( stepDistance * i / maxDistance, u_alpha );
+            color.a = color.a * t;
 
             // 6: the final color construction
             wge_FragColor = vec4( light * color.rgb, color.a );

@@ -117,7 +117,7 @@ void WMProbTractContext::properties()
 
     m_isoColor = m_properties->addProperty( "Iso Color", "The color to blend the isosurface with.", WColor( 1.0, 1.0, 1.0, 1.0 ), m_propCondition );
 
-    m_alpha  = m_properties->addProperty( "Opacity %",        "The opacity in %. Transparency = 1 - Opacity.", 0.7 );
+    m_alpha  = m_properties->addProperty( "Transparency %",        "The transparency in %.", 0.75 );
     m_alpha->setMin( 0.0 );
     m_alpha->setMax( 1.0 );
 
