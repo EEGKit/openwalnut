@@ -34,7 +34,6 @@
 #include <osg/Vec4>
 #include <boost/lexical_cast.hpp>
 
-
 #include "../../core/common/WColor.h"
 #include "../../core/common/WPropertyHelper.h"
 
@@ -129,9 +128,13 @@ void WMProbTractVis::properties()
     m_stepCount->setMin( 1 );
     m_stepCount->setMax( 1000 );
 
-    m_colormapRatio = m_properties->addProperty( "Colormap Ratio",   "The intensity of the colormap in contrast to surface shading.", 0.5 );
+    m_colormapRatio = m_properties->addProperty( "Colormap Ratio",   "The intensity of the colormap in contrast to surface shading.", 0.0 );
     m_colormapRatio->setMin( 0.0 );
     m_colormapRatio->setMax( 1.0 );
+
+    m_saturation = m_properties->addProperty( "Saturation",   "The saturation depending on the depth.", 1.0 );
+    m_saturation->setMin( 0.01 );
+    m_saturation->setMax( 2.0 );
 
     m_isoEpsilon = m_properties->addProperty( "Isovalue Tolerance", "The amount of deviation tolerated for the isovalue", 0.05 );
     m_isoEpsilon->setMax( 0.5 );
@@ -255,13 +258,15 @@ void WMProbTractVis::moduleMain()
             double isoMin = dataSet->getTexture()->minimum()->get();
             double isoRange = dataSet->getTexture()->scale()->get();
 
+            WMatrixFixed< double, 4, 1 > factors = WMatrixFixed< double, 4, 1 >( 0.55, 0.4, 0.2, 0.12 );
+
             // choose four isovalues and set them as values of a vector
             // use % of range to set isovalues
             // the largest probability has to be first (in -> out compositing)!
-            WMatrixFixed< double, 4, 1 > m_isoVals = WMatrixFixed< double, 4, 1 >( isoMin + 0.55 * isoRange,
-                                                                                   isoMin + 0.40 * isoRange,
-                                                                                   isoMin + 0.20 * isoRange,
-                                                                                   isoMin + 0.12 * isoRange );
+            WMatrixFixed< double, 4, 1 > m_isoVals = WMatrixFixed< double, 4, 1 >( isoMin + factors( 0, 0 ) * isoRange,
+                                                                                   isoMin + factors( 1, 0 ) * isoRange,
+                                                                                   isoMin + factors( 2, 0 ) * isoRange,
+                                                                                   isoMin + factors( 3, 0 ) * isoRange );
             m_vals = osg::Vec4( m_isoVals );
 
             // determine an alpha for each isocolor based on its isovalue
@@ -269,7 +274,7 @@ void WMProbTractVis::moduleMain()
             WMatrixFixed< double, 4, 1 > m_isoAlphas;
             for( size_t i = 0; i < 4; i++ )
             {
-                m_isoAlphas.at( i, size_t( 0 ) ) = ( m_isoVals.at( i, size_t( 0 ) ) - isoMin ) / isoRange;
+                m_isoAlphas( i, 0 ) = ( m_isoVals( i, 0 ) - isoMin ) / ( m_isoVals( 0, 0 ) - isoMin  );
             }
             m_alphas = osg::Vec4( m_isoAlphas );
 
@@ -294,6 +299,7 @@ void WMProbTractVis::moduleMain()
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalTolerance", m_isoEpsilon ) );
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_steps", m_stepCount ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_colormapRatio", m_colormapRatio ) );
+            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_saturation", m_saturation ) );
             rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isocolors", m_cols ) ) );
             rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isovalues", m_vals ) ) );
             rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isoalphas", m_alphas ) ) );

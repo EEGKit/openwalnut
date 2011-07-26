@@ -143,6 +143,8 @@ private:
 
     WPropDouble m_isoEpsilon; //!< The deviation tolerated for the m_isoValue.
 
+    WPropDouble m_saturation; //!< The transfer function for depth dependent saturation.
+
     osg::Vec4 m_alphas; //!< A 4x1 vector containing all isovalue-dependent alphas.
 
     WPropBool m_manualAlpha; //!< If true, the manual alpha slider is used rather than automatic, isovalue-dependent alpha.

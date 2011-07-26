@@ -79,11 +79,11 @@ uniform float u_colormapRatio;
 // The isocolors to use.
 uniform mat4 u_isocolors;
 
+// The weighting parameter for the depth-dependent saturation.
+uniform float u_saturation;
+
 float maxDistance;
 float stepDistance;
-
-mat4x3 toYCbCr;
-mat4x3 toRGB;
 
 /////////////////////////////////////////////////////////////////////////////
 // Attributes
@@ -178,57 +178,24 @@ void rayTrace( in vec3 curPoint, in float isovalue, in vec4 isocolor )
             light = blinnPhongIlluminationIntensity( normalize( normal ) );
             #endif
 
-
             // 5. set color
             // get color from colormap (alpha is set to one since we use the isovalue's alpha value here)
             vec4 mapcolor = colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y * u_texture0SizeY, curPoint.z * u_texture0SizeZ, isocolor.a ) );
             // mix color with colormap
             vec4 color = mix( mapcolor, isocolor, 1 - u_colormapRatio );
-//            // to hsv
-//            float d = max( color.rgb ) - min( color.rgb );
-////            vec3 hsv;
-//            float v = max( color.rgb );
-//            float s = sign( v ) * d / v;
-//            float h = ( 1 - d )                   * 0                                      + // r = g = b
-//                      ( 1 - sign( v - color.r ) ) * 60 *       ( color.g - color.b ) / d   + // max = r
-//                      ( 1 - sign( v - color.g ) ) * 60 * ( 2 + ( color.b - color.r ) / d ) + // max = g
-//                      ( 1 - sign( v - color.b ) ) * 60 * ( 4 + ( color.r - color.g ) / d );  // max = b
-//            // scale saturation
-//            s = log( i * stepDistance / maxDistance );
-//            // to rgb
-//            float hi = floor( h / 60 );
-//            float f = h / 60 - hi;
-//            float p = v * ( 1 - s );
-//            float q = v * ( 1 - s * f );
-//            float t = v * ( 1 - s * ( 1 - f ) );
-
-//            color.rgb = ( 1 - sign( abs( 0 - hi ) )   * vec3( v, t, p ) + // hi = 0
-//                        ( 1 - sign( abs( 1 - hi ) ) ) * vec3( q, v, p ) + // hi = 1
-//                        ( 1 - sign( abs( 2 - hi ) ) ) * vec3( p, v, t ) + // hi = 2
-//                        ( 1 - sign( abs( 3 - hi ) ) ) * vec3( p, q, v ) + // hi = 3
-//                        ( 1 - sign( abs( 4 - hi ) ) ) * vec3( t, p, v ) + // hi = 4
-//                        ( 1 - sign( abs( 5 - hi ) ) ) * vec3( v, p, q ) + // hi = 5
-//                        ( 1 - sign( abs( 6 - hi ) )   * vec3( v, t, p );  // hi = 6
 
             float t = stepDistance * i / maxDistance;
-//            float t = stepDistance * ( u_steps - i ) / maxDistance;
-//            vec3 col;
-//            col.x = toYCbCr[0] * color.r;
-//            col.y = toYCbCr[1] * color.g;
-//            col.z = toYCbCr[2] * color.b;
 
-//            col.yz = col.yz * log ( t );
-
-//            color.r = toRGB[0]
-            color.rgb = exp( t * 1.1 ) * color.rgb;
+//            color.rgb = exp( t * 1.1 ) * color.rgb;
+            color.rgb = mix( color.rgb, vec3( 0.0, 0.0, 0.0 ), pow( t, u_saturation ) );
             color.a = isocolor.a;
 
             // 6: the final color construction
             // alpha blending of background (old FragColor) and foreground (new color)
-            // (1-alpha)*fragcol*fragalpha + alpha*light*col
-            wge_FragColor.rgb = mix( wge_FragColor.rgb * wge_FragColor.a, light * color.rgb, color.a );
             // (1-alpha)*fragalpha + alpha*1
             wge_FragColor.a = mix( wge_FragColor.a, 1, color.a );
+            // (1-alpha)*fragcol*fragalpha + alpha*light*col
+            wge_FragColor.rgb = mix( wge_FragColor.rgb * wge_FragColor.a, light * color.rgb, color.a ) / wge_FragColor.a;
 
             break;
         }
@@ -250,8 +217,8 @@ void main()
     // 1.0 = back, 0.0 = front
     // fragment depth needed for postprocessing
     gl_FragDepth = 1.0; //TODO(aberres): adapt?
-    // need initial FragColor for color construction later (step 6 in rayTrace()
-    wge_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );
+    // need initial FragColor for color construction later (step 6 in rayTrace())
+    wge_FragColor = vec4( 1.0, 1.0, 1.0, 0.0 );
 
     // want to find out the maximal distance we have to evaluate and the end of our ray
     maxDistance = 0.0;
@@ -274,14 +241,6 @@ void main()
     float isovalue;
     vec4 isocolor;
 
-    toYCbCr = mat4x3( 1.00000000e+00,  -1.21889419e-06,   1.40199959e+00,  -1.79455791e+02,
-                      1.00000000e+00,  -3.44135678e-01,  -7.14136156e-01,   1.35458795e+02,
-                      1.00000000e+00,   1.77200007e+00,   4.06298063e-07,  -2.26816060e+02 );
-
-    toRGB = mat4x3(  0.299,     0.587,     0.114,     0.0,
-                    -0.168736, -0.331264,  0.5,       128.0,
-                     0.5,      -0.418688, -0.081312,  128.0 );
-
     // for each isosurface, set the isovalue + isocolor and call the raytracer
     for( int j = 0; j < u_surfCount; j++ )
     {
@@ -293,13 +252,7 @@ void main()
         // use value-dependent alpha
         isocolor = vec4( u_isocolors[j].rgb, u_isoalphas[j] );
         #endif
-        rayTrace( curPoint, isovalue, isocolor, stepDistance );
+        rayTrace( curPoint, isovalue, isocolor );
     }
-
-    // debug by using graphical output
-    // want to know current depth value
-    // need return to display this
-    // gl_FragData[0] = vec4(curPointProjected.z,0,0,1);
-    // return;
 }
 
