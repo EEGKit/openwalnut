@@ -80,6 +80,10 @@ uniform float u_axial;
 uniform float u_coronal;
 uniform float u_sagittal;
 
+float axial;
+float coronal;
+float sagittal;
+
 float maxDistance;
 float stepDistance;
 
@@ -187,12 +191,14 @@ void rayTrace( in vec3 curPoint, in float stepDistance )
             float factor = abs( dot( v_ray, normal ) / ( length( v_ray ) * length( normal ) ) );
             // using the factor results in a shaded line drawing of the brain
             vec4 color = vec4( u_isocolor.rgb * factor, 1 - factor );
-            // now we want tht frontmost part to be transparent in general
-//            float t = smoothstep( ( stepDistance * i - 0.25 * maxDistance ) / maxDistance,
-//                                  ( stepDistance * i + 0.25 * maxDistance ) / maxDistance,
-//                                  stepDistance * i / maxDistance);
+
             float t = pow( stepDistance * i / maxDistance, u_alpha );
-            color.a = color.a * t;
+
+            // beyond the slice, alpha := 1
+            // otherwise, alpha := t
+            color.a = max( sign( sagittal - curPoint.x ), t );
+//            color.a = max( sign( coronal - curPoint.y ), t );
+//            color.a = max( sign( axial - curPoint.z ), t );
 
             // 6: the final color construction
             wge_FragColor = vec4( light * color.rgb, color.a );
@@ -216,7 +222,7 @@ void main()
 {
     // 1.0 = back, 0.0 = front
     // fragment depth needed for postprocessing
-    gl_FragDepth = 1.0; //TODO(aberres): adapt?
+    gl_FragDepth = 1.0;
     // need initial FragColor for color construction later (step 6 in rayTrace()
     wge_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );
 
@@ -237,6 +243,11 @@ void main()
     // current point in texture space + v_ray
     vec3 curPoint = v_rayStart + v_ray;
     #endif
+
+    // scale down the slice positions to [0,1]
+    axial = u_axial / 160;
+    coronal = u_coronal / 200;
+    sagittal = u_sagittal / 160;
 
     rayTrace( curPoint, stepDistance );
 

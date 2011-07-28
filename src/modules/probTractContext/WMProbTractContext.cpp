@@ -259,7 +259,7 @@ void WMProbTractContext::moduleMain()
             osg::StateSet* rootState = cube->getOrCreateStateSet();
             osg::ref_ptr< WGETexture3D > texture3D = dataSet->getTexture();
             texture3D->bind( cube );
-
+            errorLog() << *m_axial << "|" << *m_coronal << "|" << *m_sagittal;
             ////////////////////////////////////////////////////////////////////////////////////////////////////
             // setup all those uniforms and additional textures
             ////////////////////////////////////////////////////////////////////////////////////////////////////

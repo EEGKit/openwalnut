@@ -119,14 +119,14 @@ private:
     WPropDouble m_coronal; //!< Coronal NavSlice position.
     WPropDouble m_sagittal; //!< Sagittal NavSlice position.
 
+
     // gui properties
     boost::shared_ptr< WCondition > m_propCondition;
 
     WPropDouble m_isoValue; //!< The isovalue used for the context.
-    WPropDouble m_alpha; //!< The context transparency
+    WPropDouble m_alpha; //!< The context transparency.
     WPropColor m_isoColor; //!< The color used for the context.
     WPropInt m_stepCount; //!< The number of steps for the raytracer.
-    //TODO(aberres): separate alphas for vis and context!!
     WPropBool m_phong; //!< Enables or disables phong shading.
     WPropBool m_jitter; //!< Enables or disables stochastic jitter.
 };
