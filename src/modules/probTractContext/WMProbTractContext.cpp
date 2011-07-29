@@ -121,6 +121,19 @@ void WMProbTractContext::properties()
     m_alpha->setMin( 0.0 );
     m_alpha->setMax( 1.0 );
 
+    // TODO(aberres): use proper names!
+    m_viewAxial = m_properties->addProperty( "Inferior or Superior opaque", "Opaque context on top (+1), underneath (-1), or off (0).", 0 );
+    m_viewAxial->setMin(-1);
+    m_viewAxial->setMax(1);
+
+    m_viewCoronal = m_properties->addProperty( "Posterior or Anterior opaque", "Opaque context in front (+1), in the back (-1), or off (0).", -1 );
+    m_viewCoronal->setMin(-1);
+    m_viewCoronal->setMax(1);
+
+    m_viewSagittal = m_properties->addProperty( "Left or Right opaque", "Opaque context on the right (+1), on the left (-1), or off (0).", 0 );
+    m_viewSagittal->setMin(-1);
+    m_viewSagittal->setMax(1);
+
     WModule::properties();
 }
 
@@ -234,9 +247,9 @@ void WMProbTractContext::moduleMain()
             m_isoValue->set( dataSet->getTexture()->minimum()->get() + ( 0.3 * dataSet->getTexture()->scale()->get() ) );
 
             // get NavSlice positions
-            m_axial = WKernel::getRunningKernel()->getSelectionManager()->getPropAxialPos();
-            m_coronal = WKernel::getRunningKernel()->getSelectionManager()->getPropCoronalPos();
-            m_sagittal = WKernel::getRunningKernel()->getSelectionManager()->getPropSagittalPos();
+            m_axialPos = WKernel::getRunningKernel()->getSelectionManager()->getPropAxialPos();
+            m_coronalPos = WKernel::getRunningKernel()->getSelectionManager()->getPropCoronalPos();
+            m_sagittalPos = WKernel::getRunningKernel()->getSelectionManager()->getPropSagittalPos();
 
             // First, grab the grid
             boost::shared_ptr< WGridRegular3D > grid = boost::shared_dynamic_cast< WGridRegular3D >( dataSet->getGrid() );
@@ -259,13 +272,16 @@ void WMProbTractContext::moduleMain()
             osg::StateSet* rootState = cube->getOrCreateStateSet();
             osg::ref_ptr< WGETexture3D > texture3D = dataSet->getTexture();
             texture3D->bind( cube );
-            errorLog() << *m_axial << "|" << *m_coronal << "|" << *m_sagittal;
+//
             ////////////////////////////////////////////////////////////////////////////////////////////////////
             // setup all those uniforms and additional textures
             ////////////////////////////////////////////////////////////////////////////////////////////////////
-            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_axial", m_axial ) );
-            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_coronal", m_coronal ) );
-            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_sagittal", m_sagittal ) );
+            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_axial", m_axialPos ) );
+            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_coronal", m_coronalPos ) );
+            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_sagittal", m_sagittalPos ) );
+            rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_viewAxial", m_viewAxial ) );
+            rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_viewCoronal", m_viewCoronal ) );
+            rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_viewSagittal", m_viewSagittal ) );
             rootState->addUniform( new WGEPropertyUniform< WPropColor >( "u_isocolor", m_isoColor ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalue", m_isoValue ) );
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_steps", m_stepCount ) );

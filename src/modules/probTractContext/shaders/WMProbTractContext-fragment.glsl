@@ -80,6 +80,11 @@ uniform float u_axial;
 uniform float u_coronal;
 uniform float u_sagittal;
 
+// View context only
+uniform int u_viewAxial;
+uniform int u_viewCoronal;
+uniform int u_viewSagittal;
+
 float axial;
 float coronal;
 float sagittal;
@@ -188,17 +193,19 @@ void rayTrace( in vec3 curPoint, in float stepDistance )
             // 5. set color
             // calculate factor containing the absolute value of cos(alpha)
             // where alpha is the angle between view vector and normal
+//            t = dFdx( normal.y );
             float factor = abs( dot( v_ray, normal ) / ( length( v_ray ) * length( normal ) ) );
             // using the factor results in a shaded line drawing of the brain
             vec4 color = vec4( u_isocolor.rgb * factor, 1 - factor );
 
             float t = pow( stepDistance * i / maxDistance, u_alpha );
 
+            // TODO(aberres): write concise comment
             // beyond the slice, alpha := 1
             // otherwise, alpha := t
-            color.a = max( sign( sagittal - curPoint.x ), t );
-//            color.a = max( sign( coronal - curPoint.y ), t );
-//            color.a = max( sign( axial - curPoint.z ), t );
+            color.a = max( u_viewSagittal * sign( curPoint.x - sagittal ), t );
+            color.a = max( max( u_viewCoronal * sign( curPoint.y - coronal ), t ), color.a );
+            color.a = max( max( u_viewAxial * sign( curPoint.z - axial ), t ), color.a );
 
             // 6: the final color construction
             wge_FragColor = vec4( light * color.rgb, color.a );

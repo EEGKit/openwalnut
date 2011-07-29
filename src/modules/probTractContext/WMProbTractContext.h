@@ -115,10 +115,13 @@ private:
 
     osg::ref_ptr< WGEShader > m_shader; //!< The shader.
 
-    WPropDouble m_axial; //!< Axial NavSlice position.
-    WPropDouble m_coronal; //!< Coronal NavSlice position.
-    WPropDouble m_sagittal; //!< Sagittal NavSlice position.
+    WPropDouble m_axialPos; //!< Axial NavSlice position.
+    WPropDouble m_coronalPos; //!< Coronal NavSlice position.
+    WPropDouble m_sagittalPos; //!< Sagittal NavSlice position.
 
+    WPropInt m_viewAxial;
+    WPropInt m_viewCoronal;
+    WPropInt m_viewSagittal;
 
     // gui properties
     boost::shared_ptr< WCondition > m_propCondition;
