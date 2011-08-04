@@ -109,14 +109,14 @@ vec3 findRayEnd( out float d )
 
     // v_ray in cube coordinates is used to check against the unit cube borders
     // when will v_ray reach the front face? -> solve equations
-    float tFront     = - p.z / r.z;                  // (x,x,0) = v_rayStart + t * v_ray
-    float tBack      = ( 1.0 - p.z ) / r.z;          // (x,x,1) = v_rayStart + t * v_ray
+    float tFront     = - p.z / r.z;                  // (x,y,0) = v_rayStart + t * v_ray
+    float tBack      = ( 1.0 - p.z ) / r.z;          // (x,y,1) = v_rayStart + t * v_ray
 
-    float tLeft      = - p.x / r.x;                  // (0,x,x) = v_rayStart + t * v_ray
-    float tRight     = ( 1.0 - p.x ) / r.x;          // (1,x,x) = v_rayStart + t * v_ray
+    float tLeft      = - p.x / r.x;                  // (0,y,z) = v_rayStart + t * v_ray
+    float tRight     = ( 1.0 - p.x ) / r.x;          // (1,y,z) = v_rayStart + t * v_ray
 
-    float tBottom    = - p.y / r.y;                  // (x,0,x) = v_rayStart + t * v_ray
-    float tTop       = ( 1.0 - p.y ) / r.y;          // (x,1,x) = v_rayStart + t * v_ray
+    float tBottom    = - p.y / r.y;                  // (x,0,z) = v_rayStart + t * v_ray
+    float tTop       = ( 1.0 - p.y ) / r.y;          // (x,1,z) = v_rayStart + t * v_ray
 
     // get the nearest hit
     d = min( min( max( tFront, tBack ), max( tLeft, tRight ) ), max( tBottom, tTop ) );
@@ -180,32 +180,27 @@ void rayTrace( in vec3 curPoint, in float isovalue, in vec4 isocolor )
 
             // 5. set color
             // get color from colormap (alpha is set to one since we use the isovalue's alpha value here)
-            vec4 mapcolor = colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y * u_texture0SizeY, curPoint.z * u_texture0SizeZ, isocolor.a ) );
+            vec4 mapcolor = colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y * u_texture0SizeY, curPoint.z * u_texture0SizeZ, 1 ) );
             // mix color with colormap
             vec4 color = mix( mapcolor, isocolor, 1 - u_colormapRatio );
-
-            float t = stepDistance * i / maxDistance;
-
-//            color.rgb = exp( t * 1.1 ) * color.rgb;
-            color.rgb = mix( color.rgb, vec3( 0.0, 0.0, 0.0 ), pow( t, u_saturation ) );
+            // compute distance from eye point
+            float t = 1 - stepDistance * i / maxDistance;
+            // estimate gray value of color
+            vec3 gray = vec3( ( color.r + color.g + color.b ) / 3 );
+            // mix color with grey value dependent on distance from eye point
+            color.rgb = mix( color.rgb, gray, pow( t, u_saturation ) );
+            // use isocolor's transparency
             color.a = isocolor.a;
 
             // 6: the final color construction
             // alpha blending of background (old FragColor) and foreground (new color)
-            // (1-alpha)*fragalpha + alpha*1
+            // (1-z)*x + z*y
             wge_FragColor.a = mix( wge_FragColor.a, 1, color.a );
             // (1-alpha)*fragcol*fragalpha + alpha*light*col
             wge_FragColor.rgb = mix( wge_FragColor.rgb * wge_FragColor.a, light * color.rgb, color.a ) / wge_FragColor.a;
-
-            break;
         }
-
-        else
-        {
-            // no it is not the iso value
-            // -> continue along the ray
-            curPoint += stepDistance * v_ray;
-        }
+        // continue along the ray
+        curPoint -= stepDistance * v_ray;
     }
 }
 
@@ -231,11 +226,11 @@ void main()
     // introduce some noise artifacts.
     float jitter = 0.5 - texture2D( u_texture1Sampler, gl_FragCoord.xy / u_texture1SizeX ).r;
     // the point along the ray in cube coordinates
-    vec3 curPoint = v_rayStart + v_ray + ( v_ray * stepDistance * jitter );
+    vec3 curPoint = v_rayStart + maxDistance * v_ray + ( v_ray * stepDistance * jitter );
     vec3 rayStart = curPoint;
     #else
     // current point in texture space + v_ray
-    vec3 curPoint = v_rayStart + v_ray;
+    vec3 curPoint = v_rayStart + maxDistance * v_ray;
     #endif
 
     float isovalue;
@@ -252,6 +247,8 @@ void main()
         // use value-dependent alpha
         isocolor = vec4( u_isocolors[j].rgb, u_isoalphas[j] );
         #endif
+        // reduce alpha to a reasonable value (several layers per isovalue will be opaque otherwise)
+	isocolor.a = pow( isocolor.a, 3 );
         rayTrace( curPoint, isovalue, isocolor );
     }
 }
