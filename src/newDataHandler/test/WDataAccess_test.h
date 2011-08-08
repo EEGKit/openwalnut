@@ -30,6 +30,7 @@
 #include "../WDataAccess.h"
 #include "../WDataSet.h"
 #include "../WGridRegular3D2.h"
+#include "../WGridRegular3D2Specializations.h"
 #include "../structuralTypes/WScalarStructural.h"
 
 /**

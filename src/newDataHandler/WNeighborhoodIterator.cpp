@@ -22,36 +22,4 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WGRIDREGULAR3D2_TEST_H
-#define WGRIDREGULAR3D2_TEST_H
-
-#include <cxxtest/TestSuite.h>
-
-#include "../WGridRegular3D2.h"
-#include "../WGridRegular3D2Specializations.h"
-
-/**
- * Test functionality of WGridRegular3D2.
- */
-class WGridRegular3D2Test : public CxxTest::TestSuite
-{
-public:
-    /**
-     * Test the mapping from voxel indices to voxel coords.
-     */
-    void testVoxelIndexCalculation()
-    {
-        WGridRegular3D2 g( 3, 4, 5 );
-
-        TS_ASSERT_EQUALS( 4, WIndexMap< WGridRegular3D2 >::getVoxelIndex( g, 1, 1, 0 ) );
-        TS_ASSERT_EQUALS( 28, WIndexMap< WGridRegular3D2 >::getVoxelIndex( g, 1, 1, 2 ) );
-        TS_ASSERT_EQUALS( g.numVoxels() - 1, WIndexMap< WGridRegular3D2 >::getVoxelIndex( g, 2, 3, 4 ) );
-
-        boost::array< std::size_t, 3 > coords = WIndexMap< WGridRegular3D2 >::getVoxelCoords( g, 28 );
-        TS_ASSERT_EQUALS( coords[ 0 ], 1 );
-        TS_ASSERT_EQUALS( coords[ 1 ], 1 );
-        TS_ASSERT_EQUALS( coords[ 2 ], 2 );
-    }
-};
-
-#endif  // WGRIDREGULAR3D2_TEST_H
+#include "WNeighborhoodIterator.h"

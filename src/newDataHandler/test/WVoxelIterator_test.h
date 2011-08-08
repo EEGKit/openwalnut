@@ -31,6 +31,7 @@
 #include "../WDataSet.h"
 #include "../WVoxelIterator.h"
 #include "../WGridRegular3D2.h"
+#include "../WGridRegular3D2Specializations.h"
 #include "../structuralTypes/WScalarStructural.h"
 
 /**

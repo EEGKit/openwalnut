@@ -26,10 +26,31 @@
 #define WVOXELITERATOR_H
 
 #include <string> // for std::size_t
+#include <utility>
+
+#include "WNeighborhood.h"
+
+// ################################ forward declarations #######################################
+
+// a forward declaration for the type used for neighbor voxel iteration
+template< typename T >
+class WNeighborhoodIterator;
+
+// a forward declaration for the type used for neighbor voxel iteration (const version)
+template< typename T >
+class WNeighborhoodIteratorConst;
+
+// a forward declaration for the boundary specific functionality
+template< typename T >
+class WBoundaryStrategy;
 
 // a forward declaration needed for a friend declaration below
 template< typename GridT, typename ValueT >
 class WDataAccess;
+
+// a forward declaration needed for a friend declaration below
+template< typename GridT, typename ValueT >
+class WDataAccessConst;
 
 // one for the valueset
 template< typename ValueT >
@@ -42,9 +63,12 @@ class WIndexMap;
 // a forward declaration for the test
 class WVoxelIteratorTest;
 
-// forward the const version of the voxel iterator
+// forward the const version of the voxel iterator, declared in this header
 template< typename GridT, typename ValueT >
 class WVoxelIteratorConst;
+
+// TODO( reichenbach ): remove the neighborhood iterator construction from this class and move it to
+//                      a specialization of the data access
 
 /**
  * A class for iterating voxels of a dataset. Provides operations for incrementing, decrementing, data access and so on,
@@ -69,6 +93,9 @@ class WVoxelIteratorConst;
  * Also, be sure to keep a shared_ptr to your dataset while working with iterators. If the last shared_ptr to the data gets destroyed
  * (say you didn't copy the input data shared_ptr from your input connector and it gets updated while you do your stuff with the iterators),
  * there will be dangling pointers and a segfault is imminent!
+ *
+ * \param GridT The type of the grid.
+ * \param T The type of the data in the valueset.
  */
 template< typename GridT, typename T >
 class WVoxelIterator
@@ -81,15 +108,15 @@ public:
     // the const version is also a friend
     friend class WVoxelIteratorConst< GridT, T >;
 
-    //! A typedef for the grid's type.
-    typedef GridT GridType;
-
     // The data access is a friend so it can create iterators using the non-default constructor.
     template< typename GridTT, typename ValueT >
     friend class WDataAccess;
 
+    //! A typedef for the grid's type.
+    typedef GridT GridType;
+
     /**
-     * Default constructor, create an invalid iterator.
+     * Default constructor, creates an invalid iterator.
      */
     WVoxelIterator()
         : m_grid( NULL ),
@@ -207,7 +234,7 @@ public:
     typename GridType::VoxelIndex operator() () const
     {
         // the index will be tested by getVoxelCoords
-        return WIndexMap< GridType >::getVoxelCoords( m_index );
+        return WIndexMap< GridType >::getVoxelCoords( *m_grid, m_index );
     }
 
     /**
@@ -276,6 +303,22 @@ public:
         {
             return NULL;
         }
+    }
+
+    /**
+     * Get a range of neighbor iterators that can be used to iterate all voxels that are in
+     * a specified neighborhood of the voxel that this iterator currently points to. Changes made to the voxel iterator after
+     * construction of a neighborhood iterator range do not affect that range.
+     *
+     * \param nbh A neighborhood that defines the offsets of the voxels that will be neighbors to a currently selected voxel.
+     * \param bs A strategy to use for out-of-grid voxels.
+     *
+     * \return A pair of begin and end iterators for the neighbors of the voxel currently pointed to by this iterator.
+     */
+    std::pair< WNeighborhoodIterator< T >, WNeighborhoodIterator< T > > neighbors( WNeighborhood const& nbh, WBoundaryStrategy< T > const& bs )
+    {
+        return std::make_pair( WNeighborhoodIterator< T >( m_grid, m_valueSet, nbh, bs, this->operator() (), 0 ),
+                               WNeighborhoodIterator< T >( m_grid, m_valueSet, nbh, bs, this->operator() (), nbh.size() ) );
     }
 
 protected:
@@ -480,7 +523,7 @@ public:
     typename GridType::VoxelIndex operator() () const
     {
         // the index will be tested by getVoxelCoords
-        return WIndexMap< GridType >::getVoxelCoords( m_index );
+        return WIndexMap< GridType >::getVoxelCoords( *m_grid, m_index );
     }
 
     /**
@@ -549,6 +592,23 @@ public:
         {
             return NULL;
         }
+    }
+
+    /**
+     * Get a range of neighbor iterators that can be used to iterate all voxels that are in
+     * a specified neighborhood of the voxel that this iterator currently points to. Changes made to the voxel iterator after
+     * construction of a neighborhood iterator range do not affect that range.
+     *
+     * \param nbh A neighborhood that defines the offsets of the voxels that will be neighbors to a currently selected voxel.
+     * \param bs A strategy to use for out-of-grid voxels.
+     *
+     * \return A pair of begin and end iterators for the neighbors of the voxel currently pointed to by this iterator.
+     */
+    std::pair< WNeighborhoodIteratorConst< T >, WNeighborhoodIteratorConst< T > >
+        neighbors( WNeighborhood const& nbh, WBoundaryStrategy< T > const& bs )
+    {
+        return std::make_pair( WNeighborhoodIteratorConst< T >( m_grid, m_valueSet, nbh, bs, this->operator() (), 0 ),
+                               WNeighborhoodIteratorConst< T >( m_grid, m_valueSet, nbh, bs, this->operator() (), nbh.size() ) );
     }
 
 protected:
