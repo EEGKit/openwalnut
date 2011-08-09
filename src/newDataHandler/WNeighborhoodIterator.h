@@ -324,7 +324,7 @@ public:
     /**
      * Constructor.
      *
-     * \param def The default value. 
+     * \param def The default value.
      */
     WBoundaryStrategyDefault( T def = T() )
         : WBoundaryStrategy< T >(),
@@ -441,6 +441,9 @@ class WVoxelIterator;
 template< typename GridT, typename ValueT >
 class WVoxelIteratorConst;
 
+// forward the test
+class WNeighborhoodIteratorTest;
+
 /**
  * A class for iterating neighbors of voxels of a dataset. For more important information
  * on iterators, see WVoxelIterator.
@@ -460,13 +463,19 @@ public:
     // voxel iterators create neighborhood iterators using a non-public constructor
     template< typename GridTT, typename ValueTT > friend class WVoxelIterator;
 
+    // the const version is a friend
+    template< typename TT > friend class WNeighborhoodIteratorConst;
+
+    // the test is a friend
+    friend class WNeighborhoodIteratorTest;
+
     /**
      * Default constructor, creates an invalid iterator.
      */
     WNeighborhoodIterator()
-        : m_boundaryStrategy( new WBoundaryStrategyClamp< T >() )
+        : m_grid( NULL ),
+          m_valueSet( NULL )
     {
-        m_voxel[ 0 ] = m_voxel[ 1 ] = m_voxel[ 2 ] = 0u - 1u;
     }
 
     /**
@@ -553,7 +562,7 @@ public:
      *
      * \return The iterator before incrementing.
      */
-    WNeighborhoodIterator& operator++( int )
+    WNeighborhoodIterator operator++( int )
     {
         WNeighborhoodIterator it = *this;
         do
@@ -570,7 +579,7 @@ public:
      *
      * \return The iterator before decrementing.
      */
-    WNeighborhoodIterator& operator--( int )
+    WNeighborhoodIterator operator--( int )
     {
         WNeighborhoodIterator it = *this;
         do
@@ -600,9 +609,34 @@ public:
      *
      * \param nb The iterator to compare to.
      *
+     * \return True, if the two iterators are equal.
+     */
+    bool operator==( WNeighborhoodIteratorConst< T > const& nb ) const
+    {
+        // TODO( reichenbach ): better compare m_currentPos instead of the first two?
+        return m_voxel == nb.m_voxel && m_index == nb.m_index && m_grid == nb.m_grid && m_valueSet == nb.m_valueSet;
+    }
+
+    /**
+     * Comparison operator.
+     *
+     * \param nb The iterator to compare to.
+     *
      * \return False, if the two iterators are equal.
      */
     bool operator!=( WNeighborhoodIterator const& nb ) const
+    {
+        return !this->operator==( nb );
+    }
+
+    /**
+     * Comparison operator.
+     *
+     * \param nb The iterator to compare to.
+     *
+     * \return False, if the two iterators are equal.
+     */
+    bool operator!=( WNeighborhoodIteratorConst< T > const& nb ) const
     {
         return !this->operator==( nb );
     }
@@ -739,13 +773,19 @@ public:
     //! WVoxelIteratorConst is a friend.
     template< typename GridTT, typename ValueTT > friend class WVoxelIteratorConst;
 
+    // the const version is a friend
+    template< typename TT > friend class WNeighborhoodIterator;
+
+    // the test is a friend
+    friend class WNeighborhoodIteratorTest;
+
     /**
      * Default constructor, creates an invalid iterator.
      */
     WNeighborhoodIteratorConst()
-        : m_boundaryStrategy( new WBoundaryStrategyClamp< T >() )
+        : m_grid( NULL ),
+          m_valueSet( NULL )
     {
-        m_voxel[ 0 ] = m_voxel[ 1 ] = m_voxel[ 2 ] = 0u - 1u;
     }
 
     /**
@@ -772,18 +812,53 @@ public:
     }
 
     /**
+     * Copy constructor.
+     *
+     * \param nhi The iterator to copy from.
+     */
+    WNeighborhoodIteratorConst( WNeighborhoodIterator< T > const& nhi )  // NOLINT not explicit
+        : m_grid( nhi.m_grid ),
+          m_valueSet( nhi.m_valueSet ),
+          m_neighborhood( nhi.m_neighborhood ),
+          m_boundaryStrategy( nhi.m_boundaryStrategy->clonePtr() ),
+          m_voxel( nhi.m_voxel ),
+          m_currentPos( nhi.m_currentPos ),
+          m_index( nhi.m_index )
+    {
+    }
+
+    /**
      * Copy operator.
      *
      * \param nhi The iterator to copy from.
      *
      * \return *this.
      */
-    WNeighborhoodIteratorConst& operator=( WNeighborhoodIteratorConst const nhi ) // = default;
+    WNeighborhoodIteratorConst& operator=( WNeighborhoodIteratorConst const nhi )
     {
         if( this == &nhi )
         {
             return *this;
         }
+        m_grid = nhi.m_grid;
+        m_valueSet = nhi.m_valueSet;
+        m_neighborhood = nhi.m_neighborhood;
+        m_boundaryStrategy = std::auto_ptr< WBoundaryStrategy< T > const >( nhi.m_boundaryStrategy->clonePtr() );
+        m_voxel = nhi.m_voxel;
+        m_currentPos = nhi.m_currentPos;
+        m_index = nhi.m_index;
+        return *this;
+    }
+
+    /**
+     * Copy operator.
+     *
+     * \param nhi The iterator to copy from.
+     *
+     * \return *this.
+     */
+    WNeighborhoodIteratorConst& operator=( WNeighborhoodIterator< T > const nhi )
+    {
         m_grid = nhi.m_grid;
         m_valueSet = nhi.m_valueSet;
         m_neighborhood = nhi.m_neighborhood;
@@ -829,7 +904,7 @@ public:
      *
      * \return The iterator before incrementing.
      */
-    WNeighborhoodIteratorConst& operator++( int )
+    WNeighborhoodIteratorConst operator++( int )
     {
         WNeighborhoodIteratorConst it = *this;
         if( m_index < m_neighborhood.size() )
@@ -845,7 +920,7 @@ public:
      *
      * \return The iterator before decrementing.
      */
-    WNeighborhoodIteratorConst& operator--( int )
+    WNeighborhoodIteratorConst operator--( int )
     {
         WNeighborhoodIteratorConst it = *this;
         if( m_index > 0 )
@@ -873,9 +948,33 @@ public:
      *
      * \param nb The iterator to compare to.
      *
+     * \return True, if the two iterators are equal.
+     */
+    bool operator==( WNeighborhoodIterator< T > const& nb ) const
+    {
+        return m_voxel == nb.m_voxel && m_index == nb.m_index && m_grid == nb.m_grid && m_valueSet == nb.m_valueSet;
+    }
+
+    /**
+     * Comparison operator.
+     *
+     * \param nb The iterator to compare to.
+     *
      * \return False, if the two iterators are equal.
      */
     bool operator!=( WNeighborhoodIteratorConst const& nb ) const
+    {
+        return !this->operator==( nb );
+    }
+
+    /**
+     * Comparison operator.
+     *
+     * \param nb The iterator to compare to.
+     *
+     * \return False, if the two iterators are equal.
+     */
+    bool operator!=( WNeighborhoodIterator< T > const& nb ) const
     {
         return !this->operator==( nb );
     }
