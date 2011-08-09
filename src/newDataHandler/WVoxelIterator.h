@@ -427,7 +427,7 @@ public:
      *
      * \return *this.
      */
-    WVoxelIteratorConst& operator==( WVoxelIterator< GridT, T > const& vi )
+    WVoxelIteratorConst& operator=( WVoxelIterator< GridT, T > const& vi )
     {
         m_grid = vi.m_grid;
         m_valueSet = vi.m_valueSet;
