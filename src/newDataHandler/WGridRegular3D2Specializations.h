@@ -35,88 +35,35 @@
 
 #include "WIndexMap.h"
 #include "WDataAccess.h"
+#include "WNeighborhood.h"
+
 #include "WVoxelIterator.h"
+
+#include "WSliceIterator.h"
 
 // forward declare the grid
 class WGridRegular3D2;
 
+template< typename T >
+class WSliceIterator;
+
+template< typename T >
+class WSliceIteratorConst;
+
+template< typename T >
+class WNeighborhoodIterator;
+
+template< typename T >
+class WNeighborhoodIteratorConst;
+
+template< typename GridT, typename T >
+class WVoxelIterator;
+
+template< typename GridT, typename T >
+class WVoxelIteratorConst;
+
 // ########################################### WIndexMap for this grid #######################################################
 // maybe move this to its own header
-
-/**
- * WIndexMap specialization for WGridRegular3D2.
- */
-// see WIndexMap decl for complete doc
-template<>
-class WIndexMap< WGridRegular3D2 >
-{
-public:
-
-    /**
-     * Get the index of the voxel from some voxel coordinates.
-     *
-     * \param grid The grid.
-     * \param idx The coords of the voxel.
-     *
-     * \return The index of the voxel.
-     */
-    static std::size_t getVoxelIndex( WGridRegular3D2 const& grid, WGridRegular3D2::VoxelIndex const& idx );
-
-    /**
-     * Get the index of the voxel from some voxel coordinates.
-     *
-     * \param grid The grid.
-     * \param x The number of the voxel in x-direction.
-     * \param y The number of the voxel in y-direction.
-     * \param z The number of the voxel in z-direction.
-     *
-     * \return The index of the voxel.
-     */
-    static std::size_t getVoxelIndex( WGridRegular3D2 const& grid, std::size_t x, std::size_t y, std::size_t z );
-
-    // note: we may need this to calculate positions for iterators
-    /**
-     * Get the voxel coords from its index.
-     *
-     * \param grid The grid.
-     * \param index The voxel's index.
-     *
-     * \return An array containing the x, y and z coordinates of the voxel or an undefined result if index >= numVoxels().
-     *
-     * \note In debug mode, an exception gets thrown if index >= numVoxels().
-     */
-    static WGridRegular3D2::VoxelIndex getVoxelCoords( WGridRegular3D2 const& grid, std::size_t index );
-
-    // note that the valueset index calculation from voxel indices does not have to be injective (though it is in this case)
-};
-
-std::size_t WIndexMap< WGridRegular3D2 >::getVoxelIndex( WGridRegular3D2 const& grid, std::size_t x, std::size_t y, std::size_t z )
-{
-    return x + y * grid.getNbVoxelsX() + z * grid.getNbVoxelsX() * grid.getNbVoxelsY();
-}
-
-std::size_t WIndexMap< WGridRegular3D2 >::getVoxelIndex( WGridRegular3D2 const& grid, WGridRegular3D2::VoxelIndex const& idx )
-{
-    return idx[ 0 ] + idx[ 1 ] * grid.getNbVoxelsX() + idx[ 2 ] * grid.getNbVoxelsX() * grid.getNbVoxelsY();
-}
-
-WGridRegular3D2::VoxelIndex WIndexMap< WGridRegular3D2 >::getVoxelCoords( WGridRegular3D2 const& grid, std::size_t index )
-{
-#ifdef _DEBUG
-    WAssert( index < grid.numVoxels(), "The index was too large for this grid." );
-#endif
-
-    WGridRegular3D2::VoxelIndex res;
-
-    std::size_t xy = grid.getNbVoxelsX() * grid.getNbVoxelsY();
-
-    res[ 2 ] = index / xy;
-    res[ 1 ] = index % xy;
-    res[ 0 ] = res[ 1 ] / grid.getNbVoxelsX();
-    res[ 1 ] = res[ 1 ] % grid.getNbVoxelsX();
-
-    return res;
-}
 
 // ########################################### WDataAccess for this grid #######################################################
 
@@ -139,6 +86,9 @@ public:
 
     //! A type for voxel iterators.
     typedef WVoxelIterator< WGridRegular3D2, ValueT > VoxelIterator;
+
+    //! The type for slice iterators.
+    typedef WSliceIterator< ValueT > SliceIterator;
 
     //! A type for voxel neighbor iterators.
     typedef WNeighborhoodIterator< ValueT > VoxelNeighborIterator;
@@ -185,6 +135,20 @@ public:
     {
         return std::make_pair( VoxelIterator( m_grid.get(), m_valueSet.get(), 0 ),
                                VoxelIterator( m_grid.get(), m_valueSet.get(), m_grid->numVoxels() ) );
+    }
+
+    /**
+     * Creates an iterator range for slice iteration.
+     *
+     * \param dir The orientation of the slice ( 0: xy, 1: xz, 2: yz ).
+     * \param slice The index of the slice to iterate.
+     *
+     * \return A begin and an end iterator as a std::pair.
+     */
+    std::pair< SliceIterator, SliceIterator > slice( std::size_t dir, std::size_t slice ) const
+    {
+        return std::make_pair( SliceIterator( m_grid.get(), m_valueSet.get(), 0, dir, slice ),
+                               SliceIterator( m_grid.get(), m_valueSet.get(), m_grid->sliceSize( dir ), dir, slice ) );
     }
 
 private:
@@ -238,6 +202,9 @@ public:
     //! A type for voxel iterators.
     typedef WVoxelIteratorConst< WGridRegular3D2, ValueT > VoxelIterator;
 
+    //! The type for the slice iterators.
+    typedef WSliceIteratorConst< ValueT > SliceIterator;
+
     //! A type for voxel neighbor iterators.
     typedef WNeighborhoodIteratorConst< ValueT > VoxelNeighborIterator;
 
@@ -282,6 +249,20 @@ public:
     {
         return std::make_pair( VoxelIterator( m_grid.get(), m_valueSet.get(), 0 ),
                                VoxelIterator( m_grid.get(), m_valueSet.get(), m_grid->numVoxels() ) );
+    }
+
+    /**
+     * Creates an iterator range for slice iteration.
+     *
+     * \param dir The orientation of the slice ( 0: xy, 1: xz, 2: yz ).
+     * \param slice The index of the slice to iterate.
+     *
+     * \return A begin and an end iterator as a std::pair.
+     */
+    std::pair< SliceIterator, SliceIterator > slice( std::size_t dir, std::size_t slice ) const
+    {
+        return std::make_pair( SliceIterator( m_grid.get(), m_valueSet.get(), 0, dir, slice ),
+                               SliceIterator( m_grid.get(), m_valueSet.get(), m_grid->sliceSize( dir ), dir, slice ) );
     }
 
 private:

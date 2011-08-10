@@ -63,6 +63,9 @@ class WIndexMap;
 // a forward declaration for the test
 class WVoxelIteratorTest;
 
+// for the slice iter test
+class WSliceIteratorTest;
+
 // forward the const version of the voxel iterator, declared in this header
 template< typename GridT, typename ValueT >
 class WVoxelIteratorConst;
@@ -104,6 +107,9 @@ public:
 
     // the test is a friend
     friend class WVoxelIteratorTest;
+
+    // another test that needs the constructor
+    friend class WSliceIteratorTest;
 
     // the const version is also a friend
     friend class WVoxelIteratorConst< GridT, T >;

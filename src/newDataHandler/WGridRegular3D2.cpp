@@ -70,3 +70,19 @@ boost::array< std::size_t, 3 > WGridRegular3D2::getNbVoxelsXYZ() const
     res[ 2 ] = m_coordsZ;
     return res;
 }
+
+std::size_t WGridRegular3D2::sliceSize( std::size_t dir ) const
+{
+    switch( dir )
+    {
+    case 0:
+        return m_coordsX * m_coordsY;
+    case 1:
+        return m_coordsX * m_coordsZ;
+    case 2:
+        return m_coordsY * m_coordsZ;
+    }
+
+    return 0;
+}
+

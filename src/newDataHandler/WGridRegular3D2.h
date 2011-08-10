@@ -33,9 +33,6 @@
 // for tie( x, y ) = ... ; included here so it can be used where this grid is used
 #include <boost/tuple/tuple.hpp>
 
-#include "WIndexMap.h"
-#include "WDataAccess.h"
-
 // this is a simple regular grid
 
 // TODO( reichenbach ):
@@ -119,6 +116,15 @@ public:
      * \return An array containing the number of voxels in x-, y- and z-directions respectively.
      */
     boost::array< std::size_t, 3 > getNbVoxelsXYZ() const;
+
+    /**
+     * Return the number of voxels in a slice.
+     *
+     * \param dir The orientation of the slice ( 0: xy, 1: xz, 2: yz ).
+     *
+     * \return The number of voxel for a slice of the given orientation.
+     */
+    std::size_t sliceSize( std::size_t dir ) const;
 
 private:
 

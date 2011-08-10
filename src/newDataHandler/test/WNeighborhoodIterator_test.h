@@ -25,6 +25,8 @@
 #ifndef WNEIGHBORHOODITERATOR_TEST_H
 #define WNEIGHBORHOODITERATOR_TEST_H
 
+#include <vector>
+
 #include <cxxtest/TestSuite.h>
 
 #include "../WDataAccess.h"
@@ -313,7 +315,7 @@ public:
     }
 
     /**
-     * Test self-assignment of voxel iterators.
+     * Test self-assignment of neighborhood iterators.
      */
     void testSelfAssignment()
     {
@@ -386,7 +388,7 @@ public:
         // get the indices
         {
             // these are the expected indices
-            int ref[] = { 1, 3, 4, 9, 10, 12, 13 };
+            int ref[] = { 1, 3, 4, 9, 10, 12, 13 };  // NOLINT braces
 
             NeighborListVisitor* visitor = new NeighborListVisitor();
 
@@ -432,7 +434,7 @@ public:
             // these are the expected indices
             int ref[] = {  0,  0,  1,  0,  0,  1,  3,  3,  4,
                            0,  0,  1,  0,      1,  3,  3,  4,
-                           9,  9, 10,  9,  9, 10, 12, 12, 13 };
+                           9,  9, 10,  9,  9, 10, 12, 12, 13 };  // NOLINT braces
 
             NeighborListVisitor* visitor = new NeighborListVisitor();
 
@@ -475,7 +477,7 @@ public:
         // get the indices
         {
             // these are the expected indices
-            int ref[] = { 18, 6, 2, 1, 3, 9 };
+            int ref[] = { 18, 6, 2, 1, 3, 9 };  // NOLINT braces
 
             NeighborListVisitor* visitor = new NeighborListVisitor();
 
@@ -520,7 +522,7 @@ public:
             // these are the expected indices
             int ref[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1,
                           -1, -1, -1, -1,      1, -1,  3,  4,
-                          -1, -1, -1, -1,  9, 10, -1, 12, 13 };
+                          -1, -1, -1, -1,  9, 10, -1, 12, 13 };  // NOLINT braces
 
             NeighborListVisitor* visitor = new NeighborListVisitor();
 
@@ -567,7 +569,7 @@ public:
             // these are the expected indices
             int ref[] = {  0,  0,  1,  0,  0,  1,  3,  3,  4,
                            0,  0,  1,  0,      1,  3,  3,  4,
-                           9,  9, 10,  9,  9, 10, 12, 12, 13 };
+                           9,  9, 10,  9,  9, 10, 12, 12, 13 };  // NOLINT braces
 
             NeighborListVisitor* visitor = new NeighborListVisitor();
 
@@ -611,7 +613,7 @@ public:
         // get the indices
         {
             // these are the expected indices
-            int ref[] = { 18, 6, 2, 1, 3, 9 };
+            int ref[] = { 18, 6, 2, 1, 3, 9 };  // NOLINT braces
 
             NeighborListVisitor* visitor = new NeighborListVisitor();
 

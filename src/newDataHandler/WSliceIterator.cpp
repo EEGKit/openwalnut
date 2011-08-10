@@ -22,34 +22,4 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WGridRegular3D2.h"
-
-#include "WIndexMap.h"
-
-std::size_t WIndexMap< WGridRegular3D2 >::getVoxelIndex( WGridRegular3D2 const& grid, std::size_t x, std::size_t y, std::size_t z )
-{
-    return x + y * grid.getNbVoxelsX() + z * grid.getNbVoxelsX() * grid.getNbVoxelsY();
-}
-
-std::size_t WIndexMap< WGridRegular3D2 >::getVoxelIndex( WGridRegular3D2 const& grid, WGridRegular3D2::VoxelIndex const& idx )
-{
-    return idx[ 0 ] + idx[ 1 ] * grid.getNbVoxelsX() + idx[ 2 ] * grid.getNbVoxelsX() * grid.getNbVoxelsY();
-}
-
-WGridRegular3D2::VoxelIndex WIndexMap< WGridRegular3D2 >::getVoxelCoords( WGridRegular3D2 const& grid, std::size_t index )
-{
-#ifdef _DEBUG
-    WAssert( index < grid.numVoxels(), "The index was too large for this grid." );
-#endif
-
-    WGridRegular3D2::VoxelIndex res;
-
-    std::size_t xy = grid.getNbVoxelsX() * grid.getNbVoxelsY();
-
-    res[ 2 ] = index / xy;
-    res[ 1 ] = index % xy;
-    res[ 0 ] = res[ 1 ] / grid.getNbVoxelsX();
-    res[ 1 ] = res[ 1 ] % grid.getNbVoxelsX();
-
-    return res;
-}
+#include "WSliceIterator.h"
