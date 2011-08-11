@@ -145,6 +145,77 @@ public:
         applyVisitorImpl< DataSetVisitorType >( visitor, this );
     }
 
+    /**
+     * This generates an accessor object with userdefined type. This is used if a user
+     * wants to get/set data using a user-specified type, for example if the user just wants to
+     * use double values without having to know the type of the actual data stored in the valueset.
+     *
+     * Be aware that there is additional overhead per data access in the form of casting, copies
+     * and virtual function calls.
+     *
+     * All functions and iterators offered by the returned access object will return data proxy objects
+     * instead of direct references to the data stored in the valueset. These proxy objects can then be
+     * implicitly or explicitly cast to the user-defined type or be assigned from the user-defined
+     * type (or anything that can be implicitly cast to the user-defined type).
+     *
+     * This creates special problems you should be aware of. For example, if you had a voxel iterator pointing
+     * to a valid voxel, you could do this:
+     *
+     * int i = *vi;
+     * *vi = 1;
+     *
+     * But not this:
+     *
+     * int i = *vi + 1;
+     *
+     * Instead you need to do this:
+     *
+     * int i = 1 + *vi;    or
+     * int i = static_cast< int >( *vi ) + 1;
+     *
+     * But you can do all this even of the dataset actually contained double data (with loss of precision of course).
+     *
+     * The integral data type is not the only thing that can be different, it could be other properties defined by the structural
+     * type too, for example spherical harmonic order. However, you need the correct assignment and/or cast operators between the
+     * types, for example an operator:
+     *
+     * template< typename T, std::size_t order >
+     * SH< double, 4 > operator=( SH< T, order > const& s )
+     *
+     * \tparam The user-defined type.
+     *
+     * \return An access object for a user-defined type.
+     */
+    template< typename T >
+    WDataAccess< GridType, WDataProxy< T > > getAccess()
+    {
+        WGetProxyValueSetVisitor< T > visitor( m_valueSet );
+        typedef WStructuralTypeResolution< StructuralType, WGetProxyValueSetVisitor< T > > TypeResolution;
+        TypeResolution tr( m_structuralTypeSample, &visitor );
+        tr.resolve();
+
+        return WDataAccess< GridType, WDataProxy< T > >( m_grid, visitor.get() );
+    }
+
+    /**
+     * As with the non-const version, but there is no (data) assignment operator for the data proxies
+     * return by the various functions and iterators.
+     *
+     * \tparam The user-defined type.
+     *
+     * \return An access object for a user-defined type.
+     */
+    template< typename T >
+    WDataAccessConst< GridType, WDataProxy< T > > getAccess() const
+    {
+        WGetProxyValueSetVisitor< T > visitor( m_valueSet );
+        typedef WStructuralTypeResolution< StructuralType, WGetProxyValueSetVisitor< T > > TypeResolution;
+        TypeResolution tr( m_structuralTypeSample, &visitor );
+        tr.resolve();
+
+        return WDataAccessConst< GridType, WDataProxy< T > >( m_grid, visitor.get() );
+    }
+
 protected:
 
     /**
@@ -233,11 +304,11 @@ private:
     void applyVisitorImpl( typename DataSetVisitorType::VisitorType* visitor, typename DataSetVisitorType::ValueMapperType* correctThis ) const
     {
         // the visitor is not called directly. Its done by WDataSetVisitor which acts as dispatcher.
-        DataSetVisitorType visitDispacher( visitor, correctThis );
+        DataSetVisitorType visitDispatcher( visitor, correctThis );
 
         // now, use the type resolution mechanism to call the correct WDataSetVisitor operator.
         typedef WStructuralTypeResolution< StructuralType, DataSetVisitorType > TypeResolution;
-        TypeResolution tr( m_structuralTypeSample, &visitDispacher );
+        TypeResolution tr( m_structuralTypeSample, &visitDispatcher );
         tr.resolve();
     }
 

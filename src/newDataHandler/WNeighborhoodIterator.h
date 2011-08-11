@@ -660,11 +660,11 @@ public:
     }
 
     /**
-     * Get a reference to the data if the voxel pointed to by this iterator.
+     * Get a reference to the data of the voxel pointed to by this iterator.
      *
      * \return A reference to the data.
      */
-    T& operator* ()
+    typename WValueSet< T >::ValueReturnType operator* ()
     {
         return m_boundaryStrategy->getValue( this->operator()(), m_grid, m_valueSet );
     }
@@ -1002,7 +1002,7 @@ public:
      *
      * \return A const reference to the data.
      */
-    T const& operator* () const
+    typename WValueSet< T >::ValueReturnTypeConst operator* () const
     {
         return m_boundaryStrategy->getValue( this->operator()(), m_grid, m_valueSet );
     }

@@ -126,6 +126,45 @@ public:
         delete visitor;
         delete visitor2;
     }
+
+    /**
+     * Tests access using access objects whose types are defined by the user.
+     */
+    void testTypedAccess()
+    {
+        typedef WStillNeedsAName< WGridRegular3D2, WScalarStructural > ValueMapper;
+        boost::shared_ptr< WGridRegular3D2 > g( new WGridRegular3D2( 3, 3, 3 ) );
+
+        ValueMapper::SPtr vm = ValueMapper::SPtr( new ValueMapper( g, double() ) );
+        ValueMapper::ConstSPtr vmc( vm );
+
+        {
+            typedef WDataAccess< WGridRegular3D2, WDataProxy< float > > AccessFloat;
+            AccessFloat access = vm->getAccess< float >();
+            AccessFloat::VoxelIterator vi, ve;
+
+            float f = 0.0f;
+            for( tie( vi, ve ) = access.voxels(); vi != ve; ++vi )
+            {
+                *vi = f;
+                f += 1.0f;
+            }
+        }
+
+        {
+            typedef WDataAccessConst< WGridRegular3D2, WDataProxy< unsigned char > > AccessUCharConst;
+            AccessUCharConst access = vmc->getAccess< unsigned char >();
+            AccessUCharConst::VoxelIterator vi, ve;
+
+            unsigned char c = 0;
+            for( tie( vi, ve ) = access.voxels(); vi != ve; ++vi )
+            {
+                TS_ASSERT_EQUALS( c, *vi );
+                std::cout << *vi << std::endl;
+                ++c;
+            }
+        }
+    }
 };
 
 #endif  // WDATAACCESS_TEST_H

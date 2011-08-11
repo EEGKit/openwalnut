@@ -165,7 +165,7 @@ public:
      * \return A reference to the data for the voxel the iterator currently points to.
      */
     // TODO( reichenbach ): add a WInvalidIteratorException and a WNoValidVoxel(name?)Exception
-    T& operator*() // const?
+    typename WValueSet< T >::ValueReturnType operator*() // const?
     {
 #ifdef _DEBUG
         if( !m_grid || !m_valueSet )
@@ -487,7 +487,7 @@ public:
      * \return A const reference to the data for the voxel the iterator currently points to.
      */
     // TODO( reichenbach ): add a WInvalidIteratorException and a WNoValidVoxel(name?)Exception
-    T const& operator*() // const?
+    typename WValueSet< T >::ValueReturnTypeConst operator*() // const?
     {
 #ifdef _DEBUG
         if( !m_grid || !m_valueSet )
