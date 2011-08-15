@@ -31,6 +31,9 @@
 #include "../WDataSet.h"
 #include "../WGridRegular3D2.h"
 #include "../WGridRegular3D2Specializations.h"
+
+#include "../WTypeInterpolatorStandard.h"
+
 #include "../structuralTypes/WScalarStructural.h"
 
 /**
@@ -99,6 +102,100 @@ private:
 };
 
 /**
+ * Visitor that writes 1.0 into the first x-y-slice and 2.0 into the second x-y-slice of
+ * a 2x2x2 dataset.
+ */
+class InitInterpolationVisitor
+{
+public:
+
+    /**
+     * Operator called by resolving mechanism.
+     *
+     * \tparam T the real type.
+     *
+     * \param access The access object for dataset access.
+     */
+    template< typename T >
+    void operator()( WDataAccess< WGridRegular3D2, T > access )
+    {
+        typename WDataAccess< WGridRegular3D2, T >::SliceIterator si, se;
+        for( tie( si, se ) = access.slice( 0, 0 ); si != se; ++si )
+        {
+            *si = 1.0;
+        }
+        for( tie( si, se ) = access.slice( 0, 1 ); si != se; ++si )
+        {
+            *si = 2.0;
+        }
+    }
+};
+
+/**
+ * Tests the interpolation with the resolved type.
+ */
+class TestInterpolationVisitor
+{
+public:
+
+    /**
+     * Operator called by resolving mechanism.
+     *
+     * \tparam T the real type.
+     *
+     * \param access The access object for dataset access.
+     */
+    template< typename T >
+    void operator()( WDataAccessConst< WGridRegular3D2, T > access )
+    {
+        typedef WInterpolator< WInterpolationLinear< WGridRegular3D2 >, WTypeInterpolatorStandard< T > > Interpolator;
+        Interpolator ip = access.template createInterpolator< WInterpolationLinear, WTypeInterpolatorStandard >();
+
+        WGridRegular3D2::CoordinateType coords = { { 0.0, 0.0, 0.0 } };  // NOLINT
+
+        bool success;
+        double v = ip.interpolate( coords, &success );
+        TS_ASSERT( success );
+        TS_ASSERT_EQUALS( v, 1.0 );
+
+        coords[ 0 ] = 0.5;
+        v = ip.interpolate( coords, &success );
+        TS_ASSERT( success );
+        TS_ASSERT_EQUALS( v, 1.0 );
+
+        coords[ 0 ] = 1.0;
+        v = ip.interpolate( coords, &success );
+        TS_ASSERT( success );
+        TS_ASSERT_EQUALS( v, 1.0 );
+
+        coords[ 0 ] = 0.5;
+        coords[ 1 ] = 0.25;
+        v = ip.interpolate( coords, &success );
+        TS_ASSERT( success );
+        TS_ASSERT_EQUALS( v, 1.0 );
+
+        coords[ 2 ] = 0.25;
+        v = ip.interpolate( coords, &success );
+        TS_ASSERT( success );
+        TS_ASSERT_EQUALS( v, 1.25 );
+
+        coords[ 2 ] = 0.3565;
+        v = ip.interpolate( coords, &success );
+        TS_ASSERT( success );
+        TS_ASSERT_DELTA( v, 1.3565, 0.001 );
+
+        coords[ 2 ] = 1.0;
+        v = ip.interpolate( coords, &success );
+        TS_ASSERT( success );
+        TS_ASSERT_EQUALS( v, 2.0 );
+
+        coords[ 2 ] = 1.001;
+        v = ip.interpolate( coords, &success );
+        TS_ASSERT( !success );
+    }
+};
+
+/**
  * Test functionality of WDataAccess.
  */
 class WDataAccessTest : public CxxTest::TestSuite
@@ -160,9 +257,81 @@ public:
             for( tie( vi, ve ) = access.voxels(); vi != ve; ++vi )
             {
                 TS_ASSERT_EQUALS( c, *vi );
-                std::cout << *vi << std::endl;
                 ++c;
             }
+        }
+    }
+
+    /**
+     * Tests the interpolation.
+     */
+    void testInterpolation()
+    {
+        typedef WStillNeedsAName< WGridRegular3D2, WScalarStructural > ValueMapper;
+        boost::shared_ptr< WGridRegular3D2 > g( new WGridRegular3D2( 2, 2, 2 ) );
+
+        ValueMapper::SPtr vm = ValueMapper::SPtr( new ValueMapper( g, double() ) );
+        ValueMapper::ConstSPtr vmc( vm );
+
+        {
+            InitInterpolationVisitor* visitor = new InitInterpolationVisitor();
+            vm->applyVisitor( visitor );
+            delete visitor;
+        }
+
+        {
+            TestInterpolationVisitor* visitor = new TestInterpolationVisitor();
+            vmc->applyVisitor( visitor );
+            delete visitor;
+        }
+
+        {
+            WDataAccessConst< WGridRegular3D2, WDataProxy< double > > access = vmc->getAccess< double >();
+
+            typedef WInterpolator< WInterpolationLinear< WGridRegular3D2 >, WTypeInterpolatorStandard< WDataProxy< double > > > Interpolator;
+            Interpolator ip = access.createInterpolator< WInterpolationLinear, WTypeInterpolatorStandard >();
+
+            WGridRegular3D2::CoordinateType coords = { { 0.0, 0.0, 0.0 } };  // NOLINT
+
+            bool success;
+            double v = ip.interpolate( coords, &success );
+            TS_ASSERT( success );
+            TS_ASSERT_EQUALS( v, 1.0 );
+
+            coords[ 0 ] = 0.5;
+            v = ip.interpolate( coords, &success );
+            TS_ASSERT( success );
+            TS_ASSERT_EQUALS( v, 1.0 );
+
+            coords[ 0 ] = 1.0;
+            v = ip.interpolate( coords, &success );
+            TS_ASSERT( success );
+            TS_ASSERT_EQUALS( v, 1.0 );
+
+            coords[ 0 ] = 0.5;
+            coords[ 1 ] = 0.25;
+            v = ip.interpolate( coords, &success );
+            TS_ASSERT( success );
+            TS_ASSERT_EQUALS( v, 1.0 );
+
+            coords[ 2 ] = 0.25;
+            v = ip.interpolate( coords, &success );
+            TS_ASSERT( success );
+            TS_ASSERT_EQUALS( v, 1.25 );
+
+            coords[ 2 ] = 0.3565;
+            v = ip.interpolate( coords, &success );
+            TS_ASSERT( success );
+            TS_ASSERT_DELTA( v, 1.3565, 0.001 );
+
+            coords[ 2 ] = 1.0;
+            v = ip.interpolate( coords, &success );
+            TS_ASSERT( success );
+            TS_ASSERT_EQUALS( v, 2.0 );
+
+            coords[ 2 ] = 1.001;
+            v = ip.interpolate( coords, &success );
+            TS_ASSERT( !success );
         }
     }
 };

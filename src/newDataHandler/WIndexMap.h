@@ -29,6 +29,8 @@
 
 #include <string> // for size_t
 
+#include "WGridRegular3D2.h"
+
 class WGridRegular3D2;
 
 /**

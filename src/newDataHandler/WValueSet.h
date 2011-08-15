@@ -182,6 +182,13 @@ class WDataProxy
 public:
 
     /**
+     * Standard constructor. Does nothing.
+     */
+    WDataProxy()
+    {
+    }
+
+    /**
      * Constructor.
      *
      * \param vs A pointer to the base class of the proxy valuesets.
@@ -248,7 +255,7 @@ private:
      * of the data stored in the actual dataset. We can thus call the correct virtual
      * functions for data conversion.
      */
-    WValueSet< WDataProxy< T > >* const m_vs;
+    WValueSet< WDataProxy< T > >* m_vs;
 
     //! The index of the referenced data element in the valueset.
     std::size_t m_index;
@@ -265,6 +272,13 @@ template< typename T >
 class WDataProxyConst
 {
 public:
+
+    /**
+     * Standard constructor. Does nothing.
+     */
+    WDataProxyConst()
+    {
+    }
 
     /**
      * Constructor.
@@ -295,7 +309,7 @@ private:
      * of the data stored in the actual dataset. We can thus call the correct virtual
      * functions for data conversion.
      */
-    WValueSet< WDataProxy< T > > const* const m_vs;
+    WValueSet< WDataProxy< T > > const* m_vs;
 
     //! The index of the referenced data element in the valueset.
     std::size_t m_index;

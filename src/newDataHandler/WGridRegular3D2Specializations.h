@@ -33,6 +33,9 @@
 // for tie( x, y ) = ... ; included here so it can be used where this grid is used
 #include <boost/tuple/tuple.hpp>
 
+#include "WInterpolationTypes.h"
+#include "WInterpolator.h"
+#include "WTypeInterpolatorStandard.h"
 #include "WIndexMap.h"
 #include "WDataAccess.h"
 #include "WNeighborhood.h"
@@ -93,6 +96,8 @@ public:
     //! A type for voxel neighbor iterators.
     typedef WNeighborhoodIterator< ValueT > VoxelNeighborIterator;
 
+    //! The standard interpolator.
+    typedef WInterpolator< WInterpolationLinear< WGridRegular3D2 >, WTypeInterpolatorStandard< ValueT > > StandardInterpolator;
 
     /**
      * Constructs access object. Requires the valueset and grid.
@@ -125,6 +130,33 @@ public:
      * \return A reference to the data.
      */
     ValueT& getAt( WGridRegular3D2::VoxelIndex const& vox );
+
+    /**
+     * Creates a standard (tri-)linear interpolator.
+     *
+     * \return The interpolator object.
+     */
+    StandardInterpolator createStandardInterpolator() const
+    {
+        return StandardInterpolator( m_grid, m_valueSet );
+    }
+
+    /**
+     * Creates a user-defined interpolator object. You can specify via template parameters
+     * the interpolation method/precicion (for example nearest neighbor, linear, quadratic)
+     * and how the weights and values should be combined.
+     *
+     * \tparam InterpolationPrecisionT A template specialized for each grid type that implements the method of interpolation.
+     * \tparam TypeInterpolatorT A template specialized for the data type that implements calculating the resulting interpolated value.
+     *
+     * \return The interpolator object.
+     */
+    template< template< typename > class InterpolationPrecisionT,
+              template< typename > class TypeInterpolatorT >
+    WInterpolator< InterpolationPrecisionT< WGridRegular3D2 >, TypeInterpolatorT< ValueT > > createInterpolator() const
+    {
+        return WInterpolator< InterpolationPrecisionT< WGridRegular3D2 >, TypeInterpolatorT< ValueT > >( m_grid, m_valueSet );
+    }
 
     /**
      * Get a voxel iterator range. Use this to iterate all voxels in a dataset.
@@ -208,6 +240,9 @@ public:
     //! A type for voxel neighbor iterators.
     typedef WNeighborhoodIteratorConst< ValueT > VoxelNeighborIterator;
 
+    //! The standard interpolator.
+    typedef WInterpolator< WInterpolationLinear< WGridRegular3D2 >, WTypeInterpolatorStandard< ValueT > > StandardInterpolator;
+
     /**
      * Constructs access object. Requires the valueset and grid.
      *
@@ -239,6 +274,35 @@ public:
      * \return A reference to the data.
      */
     ValueT const& getAt( WGridRegular3D2::VoxelIndex const& vox ) const;
+
+    /**
+     * Creates a standard (tri-)linear interpolator.
+     *
+     * \return The interpolator object.
+     */
+    StandardInterpolator createStandardInterpolator() const
+    {
+        return StandardInterpolator( m_grid, m_valueSet );
+    }
+
+    /**
+     * Creates a user-defined interpolator object. You can specify via template parameters
+     * the interpolation method/precicion (for example nearest neighbor, linear, quadratic)
+     * and how the weights and values should be combined.
+     *
+     * \tparam InterpolationPrecisionT A template specialized for each grid type that implements the method of interpolation.
+     * \tparam TypeInterpolatorT A template specialized for the data type that implements calculating the resulting interpolated value.
+     *
+     * \return The interpolator object.
+     */
+    template< template< typename > class InterpolationPrecisionT,
+              template< typename > class TypeInterpolatorT >
+    WInterpolator< InterpolationPrecisionT< WGridRegular3D2 >, TypeInterpolatorT< ValueT > > createInterpolator() const
+    {
+        return WInterpolator< InterpolationPrecisionT< WGridRegular3D2 >, TypeInterpolatorT< ValueT > >( m_grid, m_valueSet );
+        // I'd really like to provide a convenient template typedef for the interpolator (return) type, but we'd need
+        // std-c++0x for that.
+    }
 
     /**
      * Get a voxel iterator range. Use this to iterate all voxels in a dataset.
@@ -292,5 +356,88 @@ ValueT const& WDataAccessConst< WGridRegular3D2, ValueT >::getAt( std::size_t x,
     // as above
     return getAt( vox );
 }
+
+// ########################################### linear interpolation for this grid ###################################################
+
+/**
+ * Defines linear interpolation on a regular 3D-grid. Calculates weights and sample values.
+ */
+template<>
+class WInterpolationLinear< WGridRegular3D2 >
+{
+public:
+
+    //! The type of the grid.
+    typedef WGridRegular3D2 GridType;
+
+    //! The type of the coordinates used.
+    typedef WGridRegular3D2::CoordinateType CoordinateType;
+
+    //! The number of values and weights needed for the interpolation.
+    static int const numValues = 8;
+    // this needs to be specified in your own interpolation classes
+
+    /**
+     * Calculates the weights and samples the grid. These can then be used to calculate
+     * the interpolated value.
+     *
+     * \tparam ValueSetPtrT A pointer to a valueset.
+     * \tparam WeightsArrayT The type for the weights array.
+     * \tparam ValueArrayT The type for the value array.
+     *
+     * \param grid The grid to interpolate on.
+     * \param valueSet The valueset.
+     * \param coords The coordinates of the value that is to be interpolated.
+     * \param success A bool flag that will indicate success.
+     * \param weights An array of weights for the interpolation.
+     * \param values An array of values.
+     */
+    template< typename ValueSetPtrT, typename WeightsArrayT, typename ValuePtrArrayT >
+    inline static void getWeightsAndValues( WGridRegular3D2::ConstSPtr const& grid, ValueSetPtrT const& valueSet,
+                                            CoordinateType const& coords, bool* success,
+                                            WeightsArrayT& weights, ValuePtrArrayT& values )
+    {
+        *success = false;
+        if( !grid->isInGrid( coords ) )
+        {
+            return;
+        }
+
+        CoordinateType c = grid->transformToGridSpace( coords );
+        boost::array< double, 3 > a = { { c[ 0 ] - static_cast< int >( c[ 0 ] ),
+                                          c[ 1 ] - static_cast< int >( c[ 1 ] ),
+                                          c[ 2 ] - static_cast< int >( c[ 2 ] ) } };  // NOLINT
+
+        weights[ 0 ] = ( 1.0 - a[ 0 ] ) * ( 1.0 - a[ 1 ] ) * ( 1.0 - a[ 2 ] );
+        weights[ 1 ] = a[ 0 ] * ( 1.0 - a[ 1 ] ) * ( 1.0 - a[ 2 ] );
+        weights[ 2 ] = a[ 0 ] * a[ 1 ] * ( 1.0 - a[ 2 ] );
+        weights[ 3 ] = a[ 0 ] * a[ 1 ] * a[ 2 ];
+        weights[ 4 ] = a[ 0 ] * ( 1.0 - a[ 1 ] ) * a[ 2 ];
+        weights[ 5 ] = ( 1.0 - a[ 0 ] ) * ( 1.0 - a[ 1 ] ) * a[ 2 ];
+        weights[ 6 ] = ( 1.0 - a[ 0 ] ) * a[ 1 ] * a[ 2 ];
+        weights[ 7 ] = ( 1.0 - a[ 0 ] ) * a[ 1 ] * ( 1.0 - a[ 2 ] );
+
+        std::size_t index = static_cast< std::size_t >( c[ 0 ] ) + static_cast< std::size_t >( c[ 1 ] ) * grid->getNbVoxelsX()
+                          + static_cast< std::size_t >( c[ 2 ] ) * grid->getNbVoxelsX() * grid->getNbVoxelsY();
+
+        values.set( 0, valueSet->operator[] ( index ) );
+        index += 1;
+        values.set( 1, valueSet->operator[] ( index ) );
+        index += grid->getNbVoxelsX();
+        values.set( 2, valueSet->operator[] ( index ) );
+        index += grid->getNbVoxelsX() * grid->getNbVoxelsY();
+        values.set( 3, valueSet->operator[] ( index ) );
+        index -= grid->getNbVoxelsX();
+        values.set( 4, valueSet->operator[] ( index ) );
+        index -= 1;
+        values.set( 5, valueSet->operator[] ( index ) );
+        index += grid->getNbVoxelsX();
+        values.set( 6, valueSet->operator[] ( index ) );
+        index -= grid->getNbVoxelsX() * grid->getNbVoxelsY();
+        values.set( 7, valueSet->operator[] ( index ) );
+
+        *success = true;
+    }
+};
 
 #endif  // WGRIDREGULAR3D2SPECIALIZATIONS_H

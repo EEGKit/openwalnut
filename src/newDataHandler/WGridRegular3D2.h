@@ -60,6 +60,9 @@ public:
     //! The type used to index voxels in this grid.
     typedef boost::array< std::size_t, 3 > VoxelIndex;
 
+    //! The type used for coordinates.
+    typedef boost::array< double, 3 > CoordinateType;
+
     /**
      * Construct an axis-aligned grid from the number of voxels as well as data points per axis.
      *
@@ -125,6 +128,23 @@ public:
      * \return The number of voxel for a slice of the given orientation.
      */
     std::size_t sliceSize( std::size_t dir ) const;
+
+    /**
+     * Transforms coordinates from world space to grid space.
+     *
+     * \param coords The world coordinates to transform.
+     * \return The transformed coords.
+     */
+    CoordinateType transformToGridSpace( CoordinateType const& coords ) const;
+
+    /**
+     * Check if the given world coordinates are in the grid.
+     *
+     * \param coords The coordinates to test.
+     *
+     * \return true, if the coordinates were inside (or on the boundary of) the grid.
+     */
+    bool isInGrid( CoordinateType const& coords ) const;
 
 private:
 

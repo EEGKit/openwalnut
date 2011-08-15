@@ -86,3 +86,16 @@ std::size_t WGridRegular3D2::sliceSize( std::size_t dir ) const
     return 0;
 }
 
+WGridRegular3D2::CoordinateType WGridRegular3D2::transformToGridSpace( CoordinateType const& coords ) const
+{
+    // TODO( reichenbach ): implement this
+    return coords;
+}
+
+bool WGridRegular3D2::isInGrid( CoordinateType const& coords ) const
+{
+    CoordinateType c = transformToGridSpace( coords );
+    return c[ 0 ] >= 0.0 && c[ 1 ] >= 0.0 && c[ 2 ] >= 0.0 && c[ 0 ] <= -1.0 + m_coordsX
+             && c[ 1 ] <= -1.0 + m_coordsY && c[ 2 ] <= -1.0 + m_coordsZ;
+}
+
