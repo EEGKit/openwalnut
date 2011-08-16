@@ -28,13 +28,6 @@
 
 WNetworkLayout::WNetworkLayout()
 {
-    for( unsigned int x = 0; x != WNETWORKLAYOUT_GRID_X; ++x )
-    {
-        for( unsigned int y = 0; y != WNETWORKLAYOUT_GRID_Y; ++y )
-        {
-            m_array[x][y] = 0;
-        }
-    }
 }
 
 WNetworkLayout::~WNetworkLayout()
@@ -43,405 +36,110 @@ WNetworkLayout::~WNetworkLayout()
 
 void WNetworkLayout::addItem( WQtNetworkItem *item )
 {
-    WNetworkLayoutItem *layoutItem = new WNetworkLayoutItem( item );
-    unsigned int x = 0;
-    if( m_subgraphList.size() > 0 )
-    {
-        x = m_subgraphList.back().getRightmostItem()->getGridPos().x() + 1;
-    }
-
-    unsigned char id = static_cast< unsigned char >( m_subgraphList.size() + 1 );
-    m_array[x][0] = id;
-    layoutItem->setGridPos( QPointF( x, 0 ) );
-    m_subgraphList.push_back( WNetworkLayoutSubgraph( id, layoutItem ) );
+    WNetworkLayoutNode *layoutNode = new WNetworkLayoutNode( item );
+    m_nodes.push_back( layoutNode );
+    traverse();
 }
 
 void WNetworkLayout::connectItems( WQtNetworkItem *parent, WQtNetworkItem *child )
 {
-    //if( parent->getLayoutItem()->getId() == child->getLayoutItem()->getId() )
-    //{
-    //    // both item belong already to the same graph
-    //}
-    if( child->getLayoutItem()->getGridPos().y() != 0 )
-        // child belongs to a graph consisting of only more than one node
-    {
-        merge( parent, child );
-    }
-    else
-    {
-        unsigned int x = child->getLayoutItem()->getGridPos().x();
-        m_array[x][0] = 0;
-        for( std::list< WNetworkLayoutSubgraph >::iterator iter = m_subgraphList.begin();
-                iter != m_subgraphList.end(); ++iter )
-        {
-            if( iter->find( child->getLayoutItem() ) )
-            {
-                iter->remove( child->getLayoutItem() );
-                if( iter->size() == 0 )
-                {
-                    updateGrid( iter->getId(), x, false );
-                    iter = m_subgraphList.erase( iter );
-                    // update subgraph positions, those who were to the right of the removed
-                    // subgraph
-                    for( ; iter != m_subgraphList.end(); ++iter )
-                    {
-                        iter->manipulate( -1 );
-                        // OMG update m_array
-                    }
-                }
-                break;
-            }
-        }
-
-        // add the child to the subgraph of parent
-        std::list< WNetworkLayoutSubgraph >::iterator parentSubgraph;
-        unsigned char graphId;
-        for( parentSubgraph = m_subgraphList.begin(); parentSubgraph != m_subgraphList.end(); ++parentSubgraph )
-        {
-            if( parentSubgraph->find( parent->getLayoutItem() ) )
-            {
-                graphId = parentSubgraph->getId();
-                break;
-            }
-        }
-
-        // TODO remove offset if not needed
-        QPointF parentPos = parent->getLayoutItem()->getGridPos();
-        for( x = parentPos.x(); x != WNETWORKLAYOUT_GRID_X; ++x )
-        {
-            unsigned int y = parentPos.y() + 1;
-            if( m_array[x][y] == 0 )
-            {
-                if( m_array[x][0] != 0 && m_array[x][0] != graphId )
-                {
-                    updateGrid( graphId, x );
-                    std::list< WNetworkLayoutSubgraph >::iterator iter = parentSubgraph;
-                    for( ++iter; iter != m_subgraphList.end(); ++iter )
-                    {
-                        iter->manipulate( 1 ); // move one to the right
-                    }
-                }
-                child->getLayoutItem()->setGridPos( QPointF( x, y ) );
-                parentSubgraph->add( child->getLayoutItem() );
-                m_array[x][y] = graphId;
-                break;
-            }
-        }
-    }
+    parent->getLayoutNode()->add( child->getLayoutNode() );
+    traverse();
 }
 
-void WNetworkLayout::disconnectItem( WQtNetworkItem *item )
+void WNetworkLayout::disconnectNodes( WQtNetworkItem *parent, WQtNetworkItem *child )
 {
-    // remove old pos data
-    unsigned int x = item->getLayoutItem()->getGridPos().x();
-    unsigned int y = item->getLayoutItem()->getGridPos().y();
-    m_array[x][y] = 0;
-
-    // test if positions of the other subgraphs has to be updated
-    if( !m_subgraphList.back().find( item->getLayoutItem() ) )
-    {
-        bool empty = true;
-        for( y = 0; y != WNETWORKLAYOUT_GRID_Y; ++y )
-        {
-            if( m_array[x][y] != 0 )
-            {
-                empty = false;
-                break;
-            }
-        }
-        for( std::list< WNetworkLayoutSubgraph >::iterator iter = m_subgraphList.begin();
-                iter != m_subgraphList.end(); ++iter )
-        {
-            if( iter->find( item->getLayoutItem() ) )
-            {
-                iter->remove( item->getLayoutItem() );
-                if( empty )
-                {
-                    updateGrid( iter->getId(), x, false );
-                    // update righthand neighbours
-                    iter++;
-                    for( ; iter != m_subgraphList.end(); ++iter )
-                    {
-                        iter->manipulate( -1 ); // move one to the left
-                    }
-                }
-                break;
-            }
-        }
-    }
-    else
-    {
-        m_subgraphList.back().remove( item->getLayoutItem() );
-    }
-
-    // set new pos data
-    x = m_subgraphList.back().getRightmostItem()->getGridPos().x() + 1;
-    unsigned char id = static_cast< unsigned char >( m_subgraphList.size() + 1 );
-    m_array[x][0] = id;
-    item->getLayoutItem()->setGridPos( QPointF( x, 0 ) );
-    m_subgraphList.push_back( WNetworkLayoutSubgraph( id, item->getLayoutItem() ) );
+    parent->getLayoutNode()->remove( child->getLayoutNode() );
+    traverse();
 }
 
 void WNetworkLayout::removeItem( WQtNetworkItem *item )
 {
-    unsigned int x = item->getLayoutItem()->getGridPos().x();
-    unsigned int y = item->getLayoutItem()->getGridPos().y();
-    m_array[x][y] = 0;
-
-    for( std::list< WNetworkLayoutSubgraph >::iterator iter = m_subgraphList.begin();
-            iter != m_subgraphList.end(); ++iter )
-    {
-        if( iter->find( item->getLayoutItem() ) )
-        {
-            iter->remove( item->getLayoutItem() );
-            if( iter->size() == 0 )
-            {
-                updateGrid( iter->getId(), x, false );
-                iter = m_subgraphList.erase( iter );
-                // update subgraph positions, thos who were to the right of the removed
-                // subgraph
-                for( ; iter != m_subgraphList.end(); ++iter )
-                {
-                    iter->manipulate( -1 );
-                }
-            }
-            break;
-        }
-    }
+    delete item->getLayoutNode();
 }
 
-// privat
+// private
 
-void WNetworkLayout::updateGrid( unsigned int fixedGraph, unsigned int x, bool shiftRight, int distance )
+void WNetworkLayout::traverse()
 {
-    if( shiftRight )
+    std::list< WNetworkLayoutNode * > rootNodes, leafNodes;
+    // dummy - used to create empty positions in the grid
+    WNetworkLayoutNode dummyNode;
+    for( std::list< WNetworkLayoutNode * >::iterator iter = m_nodes.begin(); iter != m_nodes.end();
+            ++iter )
     {
-        for( ; x != 0 ; --x )
+        if( ( *iter )->nParents() == 0 )
         {
-            bool stop = false;
-            for( unsigned int y = 0; y != WNETWORKLAYOUT_GRID_Y; ++y )
+            rootNodes.push_back( *iter );
+            if( ( *iter )->nChildren() > 1 )
             {
-                if( m_array[x][y] != fixedGraph )
+                for( int i = 0; i != ( *iter )->nChildren() -1; ++i )
                 {
-                    m_array[ x + distance ][y] = m_array[x][y];
-                    m_array[x][y] = 0;
-                }
-                else
-                {
-                    stop = true;
-                    break;
-                }
-            }
-            if( stop )
-            {
-                break;
-            }
-        }
-    }
-    else
-    {
-        for( ; x > m_subgraphList.back().getRightmostItem()->getGridPos().x(); ++x )
-        {
-            for( unsigned int y = 0; y != WNETWORKLAYOUT_GRID_Y; ++y )
-            {
-                if( m_array[x][y] != fixedGraph )
-                {
-                    m_array[x][y] = m_array[ x + 1 ][y];
-                    m_array[ x + 1 ][y] = 0;
+                    // add dummy node to create a better layout, just as a simple heuristic
+                    rootNodes.push_back( ( &dummyNode ) );
                 }
             }
         }
-    }
-}
-
-void WNetworkLayout::merge( WQtNetworkItem *parent, WQtNetworkItem *child )
-{
-//    if( parent->getLayoutItem()->getGridPos().y() + 1 > child->getLayoutItem()->getGridPos().y() )
-//    {
-//        WQtNetworkItem* help = parent;
-//        parent = child;
-//        child = help;
-//    }
-    float offsetY = ( parent->getLayoutItem()->getGridPos().y() + 1 ) - child->getLayoutItem()->getGridPos().y();
-    if( offsetY > 0 )
-    {
-        // change child
-        QPointF pos = child->getLayoutItem()->getGridPos();
-        pos.setY( pos.y() + offsetY );
-        child->getLayoutItem()->setGridPos( pos );
-        // offsetY auf child
-    }
-    else if( offsetY < 0 )
-    {
-        // change parent
-        QPointF pos = parent->getLayoutItem()->getGridPos();
-        pos.setY( pos.y() - offsetY );
-        parent->getLayoutItem()->setGridPos( pos );
-        // offset auf parent
-    }
-
-    // calculate size
-    // first we need to know to which subgraph both items belong
-    std::list< WNetworkLayoutSubgraph >::iterator parentSubgraph = m_subgraphList.end();
-    std::list< WNetworkLayoutSubgraph >::iterator childSubgraph = m_subgraphList.end();
-    unsigned int distance; // distance between the two subgraphs
-    std::list< WNetworkLayoutSubgraph >::iterator iter;
-    for( iter = m_subgraphList.begin(); iter != m_subgraphList.end(); ++iter )
-    {
-        if( parentSubgraph != childSubgraph )
+        if( ( *iter )->nChildren() == 0 )
         {
-            distance++;
+            leafNodes.push_back( *iter );
         }
-        if( iter->find( parent->getLayoutItem() ) )
+    }
+
+    // list depicting the final grid, contains a list for each row in the grid
+    // rows.size() == number of rows in the grid, when algorithm is done
+    std::list< std::list< WNetworkLayoutNode * > > rows;
+    rows.push_back( rootNodes );
+    bool done = false;
+
+    while( !done )
+    {
+        done = true;
+        std::list< WNetworkLayoutNode * > newRow;
+        for( std::list< WNetworkLayoutNode * >::iterator iter = rows.back().begin();
+                iter != rows.back().end(); ++iter )
         {
-            parentSubgraph = iter;
-            if( childSubgraph != m_subgraphList.end() )
+            std::list< WNetworkLayoutNode * > children = ( *iter )->getChildren();
+
+            if( children.size() == 0 )
             {
-                break;
+                newRow.push_back( &dummyNode );
             }
-        }
-        if( iter->find( child->getLayoutItem() ) )
-        {
-            childSubgraph = iter;
-            if( parentSubgraph != m_subgraphList.end() )
+
+            for( std::list< WNetworkLayoutNode * >::iterator childIter = children.begin();
+                    childIter != children.end(); ++childIter )
             {
-                break;
-            }
-        }
-    }
-    if( parentSubgraph->getId() == childSubgraph->getId() )
-    {
-        return;
-    }
-
-
-    //
-    // ------------------------------- REDONE ---------------------------------------------------
-    //
-
-    // calculate the width of the subgraphs and the height where the item is
-    std::pair< unsigned int, unsigned int > firstValues, secondValues; // first = dx; second = dy
-    for( int x = parent->getLayoutItem()->getGridPos().x(); x < 0; --x )
-    {
-        if( m_array[x][0] != 0 ) // &&  == subgraphID
-        {
-            firstValues.first = parentSubgraph->getRightmostItem()->getGridPos().x() - x + 1;
-            break;
-        }
-    }
-    firstValues.second = parent->getLayoutItem()->getGridPos().y();
-
-    for( int x = child->getLayoutItem()->getGridPos().x(); x < 0; --x )
-    {
-        if( m_array[x][0] != 0 ) // &&  == subgraphID
-        {
-            secondValues.first = childSubgraph->getRightmostItem()->getGridPos().x() - x + 1;
-            break;
-        }
-    }
-    secondValues.second = child->getLayoutItem()->getGridPos().y();
-
-    // change position of the two graphs that are going to be merged
-//    if( first->getLayoutItem()->getGridPos().y() > child->getLayoutItem()->getGridPos().y() ) //firstValues.second > secondValues.second )
-//    {
-        if( parent->getLayoutItem()->getGridPos().x() < child->getLayoutItem()->getGridPos().x() )
-        {
-            distance *= -1;
-        }
-        updateGrid( parentSubgraph->getId(), parentSubgraph->getRightmostItem()->getGridPos().x(),
-                false, secondValues.first );
-        iter = parentSubgraph;
-        for( ++iter; iter != m_subgraphList.end(); ++iter )
-        {
-            iter->manipulate( secondValues.first ); // make the space for the second subgraph
-        }
-
-        // change position of the second subgraph
-        // TODO deltaY never equals zero, make sure
-        unsigned int deltaY =
-            parent->getLayoutItem()->getGridPos().y() - child->getLayoutItem()->getGridPos().y();
-        for( unsigned int x = child->getLayoutItem()->getGridPos().x();
-                x != child->getLayoutItem()->getGridPos().x() + secondValues.first; ++x )
-        {
-            for( unsigned int y = deltaY; y != WNETWORKLAYOUT_GRID_Y; ++y )
-            {
-                m_array[ x + distance ][y] = parentSubgraph->getId();
-                m_array[x][ y - deltaY ] = 0;
-            }
-        }
-
-        // close the gap if needed
-        if( !m_subgraphList.back().find( child->getLayoutItem() ) )
-        {
-            // TODO direction
-            iter = childSubgraph;
-            ++iter;
-            updateGrid( iter->getId(), iter->getRightmostItem()->getGridPos().x(),
-                    false, secondValues.first );
-            for( unsigned int x = child->getLayoutItem()->getGridPos().x();
-                    x <= m_subgraphList.back().getRightmostItem()->getGridPos().x(); ++x )
-            {
-                for( unsigned int y = 0; y != WNETWORKLAYOUT_GRID_Y; ++y )
+                done = false;
+                std::list< WNetworkLayoutNode * >::iterator findIter =
+                    find( rows.back().begin(), rows.back().end(), *childIter );
+                if( rows.back().end() != findIter )
+                    // the node is already in the layout
                 {
-                    m_array[x][y] = m_array[ x + secondValues.first ][y];
-                    m_array[ x + secondValues.first ][y] = 0;
+                    // remove node
+                    findIter = rows.back().erase( findIter );
+                    // add dummy in the parent row, dummy creates an 'empty' position in the grid
+                    rows.back().insert( findIter, &dummyNode );
                 }
-            }
-            iter = childSubgraph;
-            for( ++iter; childSubgraph != m_subgraphList.end(); ++iter )
-            {
-                iter->manipulate( secondValues.first ); // length of the second subgraph in x direction
+                newRow.push_back( *childIter );
             }
         }
+        rows.push_back( newRow );
+    }
 
-        // TODO
-        if( parent->getLayoutItem()->getGridPos().x() < parentSubgraph->getRightmostItem()->getGridPos().x() )
+    // set position of each node
+    unsigned int x = 0;
+    for( std::list< std::list< WNetworkLayoutNode * > >::iterator rowsIter = rows.begin();
+            rowsIter != rows.end(); ++rowsIter )
+    {
+        unsigned int y = 0;
+        for( std::list< WNetworkLayoutNode * >::iterator iter = rowsIter->begin(); iter != rowsIter->end(); ++iter )
         {
-            QPointF newPos = parent->getLayoutItem()->getGridPos();
-            newPos.setY( parentSubgraph->getRightmostItem()->getGridPos().y() );
-
-            QPoint oldPos = parent->getLayoutItem()->getGridPos().toPoint();
-            unsigned char help = m_array[oldPos.x()][oldPos.y()];
-            m_array[oldPos.x()][oldPos.y()] = m_array[newPos.toPoint().x()][newPos.toPoint().y()];
-            m_array[newPos.toPoint().x()][newPos.toPoint().y()] = help;
-
-            parentSubgraph->swap( parent->getLayoutItem()->getGridPos(), newPos );
+            QPoint pos( x, y );
+            ( *iter )->setGridPos( pos );
+            ++y;
         }
-        // TODO remove comment
-        if( parent->getLayoutItem()->getGridPos().x() /*+ 1*/ != child->getLayoutItem()->getGridPos().x() )
-        {
-            QPointF newPos = child->getLayoutItem()->getGridPos();
-            newPos.setX( parent->getLayoutItem()->getGridPos().x() + 1 );
 
-            QPoint oldPos = parent->getLayoutItem()->getGridPos().toPoint();
-            unsigned char help = m_array[oldPos.x()][oldPos.y()];
-            m_array[oldPos.x()][oldPos.y()] = m_array[newPos.toPoint().x()][newPos.toPoint().y()];
-            m_array[newPos.toPoint().x()][newPos.toPoint().y()] = help;
-
-            childSubgraph->swap( child->getLayoutItem()->getGridPos(), newPos );
-        }
-        // change position within the graph
-        childSubgraph->manipulate( distance, deltaY ); // where comes this from ?
-        parentSubgraph->merge( &( *childSubgraph ) );
-        m_subgraphList.erase( childSubgraph );
-//    }
-//    else
-//    {
-//        // TODO really needed ?
-//        if( child->getLayoutItem()->getGridPos().x() > first->getLayoutItem()->getGridPos().x() )
-//        {
-//            distance *= -1;
-//        }
-//        updateGrid( parentSubgraph->getId(), parentSubgraph->getRightmostItem()->getGridPos().x(),
-//                false, secondValues.first );
-//        iter = parentSubgraph;
-//        for( ++iter; iter != m_subgraphList.end(); ++iter )
-//        {
-//            iter->manipulate( secondValues.first ); // make the space for the second subgraph
-//        }
-//    }
-
-    // change position of the two nodes if need be
-    // change the ID of one graph
+        ++x;
+    }
 }
 

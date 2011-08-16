@@ -397,7 +397,7 @@ bool WQtNetworkEditor::event( QEvent* event )
         }
         if( ar )
         {
-            m_layout->disconnectItem( inItem );
+            m_layout->disconnectNodes( outItem, inItem );
 
             op->removeArrow( ar );
             ip->removeArrow( ar );
@@ -517,7 +517,7 @@ void WQtNetworkEditor::timerEvent( QTimerEvent* /*event*/ )
     //        itemsMoved = true;
     //}
 
-    //if ( !itemsMoved )
+    //if( !itemsMoved )
     //{
     //    killTimer( timerId );
     //    timerId = 0;

@@ -97,6 +97,10 @@ void WMWriteTracts::properties()
     m_povrayRadiosity = m_povrayOptions->addProperty( "Enable Radiosity",
                                   "Enable POVRay's radiosity renderer. Creates more realistic lighting but is very slow.",
                                   false );
+    m_povraySaveOnlyNth = m_povrayOptions->addProperty( "Save Every n'th", "Option allows thinning the data. This is useful in cases were fast"
+                                                        " rendering is needed.", 1 );
+    m_povraySaveOnlyNth->setMin( 1 );
+    m_povraySaveOnlyNth->setMax( 1000 );
 
     WModule::properties();
 }
@@ -178,7 +182,7 @@ bool WMWriteTracts::saveJson() const
     const char* c_file = m_savePath->get().file_string().c_str();
     std::ofstream dataFile( c_file, std::ios_base::binary );
 
-    if ( dataFile )
+    if( dataFile )
     {
         WLogger::getLogger()->addLogMessage( "opening file", "Write Tracts", LL_DEBUG );
     }
@@ -198,7 +202,7 @@ bool WMWriteTracts::saveJson() const
     dataFile << ( "    \"vertices\" : [" );
     boost::shared_ptr<std::vector<float> > verts = ds->getVertices();
     float fValue;
-    for ( size_t i = 0; i < (verts->size() - 1 )/ 3; ++i )
+    for( size_t i = 0; i < (verts->size() - 1 )/ 3; ++i )
     {
         fValue = 160 - verts->at( i * 3 );
         dataFile << fValue << ",";
@@ -216,7 +220,7 @@ bool WMWriteTracts::saveJson() const
 
     dataFile << ( "    \"normals\" : [" );
     boost::shared_ptr<std::vector<float> > tangents = ds->getTangents();
-    for ( size_t i = 0; i < tangents->size() - 1; ++i )
+    for( size_t i = 0; i < tangents->size() - 1; ++i )
     {
         fValue = tangents->at( i );
         dataFile << fValue << ",";
@@ -226,7 +230,7 @@ bool WMWriteTracts::saveJson() const
 
     dataFile << ( "    \"colors\" : [" );
     boost::shared_ptr<std::vector<float> > colors = ds->getGlobalColors();
-    for ( size_t i = 0; i < colors->size() - 3; i += 3 )
+    for( size_t i = 0; i < colors->size() - 3; i += 3 )
     {
         fValue = colors->at( i );
         dataFile << fValue << ",";
@@ -245,7 +249,7 @@ bool WMWriteTracts::saveJson() const
     int iValue;
     dataFile << ( "    \"indices\" : [" );
     boost::shared_ptr<std::vector<size_t> > lengths = ds->getLineLengths();
-    for ( size_t i = 0; i < lengths->size() - 1; ++i )
+    for( size_t i = 0; i < lengths->size() - 1; ++i )
     {
         iValue = lengths->at( i );
         dataFile << iValue << ",";
@@ -278,7 +282,7 @@ bool WMWriteTracts::saveJson2() const
     const char* c_file = m_savePath->get().file_string().c_str();
     std::ofstream dataFile( c_file, std::ios_base::binary );
 
-    if ( dataFile )
+    if( dataFile )
     {
         WLogger::getLogger()->addLogMessage( "opening file", "Write Tracts", LL_DEBUG );
     }
@@ -307,12 +311,12 @@ bool WMWriteTracts::saveJson2() const
     boost::shared_ptr<std::vector<float> > tangents = ds->getTangents();
     boost::shared_ptr<std::vector<float> > colors = ds->getGlobalColors();
 
-    for ( size_t k = 0; k < lengths->size(); ++k )
+    for( size_t k = 0; k < lengths->size(); ++k )
     {
         size_t newLength = 0;
-        for ( size_t i = starts->at( k ); i < ( starts->at( k ) + lengths->at( k ) ); ++i )
+        for( size_t i = starts->at( k ); i < ( starts->at( k ) + lengths->at( k ) ); ++i )
         {
-            if ( i % 2 == 0 )
+            if( i % 2 == 0 )
             {
                 nVertices.push_back( 160 - verts->at( i * 3 ) );
                 nVertices.push_back( 200 - verts->at( i * 3 + 1 ) );
@@ -342,7 +346,7 @@ bool WMWriteTracts::saveJson2() const
     dataFile << ( "    \"vertices\" : [" );
 
     float fValue;
-    for ( size_t i = 0; i < nVertices.size() - 1 ; ++i )
+    for( size_t i = 0; i < nVertices.size() - 1 ; ++i )
     {
         fValue = nVertices[i];
         dataFile << fValue << ",";
@@ -352,7 +356,7 @@ bool WMWriteTracts::saveJson2() const
 
     dataFile << ( "    \"normals\" : [" );
 
-    for ( size_t i = 0; i < nNormals.size() - 1; ++i )
+    for( size_t i = 0; i < nNormals.size() - 1; ++i )
     {
         fValue = nNormals[i];
         dataFile << fValue << ",";
@@ -362,7 +366,7 @@ bool WMWriteTracts::saveJson2() const
 
     dataFile << ( "    \"colors\" : [" );
 
-    for ( size_t i = 0; i < nColors.size()- 1; ++i )
+    for( size_t i = 0; i < nColors.size()- 1; ++i )
     {
         fValue = nColors[i];
         dataFile << fValue << ",";
@@ -373,7 +377,7 @@ bool WMWriteTracts::saveJson2() const
     int iValue;
     dataFile << ( "    \"indices\" : [" );
 
-    for ( size_t i = 0; i < nIndices.size() - 1; ++i )
+    for( size_t i = 0; i < nIndices.size() - 1; ++i )
     {
         iValue = nIndices[i];
         dataFile << iValue << ",";
@@ -407,7 +411,7 @@ bool WMWriteTracts::saveJsonTriangles() const
     const char* c_file = m_savePath->get().file_string().c_str();
     std::ofstream dataFile( c_file, std::ios_base::binary );
 
-    if ( dataFile )
+    if( dataFile )
     {
         WLogger::getLogger()->addLogMessage( "opening file", "Write Tracts", LL_DEBUG );
     }
@@ -428,7 +432,7 @@ bool WMWriteTracts::saveJsonTriangles() const
     float fValue0;
     float fValue1;
     float fValue2;
-    for ( size_t i = 0; i < verts->size() - 3; ++i )
+    for( size_t i = 0; i < verts->size() - 3; ++i )
     {
         fValue0 = verts->at( i );
         i += 1;
@@ -449,9 +453,9 @@ bool WMWriteTracts::saveJsonTriangles() const
     boost::shared_ptr<std::vector<size_t> > lengths = ds->getLineLengths();
 
     int counter = 0;
-    for ( size_t i = 0; i < lengths->size(); ++i )
+    for( size_t i = 0; i < lengths->size(); ++i )
     {
-        for ( size_t k = 0; k < lengths->at( i ); ++k )
+        for( size_t k = 0; k < lengths->at( i ); ++k )
         {
             dataFile << counter << "," << counter + 1 << "," << counter + 2 << ",";
             dataFile << counter + 1 << "," << counter + 3 << "," << counter + 2 << ",";
@@ -484,7 +488,7 @@ bool WMWriteTracts::savePOVRay( boost::shared_ptr< const WDataSetFibers > fibers
 
     debugLog() << "Opening " << fnMeshAbs << " for writing the mesh data.";
     std::ofstream dataFile( fnMeshAbs.c_str(), std::ios_base::binary );
-    if ( !dataFile )
+    if( !dataFile )
     {
         errorLog() << "Opening " << fnMeshAbs << " failed.";
         return false;
@@ -501,9 +505,6 @@ bool WMWriteTracts::savePOVRay( boost::shared_ptr< const WDataSetFibers > fibers
     debugLog() << "Color mode is " << fibColorMode << ".";
     WDataSetFibers::ColorArray  fibColors = fibers->getColorScheme()->getColor();
 
-    boost::shared_ptr< WProgress > progress1 = boost::shared_ptr< WProgress >( new WProgress( "Converting fibers", fibStart->size() ) );
-    m_progress->addSubProgress( progress1 );
-
     // for each fiber:
     debugLog() << "Iterating over all fibers.";
 
@@ -516,7 +517,11 @@ bool WMWriteTracts::savePOVRay( boost::shared_ptr< const WDataSetFibers > fibers
     double maxZ = wlimits::MIN_DOUBLE;
 
     size_t currentStart = 0;
-    for( size_t fidx = 0; fidx < fibStart->size(); fidx += 1 )
+    size_t increment = m_povraySaveOnlyNth->get();
+
+    boost::shared_ptr< WProgress > progress1 = boost::shared_ptr< WProgress >( new WProgress( "Converting fibers", fibStart->size() / increment) );
+    m_progress->addSubProgress( progress1 );
+    for( size_t fidx = 0; fidx < fibStart->size(); fidx += increment )
     {
         ++*progress1;
 
@@ -560,12 +565,12 @@ bool WMWriteTracts::savePOVRay( boost::shared_ptr< const WDataSetFibers > fibers
             dataFile << "cylinder" << std::endl <<
                         "{" << std::endl <<
                         " <" << lastvert.x() << "," << lastvert.y() << "," << lastvert.z() << ">," <<
-                          "<" << vert.x() << "," << vert.y() << "," << vert.z() << ">," << m_povrayTubeDiameter->get() << std::endl <<
+                          "<" << vert.x() << "," << vert.y() << "," << vert.z() << ">,Diameter" << std::endl <<
                         " pigment{color rgb <" << color.x() << "," << color.y() << "," << color.z() << ">}" << std::endl <<
                         " transform MoveToCenter" << std::endl <<
                         "}" << std::endl;
             dataFile << "sphere {" << std::endl <<
-                        " <" << vert.x() << "," << vert.y() << "," << vert.z() << ">,"  << m_povrayTubeDiameter->get() << std::endl <<
+                        " <" << vert.x() << "," << vert.y() << "," << vert.z() << ">,Diameter" << std::endl <<
                         " pigment{ color rgb <" << color.x() << "," << color.y() << "," << color.z() << ">}" << std::endl <<
                         " transform MoveToCenter" << std::endl <<
                         "}" << std::endl;
@@ -589,7 +594,7 @@ bool WMWriteTracts::savePOVRay( boost::shared_ptr< const WDataSetFibers > fibers
 
     debugLog() << "Opening " << fnSceneAbs << " for writing.";
     std::ofstream dataFileScene( fnSceneAbs.c_str(), std::ios_base::binary );
-    if ( !dataFileScene )
+    if( !dataFileScene )
     {
         errorLog() << "Opening " << fnSceneAbs << " failed.";
         return false;
@@ -597,6 +602,10 @@ bool WMWriteTracts::savePOVRay( boost::shared_ptr< const WDataSetFibers > fibers
 
     // write some head data
     dataFileScene << "#version 3.6;" << std::endl << std::endl;
+
+    dataFileScene << "// run with  povray -w800 -h600 -Q0 fibsLarge.scene.pov " << std::endl <<
+                     "// * this creates a fast preview of the scene with a resolution of 800x600." << std::endl <<
+                     "// * the Q parameter defines the quality Q0 means plain colors. Q11 is best, including radiosity." << std::endl << std::endl;
 
     if( m_povrayRadiosity->get() )
     {
@@ -612,11 +621,12 @@ bool WMWriteTracts::savePOVRay( boost::shared_ptr< const WDataSetFibers > fibers
         "}" << std::endl << std::endl;
     }
 
+    dataFileScene << "// Enable Phong lighting for all th egeometry" << std::endl <<
     dataFileScene << "#default{" << std::endl <<
                    " finish{" << std::endl <<
                    "  ambient 0" << std::endl <<
                    "  phong 1" << std::endl <<
-                   //"  reflection 0.9yy " << std::endl <<
+                   "  // reflection 0.9 " << std::endl <<
                    " }" << std::endl <<
                    "}" << std::endl << std::endl;
 
@@ -627,13 +637,17 @@ bool WMWriteTracts::savePOVRay( boost::shared_ptr< const WDataSetFibers > fibers
 
     dataFileScene << "#declare MoveToCenter = transform{ translate < " << -mX << ", " << -mY << ", " << -mZ << " > };" << std::endl;
     dataFileScene << "#declare CamPosition = < " << camX << ", " << camY << ", " << camZ << " >;" << std::endl << std::endl;
+    dataFileScene << "// Tube diameter" << std::endl;
+    dataFileScene << "#declare Diameter = " << m_povrayTubeDiameter->get() << ";" << std::endl << std::endl;
 
     // this camera should produce a direct front view. The user surely needs to modify the camera
     dataFileScene << "camera {" << std::endl <<
+                "  orthographic angle 45" << std::endl <<
                 "  location CamPosition" << std::endl <<
                 "  right 1.33*x" << std::endl <<
+                "  // use this with 1280x1024" << std::endl <<
+                "  // right 1.25*x" << std::endl <<
                 "  up y " << std::endl <<
-                "  // angle 45 " << std::endl <<
                 "  look_at  < 0, 0, 0 >" << std::endl <<
                 "}" << std::endl << std::endl;
     // headlight

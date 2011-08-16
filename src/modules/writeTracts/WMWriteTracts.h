@@ -76,6 +76,7 @@ public:
 
     /**
      * Get the icon for this module in XPM format.
+     * \return The icon.
      */
     virtual const char** getXPMIcon() const;
 
@@ -158,6 +159,11 @@ private:
      * The tube diameter in povray export
      */
     WPropDouble m_povrayTubeDiameter;
+
+    /**
+     * Allows thinning of the data. Often useful for testing povray settings as small scene render faster.
+     */
+    WPropInt m_povraySaveOnlyNth;
 
     /**
      * Handles updates in filetype property. Used to hide and unhide certain property groups.
