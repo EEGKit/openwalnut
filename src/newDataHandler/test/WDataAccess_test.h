@@ -28,7 +28,7 @@
 #include <cxxtest/TestSuite.h>
 
 #include "../WDataAccess.h"
-#include "../WDataSet.h"
+#include "../WDataSet2.h"
 #include "../WGridRegular3D2.h"
 #include "../WGridRegular3D2Specializations.h"
 

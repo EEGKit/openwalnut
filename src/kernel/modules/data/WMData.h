@@ -31,18 +31,21 @@
 #include <boost/thread.hpp>
 
 // #include "../../WKernel.h"
+
 #include "../../WModule.h"
+#include "../../../common/math/WMatrix.h"
+#include "../../../newDataHandler/WDataSet2.h"
 
 #include "../../WExportKernel.h"
 
 // forward declarations
-class WDataSet;
-class WDataSetSingle;
+
 class WModuleConnector;
+
 template< class T > class WModuleOutputData;
 
 /**
- * Module for encapsulating WDataSets. It can encapsulate almost everything, but is intended to be used with WDataSets and its
+ * Module for encapsulating WDataSet2s. It can encapsulate almost everything, but is intended to be used with WDataSet2s and its
  * inherited classes. This class builds a "source" in OpenWalnut's DataFlow Network.
  * \ingroup modules
  */
@@ -62,18 +65,20 @@ public:
 
     /**
      * Gives back the name of this module.
+     *
      * \return the module's name.
      */
     virtual const std::string getName() const;
 
     /**
      * Gives back a description of this module.
+     *
      * \return description to module.
      */
     virtual const std::string getDescription() const;
 
     /**
-     * Getter for the dataset.
+     * Getter for the dataset. Currently returns a zero pointer.
      *
      * \return the dataset encapsulated by this module.
      */
@@ -181,10 +186,10 @@ protected:
     //! a standard transform (should be an identity transform)
     WMatrix< double > m_transformNoMatrix;
 
-    //! a standard transform (should be an identity transform)
+    //! another transform that may come with a data file
     WMatrix< double > m_transformSForm;
 
-    //! a standard transform (should be an identity transform)
+    //! another transform that may come with a data file
     WMatrix< double > m_transformQForm;
 
 private:
@@ -199,17 +204,17 @@ private:
      *
      * \return the type name of the specified dataset
      */
-    std::string getDataTypeString( boost::shared_ptr< WDataSetSingle > dss );
+    std::string getDataTypeString( boost::shared_ptr< WDataSet2Base > dss );
 
     /**
      * The associated dataset.
      */
-    boost::shared_ptr< WDataSet > m_dataSet;
+    WDataSet2Base::SPtr m_dataSet;
 
     /**
      * The only output of this data module.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSet > > m_output;
+    boost::shared_ptr< WModuleOutputData< WDataSet2Base > > m_output;
 };
 
 #endif  // WMDATA_H

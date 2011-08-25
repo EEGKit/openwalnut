@@ -5,6 +5,8 @@ ADD_SUBDIRECTORY( structuralTypes )
 ADD_LIBRARY( OWnewDataHandler ${NEWDATAHANDLER_SRC} )
 TARGET_LINK_LIBRARIES( OWnewDataHandler OWcommon ${Boost_LIBRARIES} )
 
+SET( LIB_NAME "${OWnewDataHandlerName}" )
+
 # Unit tests
 IF( OW_COMPILE_TESTS )
     CXXTEST_ADD_TESTS_FROM_LIST( "${NEWDATAHANDLER_SRC}" "OWnewDataHandler" )

@@ -54,7 +54,7 @@ class WDataAccessConst;
 
 // one for the valueset
 template< typename ValueT >
-class WValueSet;
+class WValueSet2;
 
 // and the index map
 template< typename GridT >
@@ -217,7 +217,7 @@ public:
      * \return A reference to the data for the voxel the iterator currently points to.
      */
     // TODO( reichenbach ): add a WInvalidIteratorException and a WNoValidVoxel(name?)Exception
-    typename WValueSet< T >::ValueReturnType operator*() // const?
+    typename WValueSet2< T >::ValueReturnType operator*() // const?
     {
 #ifdef _DEBUG
         if( !m_grid || !m_valueSet )
@@ -337,7 +337,7 @@ protected:
      * \param valueSet The respective valueset.
      * \param idx The index of the voxel that is currently pointed to.
      */
-    WVoxelIterator( GridT const* grid, WValueSet< T >* valueSet, std::size_t idx )
+    WVoxelIterator( GridT const* grid, WValueSet2< T >* valueSet, std::size_t idx )
         : m_grid( grid ),
           m_valueSet( valueSet ),
           m_index( idx )
@@ -350,7 +350,7 @@ private:
     GridT const* m_grid;
 
     //! The values.
-    WValueSet< T >* m_valueSet; // the valueset is not const for the non-const iterator
+    WValueSet2< T >* m_valueSet; // the valueset is not const for the non-const iterator
 
     //! The current voxel.
     std::size_t m_index;
@@ -506,7 +506,7 @@ public:
      * \return A reference to the data for the voxel the iterator currently points to.
      */
     // TODO( reichenbach ): add a WInvalidIteratorException and a WNoValidVoxel(name?)Exception
-    typename WValueSet< T >::ValueReturnTypeConst operator*() const
+    typename WValueSet2< T >::ValueReturnTypeConst operator*() const
     {
 #ifdef _DEBUG
         if( !m_grid || !m_valueSet )
@@ -627,7 +627,7 @@ protected:
      * \param valueSet The respective valueset.
      * \param idx The index of the voxel that is currently pointed to.
      */
-    WVoxelIteratorConst( GridT const* grid, WValueSet< T > const* valueSet, std::size_t idx )
+    WVoxelIteratorConst( GridT const* grid, WValueSet2< T > const* valueSet, std::size_t idx )
         : m_grid( grid ),
           m_valueSet( valueSet ),
           m_index( idx )
@@ -640,7 +640,7 @@ private:
     GridT const* m_grid;
 
     //! The values.
-    WValueSet< T > const* m_valueSet;
+    WValueSet2< T > const* m_valueSet;
 
     //! The current voxel.
     std::size_t m_index;

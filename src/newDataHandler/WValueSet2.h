@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WVALUESET_H
-#define WVALUESET_H
+#ifndef WVALUESET2_H
+#define WVALUESET2_H
 
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
@@ -31,18 +31,18 @@
 /**
  * The valueset base class. This class contains only the base information needed: its size. It represents the actual date that resides <b>somewhere</b>. The derived classes can then handle storage.
  */
-class WValueSetBase
+class WValueSet2Base
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WValueSet<...> >.
+     * Convenience typedef for a boost::shared_ptr< WValueSet2<...> >.
      */
-    typedef boost::shared_ptr< WValueSetBase > SPtr;
+    typedef boost::shared_ptr< WValueSet2Base > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WValueSet<...> >.
+     * Convenience typedef for a boost::shared_ptr< const WValueSet2<...> >.
      */
-    typedef boost::shared_ptr< const WValueSetBase > ConstSPtr;
+    typedef boost::shared_ptr< const WValueSet2Base > ConstSPtr;
 
     /**
      * Constructor to create an empty value-set. Instantiating this class directly is quite useless as it does not store any data. Derive from
@@ -50,7 +50,7 @@ public:
      *
      * \param elements the number of elements to be used.
      */
-    explicit WValueSetBase( size_t elements ):
+    explicit WValueSet2Base( size_t elements ):
         m_elements( elements )
     {
         // initialize
@@ -59,7 +59,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~WValueSetBase()
+    virtual ~WValueSet2Base()
     {
         // clean-up
     }
@@ -88,7 +88,7 @@ private:
  * \tparam ValueT the real type of the values.
  */
 template< typename ValueT >
-class WValueSet: public WValueSetBase
+class WValueSet2: public WValueSet2Base
 {
 public:
 
@@ -104,23 +104,23 @@ public:
     typedef ValueT const& ValueReturnTypeConst;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< WValueSet<...> >.
+     * Convenience typedef for a boost::shared_ptr< WValueSet2<...> >.
      */
-    typedef boost::shared_ptr< WValueSet< ValueType > > SPtr;
+    typedef boost::shared_ptr< WValueSet2< ValueType > > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WValueSet<...> >.
+     * Convenience typedef for a boost::shared_ptr< const WValueSet2<...> >.
      */
-    typedef boost::shared_ptr< const WValueSet< ValueType > > ConstSPtr;
+    typedef boost::shared_ptr< const WValueSet2< ValueType > > ConstSPtr;
 
     /**
      * Default constructor. This knows the real value-type and provides the needed mechanism to unveil it to an specified operator. It
-     * additionally stores data as array in memory. If you want to write your own value-set, derive from WValueSetTyped.
+     * additionally stores data as array in memory. If you want to write your own value-set, derive from WValueSet2Typed.
      *
      * \param elements number of elements in the array
      */
-    explicit WValueSet( size_t elements ):
-        WValueSetBase( elements ),
+    explicit WValueSet2( size_t elements ):
+        WValueSet2Base( elements ),
         m_data( new ValueType[ elements ] )
     {
         // initialize
@@ -129,7 +129,7 @@ public:
     /**
      * Destructor. Does not necessarily remove the data array as it is reference counted and may be used by other value-sets.
      */
-    virtual ~WValueSet()
+    virtual ~WValueSet2()
     {
         // clean-up
         delete[] m_data;
@@ -194,7 +194,7 @@ public:
      * \param vs A pointer to the base class of the proxy valuesets.
      * \param index The index of the element in the valueset this proxy object refers to.
      */
-    WDataProxy( WValueSet< WDataProxy< T > >* vs, std::size_t index )
+    WDataProxy( WValueSet2< WDataProxy< T > >* vs, std::size_t index )
         : m_vs( vs ),
           m_index( index )
     {
@@ -226,7 +226,7 @@ public:
         // does an implicit cast of s to type T and lets the valueset
         // do the cast from T to its stored data type via the operator= of
         // its stored data type
-        m_vs->setData( m_index, s );
+        m_vs->setData( m_index, static_cast< T >( s ) );
         return *this;
     }
 
@@ -255,7 +255,7 @@ private:
      * of the data stored in the actual dataset. We can thus call the correct virtual
      * functions for data conversion.
      */
-    WValueSet< WDataProxy< T > >* m_vs;
+    WValueSet2< WDataProxy< T > >* m_vs;
 
     //! The index of the referenced data element in the valueset.
     std::size_t m_index;
@@ -286,7 +286,7 @@ public:
      * \param vs A pointer to the base class of the proxy valuesets.
      * \param index The index of the element in the valueset this proxy object refers to.
      */
-    WDataProxyConst( WValueSet< WDataProxy< T > > const* vs, std::size_t index )
+    WDataProxyConst( WValueSet2< WDataProxy< T > > const* vs, std::size_t index )
         : m_vs( vs ),
           m_index( index )
     {
@@ -309,7 +309,7 @@ private:
      * of the data stored in the actual dataset. We can thus call the correct virtual
      * functions for data conversion.
      */
-    WValueSet< WDataProxy< T > > const* m_vs;
+    WValueSet2< WDataProxy< T > > const* m_vs;
 
     //! The index of the referenced data element in the valueset.
     std::size_t m_index;
@@ -330,7 +330,7 @@ private:
  * \tparam T The type used for the data access.
  */
 template< typename T >
-class WValueSet< WDataProxy< T > >
+class WValueSet2< WDataProxy< T > >
 {
 public:
 
@@ -347,19 +347,19 @@ public:
     typedef ValueTypeConst ValueReturnTypeConst;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< WValueSet<...> >.
+     * Convenience typedef for a boost::shared_ptr< WValueSet2<...> >.
      */
-    typedef boost::shared_ptr< WValueSet< ValueType > > SPtr;
+    typedef boost::shared_ptr< WValueSet2< ValueType > > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WValueSet<...> >.
+     * Convenience typedef for a boost::shared_ptr< const WValueSet2<...> >.
      */
-    typedef boost::shared_ptr< const WValueSet< ValueType > > ConstSPtr;
+    typedef boost::shared_ptr< const WValueSet2< ValueType > > ConstSPtr;
 
     /**
      * Destructor.
      */
-    virtual ~WValueSet()
+    virtual ~WValueSet2()
     {
     }
 
@@ -414,7 +414,7 @@ protected:
     /**
      * Constructor.
      */
-    WValueSet()
+    WValueSet2()
     {
     }
 };
@@ -428,7 +428,7 @@ protected:
  * \tparam SourceT The type of the data in the valueset pointed to by this class.
  */
 template< typename TargetT, typename SourceT >
-class WValueSetProxy : public WValueSet< WDataProxy< TargetT > >
+class WValueSet2Proxy : public WValueSet2< WDataProxy< TargetT > >
 {
 public:
 
@@ -449,7 +449,7 @@ public:
      *
      * \param vs The valueset this should be a proxy for.
      */
-    explicit WValueSetProxy( typename WValueSet< SourceT >::SPtr const& vs )
+    explicit WValueSet2Proxy( typename WValueSet2< SourceT >::SPtr const& vs )
         : m_valueSet( vs )
     {
     }
@@ -457,7 +457,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~WValueSetProxy()
+    virtual ~WValueSet2Proxy()
     {
     }
 
@@ -524,13 +524,13 @@ public:
 private:
 
     //! A pointer to the actual dataset that contains the data.
-    typename WValueSet< SourceT >::SPtr m_valueSet;
+    typename WValueSet2< SourceT >::SPtr m_valueSet;
 };
 
 // ####################################### proxy valueset visitor #############################################
 
 /**
- * A visitor that is used to build a proxy valueset from a pointer to a WValueSetBase. This
+ * A visitor that is used to build a proxy valueset from a pointer to a WValueSet2Base. This
  * is intended to be used with the type resolution mechanism.
  *
  * \tparam T The type used to access the data.
@@ -545,7 +545,7 @@ public:
      *
      * \param vsbase A pointer to an actual valueset.
      */
-    explicit WGetProxyValueSetVisitor( WValueSetBase::SPtr const& vsbase )
+    explicit WGetProxyValueSetVisitor( WValueSet2Base::SPtr const& vsbase )
         : m_base( vsbase )
     {
     }
@@ -559,9 +559,9 @@ public:
     template< typename S >
     void operator() ( S /* not used */ )
     {
-        m_result = typename WValueSetProxy< T, S >::SPtr(
-                        new WValueSetProxy< T, S >(
-                                boost::shared_dynamic_cast< WValueSet< S > >( m_base ) ) );
+        m_result = typename WValueSet2Proxy< T, S >::SPtr(
+                        new WValueSet2Proxy< T, S >(
+                                boost::shared_dynamic_cast< WValueSet2< S > >( m_base ) ) );
     }
 
     /**
@@ -569,7 +569,7 @@ public:
      *
      * \return The proxy valueset.
      */
-    typename WValueSet< WDataProxy< T > >::SPtr get()
+    typename WValueSet2< WDataProxy< T > >::SPtr get()
     {
         return m_result;
     }
@@ -577,11 +577,11 @@ public:
 private:
 
     //! The pointer to the valueset containing the data.
-    WValueSetBase::SPtr m_base;
+    WValueSet2Base::SPtr m_base;
 
     //! The base pointer to the resulting proxy valueset.
-    typename WValueSet< WDataProxy< T > >::SPtr m_result;
+    typename WValueSet2< WDataProxy< T > >::SPtr m_result;
 };
 
-#endif  // WVALUESET_H
+#endif  // WVALUESET2_H
 

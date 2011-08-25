@@ -25,7 +25,7 @@
 #ifndef WDATASETVISITOR_H
 #define WDATASETVISITOR_H
 
-template< typename > class WValueSet;
+template< typename > class WValueSet2;
 template< typename, typename > class WDataAccess;
 template< typename, typename > class WDataAccessConst;
 

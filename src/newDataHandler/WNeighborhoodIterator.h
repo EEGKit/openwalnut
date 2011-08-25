@@ -79,7 +79,7 @@ public:
      * \return A reference to the value of the current neighbor voxel.
      */
     virtual T& getValue( boost::array< int, 3 > const& currentPos, WGridRegular3D2 const * const grid,
-                         WValueSet< T >* valueSet ) = 0;
+                         WValueSet2< T >* valueSet ) = 0;
 
     /**
      * Get a const reference to the value of the current neighbor voxel.
@@ -91,7 +91,7 @@ public:
      * \return A const reference to the value of the current neighbor voxel.
      */
     virtual T const& getValue( boost::array< int, 3 > const& currentPos, WGridRegular3D2 const * const grid,
-                               WValueSet< T > const* valueSet ) const = 0;
+                               WValueSet2< T > const* valueSet ) const = 0;
 
     /**
      * Allocate a copy of this strategy on the heap and return a pointer to that copy.
@@ -153,7 +153,7 @@ public:
      * \return A reference to the value.
      */
     virtual T& getValue( boost::array< int, 3 > const& currentPos, WGridRegular3D2 const * const grid,
-                         WValueSet< T >* valueSet )
+                         WValueSet2< T >* valueSet )
     {
         boost::array< std::size_t, 3 > pos = { { std::max( std::min( currentPos[ 0 ], static_cast< int >( grid->getNbVoxelsX() ) ), 0 ),
                                                  std::max( std::min( currentPos[ 1 ], static_cast< int >( grid->getNbVoxelsY() ) ), 0 ),
@@ -172,7 +172,7 @@ public:
      * \return A const reference to the value.
      */
     virtual T const& getValue( boost::array< int, 3 > const& currentPos, WGridRegular3D2 const * const grid,
-                               WValueSet< T > const* valueSet ) const
+                               WValueSet2< T > const* valueSet ) const
     {
         boost::array< std::size_t, 3 > pos = { { std::max( std::min( currentPos[ 0 ], static_cast< int >( grid->getNbVoxelsX() ) ), 0 ),
                                                  std::max( std::min( currentPos[ 1 ], static_cast< int >( grid->getNbVoxelsY() ) ), 0 ),
@@ -241,7 +241,7 @@ public:
      * \return A reference to the value.
      */
     virtual T& getValue( boost::array< int, 3 > const& currentPos, WGridRegular3D2 const * const grid,
-                         WValueSet< T >* valueSet )
+                         WValueSet2< T >* valueSet )
     {
         boost::array< std::size_t, 3 > pos =
         { {  // NOLINT braces
@@ -264,7 +264,7 @@ public:
      * \return A const reference to the value.
      */
     virtual T const& getValue( boost::array< int, 3 > const& currentPos, WGridRegular3D2 const * const grid,
-                               WValueSet< T > const* valueSet ) const
+                               WValueSet2< T > const* valueSet ) const
     {
         boost::array< std::size_t, 3 > pos =
         { {  // NOLINT braces
@@ -362,7 +362,7 @@ public:
      * \return A reference to the value.
      */
     virtual T& getValue( boost::array< int, 3 > const& currentPos, WGridRegular3D2 const * const grid,
-                         WValueSet< T >* valueSet )
+                         WValueSet2< T >* valueSet )
     {
         if( isInGrid( currentPos, grid ) )
         {
@@ -385,7 +385,7 @@ public:
      * \return A const reference to the value.
      */
     virtual T const& getValue( boost::array< int, 3 > const& currentPos, WGridRegular3D2 const * const grid,
-                               WValueSet< T > const* valueSet ) const
+                               WValueSet2< T > const* valueSet ) const
     {
         if( isInGrid( currentPos, grid ) )
         {
@@ -664,7 +664,7 @@ public:
      *
      * \return A reference to the data.
      */
-    typename WValueSet< T >::ValueReturnType operator* ()
+    typename WValueSet2< T >::ValueReturnType operator* ()
     {
         return m_boundaryStrategy->getValue( this->operator()(), m_grid, m_valueSet );
     }
@@ -701,7 +701,7 @@ protected:
      * \param voxel The coords of the voxel who's neighbors shall be iterated.
      * \param nbIndex The index of the initial neighbor in the provided neighborhood.
      */
-    WNeighborhoodIterator( WGridRegular3D2 const* grid, WValueSet< T >* valueSet, WNeighborhood nb,
+    WNeighborhoodIterator( WGridRegular3D2 const* grid, WValueSet2< T >* valueSet, WNeighborhood nb,
                            WBoundaryStrategy< T > const& strat, WGridRegular3D2::VoxelIndex const& voxel, std::size_t nbIndex )
         : m_grid( grid ),
           m_valueSet( valueSet ),
@@ -734,7 +734,7 @@ private:
     WGridRegular3D2 const* m_grid;
 
     //! The valueset.
-    WValueSet< T >* m_valueSet;
+    WValueSet2< T >* m_valueSet;
 
     //! Stores the neighbor's relative coords.
     WNeighborhood m_neighborhood;
@@ -1002,7 +1002,7 @@ public:
      *
      * \return A const reference to the data.
      */
-    typename WValueSet< T >::ValueReturnTypeConst operator* () const
+    typename WValueSet2< T >::ValueReturnTypeConst operator* () const
     {
         return m_boundaryStrategy->getValue( this->operator()(), m_grid, m_valueSet );
     }
@@ -1039,7 +1039,7 @@ protected:
      * \param voxel The coords of the voxel who's neighbors shall be iterated.
      * \param nbIndex The index of the initial neighbor in the provided neighborhood.
      */
-    WNeighborhoodIteratorConst( WGridRegular3D2 const* grid, WValueSet< T > const* valueSet, WNeighborhood nb,
+    WNeighborhoodIteratorConst( WGridRegular3D2 const* grid, WValueSet2< T > const* valueSet, WNeighborhood nb,
                                 WBoundaryStrategy< T > const& strat, WGridRegular3D2::VoxelIndex const& voxel, std::size_t nbIndex )
         : m_grid( grid ),
           m_valueSet( valueSet ),
@@ -1071,7 +1071,7 @@ private:
     WGridRegular3D2 const* m_grid;
 
     //! The valueset.
-    WValueSet< T > const* m_valueSet;
+    WValueSet2< T > const* m_valueSet;
 
     //! Stores the neighbor's relative coords.
     WNeighborhood m_neighborhood;

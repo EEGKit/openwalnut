@@ -30,7 +30,7 @@
 #include <cxxtest/TestSuite.h>
 
 #include "../WDataAccess.h"
-#include "../WDataSet.h"
+#include "../WDataSet2.h"
 #include "../WNeighborhoodIterator.h"
 #include "../WGridRegular3D2.h"
 #include "../structuralTypes/WScalarStructural.h"
@@ -197,7 +197,7 @@ public:
 
         // now create a valid iterator
         WGridRegular3D2 g( 3, 3, 3 );
-        WValueSet< double > vs( 27 );
+        WValueSet2< double > vs( 27 );
         WNeighborhood nbh = makeMoore( 1 );
         boost::array< std::size_t, 3 > coords = { { 0, 0, 0 } };  // NOLINT braces
         WBoundaryStrategyDefault< double > bs( -1 );
@@ -226,7 +226,7 @@ public:
 
         // now create a valid iterator
         WGridRegular3D2 g( 3, 3, 3 );
-        WValueSet< double > vs( 27 );
+        WValueSet2< double > vs( 27 );
         WNeighborhood nbh = makeMoore( 1 );
         boost::array< std::size_t, 3 > coords = { { 0, 0, 0 } };  // NOLINT braces
         WBoundaryStrategyDefault< double > bs( -1 );
@@ -244,7 +244,7 @@ public:
     void testIncDecr()
     {
         WGridRegular3D2 g( 3, 3, 3 );
-        WValueSet< double > vs( 27 );
+        WValueSet2< double > vs( 27 );
         WNeighborhood nbh = makeMoore( 1 );
         boost::array< std::size_t, 3 > coords = { { 0, 0, 0 } };  // NOLINT braces
         WBoundaryStrategyClamp< double > bs;
@@ -282,7 +282,7 @@ public:
     void testIncDecrConst()
     {
         WGridRegular3D2 g( 3, 3, 3 );
-        WValueSet< double > vs( 27 );
+        WValueSet2< double > vs( 27 );
         WNeighborhood nbh = makeMoore( 1 );
         boost::array< std::size_t, 3 > coords = { { 0, 0, 0 } };  // NOLINT braces
         WBoundaryStrategyClamp< double > bs;
@@ -320,7 +320,7 @@ public:
     void testSelfAssignment()
     {
         WGridRegular3D2 g( 3, 3, 3 );
-        WValueSet< double > vs( 27 );
+        WValueSet2< double > vs( 27 );
         WNeighborhood nbh = makeMoore( 1 );
         boost::array< std::size_t, 3 > coords = { { 0, 0, 0 } };  // NOLINT braces
         WBoundaryStrategyDefault< double > bs;
@@ -342,7 +342,7 @@ public:
     void testCopyAndCompare()
     {
         WGridRegular3D2 g( 3, 3, 3 );
-        WValueSet< double > vs( 27 );
+        WValueSet2< double > vs( 27 );
         WNeighborhood nbh = makeMoore( 1 );
         boost::array< std::size_t, 3 > coords = { { 0, 0, 0 } };  // NOLINT braces
         WBoundaryStrategyClamp< double > bs;

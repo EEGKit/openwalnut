@@ -26,8 +26,7 @@
 #define WSTILLNEEDSANAME_H
 
 #include <boost/shared_ptr.hpp>
-
-#include "WValueSet.h"
+#include "WValueSet2.h"
 #include "WDataSetVisitor.h"
 #include "WDataAccess.h"
 #include "structuralTypes/WStructuralTypes.h"
@@ -59,7 +58,7 @@ public:
     /**
      * The type of the value set with the specified structural type
      */
-    typedef WValueSetBase ValueSetBaseType;
+    typedef WValueSet2Base ValueSetBaseType;
 
     /**
      * The value-mapper to which this class can be applied.
@@ -77,7 +76,7 @@ public:
     typedef boost::shared_ptr< const WStillNeedsAName< GridType, StructuralType > > ConstSPtr;
 
     /**
-     * Creates instance of WStillNeedsAName. It uses a sample to determine the correct WValueSet type. The value of the sample is completely
+     * Creates instance of WStillNeedsAName. It uses a sample to determine the correct WValueSet2 type. The value of the sample is completely
      * unimportant. You can simply use the default constructor. Depending on the ValueSet, the memory is allocated for the data and you can
      * afterwards use the visitor scheme to fill it.
      *
@@ -89,7 +88,7 @@ public:
     WStillNeedsAName( typename GridType::ConstSPtr grid, const SampleT& sample ):
         m_structuralTypeSample( StructuralT::FromRealType( sample ) ),
         m_grid( grid ),
-        m_valueSet( typename ValueSetBaseType::SPtr( new WValueSet< SampleT >( grid->size() ) ) )
+        m_valueSet( typename ValueSetBaseType::SPtr( new WValueSet2< SampleT >( grid->size() ) ) )
     {
         // Initialize
     }
@@ -221,7 +220,7 @@ protected:
     /**
      * Returns the value-set base instance as pointer.
      *
-     * \return WValueSetBase instance
+     * \return WValueSet2Base instance
      */
     ValueSetBaseType::SPtr getValueSetBase()
     {
@@ -231,7 +230,7 @@ protected:
     /**
      * Returns the value-set base instance as const pointer.
      *
-     * \return WValueSetBase instance
+     * \return WValueSet2Base instance
      */
     ValueSetBaseType::ConstSPtr getValueSetBase() const
     {
@@ -241,28 +240,28 @@ protected:
     /**
      * Returns the value-set instance as pointer with the specified value-type.
      *
-     * \return WValueSet instance with specified type. NULL if specified type is wrong.
+     * \return WValueSet2 instance with specified type. NULL if specified type is wrong.
      */
     template < typename ValueT >
-    typename WValueSet< ValueT >::SPtr getValueSet()
+    typename WValueSet2< ValueT >::SPtr getValueSet()
     {
-        return boost::shared_dynamic_cast< WValueSet< ValueT > >( m_valueSet );
+        return boost::shared_dynamic_cast< WValueSet2< ValueT > >( m_valueSet );
     }
 
     /**
      * Returns the value-set instance as const pointer with the specified value-type.
      *
-     * \return WValueSet instance with specified type. NULL if specified type is wrong.
+     * \return WValueSet2 instance with specified type. NULL if specified type is wrong.
      */
     template < typename ValueT >
-    typename WValueSet< ValueT >::ConstSPtr getValueSet() const
+    typename WValueSet2< ValueT >::ConstSPtr getValueSet() const
     {
-        return boost::shared_dynamic_cast< WValueSet< ValueT > >( m_valueSet );
+        return boost::shared_dynamic_cast< WValueSet2< ValueT > >( m_valueSet );
     }
 
     /**
      * Create an accessor object of given type. The type you specify here should allow non-const access to the data. Thy AccessorT needs a
-     * constructor which accepts GridType::ConstSPtr and WValueSet< SomeType >::SPtr.
+     * constructor which accepts GridType::ConstSPtr and WValueSet2< SomeType >::SPtr.
      *
      * \tparam AccessorT some Type allowing non-const access to the data.
      *
@@ -277,7 +276,7 @@ protected:
 
     /**
      * Create an accessor object of given type. The type you specify here should dis-allow non-const access to the data. Thy ConstAccessorT needs a
-     * constructor which accepts GridType::ConstSPtr and WValueSet< SomeType >::ConstSPtr.
+     * constructor which accepts GridType::ConstSPtr and WValueSet2< SomeType >::ConstSPtr.
      *
      * \tparam ConstAccessorT some Type allowing only const access to the data.
      *

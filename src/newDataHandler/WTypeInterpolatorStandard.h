@@ -25,11 +25,7 @@
 #ifndef WTYPEINTERPOLATORSTANDARD_H
 #define WTYPEINTERPOLATORSTANDARD_H
 
-// TEST
-#include <iostream>
-
-
-#include "WValueSet.h"
+#include "WValueSet2.h"
 #include "WInterpolationTypes.h"
 #include "WGridRegular3D2.h"
 
@@ -49,7 +45,7 @@ public:
     typedef ValueT ValueType;
 
     //! The type of the valueset.
-    typedef WValueSet< ValueType > ValueSetType;
+    typedef WValueSet2< ValueType > ValueSetType;
 
     /**
      * The actual calculation of the interpolated value. This is the version for linear

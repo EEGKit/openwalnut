@@ -25,7 +25,8 @@
 #ifndef WDATAACCESS_H
 #define WDATAACCESS_H
 
-template< typename > class WValueSet;
+// forward declaration
+template< typename > class WValueSet2;
 
 /**
  * Provides functions for random access to the data of a dataset as well as
@@ -51,7 +52,7 @@ public:
      * \param grid the grid needed to access the data
      * \param valueSet the values
      */
-    WDataAccess( typename GridType::ConstSPtr grid, typename WValueSet< ValueType >::SPtr valueSet ):
+    WDataAccess( typename GridType::ConstSPtr grid, typename WValueSet2< ValueType >::SPtr valueSet ):
         m_grid( grid ),
         m_valueSet( valueSet )
     {
@@ -67,7 +68,7 @@ private:
     /**
      * The valueset.
      */
-    typename WValueSet< ValueType >::SPtr m_valueSet;
+    typename WValueSet2< ValueType >::SPtr m_valueSet;
 };
 
 /**
@@ -94,7 +95,7 @@ public:
      * \param grid the grid needed to access the data
      * \param valueSet the values
      */
-    WDataAccessConst( typename GridType::ConstSPtr grid, typename WValueSet< ValueType >::ConstSPtr valueSet ):
+    WDataAccessConst( typename GridType::ConstSPtr grid, typename WValueSet2< ValueType >::ConstSPtr valueSet ):
         m_grid( grid ),
         m_valueSet( valueSet )
     {
@@ -110,7 +111,7 @@ private:
     /**
      * The valueset.
      */
-    typename WValueSet< ValueType >::ConstSPtr m_valueSet;
+    typename WValueSet2< ValueType >::ConstSPtr m_valueSet;
 };
 
 #endif  // WDATAACCESS_H

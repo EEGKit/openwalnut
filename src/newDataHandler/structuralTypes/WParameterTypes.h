@@ -79,12 +79,237 @@ typedef boost::make_variant_over< WNaturalNumbersNoZeroTypeVector >::type WNatur
  * Even numbers as MPL types.
  * This is needed as orders for tensors.
  */
-typedef boost::make_variant_over< WEvenNumbersTypeVector > WEvenNumbersVariant;
+typedef boost::make_variant_over< WEvenNumbersTypeVector >::type WEvenNumbersVariant;
 
 /**
  * Use even numbers as allowed orders for symmetric spherical harmonic and tensor types.
  */
 typedef WEvenNumbersVariant SymmetricOrderVariant;
+
+/**
+ * A traits template for variants that provides functions and types used for runtime
+ * variant initialization. Needed to construct variants from runtime parameters, such as
+ * values loaded from a file.
+ *
+ * \tparam VariantT The type of the variant.
+ */
+template< typename VariantT >
+struct VariantRuntimeValue;
+
+/**
+ * A runtime specific types and functions for WIntegralVariant.
+ */
+template<>
+struct VariantRuntimeValue< WIntegralVariant >
+{
+    //! The type of the runtime value to init the variant from.
+    typedef std::size_t ValueType;
+
+    /**
+     * Construct an initialized variant from the runtime value. This uses
+     * the datatype codes also used by nifti headers.
+     *
+     * \param v The runtime value.
+     * \return The initialized variant.
+     */
+    static WIntegralVariant variantFromValue( ValueType const& v )
+    {
+        WIntegralVariant var;
+        switch( v )
+        {
+        case 2: // W_DT_UNSIGNED_CHAR
+            var = uint8_t();
+            break;
+        case 256: // W_DT_INT8
+            var = int8_t();
+            break;
+        case 512: // W_DT_UINT16
+            var = uint16_t();
+            break;
+        case 4: // W_DT_SIGNED_SHORT
+            var = int16_t();
+            break;
+        case 768: // W_DT_UINT32
+            var = uint32_t();
+            break;
+        case 8: // W_DT_SIGNED_INT
+            var = int();
+            break;
+        case 1280: // W_DT_UINT64
+            var = uint64_t();
+            break;
+        case 1024: // W_DT_INT64
+            var = int64_t();
+            break;
+        case 16: // W_DT_FLOAT
+            var = float();
+            break;
+        case 64: // W_DT_DOUBLE
+            var = double();
+            break;
+        }
+        return var;
+    }
+};
+
+/**
+ * A runtime specific types and functions for WNaturalNumbersVariant.
+ */
+template<>
+struct VariantRuntimeValue< WNaturalNumbersVariant >
+{
+    //! The type of the runtime value to init the variant from.
+    typedef std::size_t ValueType;
+
+    /**
+     * Construct an initialized variant from the runtime value.
+     *
+     * \param v The runtime value.
+     * \return The initialized variant.
+     */
+    static WNaturalNumbersVariant variantFromValue( ValueType const& v )
+    {
+        WNaturalNumbersVariant var;
+        switch( v )
+        {
+        case 0:
+            var = boost::mpl::size_t< 0 >();
+            break;
+        case 1:
+            var = boost::mpl::size_t< 1 >();
+            break;
+        case 2:
+            var = boost::mpl::size_t< 2 >();
+            break;
+        case 3:
+            var = boost::mpl::size_t< 3 >();
+            break;
+        case 4:
+            var = boost::mpl::size_t< 4 >();
+            break;
+        case 5:
+            var = boost::mpl::size_t< 5 >();
+            break;
+        case 6:
+            var = boost::mpl::size_t< 6 >();
+            break;
+        case 7:
+            var = boost::mpl::size_t< 7 >();
+            break;
+        case 8:
+            var = boost::mpl::size_t< 8 >();
+            break;
+        case 9:
+            var = boost::mpl::size_t< 9 >();
+            break;
+        }
+        return var;
+    }
+};
+
+/**
+ * A runtime specific types and functions for WNaturalNumbersNoZeroVariant.
+ */
+template<>
+struct VariantRuntimeValue< WNaturalNumbersNoZeroVariant >
+{
+    //! The type of the runtime value to init the variant from.
+    typedef std::size_t ValueType;
+
+    /**
+     * Construct an initialized variant from the runtime value.
+     *
+     * \param v The runtime value.
+     * \return The initialized variant.
+     */
+    static WNaturalNumbersNoZeroVariant variantFromValue( ValueType const& v )
+    {
+        WNaturalNumbersNoZeroVariant var;
+        switch( v )
+        {
+        case 1:
+            var = boost::mpl::size_t< 1 >();
+            break;
+        case 2:
+            var = boost::mpl::size_t< 2 >();
+            break;
+        case 3:
+            var = boost::mpl::size_t< 3 >();
+            break;
+        case 4:
+            var = boost::mpl::size_t< 4 >();
+            break;
+        case 5:
+            var = boost::mpl::size_t< 5 >();
+            break;
+        case 6:
+            var = boost::mpl::size_t< 6 >();
+            break;
+        case 7:
+            var = boost::mpl::size_t< 7 >();
+            break;
+        case 8:
+            var = boost::mpl::size_t< 8 >();
+            break;
+        case 9:
+            var = boost::mpl::size_t< 9 >();
+            break;
+        }
+        return var;
+    }
+};
+
+/**
+ * A runtime specific types and functions for WEvenNumbersVariant.
+ */
+template<>
+struct VariantRuntimeValue< WEvenNumbersVariant >
+{
+    //! The type of the runtime value to init the variant from.
+    typedef std::size_t ValueType;
+
+    /**
+     * Construct an initialized variant from the runtime value.
+     *
+     * \param v The runtime value.
+     * \return The initialized variant.
+     */
+    static WEvenNumbersVariant variantFromValue( ValueType const& v )
+    {
+        WEvenNumbersVariant var;
+        switch( v )
+        {
+        case 0:
+            var = boost::mpl::size_t< 0 >();
+            break;
+        case 2:
+            var = boost::mpl::size_t< 2 >();
+            break;
+        case 4:
+            var = boost::mpl::size_t< 4 >();
+            break;
+        case 6:
+            var = boost::mpl::size_t< 6 >();
+            break;
+        case 8:
+            var = boost::mpl::size_t< 8 >();
+            break;
+        case 10:
+            var = boost::mpl::size_t< 10 >();
+            break;
+        case 12:
+            var = boost::mpl::size_t< 12 >();
+            break;
+        case 14:
+            var = boost::mpl::size_t< 14 >();
+            break;
+        case 16:
+            var = boost::mpl::size_t< 16 >();
+            break;
+        }
+        return var;
+    }
+};
 
 #endif  // WPARAMETERTYPES_H
 

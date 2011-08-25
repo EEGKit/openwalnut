@@ -28,7 +28,7 @@
 #include <cxxtest/TestSuite.h>
 
 #include "../WDataAccess.h"
-#include "../WDataSet.h"
+#include "../WDataSet2.h"
 #include "../WVoxelIterator.h"
 #include "../WGridRegular3D2.h"
 #include "../WGridRegular3D2Specializations.h"
@@ -200,7 +200,7 @@ public:
 
         // now create a valid iterator
         WGridRegular3D2 g( 3, 3, 3 );
-        WValueSet< double > vs( 27 );
+        WValueSet2< double > vs( 27 );
 
         TS_ASSERT_THROWS_NOTHING( VI( &g, &vs, 0 ) );
 
@@ -226,7 +226,7 @@ public:
 
         // now create a valid iterator
         WGridRegular3D2 g( 3, 3, 3 );
-        WValueSet< double > vs( 27 );
+        WValueSet2< double > vs( 27 );
 
         TS_ASSERT_THROWS_NOTHING( VI( &g, &vs, 0 ) );
 
@@ -241,7 +241,7 @@ public:
     void testIncDecr()
     {
         WGridRegular3D2 g( 3, 3, 3 );
-        WValueSet< double > vs( 27 );
+        WValueSet2< double > vs( 27 );
 
         WVoxelIterator< WGridRegular3D2, double > vi( &g, &vs, 0 );
 
@@ -276,7 +276,7 @@ public:
     void testIncDecrConst()
     {
         WGridRegular3D2 g( 3, 3, 3 );
-        WValueSet< double > vs( 27 );
+        WValueSet2< double > vs( 27 );
 
         WVoxelIteratorConst< WGridRegular3D2, double > vi( &g, &vs, 0 );
 
@@ -311,7 +311,7 @@ public:
     void testSelfAssignment()
     {
         WGridRegular3D2 g( 3, 3, 3 );
-        WValueSet< double > vs( 27 );
+        WValueSet2< double > vs( 27 );
 
         WVoxelIterator< WGridRegular3D2, double > vi( &g, &vs, 0 );
 
@@ -347,7 +347,7 @@ public:
     void testCopyAndCompare()
     {
         WGridRegular3D2 g( 3, 3, 3 );
-        WValueSet< double > vs( 27 );
+        WValueSet2< double > vs( 27 );
 
         WVoxelIterator< WGridRegular3D2, double > vi( &g, &vs, 0 );
 

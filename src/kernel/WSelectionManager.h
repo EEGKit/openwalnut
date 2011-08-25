@@ -33,6 +33,9 @@
 
 #include "WExportKernel.h"
 
+// we need a forward declaration for the old grid type
+class WGridRegular3D;
+
 typedef enum
 {
     PAINTMODE_NONE = 0,

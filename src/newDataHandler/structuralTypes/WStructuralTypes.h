@@ -370,5 +370,69 @@ public:
     }
 };
 
-#endif  // WSTRUCTURALTYPES_H
+// ######################################### type store from runtime variables #####################################################################
 
+/**
+ * Constructs a type store object (a list of variants) from runtime values, as read from a file for example.
+ *
+ * This version uses a single runtime value.
+ *
+ * \tparam ParameterVectorT The list of variant types used for the type store object.
+ *
+ * \param p1 The first runtime value.
+ *
+ * \return The type store object.
+ */
+template< typename ParameterVectorT >
+WStructuralTypeStore< ParameterVectorT > typeStoreFromRuntimeVariables( std::size_t p1 )
+{
+    WStructuralTypeStore< ParameterVectorT > ts;
+    ts.getVariant() = VariantRuntimeValue< typename mpl::at< ParameterVectorT, mpl::size_t< 0 > >::type >::variantFromValue( p1 );
+    return ts;
+}
+
+/**
+ * Constructs a type store object (a list of variants) from runtime values, as read from a file for example.
+ *
+ * This version uses two runtime values.
+ *
+ * \tparam ParameterVectorT The list of variant types used for the type store object.
+ *
+ * \param p1 The first runtime value.
+ * \param p2 The second runtime value.
+ *
+ * \return The type store object.
+ */
+template< typename ParameterVectorT >
+WStructuralTypeStore< ParameterVectorT > typeStoreFromRuntimeVariables( std::size_t p1, std::size_t p2 )
+{
+    WStructuralTypeStore< ParameterVectorT > ts;
+    ts.getVariant() = VariantRuntimeValue< typename mpl::at< ParameterVectorT, mpl::size_t< 0 > >::type >::variantFromValue( p1 );
+    ts.next().getVariant() = VariantRuntimeValue< typename mpl::at< ParameterVectorT, mpl::size_t< 1 > >::type >::variantFromValue( p2 );
+    return ts;
+}
+
+/**
+ * Constructs a type store object (a list of variants) from runtime values, as read from a file for example.
+ *
+ * This version uses three runtime values.
+ *
+ * \tparam ParameterVectorT The list of variant types used for the type store object.
+ *
+ * \param p1 The first runtime value.
+ * \param p2 The second runtime value.
+ * \param p3 The third runtime value.
+ *
+ * \return The type store object.
+ */
+template< typename ParameterVectorT >
+WStructuralTypeStore< ParameterVectorT > typeStoreFromRuntimeVariables( std::size_t p1, std::size_t p2, std::size_t p3 )
+{
+    WStructuralTypeStore< ParameterVectorT > ts;
+    ts.getVariant() = VariantRuntimeValue< typename mpl::at< ParameterVectorT, mpl::size_t< 0 > >::type >::variantFromValue( p1 );
+    ts.next().getVariant() = VariantRuntimeValue< typename mpl::at< ParameterVectorT, mpl::size_t< 1 > >::type >::variantFromValue( p2 );
+    ts.next().next().getVariant() = VariantRuntimeValue< typename mpl::at< ParameterVectorT, mpl::size_t< 2 > >::type >::variantFromValue( p3 );
+    return ts;
+}
+
+#endif  // WSTRUCTURALTYPES_H

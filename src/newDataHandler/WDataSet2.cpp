@@ -22,5 +22,35 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WDataSet.h"
+#include "WDataSet2.h"
 
+boost::shared_ptr< WPrototyped > WDataSet2Base::m_prototype = boost::shared_ptr< WPrototyped >();
+
+WDataSet2Base::WDataSet2Base()
+    : WTransferable()
+{
+}
+
+WDataSet2Base::~WDataSet2Base()
+{
+}
+
+std::string const WDataSet2Base::getName() const
+{
+    return "Dataset base class";
+}
+
+std::string const WDataSet2Base::getDescription() const
+{
+    return "a dataset base class";
+}
+
+boost::shared_ptr< WPrototyped > WDataSet2Base::getPrototype()
+{
+    if ( !m_prototype )
+    {
+        m_prototype = boost::shared_ptr< WPrototyped >( new WDataSet2Base() );
+    }
+
+    return m_prototype;
+}
