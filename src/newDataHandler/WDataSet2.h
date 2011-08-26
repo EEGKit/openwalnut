@@ -142,13 +142,10 @@ public:
      * provided to this constructor. Use this to create datasets for data read from files, or in any other case where
      * you do not know the type of the data at compile-time.
      *
-     * \tparam TypeStoreT The type of the provided typestore object.
-     *
      * \param grid The grid to use.
      * \param ts The type store instance.
      */
-    template< typename TypeStoreT >
-    WDataSet2( typename GridType::ConstSPtr grid, TypeStoreT const& ts )
+    WDataSet2( typename GridType::ConstSPtr grid, WStructuralTypeStore< typename StructuralT::ParameterVector > const& ts )
         : WDataSet2Base()
     {
         typedef WStructuralTypeResolution< StructuralType, InitDataSetFunctor > TypeResolver;
@@ -168,7 +165,7 @@ public:
      * \param sample a sample. Needed to determine the real type of the values in this WStillNeedsAName.
      */
     template< typename SampleT >
-    WDataSet2( const GridType& grid, const SampleT& sample )
+    WDataSet2( typename GridType::ConstSPtr grid, const SampleT& sample )
         : WDataSet2Base(),
           m_valuemapper( typename ValueMapperType::SPtr( new ValueMapperType( grid, sample ) ) )
     {
@@ -238,6 +235,67 @@ public:
     void applyVisitor( VisitorT* visitor ) const
     {
         static_cast< ValueMapperType const* const >( m_valuemapper.get() )->applyVisitor( visitor );
+    }
+
+    /**
+     * This generates an accessor object with userdefined type. This is used if a user
+     * wants to get/set data using a user-specified type, for example if the user just wants to
+     * use double values without having to know the type of the actual data stored in the valueset.
+     *
+     * Be aware that there is additional overhead per data access in the form of casting, copies
+     * and virtual function calls.
+     *
+     * All functions and iterators offered by the returned access object will return data proxy objects
+     * instead of direct references to the data stored in the valueset. These proxy objects can then be
+     * implicitly or explicitly cast to the user-defined type or be assigned from the user-defined
+     * type (or anything that can be implicitly cast to the user-defined type).
+     *
+     * This creates special problems you should be aware of. For example, if you had a voxel iterator pointing
+     * to a valid voxel, you could do this:
+     *
+     * int i = *vi;
+     * *vi = 1;
+     *
+     * But not this:
+     *
+     * int i = *vi + 1;
+     *
+     * Instead you need to do this:
+     *
+     * int i = 1 + *vi;    or
+     * int i = static_cast< int >( *vi ) + 1;
+     *
+     * But you can do all this even of the dataset actually contained double data (with loss of precision of course).
+     *
+     * The integral data type is not the only thing that can be different, it could be other properties defined by the structural
+     * type too, for example spherical harmonic order. However, you need the correct assignment and/or cast operators between the
+     * types, for example an operator:
+     *
+     * template< typename T, std::size_t order >
+     * SH< double, 4 > operator=( SH< T, order > const& s )
+     *
+     * \tparam The user-defined type.
+     *
+     * \return An access object for a user-defined type.
+     */
+    template< typename T >
+    WDataAccess< GridType, WDataProxy< T > > getAccess()
+    {
+        return m_valuemapper->getAccess< T >();
+    }
+
+    /**
+     * As with the non-const version, but there is no (data) assignment operator for the data proxies
+     * return by the various functions and iterators.
+     *
+     * \tparam The user-defined type.
+     *
+     * \return An access object for a user-defined type.
+     */
+    template< typename T >
+    WDataAccessConst< GridType, WDataProxy< T > > getAccess() const
+    {
+        return static_cast< ValueMapperType const* const >( m_valuemapper.get() )->getAccess< T >();
     }
 
     /**

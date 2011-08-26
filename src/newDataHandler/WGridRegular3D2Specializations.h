@@ -183,6 +183,16 @@ public:
                                SliceIterator( m_grid.get(), m_valueSet.get(), m_grid->sliceSize( dir ), dir, slice ) );
     }
 
+    /**
+     * Get a pointer to a const grid for this access object.
+     *
+     * \return The grid.
+     */
+    typename GridType::ConstSPtr getGrid() const
+    {
+        return m_grid;
+    }
+
 private:
 
     /**
@@ -327,6 +337,16 @@ public:
     {
         return std::make_pair( SliceIterator( m_grid.get(), m_valueSet.get(), 0, dir, slice ),
                                SliceIterator( m_grid.get(), m_valueSet.get(), m_grid->sliceSize( dir ), dir, slice ) );
+    }
+
+    /**
+     * Get a pointer to a const grid for this access object.
+     *
+     * \return The grid.
+     */
+    typename GridType::ConstSPtr getGrid() const
+    {
+        return m_grid;
     }
 
 private:

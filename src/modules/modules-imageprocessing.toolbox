@@ -1,4 +1,4 @@
 #ADD_SUBDIRECTORY( gaussFiltering )
-#ADD_SUBDIRECTORY( gaussFiltering2 )
+ADD_SUBDIRECTORY( gaussFiltering2 )
 #ADD_SUBDIRECTORY( histogramEqualization )
 #ADD_SUBDIRECTORY( spatialDerivation )
