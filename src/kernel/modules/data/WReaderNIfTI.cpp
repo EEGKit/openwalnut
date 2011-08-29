@@ -86,7 +86,7 @@ std::vector< WDataSet2Base::SPtr > WReaderNIfTI::suggestDataSets( boost::filesys
         return suggestions;
     }
 
-    if( header->dim[ 4 ] == 1 && header->dim[ 5 ] == 0 )
+    if( header->dim[ 4 ] == 1 && ( header->dim[ 5 ] == 0 || header->dim[ 5 ] == 1 ) )
     {
         suggestions.push_back( WDataSet2Base::SPtr( new WDataSet2< WGridRegular3D2, WScalarStructural >() ) );
     }
@@ -136,6 +136,7 @@ WDataSet2Base::SPtr WReaderNIfTI::load( boost::filesystem::path const& filename,
         typedef WDataSet2< WGridRegular3D2, WScalarStructural > DataSetType;
         DataSetType::SPtr ptr = DataSetType::SPtr( new DataSetType( grid, ts ) );
         ds = ptr;
+
         ptr->applyVisitor( &copy );
     }
     else

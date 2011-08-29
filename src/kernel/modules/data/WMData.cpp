@@ -213,7 +213,7 @@ void WMData::moduleMain()
             continue;
         }
         m_dataSet = ( *it )->load( p, *suggestions.begin() );
-        if( m_dataSet )
+        if( !m_dataSet )
         {
             break;
         }
