@@ -168,17 +168,10 @@ void WMGaussFiltering2::moduleMain()
         boost::shared_ptr< DataSetType > newDataSet = m_input->getData();
         bool dataChanged = ( m_dataSet != newDataSet );
 
-        if( dataChanged || !m_dataSet )
+        if( dataChanged )
         {
-            debugLog() << "Received Data.";
+            debugLog() << "Received new data.";
             m_dataSet = newDataSet;
-
-            if( !m_dataSet )
-            {
-                debugLog() << "Resetting output.";
-                m_output->reset();
-                continue;
-            }
         }
 
         if( dataChanged || m_iterations->changed() )
@@ -187,6 +180,8 @@ void WMGaussFiltering2::moduleMain()
 
             // do the filtering
             DataSetType::SPtr ds[ 2 ];
+
+            infoLog() << "Filtering...";
 
             if( iterations > 0 )
             {
@@ -208,8 +203,12 @@ void WMGaussFiltering2::moduleMain()
             {
                 m_output->updateData( m_dataSet );
             }
+
+            infoLog() << "Done.";
         }
     }
+
+    infoLog() << "Shutting down, bye!";
 }
 
 void WMGaussFiltering2::connectors()
