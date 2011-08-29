@@ -117,7 +117,6 @@ void WMProbTractVis::properties()
     m_surfCount->setMin( 0 );
     m_surfCount->setMax( 4 );
 
-    // TODO(aberres): find what to do with the cube (it uses m_isoColor1)
     m_isoColor1 = m_properties->addProperty( "Iso Color 1", "The color for the innermost surface.", WColor( 0.5, 0.0, 0.0, 1.0 ), m_propCondition );
     m_isoColor2 = m_properties->addProperty( "Iso Color 2", "The color for the second surface.", WColor( 1.0, 0.5, 0.0, 0.7 ), m_propCondition );
     m_isoColor3 = m_properties->addProperty( "Iso Color 3", "The color for the third surface.", WColor( 0.0, 0.5, 0.7, 0.5 ), m_propCondition );
@@ -133,13 +132,14 @@ void WMProbTractVis::properties()
     m_colormapRatio->setMax( 1.0 );
 
     m_saturation = m_properties->addProperty( "Saturation",   "The saturation depending on the depth.", 1.0 );
-    m_saturation->setMin( 0.01 );
+    m_saturation->setMin( 0.0 );
     m_saturation->setMax( 2.0 );
 
     m_isoEpsilon = m_properties->addProperty( "Isovalue Tolerance", "The amount of deviation tolerated for the isovalue", 0.05 );
     m_isoEpsilon->setMax( 0.5 );
 
-    m_manualAlpha = m_properties->addProperty( "Manual Alpha", "Lets user use the slider to set a global alpha rather than computing it automatically.", false );
+    m_manualAlpha = m_properties->addProperty( "Manual Alpha", "Lets user use the slider to set a global alpha rather than "
+                                                                                      "computing it automatically.", false );
 
     m_phong  = m_properties->addProperty( "Phong Shading", "If enabled, Phong shading gets applied on a per-pixel basis.", true );
 
@@ -185,7 +185,7 @@ void WMProbTractVis::moduleMain()
     osg::ref_ptr< WGEPostprocessingNode > postNode = new WGEPostprocessingNode(
                 WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()
                 );
-    postNode->setEnabled( false );  // do not use it by default
+    postNode->setEnabled( true );  // use it by default
     postNode->addUpdateCallback( new WGENodeMaskCallback( m_active ) ); // disable the postNode with m_active
 
     // provide the properties of the post-processor to the user
@@ -222,13 +222,13 @@ void WMProbTractVis::moduleMain()
         }
 
         // m_isoColor or shading changed
-        if ( m_isoColor1->changed() || m_isoColor2->changed() || m_isoColor3->changed() || m_isoColor4->changed() )//|| m_surfCount->changed() )
+        if ( m_isoColor1->changed() || m_isoColor2->changed() || m_isoColor3->changed() || m_isoColor4->changed() )
         {
             // a new color requires the proxy geometry to be rebuild as we store it as color in this geometry
             dataUpdated = true;
         }
 
-                // As the data has changed, we need to recreate the texture.
+        // As the data has changed, we need to recreate the texture.
         if ( dataUpdated && dataValid )
         {
             debugLog() << "Data changed. Uploading new data as texture.";
@@ -324,9 +324,7 @@ void WMProbTractVis::moduleMain()
             {
                 gradTexEnableDefine->setActive( false ); // disable gradient texture
             }
-            //TODO(aberres): why?
             WGEColormapping::apply( cube, m_shader, 3 );
-//            WGEColormapping::apply( cube, m_shader );
 
             // update node
             debugLog() << "Adding new rendering.";

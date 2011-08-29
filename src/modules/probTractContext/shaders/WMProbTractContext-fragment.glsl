@@ -85,10 +85,7 @@ uniform int u_viewAxial;
 uniform int u_viewCoronal;
 uniform int u_viewSagittal;
 
-float axial;
-float coronal;
-float sagittal;
-
+// member variables to avoid handing them over as function parameters
 float maxDistance;
 float stepDistance;
 
@@ -153,9 +150,10 @@ vec3 getNormal( in vec3 position )
     return sign( dot( grad, -v_ray ) ) * grad;
 }
 
-void rayTrace( in vec3 curPoint, in float stepDistance )
+// raycaster for context that stops after the first hit
+void rayCast( in vec3 curPoint, in float stepDistance )
 {
-    for( int i = 1; i < u_steps; i++ )
+    for( int j = 1; j < u_steps; j++ )
     {
         // get current value
         float curValue = texture3D( u_texture0Sampler, curPoint ).r;
@@ -181,7 +179,7 @@ void rayTrace( in vec3 curPoint, in float stepDistance )
             vec3 normal = ( gl_ModelViewMatrix * vec4( getNormal( curPoint ), 0.0 ) ).xyz;
             #ifdef WGE_POSTPROCESSING_ENABLED
             wge_FragNormal = textureNormalize( normal );
-            #endif            
+            #endif
 
             // full brightness
             float light = 1.0;
@@ -191,28 +189,30 @@ void rayTrace( in vec3 curPoint, in float stepDistance )
             #endif
 
             // 5. set color
-            // calculate factor containing the absolute value of cos(alpha)
-            // where alpha is the angle between view vector and normal
-//            t = dFdx( normal.y );
+            // calculate factor containing the absolute value of cos(phi)
+            // where phi is the angle between view vector and normal
             float factor = abs( dot( v_ray, normal ) / ( length( v_ray ) * length( normal ) ) );
             // using the factor results in a shaded line drawing of the brain
             vec4 color = vec4( u_isocolor.rgb * factor, 1 - factor );
 
-            float t = pow( stepDistance * i / maxDistance, u_alpha );
+            // compute relative distance with respect to the maximum distance
+            float d = pow( stepDistance * j / maxDistance, u_alpha );
+            color.a = color.a * d;
 
-            // TODO(aberres): write concise comment
+            // combine opaque half-spaces with each other
+            // u_viewSlicename is in { -1, 0, +1 }
+            // slicename is the current slice position in cube coordinates
             // beyond the slice, alpha := 1
-            // otherwise, alpha := t
-            color.a = max( u_viewSagittal * sign( curPoint.x - sagittal ), t );
-            color.a = max( max( u_viewCoronal * sign( curPoint.y - coronal ), t ), color.a );
-            color.a = max( max( u_viewAxial * sign( curPoint.z - axial ), t ), color.a );
+            // otherwise, alpha remains as before
+            color.a = max( u_viewSagittal * sign( curPoint.x - u_sagittal ), color.a );
+            color.a = max( u_viewCoronal * sign( curPoint.y - u_coronal ), color.a );
+            color.a = max( u_viewAxial * sign( curPoint.z - u_axial ), color.a );
 
             // 6: the final color construction
             wge_FragColor = vec4( light * color.rgb, color.a );
 
             break;
         }
-
         else
         {
             // no it is not the iso value
@@ -231,7 +231,7 @@ void main()
     // fragment depth needed for postprocessing
     gl_FragDepth = 1.0;
     // need initial FragColor for color construction later (step 6 in rayTrace()
-    wge_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );
+    wge_FragColor = vec4( 1.0, 1.0, 1.0, 0.0 );
 
     // want to find out the maximal distance we have to evaluate and the end of our ray
     maxDistance = 0.0;
@@ -251,17 +251,6 @@ void main()
     vec3 curPoint = v_rayStart + v_ray;
     #endif
 
-    // scale down the slice positions to [0,1]
-    axial = u_axial / 160;
-    coronal = u_coronal / 200;
-    sagittal = u_sagittal / 160;
-
-    rayTrace( curPoint, stepDistance );
-
-    // debug by using graphical output
-    // want to know current depth value
-    // need return to display this
-    // gl_FragData[0] = vec4(curPointProjected.z,0,0,1);
-    // return;
+    rayCast( curPoint, stepDistance );
 }
 

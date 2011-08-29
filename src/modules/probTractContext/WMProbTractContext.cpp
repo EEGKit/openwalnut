@@ -117,22 +117,21 @@ void WMProbTractContext::properties()
 
     m_isoColor = m_properties->addProperty( "Iso Color", "The color to blend the isosurface with.", WColor( 1.0, 1.0, 1.0, 1.0 ), m_propCondition );
 
-    m_alpha  = m_properties->addProperty( "Transparency %",        "The transparency in %.", 0.75 );
+    m_alpha  = m_properties->addProperty( "Focus-Dependent Transparency", "The amount of transparency depending on depth.", 0.75 );
     m_alpha->setMin( 0.0 );
-    m_alpha->setMax( 1.0 );
+    m_alpha->setMax( 2.0 );
 
-    // TODO(aberres): use proper names!
     m_viewAxial = m_properties->addProperty( "Inferior or Superior opaque", "Opaque context on top (+1), underneath (-1), or off (0).", 0 );
-    m_viewAxial->setMin(-1);
-    m_viewAxial->setMax(1);
+    m_viewAxial->setMin( -1 );
+    m_viewAxial->setMax( 1 );
 
-    m_viewCoronal = m_properties->addProperty( "Posterior or Anterior opaque", "Opaque context in front (+1), in the back (-1), or off (0).", -1 );
-    m_viewCoronal->setMin(-1);
-    m_viewCoronal->setMax(1);
+    m_viewCoronal = m_properties->addProperty( "Dorsal or Ventral opaque", "Opaque context in front (+1), in the back (-1), or off (0).", -1 );
+    m_viewCoronal->setMin( -1 );
+    m_viewCoronal->setMax( 1 );
 
     m_viewSagittal = m_properties->addProperty( "Left or Right opaque", "Opaque context on the right (+1), on the left (-1), or off (0).", 0 );
-    m_viewSagittal->setMin(-1);
-    m_viewSagittal->setMax(1);
+    m_viewSagittal->setMin( -1 );
+    m_viewSagittal->setMax( 1 );
 
     WModule::properties();
 }
@@ -174,8 +173,6 @@ void WMProbTractContext::moduleMain()
     m_jitter->set( true );
     m_properties->addProperty( m_jitter );
 
-    //TODO(aberres): more? e.g. colormapRatio
-
     // the WGEShader can take the name of any glsl shader (without extension) in the shaders folder
     m_shader = osg::ref_ptr< WGEShader > ( new WGEShader( "WMProbTractContext", m_localPath ) );
     m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
@@ -184,7 +181,6 @@ void WMProbTractContext::moduleMain()
     m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
         new WGEShaderPropertyDefineOptions< WPropBool >( m_phong, "PHONGSHADING_DISABLED", "PHONGSHADING_ENABLED" ) )
     );
-//    WGEShaderDefineSwitch::SPtr gradTexEnableDefine = m_shader->setDefine( "GRADIENTTEXTURE_DISABLED" );
 
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_input->getDataChangedCondition() );
@@ -200,7 +196,7 @@ void WMProbTractContext::moduleMain()
     osg::ref_ptr< WGEPostprocessingNode > postNode = new WGEPostprocessingNode(
                 WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()
                 );
-    postNode->setEnabled( true );  // do not use it by default
+    postNode->setEnabled( true );  // use it by default
     postNode->addUpdateCallback( new WGENodeMaskCallback( m_active ) ); // disable the postNode with m_active
 
     // provide the properties of the post-processor to the user
@@ -225,7 +221,7 @@ void WMProbTractContext::moduleMain()
         }
 
         // was there an update?
-        bool dataUpdated = m_input->updated();// || m_gradients->updated();
+        bool dataUpdated = m_input->updated();
         boost::shared_ptr< WDataSetScalar > dataSet = m_input->getData();
         bool dataValid   = ( dataSet );
 
@@ -246,11 +242,6 @@ void WMProbTractContext::moduleMain()
             m_isoValue->setMax( dataSet->getTexture()->scale()->get() + dataSet->getTexture()->minimum()->get() );
             m_isoValue->set( dataSet->getTexture()->minimum()->get() + ( 0.3 * dataSet->getTexture()->scale()->get() ) );
 
-            // get NavSlice positions
-            m_axialPos = WKernel::getRunningKernel()->getSelectionManager()->getPropAxialPos();
-            m_coronalPos = WKernel::getRunningKernel()->getSelectionManager()->getPropCoronalPos();
-            m_sagittalPos = WKernel::getRunningKernel()->getSelectionManager()->getPropSagittalPos();
-
             // First, grab the grid
             boost::shared_ptr< WGridRegular3D > grid = boost::shared_dynamic_cast< WGridRegular3D >( dataSet->getGrid() );
             if ( !grid )
@@ -258,6 +249,14 @@ void WMProbTractContext::moduleMain()
                 errorLog() << "The dataset does not provide a regular grid. Ignoring dataset.";
                 continue;
             }
+
+            // get NavSlice positions
+            m_axialPos = WKernel::getRunningKernel()->getSelectionManager()->getPropAxialPos();
+            m_coronalPos = WKernel::getRunningKernel()->getSelectionManager()->getPropCoronalPos();
+            m_sagittalPos = WKernel::getRunningKernel()->getSelectionManager()->getPropSagittalPos();
+            float relativeAxialPos = m_axialPos->get() / ( grid->getNbCoordsX() - 1 );
+            float relativeCoronalPos = m_coronalPos->get() / ( grid->getNbCoordsY() - 1 );
+            float relativeSagittalPos = m_sagittalPos->get() / ( grid->getNbCoordsZ() - 1 );
 
             // use the OSG Shapes, create unit cube
             WBoundingBox bb( WPosition( 0.0, 0.0, 0.0 ),
@@ -272,13 +271,13 @@ void WMProbTractContext::moduleMain()
             osg::StateSet* rootState = cube->getOrCreateStateSet();
             osg::ref_ptr< WGETexture3D > texture3D = dataSet->getTexture();
             texture3D->bind( cube );
-//
+
             ////////////////////////////////////////////////////////////////////////////////////////////////////
             // setup all those uniforms and additional textures
             ////////////////////////////////////////////////////////////////////////////////////////////////////
-            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_axial", m_axialPos ) );
-            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_coronal", m_coronalPos ) );
-            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_sagittal", m_sagittalPos ) );
+            rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_axial", relativeAxialPos ) ) );
+            rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_coronal", relativeCoronalPos ) ) );
+            rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_sagittal", relativeSagittalPos ) ) );
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_viewAxial", m_viewAxial ) );
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_viewCoronal", m_viewCoronal ) );
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_viewSagittal", m_viewSagittal ) );
@@ -286,7 +285,6 @@ void WMProbTractContext::moduleMain()
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isovalue", m_isoValue ) );
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_steps", m_stepCount ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_alpha", m_alpha ) );
-//            rootState->addUniform( new WGEPropertyUniform< WProp >( "u_", m_ ) );
 
             // Stochastic jitter?
             const size_t size = 64;

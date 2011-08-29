@@ -82,6 +82,7 @@ uniform mat4 u_isocolors;
 // The weighting parameter for the depth-dependent saturation.
 uniform float u_saturation;
 
+// member variables to avoid handing them over as function parameters
 float maxDistance;
 float stepDistance;
 
@@ -109,14 +110,14 @@ vec3 findRayEnd( out float d )
 
     // v_ray in cube coordinates is used to check against the unit cube borders
     // when will v_ray reach the front face? -> solve equations
-    float tFront     = - p.z / r.z;                  // (x,y,0) = v_rayStart + t * v_ray
-    float tBack      = ( 1.0 - p.z ) / r.z;          // (x,y,1) = v_rayStart + t * v_ray
+    float tFront     = - p.z / r.z;                  // (x,x,0) = v_rayStart + t * v_ray
+    float tBack      = ( 1.0 - p.z ) / r.z;          // (x,x,1) = v_rayStart + t * v_ray
 
-    float tLeft      = - p.x / r.x;                  // (0,y,z) = v_rayStart + t * v_ray
-    float tRight     = ( 1.0 - p.x ) / r.x;          // (1,y,z) = v_rayStart + t * v_ray
+    float tLeft      = - p.x / r.x;                  // (0,x,x) = v_rayStart + t * v_ray
+    float tRight     = ( 1.0 - p.x ) / r.x;          // (1,x,x) = v_rayStart + t * v_ray
 
-    float tBottom    = - p.y / r.y;                  // (x,0,z) = v_rayStart + t * v_ray
-    float tTop       = ( 1.0 - p.y ) / r.y;          // (x,1,z) = v_rayStart + t * v_ray
+    float tBottom    = - p.y / r.y;                  // (x,0,x) = v_rayStart + t * v_ray
+    float tTop       = ( 1.0 - p.y ) / r.y;          // (x,1,x) = v_rayStart + t * v_ray
 
     // get the nearest hit
     d = min( min( max( tFront, tBack ), max( tLeft, tRight ) ), max( tBottom, tTop ) );
@@ -141,9 +142,10 @@ vec3 getNormal( in vec3 position )
     return sign( dot( grad, -v_ray ) ) * grad;
 }
 
-void rayTrace( in vec3 curPoint, in float isovalue, in vec4 isocolor )
+// raycaster for probabilistic tractograms which stops after first hit
+void rayCast( in vec3 curPoint, in float isovalue, in vec4 isocolor )
 {
-    for( int i = 1; i < u_steps; i++ )
+    for( int j = 1; j < u_steps; j++ )
     {
         // get current value
         float curValue = texture3D( u_texture0Sampler, curPoint ).r;
@@ -180,27 +182,39 @@ void rayTrace( in vec3 curPoint, in float isovalue, in vec4 isocolor )
 
             // 5. set color
             // get color from colormap (alpha is set to one since we use the isovalue's alpha value here)
-            vec4 mapcolor = colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y * u_texture0SizeY, curPoint.z * u_texture0SizeZ, 1 ) );
+            vec4 mapcolor = colormapping( vec4( curPoint.x * u_texture0SizeX,
+                                                curPoint.y * u_texture0SizeY,
+                                                curPoint.z * u_texture0SizeZ,
+                                                isocolor.a ) );
+
             // mix color with colormap
             vec4 color = mix( mapcolor, isocolor, 1 - u_colormapRatio );
-            // compute distance from eye point
-            float t = 1 - stepDistance * i / maxDistance;
-            // estimate gray value of color
-            vec3 gray = vec3( ( color.r + color.g + color.b ) / 3 );
-            // mix color with grey value dependent on distance from eye point
-            color.rgb = mix( color.rgb, gray, pow( t, u_saturation ) );
-            // use isocolor's transparency
             color.a = isocolor.a;
+
+            // change saturation depending on depth:
+            // compute relative distance with respect to the maximum distance
+            float d = stepDistance * j / maxDistance;
+            // approximate desaturated color (cf. HSI color space)
+            vec3 gray = ( color.r + color.g + color.b ) / 3 * vec3( 1.0, 1.0, 1.0 );
+            // desaturate color depending on the exponentiated distance d^k (k = u_saturation)
+            color.rgb = mix( color.rgb, gray, pow( d, u_saturation ) );
 
             // 6: the final color construction
             // alpha blending of background (old FragColor) and foreground (new color)
-            // (1-z)*x + z*y
+            // (1-alpha)*fragcol + alpha*light*col
+            wge_FragColor.rgb = mix( wge_FragColor.rgb, light * color.rgb, color.a );
+            // (1-alpha)*fragalpha + alpha*1
             wge_FragColor.a = mix( wge_FragColor.a, 1, color.a );
-            // (1-alpha)*fragcol*fragalpha + alpha*light*col
-            wge_FragColor.rgb = mix( wge_FragColor.rgb * wge_FragColor.a, light * color.rgb, color.a ) / wge_FragColor.a;
+
+            break;
         }
-        // continue along the ray
-        curPoint -= stepDistance * v_ray;
+
+        else
+        {
+            // no it is not the iso value
+            // -> continue along the ray
+            curPoint += stepDistance * v_ray;
+        }
     }
 }
 
@@ -211,7 +225,7 @@ void main()
 {
     // 1.0 = back, 0.0 = front
     // fragment depth needed for postprocessing
-    gl_FragDepth = 1.0; //TODO(aberres): adapt?
+    gl_FragDepth = 1.0;
     // need initial FragColor for color construction later (step 6 in rayTrace())
     wge_FragColor = vec4( 1.0, 1.0, 1.0, 0.0 );
 
@@ -226,11 +240,11 @@ void main()
     // introduce some noise artifacts.
     float jitter = 0.5 - texture2D( u_texture1Sampler, gl_FragCoord.xy / u_texture1SizeX ).r;
     // the point along the ray in cube coordinates
-    vec3 curPoint = v_rayStart + maxDistance * v_ray + ( v_ray * stepDistance * jitter );
+    vec3 curPoint = v_rayStart + v_ray + ( v_ray * stepDistance * jitter );
     vec3 rayStart = curPoint;
     #else
     // current point in texture space + v_ray
-    vec3 curPoint = v_rayStart + maxDistance * v_ray;
+    vec3 curPoint = v_rayStart + v_ray;
     #endif
 
     float isovalue;
@@ -241,15 +255,13 @@ void main()
     {
         isovalue = v_isovalues[j];
         #ifdef MANUALALPHA_ENABLED
-        // use slider to define global alpha for all surfaces
+        // pick individual alpha values for all surfaces
         isocolor = u_isocolors[j];
         #else
         // use value-dependent alpha
         isocolor = vec4( u_isocolors[j].rgb, u_isoalphas[j] );
         #endif
-        // reduce alpha to a reasonable value (several layers per isovalue will be opaque otherwise)
-	isocolor.a = pow( isocolor.a, 3 );
-        rayTrace( curPoint, isovalue, isocolor );
+        rayCast( curPoint, isovalue, isocolor );
     }
 }
 
