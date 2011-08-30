@@ -188,7 +188,7 @@ public:
      */
     typename GridType::ConstSPtr getGrid() const
     {
-        m_valuemapper->getGrid();
+        return m_valuemapper->getGrid();
     }
 
     /**

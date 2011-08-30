@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WREADER_H
-#define WREADER_H
+#ifndef WREADER2_H
+#define WREADER2_H
 
 #include <string>
 #include <vector>
@@ -35,25 +35,25 @@
 /**
  * A base class for file readers that can be used by the data loading modules.
  */
-class WReader : public WPrototyped
+class WReader2 : public WPrototyped
 {
 public:
 
     //! Conveniance typedef for a boost::shared_ptr.
-    typedef boost::shared_ptr< WReader > SPtr;
+    typedef boost::shared_ptr< WReader2 > SPtr;
 
     //! Conveniance typedef for a boost::shared_ptr to a const object.
-    typedef boost::shared_ptr< WReader const > ConstSPtr;
+    typedef boost::shared_ptr< WReader2 const > ConstSPtr;
 
     /**
      * Creates a read object for file reading.
      */
-    WReader();
+    WReader2();
 
     /**
      * Destructor.
      */
-    virtual ~WReader();
+    virtual ~WReader2();
 
     /**
      * Check if this file can be loaded by this reader.
@@ -86,4 +86,4 @@ protected:
 private:
 };
 
-#endif  // WREADER_H
+#endif  // WREADER2_H

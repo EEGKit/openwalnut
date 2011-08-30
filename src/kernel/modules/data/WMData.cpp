@@ -29,20 +29,7 @@
 #include "../../../common/WIOTools.h"
 #include "../../../common/WPropertyHelper.h"
 
-#include "../../../dataHandler/WDataSet.h"
-#include "../../../dataHandler/WDataSetSingle.h"
-#include "../../../dataHandler/WDataSetScalar.h"
-#include "../../../dataHandler/WDataSetTimeSeries.h"
-#include "../../../dataHandler/WDataSetVector.h"
-#include "../../../dataHandler/WSubject.h"
-#include "../../../dataHandler/WDataHandler.h"
-#include "../../../dataHandler/WDataTexture3D_2.h"
-
 #include "../../../newDataHandler/WDataSet2.h"
-
-#include "../../../dataHandler/WEEG2.h"
-#include "../../../dataHandler/exceptions/WDHException.h"
-
 #include "WReaderNIfTI.h"
 
 #include "../../../graphicsEngine/WGEColormapping.h"
@@ -183,8 +170,8 @@ void WMData::moduleMain()
     m_moduleState.add( m_propCondition );
 
     // init readers
-    std::vector< WReader::SPtr > readers;
-    readers.push_back( WReader::SPtr( new WReaderNIfTI() ) );
+    std::vector< WReader2::SPtr > readers;
+    readers.push_back( WReader2::SPtr( new WReaderNIfTI() ) );
 
     std::string fileName = m_fileName.string();
 
@@ -200,7 +187,7 @@ void WMData::moduleMain()
     // load it now
 
     m_dataSet.reset();
-    for( std::vector< WReader::SPtr >::iterator it = readers.begin(); it != readers.end(); ++it )
+    for( std::vector< WReader2::SPtr >::iterator it = readers.begin(); it != readers.end(); ++it )
     {
         boost::filesystem::path p( fileName );
         if( !( *it )->acceptFile( p ) )
@@ -218,6 +205,8 @@ void WMData::moduleMain()
             break;
         }
     }
+
+    readers.clear();
 
     debugLog() << "Loading data done.";
 

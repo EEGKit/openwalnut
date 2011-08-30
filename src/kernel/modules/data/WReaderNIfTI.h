@@ -29,7 +29,7 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 
-#include "../../../newDataHandler/reader/WReader.h"
+#include "../../../newDataHandler/reader/WReader2.h"
 #include "../../../newDataHandler/WDataSet2.h"
 #include "../../../newDataHandler/WGridRegular3D2.h"
 #include "../../../newDataHandler/WGridRegular3D2Specializations.h"
@@ -42,7 +42,7 @@
  * Reader for the NIfTI file format. For NIfTI just see http://nifti.nimh.nih.gov/.
  * \ingroup dataHandler
  */
-class WReaderNIfTI : public WReader // NOLINT
+class WReaderNIfTI : public WReader2 // NOLINT
 {
 public:
 
@@ -51,6 +51,11 @@ public:
      * for the loader when executed in its own thread.
      */
     WReaderNIfTI();
+
+    /**
+     * Destructor.
+     */
+    virtual ~WReaderNIfTI();
 
     /**
      * Returns the name of this reader.

@@ -35,27 +35,22 @@
 #include "../../common/WAssert.h"
 #include "../../common/WPathHelper.h"
 #include "../../common/WStringUtils.h"
-#include "../../dataHandler/WGridRegular3D.h"
-#include "../../dataHandler/WDataSetRawHARDI.h"
 #include "../../kernel/WKernel.h"
 #include "../../common/math/linearAlgebra/WLinearAlgebra.h"
 #include "../../ext/nifti/nifti1_io.h"
-#include "WMWriteNIfTI.h"
 #include "../../kernel/WModule.h"
 
-// This line is needed by the module loader to actually find your module.
+#include "WMWriteNIfTI.h"
+
 W_LOADABLE_MODULE( WMWriteNIfTI )
 
 WMWriteNIfTI::WMWriteNIfTI() :
     WModule()
 {
-    // WARNING: initializing connectors inside the constructor will lead to an exception.
-    // Implement WModule::initializeConnectors instead.
 }
 
 WMWriteNIfTI::~WMWriteNIfTI()
 {
-    // cleanup
     removeConnectors();
 }
 
@@ -89,43 +84,31 @@ const std::string WMWriteNIfTI::getDescription() const
 
 void WMWriteNIfTI::moduleMain()
 {
-    // use the m_input "data changed" flag
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_input->getDataChangedCondition() );
 
-    // signal ready state
     ready();
 
-    // loop until the module container requests the module to quit
     while( !m_shutdownFlag() )
     {
-        // acquire data from the input connector
         m_dataSet = m_input->getData();
         if( !m_dataSet )
         {
-            // ok, the output has not yet sent data
-            // NOTE: see comment at the end of this while loop for m_moduleState
             debugLog() << "Waiting for data ...";
             m_moduleState.wait();
             continue;
         }
-        writeToFile();
-        // this waits for m_moduleState to fire. By default, this is only the m_shutdownFlag condition.
-        // NOTE: you can add your own conditions to m_moduleState using m_moduleState.add( ... )
         m_moduleState.wait();
     }
 }
 
 void WMWriteNIfTI::connectors()
 {
-    // this module works for scalar data sets only so far
-    m_input = boost::shared_ptr< WModuleInputData< WDataSetSingle > >( new WModuleInputData< WDataSetSingle > (
-                    shared_from_this(), "in", "The dataset to filter" ) );
+    m_input = boost::shared_ptr< WModuleInputData< WDataSet2Base > >( new WModuleInputData< WDataSet2Base > (
+                    shared_from_this(), "in", "The dataset to write." ) );
 
-    // add it to the list of connectors. Please note, that a connector NOT added via addConnector will not work as expected.
     addConnector( m_input );
 
-    // call WModules initialization
     WModule::connectors();
 }
 
@@ -140,6 +123,75 @@ void WMWriteNIfTI::properties()
     WModule::properties();
 }
 
+void WMWriteNIfTI::writeToFile()
+{
+    m_saveTriggerProp->set( WPVBaseTypes::PV_TRIGGER_READY, false );
+
+    if( !m_dataSet )
+    {
+        return;
+    }
+
+    infoLog() << "Writing Data to " << m_filename->get().file_string();
+    nifti_image *outField = nifti_simple_init_nim();
+
+    outField->nifti_type = 1; // 1==NIFTI-1 (1 file)
+    outField->freq_dim = 1;
+    outField->phase_dim = 2;
+    outField->slice_dim = 3;
+
+    outField->qform_code = 1;
+    outField->sform_code = 1;
+
+    std::string description = m_dataSet->getName();
+    description.copy( outField->descrip, 80 );
+
+/*
+    WMatrix< double > matrix = grid->getTransformationMatrix();
+    for( size_t i = 0; i < 4; ++i )
+    {
+        for( size_t j = 0; j < 4; ++j )
+        {
+            outField->qto_xyz.m[i][j] = matrix( i, j );
+            outField->sto_xyz.m[i][j] = matrix( i, j );
+        }
+    }
+
+    {
+        float dx, dy, dz;
+        nifti_mat44_to_quatern( outField->qto_xyz, &( outField->quatern_b ),
+                                &( outField->quatern_c ), &( outField->quatern_d ),
+                                &( outField->qoffset_x ), &( outField->qoffset_y ),
+                                &( outField->qoffset_z ),
+                                &dx, &dy, &dz,
+                                &( outField->qfac ) );
+    }
+
+    outField->qto_ijk = nifti_mat44_inverse( outField->qto_xyz );
+    outField->sto_ijk = nifti_mat44_inverse( outField->sto_xyz );
+*/
+
+    SaveDataVisitor save( outField );
+
+    // write data
+    if( boost::shared_dynamic_cast< WDataSet2< WGridRegular3D2, WScalarStructural > const >( m_dataSet ) )
+    {
+        boost::shared_dynamic_cast< WDataSet2< WGridRegular3D2, WScalarStructural > const >( m_dataSet )->applyVisitor( &save );
+    }
+
+    std::string s = m_filename->get().file_string();
+    if( nifti_set_filenames( outField, s.c_str(), 0, 1 ) )
+    {
+        throw WException( std::string( "NIfTI filename Problem" ) );
+    }
+
+    nifti_image_write( outField );
+    nifti_image_free( outField );
+
+    infoLog() << "Writing data completed.";
+}
+
+/*
 template< typename T > void WMWriteNIfTI::castData( void*& returnData )
 {
     // cast valueset
@@ -308,3 +360,4 @@ void WMWriteNIfTI::writeToFile()
     nifti_image_free( outField );
     infoLog() << "Writing data completed.";
 }
+*/

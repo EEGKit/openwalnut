@@ -37,9 +37,13 @@
 #include "WReaderNIfTI.h"
 
 WReaderNIfTI::WReaderNIfTI()
-    : WReader(),
+    : WReader2(),
       m_sform( 4, 4 ),
       m_qform( 4, 4 )
+{
+}
+
+WReaderNIfTI::~WReaderNIfTI()
 {
 }
 

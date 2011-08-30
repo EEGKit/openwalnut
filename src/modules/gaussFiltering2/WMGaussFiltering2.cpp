@@ -56,7 +56,7 @@ public:
      *
      * \param result The dataset to write to or NULL.
      */
-    explicit GaussVisitor( DataSetType::SPtr result )
+    explicit GaussVisitor( DataSetType::SPtr& result )
         : m_result( result )
     {
     }
@@ -108,7 +108,7 @@ public:
 private:
 
     //! The dataset containing the result of the filtering.
-    DataSetType::SPtr m_result;
+    DataSetType::SPtr& m_result;
 };
 
 // This line is needed by the module loader to actually find your module.
@@ -185,16 +185,24 @@ void WMGaussFiltering2::moduleMain()
 
             if( iterations > 0 )
             {
-                GaussVisitor gv( ds[ 0 ] );
-                static_cast< DataSetType const* const >( m_dataSet.get() )->applyVisitor( &gv );
+                {
+                    GaussVisitor gv( ds[ 0 ] );
+                    static_cast< DataSetType const* const >( m_dataSet.get() )->applyVisitor( &gv );
+                }
 
                 bool b = false;
 
+/*
                 for( int i = 1; i < iterations; ++i )
                 {
-                    GaussVisitor gv( ds[ static_cast< int >( b ) ] );
-                    static_cast< DataSetType const* const >( ds[ static_cast< int >( !b ) ].get() )->applyVisitor( &gv );
+                    GaussVisitor gv( ds[ static_cast< int >( !b ) ] );
+                    static_cast< DataSetType const* const >( ds[ static_cast< int >( b ) ].get() )->applyVisitor( &gv );
                     b = !b;
+                }
+*/
+                if( !ds[ static_cast< int >( b ) ] )
+                {
+                    errorLog() << "No resulting dataset! ( " << static_cast< int >( b ) << " )";
                 }
 
                 m_output->updateData( ds[ static_cast< int >( b ) ] );

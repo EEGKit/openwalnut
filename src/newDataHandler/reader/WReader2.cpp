@@ -24,13 +24,13 @@
 
 #include <string>
 
-#include "WReader.h"
+#include "WReader2.h"
 
-WReader::WReader()
+WReader2::WReader2()
     : WPrototyped()
 {
 }
 
-WReader::~WReader()
+WReader2::~WReader2()
 {
 }
