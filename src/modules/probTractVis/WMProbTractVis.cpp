@@ -117,9 +117,16 @@ void WMProbTractVis::properties()
     m_surfCount->setMin( 0 );
     m_surfCount->setMax( 4 );
 
+    m_isoValue1 = m_properties->addProperty( "Iso Value 1", "The value for the innermost surface.", 100.0 );
     m_isoColor1 = m_properties->addProperty( "Iso Color 1", "The color for the innermost surface.", WColor( 0.5, 0.0, 0.0, 1.0 ), m_propCondition );
+
+    m_isoValue2 = m_properties->addProperty( "Iso Value 2", "The value for the second surface.", 100.0 );
     m_isoColor2 = m_properties->addProperty( "Iso Color 2", "The color for the second surface.", WColor( 1.0, 0.5, 0.0, 0.7 ), m_propCondition );
+
+    m_isoValue3 = m_properties->addProperty( "Iso Value 3", "The value for the third surface.", 100.0 );
     m_isoColor3 = m_properties->addProperty( "Iso Color 3", "The color for the third surface.", WColor( 0.0, 0.5, 0.7, 0.5 ), m_propCondition );
+
+    m_isoValue4 = m_properties->addProperty( "Iso Value 4", "The value for the fourth surface.", 100.0 );
     m_isoColor4 = m_properties->addProperty( "Iso Color 4", "The color for the fourth surface.", WColor( 0.0, 0.7, 0.0, 0.3 ), m_propCondition );
 
     m_stepCount = m_properties->addProperty( "Step Count",       "The number of steps to walk along the ray during raycasting. A low value "
@@ -221,8 +228,10 @@ void WMProbTractVis::moduleMain()
             rootNode->clear();
         }
 
+        // TODO(aberres): remove isovalues again if solution is found
         // m_isoColor or shading changed
-        if ( m_isoColor1->changed() || m_isoColor2->changed() || m_isoColor3->changed() || m_isoColor4->changed() )
+        if ( m_isoColor1->changed() || m_isoColor2->changed() || m_isoColor3->changed() || m_isoColor4->changed() ||
+             m_isoValue1->changed() || m_isoValue2->changed() || m_isoValue3->changed() || m_isoValue4->changed() )
         {
             // a new color requires the proxy geometry to be rebuild as we store it as color in this geometry
             dataUpdated = true;
@@ -241,42 +250,53 @@ void WMProbTractVis::moduleMain()
                 continue;
             }
 
+            // adapt shader to dataset's isovalues
+            // determine minimum isovalue and range of isovalues in dataset
+            double isoMin = dataSet->getTexture()->minimum()->get();
+            double isoRange = dataSet->getTexture()->scale()->get();
+            double isoMax = isoMin + isoRange;
+
+            // set minimum and maximum for all isovalues
+            m_isoValue1->setMin( isoMin );
+            m_isoValue1->setMax( isoMax );
+            m_isoValue2->setMin( isoMin );
+            m_isoValue2->setMax( isoMax );
+            m_isoValue3->setMin( isoMin );
+            m_isoValue3->setMax( isoMax );
+            m_isoValue4->setMin( isoMin );
+            m_isoValue4->setMax( isoMax );
+
+            // set isovalues to something more meaningful and put them in a vector
+            // the largest probability has to be first (in -> out compositing)!
+            m_isoValue1->set( isoMin + 0.55 * isoRange );
+            m_isoValue2->set( isoMin + 0.40 * isoRange );
+            m_isoValue3->set( isoMin + 0.20 * isoRange );
+            m_isoValue4->set( isoMin + 0.12 * isoRange );
+            WMatrixFixed< double, 4, 1 > isoVals = WMatrixFixed< double, 4, 1 >( m_isoValue1->get(), m_isoValue2->get(),
+                                                                                 m_isoValue3->get(), m_isoValue4->get() );
+            osg::Vec4 vals = osg::Vec4( isoVals );
+
             // get the four picked isocolors and save them as rows in a matrix
             // the innermost isosurface (highest probability) has to be first (in -> out compositing)!
-            WMatrixFixed< double, 4, 4 > m_isoCols = WMatrixFixed< double, 4, 4 >();
+            WMatrixFixed< double, 4, 4 > isoCols = WMatrixFixed< double, 4, 4 >();
             WMatrixFixed< double, 4, 1 > col1( m_isoColor1->get() );
             WMatrixFixed< double, 4, 1 > col2( m_isoColor2->get() );
             WMatrixFixed< double, 4, 1 > col3( m_isoColor3->get() );
             WMatrixFixed< double, 4, 1 > col4( m_isoColor4->get() );
-            m_isoCols.setRowVector( 0, col1 );
-            m_isoCols.setRowVector( 1, col2 );
-            m_isoCols.setRowVector( 2, col3 );
-            m_isoCols.setRowVector( 3, col4 );
-            m_cols = osg::Matrixd( m_isoCols );
-
-            // determine minimum isovalue and range of isovalues in dataset
-            double isoMin = dataSet->getTexture()->minimum()->get();
-            double isoRange = dataSet->getTexture()->scale()->get();
-
-            WMatrixFixed< double, 4, 1 > factors = WMatrixFixed< double, 4, 1 >( 0.55, 0.4, 0.2, 0.12 );
-
-            // choose four isovalues and set them as values of a vector
-            // use % of range to set isovalues
-            // the largest probability has to be first (in -> out compositing)!
-            WMatrixFixed< double, 4, 1 > m_isoVals = WMatrixFixed< double, 4, 1 >( isoMin + factors( 0, 0 ) * isoRange,
-                                                                                   isoMin + factors( 1, 0 ) * isoRange,
-                                                                                   isoMin + factors( 2, 0 ) * isoRange,
-                                                                                   isoMin + factors( 3, 0 ) * isoRange );
-            m_vals = osg::Vec4( m_isoVals );
+            isoCols.setRowVector( 0, col1 );
+            isoCols.setRowVector( 1, col2 );
+            isoCols.setRowVector( 2, col3 );
+            isoCols.setRowVector( 3, col4 );
+            osg::Matrixd cols = osg::Matrixd( isoCols );
 
             // determine an alpha for each isocolor based on its isovalue
             // hightest value = 1, lowest value = 0
-            WMatrixFixed< double, 4, 1 > m_isoAlphas;
+            WMatrixFixed< double, 4, 1 > isoAlphas;
             for( size_t i = 0; i < 4; i++ )
             {
-                m_isoAlphas( i, 0 ) = ( m_isoVals( i, 0 ) - isoMin ) / ( m_isoVals( 0, 0 ) - isoMin  );
+                isoAlphas( i, 0 ) = ( isoVals( i, 0 ) - isoMin ) / ( isoVals( 0, 0 ) - isoMin  );
             }
-            m_alphas = osg::Vec4( m_isoAlphas );
+            osg::Vec4 alphas = osg::Vec4( isoAlphas );
 
             // use the OSG Shapes, create unit cube
             WBoundingBox bb( WPosition( 0.0, 0.0, 0.0 ),
@@ -300,9 +320,9 @@ void WMProbTractVis::moduleMain()
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_steps", m_stepCount ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_colormapRatio", m_colormapRatio ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_saturation", m_saturation ) );
-            rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isocolors", m_cols ) ) );
-            rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isovalues", m_vals ) ) );
-            rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isoalphas", m_alphas ) ) );
+            rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isocolors", cols ) ) );
+            rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isovalues", vals ) ) );
+            rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isoalphas", alphas ) ) );
 
             // Stochastic jitter?
             const size_t size = 64;

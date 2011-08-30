@@ -133,9 +133,11 @@ private:
     WPropColor m_isoColor2; //!< The color used for the second isosurface.
     WPropColor m_isoColor3; //!< The color used for the third isosurface.
     WPropColor m_isoColor4; //!< The color used for the fourth isosurface.
-    osg::Matrixd m_cols; //!< A 4x4 matrix containing all colors.
 
-    osg::Vec4 m_vals; //!< A 4x1 vector containing all isovalues.
+    WPropDouble m_isoValue1; //!< The value used for the first isosurface.
+    WPropDouble m_isoValue2; //!< The value used for the second isosurface.
+    WPropDouble m_isoValue3; //!< The value used for the third isosurface.
+    WPropDouble m_isoValue4; //!< The value used for the fourth isosurface.
 
     WPropInt m_stepCount; //!< The number of steps to walk along the ray.
 
@@ -144,8 +146,6 @@ private:
     WPropDouble m_isoEpsilon; //!< The deviation tolerated for the m_isoValue.
 
     WPropDouble m_saturation; //!< The transfer function for depth dependent saturation.
-
-    osg::Vec4 m_alphas; //!< A 4x1 vector containing all isovalue-dependent alphas.
 
     WPropBool m_manualAlpha; //!< If true, the manual alpha slider is used rather than automatic, isovalue-dependent alpha.
 
