@@ -56,7 +56,7 @@ public:
      *
      * \param result The dataset to write to or NULL.
      */
-    explicit GaussVisitor( DataSetType::SPtr& result )
+    explicit GaussVisitor( DataSetType::SPtr& result )  // NOLINT reference
         : m_result( result )
     {
     }
@@ -192,17 +192,11 @@ void WMGaussFiltering2::moduleMain()
 
                 bool b = false;
 
-/*
                 for( int i = 1; i < iterations; ++i )
                 {
                     GaussVisitor gv( ds[ static_cast< int >( !b ) ] );
                     static_cast< DataSetType const* const >( ds[ static_cast< int >( b ) ].get() )->applyVisitor( &gv );
                     b = !b;
-                }
-*/
-                if( !ds[ static_cast< int >( b ) ] )
-                {
-                    errorLog() << "No resulting dataset! ( " << static_cast< int >( b ) << " )";
                 }
 
                 m_output->updateData( ds[ static_cast< int >( b ) ] );

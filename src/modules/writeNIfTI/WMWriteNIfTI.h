@@ -145,7 +145,12 @@ private:
         {
         }
 
-        void writeGridProps( WGridRegular3D2::ConstSPtr& grid )
+        /**
+         * Write grid properties to the data struct.
+         *
+         * \param grid The grid.
+         */
+        void writeGridProps( WGridRegular3D2::ConstSPtr const& grid )
         {
             m_data->nx = grid->getNbVoxelsX();
             m_data->ny = grid->getNbVoxelsY();
