@@ -30,7 +30,11 @@
 
 #include <osg/Geode>
 
-#include "../../dataHandler/WDataSetVector.h"
+#include "../../newDataHandler/WDataSet2.h"
+#include "../../newDataHandler/WGridRegular3D2.h"
+#include "../../newDataHandler/WGridRegular3D2Specializations.h"
+#include "../../newDataHandler/structuralTypes/WVectorFixedStructural.h"
+
 #include "../../graphicsEngine/shaders/WGEShader.h"
 #include "../../kernel/WModule.h"
 #include "../../kernel/WModuleInputData.h"
@@ -39,13 +43,15 @@
 #include "../../common/math/linearAlgebra/WLinearAlgebra.h"
 
 /**
- * Show an glyph plot (in this case the glyphs are arrows) of a vector data set.
- * \warning Selectable slices are limited to [0,160]x[0,200]x[0,160] so far.
+ * Shows a glyph plot (in this case the glyphs are arrows) of a vector data set.
  * \ingroup modules
  */
 class WMVectorPlot: public WModule
 {
 public:
+
+    //! The dataset type we will work with.
+    typedef WDataSet2< WGridRegular3D2, WVectorFixedStructural< 3 > > DataSetType;
 
     /**
      * Default constructor.
@@ -121,21 +127,14 @@ private:
     void updateCallback();
 
     /**
-     * Transforms the given vertices according to m_matrix
-     * \param verts These vertices will be transformed.
-     */
-    void transformVerts( osg::ref_ptr< osg::Vec3Array > verts );
-
-
-    /**
      * An input connector used to get datasets from other modules. The connection management between connectors must not be handled by the module.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetVector > > m_input;
+    boost::shared_ptr< WModuleInputData< DataSetType > > m_input;
 
     /**
      * This is a pointer to the dataset the module is currently working on.
      */
-    boost::shared_ptr< WDataSetVector > m_dataSet;
+    boost::shared_ptr< DataSetType > m_dataSet;
 
     /**
      * list of positions to plot vectors on, this will come from a selection tool class

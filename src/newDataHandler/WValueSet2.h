@@ -409,6 +409,13 @@ public:
      */
     virtual T getData( std::size_t index ) const = 0;
 
+    /**
+     * Returns the size of the valueset. It is the number of elements in it.
+     *
+     * \return number of elements
+     */
+    virtual std::size_t size() const = 0;
+
 protected:
 
     /**
@@ -519,6 +526,16 @@ public:
         TargetT t;
         t = m_valueSet->operator[] ( index );
         return t;
+    }
+
+    /**
+     * Returns the size of the valueset. It is the number of elements in it.
+     *
+     * \return number of elements
+     */
+    virtual std::size_t size() const
+    {
+        return m_valueSet->size();
     }
 
 private:

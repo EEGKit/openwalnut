@@ -28,6 +28,7 @@
 #include <string> // for std::size_t
 #include <utility>
 
+#include "../common/WException.h"
 #include "WGridRegular3D2.h"
 #include "WValueSet2.h"
 #include "WIndexMap.h"
@@ -167,7 +168,7 @@ public:
     // TODO( reichenbach ): add a WInvalidIteratorException and a WNoValidVoxel(name?)Exception
     typename WValueSet2< T >::ValueReturnType operator*() // const?
     {
-#ifdef _DEBUG
+#ifdef DEBUG
         if( !m_grid || !m_valueSet )
         {
             throw WException( "Trying element access with invalid iterator." );
@@ -489,7 +490,7 @@ public:
     // TODO( reichenbach ): add a WInvalidIteratorException and a WNoValidVoxel(name?)Exception
     typename WValueSet2< T >::ValueReturnTypeConst operator*() // const?
     {
-#ifdef _DEBUG
+#ifdef DEBUG
         if( !m_grid || !m_valueSet )
         {
             throw WException( "Trying element access with invalid iterator." );

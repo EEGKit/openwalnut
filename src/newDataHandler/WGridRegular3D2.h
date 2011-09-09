@@ -138,6 +138,14 @@ public:
     CoordinateType transformToGridSpace( CoordinateType const& coords ) const;
 
     /**
+     * Transforms coordinates from grid space to world space.
+     *
+     * \param coords The grid coordinates to transform.
+     * \return The transformed coords.
+     */
+    CoordinateType transformToWorldSpace( CoordinateType const& coords ) const;
+
+    /**
      * Check if the given world coordinates are in the grid.
      *
      * \param coords The coordinates to test.

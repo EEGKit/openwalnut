@@ -92,6 +92,12 @@ WGridRegular3D2::CoordinateType WGridRegular3D2::transformToGridSpace( Coordinat
     return coords;
 }
 
+WGridRegular3D2::CoordinateType WGridRegular3D2::transformToWorldSpace( CoordinateType const& coords ) const
+{
+    // TODO( reichenbach ): implement this
+    return coords;
+}
+
 bool WGridRegular3D2::isInGrid( CoordinateType const& coords ) const
 {
     CoordinateType c = transformToGridSpace( coords );

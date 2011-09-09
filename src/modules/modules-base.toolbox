@@ -20,5 +20,5 @@
 #ADD_SUBDIRECTORY( superquadricGlyphs )
 #ADD_SUBDIRECTORY( template )
 #ADD_SUBDIRECTORY( triangleMeshRenderer )
-#ADD_SUBDIRECTORY( vectorPlot )
+ADD_SUBDIRECTORY( vectorPlot )
 #ADD_SUBDIRECTORY( voxelizer )
