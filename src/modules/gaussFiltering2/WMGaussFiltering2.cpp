@@ -42,7 +42,7 @@
 #include "WMGaussFiltering2.h"
 
 /**
- * A visitor/functor object used to perform gauss filtering on regular 3D datsets.
+ * A visitor/functor object used to perform single-direction gauss filtering on regular 3D datsets.
  */
 class GaussVisitor
 {
@@ -55,14 +55,16 @@ public:
      * Constructor.
      *
      * \param result The dataset to write to or NULL.
+     * \param direction In which direction to smooth, 0 = x, 1 = y, 2 = z.
      */
-    explicit GaussVisitor( DataSetType::SPtr& result )  // NOLINT reference
-        : m_result( result )
+    GaussVisitor( DataSetType::SPtr& result, int direction )  // NOLINT reference
+        : m_result( result ),
+          m_direction( direction )
     {
     }
 
     /**
-     * Performs one iteration of gaussian blur with a 3x3x3 kernel.
+     * Performs one iteration of gaussian blur with a 1x1x3 kernel.
      *
      * \tparam T The type of the data stored in the dataset.
      * \param access The access object of the dataset to blur.
@@ -91,24 +93,23 @@ public:
         nbh[ 2 ].add( 0, 0, -1 );
         nbh[ 2 ].add( 0, 0, 1 );
 
-        for( int j = 0; j < 3; ++j )
+        RI ri = accessResult.voxels().first;
+        VI vi, ve;
+        for( tie( vi, ve ) = access.voxels(); vi != ve; ++vi )
         {
-            RI ri = accessResult.voxels().first;
-            VI vi, ve;
-            for( tie( vi, ve ) = access.voxels(); vi != ve; ++vi )
-            {
-                NI ni;
-                ni = vi.neighbors( nbh[ j ], WBoundaryStrategyDefault< T >( 0 ) ).first;
-                *ri = ( *ni + *vi * 2 + *( ++ni ) ) / 4;
-                ++ri;
-            }
+            NI ni;
+            ni = vi.neighbors( nbh[ m_direction ], WBoundaryStrategyWrap< T >() ).first;
+            *ri = ( *ni + *vi * 2 + *( ++ni ) ) / 4;
+            ++ri;
         }
     }
 
 private:
-
     //! The dataset containing the result of the filtering.
     DataSetType::SPtr& m_result;
+
+    //! The direction
+    int m_direction;
 };
 
 // This line is needed by the module loader to actually find your module.
@@ -183,28 +184,27 @@ void WMGaussFiltering2::moduleMain()
 
             infoLog() << "Filtering...";
 
-            if( iterations > 0 )
+            bool b = false;
+
+            for( int i = 0; i < iterations; ++i )
             {
+                for( int j = 0; j < 3; ++j )
                 {
-                    GaussVisitor gv( ds[ 0 ] );
-                    static_cast< DataSetType const* const >( m_dataSet.get() )->applyVisitor( &gv );
+                    if( i == 0 && j == 0 )
+                    {
+                        GaussVisitor gv( ds[ 0 ], 0 );
+                        static_cast< DataSetType const* const >( m_dataSet.get() )->applyVisitor( &gv );
+                    }
+                    else
+                    {
+                        GaussVisitor gv( ds[ static_cast< int >( !b ) ], j );
+                        static_cast< DataSetType const* const >( ds[ static_cast< int >( b ) ].get() )->applyVisitor( &gv );
+                        b = !b;
+                    }
                 }
-
-                bool b = false;
-
-                for( int i = 1; i < iterations; ++i )
-                {
-                    GaussVisitor gv( ds[ static_cast< int >( !b ) ] );
-                    static_cast< DataSetType const* const >( ds[ static_cast< int >( b ) ].get() )->applyVisitor( &gv );
-                    b = !b;
-                }
-
-                m_output->updateData( ds[ static_cast< int >( b ) ] );
             }
-            else
-            {
-                m_output->updateData( m_dataSet );
-            }
+
+            m_output->updateData( ds[ static_cast< int >( b ) ] );
 
             infoLog() << "Done.";
         }

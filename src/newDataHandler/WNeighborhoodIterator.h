@@ -29,6 +29,9 @@
 #include <memory> // for auto_ptr
 #include <string> // for std::size_t
 
+//TEST
+#include <iostream>
+
 #include "WGridRegular3D2.h"
 #include "WGridRegular3D2Specializations.h"
 
@@ -155,9 +158,9 @@ public:
     virtual T& getValue( boost::array< int, 3 > const& currentPos, WGridRegular3D2 const * const grid,
                          WValueSet2< T >* valueSet )
     {
-        boost::array< std::size_t, 3 > pos = { { std::max( std::min( currentPos[ 0 ], static_cast< int >( grid->getNbVoxelsX() ) ), 0 ),
-                                                 std::max( std::min( currentPos[ 1 ], static_cast< int >( grid->getNbVoxelsY() ) ), 0 ),
-                                                 std::max( std::min( currentPos[ 2 ], static_cast< int >( grid->getNbVoxelsZ() ) ), 0 ) } };  // NOLINT braces
+        boost::array< std::size_t, 3 > pos = { { std::max( std::min( currentPos[ 0 ], static_cast< int >( grid->getNbVoxelsX() - 1 ) ), 0 ),
+                                                 std::max( std::min( currentPos[ 1 ], static_cast< int >( grid->getNbVoxelsY() - 1 ) ), 0 ),
+                                                 std::max( std::min( currentPos[ 2 ], static_cast< int >( grid->getNbVoxelsZ() - 1 ) ), 0 ) } };  // NOLINT braces
         return valueSet->operator[]( WIndexMap< WGridRegular3D2 >::getVoxelIndex( *grid, pos ) );
     }
 
@@ -174,9 +177,9 @@ public:
     virtual T const& getValue( boost::array< int, 3 > const& currentPos, WGridRegular3D2 const * const grid,
                                WValueSet2< T > const* valueSet ) const
     {
-        boost::array< std::size_t, 3 > pos = { { std::max( std::min( currentPos[ 0 ], static_cast< int >( grid->getNbVoxelsX() ) ), 0 ),
-                                                 std::max( std::min( currentPos[ 1 ], static_cast< int >( grid->getNbVoxelsY() ) ), 0 ),
-                                                 std::max( std::min( currentPos[ 2 ], static_cast< int >( grid->getNbVoxelsZ() ) ), 0 ) } };  // NOLINT braces
+        boost::array< std::size_t, 3 > pos = { { std::max( std::min( currentPos[ 0 ], static_cast< int >( grid->getNbVoxelsX() - 1 ) ), 0 ),
+                                                 std::max( std::min( currentPos[ 1 ], static_cast< int >( grid->getNbVoxelsY() - 1 ) ), 0 ),
+                                                 std::max( std::min( currentPos[ 2 ], static_cast< int >( grid->getNbVoxelsZ() - 1 ) ), 0 ) } };  // NOLINT braces
         return valueSet->operator[]( WIndexMap< WGridRegular3D2 >::getVoxelIndex( *grid, pos ) );
     }
 
