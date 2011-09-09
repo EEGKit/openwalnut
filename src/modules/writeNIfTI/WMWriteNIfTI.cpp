@@ -140,8 +140,8 @@ void WMWriteNIfTI::writeToFile()
     outField->phase_dim = 2;
     outField->slice_dim = 3;
 
-    outField->qform_code = 1;
-    outField->sform_code = 1;
+    outField->qform_code = 0;
+    outField->sform_code = 0;
 
     std::string description = m_dataSet->getName();
     description.copy( outField->descrip, 80 );
@@ -152,6 +152,10 @@ void WMWriteNIfTI::writeToFile()
     if( boost::shared_dynamic_cast< WDataSet2< WGridRegular3D2, WScalarStructural > const >( m_dataSet ) )
     {
         boost::shared_dynamic_cast< WDataSet2< WGridRegular3D2, WScalarStructural > const >( m_dataSet )->applyVisitor( &save );
+    }
+    if( boost::shared_dynamic_cast< WDataSet2< WGridRegular3D2, WVectorFixedStructural< 3 > > const >( m_dataSet ) )
+    {
+        boost::shared_dynamic_cast< WDataSet2< WGridRegular3D2, WVectorFixedStructural< 3 > > const >( m_dataSet )->applyVisitor( &save );
     }
 
     std::string s = m_filename->get().file_string();

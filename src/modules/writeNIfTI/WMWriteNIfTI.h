@@ -37,6 +37,7 @@
 #include "../../newDataHandler/WGridRegular3D2.h"
 #include "../../newDataHandler/WGridRegular3D2Specializations.h"
 #include "../../newDataHandler/structuralTypes/WScalarStructural.h"
+#include "../../newDataHandler/structuralTypes/WVectorFixedStructural.h"
 #include "../../kernel/WModule.h"
 #include "../../kernel/WModuleInputData.h"
 
@@ -193,6 +194,43 @@ private:
             m_data->data = reinterpret_cast< void* >( t );
         }
 
+        /**
+         * An operator thats writes vector data using the correct type.
+         *
+         * \tparam T The data type of the dataset to be copied to.
+         * \param access The access object of the correct type provided by the type resolving mechanism.
+         */
+        template< typename T, std::size_t k >
+        void operator()( WDataAccessConst< WGridRegular3D2, WMatrixFixed< T, k, 1 > > access )
+        {
+            typedef typename WDataAccessConst< WGridRegular3D2, WMatrixFixed< T, k, 1 > >::VoxelIterator VI;
+
+            WGridRegular3D2::ConstSPtr grid = access.getGrid();
+
+            writeGridProps( grid );
+
+            m_data->nvox = k * grid->numVoxels();
+            m_data->nt = k;
+            m_data->dim[ 4 ] = k;
+            m_data->dim[ 0 ] = 4;
+            m_data->ndim = 4;
+            m_data->datatype = DataType< T >::type;
+            m_data->nbyper = sizeof( T );
+
+            T* t = new T[ grid->numVoxels() * k ];
+            VI vi, ve;
+            std::size_t count = 0;
+            for( tie( vi, ve ) = access.voxels(); vi != ve; ++vi )
+            {
+                for( std::size_t i = 0; i < k; ++i )
+                {
+                    t[ i * grid->numVoxels() + count ] = ( *vi )[ i ];
+                }
+                ++count;
+            }
+            m_data->data = reinterpret_cast< void* >( t );
+        }
+
         // to add other dataset types, for example vector data, add another operator():
         //
         // example for vector data:
@@ -209,4 +247,5 @@ private:
         nifti_image* const m_data;
     };
 };
+
 #endif  // WMWRITENIFTI_H

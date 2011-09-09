@@ -95,6 +95,11 @@ std::vector< WDataSet2Base::SPtr > WReaderNIfTI::suggestDataSets( boost::filesys
         suggestions.push_back( WDataSet2Base::SPtr( new WDataSet2< WGridRegular3D2, WScalarStructural >() ) );
     }
 
+    if( header->dim[ 4 ] == 3 && ( header->dim[ 5 ] == 0 || header->dim[ 5 ] == 1 ) )
+    {
+        suggestions.push_back( WDataSet2Base::SPtr( new WDataSet2< WGridRegular3D2, WVectorFixedStructural< 3 > >() ) );
+    }
+
     if( header )
     {
         nifti_image_free( header );
@@ -138,6 +143,19 @@ WDataSet2Base::SPtr WReaderNIfTI::load( boost::filesystem::path const& filename,
             typeStoreFromRuntimeVariables< WScalarStructural::ParameterVector >( static_cast< std::size_t >( header->datatype ) );
 
         typedef WDataSet2< WGridRegular3D2, WScalarStructural > DataSetType;
+        DataSetType::SPtr ptr = DataSetType::SPtr( new DataSetType( grid, ts ) );
+        ds = ptr;
+
+        ptr->applyVisitor( &copy );
+    }
+    if( boost::shared_dynamic_cast< WDataSet2< WGridRegular3D2, WVectorFixedStructural< 3 > > const >( dataSetSample ) )
+    {
+        // vector dataset
+        WStructuralTypeStore< WVectorFixedStructural< 3 >::ParameterVector > ts =
+            typeStoreFromRuntimeVariables< WVectorFixedStructural< 3 >::ParameterVector >(
+                                            static_cast< std::size_t >( header->datatype ) );
+
+        typedef WDataSet2< WGridRegular3D2, WVectorFixedStructural< 3 > > DataSetType;
         DataSetType::SPtr ptr = DataSetType::SPtr( new DataSetType( grid, ts ) );
         ds = ptr;
 

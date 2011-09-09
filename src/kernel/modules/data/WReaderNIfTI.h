@@ -34,6 +34,7 @@
 #include "../../../newDataHandler/WGridRegular3D2.h"
 #include "../../../newDataHandler/WGridRegular3D2Specializations.h"
 #include "../../../newDataHandler/structuralTypes/WScalarStructural.h"
+#include "../../../newDataHandler/structuralTypes/WVectorFixedStructural.h"
 #include "../../../common/math/WMatrix.h"
 
 #include "../../../ext/nifti/nifti1_io.h"
@@ -174,6 +175,30 @@ private:
             for( tie( vi, ve ) = access.voxels(); vi != ve; ++vi )
             {
                 *vi = dataptr[ count ];
+                ++count;
+            }
+        }
+
+        /**
+         * An operator thats loads vector data using the correct type.
+         *
+         * \tparam T The data type of the dataset to be copied to.
+         * \param access The access object of the correct type provided by the type resolving mechanism.
+         */
+        template< typename T, std::size_t k >
+        void operator()( WDataAccess< WGridRegular3D2, WMatrixFixed< T, k, 1 > > access )
+        {
+            typedef typename WDataAccess< WGridRegular3D2, WMatrixFixed< T, k, 1 > >::VoxelIterator VI;
+            T const* const dataptr = reinterpret_cast< T const* >( m_data->data );
+            VI vi, ve;
+            std::size_t count = 0;
+            std::size_t size = access.getGrid()->numVoxels();
+            for( tie( vi, ve ) = access.voxels(); vi != ve; ++vi )
+            {
+                for( std::size_t i = 0; i < k; ++i )
+                {
+                    ( *vi )[ i ] = dataptr[ i * size + count ];
+                }
                 ++count;
             }
         }
