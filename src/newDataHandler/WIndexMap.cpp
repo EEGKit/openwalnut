@@ -48,8 +48,8 @@ WGridRegular3D2::VoxelIndex WIndexMap< WGridRegular3D2 >::getVoxelCoords( WGridR
 
     res[ 2 ] = index / xy;
     res[ 1 ] = index % xy;
-    res[ 0 ] = res[ 1 ] / grid.getNbVoxelsX();
-    res[ 1 ] = res[ 1 ] % grid.getNbVoxelsX();
+    res[ 0 ] = res[ 1 ] % grid.getNbVoxelsX();
+    res[ 1 ] = res[ 1 ] / grid.getNbVoxelsX();
 
     return res;
 }

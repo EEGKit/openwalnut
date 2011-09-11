@@ -36,11 +36,21 @@
 #include "../structuralTypes/WScalarStructural.h"
 
 /**
- * A visitor that creates a list of the values of the neighbors of the first voxel.
+ * A visitor that creates a list of the values of the neighbors of the chosen voxel.
  */
 class NeighborListVisitor
 {
 public:
+
+    /**
+     * Constructor.
+     *
+     * \param voxel The index of the voxel from which we want to get the neighbor indices.
+     */
+    explicit NeighborListVisitor( int voxel )
+        : m_voxelnum( voxel )
+    {
+    }
 
     /**
      * The operator called when visiting the dataset. Used for any types but double.
@@ -55,7 +65,7 @@ public:
 
     /**
      * The operator called when visiting the dataset, double version. Iterates over a dataset
-     * and stores the values of the neighbors of the first voxel.
+     * and stores the values of the neighbors of the chosen voxel.
      *
      * \param access The access object for the provided dataset.
      */
@@ -64,6 +74,11 @@ public:
         typedef WDataAccess< WGridRegular3D2, double >::VoxelIterator VI;
         typedef WDataAccess< WGridRegular3D2, double >::VoxelNeighborIterator NI;
         VI vi = access.voxels().first;
+
+        for( int i = 0; i < m_voxelnum; ++i )
+        {
+            ++vi;
+        }
 
         NI ni, ne;
         for( tie( ni, ne ) = vi.neighbors( m_nbrHood, *m_strat ); ni != ne; ++ni )
@@ -85,7 +100,7 @@ public:
 
     /**
      * The operator called when visiting the dataset, const and double version. Iterates over a dataset
-     * and stores the values of the neighbors of the first voxel.
+     * and stores the values of the neighbors of the chosen voxel.
      *
      * \param access The access object for the provided dataset.
      */
@@ -95,6 +110,11 @@ public:
         typedef WDataAccessConst< WGridRegular3D2, double >::VoxelNeighborIterator NI;
         VI vi = access.voxels().first;
 
+        for( int i = 0; i < m_voxelnum; ++i )
+        {
+            ++vi;
+        }
+
         NI ni, ne;
         for( tie( ni, ne ) = vi.neighbors( m_nbrHood, *m_strat ); ni != ne; ++ni )
         {
@@ -103,7 +123,7 @@ public:
     }
 
     /**
-     * Get the indices of neighbors of the first voxel.
+     * Get the indices of neighbors of the chosen voxel.
      *
      * \return A vector containing the indices of the voxels that are neighbors to the first voxel.
      */
@@ -133,6 +153,9 @@ public:
     }
 
 private:
+
+    //! The index of the voxel from which we want to get the neighbor indices.
+    int m_voxelnum;
 
     //! A neighborhood to iterate.
     WNeighborhood m_nbrHood;
@@ -390,7 +413,7 @@ public:
             // these are the expected indices
             int ref[] = { 1, 3, 4, 9, 10, 12, 13 };  // NOLINT braces
 
-            NeighborListVisitor* visitor = new NeighborListVisitor();
+            NeighborListVisitor* visitor = new NeighborListVisitor( 0 );
 
             WNeighborhood nh = makeMoore( 1 );
             WBoundaryStrategy< double >* bs = new WBoundaryStrategyDefault< double >( -1 );
@@ -405,6 +428,30 @@ public:
 
             TS_ASSERT_EQUALS( indices.size(), 7 );
             TS_ASSERT_SAME_DATA( &indices[ 0 ], ref, sizeof( int ) * 7 );
+
+            delete bs;
+            delete visitor;
+        }
+
+        {
+            // these are the expected indices
+            int ref[] = { 1, 2, 4, 5, 7, 8, 10, 11, 13, 16, 17, 19, 20, 22, 23, 25, 26 };  // NOLINT braces
+
+            NeighborListVisitor* visitor = new NeighborListVisitor( 14 );
+
+            WNeighborhood nh = makeMoore( 1 );
+            WBoundaryStrategy< double >* bs = new WBoundaryStrategyDefault< double >( -1 );
+
+            visitor->setNeighborhood( nh );
+            visitor->setBoundaryStrategy( bs );
+
+            // this will call the non-const double operator of the visitor
+            vm->applyVisitor( visitor );
+
+            std::vector< int > const& indices = visitor->getNeighborIndices();
+
+            TS_ASSERT_EQUALS( indices.size(), 17 );
+            TS_ASSERT_SAME_DATA( &indices[ 0 ], ref, sizeof( int ) * 17 );
 
             delete bs;
             delete visitor;
@@ -436,7 +483,7 @@ public:
                            0,  0,  1,  0,      1,  3,  3,  4,
                            9,  9, 10,  9,  9, 10, 12, 12, 13 };  // NOLINT braces
 
-            NeighborListVisitor* visitor = new NeighborListVisitor();
+            NeighborListVisitor* visitor = new NeighborListVisitor( 0 );
 
             WNeighborhood nh = makeMoore( 1 );
             WBoundaryStrategy< double >* bs = new WBoundaryStrategyClamp< double >();
@@ -479,7 +526,7 @@ public:
             // these are the expected indices
             int ref[] = { 18, 6, 2, 1, 3, 9 };  // NOLINT braces
 
-            NeighborListVisitor* visitor = new NeighborListVisitor();
+            NeighborListVisitor* visitor = new NeighborListVisitor( 0 );
 
             WNeighborhood nh = makeVonNeumann( 1 );
             WBoundaryStrategy< double >* bs = new WBoundaryStrategyWrap< double >();
@@ -524,7 +571,7 @@ public:
                           -1, -1, -1, -1,      1, -1,  3,  4,
                           -1, -1, -1, -1,  9, 10, -1, 12, 13 };  // NOLINT braces
 
-            NeighborListVisitor* visitor = new NeighborListVisitor();
+            NeighborListVisitor* visitor = new NeighborListVisitor( 0 );
 
             WNeighborhood nh = makeMoore( 1 );
             WBoundaryStrategy< double >* bs = new WBoundaryStrategyDefault< double >( -1 );
@@ -571,7 +618,7 @@ public:
                            0,  0,  1,  0,      1,  3,  3,  4,
                            9,  9, 10,  9,  9, 10, 12, 12, 13 };  // NOLINT braces
 
-            NeighborListVisitor* visitor = new NeighborListVisitor();
+            NeighborListVisitor* visitor = new NeighborListVisitor( 0 );
 
             WNeighborhood nh = makeMoore( 1 );
             WBoundaryStrategy< double >* bs = new WBoundaryStrategyClamp< double >();
@@ -615,7 +662,7 @@ public:
             // these are the expected indices
             int ref[] = { 18, 6, 2, 1, 3, 9 };  // NOLINT braces
 
-            NeighborListVisitor* visitor = new NeighborListVisitor();
+            NeighborListVisitor* visitor = new NeighborListVisitor( 0 );
 
             WNeighborhood nh = makeVonNeumann( 1 );
             WBoundaryStrategy< double >* bs = new WBoundaryStrategyWrap< double >();

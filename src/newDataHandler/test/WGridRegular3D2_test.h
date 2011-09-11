@@ -51,6 +51,16 @@ public:
         TS_ASSERT_EQUALS( coords[ 0 ], 1 );
         TS_ASSERT_EQUALS( coords[ 1 ], 1 );
         TS_ASSERT_EQUALS( coords[ 2 ], 2 );
+
+        coords = WIndexMap< WGridRegular3D2 >::getVoxelCoords( g, 14 );
+        TS_ASSERT_EQUALS( coords[ 0 ], 2 );
+        TS_ASSERT_EQUALS( coords[ 1 ], 0 );
+        TS_ASSERT_EQUALS( coords[ 2 ], 1 );
+
+        coords = WIndexMap< WGridRegular3D2 >::getVoxelCoords( g, 30 );
+        TS_ASSERT_EQUALS( coords[ 0 ], 0 );
+        TS_ASSERT_EQUALS( coords[ 1 ], 2 );
+        TS_ASSERT_EQUALS( coords[ 2 ], 2 );
     }
 };
 
