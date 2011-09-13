@@ -200,10 +200,7 @@ void WMData::moduleMain()
             continue;
         }
         m_dataSet = ( *it )->load( p, *suggestions.begin() );
-        if( !m_dataSet )
-        {
-            break;
-        }
+        break;
     }
 
     readers.clear();
@@ -216,6 +213,11 @@ void WMData::moduleMain()
     // textures also provide properties
 
     // notify
+    if( !m_dataSet )
+    {
+        infoLog() << "No data loaded!";
+    }
+    
     m_output->updateData( m_dataSet );
     ready();
 
