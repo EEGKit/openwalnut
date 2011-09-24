@@ -196,8 +196,8 @@ void rayCast( in vec3 curPoint, in float stepDistance )
             vec4 color = vec4( u_isocolor.rgb * factor, 1 - factor );
 
             // compute relative distance with respect to the maximum distance
-            float d = pow( stepDistance * j / maxDistance, u_alpha );
-            color.a = color.a * d;
+            float d = stepDistance * j / maxDistance;
+            color.a = color.a * pow( d, u_alpha );
 
             // combine opaque half-spaces with each other
             // u_viewSlicename is in { -1, 0, +1 }
@@ -205,8 +205,8 @@ void rayCast( in vec3 curPoint, in float stepDistance )
             // beyond the slice, alpha := 1
             // otherwise, alpha remains as before
             color.a = max( u_viewSagittal * sign( curPoint.x - u_sagittal ), color.a );
-            color.a = max( u_viewCoronal * sign( curPoint.y - u_coronal ), color.a );
-            color.a = max( u_viewAxial * sign( curPoint.z - u_axial ), color.a );
+            color.a = max( u_viewCoronal  * sign( curPoint.y - u_coronal ),  color.a );
+            color.a = max( u_viewAxial    * sign( curPoint.z - u_axial ),    color.a );
 
             // 6: the final color construction
             wge_FragColor = vec4( light * color.rgb, color.a );

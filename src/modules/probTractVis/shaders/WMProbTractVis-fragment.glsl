@@ -195,7 +195,7 @@ void rayCast( in vec3 curPoint, in float isovalue, in vec4 isocolor )
             // compute relative distance with respect to the maximum distance
             float d = stepDistance * j / maxDistance;
             // approximate desaturated color (cf. HSI color space)
-            vec3 gray = ( color.r + color.g + color.b ) / 3 * vec3( 1.0, 1.0, 1.0 );
+            vec3 gray = vec3( ( color.r + color.g + color.b ) / 3 );
             // desaturate color depending on the exponentiated distance d^k (k = u_saturation)
             color.rgb = mix( color.rgb, gray, pow( d, u_saturation ) );
 
@@ -247,19 +247,33 @@ void main()
     vec3 curPoint = v_rayStart + v_ray;
     #endif
 
+    // sort the isovalues (and their colors) in ascending order
+    vec4 isovalues;
+    mat4 isocolors;
+    // determine order (largest value first)
+    ivec4 order = ivec4( greaterThan( vec4( v_isovalues[0] ), v_isovalues ) ) +
+                  ivec4( greaterThan( vec4( v_isovalues[1] ), v_isovalues ) ) +
+                  ivec4( greaterThan( vec4( v_isovalues[2] ), v_isovalues ) ) +
+                  ivec4( greaterThan( vec4( v_isovalues[3] ), v_isovalues ) );
+    // sort the values according to the determined order
+    for( int i = 0; i < 4; i++ )
+    {
+       isovalues[i] = v_isovalues[ order[i] ];
+       isocolors[i] = u_isocolors[ order[i] ];
+    }
+
     float isovalue;
     vec4 isocolor;
-
     // for each isosurface, set the isovalue + isocolor and call the raytracer
     for( int j = 0; j < u_surfCount; j++ )
     {
-        isovalue = v_isovalues[j];
+        isovalue = isovalues[j];
         #ifdef MANUALALPHA_ENABLED
         // pick individual alpha values for all surfaces
-        isocolor = u_isocolors[j];
+        isocolor = isocolors[j];
         #else
         // use value-dependent alpha
-        isocolor = vec4( u_isocolors[j].rgb, u_isoalphas[j] );
+        isocolor = vec4( isocolors[j].rgb, isovalue );
         #endif
         rayCast( curPoint, isovalue, isocolor );
     }

@@ -45,7 +45,10 @@ uniform float u_texture0Scale;
 uniform float u_texture0Min;
 
 // The isovalues to use.
-uniform vec4 u_isovalues;
+uniform float u_isoval1;
+uniform float u_isoval2;
+uniform float u_isoval3;
+uniform float u_isoval4;
 
 /////////////////////////////////////////////////////////////////////////////
 // Attributes
@@ -66,10 +69,13 @@ void main()
 {
     colormapping();
 
+    // create a vector containing the four isovalues
+    vec4 isovalues = vec4( u_isoval1, u_isoval2, u_isoval3, u_isoval4 );
+
     // scale isovalues to equal the texture data scaling.
     for( int i = 0; i < 4; i++ )
     {
-        v_isovalues[i] = ( u_isovalues[i] - u_texture0Min ) / u_texture0Scale;
+        v_isovalues[i] = ( isovalues[i] - u_texture0Min ) / u_texture0Scale;
     }
 
     // for easy access to texture coordinates

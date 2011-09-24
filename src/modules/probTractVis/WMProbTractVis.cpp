@@ -41,7 +41,6 @@
 #include "../../core/dataHandler/WDataSetVector.h"
 #include "../../core/dataHandler/WDataTexture3D.h"
 
-// TODO(aberres): check which ones are needed
 #include "../../core/graphicsEngine/WGEColormapping.h"
 #include "../../core/graphicsEngine/WGEGeodeUtils.h"
 #include "../../core/graphicsEngine/WGEManagedGroupNode.h"
@@ -117,20 +116,20 @@ void WMProbTractVis::properties()
     m_surfCount->setMin( 0 );
     m_surfCount->setMax( 4 );
 
-    m_isoValue1 = m_properties->addProperty( "Iso Value 1", "The value for the innermost surface.", 100.0 );
-    m_isoColor1 = m_properties->addProperty( "Iso Color 1", "The color for the innermost surface.", WColor( 0.5, 0.0, 0.0, 1.0 ), m_propCondition );
+    m_isoValue1 = m_properties->addProperty( "Isovalue 1", "The value for the innermost surface.", 0.8 );
+    m_isoColor1 = m_properties->addProperty( "Color 1",    "The color for the innermost surface.", WColor( 0.7, 0.0, 0.0, 1.0 ), m_propCondition );
 
-    m_isoValue2 = m_properties->addProperty( "Iso Value 2", "The value for the second surface.", 100.0 );
-    m_isoColor2 = m_properties->addProperty( "Iso Color 2", "The color for the second surface.", WColor( 1.0, 0.5, 0.0, 0.7 ), m_propCondition );
+    m_isoValue2 = m_properties->addProperty( "Isovalue 2", "The value for the second surface.", 0.6 );
+    m_isoColor2 = m_properties->addProperty( "Color 2",    "The color for the second surface.", WColor( 0.7, 0.7, 0.0, 0.75 ), m_propCondition );
 
-    m_isoValue3 = m_properties->addProperty( "Iso Value 3", "The value for the third surface.", 100.0 );
-    m_isoColor3 = m_properties->addProperty( "Iso Color 3", "The color for the third surface.", WColor( 0.0, 0.5, 0.7, 0.5 ), m_propCondition );
+    m_isoValue3 = m_properties->addProperty( "Isovalue 3", "The value for the third surface.", 0.4 );
+    m_isoColor3 = m_properties->addProperty( "Color 3",    "The color for the third surface.", WColor( 0.0, 0.7, 0.7, 0.5 ), m_propCondition );
 
-    m_isoValue4 = m_properties->addProperty( "Iso Value 4", "The value for the fourth surface.", 100.0 );
-    m_isoColor4 = m_properties->addProperty( "Iso Color 4", "The color for the fourth surface.", WColor( 0.0, 0.7, 0.0, 0.3 ), m_propCondition );
+    m_isoValue4 = m_properties->addProperty( "Isovalue 4", "The value for the fourth surface.", 0.2 );
+    m_isoColor4 = m_properties->addProperty( "Color 4",    "The color for the fourth surface.", WColor( 0.0, 0.7, 0.0, 0.25 ), m_propCondition );
 
-    m_stepCount = m_properties->addProperty( "Step Count",       "The number of steps to walk along the ray during raycasting. A low value "
-                                                                      "may cause artifacts whilst a high value slows down rendering.", 250 );
+    m_stepCount = m_properties->addProperty( "Step Count", "The number of steps to walk along the ray during raycasting. A low value "
+                                                           "may cause artifacts whilst a high value slows down rendering.", 500 );
     m_stepCount->setMin( 1 );
     m_stepCount->setMax( 1000 );
 
@@ -138,20 +137,21 @@ void WMProbTractVis::properties()
     m_colormapRatio->setMin( 0.0 );
     m_colormapRatio->setMax( 1.0 );
 
-    m_saturation = m_properties->addProperty( "Saturation",   "The saturation depending on the depth.", 1.0 );
+    m_saturation = m_properties->addProperty( "Saturation", "The saturation depending on the depth.", 1.0 );
     m_saturation->setMin( 0.0 );
     m_saturation->setMax( 2.0 );
 
     m_isoEpsilon = m_properties->addProperty( "Isovalue Tolerance", "The amount of deviation tolerated for the isovalue", 0.05 );
+    m_isoEpsilon->setMin( 0.0 );
     m_isoEpsilon->setMax( 0.5 );
 
     m_manualAlpha = m_properties->addProperty( "Manual Alpha", "Lets user use the slider to set a global alpha rather than "
-                                                                                      "computing it automatically.", false );
+                                                               "computing it automatically.", false );
 
     m_phong  = m_properties->addProperty( "Phong Shading", "If enabled, Phong shading gets applied on a per-pixel basis.", true );
 
-    m_jitter = m_properties->addProperty( "Stochastic Jitter", "Improves image quality at low sampling rates but introduces slight "
-                                                                         "noise effect.", true );
+    m_jitter = m_properties->addProperty( "Stochastic Jitter", "Improves image quality at low sampling rates "
+                                                               "but introduces slight noise effect.", true );
 
     WModule::properties();
 }
@@ -228,10 +228,8 @@ void WMProbTractVis::moduleMain()
             rootNode->clear();
         }
 
-        // TODO(aberres): remove isovalues again if solution is found
-        // m_isoColor or shading changed
-        if ( m_isoColor1->changed() || m_isoColor2->changed() || m_isoColor3->changed() || m_isoColor4->changed() ||
-             m_isoValue1->changed() || m_isoValue2->changed() || m_isoValue3->changed() || m_isoValue4->changed() )
+        // have isocolors changed?
+        if ( m_isoColor1->changed() || m_isoColor2->changed() || m_isoColor3->changed() || m_isoColor4->changed() )
         {
             // a new color requires the proxy geometry to be rebuild as we store it as color in this geometry
             dataUpdated = true;
@@ -268,13 +266,12 @@ void WMProbTractVis::moduleMain()
 
             // set isovalues to something more meaningful and put them in a vector
             // the largest probability has to be first (in -> out compositing)!
-            m_isoValue1->set( isoMin + 0.55 * isoRange );
-            m_isoValue2->set( isoMin + 0.40 * isoRange );
-            m_isoValue3->set( isoMin + 0.20 * isoRange );
-            m_isoValue4->set( isoMin + 0.12 * isoRange );
-            WMatrixFixed< double, 4, 1 > isoVals = WMatrixFixed< double, 4, 1 >( m_isoValue1->get(), m_isoValue2->get(),
-                                                                                 m_isoValue3->get(), m_isoValue4->get() );
-            osg::Vec4 vals = osg::Vec4( isoVals );
+            m_isoValue1->set( isoMin + m_isoValue1->get() * isoRange );
+            m_isoValue2->set( isoMin + m_isoValue2->get() * isoRange );
+            m_isoValue3->set( isoMin + m_isoValue3->get() * isoRange );
+            m_isoValue4->set( isoMin + m_isoValue4->get() * isoRange );
+            m_isoVals = WMatrixFixed< double, 4, 1 >( m_isoValue1->get(), m_isoValue2->get(),
+                                                      m_isoValue3->get(), m_isoValue4->get() );
 
             // get the four picked isocolors and save them as rows in a matrix
             // the innermost isosurface (highest probability) has to be first (in -> out compositing)!
@@ -288,15 +285,6 @@ void WMProbTractVis::moduleMain()
             isoCols.setRowVector( 2, col3 );
             isoCols.setRowVector( 3, col4 );
             osg::Matrixd cols = osg::Matrixd( isoCols );
-
-            // determine an alpha for each isocolor based on its isovalue
-            // hightest value = 1, lowest value = 0
-            WMatrixFixed< double, 4, 1 > isoAlphas;
-            for( size_t i = 0; i < 4; i++ )
-            {
-                isoAlphas( i, 0 ) = ( isoVals( i, 0 ) - isoMin ) / ( isoVals( 0, 0 ) - isoMin  );
-            }
-            osg::Vec4 alphas = osg::Vec4( isoAlphas );
 
             // use the OSG Shapes, create unit cube
             WBoundingBox bb( WPosition( 0.0, 0.0, 0.0 ),
@@ -320,9 +308,11 @@ void WMProbTractVis::moduleMain()
             rootState->addUniform( new WGEPropertyUniform< WPropInt >( "u_steps", m_stepCount ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_colormapRatio", m_colormapRatio ) );
             rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_saturation", m_saturation ) );
+            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isoval1", m_isoValue1 ) );
+            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isoval2", m_isoValue2 ) );
+            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isoval3", m_isoValue3 ) );
+            rootState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_isoval4", m_isoValue4 ) );
             rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isocolors", cols ) ) );
-            rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isovalues", vals ) ) );
-            rootState->addUniform( osg::ref_ptr< osg::Uniform >( new osg::Uniform( "u_isoalphas", alphas ) ) );
 
             // Stochastic jitter?
             const size_t size = 64;

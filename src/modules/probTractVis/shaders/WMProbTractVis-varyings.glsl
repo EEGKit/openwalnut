@@ -39,3 +39,6 @@ varying vec3 v_normal;
 // The isovalues scaled using texture scaling information to [0,1]
 varying vec4 v_isovalues;
 
+// The colors to use for the surfaces
+varying mat4 v_isocolors;
+

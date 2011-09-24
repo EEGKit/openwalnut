@@ -139,6 +139,8 @@ private:
     WPropDouble m_isoValue3; //!< The value used for the third isosurface.
     WPropDouble m_isoValue4; //!< The value used for the fourth isosurface.
 
+    WMatrixFixed< double, 4, 1 > m_isoVals; //!< All isovalues in one vector.
+
     WPropInt m_stepCount; //!< The number of steps to walk along the ray.
 
     WPropDouble m_colormapRatio; //!< The ratio between colormap and normal surface color.
