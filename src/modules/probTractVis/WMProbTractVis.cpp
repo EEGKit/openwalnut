@@ -189,18 +189,18 @@ void WMProbTractVis::moduleMain()
     osg::ref_ptr< WGEGroupNode > rootNode = new WGEGroupNode();
 
     // create the post-processing node which actually does the nice stuff to the rendered image
-    osg::ref_ptr< WGEPostprocessingNode > postNode = new WGEPostprocessingNode(
-                WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()
-                );
-    postNode->setEnabled( true );  // use it by default
-    postNode->addUpdateCallback( new WGENodeMaskCallback( m_active ) ); // disable the postNode with m_active
+//    osg::ref_ptr< WGEPostprocessingNode > postNode = new WGEPostprocessingNode(
+//                WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()
+//                );
+//    postNode->setEnabled( true );  // use it by default
+//    postNode->addUpdateCallback( new WGENodeMaskCallback( m_active ) ); // disable the postNode with m_active
 
     // provide the properties of the post-processor to the user
-    m_properties->addProperty( postNode->getProperties() );
+//    m_properties->addProperty( postNode->getProperties() );
 
     // insert it
-    postNode->insert( rootNode, m_shader );
-    bool postNodeInserted = false;
+//    postNode->insert( rootNode, m_shader );
+//    bool postNodeInserted = false;
 
     // Normally, you will have a loop which runs as long as the module should not shutdown. In this loop you can react on changing data on input
     // connectors or on changed in your properties.
@@ -343,15 +343,15 @@ void WMProbTractVis::moduleMain()
 
             // insert root node if needed. This way, we ensure that the root node gets added only if the proxy cube has been added AND the bbox
             // can be calculated properly by the OSG to ensure the proxy cube is centered in the scene if no other item has been added earlier.
-            if ( !postNodeInserted )
-            {
-                postNodeInserted = true;
-                WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( postNode );
-            }
+//            if ( !postNodeInserted )
+//            {
+//                postNodeInserted = true;
+//                WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( postNode );
+//            }
         }
     }
 
     // At this point, the container managing this module signalled to shutdown. The main loop has ended and you should clean up. Always remove
     // allocated memory and remove all OSG nodes.
-    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( postNode );
+//    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( postNode );
 }

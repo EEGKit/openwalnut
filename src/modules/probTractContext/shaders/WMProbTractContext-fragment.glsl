@@ -190,8 +190,9 @@ void rayCast( in vec3 curPoint, in float stepDistance )
 
             // 5. set color
             // calculate factor containing the absolute value of cos(phi)
-            // where phi is the angle between view vector and normal
-            float factor = abs( dot( v_ray, normal ) / ( length( v_ray ) * length( normal ) ) );
+            // where phi is the angle between view vector (in world coordinates) and normal
+            vec4 ray = gl_ModelViewMatrix * vec4( v_ray, 0.0 );
+            float factor = abs( dot( ray.xyz, normal ) / ( length( ray.xyz ) * length( normal ) ) );
             // using the factor results in a shaded line drawing of the brain
             vec4 color = vec4( u_isocolor.rgb * factor, 1 - factor );
 

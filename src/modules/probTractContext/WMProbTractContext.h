@@ -113,6 +113,8 @@ private:
 
     boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_input; //!< Scalar dataset.
 
+    boost::shared_ptr< WModuleInputData< WDataSetVector > > m_gradients; //!< The gradient field input.
+
     osg::ref_ptr< WGEShader > m_shader; //!< The shader.
 
     WPropDouble m_axialPos; //!< Axial NavSlice position.
