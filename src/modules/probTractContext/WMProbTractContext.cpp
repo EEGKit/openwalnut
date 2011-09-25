@@ -36,11 +36,11 @@
 #include "../../core/common/WPropertyHelper.h"
 
 #include "../../core/dataHandler/WDataSetScalar.h"
-#include "../../core/dataHandler/WDataSetVector.h"
 #include "../../core/dataHandler/WDataTexture3D.h"
 #include "../../core/dataHandler/WGridRegular3D.h"
 #include "../../core/dataHandler/WSubject.h"
 
+// TODO(aberres): check which ones are needed
 #include "../../core/graphicsEngine/WGEColormapping.h"
 #include "../../core/graphicsEngine/WGEGeodeUtils.h"
 #include "../../core/graphicsEngine/WGEManagedGroupNode.h"
@@ -99,14 +99,9 @@ const std::string WMProbTractContext::getDescription() const
 
 void WMProbTractContext::connectors()
 {
-    // The scalar field used as input - ideally this should be a structural MRI dataset.
-    m_input = WModuleInputData < WDataSetScalar >::createAndAdd( shared_from_this(), "in", "The scalar dataset." );
-
-    // As properties, every connector needs to be added to the list of connectors.
-//    addConnector( m_input );
-
-    // Optional: the gradient field
-    m_gradients = WModuleInputData< WDataSetVector >::createAndAdd( shared_from_this(), "gradients", "The gradient field of the dataset to display" );
+    // TODO(aberres): document
+    m_input = WModuleInputData < WDataSetScalar >::createAndAdd( shared_from_this(), "in",
+                                                "The scalar dataset." );
 
     WModule::connectors();
 }
@@ -183,14 +178,12 @@ void WMProbTractContext::moduleMain()
     m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
         new WGEShaderPropertyDefineOptions< WPropBool >( m_jitter, "STOCHASTICJITTER_DISABLED", "STOCHASTICJITTER_ENABLED" ) )
     );
-    WGEShaderDefineSwitch::SPtr gradTexEnableDefine = m_shader->setDefine( "GRADIENTTEXTURE_ENABLED" );
     m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
         new WGEShaderPropertyDefineOptions< WPropBool >( m_phong, "PHONGSHADING_DISABLED", "PHONGSHADING_ENABLED" ) )
     );
 
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_input->getDataChangedCondition() );
-    m_moduleState.add( m_gradients->getDataChangedCondition() );
 
 
     ready();
@@ -228,7 +221,7 @@ void WMProbTractContext::moduleMain()
         }
 
         // was there an update?
-        bool dataUpdated = m_input->updated() || m_gradients->updated();
+        bool dataUpdated = m_input->updated();
         boost::shared_ptr< WDataSetScalar > dataSet = m_input->getData();
         bool dataValid   = ( dataSet );
 
@@ -298,23 +291,9 @@ void WMProbTractContext::moduleMain()
             osg::ref_ptr< WGETexture2D > randTex = wge::genWhiteNoiseTexture( size, size, 1 );
             wge::bindTexture( cube, randTex, 1 );
 
-            // if there is a gradient field available -> apply as texture too
-            boost::shared_ptr< WDataSetVector > gradients = m_gradients->getData();
-            if( gradients )
-            {
-                debugLog() << "Uploading specified gradient field.";
-
-                // bind the texture to the node
-                osg::ref_ptr< WDataTexture3D > gradTexture3D = gradients->getTexture();
-                wge::bindTexture( cube, gradTexture3D, 2, "u_gradients" );
-                gradTexEnableDefine->setActive( true );
-            }
-            else
-            {
-                gradTexEnableDefine->setActive( false ); // disable gradient texture
-            }
-
-            WGEColormapping::apply( cube, grid->getTransformationMatrix(), m_shader, 3 );
+            //TODO(aberres): why?
+//            WGEColormapping::apply( cube, grid->getTransformationMatrix(), m_shader, 3 );
+            WGEColormapping::apply( cube, m_shader );
 
             // update node
             debugLog() << "Adding new rendering.";
