@@ -61,6 +61,12 @@ public:
         : m_result( result ),
           m_direction( direction )
     {
+        m_nbh[ 0 ].add( -1, 0, 0 );
+        m_nbh[ 0 ].add( 1, 0, 0 );
+        m_nbh[ 1 ].add( 0, -1, 0 );
+        m_nbh[ 1 ].add( 0, 1, 0 );
+        m_nbh[ 2 ].add( 0, 0, -1 );
+        m_nbh[ 2 ].add( 0, 0, 1 );
     }
 
     /**
@@ -82,23 +88,19 @@ public:
         AccessOutputType accessResult = m_result->getAccess< T >();
 
         typedef typename AccessInputType::VoxelIterator VI;
-        typedef typename AccessInputType::VoxelNeighborIterator NI;
+        typedef typename AccessInputType::VoxelNeighborIteratorWrap NI;
         typedef typename AccessOutputType::VoxelIterator RI;
-
-        WNeighborhood nbh[ 3 ];
-        nbh[ 0 ].add( -1, 0, 0 );
-        nbh[ 0 ].add( 1, 0, 0 );
-        nbh[ 1 ].add( 0, -1, 0 );
-        nbh[ 1 ].add( 0, 1, 0 );
-        nbh[ 2 ].add( 0, 0, -1 );
-        nbh[ 2 ].add( 0, 0, 1 );
 
         RI ri = accessResult.voxels().first;
         VI vi, ve;
+
+        WBoundaryStrategyWrap< T > bs;
+
         for( tie( vi, ve ) = access.voxels(); vi != ve; ++vi )
         {
             NI ni;
-            ni = vi.neighbors( nbh[ m_direction ], WBoundaryStrategyWrap< T >() ).first;
+            ni = vi.neighbors( &m_nbh[ m_direction ], &bs ).first;
+
             *ri = ( *ni + *vi * 2 + *( ++ni ) ) / 4;
             ++ri;
         }
@@ -110,6 +112,9 @@ private:
 
     //! The direction
     int m_direction;
+
+    //! The 3 neighborhoods, one for each direction.
+    WNeighborhood m_nbh[ 3 ];
 };
 
 // This line is needed by the module loader to actually find your module.
@@ -184,6 +189,8 @@ void WMGaussFiltering2::moduleMain()
 
             infoLog() << "Filtering...";
 
+            clock_t t = clock();
+
             bool b = false;
 
             for( int i = 0; i < iterations; ++i )
@@ -203,6 +210,8 @@ void WMGaussFiltering2::moduleMain()
                     }
                 }
             }
+
+            infoLog() << "Time: " << clock() - t << "!";
 
             m_output->updateData( ds[ static_cast< int >( b ) ] );
 

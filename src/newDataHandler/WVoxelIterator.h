@@ -33,16 +33,27 @@
 // ################################ forward declarations #######################################
 
 // a forward declaration for the type used for neighbor voxel iteration
-template< typename T >
+template< typename T, typename BoundaryStrategyT >
 class WNeighborhoodIterator;
 
 // a forward declaration for the type used for neighbor voxel iteration (const version)
-template< typename T >
+template< typename T, typename BoundaryStrategyT >
 class WNeighborhoodIteratorConst;
 
-// a forward declaration for the boundary specific functionality
+
+
 template< typename T >
-class WBoundaryStrategy;
+class WBoundaryStrategyClamp;
+
+template< typename T >
+class WBoundaryStrategyWrap;
+
+template< typename T >
+class WBoundaryStrategyDefault;
+
+
+
+
 
 // a forward declaration needed for a friend declaration below
 template< typename GridT, typename ValueT >
@@ -321,10 +332,11 @@ public:
      *
      * \return A pair of begin and end iterators for the neighbors of the voxel currently pointed to by this iterator.
      */
-    std::pair< WNeighborhoodIterator< T >, WNeighborhoodIterator< T > > neighbors( WNeighborhood const& nbh, WBoundaryStrategy< T > const& bs )
+    template< typename BoundaryStrategyT >
+    std::pair< WNeighborhoodIterator< T, BoundaryStrategyT >, WNeighborhoodIterator< T, BoundaryStrategyT > > neighbors( WNeighborhood* nbh, BoundaryStrategyT* bs )
     {
-        return std::make_pair( WNeighborhoodIterator< T >( m_grid, m_valueSet, nbh, bs, this->operator() (), 0 ),
-                               WNeighborhoodIterator< T >( m_grid, m_valueSet, nbh, bs, this->operator() (), nbh.size() ) );
+        return std::make_pair( WNeighborhoodIterator< T, BoundaryStrategyT >( m_grid, m_valueSet, nbh, bs, this->operator() (), 0 ),
+                               WNeighborhoodIterator< T, BoundaryStrategyT >( m_grid, m_valueSet, nbh, bs, this->operator() (), nbh->size() ) );
     }
 
 protected:
@@ -610,11 +622,12 @@ public:
      *
      * \return A pair of begin and end iterators for the neighbors of the voxel currently pointed to by this iterator.
      */
-    std::pair< WNeighborhoodIteratorConst< T >, WNeighborhoodIteratorConst< T > >
-        neighbors( WNeighborhood const& nbh, WBoundaryStrategy< T > const& bs )
+    template< typename BoundaryStrategyT >
+    std::pair< WNeighborhoodIteratorConst< T, BoundaryStrategyT >, WNeighborhoodIteratorConst< T, BoundaryStrategyT > >
+                neighbors( WNeighborhood* nbh, BoundaryStrategyT* bs )
     {
-        return std::make_pair( WNeighborhoodIteratorConst< T >( m_grid, m_valueSet, nbh, bs, this->operator() (), 0 ),
-                               WNeighborhoodIteratorConst< T >( m_grid, m_valueSet, nbh, bs, this->operator() (), nbh.size() ) );
+        return std::make_pair( WNeighborhoodIteratorConst< T, BoundaryStrategyT >( m_grid, m_valueSet, nbh, bs, this->operator() (), 0 ),
+                               WNeighborhoodIteratorConst< T, BoundaryStrategyT >( m_grid, m_valueSet, nbh, bs, this->operator() (), nbh->size() ) );
     }
 
 protected:

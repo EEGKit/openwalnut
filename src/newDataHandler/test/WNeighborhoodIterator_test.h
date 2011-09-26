@@ -38,6 +38,7 @@
 /**
  * A visitor that creates a list of the values of the neighbors of the chosen voxel.
  */
+template< typename BoundaryStrategyT >
 class NeighborListVisitor
 {
 public:
@@ -72,7 +73,8 @@ public:
     void operator() ( WDataAccess< WGridRegular3D2, double > access )
     {
         typedef WDataAccess< WGridRegular3D2, double >::VoxelIterator VI;
-        typedef WDataAccess< WGridRegular3D2, double >::VoxelNeighborIterator NI;
+        typedef WNeighborhoodIterator< double, BoundaryStrategyT > NI; 
+
         VI vi = access.voxels().first;
 
         for( int i = 0; i < m_voxelnum; ++i )
@@ -81,7 +83,7 @@ public:
         }
 
         NI ni, ne;
-        for( tie( ni, ne ) = vi.neighbors( m_nbrHood, *m_strat ); ni != ne; ++ni )
+        for( tie( ni, ne ) = vi.neighbors< BoundaryStrategyT >( &m_nbrHood, m_strat ); ni != ne; ++ni )
         {
             m_nbrIndices.push_back( *ni );
         }
@@ -107,7 +109,8 @@ public:
     void operator() ( WDataAccessConst< WGridRegular3D2, double > const access )
     {
         typedef WDataAccessConst< WGridRegular3D2, double >::VoxelIterator VI;
-        typedef WDataAccessConst< WGridRegular3D2, double >::VoxelNeighborIterator NI;
+        typedef WNeighborhoodIteratorConst< double, BoundaryStrategyT > NI; 
+
         VI vi = access.voxels().first;
 
         for( int i = 0; i < m_voxelnum; ++i )
@@ -116,7 +119,7 @@ public:
         }
 
         NI ni, ne;
-        for( tie( ni, ne ) = vi.neighbors( m_nbrHood, *m_strat ); ni != ne; ++ni )
+        for( tie( ni, ne ) = vi.neighbors< BoundaryStrategyT >( &m_nbrHood, m_strat ); ni != ne; ++ni )
         {
             m_nbrIndices.push_back( *ni );
         }
@@ -147,7 +150,7 @@ public:
      *
      * \param strat The strategy to use.
      */
-    void setBoundaryStrategy( WBoundaryStrategy< double > const* strat )
+    void setBoundaryStrategy( BoundaryStrategyT* strat )
     {
         m_strat = strat;
     }
@@ -161,7 +164,7 @@ private:
     WNeighborhood m_nbrHood;
 
     //! The strategy for nonexisting voxels.
-    WBoundaryStrategy< double > const* m_strat;
+    BoundaryStrategyT* m_strat;
 
     //! Stores the indices of the neighborvoxels that have been found.
     std::vector< int > m_nbrIndices;
@@ -208,7 +211,7 @@ public:
      */
     void testConstruction()
     {
-        typedef WNeighborhoodIterator< double > NI;
+        typedef WNeighborhoodIterator< double, WBoundaryStrategyDefault< double > > NI;
 
         // create an invalid iterator
         TS_ASSERT_THROWS_NOTHING( NI() );
@@ -225,9 +228,9 @@ public:
         boost::array< std::size_t, 3 > coords = { { 0, 0, 0 } };  // NOLINT braces
         WBoundaryStrategyDefault< double > bs( -1 );
 
-        TS_ASSERT_THROWS_NOTHING( NI( &g, &vs, nbh, bs, coords, 0 ) );
+        TS_ASSERT_THROWS_NOTHING( NI( &g, &vs, &nbh, &bs, coords, 0 ) );
 
-        NI no( &g, &vs, nbh, bs, coords, 0 );
+        NI no( &g, &vs, &nbh, &bs, coords, 0 );
 
         TS_ASSERT( no );
     }
@@ -237,7 +240,7 @@ public:
      */
     void testConstructionConst()
     {
-        typedef WNeighborhoodIteratorConst< double > NI;
+        typedef WNeighborhoodIteratorConst< double, WBoundaryStrategyDefault< double > > NI;
 
         // create an invalid iterator
         TS_ASSERT_THROWS_NOTHING( NI() );
@@ -254,9 +257,9 @@ public:
         boost::array< std::size_t, 3 > coords = { { 0, 0, 0 } };  // NOLINT braces
         WBoundaryStrategyDefault< double > bs( -1 );
 
-        TS_ASSERT_THROWS_NOTHING( NI( &g, &vs, nbh, bs, coords, 0 ) );
+        TS_ASSERT_THROWS_NOTHING( NI( &g, &vs, &nbh, &bs, coords, 0 ) );
 
-        NI no( &g, &vs, nbh, bs, coords, 0 );
+        NI no( &g, &vs, &nbh, &bs, coords, 0 );
 
         TS_ASSERT( no );
     }
@@ -272,10 +275,10 @@ public:
         boost::array< std::size_t, 3 > coords = { { 0, 0, 0 } };  // NOLINT braces
         WBoundaryStrategyClamp< double > bs;
 
-        WNeighborhoodIterator< double > ni( &g, &vs, nbh, bs, coords, 0 );
+        WNeighborhoodIterator< double, WBoundaryStrategyClamp< double > > ni( &g, &vs, &nbh, &bs, coords, 0 );
 
-        WNeighborhoodIterator< double > begin = ni;
-        WNeighborhoodIterator< double > end( &g, &vs, nbh, bs, coords, 26 );
+        WNeighborhoodIterator< double, WBoundaryStrategyClamp< double > > begin = ni;
+        WNeighborhoodIterator< double, WBoundaryStrategyClamp< double > > end( &g, &vs, &nbh, &bs, coords, 26 );
 
         for( int i = 0; i < 26; ++i )
         {
@@ -310,10 +313,10 @@ public:
         boost::array< std::size_t, 3 > coords = { { 0, 0, 0 } };  // NOLINT braces
         WBoundaryStrategyClamp< double > bs;
 
-        WNeighborhoodIteratorConst< double > ni( &g, &vs, nbh, bs, coords, 0 );
+        WNeighborhoodIteratorConst< double, WBoundaryStrategyClamp< double > > ni( &g, &vs, &nbh, &bs, coords, 0 );
 
-        WNeighborhoodIteratorConst< double > begin = ni;
-        WNeighborhoodIteratorConst< double > end( &g, &vs, nbh, bs, coords, 26 );
+        WNeighborhoodIteratorConst< double, WBoundaryStrategyClamp< double > > begin = ni;
+        WNeighborhoodIteratorConst< double, WBoundaryStrategyClamp< double > > end( &g, &vs, &nbh, &bs, coords, 26 );
 
         for( int i = 0; i < 26; ++i )
         {
@@ -350,11 +353,11 @@ public:
 
         // TODO( reichenbach ): this test could be a little more sophisticated
 
-        WNeighborhoodIterator< double > ni( &g, &vs, nbh, bs, coords, 0 );
+        WNeighborhoodIterator< double, WBoundaryStrategyDefault< double > > ni( &g, &vs, &nbh, &bs, coords, 0 );
 
         TS_ASSERT_THROWS_NOTHING( ni = ni );
 
-        WNeighborhoodIteratorConst< double > nic( &g, &vs, nbh, bs, coords, 0 );
+        WNeighborhoodIteratorConst< double, WBoundaryStrategyDefault< double > > nic( &g, &vs, &nbh, &bs, coords, 0 );
 
         TS_ASSERT_THROWS_NOTHING( nic = nic );
     }
@@ -370,15 +373,15 @@ public:
         boost::array< std::size_t, 3 > coords = { { 0, 0, 0 } };  // NOLINT braces
         WBoundaryStrategyClamp< double > bs;
 
-        WNeighborhoodIterator< double > ni( &g, &vs, nbh, bs, coords, 0 );
+        WNeighborhoodIterator< double, WBoundaryStrategyClamp< double > > ni( &g, &vs, &nbh, &bs, coords, 0 );
 
         // copy constructor
-        WNeighborhoodIteratorConst< double > nic( ni );
+        WNeighborhoodIteratorConst< double, WBoundaryStrategyClamp< double > > nic( ni );
 
         TS_ASSERT( nic );
         TS_ASSERT( nic == ni );
 
-        WNeighborhoodIteratorConst< double > nid;
+        WNeighborhoodIteratorConst< double, WBoundaryStrategyClamp< double > > nid;
         nid = ni++;
 
         TS_ASSERT( nid );
@@ -413,13 +416,13 @@ public:
             // these are the expected indices
             int ref[] = { 1, 3, 4, 9, 10, 12, 13 };  // NOLINT braces
 
-            NeighborListVisitor* visitor = new NeighborListVisitor( 0 );
+            NeighborListVisitor< WBoundaryStrategyDefault< double > >* visitor = new NeighborListVisitor< WBoundaryStrategyDefault< double > >( 0 );
 
             WNeighborhood nh = makeMoore( 1 );
-            WBoundaryStrategy< double >* bs = new WBoundaryStrategyDefault< double >( -1 );
+            WBoundaryStrategyDefault< double > bs( -1 );
 
             visitor->setNeighborhood( nh );
-            visitor->setBoundaryStrategy( bs );
+            visitor->setBoundaryStrategy( &bs );
 
             // this will call the non-const double operator of the visitor
             vm->applyVisitor( visitor );
@@ -429,7 +432,6 @@ public:
             TS_ASSERT_EQUALS( indices.size(), 7 );
             TS_ASSERT_SAME_DATA( &indices[ 0 ], ref, sizeof( int ) * 7 );
 
-            delete bs;
             delete visitor;
         }
 
@@ -437,13 +439,13 @@ public:
             // these are the expected indices
             int ref[] = { 1, 2, 4, 5, 7, 8, 10, 11, 13, 16, 17, 19, 20, 22, 23, 25, 26 };  // NOLINT braces
 
-            NeighborListVisitor* visitor = new NeighborListVisitor( 14 );
+            NeighborListVisitor< WBoundaryStrategyDefault< double > >* visitor = new NeighborListVisitor< WBoundaryStrategyDefault< double > >( 14 );
 
             WNeighborhood nh = makeMoore( 1 );
-            WBoundaryStrategy< double >* bs = new WBoundaryStrategyDefault< double >( -1 );
+            WBoundaryStrategyDefault< double > bs( -1 );
 
             visitor->setNeighborhood( nh );
-            visitor->setBoundaryStrategy( bs );
+            visitor->setBoundaryStrategy( &bs );
 
             // this will call the non-const double operator of the visitor
             vm->applyVisitor( visitor );
@@ -453,7 +455,6 @@ public:
             TS_ASSERT_EQUALS( indices.size(), 17 );
             TS_ASSERT_SAME_DATA( &indices[ 0 ], ref, sizeof( int ) * 17 );
 
-            delete bs;
             delete visitor;
         }
     }
@@ -483,13 +484,13 @@ public:
                            0,  0,  1,  0,      1,  3,  3,  4,
                            9,  9, 10,  9,  9, 10, 12, 12, 13 };  // NOLINT braces
 
-            NeighborListVisitor* visitor = new NeighborListVisitor( 0 );
+            NeighborListVisitor< WBoundaryStrategyClamp< double > >* visitor = new NeighborListVisitor< WBoundaryStrategyClamp< double > >( 0 );
 
             WNeighborhood nh = makeMoore( 1 );
-            WBoundaryStrategy< double >* bs = new WBoundaryStrategyClamp< double >();
+            WBoundaryStrategyClamp< double > bs;
 
             visitor->setNeighborhood( nh );
-            visitor->setBoundaryStrategy( bs );
+            visitor->setBoundaryStrategy( &bs );
 
             vm->applyVisitor( visitor );
 
@@ -498,7 +499,6 @@ public:
             TS_ASSERT_EQUALS( indices.size(), 26 );
             TS_ASSERT_SAME_DATA( &indices[ 0 ], ref, sizeof( int ) * 26 );
 
-            delete bs;
             delete visitor;
         }
     }
@@ -526,13 +526,13 @@ public:
             // these are the expected indices
             int ref[] = { 18, 6, 2, 1, 3, 9 };  // NOLINT braces
 
-            NeighborListVisitor* visitor = new NeighborListVisitor( 0 );
+            NeighborListVisitor< WBoundaryStrategyWrap< double > >* visitor = new NeighborListVisitor< WBoundaryStrategyWrap< double > >( 0 );
 
             WNeighborhood nh = makeVonNeumann( 1 );
-            WBoundaryStrategy< double >* bs = new WBoundaryStrategyWrap< double >();
+            WBoundaryStrategyWrap< double > bs;
 
             visitor->setNeighborhood( nh );
-            visitor->setBoundaryStrategy( bs );
+            visitor->setBoundaryStrategy( &bs );
 
             vm->applyVisitor( visitor );
 
@@ -541,7 +541,6 @@ public:
             TS_ASSERT_EQUALS( indices.size(), 6 );
             TS_ASSERT_SAME_DATA( &indices[ 0 ], ref, sizeof( int ) * 6 );
 
-            delete bs;
             delete visitor;
         }
     }
@@ -571,13 +570,13 @@ public:
                           -1, -1, -1, -1,      1, -1,  3,  4,
                           -1, -1, -1, -1,  9, 10, -1, 12, 13 };  // NOLINT braces
 
-            NeighborListVisitor* visitor = new NeighborListVisitor( 0 );
+            NeighborListVisitor< WBoundaryStrategyDefault< double > >* visitor = new NeighborListVisitor< WBoundaryStrategyDefault< double > >( 0 );
 
             WNeighborhood nh = makeMoore( 1 );
-            WBoundaryStrategy< double >* bs = new WBoundaryStrategyDefault< double >( -1 );
+            WBoundaryStrategyDefault< double > bs( -1 );
 
             visitor->setNeighborhood( nh );
-            visitor->setBoundaryStrategy( bs );
+            visitor->setBoundaryStrategy( &bs );
 
             // this calls the const double version of the operator of the visitor
             boost::shared_ptr< ValueMapper const > cvm( vm );
@@ -588,7 +587,6 @@ public:
             TS_ASSERT_EQUALS( indices.size(), 26 );
             TS_ASSERT_SAME_DATA( &indices[ 0 ], ref, sizeof( int ) * 26 );
 
-            delete bs;
             delete visitor;
         }
     }
@@ -618,13 +616,13 @@ public:
                            0,  0,  1,  0,      1,  3,  3,  4,
                            9,  9, 10,  9,  9, 10, 12, 12, 13 };  // NOLINT braces
 
-            NeighborListVisitor* visitor = new NeighborListVisitor( 0 );
+            NeighborListVisitor< WBoundaryStrategyClamp< double > >* visitor = new NeighborListVisitor< WBoundaryStrategyClamp< double > >( 0 );
 
             WNeighborhood nh = makeMoore( 1 );
-            WBoundaryStrategy< double >* bs = new WBoundaryStrategyClamp< double >();
+            WBoundaryStrategyClamp< double > bs;
 
             visitor->setNeighborhood( nh );
-            visitor->setBoundaryStrategy( bs );
+            visitor->setBoundaryStrategy( &bs );
 
             boost::shared_ptr< ValueMapper const > cvm( vm );
             cvm->applyVisitor( visitor );
@@ -634,7 +632,6 @@ public:
             TS_ASSERT_EQUALS( indices.size(), 26 );
             TS_ASSERT_SAME_DATA( &indices[ 0 ], ref, sizeof( int ) * 26 );
 
-            delete bs;
             delete visitor;
         }
     }
@@ -662,13 +659,13 @@ public:
             // these are the expected indices
             int ref[] = { 18, 6, 2, 1, 3, 9 };  // NOLINT braces
 
-            NeighborListVisitor* visitor = new NeighborListVisitor( 0 );
+            NeighborListVisitor< WBoundaryStrategyWrap< double > >* visitor = new NeighborListVisitor< WBoundaryStrategyWrap< double > >( 0 );
 
             WNeighborhood nh = makeVonNeumann( 1 );
-            WBoundaryStrategy< double >* bs = new WBoundaryStrategyWrap< double >();
+            WBoundaryStrategyWrap< double > bs;
 
             visitor->setNeighborhood( nh );
-            visitor->setBoundaryStrategy( bs );
+            visitor->setBoundaryStrategy( &bs );
 
             boost::shared_ptr< ValueMapper const > cvm( vm );
             cvm->applyVisitor( visitor );
@@ -678,7 +675,6 @@ public:
             TS_ASSERT_EQUALS( indices.size(), 6 );
             TS_ASSERT_SAME_DATA( &indices[ 0 ], ref, sizeof( int ) * 6 );
 
-            delete bs;
             delete visitor;
         }
     }

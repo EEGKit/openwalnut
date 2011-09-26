@@ -53,11 +53,20 @@ class WSliceIterator;
 template< typename T >
 class WSliceIteratorConst;
 
-template< typename T >
+template< typename T, typename BoundaryStrategyT >
 class WNeighborhoodIterator;
 
-template< typename T >
+template< typename T, typename BoundaryStrategyT >
 class WNeighborhoodIteratorConst;
+
+template< typename T >
+class WBoundaryStrategyClamp;
+
+template< typename T >
+class WBoundaryStrategyWrap;
+
+template< typename T >
+class WBoundaryStrategyDefault;
 
 template< typename GridT, typename T >
 class WVoxelIterator;
@@ -94,7 +103,13 @@ public:
     typedef WSliceIterator< ValueT > SliceIterator;
 
     //! A type for voxel neighbor iterators.
-    typedef WNeighborhoodIterator< ValueT > VoxelNeighborIterator;
+    typedef WNeighborhoodIterator< ValueT, WBoundaryStrategyClamp< ValueT > > VoxelNeighborIteratorClamp;
+
+    //! A type for voxel neighbor iterators.
+    typedef WNeighborhoodIterator< ValueT, WBoundaryStrategyWrap< ValueT > > VoxelNeighborIteratorWrap;
+
+    //! A type for voxel neighbor iterators.
+    typedef WNeighborhoodIterator< ValueT, WBoundaryStrategyDefault< ValueT > > VoxelNeighborIterator;
 
     //! The standard interpolator.
     typedef WInterpolator< WInterpolationLinear< WGridRegular3D2 >, WTypeInterpolatorStandard< ValueT > > StandardInterpolator;
@@ -248,7 +263,13 @@ public:
     typedef WSliceIteratorConst< ValueT > SliceIterator;
 
     //! A type for voxel neighbor iterators.
-    typedef WNeighborhoodIteratorConst< ValueT > VoxelNeighborIterator;
+    typedef WNeighborhoodIteratorConst< ValueT, WBoundaryStrategyClamp< ValueT > > VoxelNeighborIteratorClamp;
+
+    //! A type for voxel neighbor iterators.
+    typedef WNeighborhoodIteratorConst< ValueT, WBoundaryStrategyWrap< ValueT > > VoxelNeighborIteratorWrap;
+
+    //! A type for voxel neighbor iterators.
+    typedef WNeighborhoodIteratorConst< ValueT, WBoundaryStrategyDefault< ValueT > > VoxelNeighborIterator;
 
     //! The standard interpolator.
     typedef WInterpolator< WInterpolationLinear< WGridRegular3D2 >, WTypeInterpolatorStandard< ValueT > > StandardInterpolator;
