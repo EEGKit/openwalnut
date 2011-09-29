@@ -73,7 +73,7 @@ public:
     void operator() ( WDataAccess< WGridRegular3D2, double > access )
     {
         typedef WDataAccess< WGridRegular3D2, double >::VoxelIterator VI;
-        typedef WNeighborhoodIterator< double, BoundaryStrategyT > NI; 
+        typedef WNeighborhoodIterator< double, BoundaryStrategyT > NI;
 
         VI vi = access.voxels().first;
 
@@ -109,7 +109,7 @@ public:
     void operator() ( WDataAccessConst< WGridRegular3D2, double > const access )
     {
         typedef WDataAccessConst< WGridRegular3D2, double >::VoxelIterator VI;
-        typedef WNeighborhoodIteratorConst< double, BoundaryStrategyT > NI; 
+        typedef WNeighborhoodIteratorConst< double, BoundaryStrategyT > NI;
 
         VI vi = access.voxels().first;
 

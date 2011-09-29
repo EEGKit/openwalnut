@@ -333,7 +333,8 @@ public:
      * \return A pair of begin and end iterators for the neighbors of the voxel currently pointed to by this iterator.
      */
     template< typename BoundaryStrategyT >
-    std::pair< WNeighborhoodIterator< T, BoundaryStrategyT >, WNeighborhoodIterator< T, BoundaryStrategyT > > neighbors( WNeighborhood* nbh, BoundaryStrategyT* bs )
+    std::pair< WNeighborhoodIterator< T, BoundaryStrategyT >, WNeighborhoodIterator< T, BoundaryStrategyT > > neighbors( WNeighborhood* nbh,
+                                                                                                                         BoundaryStrategyT* bs )
     {
         return std::make_pair( WNeighborhoodIterator< T, BoundaryStrategyT >( m_grid, m_valueSet, nbh, bs, this->operator() (), 0 ),
                                WNeighborhoodIterator< T, BoundaryStrategyT >( m_grid, m_valueSet, nbh, bs, this->operator() (), nbh->size() ) );

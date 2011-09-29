@@ -72,7 +72,10 @@
 #include "WMTemplate.h"
 
 // This line is needed by the module loader to actually find your module. You need to add this to your module too. Do NOT add a ";" here.
-W_LOADABLE_MODULE( WMTemplate )
+// W_LOADABLE_MODULE( WMTemplate )
+
+// Note that this only works for a single module per shared library. If you want to add multiple modules, LoadModules.cpp that comes with the
+// template module shows how to do it.
 
 WMTemplate::WMTemplate():
     WModule()

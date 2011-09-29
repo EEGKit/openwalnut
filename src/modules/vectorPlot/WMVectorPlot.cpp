@@ -228,7 +228,7 @@ osg::ref_ptr<osg::Geometry> WMVectorPlot::buildPlotSlices()
                     vertices->push_back( osg::Vec3( pos[ 0 ] + vec[ 0 ], pos[ 1 ] + vec[ 1 ], pos[ 2 ] + vec[ 2 ] ) );
                     vertices->back()[ i ] = slices[ i ];
                 }
-                
+
                 if( m_coloringMode->get( true ) )
                 {
                     colors->push_back( osg::Vec4( fabs( vec[ 0 ] ), fabs( vec[ 1 ] ), fabs( vec[ 2 ] ), 1.0 ) );

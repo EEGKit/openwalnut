@@ -217,7 +217,7 @@ void WMData::moduleMain()
     {
         infoLog() << "No data loaded!";
     }
-    
+
     m_output->updateData( m_dataSet );
     ready();
 
