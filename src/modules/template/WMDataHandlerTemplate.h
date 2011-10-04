@@ -108,6 +108,13 @@ protected:
 
 private:
 
+    /**
+     * Do various things with a scalar dataset.
+     *
+     * \param ds The dataset to do various things with.
+     */
+    void processScalarSet( WDataSet2< WGridRegular3D2, WScalarStructural >::ConstSPtr const& ds );
+
     //! An input connector for the data.
     boost::shared_ptr< WModuleInputData< WDataSet2Base > > m_input;
 

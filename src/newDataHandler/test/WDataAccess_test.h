@@ -249,7 +249,7 @@ public:
         }
 
         {
-            typedef WDataAccessConst< WGridRegular3D2, WDataProxy< unsigned char > > AccessUCharConst;
+            typedef WDataAccessConst< WGridRegular3D2, WDataProxyConst< unsigned char > > AccessUCharConst;
             AccessUCharConst access = vmc->getAccess< unsigned char >();
             AccessUCharConst::VoxelIterator vi, ve;
 
@@ -286,9 +286,9 @@ public:
         }
 
         {
-            WDataAccessConst< WGridRegular3D2, WDataProxy< double > > access = vmc->getAccess< double >();
+            WDataAccessConst< WGridRegular3D2, WDataProxyConst< double > > access = vmc->getAccess< double >();
 
-            typedef WInterpolator< WInterpolationLinear< WGridRegular3D2 >, WTypeInterpolatorStandard< WDataProxy< double > > > Interpolator;
+            typedef WInterpolator< WInterpolationLinear< WGridRegular3D2 >, WTypeInterpolatorStandard< WDataProxyConst< double > > > Interpolator;
             Interpolator ip = access.createInterpolator< WInterpolationLinear, WTypeInterpolatorStandard >();
 
             WGridRegular3D2::CoordinateType coords = { { 0.0, 0.0, 0.0 } };  // NOLINT

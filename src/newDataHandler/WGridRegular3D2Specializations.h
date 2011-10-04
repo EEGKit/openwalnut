@@ -74,9 +74,6 @@ class WVoxelIterator;
 template< typename GridT, typename T >
 class WVoxelIteratorConst;
 
-// ########################################### WIndexMap for this grid #######################################################
-// maybe move this to its own header
-
 // ########################################### WDataAccess for this grid #######################################################
 
 /**
@@ -92,6 +89,9 @@ public:
 
     //! The type of the values in the dataset.
     typedef ValueT ValueType;
+
+    //! The type that gets returned by access functions.
+    typedef typename ValueTypeTraits< ValueT >::ReturnType ReturnType;
 
     //! The type of the index mapper.
     typedef WIndexMap< WGridRegular3D2 > IndexMapType;
@@ -120,7 +120,7 @@ public:
      * \param grid the grid needed to access the data
      * \param valueSet the values
      */
-    WDataAccess( typename GridType::ConstSPtr grid, typename WValueSet2< ValueType >::SPtr valueSet ):
+    WDataAccess( typename GridType::ConstSPtr grid, typename ValueTypeTraits< ValueType >::ValueSetType::SPtr valueSet ):
         m_grid( grid ),
         m_valueSet( valueSet )
     {
@@ -135,7 +135,7 @@ public:
      *
      * \return A reference to the data.
      */
-    ValueT& getAt( std::size_t x, std::size_t y, std::size_t z );
+    ReturnType getAt( std::size_t x, std::size_t y, std::size_t z );
 
     /**
      * Get the data at a given position.
@@ -144,7 +144,7 @@ public:
      *
      * \return A reference to the data.
      */
-    ValueT& getAt( WGridRegular3D2::VoxelIndex const& vox );
+    ReturnType getAt( WGridRegular3D2::VoxelIndex const& vox );
 
     /**
      * Creates a standard (tri-)linear interpolator.
@@ -218,11 +218,12 @@ private:
     /**
      * The valueset.
      */
-    typename WValueSet2< ValueType >::SPtr m_valueSet;
+    typename ValueTypeTraits< ValueType >::ValueSetType::SPtr m_valueSet;
 };
 
 template< typename ValueT >
-ValueT& WDataAccess< WGridRegular3D2, ValueT >::getAt( WGridRegular3D2::VoxelIndex const& vox )
+typename WDataAccess< WGridRegular3D2, ValueT >::ReturnType WDataAccess< WGridRegular3D2, ValueT >::getAt(
+                                                            WGridRegular3D2::VoxelIndex const& vox )
 {
     // we use the index map to convert from grid space to valueset index
     std::size_t index = IndexMapType::getVoxelIndex( *m_grid.get(), vox );
@@ -230,7 +231,8 @@ ValueT& WDataAccess< WGridRegular3D2, ValueT >::getAt( WGridRegular3D2::VoxelInd
 }
 
 template< typename ValueT >
-ValueT& WDataAccess< WGridRegular3D2, ValueT >::getAt( std::size_t x, std::size_t y, std::size_t z )
+typename WDataAccess< WGridRegular3D2, ValueT >::ReturnType WDataAccess< WGridRegular3D2, ValueT >::getAt(
+                                                            std::size_t x, std::size_t y, std::size_t z )
 {
     WGridRegular3D2::VoxelIndex vox = { { x, y, z } }; // NOLINT not a line for every brace
     // as above
@@ -252,6 +254,9 @@ public:
 
     //! The type of the values in the dataset.
     typedef ValueT ValueType;
+
+    //! The type that gets returned by access functions.
+    typedef typename ValueTypeTraits< ValueT >::ConstReturnType ReturnType;
 
     //! The type of the index mapper.
     typedef WIndexMap< WGridRegular3D2 > IndexMapType;
@@ -280,7 +285,7 @@ public:
      * \param grid the grid needed to access the data
      * \param valueSet the values
      */
-    WDataAccessConst( typename GridType::ConstSPtr grid, typename WValueSet2< ValueType >::ConstSPtr valueSet ):
+    WDataAccessConst( typename GridType::ConstSPtr grid, typename ValueTypeTraits< ValueType >::ValueSetType::ConstSPtr valueSet ):
         m_grid( grid ),
         m_valueSet( valueSet )
     {
@@ -295,7 +300,7 @@ public:
      *
      * \return A reference to the data.
      */
-    ValueT const& getAt( std::size_t x, std::size_t y, std::size_t z ) const;
+    ReturnType getAt( std::size_t x, std::size_t y, std::size_t z ) const;
 
     /**
      * Get the data at a given position.
@@ -304,7 +309,7 @@ public:
      *
      * \return A reference to the data.
      */
-    ValueT const& getAt( WGridRegular3D2::VoxelIndex const& vox ) const;
+    ReturnType getAt( WGridRegular3D2::VoxelIndex const& vox ) const;
 
     /**
      * Creates a standard (tri-)linear interpolator.
@@ -380,18 +385,20 @@ private:
     /**
      * The valueset.
      */
-    typename WValueSet2< ValueType >::ConstSPtr m_valueSet;
+    typename ValueTypeTraits< ValueType >::ValueSetType::ConstSPtr m_valueSet;
 };
 
 template< typename ValueT >
-ValueT const& WDataAccessConst< WGridRegular3D2, ValueT >::getAt( WGridRegular3D2::VoxelIndex const& vox ) const
+typename WDataAccessConst< WGridRegular3D2, ValueT >::ReturnType WDataAccessConst< WGridRegular3D2, ValueT >::getAt(
+                                                WGridRegular3D2::VoxelIndex const& vox ) const
 {
     std::size_t index = IndexMapType::getVoxelIndex( *m_grid.get(), vox );
     return m_valueSet->operator[] ( index );
 }
 
 template< typename ValueT >
-ValueT const& WDataAccessConst< WGridRegular3D2, ValueT >::getAt( std::size_t x, std::size_t y, std::size_t z ) const
+typename WDataAccessConst< WGridRegular3D2, ValueT >::ReturnType WDataAccessConst< WGridRegular3D2, ValueT >::getAt(
+                                                std::size_t x, std::size_t y, std::size_t z ) const
 {
     WGridRegular3D2::VoxelIndex vox = { { x, y, z } }; // NOLINT not a line for every brace
     // as above
@@ -448,6 +455,8 @@ public:
         boost::array< double, 3 > a = { { c[ 0 ] - static_cast< int >( c[ 0 ] ),
                                           c[ 1 ] - static_cast< int >( c[ 1 ] ),
                                           c[ 2 ] - static_cast< int >( c[ 2 ] ) } };  // NOLINT
+
+        // TODO boundary check, correct value for *success
 
         weights[ 0 ] = ( 1.0 - a[ 0 ] ) * ( 1.0 - a[ 1 ] ) * ( 1.0 - a[ 2 ] );
         weights[ 1 ] = a[ 0 ] * ( 1.0 - a[ 1 ] ) * ( 1.0 - a[ 2 ] );

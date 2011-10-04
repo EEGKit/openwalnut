@@ -28,6 +28,10 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
 
+// forward declaration
+template< typename T >
+struct ValueTypeTraits;
+
 /**
  * The valueset base class. This class contains only the base information needed: its size. It represents the actual date that resides <b>somewhere</b>. The derived classes can then handle storage.
  */
@@ -98,10 +102,10 @@ public:
     typedef ValueT ValueType;
 
     //! The type of values returned by this valueset.
-    typedef ValueT& ValueReturnType;
+    typedef typename ValueTypeTraits< ValueT >::ReturnType ValueReturnType;
 
     //! The type of values returned by this valueset when using const functions.
-    typedef ValueT const& ValueReturnTypeConst;
+    typedef typename ValueTypeTraits< ValueT >::ConstReturnType ValueReturnTypeConst;
 
     /**
      * Convenience typedef for a boost::shared_ptr< WValueSet2<...> >.
@@ -340,11 +344,11 @@ public:
     //! The value type of this valueset when const.
     typedef WDataProxyConst< T > ValueTypeConst;
 
-    //! The type returned by access operators.
-    typedef ValueType ValueReturnType;
+    //! The type of values returned by this valueset.
+    typedef typename ValueTypeTraits< WDataProxy< T > >::ReturnType ValueReturnType;
 
-    //! The type returned by const access operators.
-    typedef ValueTypeConst ValueReturnTypeConst;
+    //! The type of values returned by this valueset when using const functions.
+    typedef typename ValueTypeTraits< WDataProxy< T > >::ConstReturnType ValueReturnTypeConst;
 
     /**
      * Convenience typedef for a boost::shared_ptr< WValueSet2<...> >.
@@ -375,7 +379,7 @@ public:
      *
      * \return The data proxy object.
      */
-    virtual ValueTypeConst operator[]( size_t index ) const = 0;
+    virtual ValueReturnTypeConst operator[]( size_t index ) const = 0;
 
     /**
      * Non-const access operator. Returns a data proxy object that references
@@ -389,7 +393,7 @@ public:
      *
      * \return The data proxy object.
      */
-    virtual ValueType operator[]( size_t index ) = 0;
+    virtual ValueReturnType operator[]( size_t index ) = 0;
 
     /**
      * Set the data in the valueset to the given data. This actually does all the
@@ -445,11 +449,11 @@ public:
     //! The value type of this valueset when const.
     typedef WDataProxyConst< TargetT > ValueTypeConst;
 
-    //! The type returned by access operators.
-    typedef ValueType ValueReturnType;
+    //! The type of values returned by this valueset.
+    typedef typename ValueTypeTraits< WDataProxy< TargetT > >::ReturnType ValueReturnType;
 
-    //! The type returned by const access operators.
-    typedef ValueTypeConst ValueReturnTypeConst;
+    //! The type of values returned by this valueset when using const functions.
+    typedef typename ValueTypeTraits< WDataProxy< TargetT > >::ConstReturnType ValueReturnTypeConst;
 
     /**
      * Constructs a proxy valueset.
@@ -479,9 +483,9 @@ public:
      *
      * \return The data proxy object.
      */
-    ValueType operator[] ( std::size_t index )
+    ValueReturnType operator[] ( std::size_t index )
     {
-        return ValueType( this, index );
+        return ValueReturnType( this, index );
     }
 
     /**
@@ -495,9 +499,9 @@ public:
      *
      * \return The data proxy object.
      */
-    ValueTypeConst operator[] ( std::size_t index ) const
+    ValueReturnTypeConst operator[] ( std::size_t index ) const
     {
-        return ValueTypeConst( this, index );
+        return ValueReturnTypeConst( this, index );
     }
 
     /**
@@ -591,6 +595,16 @@ public:
         return m_result;
     }
 
+    /**
+     * Get a const pointer to the proxy valueset.
+     *
+     * \return The proxy valueset.
+     */
+    typename WValueSet2< WDataProxy< T > >::ConstSPtr getConst()
+    {
+        return m_result;
+    }
+
 private:
 
     //! The pointer to the valueset containing the data.
@@ -598,6 +612,72 @@ private:
 
     //! The base pointer to the resulting proxy valueset.
     typename WValueSet2< WDataProxy< T > >::SPtr m_result;
+};
+
+/**
+ * A traits template that specifies ValueSet- and return types
+ * for normal and proxy values. Use this in iterators to handle the
+ * WDataProxy<> as template parameters.
+ *
+ * This is the specialization for normal values.
+ *
+ * \tparam T A value type or a WDataProxy(Const)<> of a value type.
+ */
+template< typename T >
+struct ValueTypeTraits
+{
+    //! The valueset to use with type T.
+    typedef WValueSet2< T > ValueSetType;
+
+    //! The return type for non-const access functions.
+    typedef T& ReturnType;
+
+    //! The return type for const access functions.
+    typedef T const& ConstReturnType;
+};
+
+/**
+ * A traits template that specifies ValueSet- and return types
+ * for normal and proxy values. Use this in iterators to handle the
+ * WDataProxy<> as template parameters.
+ *
+ * This is the specialization for WDataProxy<>.
+ *
+ * \tparam T A value type or a WDataProxy(Const)<> of a value type.
+ */
+template< typename T >
+struct ValueTypeTraits< WDataProxy< T > >
+{
+    //! The valueset to use with type WDataProxy< T >.
+    typedef WValueSet2< WDataProxy< T > > ValueSetType;
+
+    //! The return type for non-const access functions.
+    typedef WDataProxy< T > ReturnType;
+
+    //! The return type for const access functions.
+    typedef WDataProxyConst< T > ConstReturnType;
+};
+
+/**
+ * A traits template that specifies ValueSet- and return types
+ * for normal and proxy values. Use this in iterators to handle the
+ * WDataProxy<> as template parameters.
+ *
+ * This is the specialization for WDataProxyConst<>.
+ *
+ * \tparam T A value type or a WDataProxy(Const)<> of a value type.
+ */
+template< typename T >
+struct ValueTypeTraits< WDataProxyConst< T > >
+{
+    //! The valueset to use with type WDataProxyConst< T >.
+    typedef WValueSet2< WDataProxy< T > > ValueSetType;
+
+    //! The return type for non-const access functions.
+    typedef WDataProxyConst< T > ReturnType;
+
+    //! The return type for const access functions.
+    typedef WDataProxyConst< T > ConstReturnType;
 };
 
 #endif  // WVALUESET2_H

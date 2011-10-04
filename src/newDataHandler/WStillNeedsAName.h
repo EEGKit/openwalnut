@@ -205,14 +205,14 @@ public:
      * \return An access object for a user-defined type.
      */
     template< typename T >
-    WDataAccessConst< GridType, WDataProxy< T > > getAccess() const
+    WDataAccessConst< GridType, WDataProxyConst< T > > getAccess() const
     {
         WGetProxyValueSetVisitor< T > visitor( m_valueSet );
         typedef WStructuralTypeResolution< StructuralType, WGetProxyValueSetVisitor< T > > TypeResolution;
         TypeResolution tr( m_structuralTypeSample, &visitor );
         tr.resolve();
 
-        return WDataAccessConst< GridType, WDataProxy< T > >( m_grid, visitor.get() );
+        return WDataAccessConst< GridType, WDataProxyConst< T > >( m_grid, visitor.getConst() );
     }
 
 protected:

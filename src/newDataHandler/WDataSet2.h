@@ -124,7 +124,7 @@ public:
     /**
      * Convenience typedef for a boost::shared_ptr< const WStillNeedsAName<...> >.
      */
-    typedef boost::shared_ptr< const WDataSet2< GridType, StructuralType > > ConstSPtr;
+    typedef boost::shared_ptr< WDataSet2< GridType, StructuralType > const > ConstSPtr;
 
     /**
      * Creates an invalid dataset.
@@ -265,7 +265,7 @@ public:
      * int i = 1 + *vi;    or
      * int i = static_cast< int >( *vi ) + 1;
      *
-     * But you can do all this even of the dataset actually contained double data (with loss of precision of course).
+     * But you can do all this even if the dataset actually contained double data (with loss of precision of course).
      *
      * The integral data type is not the only thing that can be different, it could be other properties defined by the structural
      * type too, for example spherical harmonic order. However, you need the correct assignment and/or cast operators between the
@@ -293,7 +293,7 @@ public:
      * \return An access object for a user-defined type.
      */
     template< typename T >
-    WDataAccessConst< GridType, WDataProxy< T > > getAccess() const
+    WDataAccessConst< GridType, WDataProxyConst< T > > getAccess() const
     {
         return static_cast< ValueMapperType const* const >( m_valuemapper.get() )->getAccess< T >();
     }

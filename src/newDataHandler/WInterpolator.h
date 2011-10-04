@@ -128,7 +128,7 @@ private:
  * \tparam T The data type.
  */
 template< int size, typename T >
-class WInterpolationDataReferenceArray< size, WDataProxy< T > >
+class WInterpolationDataReferenceArray< size, WDataProxyConst< T > >
 {
 public:
 

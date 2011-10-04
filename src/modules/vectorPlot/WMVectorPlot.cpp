@@ -197,7 +197,7 @@ osg::ref_ptr<osg::Geometry> WMVectorPlot::buildPlotSlices()
     boost::array< int, 3 > slices = { { m_zSlice->get( true ), m_ySlice->get( true ), m_xSlice->get( true ),  } };  // NOLINT braces
     boost::array< bool, 3 > show = { { m_showOnSagittal->get( true ), m_showOnCoronal->get( true ), m_showOnAxial->get( true ) } };  // NOLINT braces
 
-    typedef WDataAccessConst< WGridRegular3D2, WDataProxy< WMatrixFixed< float, 3, 1 > > > AccessType;
+    typedef WDataAccessConst< WGridRegular3D2, WDataProxyConst< WMatrixFixed< float, 3, 1 > > > AccessType;
     AccessType access = static_cast< DataSetType const& >( *m_dataSet ).getAccess< WMatrixFixed< float, 3, 1 > >();
 
     for( int i = 0; i < 3; ++i )

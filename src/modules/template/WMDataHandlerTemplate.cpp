@@ -77,7 +77,7 @@ void WMDataHandlerTemplate::moduleMain()
     // You can also write your own structural type that describes the data you want to store in the dataset, as long as this data is of constant size
     // per voxel. Then just plug your new structural type into the WDataSet2 template and you are ready to go.
     //
-    // Writing your own grids is a bit trickier if you want to provide your own iterator types too.
+    // Writing your own grid is a bit trickier if you want to provide your own iterator types too.
 
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_input->getDataChangedCondition() );
@@ -93,7 +93,21 @@ void WMDataHandlerTemplate::moduleMain()
             break;
         }
 
+        // get the data from the input connector
         m_dataSet = m_input->getData();
+
+        // let's check if this is a scalar dataset
+        WDataSet2< WGridRegular3D2, WScalarStructural >::ConstSPtr scalarSet;
+
+        // We use boost::shared_dynamic_cast to cast the WDataSet2Base pointer to a
+        // WDataSet2< WGridRegular3D2, WScalarStructural > pointer.
+        scalarSet = boost::shared_dynamic_cast< WDataSet2< WGridRegular3D2, WScalarStructural > >( m_dataSet );
+
+        // If the cast was successful, scalarSet will be a valid pointer to a scalar dataset.
+        if( scalarSet )
+        {
+            processScalarSet( scalarSet );
+        }
     }
 }
 
@@ -126,3 +140,91 @@ void WMDataHandlerTemplate::properties()
 void WMDataHandlerTemplate::requirements()
 {
 }
+
+void WMDataHandlerTemplate::processScalarSet( WDataSet2< WGridRegular3D2, WScalarStructural >::ConstSPtr const& ds )
+{
+    // To access any data in a dataset, you first need to aquire a WDataAccess or WDataAccessConst for that dataset.
+    // The data access objects provide several methods for element access as well as a pointer to the grid used by the
+    // dataset.
+    // You can aquire an access object by two different methods. Remember that you still do not know what kind of data is
+    // actually stored in the dataset. We do know, however, that is only contains a single value per voxel, since this is
+    // a scalar dataset as described by the WScalarStructural type. So the first method is to just access the data using a
+    // set type, for example double:
+    
+    WDataAccessConst< WGridRegular3D2, WDataProxyConst< double > > access = ds->getAccess< double >();
+
+    // Here, the first template parameter is again the grid type. The choise of iterators, interpolators and data access
+    // functions depends on this parameter. For example, slice iterators are only provided for WGridRegular3D2.
+    // The second parameter is the type that will be returned by any data access operations. As we do not know the type
+    // stored in the dataset, we use a WDataProxy< double > here.
+    // The WDataProxy<> template can be used to access values as if they were of type T, where T is the template parameter
+    // of the proxy. So in our case, we can work with double values, even if the actual type of the data was int.
+    // Values will be converted via the operator= of the data types or appropriate cast operators, if provided.
+    //
+    // For scalar datasets, this is no problem. If we had a WDataSet2< WGridRegular3D2, WVectorFixedStructural< 3 > >
+    // instead, which may store a WMatrixFixed< float, 3, 1 > for example, we would need either
+    //
+    // .. WMatrixFixed< double, 3, 1 >::operator= ( WMatrixFixed< float, 3, 1 > const& m )
+    //
+    // or
+    //
+    //    WMatrixFixed< float, 3, 1 >::operator WMatrixFixed< double, 3, 1 >()
+    //
+    // to read data.
+
+    // The WDataProxy< T > itself can be cast to T, and can be set via the operator= ( T const& t ). The WDataProxyConst< T >
+    // can only be cast to T.
+    // This has an implication on the written code, because while you can do this (suppose i is an iterator):
+    //
+    // T t = *i;
+    // *i = t;
+    // *i = t + 5;
+    // t = 5 + *i;
+    //
+    // you cannot do this:
+    //
+    // t = *i + 5;
+    //
+    // Instead you have to do this:
+    //
+    // t = static_cast< T >( *i ) + 5;
+    //
+    // Also make sure to use the WDataProxyConst<> for const data access objects.
+
+    // Now we will get the grid to check the dimensions of the dataset.
+
+    WGridRegular3D2::ConstSPtr grid = access.getGrid();
+
+    // We need at least one voxel.
+    if( grid->getNbVoxelsX() < 1 || grid->getNbVoxelsY() < 1 || grid->getNbVoxelsZ() < 1 )
+    {
+        return;
+    }
+
+    // Now we can access voxel (0,0,0).
+    // Note that bounds checking is only done in debug mode.
+    double d = access.getAt( 0, 0, 0 );
+
+    // We could also do something like access.getAt( 0, 0, 0 ) = d if we had a mutable access object.
+
+    // Let's find the maximum value in our dataset. We will do this with a naive implementation first.
+    WGridRegular3D2::VoxelIndex idx;
+    double max = -10e15;
+
+    for( idx[ 0 ] = 0; idx[ 0 ] < grid->getNbVoxelsX(); ++idx[ 0 ] )
+    {
+        for( idx[ 1 ] = 0; idx[ 1 ] < grid->getNbVoxelsY(); ++idx[ 1 ] )
+        {
+            for( idx[ 2 ] = 0; idx[ 2 ] < grid->getNbVoxelsZ(); ++idx[ 2 ] )
+            {
+                if( max < access.getAt( idx ) )
+                {
+                    max = access.getAt( idx );
+                }
+            }
+        }
+    }
+
+    infoLog() << "Maximum value of scalar dataset is: " << max;
+}
+

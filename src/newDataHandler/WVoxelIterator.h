@@ -29,6 +29,7 @@
 #include <utility>
 
 #include "WNeighborhood.h"
+#include "WValueSet2.h"
 
 // ################################ forward declarations #######################################
 
@@ -131,6 +132,9 @@ public:
 
     //! A typedef for the grid's type.
     typedef GridT GridType;
+
+    //! The type of the valueset used by this iterator.
+    typedef typename ValueTypeTraits< T >::ValueSetType ValueSetType;
 
     /**
      * Default constructor, creates an invalid iterator.
@@ -350,7 +354,7 @@ protected:
      * \param valueSet The respective valueset.
      * \param idx The index of the voxel that is currently pointed to.
      */
-    WVoxelIterator( GridT const* grid, WValueSet2< T >* valueSet, std::size_t idx )
+    WVoxelIterator( GridT const* grid, ValueSetType* valueSet, std::size_t idx )
         : m_grid( grid ),
           m_valueSet( valueSet ),
           m_index( idx )
@@ -363,7 +367,7 @@ private:
     GridT const* m_grid;
 
     //! The values.
-    WValueSet2< T >* m_valueSet; // the valueset is not const for the non-const iterator
+    ValueSetType* m_valueSet; // the valueset is not const for the non-const iterator
 
     //! The current voxel.
     std::size_t m_index;
@@ -395,6 +399,9 @@ public:
     // The const data access is a friend so it can create iterators using the non-default constructor.
     template< typename GridTT, typename ValueT >
     friend class WDataAccessConst;
+
+    //! The type of the valueset used by this iterator.
+    typedef typename ValueTypeTraits< T >::ValueSetType ValueSetType;
 
     /**
      * Default constructor, create an invalid iterator.
@@ -519,7 +526,7 @@ public:
      * \return A reference to the data for the voxel the iterator currently points to.
      */
     // TODO( reichenbach ): add a WInvalidIteratorException and a WNoValidVoxel(name?)Exception
-    typename WValueSet2< T >::ValueReturnTypeConst operator*() const
+    typename ValueSetType::ValueReturnTypeConst operator*() const
     {
 #ifdef _DEBUG
         if( !m_grid || !m_valueSet )
@@ -641,7 +648,7 @@ protected:
      * \param valueSet The respective valueset.
      * \param idx The index of the voxel that is currently pointed to.
      */
-    WVoxelIteratorConst( GridT const* grid, WValueSet2< T > const* valueSet, std::size_t idx )
+    WVoxelIteratorConst( GridT const* grid, ValueSetType const* valueSet, std::size_t idx )
         : m_grid( grid ),
           m_valueSet( valueSet ),
           m_index( idx )
@@ -654,7 +661,7 @@ private:
     GridT const* m_grid;
 
     //! The values.
-    WValueSet2< T > const* m_valueSet;
+    ValueSetType const* m_valueSet;
 
     //! The current voxel.
     std::size_t m_index;

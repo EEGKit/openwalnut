@@ -45,7 +45,9 @@ public:
     typedef ValueT ValueType;
 
     //! The type of the valueset.
-    typedef WValueSet2< ValueType > ValueSetType;
+
+    typedef typename ValueTypeTraits< ValueT >::ValueSetType ValueSetType;
+    // typedef WValueSet2< ValueType > ValueSetType;
 
     /**
      * The actual calculation of the interpolated value. This is the version for linear

@@ -358,6 +358,9 @@ public:
     // the test is a friend
     friend class WNeighborhoodIteratorTest;
 
+    //! The type that gets returned by access functions.
+    typedef typename ValueTypeTraits< T >::ValueSetType ValueSetType;
+
     /**
      * Default constructor, creates an invalid iterator.
      */
@@ -553,7 +556,7 @@ public:
      *
      * \return A reference to the data.
      */
-    typename WValueSet2< T >::ValueReturnType operator* ()
+    typename ValueSetType::ValueReturnType operator* ()
     {
         return m_boundaryStrategy->getValue( this->operator()(), m_grid, m_valueSet );
     }
@@ -590,7 +593,7 @@ protected:
      * \param voxel The coords of the voxel who's neighbors shall be iterated.
      * \param nbIndex The index of the initial neighbor in the provided neighborhood.
      */
-    WNeighborhoodIterator( WGridRegular3D2 const* grid, WValueSet2< T >* valueSet, WNeighborhood* nb,
+    WNeighborhoodIterator( WGridRegular3D2 const* grid, ValueSetType* valueSet, WNeighborhood* nb,
                            BoundaryStrategyT* strat, WGridRegular3D2::VoxelIndex const& voxel, std::size_t nbIndex )
         : m_grid( grid ),
           m_valueSet( valueSet ),
@@ -623,7 +626,7 @@ private:
     WGridRegular3D2 const* m_grid;
 
     //! The valueset.
-    WValueSet2< T >* m_valueSet;
+    ValueSetType* m_valueSet;
 
     //! Stores the neighbor's relative coords.
     WNeighborhood* m_neighborhood;
@@ -667,6 +670,9 @@ public:
 
     // the test is a friend
     friend class WNeighborhoodIteratorTest;
+
+    //! The type that gets returned by access functions.
+    typedef typename ValueTypeTraits< T >::ValueSetType ValueSetType;
 
     /**
      * Default constructor, creates an invalid iterator.
@@ -891,7 +897,7 @@ public:
      *
      * \return A const reference to the data.
      */
-    typename WValueSet2< T >::ValueReturnTypeConst operator* () const
+    typename ValueSetType::ValueReturnTypeConst operator* () const
     {
         return m_boundaryStrategy->getValue( this->operator()(), m_grid, m_valueSet );
     }
@@ -928,7 +934,7 @@ protected:
      * \param voxel The coords of the voxel who's neighbors shall be iterated.
      * \param nbIndex The index of the initial neighbor in the provided neighborhood.
      */
-    WNeighborhoodIteratorConst( WGridRegular3D2 const* grid, WValueSet2< T > const* valueSet, WNeighborhood* nb,
+    WNeighborhoodIteratorConst( WGridRegular3D2 const* grid, ValueSetType const* valueSet, WNeighborhood* nb,
                                 BoundaryStrategyT* strat, WGridRegular3D2::VoxelIndex const& voxel, std::size_t nbIndex )
         : m_grid( grid ),
           m_valueSet( valueSet ),
@@ -960,7 +966,7 @@ private:
     WGridRegular3D2 const* m_grid;
 
     //! The valueset.
-    WValueSet2< T > const* m_valueSet;
+    ValueSetType const* m_valueSet;
 
     //! Stores the neighbor's relative coords.
     WNeighborhood* m_neighborhood;

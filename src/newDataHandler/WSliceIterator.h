@@ -166,7 +166,7 @@ public:
      * \return A reference to the data for the voxel the iterator currently points to.
      */
     // TODO( reichenbach ): add a WInvalidIteratorException and a WNoValidVoxel(name?)Exception
-    typename WValueSet2< T >::ValueReturnType operator*() // const?
+    typename ValueTypeTraits< T >::ReturnType operator*() // const?
     {
 #ifdef DEBUG
         if( !m_grid || !m_valueSet )
@@ -269,7 +269,8 @@ protected:
      * \param dir The orientation of the slice ( 0: xy, 1: xz, 2: yz ).
      * \param slice The index of the slice to iterate.
      */
-    WSliceIterator( WGridRegular3D2 const* grid, WValueSet2< T >* valueSet, std::size_t idx, std::size_t dir, std::size_t slice )
+    WSliceIterator( WGridRegular3D2 const* grid, typename ValueTypeTraits< T >::ValueSetType* valueSet, std::size_t idx,
+                    std::size_t dir, std::size_t slice )
         : m_grid( grid ),
           m_valueSet( valueSet )
     {
@@ -306,7 +307,7 @@ private:
     WGridRegular3D2 const* m_grid;
 
     //! The values.
-    WValueSet2< T >* m_valueSet; // the valueset is not const for the non-const iterator
+    typename ValueTypeTraits< T >::ValueSetType* m_valueSet; // the valueset is not const for the non-const iterator
 
     //! The current voxel index for the whole grid (not only the current slice).
     std::size_t m_index;
@@ -488,7 +489,7 @@ public:
      * \return A const reference to the data for the voxel the iterator currently points to.
      */
     // TODO( reichenbach ): add a WInvalidIteratorException and a WNoValidVoxel(name?)Exception
-    typename WValueSet2< T >::ValueReturnTypeConst operator*() // const?
+    typename ValueTypeTraits< T >::ConstReturnType operator*() // const?
     {
 #ifdef DEBUG
         if( !m_grid || !m_valueSet )
@@ -591,7 +592,8 @@ protected:
      * \param dir The orientation of the slice ( 0: xy, 1: xz, 2: yz ).
      * \param slice The index of the slice to iterate.
      */
-    WSliceIteratorConst( WGridRegular3D2 const* grid, WValueSet2< T > const* valueSet, std::size_t idx, std::size_t dir, std::size_t slice )
+    WSliceIteratorConst( WGridRegular3D2 const* grid, typename ValueTypeTraits< T >::ValueSetType const* valueSet, std::size_t idx,
+                         std::size_t dir, std::size_t slice )
         : m_grid( grid ),
           m_valueSet( valueSet )
     {
@@ -628,7 +630,7 @@ private:
     WGridRegular3D2 const* m_grid;
 
     //! The values.
-    WValueSet2< T > const* m_valueSet; // the valueset is not const for the non-const iterator
+    typename ValueTypeTraits< T >::ValueSetType const* m_valueSet; // the valueset is not const for the non-const iterator
 
     //! The current voxel index for the whole grid (not only the current slice).
     std::size_t m_index;
