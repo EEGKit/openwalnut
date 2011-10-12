@@ -115,6 +115,25 @@ private:
      */
     void processScalarSet( WDataSet2< WGridRegular3D2, WScalarStructural >::ConstSPtr const& ds );
 
+    /**
+     * An example on how to use a visitor to get the type of the data.
+     *
+     * \param ds The dataset.
+     */
+    void processScalarSetCorrectType( WDataSet2< WGridRegular3D2, WScalarStructural >::ConstSPtr const& ds );
+
+    /**
+     * An example on how to use neighborhood iterators. Implements an erosion operation.
+     *
+     * \param ds The dataset.
+     */
+    void erodeScalarSet( WDataSet2< WGridRegular3D2, WScalarStructural >::ConstSPtr const& ds );
+
+    /**
+     * An example on how to use slice iterators. Implements creation of a synthetic vector dataset.
+     */
+    void createVectorSet();
+
     //! An input connector for the data.
     boost::shared_ptr< WModuleInputData< WDataSet2Base > > m_input;
 

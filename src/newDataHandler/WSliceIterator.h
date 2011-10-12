@@ -33,6 +33,10 @@
 #include "WValueSet2.h"
 #include "WIndexMap.h"
 
+static std::size_t const SLICE_XY = 0;
+static std::size_t const SLICE_XZ = 1;
+static std::size_t const SLICE_YZ = 2;
+
 // ################################ forward declarations #######################################
 
 // forward declaration
