@@ -472,10 +472,6 @@ vec4 colormap( in vec4 value, float minV, float scaleV, float thresholdV, bool t
         cmapped = vector( valueDescaled, minV, scaleV );
         clip = clipZero( valueDescaled );   // vectors get clipped by their length
     }
-    else if( colormap == 7 )
-    {
-        cmapped = grayscale( value ); //TODO(aberres): adapt to own colourmap + add function
-    }
 
     // build final color
     return vec4( cmapped.rgb, cmapped.a *           // did the colormap use a alpha value?
