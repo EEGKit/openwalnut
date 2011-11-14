@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WMPROBTRACTCONTEXT_H
-#define WMPROBTRACTCONTEXT_H
+#ifndef WMGLASSBRAIN_H
+#define WMGLASSBRAIN_H
 
 #include <string>
 
@@ -34,7 +34,6 @@
 #include "../../core/graphicsEngine/shaders/WGEShader.h"
 
 #include "../../core/kernel/WModule.h"
-#include "../../core/kernel/WModuleContainer.h"
 #include "../../core/kernel/WModuleInputData.h"
 #include "../../core/kernel/WModuleOutputData.h"
 #include "../../core/kernel/WModuleInputForwardData.h"
@@ -46,19 +45,19 @@
  *
  * \ingroup modules
  */
-class WMProbTractContext: public WModuleContainer
+class WMGlassBrain: public WModule
 {
 public:
 
     /**
      *
      */
-    WMProbTractContext();
+    WMGlassBrain();
 
     /**
      *
      */
-    virtual ~WMProbTractContext();
+    virtual ~WMGlassBrain();
 
     /**
      * Gives back the name of this module.
@@ -134,4 +133,4 @@ private:
     WPropBool m_jitter; //!< Enables or disables stochastic jitter.
 };
 
-#endif  // WMPROBTRACTCONTEXT_H
+#endif  // WMGLASSBRAIN_H
