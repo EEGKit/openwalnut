@@ -40,10 +40,6 @@
  * \par
  * http://www.openwalnut.org
  * \par
- * There exist two versions of this API.
- * A simple one at http://berkeley.informatik.uni-leipzig.de/api/
- * and one with callgraphs at http://berkeley.informatik.uni-leipzig.de/apiFull/
- * \par
  * Copyright 2009-2010 OpenWalnut Community, BSV\@Uni-Leipzig and CNCF\@MPI-CBS.
  * For more information see http://www.openwalnut.org/copying
  */
@@ -153,7 +149,7 @@ int main( int argc, char** argv )
     }
 
     // the kernel, and the gui should print their version info. This helps processing crashlogs from users.
-    wlog::debug( "Walnut" ) << "Version: " << W_VERSION;
+    wlog::info( "Walnut" ) << "Version: " << W_VERSION;
 
     // initialize GUI
     // NOTE: we need a shared_ptr here since WGUI uses enable_shared_from_this.

@@ -519,7 +519,7 @@ bool WMWriteTracts::savePOVRay( boost::shared_ptr< const WDataSetFibers > fibers
     size_t currentStart = 0;
     size_t increment = m_povraySaveOnlyNth->get();
 
-    boost::shared_ptr< WProgress > progress1 = boost::shared_ptr< WProgress >( new WProgress( "Converting fibers", fibStart->size() / increment) );
+    boost::shared_ptr< WProgress > progress1 = boost::shared_ptr< WProgress >( new WProgress( "Converting fibers", fibStart->size() / increment ) );
     m_progress->addSubProgress( progress1 );
     for( size_t fidx = 0; fidx < fibStart->size(); fidx += increment )
     {
@@ -621,7 +621,7 @@ bool WMWriteTracts::savePOVRay( boost::shared_ptr< const WDataSetFibers > fibers
         "}" << std::endl << std::endl;
     }
 
-    dataFileScene << "// Enable Phong lighting for all th egeometry" << std::endl <<
+    dataFileScene << "// Enable Phong lighting for all the geometry" << std::endl <<
     dataFileScene << "#default{" << std::endl <<
                    " finish{" << std::endl <<
                    "  ambient 0" << std::endl <<

@@ -124,6 +124,8 @@ public:
      *
      * \param event the kind of signal the callback should be used for.
      * \param callback the callback.
+     *
+     * \return the connection object. Disconnect it explicitly!
      */
     boost::signals2::connection subscribeSignal( LogEvent event, LogEntryCallback callback );
 
@@ -189,7 +191,7 @@ namespace wlog
         template< typename T > WStreamedLogger operator<<( const T& loggable );
 
         // Doxygen should ignore the TypeDef below which are just an alias for std::endl etc.
-        // \cond
+        // \cond Suppress_Doxygen
         typedef std::basic_ostream< char, std::char_traits< char > > OutStreamType;
         typedef OutStreamType& ( *StreamManipulatorFunctor )( OutStreamType& );
         // \endcond

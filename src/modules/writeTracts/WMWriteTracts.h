@@ -99,17 +99,23 @@ protected:
 private:
     /**
      * Store the mesh in a json (javascript object notation) file
+     *
+     * \return true if successful
      */
     bool saveJson() const;
 
     /**
      * Store the mesh in a json (javascript object notation) file
      * using only every other vertex
+     *
+     * \return true if successful
      */
     bool saveJson2() const;
 
     /**
      * Store the mesh in a json (javascript object notation) file
+     *
+     * \return true if successful
      */
     bool saveJsonTriangles() const;
 
@@ -161,7 +167,7 @@ private:
     WPropDouble m_povrayTubeDiameter;
 
     /**
-     * Allows thinning of the data. Often useful for testing povray settings as small scene render faster.
+     * Allows thinning of the data. Often useful for testing povray settings as small scenes render faster.
      */
     WPropInt m_povraySaveOnlyNth;
 

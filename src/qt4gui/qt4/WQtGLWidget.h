@@ -39,7 +39,15 @@
 #include "core/graphicsEngine/WGECamera.h"
 #include "core/graphicsEngine/WGEViewer.h"
 
+#include "WQtGLScreenCapture.h"
+
 class WSettingAction;
+
+#ifndef _WIN32
+    typedef QGLWidget WQtGLWidgetParent;
+#else
+    typedef QWidget WQtGLWidgetParent;
+#endif
 
 /**
  * A widget containing an open gl display area. This initializes OpenGL context and adds a view to the
@@ -47,12 +55,7 @@ class WSettingAction;
  * \ingroup gui
  */
 // NOTE: to make this work with MOC, the defines must be set before MOC runs (ensured in Build system)
-class WQtGLWidget: public
-#ifndef _WIN32
-    QGLWidget
-#else
-    QWidget
-#endif
+class WQtGLWidget: public WQtGLWidgetParent
 {
     Q_OBJECT
 
@@ -76,8 +79,10 @@ public:
     virtual ~WQtGLWidget();
 
     /**
-     * returns the recommended size for the widget to allow
+     * Returns the recommended size for the widget to allow
      * parent widgets to give it a proper initial layout
+     *
+     * \return size hint of widget
      */
     QSize sizeHint() const;
 
@@ -86,7 +91,7 @@ public:
      */
     enum CameraManipulators
     {
-        TRACKBALL, TWO_D
+        TRACKBALL, TWO_D, NO_OP
     };
 
     /**
@@ -130,6 +135,21 @@ public:
      * \return the action.
      */
     QAction* getBackgroundColorAction() const;
+
+    /**
+     * Adds a screen capture dock using this view's screen capture callback.
+     *
+     * \param parent the main window parent
+     * \return the capture dock instance.
+     */
+    WQtGLScreenCapture* getScreenCapture( WMainWindow* parent ) const;
+
+signals:
+
+    /**
+     * Signals that the first frame was rendered.
+     */
+    void renderedFirstFrame();
 
 public slots:
     /**
@@ -245,9 +265,16 @@ protected:
     WGECamera::ProjectionMode m_initialProjectionMode;
 
     /**
-     * Saves a screenshot of the widget's current content, opens a file dialog to get the filename.
+     * Custom event dispatcher. Gets called by QT's Event system every time an event got sent to this widget. This event handler
+     * processes the notifyrender events. Others get forwarded.
+     *
+     * \note QT Doc says: use event() for custom events.
+     *
+     * \param event the event that got transmitted.
+     *
+     * \return true if the event got handled properly.
      */
-    void makeScreenshot();
+    virtual bool event( QEvent* event );
 
 private:
     /**
@@ -274,6 +301,11 @@ private:
      * Action to trigger some colordialog for background-color-selection.
      */
     QAction* m_changeBGColorAction;
+
+    /**
+     * Called by the WGEViewer to notify about the first frame rendered
+     */
+    void notifyFirstRenderedFrame();
 
 private slots:
     /**

@@ -25,6 +25,7 @@
 #include <string>
 #include <iostream>
 
+#include <QtGui/QApplication>
 #include <QtGui/QColorDialog>
 #include <QtGui/QFileDialog>
 #include <QtGui/QKeyEvent>
@@ -38,11 +39,15 @@
 #include "core/common/WLogger.h"
 #include "core/common/WColor.h"
 #include "core/graphicsEngine/WGE2DManipulator.h"
+#include "core/graphicsEngine/WGENoOpManipulator.h"
 #include "core/graphicsEngine/WGEViewer.h"
 #include "core/graphicsEngine/WGEZoomTrackballManipulator.h"
 #include "core/graphicsEngine/WGraphicsEngine.h"
 #include "core/kernel/WKernel.h"
 
+#include "WQtGLScreenCapture.h"
+#include "events/WRenderedFrameEvent.h"
+#include "events/WEventTypes.h"
 #include "WSettingAction.h"
 #include "WMainWindow.h"
 
@@ -95,6 +100,8 @@ WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::
     m_Timer.start( 10 );
 #endif
 
+    m_Viewer->isFrameRendered()->getCondition()->subscribeSignal( boost::bind( &WQtGLWidget::notifyFirstRenderedFrame, this ) );
+
     // set bg color
     updateViewerBackground();
     // this action manages the above settings
@@ -133,6 +140,13 @@ void WQtGLWidget::setCameraManipulator( WQtGLWidget::CameraManipulators manipula
                                                  LL_DEBUG );
 
             m_Viewer->setCameraManipulator( new( WGE2DManipulator ) );
+            break;
+        case NO_OP:
+            WLogger::getLogger()->addLogMessage( "Switched to OSG manipulator \"WGENoOp\".",
+                                                 "WQtGLWidget(" + m_Viewer->getName() + ")",
+                                                 LL_DEBUG );
+
+            m_Viewer->setCameraManipulator( new( WGENoOpManipulator ) );
             break;
         case TRACKBALL:
         default:
@@ -251,10 +265,6 @@ void WQtGLWidget::keyReleaseEvent( QKeyEvent* event )
         case Qt::Key_2:
             setCameraManipulator( TWO_D );
             break;
-        // TODO( ebaum ): replace this
-        case Qt::Key_F12:
-            makeScreenshot();
-            break;
     }
 
     switch( event->modifiers() )
@@ -307,6 +317,17 @@ void WQtGLWidget::wheelEvent( QWheelEvent* event )
     m_Viewer->mouseEvent( WGEViewer::MOUSESCROLL, x, y, 0 );
 }
 
+bool WQtGLWidget::event( QEvent* event )
+{
+    if( event->type() == WQT_RENDERED_FRAME_EVENT )
+    {
+        emit renderedFirstFrame();
+        return true;
+    }
+
+    return WQtGLWidgetParent::event( event );
+}
+
 void WQtGLWidget::reset()
 {
     m_Viewer->reset();
@@ -355,19 +376,14 @@ void WQtGLWidget::changeBGColor()
     updateViewerBackground();
 }
 
-void WQtGLWidget::makeScreenshot()
+void WQtGLWidget::notifyFirstRenderedFrame()
 {
-    // TODO( ebaum ): replace this
-
-    // grab content first to avoid making a screenshot of the file dialog :)
-    QPixmap q = QPixmap::grabWindow( this->winId() );
-
-    QString path = QDir::currentPath() + tr( "/screenshot.png" );
-    QString fileName = QFileDialog::getSaveFileName( this, tr( "Save As" ), path, tr( "PNG Files (*.png);;All Files (*)" ) );
-
-    if( !fileName.isEmpty() )
-    {
-        q.save( fileName, tr( "png" ).toAscii() );
-        WLogger::getLogger()->addLogMessage( std::string( "Screenshot saved to " ) + fileName.toStdString(), "QtGLWidgetAll", LL_INFO );
-    }
+    QCoreApplication::postEvent( this, new WRenderedFrameEvent() );
 }
+
+WQtGLScreenCapture* WQtGLWidget::getScreenCapture( WMainWindow* parent ) const
+{
+    WQtGLScreenCapture* sc = new WQtGLScreenCapture( getViewer(), parent );
+    return sc;
+}
+

@@ -49,6 +49,15 @@ class OWDATAHANDLER_EXPORT WDataSetFibers : public WDataSet // NOLINT
 public:
 
     // some type alias for the used arrays.
+    /**
+     * Pointer to dataset.
+     */
+    typedef boost::shared_ptr< WDataSetFibers > SPtr;
+
+    /**
+     * Pointer to const dataset.
+     */
+    typedef boost::shared_ptr< const WDataSetFibers > ConstSPtr;
 
     /**
      * List of vertex coordinates in term of components of vertices.
@@ -346,14 +355,6 @@ public:
      * \return Tangent of the given vertex of the also given fiber
      */
     WPosition getTangent( size_t fiber, size_t vertex ) const;
-
-    /**
-     * saves the selected fiber bundles to a file
-     *
-     *\param filename
-     * \param active bitfield of the fiber selection
-     */
-    void saveSelected( std::string filename, boost::shared_ptr< std::vector< bool > > active ) const;
 
     /**
      * Get the bounding box.

@@ -66,4 +66,13 @@
 // when a module connection got closed.
 #define WQT_MODULE_DISCONNECT_EVENT QEvent::User + 11
 
+// a frame got rendered
+#define WQT_RENDERED_FRAME_EVENT QEvent::User + 12
+
+// a connector of a module changed state or value
+#define WQT_MODULE_CONNECTOR_EVENT QEvent::User + 13
+
+// when the screencapture update.
+#define WQT_SCREENCAPTURE_EVENT QEvent::User + 14
+
 #endif  // WEVENTTYPES_H

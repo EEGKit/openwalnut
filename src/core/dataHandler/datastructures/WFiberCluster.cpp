@@ -39,7 +39,7 @@
 // information. Since we don't have the possibility of multiple
 // InputConnectors we must agglomerate those into one object. Please remove this.
 // initializes the variable and provides a linker reference
-// \cond
+// \cond Suppress_Doxygen
 boost::shared_ptr< WPrototyped > WFiberCluster::m_prototype = boost::shared_ptr< WPrototyped >();
 // \endcond
 
@@ -100,7 +100,7 @@ void WFiberCluster::merge( WFiberCluster& other ) // NOLINT
 }
 
 // NODOXYGEN
-// \cond
+// \cond Suppress_Doxygen
 void WFiberCluster::setDataSetReference( boost::shared_ptr< const WDataSetFiberVector > fibs )
 {
     m_fibs = fibs;
@@ -374,4 +374,14 @@ boost::shared_ptr< WFiber > WFiberCluster::getLongestLine() const
         generateLongestLine();
     }
     return m_longestLine;
+}
+
+WBoundingBox WFiberCluster::getBoundingBox() const
+{
+    WBoundingBox result;
+    for( std::list< size_t >::const_iterator cit = m_memberIndices.begin(); cit != m_memberIndices.end(); ++cit )
+    {
+        result.expandBy( computeBoundingBox( m_fibs->at( *cit ) ) );
+    }
+    return result;
 }

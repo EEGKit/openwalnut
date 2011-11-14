@@ -71,6 +71,8 @@ public:
 
     /**
      * Returns true if there are no fibers in that cluster, false otherwise.
+     *
+     * \return true if empty
      */
     bool empty() const;
 
@@ -84,6 +86,8 @@ public:
 
     /**
      * Returns a const reference of all indices inside this cluster
+     *
+     * \return the index list
      */
     const std::list< size_t >& getIndices() const;
 
@@ -122,6 +126,8 @@ public:
     /**
      * Gets the color of which all fibers of this clusters should be painted
      * with.
+     *
+     * \return cluster color.
      */
     WColor getColor() const;
 
@@ -186,7 +192,7 @@ public:
     // dataset is, we need it in the WMVoxelizer module as well as the clustering
     // information. Since we don't have the possibility of multiple
     // InputConnectors we must agglomerate those into one object. Please remove this.
-    // \cond
+    // \cond Suppress_Doxygen
     void setDataSetReference( boost::shared_ptr< const WDataSetFiberVector > fibs );
     boost::shared_ptr< const WDataSetFiberVector > getDataSetReference() const;
     static boost::shared_ptr< WPrototyped > getPrototype();
@@ -216,12 +222,19 @@ public:
      */
     void generateLongestLine() const;
 
+    /**
+     * Recomputes on every call the axis aligned bounding box incorporating all tracts in this cluster.
+     *
+     * \return AABB as WBoundingBox.
+     */
+    WBoundingBox getBoundingBox() const;
+
 protected:
     // TODO(math): The only reason why we store here a Reference to the fiber
     // dataset is, we need it in the WMVoxelizer module as well as the clustering
     // information. Since we don't have the possibility of multiple
     // InputConnectors we must agglomerate those into one object. Please remove this.
-    // \cond
+    // \cond Suppress_Doxygen
     static boost::shared_ptr< WPrototyped > m_prototype;
     // \endcond
 

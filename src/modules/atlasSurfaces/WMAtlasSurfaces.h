@@ -44,13 +44,8 @@ class WDataSetScalar;
 
 
 /**
- * Someone should add some documentation here.
- * Probably the best person would be the module's
- * creator, i.e. "schurade".
- *
- * This is only an empty template for a new module. For
- * an example module containing many interesting concepts
- * and extensive documentation have a look at "src/modules/template"
+ * Create surface representation of atlas from volumetric atlas file
+ * and text file with labels for atlas regions.
  *
  * \ingroup modules
  */
@@ -184,6 +179,7 @@ private:
      * A property allowing the user to select multiple elements of a list.
      */
     WPropSelection m_aMultiSelection;
+    WPropFilename m_labelFile; //!< The labels will be read from this file.
 
     /**
      * A list of items that can be selected using m_aSingleSelection or m_aMultiSelection.

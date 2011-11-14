@@ -56,6 +56,7 @@ class WQtGLDockWidget;
 class WQtPropertyBoolAction;
 class WPropertyBase;
 class WQtControlPanel;
+class WQtGLScreenCapture;
 
 /**
  * This class contains the main window and the layout of the widgets within the window.
@@ -82,17 +83,23 @@ public:
     void setupGUI();
 
     /**
-     * returns a pointer to the network editor object
+     * Returns a pointer to the network editor object.
+     *
+     * \return the network editor instance
      */
     WQtNetworkEditor* getNetworkEditor();
 
     /**
-     * returns a pointer to the control panel object
+     * Returns a pointer to the control panel object.
+     *
+     * \return the control panel instance
      */
     WQtControlPanel* getControlPanel();
 
     /**
      * Return icon manager
+     *
+     * \return the icon manager instance
      */
     WIconManager* getIconManager();
 
@@ -140,6 +147,19 @@ public:
      */
     static QSettings& getSettings();
 
+    /**
+     * Forces the main gl widget to have the desired size. This is mainly useful for screenshots and similar.
+     *
+     * \param w width
+     * \param h height
+     */
+    void forceMainGLWidgetSize( size_t w, size_t h );
+
+    /**
+     * Restores the main GL widget size if it was fixed with forceMainGLWidgetSize() previously.
+     */
+    void restoreMainGLWidgetSize();
+
 protected:
 
     /**
@@ -160,7 +180,7 @@ protected:
      *
      * \param e the close event.
      */
-    void closeEvent( QCloseEvent* e );
+    virtual void closeEvent( QCloseEvent* e );
 
     /**
      * Handle custom events.
@@ -302,6 +322,8 @@ private:
     WQtCommandPromptToolbar* m_commandPrompt; //!< command prompt
 
     boost::shared_ptr< WQtGLWidget > m_mainGLWidget; //!< the main GL widget of the GUI
+    WQtGLScreenCapture* m_mainGLWidgetScreenCapture; //!< screen recorder in m_mainGLWidget
+
     boost::shared_ptr< WQtNavGLWidget > m_navAxial; //!< the axial view widget GL widget of the GUI
     boost::shared_ptr< WQtNavGLWidget > m_navCoronal; //!< the coronal view widget GL widget of the GUI
     boost::shared_ptr< WQtNavGLWidget > m_navSagittal; //!< the sgittal view widget GL widget of the GUI
@@ -331,12 +353,6 @@ private:
     bool m_navSlicesAlreadyLoaded; //!< if true, the navslices have been loaded already
 
     /**
-     * Map holding the actions for module properties added automatically. So they can be removed again automatically
-     * if the module is removed.
-     */
-    std::map< boost::shared_ptr< WPropertyBase >, WQtPropertyBoolAction* > propertyActionMap;
-
-    /**
      * Loads the window states and geometries from a file.
      */
     void restoreSavedState();
@@ -350,6 +366,17 @@ private:
      * The action controlling the auto-display feature.
      */
     WSettingAction* m_autoDisplaySetting;
+
+private slots:
+    /**
+     * Handles some special GL vendors and shows the user a dialog.
+     */
+    void handleGLVendor();
+
+    /**
+     * Shows startup info messages
+     */
+    void handleStartMessages();
 };
 
 #endif  // WMAINWINDOW_H

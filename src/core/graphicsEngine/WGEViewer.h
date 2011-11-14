@@ -52,12 +52,15 @@
 #endif
 
 #include "../common/WColor.h"
+#include "../common/WFlag.h"
 #include "../common/WThreadedRunner.h"
 #include "WExportWGE.h"
 #include "WGECamera.h"
 #include "WGEGraphicsWindow.h"
 #include "WGEGroupNode.h"
+#include "WGEScreenCapture.h"
 #include "WPickHandler.h"
+#include "animation/WGEAnimationManipulator.h"
 
 /**
  * Class for managing one view to the scene. This includes viewport, camera and graphics context.
@@ -68,6 +71,16 @@ class WGE_EXPORT WGEViewer: public WGEGraphicsWindow,
                             public boost::enable_shared_from_this< WGEViewer >
 {
 public:
+    /**
+     * Convenience typedef
+     */
+    typedef boost::shared_ptr< WGEViewer > SPtr;
+
+    /**
+     * Convenience typedef
+     */
+    typedef boost::shared_ptr< const WGEViewer > ConstSPtr;
+
     /**
      * Default constructor.
      *
@@ -87,6 +100,7 @@ public:
      * Destructor.
      */
     virtual ~WGEViewer();
+
     /**
      * Repaints the contents. Mac only.
      */
@@ -183,6 +197,49 @@ public:
      */
     osg::ref_ptr< WPickHandler > getPickHandler();
 
+    /**
+     * Queries the OpenGL vendor info.
+     *
+     * \return Vendor string.
+     */
+    std::string getOpenGLVendor() const;
+
+    /**
+     * Returns the flag which denotes whether a frame was rendered.
+     *
+     * \return the flag.
+     */
+    WBoolFlag::SPtr isFrameRendered() const;
+
+    /**
+     * Returns the main cameras screen capture callback.
+     *
+     * \return the screen capture callback.
+     */
+    WGEScreenCapture::RefPtr getScreenCapture() const;
+
+    /**
+     * The (de-)activates the animation mode. In animation mode, a special camera manipulator is used instead of the currently set. This
+     * manipulator can then play some animation path in realtime, frame-rate independent or in frame-per-frame mode which is useful if combined
+     * with the getScreenCapture() record function.
+     *
+     * If animation mode is turned off again, the previously set manipulator / camera setting is restored.
+     *
+     * \note do not modify camera or camera manipulator manually while in animation mode.
+     *
+     * \param on true to turn on.
+     *
+     * \return the animation manipulator. This, and only this should be used to provide the animation.
+     */
+    WGEAnimationManipulator::RefPtr animationMode( bool on = true );
+
+    /**
+     * Checks if the viewer is in animation mode.
+     *
+     * \return true if in animation mode
+     */
+    bool isAnimationMode() const;
+
 protected:
     /**
      * The OpenSceneGraph view used in this (Composite)Viewer.
@@ -207,6 +264,82 @@ protected:
      * reference to the scene which is displayed by viewer
      */
     osg::ref_ptr< WGEGroupNode > m_scene;
+
+    /**
+     * This flag is true and notifies after the first rendered frame.
+     */
+    WBoolFlag::SPtr m_rendered;
+
+    /**
+     * Small class used for querying glGet info during rendering.
+     */
+    class QueryCallback: public osg::Camera::DrawCallback
+    {
+    public:
+        /**
+         * Constructor. Automatically de-registers from camera after one run.
+         *
+         * \param camera the cam to which this was registered
+         * \param run notifies the flag when run.
+         */
+        QueryCallback( osg::ref_ptr<osg::Camera> camera, WBoolFlag::SPtr run );
+
+        /**
+         * Destructor.
+         */
+        virtual ~QueryCallback();
+
+        /**
+         * Query operator.
+         *
+         * \param renderInfo render info object
+         */
+        virtual void operator()( osg::RenderInfo& renderInfo ) const;   // NOLINT - this is OSG API
+
+        /**
+         * Returns the queried vendor string.
+         *
+         * \return the vendor
+         */
+        std::string getVendor() const;
+
+    protected:
+        /**
+         * The vendor string.
+         */
+        mutable std::string m_vendor;
+
+        /**
+         * True if callback was run once.
+         */
+        WBoolFlag::SPtr m_run;
+
+        /**
+         * The camera to which this was connected.
+         */
+        osg::ref_ptr<osg::Camera> m_camera;
+    };
+
+    /**
+     * The callback used for querying OpenGL features
+     */
+    osg::ref_ptr< QueryCallback > m_queryCallback;
+
+
+    /**
+     * The screen capture callback.
+     */
+    WGEScreenCapture::RefPtr m_screenCapture;
+
+    /**
+     * True -> animation mode on.
+     */
+    bool m_inAnimationMode;
+
+    /**
+     * The manipulator that was set before entering animation mode. Null if not in animation mode.
+     */
+    osg::ref_ptr<osgGA::MatrixManipulator> m_animationModeManipulatorBackup;
 
 private:
 };

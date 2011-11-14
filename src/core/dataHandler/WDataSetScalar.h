@@ -92,11 +92,15 @@ public:
 
     /**
      * Returns the largest of the scalars stored in the data set
+     *
+     * \return maximum value in dataset
      */
     double getMax() const;
 
     /**
      * Returns the smallest of the scalars stored in the data set
+     *
+     * \return minimum value in dataset
      */
     double getMin() const;
 
@@ -129,7 +133,7 @@ public:
      * \param y index in y direction
      * \param z index in z direction
      *
-     * \return the value at the given cell.
+     * \return the value at the grid position with the given index tuple.
      */
     template< typename T > T getValueAt( int x, int y, int z ) const;
 
@@ -139,7 +143,7 @@ public:
      * \param y index in y direction
      * \param z index in z direction
      *
-     * \return the double value at the given cell.
+     * \return the double the grid position with the given index tuple.
      */
     double getValueAt( int x, int y, int z ) const;
 
