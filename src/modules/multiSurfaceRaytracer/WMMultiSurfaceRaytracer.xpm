@@ -1,5 +1,5 @@
 /* XPM */
-static const char * probtractvis_xpm[] = {
+static const char * multisurfaceraytracer_xpm[] = {
 "35 32 667 2",
 "  	c #F3F3F3",
 ". 	c #F2F3F2",

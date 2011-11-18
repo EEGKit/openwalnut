@@ -57,57 +57,55 @@
 #include "../../core/kernel/WKernel.h"
 #include "../../core/kernel/WModuleInputForwardData.h"
 
-#include "WMProbTractVis.xpm"
+#include "WMMultiSurfaceRaytracer.xpm"
 
-#include "WMProbTractVis.h"
+#include "WMMultiSurfaceRaytracer.h"
 
 // This line is needed by the module loader to actually find your module. Do not remove. Do NOT add a ";" here.
-W_LOADABLE_MODULE( WMProbTractVis )
+W_LOADABLE_MODULE( WMMultiSurfaceRaytracer )
 
-WMProbTractVis::WMProbTractVis():
+WMMultiSurfaceRaytracer::WMMultiSurfaceRaytracer():
     WModule()
 {
 }
 
-WMProbTractVis::~WMProbTractVis()
+WMMultiSurfaceRaytracer::~WMMultiSurfaceRaytracer()
 {
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMProbTractVis::factory() const
+boost::shared_ptr< WModule > WMMultiSurfaceRaytracer::factory() const
 {
-    // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WMProbTractVis() );
+    return boost::shared_ptr< WModule >( new WMMultiSurfaceRaytracer() );
 }
 
-const char** WMProbTractVis::getXPMIcon() const
+const char** WMMultiSurfaceRaytracer::getXPMIcon() const
 {
-    return probtractvis_xpm;
+    return multisurfaceraytracer_xpm;
 }
 
-const std::string WMProbTractVis::getName() const
+const std::string WMMultiSurfaceRaytracer::getName() const
 {
-    // Specify your module name here. This name must be UNIQUE!
-    return "ProbTractVis";
+    return "MultiSurfaceRaytracer";
 }
 
-const std::string WMProbTractVis::getDescription() const
+const std::string WMMultiSurfaceRaytracer::getDescription() const
 {
-    return "Visualize probablistic tracts using multiple isosurfaces and isovalue-dependent alpha.";
+    return "Visualize scalar fields using multiple isosurfaces and isovalue-dependent transparency.";
 }
 
-void WMProbTractVis::connectors()
+void WMMultiSurfaceRaytracer::connectors()
 {
     // Tractography works with scalar datasets
-    m_input = WModuleInputData < WDataSetScalar >::createAndAdd( shared_from_this(), "probTract",
-                                                "The probabilistic tractogram as a scalar dataset." );
+    m_input = WModuleInputData < WDataSetScalar >::createAndAdd( shared_from_this(), "scalars",
+                                                "The scalar dataset." );
 
     m_gradients = WModuleInputData< WDataSetVector >::createAndAdd( shared_from_this(), "gradients", "The gradient field of the dataset to display" );
 
     WModule::connectors();
 }
 
-void WMProbTractVis::properties()
+void WMMultiSurfaceRaytracer::properties()
 {
     // Initialize the properties
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
@@ -156,16 +154,16 @@ void WMProbTractVis::properties()
     WModule::properties();
 }
 
-void WMProbTractVis::requirements()
+void WMMultiSurfaceRaytracer::requirements()
 {
     // Put the code for your requirements here. See "src/modules/template/" for an extensively documented example.
     m_requirements.push_back( new WGERequirement() );
 }
 
-void WMProbTractVis::moduleMain()
+void WMMultiSurfaceRaytracer::moduleMain()
 {
     // the WGEShader can take the name of any glsl shader (without extension) in the shaders folder
-    m_shader = osg::ref_ptr< WGEShader > ( new WGEShader( "WMProbTractVis", m_localPath ) );
+    m_shader = osg::ref_ptr< WGEShader > ( new WGEShader( "WMMultiSurfaceRaytracer", m_localPath ) );
     m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
         new WGEShaderPropertyDefineOptions< WPropBool >( m_jitter, "STOCHASTICJITTER_DISABLED", "STOCHASTICJITTER_ENABLED" ) )
     );

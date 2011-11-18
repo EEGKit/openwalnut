@@ -41,7 +41,10 @@
 #include "../../core/dataHandler/WDataSetScalar.h"
 
 /** 
- * This module provides context for modules such as WMProbTractVis.
+ * This module provides anatomical context in the form of a line-drawing of the cortex.
+ * Half-spaces beyond each navigation slice can be made opaque to provide more focus.
+ * To reduce visual obstruction, the part of the cortex that is closest to the viewer
+ * can be made more transparent.
  *
  * \ingroup modules
  */

@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WMPROBTRACTVIS_H
-#define WMPROBTRACTVIS_H
+#ifndef WMMULTISURFACERAYTRACER_H
+#define WMMULTISURFACERAYTRACER_H
 
 #include <string>
 
@@ -42,29 +42,27 @@ class WDataSetVector;
 class WDataSetScalar;
 
 /**
- * Someone should add some documentation here.
- * Probably the best person would be the module's
- * creator, i.e. "berres".
- *
- * This is only an empty template for a new module. For
- * an example module containing many interesting concepts
- * and extensive documentation have a look at "src/modules/template"
+ * This module draws a scalar dataset as a set of up to four isosurfaces.
+ * The transparency of the surface (automatically computed) represents the relative value
+ * of the scalar in comparison to the whole dataset.
+ * To improve depth perception, the saturation can be reduced with increasing distance from
+ * the viewer.
  *
  * \ingroup modules
  */
-class WMProbTractVis: public WModule
+class WMMultiSurfaceRaytracer: public WModule
 {
 public:
 
     /**
      *
      */
-    WMProbTractVis();
+    WMMultiSurfaceRaytracer();
 
     /**
      *
      */
-    virtual ~WMProbTractVis();
+    virtual ~WMMultiSurfaceRaytracer();
 
     /**
      * Gives back the name of this module.
@@ -158,4 +156,4 @@ private:
     WPropBool m_cortexMode; //!< Some special coloring mode emphasizing the cortex.
 };
 
-#endif  // WMPROBTRACTVIS_H
+#endif  // WMMULTISURFACERAYTRACER_H
