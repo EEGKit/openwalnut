@@ -177,7 +177,7 @@ void rayCast( in vec3 curPoint, in float isovalue, in vec4 isocolor )
             float light = 1.0;
             #ifdef PHONGSHADING_ENABLED
             // only calculate the phong illumination only if needed
-            light = blinnPhongIlluminationIntensity( normalize( normal ) );
+            light = mattePhongIlluminationIntensity( normalize( normal ) );
             #endif
 
             // 5. set color
@@ -247,33 +247,33 @@ void main()
     vec3 curPoint = v_rayStart + v_ray;
     #endif
 
-    // sort the isovalues (and their colors) in ascending order
-    vec4 isovalues;
-    mat4 isocolors;
-    // determine order (largest value first)
-    ivec4 order = ivec4( greaterThan( vec4( v_isovalues[0] ), v_isovalues ) ) +
-                  ivec4( greaterThan( vec4( v_isovalues[1] ), v_isovalues ) ) +
-                  ivec4( greaterThan( vec4( v_isovalues[2] ), v_isovalues ) ) +
-                  ivec4( greaterThan( vec4( v_isovalues[3] ), v_isovalues ) );
-    // sort the values according to the determined order
-    for( int i = 0; i < 4; i++ )
-    {
-       isovalues[i] = v_isovalues[ order[i] ];
-       isocolors[i] = u_isocolors[ order[i] ];
-    }
+//    // sort the isovalues (and their colors) in ascending order
+//    vec4 isovalues;
+//    mat4 isocolors;
+//    // determine order (largest value first)
+//    ivec4 order = ivec4( greaterThan( vec4( v_isovalues[0] ), v_isovalues ) ) +
+//                  ivec4( greaterThan( vec4( v_isovalues[1] ), v_isovalues ) ) +
+//                  ivec4( greaterThan( vec4( v_isovalues[2] ), v_isovalues ) ) +
+//                  ivec4( greaterThan( vec4( v_isovalues[3] ), v_isovalues ) );
+//    // sort the values according to the determined order
+//    for( int i = 0; i < 4; i++ )
+//    {
+//       isovalues[i] = v_isovalues[ order[i] ];
+//       isocolors[i] = u_isocolors[ order[i] ];
+//    }
 
     float isovalue;
     vec4 isocolor;
     // for each isosurface, set the isovalue + isocolor and call the raytracer
     for( int j = 0; j < u_surfCount; j++ )
     {
-        isovalue = isovalues[j];
+        isovalue = v_isovalues[j];
         #ifdef MANUALALPHA_ENABLED
         // pick individual alpha values for all surfaces
-        isocolor = isocolors[j];
+//        isocolor = isocolors[j];
         #else
         // use value-dependent alpha
-        isocolor = vec4( isocolors[j].rgb, isovalue );
+        isocolor = vec4( u_isocolors[j].rgb, isovalue );
         #endif
         rayCast( curPoint, isovalue, isocolor );
     }
