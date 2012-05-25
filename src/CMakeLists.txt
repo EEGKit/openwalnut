@@ -138,6 +138,16 @@ ELSE()
 ENDIF()
 SET( CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -DDEBUG -O2" CACHE STRING "" FORCE )
 
+# Allow injection of other flags
+# NOTE: do not set these variables somewhere in cmake. They are intended to be used when calling CMake from the command line.
+# Utilize this 
+SET( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OW_LD_FLAGS_INJECT}" FORCE )
+SET( CMAKE_MODULE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OW_LD_FLAGS_INJECT}" FORCE )
+SET( CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OW_LD_FLAGS_INJECT}" FORCE )
+SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OW_CXX_FLAGS_INJECT}" )
+SET( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OW_C_FLAGS_INJECT}" )
+ADD_DEFINITIONS( ${OW_CPP_FLAGS_INJECT} )
+
 # -----------------------------------------------------------------------------------------------------------------------------------------------
 # Eigen3 specifics
 
