@@ -1,3 +1,10 @@
+openwalnut (OWPACK_VERSION-2) unstable; urgency=low
+
+  * Fixed comoilation bug (Closes: #674343)
+  * Added hardening options
+
+ -- Sebastian Eichelbaum <eichelbaum@informatik.uni-leipzig.de>  Fri, 25 May 2012 14:31:33 +0200
+
 openwalnut (OWPACK_VERSION-1) unstable; urgency=low
 
   * Initial release (Closes: #613419)
