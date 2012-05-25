@@ -11,9 +11,9 @@
 
 override_dh_auto_build:
 	# Invoke standard build mechanism.
-	dh_auto_build
+	# dh_auto_build
 	# Enable this if you have a multi-core machine and are debugging the debian packages. Disable again for upload.
-	# dh_auto_build -- -j16
+	dh_auto_build -- -j16
 	# build the core api documentation too
 	dh_auto_build -- core_devdoc
 
@@ -33,6 +33,7 @@ override_dh_auto_configure:
 							-DOW_MODULE_TOOLBOX_IO=ON\
 							-DOW_MODULE_TOOLBOX_IMAGEPROCESSING=ON\
 							-DOW_MODULE_TOOLBOX_OTHERS=ON\
+ 							-DOW_C_FLAGS_INJECT="$(shell dpkg-buildflags --get CFLAGS)"\
  							-DOW_CXX_FLAGS_INJECT="$(shell dpkg-buildflags --get CXXFLAGS)"\
  							-DOW_LD_FLAGS_INJECT="$(shell dpkg-buildflags --get LDFLAGS)"\
  							-DOW_CPP_FLAGS_INJECT="$(shell dpkg-buildflags --get CPPFLAGS)"
