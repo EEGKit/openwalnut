@@ -1,3 +1,9 @@
+openwalnut (1.2.5-1.1) unstable; urgency=low
+  * Non maintainer upload.
+  * Fix build failure with GCC 4.7. Closes: #674343
+
+ -- Matthias Klose <doko@debian.org>  Wed, 30 May 2012 14:19:31 +0000
+
 openwalnut (OWPACK_VERSION-1) unstable; urgency=low
 
   * Initial release (Closes: #613419)
