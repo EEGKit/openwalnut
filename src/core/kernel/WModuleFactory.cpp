@@ -35,6 +35,9 @@
 #include "exceptions/WPrototypeUnknown.h"
 #include "WModule.h"
 #include "WModuleCombiner.h"
+
+#include "staticModules/androidExample/WMAndroidExample.h"
+
 #include "WModuleFactory.h"
 
 // factory instance as singleton
@@ -62,6 +65,9 @@ void WModuleFactory::load()
 
     // Load the dynamic modules here:
     m_moduleLoader.load( l );
+
+    // ANDROID HACK
+    l->get().insert( boost::shared_ptr< WModule >( new WMAndroidExample ) );
 
     // initialize every module in the set
     std::set< std::string > names;  // helper to find duplicates
