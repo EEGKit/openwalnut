@@ -29,12 +29,14 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
 
+#include "WLogOutputProvider.h"
 #include "WLogEntry.h"
 
 /**
- * Class implementing a capsule for an output stream and the needed level and format information.
+ * Class implementing a capsule for an output stream and the needed level and format information. This implements WLogOutputProvider for
+ * std::ostream.
  */
-class WLogStream // NOLINT
+class WLogStream: public WLogOutputProvider
 {
 public:
     typedef boost::shared_ptr< WLogStream > SharedPtr;  //!< shared pointer type
@@ -55,88 +57,15 @@ public:
     /**
      * Prints the specified entry to the output stream in the right format if the log level matches.
      *
-     * \param entry the entry to print-
+     * \param entry the entry to print.
      */
-    void printEntry( const WLogEntry& entry );
-
-    /**
-     * Sets the new log level. All new incoming logs will be filtered according to this level.
-     *
-     * \param logLevel the level
-     */
-    void setLogLevel( LogLevel logLevel );
-
-    /**
-     * Gets the currently set log level.
-     *
-     * \return the current log level
-     */
-    LogLevel getLogLevel() const;
-
-    /**
-     * Sets the format string.
-     *
-     * \param format the format string.
-     */
-    void setFormat( std::string format );
-
-    /**
-     * Returns the currently set format string.
-     *
-     * \return format string.
-     */
-    std::string getFormat() const;
-
-    /**
-     * Set whether to use colors or not. Note: this is only useful on Linux systems currently.
-     *
-     * \param colors true if colors should be used.
-     */
-    void setColored( bool colors );
-
-    /**
-     * Getter determining whether to use colors or not.
-     *
-     * \return true if colors should be used.
-     */
-    bool isColored() const;
+    virtual void printEntry( const WLogEntry& entry );
 
 private:
-    /**
-     * Disallow copy.
-     *
-     * \param rhs the stream to copy
-     */
-    WLogStream( const WLogStream& rhs );
-
-    /**
-     * Disallow assignment.
-     *
-     * \param rhs the stream to assign to this
-     *
-     * \return this
-     */
-    WLogStream& operator=( const WLogStream& rhs );
-
     /**
      * The output stream.
      */
     std::ostream& m_output;
-
-    /**
-     * The logging level. All messages below this level are discarded.
-     */
-    LogLevel m_logLevel;
-
-    /**
-     * The format of the message.
-     */
-    std::string m_format;
-
-    /**
-     * True if colors should be used. This requires a compatible terminal.
-     */
-    bool m_color;
 };
 
 #endif  // WLOGSTREAM_H

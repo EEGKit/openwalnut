@@ -34,14 +34,14 @@
 #include <boost/signals2/signal.hpp>
 
 #include "WLogEntry.h"
-#include "WLogStream.h"
+#include "WLogOutputProvider.h"
 #include "WStringUtils.h"
 #include "WSharedSequenceContainer.h"
 
 
 /**
  * This class defines the interface for adding logs and managing several output streams for them. The actual log entry is in \ref WLogEntry and
- * the output is done in \ref WLogStream.
+ * the output is done in \ref WLogOutputProvider.
  */
 class WLogger       // NOLINT
 {
@@ -72,14 +72,14 @@ public:
      *
      * \param s the stream to add.
      */
-    void addStream( WLogStream::SharedPtr s );
+    void addOutputProvider( WLogOutputProvider::SPtr s );
 
     /**
      * Remove the given stream.
      *
      * \param s the stream to remove
      */
-    void removeStream( WLogStream::SharedPtr s );
+    void removeOutputProvider( WLogOutputProvider::SPtr s );
 
     /**
      * Set the default format used for log entries.
@@ -127,7 +127,7 @@ public:
     /**
      * Subscribe to the specified signal.
      *
-     * \note If you want to listen to incoming log entries, you can also utilize the WLogStream class.
+     * \note If you want to listen to incoming log entries, you can also utilize the WLogOutputProvider class.
      *
      * \param event the kind of signal the callback should be used for.
      * \param callback the callback.
@@ -154,7 +154,7 @@ private:
     /**
      * The output stream list type.
      */
-    typedef WSharedSequenceContainer< std::vector< WLogStream::SharedPtr > > Outputs;
+    typedef WSharedSequenceContainer< std::vector< WLogOutputProvider::SPtr > > Outputs;
 
     /**
      * The list of outputs to print the messages to.

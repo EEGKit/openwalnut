@@ -32,6 +32,7 @@
 #include "exceptions/WPreconditionNotMet.h"
 
 #include "WLogger.h"
+#include "WLogStream.h"
 
 /**
  * Used for program wide access to the logger.
@@ -49,7 +50,7 @@ void WLogger::startup( std::ostream& output, LogLevel level )  // NOLINT - we ne
 WLogger::WLogger( std::ostream& output, LogLevel level ):       // NOLINT - we need this non-const ref here
     m_outputs()
 {
-    m_outputs.push_back( WLogStream::SharedPtr( new WLogStream( output, level ) ) );
+    m_outputs.push_back( WLogOutputProvider::SPtr( new WLogStream( output, level ) ) );
 
     addLogMessage( "Initalizing Logger", "Logger", LL_INFO );
     addLogMessage( "===============================================================================", "Logger", LL_INFO );
@@ -113,12 +114,12 @@ std::string WLogger::getDefaultFormat()
     return m_outputs[0]->getFormat();
 }
 
-void WLogger::addStream( WLogStream::SharedPtr s )
+void WLogger::addOutputProvider( WLogOutputProvider::SPtr s )
 {
     m_outputs.push_back( s );
 }
 
-void WLogger::removeStream( WLogStream::SharedPtr s )
+void WLogger::removeOutputProvider( WLogOutputProvider::SPtr s )
 {
     m_outputs.remove( s );
 }

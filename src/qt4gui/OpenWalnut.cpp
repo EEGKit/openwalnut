@@ -164,8 +164,7 @@ int main( int argc, char** argv )
     if( crashLogFile.is_open() )
     {
         // create the WLogStream. Set special format and DISABLE colors.
-        WLogStream::SharedPtr crashLog = WLogStream::SharedPtr( new WLogStream( crashLogFile, LL_DEBUG, "%t %l %s: %m\n", false ) );
-        WLogger::getLogger()->addStream( crashLog );
+        WLogger::getLogger()->addOutputProvider( WLogOutputProvider::SPtr( new WLogStream( crashLogFile, LL_DEBUG, "%t %l %s: %m\n", false ) ) );
 
         // NOTE: the stream flushes after each entry. This is needed if a crash occurs.
         if( !fallbackLog )

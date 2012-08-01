@@ -22,27 +22,48 @@
 //
 //---------------------------------------------------------------------------
 
-#include <string>
+#include "WLogOutputProvider.h"
 
-#include "WLogStream.h"
-
-
-WLogStream::WLogStream( std::ostream& output, LogLevel logLevel, std::string format, bool colored ): // NOLINT - we need this non-const ref here
-    WLogOutputProvider( logLevel, format, colored ),
-    m_output( output )
+WLogOutputProvider::WLogOutputProvider( LogLevel logLevel, std::string format, bool colored ):
+    m_logLevel( logLevel ),
+    m_format( format ),
+    m_color( colored )
 {
-    // do nothing
+    // initialize members
 }
 
-void WLogStream::printEntry( const WLogEntry& entry )
+WLogOutputProvider::~WLogOutputProvider()
 {
-    // level test
-    if( m_logLevel > entry.getLogLevel() )
-    {
-        return;
-    }
+    // cleanup
+}
 
-    m_output << entry.getLogString( m_format, m_color );
-    m_output.flush();
+void WLogOutputProvider::setLogLevel( LogLevel logLevel )
+{
+    m_logLevel = logLevel;
+}
+
+LogLevel WLogOutputProvider::getLogLevel() const
+{
+    return m_logLevel;
+}
+
+void WLogOutputProvider::setFormat( std::string format )
+{
+    m_format = format;
+}
+
+std::string WLogOutputProvider::getFormat() const
+{
+    return m_format;
+}
+
+void WLogOutputProvider::setColored( bool colors )
+{
+    m_color = colors;
+}
+
+bool WLogOutputProvider::isColored() const
+{
+    return m_color;
 }
 
