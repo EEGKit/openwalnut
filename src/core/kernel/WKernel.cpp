@@ -139,6 +139,17 @@ void WKernel::finalize()
 
     WLogger::getLogger()->addLogMessage( "Stopping Data Handler", "Kernel", LL_INFO );
     WDataHandler::getDataHandler()->clear();
+
+    WLogger::getLogger()->addLogMessage( "Releasing GUI", "Kernel", LL_DEBUG );
+    m_gui.reset();
+    WLogger::getLogger()->addLogMessage( "Releasing GraphicsEngine", "Kernel", LL_DEBUG );
+    m_graphicsEngine.reset();
+    WLogger::getLogger()->addLogMessage( "Releasing Selection System", "Kernel", LL_DEBUG );
+    m_roiManager.reset();
+    m_selectionManager.reset();
+    WLogger::getLogger()->addLogMessage( "Releasing Module System", "Kernel", LL_DEBUG );
+    m_moduleFactory.reset();
+    m_moduleContainer.reset();
 }
 
 void WKernel::threadMain()

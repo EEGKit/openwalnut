@@ -258,7 +258,7 @@ int WQt4Gui::run()
 
     // signal everybody to shut down properly.
     WKernel::getRunningKernel()->wait( true );
-    WKernel::getRunningKernel()->getGraphicsEngine()->wait( true );
+    m_ge->wait( true );
 
     m_loggerConnection.disconnect();
 
