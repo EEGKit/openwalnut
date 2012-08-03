@@ -86,7 +86,7 @@ USE_DOTOSGWRAPPER_LIBRARY( osg );
 // USE_DOTOSGWRAPPER_LIBRARY( osgFX );
 // USE_DOTOSGWRAPPER_LIBRARY( osgParticle );
 // USE_DOTOSGWRAPPER_LIBRARY( osgTerrain );
-// USE_DOTOSGWRAPPER_LIBRARY( osgText );
+USE_DOTOSGWRAPPER_LIBRARY( osgText );
 // USE_DOTOSGWRAPPER_LIBRARY( osgVolume );
 // NOTE: although we need the osgViewer, uncommenting the below line causes an segfault (at least on Android).
 // USE_DOTOSGWRAPPER_LIBRARY( osgViewer );

@@ -28,7 +28,7 @@
 #if ( defined( WGEMODE_SINGLETHREADED ) || defined( WGEMODE_MULTITHREADED ))
     // should we do something here? No! We assume the user defined it in cmake
 #else
-    #ifdef __APPLE__
+    #if defined( __APPLE__ ) || ( defined( __ANDROID__ ) )
         #define WGEMODE_SINGLETHREADED
     #else
         #define WGEMODE_MULTITHREADED

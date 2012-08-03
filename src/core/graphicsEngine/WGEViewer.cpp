@@ -25,17 +25,9 @@
 #include <string>
 #include <iostream>
 
-#include <osg/ShapeDrawable>
-#include <osg/Geode>
 #include <osg/Camera>
 
-#include <osgGA/FlightManipulator>
-#include <osgGA/DriveManipulator>
-#include <osgGA/UFOManipulator>
-#include <osgGA/KeySwitchMatrixManipulator>
 #include <osgGA/StateSetManipulator>
-#include <osgGA/AnimationPathManipulator>
-#include <osgGA/TerrainManipulator>
 #include <osgViewer/ViewerEventHandlers>
 #include <osgViewer/View>
 
@@ -48,6 +40,7 @@
 #include "WGEZoomTrackballManipulator.h"
 #include "WPickHandler.h"
 #include "../common/WConditionOneShot.h"
+#include "../common/WLogger.h"
 
 #include "../common/WThreadedRunner.h"
 
@@ -71,30 +64,46 @@ WGEViewer::WGEViewer( std::string name, osg::ref_ptr<osg::Referenced> wdata, int
         m_View = osg::ref_ptr<osgViewer::Viewer>( new osgViewer::Viewer );
 #endif
 
+#ifdef __ANDROID__
+        // create a viewer for this new window geometry.
+	    m_View->setUpViewerAsEmbeddedInWindow( x, y, width, height );
+    	m_View->setThreadingModel( osgViewer::ViewerBase::SingleThreaded );
+	    m_View->realize();
+#endif
+
+#ifndef __ANDROID__
+        // FIXME: our camera does not work on android.
         m_View->setCamera( new WGECamera( width, height, projectionMode ) );
+#endif
         m_queryCallback = new QueryCallback( m_View->getCamera(), m_rendered );
         m_View->getCamera()->setInitialDrawCallback( m_queryCallback );
         m_View->getCamera()->setFinalDrawCallback( m_screenCapture );
+        // add the stats handler
+        m_View->addEventHandler( new osgViewer::StatsHandler );
 
-#ifdef WGEMODE_MULTITHREADED
+#ifndef __ANDROID__
+    #ifdef WGEMODE_MULTITHREADED
         m_View->getCamera()->setGraphicsContext( m_GraphicsContext.get() );
-#else
+    #else
         m_View->getCamera()->setGraphicsContext( m_GraphicsWindow.get() );
+    #endif
 #endif
+
+        // force headlight
+        m_View->setLightingMode( osg::View::HEADLIGHT ); // this is the default anyway
 
         switch( projectionMode )
         {
             case( WGECamera::ORTHOGRAPHIC ):
                 m_pickHandler = new WPickHandler( name );
                 m_View->addEventHandler( m_pickHandler );
+
+                // this ensures that the main view has the WGEZoomTrackballManipulator set. Others use the default OSG.
                 if( name != std::string( "Main View" ) )
                     break;
             case( WGECamera::PERSPECTIVE ):
                 // camera manipulator
                 m_View->setCameraManipulator( new WGEZoomTrackballManipulator() );
-
-                m_View->setLightingMode( osg::View::HEADLIGHT ); // this is the default anyway
-
                 break;
             case( WGECamera::TWO_D ):
                 // no manipulators nor gui handlers
@@ -106,9 +115,6 @@ WGEViewer::WGEViewer( std::string name, osg::ref_ptr<osg::Referenced> wdata, int
             default:
                 throw WGEInitFailed( std::string( "Unknown projection mode" ) );
         }
-
-        // add the stats handler
-        m_View->addEventHandler( new osgViewer::StatsHandler );
     }
     catch( ... )
     {
@@ -177,27 +183,6 @@ void WGEViewer::paint()
 #ifdef WGEMODE_SINGLETHREADED
     m_View->frame();
 #endif
-}
-
-void WGEViewer::resize( int width, int height )
-{
-    m_View->getEventQueue()->windowResize( 0, 0, width, height );
-
-    WGEGraphicsWindow::resize( width, height );
-
-    // also update the camera
-    m_View->getCamera()->setViewport( 0, 0, width, height );
-    WGECamera* camera = dynamic_cast< WGECamera* >( m_View->getCamera() );
-    if( camera )
-    {
-        camera->resize();
-    }
-}
-
-void WGEViewer::close()
-{
-    // forward close event
-    WGEGraphicsWindow::close();
 }
 
 std::string WGEViewer::getName() const
@@ -292,5 +277,58 @@ WGEAnimationManipulator::RefPtr WGEViewer::animationMode( bool on )
 bool WGEViewer::isAnimationMode() const
 {
     return m_inAnimationMode;
+}
+
+void WGEViewer::resize( int width, int height )
+{
+    m_View->getEventQueue()->windowResize( 0, 0, width, height );
+
+    // also update the camera
+    m_View->getCamera()->setViewport( 0, 0, width, height );
+    WGECamera* camera = dynamic_cast< WGECamera* >( m_View->getCamera() );
+    if( camera )
+    {
+        camera->resize();
+    }
+}
+
+void WGEViewer::close()
+{
+    m_View->getEventQueue()->closeWindow();
+}
+
+void WGEViewer::keyEvent( KeyEvents eventType, int key )
+{
+    switch( eventType )
+    {
+        case KEYPRESS:
+            m_View->getEventQueue()->keyPress( static_cast<osgGA::GUIEventAdapter::KeySymbol>( key ) );
+            break;
+        case KEYRELEASE:
+            m_View->getEventQueue()->keyRelease( static_cast<osgGA::GUIEventAdapter::KeySymbol>( key ) );
+            break;
+    }
+}
+
+void WGEViewer::mouseEvent( MouseEvents eventType, int x, int y, int button )
+{
+    switch( eventType )
+    {
+        case MOUSEPRESS:
+            m_View->getEventQueue()->mouseButtonPress( x, y, button );
+            break;
+        case MOUSERELEASE:
+            m_View->getEventQueue()->mouseButtonRelease( x, y, button );
+            break;
+        case MOUSEDOUBLECLICK:
+            m_View->getEventQueue()->mouseDoubleButtonPress( x, y, button );
+            break;
+        case MOUSEMOVE:
+            m_View->getEventQueue()->mouseMotion( x, y );
+            break;
+        case MOUSESCROLL:
+            m_View->getEventQueue()->mouseScroll2D( x, y );
+            break;
+    }
 }
 

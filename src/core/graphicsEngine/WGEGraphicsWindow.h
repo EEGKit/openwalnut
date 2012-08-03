@@ -61,54 +61,6 @@ public:
      */
     osg::ref_ptr<osgViewer::GraphicsWindow> getGraphicsWindow();
 
-    /**
-     * Event types for the keyEvent() handler.
-     */
-    enum KeyEvents
-    {
-        KEYPRESS, KEYRELEASE
-    };
-
-    /**
-     * Mouse event types for the mouseEvent() handler.
-     */
-    enum MouseEvents
-    {
-        MOUSEPRESS, MOUSERELEASE, MOUSEDOUBLECLICK, MOUSEMOVE, MOUSESCROLL
-    };
-
-    /**
-     * Updates size information.
-     *
-     * \param width new width.
-     * \param height new height.
-     */
-    virtual void resize( int width, int height );
-
-    /**
-     * Initiates a close event for this viewer. It destroys the graphics context and invalidates the viewer.
-     * This should be called whenever a QT Widget closes to also free its OSG Viewer resources.
-     */
-    virtual void close();
-
-    /**
-     * Handles key events (if forwarded to this Viewer instance).
-     *
-     * \param key the key code.
-     * \param eventType the type of event.
-     */
-    virtual void keyEvent( KeyEvents eventType, int key );
-
-    /**
-     * Handles mouse events forwarded from widget.
-     *
-     * \param eventType the event type.
-     * \param x x coordinate of event.
-     * \param y y coordinate of event.
-     * \param button mouse button.
-     */
-    virtual void mouseEvent( MouseEvents eventType, int x, int y, int button );
-
 protected:
     /**
      * OpenSceneGraph render window.

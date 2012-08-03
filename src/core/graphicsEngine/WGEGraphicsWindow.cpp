@@ -24,6 +24,8 @@
 
 #include <iostream>
 
+#include "core/common/WAssert.h"
+
 #include "WGEGraphicsWindow.h"
 
 #include "exceptions/WGEInitFailed.h"
@@ -38,7 +40,9 @@ WGEGraphicsWindow::WGEGraphicsWindow( osg::ref_ptr<osg::Referenced>
                                             int width,
                                             int height )
 {
-#ifdef WGEMODE_MULTITHREADED
+    // on android, the graphics window is not needed
+#ifndef __ANDROID__
+    #ifdef WGEMODE_MULTITHREADED
     // initialize context
     m_WindowData = wdata;
     try
@@ -50,9 +54,10 @@ WGEGraphicsWindow::WGEGraphicsWindow( osg::ref_ptr<osg::Referenced>
         // use our own exceptions
         throw WGEInitFailed( "Initialization of OpenGL graphics context failed." );
     }
-#else
+    #else
     m_GraphicsWindow = osg::ref_ptr<osgViewer::GraphicsWindow>(
             static_cast<osgViewer::GraphicsWindow*>( new osgViewer::GraphicsWindowEmbedded( x, y, width, height ) ) );
+    #endif
 #endif
 }
 
@@ -63,6 +68,9 @@ WGEGraphicsWindow::~WGEGraphicsWindow()
 
 osg::ref_ptr<osgViewer::GraphicsWindow> WGEGraphicsWindow::getGraphicsWindow()
 {
+#ifdef __ANDROID__
+    WAssert( m_GraphicsWindow, "On Android, there is no GraphicsWindow." );
+#endif
     return m_GraphicsWindow;
 }
 
@@ -109,50 +117,4 @@ void WGEGraphicsWindow::createContext( int x, int y, int width, int height )
     traits->height = height;
 }
 #endif
-
-void WGEGraphicsWindow::resize( int width, int height )
-{
-    m_GraphicsWindow->getEventQueue()->windowResize( 0, 0, width, height );
-    m_GraphicsWindow->resized( 0, 0, width, height );
-}
-
-void WGEGraphicsWindow::close()
-{
-    m_GraphicsWindow->getEventQueue()->closeWindow();
-}
-
-void WGEGraphicsWindow::keyEvent( KeyEvents eventType, int key )
-{
-    switch( eventType )
-    {
-        case KEYPRESS:
-            m_GraphicsWindow->getEventQueue()->keyPress( static_cast<osgGA::GUIEventAdapter::KeySymbol>( key ) );
-            break;
-        case KEYRELEASE:
-            m_GraphicsWindow->getEventQueue()->keyRelease( static_cast<osgGA::GUIEventAdapter::KeySymbol>( key ) );
-            break;
-    }
-}
-
-void WGEGraphicsWindow::mouseEvent( MouseEvents eventType, int x, int y, int button )
-{
-    switch( eventType )
-    {
-        case MOUSEPRESS:
-            m_GraphicsWindow->getEventQueue()->mouseButtonPress( x, y, button );
-            break;
-        case MOUSERELEASE:
-            m_GraphicsWindow->getEventQueue()->mouseButtonRelease( x, y, button );
-            break;
-        case MOUSEDOUBLECLICK:
-            m_GraphicsWindow->getEventQueue()->mouseDoubleButtonPress( x, y, button );
-            break;
-        case MOUSEMOVE:
-            m_GraphicsWindow->getEventQueue()->mouseMotion( x, y );
-            break;
-        case MOUSESCROLL:
-            m_GraphicsWindow->getEventQueue()->mouseScroll2D( x, y );
-            break;
-    }
-}
 

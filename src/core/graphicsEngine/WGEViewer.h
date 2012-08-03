@@ -237,6 +237,40 @@ public:
      */
     bool isAnimationMode() const;
 
+    /**
+     * Event types for the keyEvent() handler.
+     */
+    enum KeyEvents
+    {
+        KEYPRESS, KEYRELEASE
+    };
+
+    /**
+     * Mouse event types for the mouseEvent() handler.
+     */
+    enum MouseEvents
+    {
+        MOUSEPRESS, MOUSERELEASE, MOUSEDOUBLECLICK, MOUSEMOVE, MOUSESCROLL
+    };
+
+    /**
+     * Handles key events (if forwarded to this Viewer instance).
+     *
+     * \param key the key code.
+     * \param eventType the type of event.
+     */
+    virtual void keyEvent( KeyEvents eventType, int key );
+
+    /**
+     * Handles mouse events forwarded from widget.
+     *
+     * \param eventType the event type.
+     * \param x x coordinate of event.
+     * \param y y coordinate of event.
+     * \param button mouse button.
+     */
+    virtual void mouseEvent( MouseEvents eventType, int x, int y, int button );
+
 protected:
     /**
      * The OpenSceneGraph view used in this (Composite)Viewer.
