@@ -124,7 +124,18 @@ private:
     /**
      * A double value.
      */
-    WPropDouble   m_aDouble;
+    WPropDouble  m_aDouble;
+
+    /**
+     * A int value
+     */
+    WPropInt m_aInt;
+
+    /**
+     * A color value
+     */
+    WPropColor m_aColor;
+
 };
 
 #endif  // WMANDROIDEXAMPLE_H
