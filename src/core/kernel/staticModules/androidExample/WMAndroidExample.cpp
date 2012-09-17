@@ -155,55 +155,52 @@ void WMAndroidExample::moduleMain()
         // to setup the colo from property
         // set the line for color by string
         // laxical_cast casts float to string
-        std::string colorLine = "const vec4 cessnaColor   =vec4( ";
-        colorLine.append(boost::lexical_cast<std::string>( m_aColor->get(true).x() ));
-        colorLine.append(" , ");
-        colorLine.append(boost::lexical_cast<std::string>( m_aColor->get(true).y() ));
-        colorLine.append(" , ");
-        colorLine.append(boost::lexical_cast<std::string>( m_aColor->get(true).z() ));
-        colorLine.append(" , 1.0);                    \n");
         //build fragmentShader as string
         //append the color setted string on the correct line
-        std::string fragmentShader = "precision mediump float;                  \n";
-        fragmentShader.append("varying mediump vec3 v_normal;               \n");
-        fragmentShader.append( "varying mediump vec3 v_vertex;               \n");
-        fragmentShader.append( "varying mediump vec3 v_light;               \n");
-        fragmentShader.append( colorLine.c_str());
-        fragmentShader.append( "const vec4 lightAmbient  =vec4(0.1, 0.1, 0.1, 1.0);                    \n");
-        fragmentShader.append( "const vec4 lightDiffuse  =vec4(0.4, 0.4, 0.4, 1.0);                    \n");
-        fragmentShader.append( "const vec4 lightSpecular =vec4(0.8, 0.8, 0.8, 1.0);                    \n");
-        fragmentShader.append( "void DirectionalLight(in vec3 normal,                                  \n");
-        fragmentShader.append( "                      in vec3 ecPos,                                   \n");
-        fragmentShader.append( "                      inout vec4 ambient,                              \n");
-        fragmentShader.append( "                      inout vec4 diffuse,                              \n");
-        fragmentShader.append( "                      inout vec4 specular)                             \n");
-        fragmentShader.append( "{                                                                      \n");
-        fragmentShader.append(  "     float nDotVP;                                                     \n");
-        fragmentShader.append( "     vec3 L = v_light;   \n");
-        fragmentShader.append( "     nDotVP = max(0.0, dot(normal, L));                                \n");
-        fragmentShader.append( "                                                                       \n");
-        fragmentShader.append(  "     if (nDotVP > 0.0) {                                               \n");
-        fragmentShader.append( "       vec3 E = normalize(-ecPos);                                     \n");
-        fragmentShader.append( "       vec3 R = normalize(reflect( L, normal ));                       \n");
-        fragmentShader.append( "       specular = pow(max(dot(R, E), 0.0), 16.0) * lightSpecular;      \n");
-        fragmentShader.append( "     }                                                                 \n");
-        fragmentShader.append(  "     ambient  = lightAmbient;                                          \n");
-        fragmentShader.append( "     diffuse  = lightDiffuse * nDotVP;                                 \n");
-        fragmentShader.append(  "}                                                                      \n");
-        fragmentShader.append(  "void main() {                             \n");
-        fragmentShader.append( "    vec4 ambiCol = vec4(0.0);                                          \n");
-        fragmentShader.append( "    vec4 diffCol = vec4(0.0);                                          \n");
-        fragmentShader.append("    vec4 specCol = vec4(0.0);                                          \n");
-        fragmentShader.append( "    vec4 ecPos    = vec4( v_vertex, 1.0 );        \n");
-        fragmentShader.append( "    DirectionalLight( v_normal, ecPos.xyz, ambiCol, diffCol, specCol);    \n");
-        fragmentShader.append( "    vec4 color = cessnaColor * (ambiCol + diffCol + specCol);               \n");
-        fragmentShader.append( "  gl_FragColor = color;                   \n");
-        fragmentShader.append( "}                                         \n");
+        std::ostringstream fragmentShader;
+	fragmentShader << "precision mediump float;                  \n"
+        << ("varying mediump vec3 v_normal;               \n")
+        << ( "varying mediump vec3 v_vertex;               \n")
+        << ( "varying mediump vec3 v_light;               \n")
+        << "const vec4 cessnaColor   =vec4( " 
+        << m_aColor->get(true).x() << (" , ")
+        << m_aColor->get(true).y() << (" , ")
+        << m_aColor->get(true).z() << (" , 1.0);                    \n")
+        << ( "const vec4 lightAmbient  =vec4(0.1, 0.1, 0.1, 1.0);                    \n")
+        << ( "const vec4 lightDiffuse  =vec4(0.4, 0.4, 0.4, 1.0);                    \n")
+        << ( "const vec4 lightSpecular =vec4(0.8, 0.8, 0.8, 1.0);                    \n")
+        << ( "void DirectionalLight(in vec3 normal,                                  \n")
+        << ( "                      in vec3 ecPos,                                   \n")
+        << ( "                      inout vec4 ambient,                              \n")
+        << ( "                      inout vec4 diffuse,                              \n")
+        << ( "                      inout vec4 specular)                             \n")
+        << ( "{                                                                      \n")
+        << (  "     float nDotVP;                                                     \n")
+        << ( "     vec3 L = v_light;   \n")
+        << ( "     nDotVP = max(0.0, dot(normal, L));                                \n")
+        << ( "                                                                       \n")
+        << (  "     if (nDotVP > 0.0) {                                               \n")
+        << ( "       vec3 E = normalize(-ecPos);                                     \n")
+        << ( "       vec3 R = normalize(reflect( L, normal ));                       \n")
+        << ( "       specular = pow(max(dot(R, E), 0.0), 16.0) * lightSpecular;      \n")
+        << ( "     }                                                                 \n")
+        << (  "     ambient  = lightAmbient;                                          \n")
+        << ( "     diffuse  = lightDiffuse * nDotVP;                                 \n")
+        << (  "}                                                                      \n")
+        << (  "void main() {                             \n")
+        << ( "    vec4 ambiCol = vec4(0.0);                                          \n")
+        << ( "    vec4 diffCol = vec4(0.0);                                          \n")
+        << ("    vec4 specCol = vec4(0.0);                                          \n")
+        << ( "    vec4 ecPos    = vec4( v_vertex, 1.0 );        \n")
+        << ( "    DirectionalLight( v_normal, ecPos.xyz, ambiCol, diffCol, specCol);    \n")
+        << ( "    vec4 color = cessnaColor * (ambiCol + diffCol + specCol);               \n")
+        << ( "  gl_FragColor = color;                   \n")
+        << ( "}                                         \n");
 
         // for GLES, we need a shader
         // TODO later the shader should be std::string at all
         osg::Shader* vshader = new osg::Shader( osg::Shader::VERTEX, vertexShader );
-        osg::Shader* fshader = new osg::Shader( osg::Shader::FRAGMENT, fragmentShader );
+        osg::Shader* fshader = new osg::Shader( osg::Shader::FRAGMENT, fragmentShader.str() );
 
         osg::Program* prog = new osg::Program;
         prog->addShader( vshader );
