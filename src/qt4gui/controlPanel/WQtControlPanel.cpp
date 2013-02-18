@@ -276,7 +276,7 @@ bool WQtControlPanel::event( QEvent* event )
 
             // finally add the module
             // TODO(schurade): is this differentiation between data and "normal" modules really needed?
-            if( boost::shared_dynamic_cast< WDataModule >( e1->getModule() ).get() )
+            if( boost::dynamic_pointer_cast< WDataModule >( e1->getModule() ).get() )
             {
                 addDataset( e1->getModule(), 0 );
             }
@@ -766,7 +766,7 @@ QTreeWidgetItem* WQtControlPanel::findModuleItem( WModule::SPtr module ) const
         if( dynamic_cast< WQtModuleTreeItem* >( *it ) )
         {
             WModule::SPtr currentModule;
-            currentModule = boost::shared_dynamic_cast< WModule >( ( dynamic_cast< WQtModuleTreeItem* >( *it ) )->getModule() );
+            currentModule = boost::dynamic_pointer_cast< WModule >( ( dynamic_cast< WQtModuleTreeItem* >( *it ) )->getModule() );
             if( currentModule )
             {
                 if( currentModule == module )
@@ -779,7 +779,7 @@ QTreeWidgetItem* WQtControlPanel::findModuleItem( WModule::SPtr module ) const
         else if( dynamic_cast< WQtDatasetTreeItem* >( *it ) )
         {
             boost::shared_ptr< WDataModule > dataModule;
-            dataModule = boost::shared_dynamic_cast< WDataModule >( ( dynamic_cast< WQtDatasetTreeItem* >( *it ) )->getModule() );
+            dataModule = boost::dynamic_pointer_cast< WDataModule >( ( dynamic_cast< WQtDatasetTreeItem* >( *it ) )->getModule() );
             if( dataModule )
             {
                 if( dataModule == module )

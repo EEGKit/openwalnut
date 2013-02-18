@@ -67,7 +67,7 @@
 //      */
 //     boost::shared_ptr< const WGridRegular3D > ensureWGridRegular3D( boost::shared_ptr< const WDataSetScalar > dataset )
 //     {
-//         boost::shared_ptr< const WGridRegular3D > result = boost::shared_dynamic_cast< WGridRegular3D >( dataset->getGrid() );
+//         boost::shared_ptr< const WGridRegular3D > result = boost::dynamic_pointer_cast< WGridRegular3D >( dataset->getGrid() );
 //         if( !result )
 //         {
 //             wlog::error( "WSPSliceBuilder" ) << "Cast to WGridRegular3D failed.";

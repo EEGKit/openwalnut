@@ -127,7 +127,7 @@ bool WModuleProjectFileCombiner::parse( std::string line, unsigned int lineNumbe
             }
             else
             {
-                boost::shared_static_cast< WDataModule >( module )->setFilename( parameter );
+                boost::static_pointer_cast< WDataModule >( module )->setFilename( parameter );
                 m_modules.insert( ModuleID( string_utils::fromString< unsigned int >( matches[1] ), module ) );
             }
         }
@@ -366,7 +366,7 @@ void WModuleProjectFileCombiner::save( std::ostream& output )   // NOLINT
         // handle data modules separately
         if( ( *iter )->getType() == MODULE_DATA )
         {
-            output << "DATA:" << i << ":" <<  boost::shared_static_cast< WDataModule >( ( *iter ) )->getFilename().string() << std::endl;
+            output << "DATA:" << i << ":" <<  boost::static_pointer_cast< WDataModule >( ( *iter ) )->getFilename().string() << std::endl;
         }
         else
         {

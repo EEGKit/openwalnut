@@ -112,7 +112,7 @@ void WMGridRenderer::moduleMain()
             continue;
         }
 
-        WGridRegular3D::SPtr regGrid = boost::shared_dynamic_cast< WGridRegular3D >( dataSet->getGrid() );
+        WGridRegular3D::SPtr regGrid = boost::dynamic_pointer_cast< WGridRegular3D >( dataSet->getGrid() );
         if( !regGrid )
         {
             // the data has no regular 3d grid.
