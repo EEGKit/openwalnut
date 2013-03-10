@@ -159,10 +159,7 @@ private:
 
     osg::ref_ptr< osg::Geode > m_surfaceGeode; //!< Pointer to geode containing the surface.
 
-    /**
-     * The shader
-     */
-    osg::ref_ptr< WGEShader > m_shader;
+    boost::shared_ptr< WSpanSpaceBase > m_spanSpace; //!< Pointer to span space algorithm.
 };
 
 #endif  // WMISOSURFACE_H

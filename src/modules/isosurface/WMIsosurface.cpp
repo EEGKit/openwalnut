@@ -28,6 +28,8 @@
 #include <string>
 #include <vector>
 
+#include <boost/variant.hpp>
+
 #include <osg/Geode>
 #include <osg/Geometry>
 #include <osg/LightModel>
@@ -45,13 +47,13 @@
 #include "core/common/WProgress.h"
 #include "core/dataHandler/WDataHandler.h"
 #include "core/dataHandler/WSubject.h"
-#include "core/common/algorithms/WMarchingCubesAlgorithm.h"
-#include "core/common/algorithms/WMarchingLegoAlgorithm.h"
+#include "core/graphicsEngine/algorithms/WSpanSpace.h"
+#include "core/graphicsEngine/algorithms/WMarchingCubesAlgorithm.h"
+#include "core/graphicsEngine/algorithms/WMarchingLegoAlgorithm.h"
 #include "core/graphicsEngine/callbacks/WGEFunctorCallback.h"
 #include "core/graphicsEngine/shaders/WGEPropertyUniform.h"
 #include "core/graphicsEngine/shaders/WGEShaderPropertyDefineOptions.h"
 #include "core/graphicsEngine/shaders/WGEShaderPropertyDefine.h"
-#include "core/graphicsEngine/postprocessing/WGEPostprocessingNode.h"
 #include "core/graphicsEngine/WGEColormapping.h"
 #include "core/graphicsEngine/WGEUtils.h"
 #include "core/kernel/WKernel.h"
@@ -100,10 +102,50 @@ const std::string WMIsosurface::getName() const
 const std::string WMIsosurface::getDescription() const
 {
     return "This module implements the marching cubes"
-" algorithm with a consistent triangulation. It allows one to compute isosurfaces"
+" algorithm with a consistent triangulation. It allows to compute isosurfaces"
 " for a given isovalue on data given on a grid only consisting of cubes. It yields"
 " the surface as triangle soup.";
 }
+
+/**
+ * Class to initial SpanSpace algorithm without typ conflicts
+ */
+class ValueSetVisitor: public boost::static_visitor< boost::shared_ptr< WSpanSpaceBase > >
+{
+public:
+    /**
+     * Constructor of this class
+     *
+     * \param nbCoordsX biggest X coordinate
+     * \param nbCoordsY biggest Y coordinate
+     * \param nbCoordsZ biggest Z coordinate
+     * \param mainProgress pointer on the progress combiner
+     */
+    ValueSetVisitor( size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
+                     boost::shared_ptr< WProgressCombiner > mainProgress ):
+    m_cordsX( nbCoordsX ), m_cordsY( nbCoordsY ), m_cordsZ( nbCoordsZ ),
+    m_progress( mainProgress )
+    {
+    }
+    
+    /**
+     * Initial spanSpace algorith
+     *
+     * \param valueSet Set of coordinates
+     * \return spanSpaceBase class
+     */
+    template< typename T >
+    WSpanSpaceBase::SPtr  operator()( WValueSet< T > const* valueSet ) const
+    {
+         return WSpanSpaceBase::SPtr( new WSpanSpace< T >( m_cordsX, m_cordsY, m_cordsZ,
+                                     valueSet->rawDataVectorPointer(), m_progress ) );
+    }
+private:
+    size_t m_cordsX; //!< X coordinate of cell
+    size_t m_cordsY; //!< Y coordinate of cell
+    size_t m_cordsZ; //!< Z coordinate of cell
+    boost::shared_ptr< WProgressCombiner > m_progress; //!< progress combiner to show the current progress status
+};
 
 void WMIsosurface::moduleMain()
 {
@@ -112,30 +154,10 @@ void WMIsosurface::moduleMain()
     m_moduleState.add( m_input->getDataChangedCondition() );
     m_moduleState.add( m_recompute );
 
-    // create the post-processing node which actually does the nice stuff to the rendered image
-    osg::ref_ptr< WGEPostprocessingNode > postNode = new WGEPostprocessingNode(
-        WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()
-    );
-    // provide the properties of the post-processor to the user
-    m_properties->addProperty( postNode->getProperties() );
-
-    // add to scene
-    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( postNode );
-
     // signal ready state
     ready();
 
-    // create shader
-    m_shader = osg::ref_ptr< WGEShader >( new WGEShader( "WMIsosurface", m_localPath ) );
-    m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
-        new WGEShaderPropertyDefineOptions< WPropBool >( m_useTextureProp, "COLORMAPPING_DISABLED", "COLORMAPPING_ENABLED" ) )
-    );
-
     m_moduleNode = new WGEManagedGroupNode( m_active );
-    m_moduleNode->getOrCreateStateSet()->addUniform( new WGEPropertyUniform< WPropInt >( "u_opacity", m_opacityProp ) );
-
-    // add it to postproc node and register shader
-    postNode->insert( m_moduleNode, m_shader );
 
     // loop until the module container requests the module to quit
     while( !m_shutdownFlag() )
@@ -166,6 +188,21 @@ void WMIsosurface::moduleMain()
             // acquire data from the input connector
             m_dataSet = m_input->getData();
 
+            if( !m_dataSet )
+            {
+                debugLog() << "No valid data.";
+                continue;
+            }
+
+            // new grid for new data
+            boost::shared_ptr< WGridRegular3D > gridRegular3D = boost::shared_dynamic_cast< WGridRegular3D >( ( *m_dataSet ).getGrid() );
+            WAssert( gridRegular3D, "Grid is not of type WGridRegular3D." );
+            m_grid = gridRegular3D;
+            // new data new span space
+            boost::shared_ptr< WValueSetBase > valueSet( m_dataSet->getValueSet() );
+            m_spanSpace = valueSet->applyFunction(
+                ValueSetVisitor( m_grid->getNbCoordsX(), m_grid->getNbCoordsY(), m_grid->getNbCoordsZ() , m_progress ) );
+
             // set appropriate constraints for properties
             m_isoValueProp->setMin( m_dataSet->getMin() );
             m_isoValueProp->setMax( m_dataSet->getMax() );
@@ -193,14 +230,14 @@ void WMIsosurface::moduleMain()
         ++*progress;
         debugLog() << "Rendering surface ...";
 
-        renderMesh();
+        //renderMesh();
         m_output->updateData( m_triMesh );
 
         debugLog() << "Done!";
         progress->finish();
     }
 
-    WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getScene()->remove( postNode );
+    WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getScene()->remove( m_moduleNode );
 }
 
 void WMIsosurface::connectors()
@@ -263,6 +300,7 @@ namespace
                                                             const WMatrix<double>& matrix,
                                                             boost::shared_ptr<WValueSetBase> valueSet,
                                                             double isoValue,
+                                                            boost::shared_ptr< WSpanSpaceBase > spanSpace,
                                                             boost::shared_ptr<WProgressCombiner> ) = 0;
     };
 
@@ -299,12 +337,13 @@ namespace
                                                             const WMatrix<double>& matrix,
                                                             boost::shared_ptr<WValueSetBase> valueSet,
                                                             double isoValue,
+                                                            boost::shared_ptr< WSpanSpaceBase > spanSpace,
                                                             boost::shared_ptr<WProgressCombiner> progress )
         {
             boost::shared_ptr< WValueSet< T > > vals(
-                    boost::dynamic_pointer_cast< WValueSet< T > >( valueSet ) );
+                    boost::shared_dynamic_cast< WValueSet< T > >( valueSet ) );
             WAssert( vals, "Data type and data type indicator must fit." );
-            return AlgoBase::generateSurface( x, y, z, matrix, vals->rawDataVectorPointer(), isoValue, progress );
+            return AlgoBase::generateSurface( x, y, z, matrix, vals->rawDataVectorPointer(), isoValue, spanSpace, progress );
         }
     };
 
@@ -356,9 +395,6 @@ void WMIsosurface::generateSurfacePre( double isoValue )
 
     WMarchingCubesAlgorithm mcAlgo;
     WMarchingLegoAlgorithm mlAlgo;
-    boost::shared_ptr< WGridRegular3D > gridRegular3D = boost::dynamic_pointer_cast< WGridRegular3D >( ( *m_dataSet ).getGrid() );
-    WAssert( gridRegular3D, "Grid is not of type WGridRegular3D." );
-    m_grid = gridRegular3D;
 
     boost::shared_ptr< WValueSetBase > valueSet( m_dataSet->getValueSet() );
 
@@ -377,7 +413,8 @@ void WMIsosurface::generateSurfacePre( double isoValue )
         m_triMesh = algo->execute( m_grid->getNbCoordsX(), m_grid->getNbCoordsY(), m_grid->getNbCoordsZ(),
                                           m_grid->getTransformationMatrix(),
                                           valueSet,
-                                          isoValue, m_progress );
+                                          isoValue, m_spanSpace, m_progress );
+
 
         // Set the info properties
         m_nbTriangles->set( m_triMesh->triangleSize() );
@@ -450,15 +487,26 @@ void WMIsosurface::renderMesh()
     surfaceGeometry->setUseDisplayList( false );
     surfaceGeometry->setUseVertexBufferObjects( true );
 
-    m_shader->apply( m_surfaceGeode );
+    // ------------------------------------------------
+    // Shader stuff
 
-    // enable transparency
-    wge::enableTransparency( m_surfaceGeode );
+    osg::ref_ptr< WGEShader > shader = osg::ref_ptr< WGEShader >( new WGEShader( "WMIsosurface", m_localPath ) );
+    shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
+        new WGEShaderPropertyDefineOptions< WPropBool >( m_useTextureProp, "COLORMAPPING_DISABLED", "COLORMAPPING_ENABLED" ) )
+    );
+    state->addUniform( new WGEPropertyUniform< WPropInt >( "u_opacity", m_opacityProp ) );
+    shader->apply( m_surfaceGeode );
 
     // Colormapping
-    WGEColormapping::apply( m_surfaceGeode, m_shader );
+    WGEColormapping::apply( m_surfaceGeode, shader );
 
     m_moduleNode->insert( m_surfaceGeode );
+    if( !m_moduleNodeInserted )
+    {
+        WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_moduleNode );
+        m_moduleNodeInserted = true;
+    }
+
     m_moduleNode->addUpdateCallback( new WGEFunctorCallback< osg::Node >( boost::bind( &WMIsosurface::updateGraphicsCallback, this ) ) );
 }
 
