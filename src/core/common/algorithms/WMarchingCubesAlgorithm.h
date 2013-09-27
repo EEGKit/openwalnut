@@ -176,10 +176,10 @@ private:
      * \return ID of vertex with the given coordinates
      */
     unsigned int getVertexID( unsigned int nX, unsigned int nY, unsigned int nZ );
-    
+
     /**
      * Calculate marching cubes algorithm
-     * 
+     *
      * \param x number of vertices in X direction
      * \param y number of vertices in Y direction
      * \param z number of vertices in Z direction
@@ -351,11 +351,11 @@ template<typename T> boost::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::g
 
     m_tIsoLevel = isoValue;
 
-    unsigned int nX = m_nCellsX + 1;
-    unsigned int nY = m_nCellsY + 1;
+    // unsigned int nX = m_nCellsX + 1;
+    // unsigned int nY = m_nCellsY + 1;
 
 
-    unsigned int nPointsInSlice = nX * nY;
+    // unsigned int nPointsInSlice = nX * nY;
 
     boost::shared_ptr< WProgress > progress;
 
@@ -369,7 +369,7 @@ template<typename T> boost::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::g
         boost::shared_ptr< WSpanSpaceBase::cellids_t > cells = spanSpace->findCells( isoValue );
         for( typename WSpanSpaceBase::cellids_t::const_iterator i = cells->begin(); i < cells->end(); ++i )
         {
-            //calculateMarchingCube( ( *i )->m_x, ( *i )->m_y,  ( *i )->m_z, vals );
+            calculateMarchingCube( ( *i )->m_x, ( *i )->m_y,  ( *i )->m_z, vals );
         }
     }
     else

@@ -146,14 +146,14 @@ public:
 
 private:
     int m_depth; //!< depth of KdTree
-    
+
     /**
      * Sort method for the nth_element function
      *
      * \param i first cell which is compared to secound cell
      * \param j secound cell which is compared to the first cell
      *
-     * \return for even numbers true if the first cell has a smaller minimum isovalue and 
+     * \return for even numbers true if the first cell has a smaller minimum isovalue and
      *         for odd numbers true if the secound cell has a bigger maximum isovalue
      */
     bool sortValues( cells_t i, cells_t j );
@@ -196,7 +196,7 @@ template< class T > bool WSpanSpaceKdTree< T >::sortValues( cells_t i, cells_t j
         +-------> min = x = 1
     */
     if( m_depth % 2 == 1  ) // choos x or y axis
-    {   
+    {
         // for even numbers like (0, 2, 4)
         // the function returns true if the first cell has a smaller minimum isovalue
         return ( i.m_minMax.m_min < j.m_minMax.m_min );
@@ -241,7 +241,7 @@ public:
     typedef MinMax< T > minmax_t; //!< minmax type used for KdCells
     typedef KdCells< T > cells_t; //!< the typ for KdCells
     typedef std::vector< cells_t > kdCells_t; //!< vector of KdCells
-    
+
     /**
      * Virtual function of SpanSpace algorithm
      *
@@ -256,7 +256,7 @@ public:
     virtual ~WSpanSpace()
     {
     }
-    
+
     /**
      * Find cells with given isovalue
      *
@@ -279,7 +279,7 @@ private:
      * \return minMax isovalue
      */
     minmax_t getCellMinMax( unsigned int coordX, unsigned int coordY, unsigned int coordZ );
-    
+
     /**
      * Calculate the id of a cell
      *
@@ -330,14 +330,10 @@ private:
 
 template< class T > boost::shared_ptr< WSpanSpaceBase::cellids_t > WSpanSpace<T>::findCells( double iso ) const
 {
-        wlog::debug( "sleep" );
-        sleep( 20 );
         boost::shared_ptr< cellids_t > cellVector( new cellids_t );
         T isoValue = static_cast< T >( iso );
         // fill cellVec with content
         searchKdTree( isoValue, *cellVector );
-        wlog::debug( "sleep" );
-        sleep( 20 );
         wlog::debug( "WSpanSpace" ) << "active cells:" << cellVector->size();
         return cellVector;
 }
