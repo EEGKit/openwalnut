@@ -216,7 +216,7 @@ void WMIsosurface::moduleMain()
             }
 
             // new grid for new data
-            boost::shared_ptr< WGridRegular3D > gridRegular3D = boost::shared_dynamic_cast< WGridRegular3D >( ( *m_dataSet ).getGrid() );
+            boost::shared_ptr< WGridRegular3D > gridRegular3D = boost::shared_pointer_cast< WGridRegular3D >( ( *m_dataSet ).getGrid() );
             WAssert( gridRegular3D, "Grid is not of type WGridRegular3D." );
             m_grid = gridRegular3D;
             // new data new span space
