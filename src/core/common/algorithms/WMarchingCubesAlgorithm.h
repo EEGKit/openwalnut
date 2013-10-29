@@ -25,12 +25,17 @@
 #ifndef WMARCHINGCUBESALGORITHM_H
 #define WMARCHINGCUBESALGORITHM_H
 
+#include <algorithm>
 #include <vector>
 #include <map>
+
+#include <boost/tuple/tuple.hpp>
+#include "boost/tuple/tuple_comparison.hpp"
 
 #include "../math/WMatrix.h"
 #include "../WProgressCombiner.h"
 #include "core/graphicsEngine/WTriangleMesh.h"
+#include "core/common/WLogger.h"
 
 #include "WMarchingCubesCaseTables.h"
 #include "WSpanSpace.h"
@@ -366,11 +371,108 @@ template<typename T> boost::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::g
         progress = boost::shared_ptr< WProgress >( new WProgress( "Marching Cubes" ) );
         mainProgress->addSubProgress( progress );
 
+        // Debug: print the expected cell IDs using manual check
+        typedef boost::tuple< unsigned int, unsigned int, unsigned int > CellDef;
+
+        // collect cell coordinates in two separate lists -> allows comparison afterwards
+        typedef std::vector< CellDef > CellVec;
+        CellVec mcDirektListe;
+        CellVec mcMitSSListe;
+
+        // first: find all cells, where the isovalue can be found inside
+        for( unsigned int z = 0; z < m_nCellsZ; z++ )
+        {
+            for( unsigned int y = 0; y < m_nCellsY; y++ )
+            {
+                for( unsigned int x = 0; x < m_nCellsX; x++ )
+                {
+                    unsigned int nX = m_nCellsX + 1;
+                    unsigned int nY = m_nCellsY + 1;
+
+                    unsigned int nPointsInSlice = nX * nY;
+
+                    double v1 = ( *vals )[ z * nPointsInSlice + y * nX + x ];
+                    double v2 = ( *vals )[ z * nPointsInSlice + ( y + 1 ) * nX + x ];
+                    double v3 = ( *vals )[ z * nPointsInSlice + ( y + 1 ) * nX + ( x + 1 ) ];
+                    double v4 = ( *vals )[ z * nPointsInSlice + y * nX + ( x + 1 ) ];
+                    double v5 = ( *vals )[ ( z + 1 ) * nPointsInSlice + y * nX + x ];
+                    double v6 = ( *vals )[ ( z + 1 ) * nPointsInSlice + ( y + 1 ) * nX + x ];
+                    double v7 = ( *vals )[ ( z + 1 ) * nPointsInSlice + ( y + 1 ) * nX + ( x + 1 ) ];
+                    double v8 = ( *vals )[ ( z + 1 ) * nPointsInSlice + y * nX + ( x + 1 ) ];
+
+                    double min = std::min( v1, std::min( v2, std::min( v3, std::min( v4, std::min( v5, std::min( v6, std::min( v7, v8 ) ) ) ) ) ) );
+                    double max = std::max( v1, std::max( v2, std::max( v3, std::max( v4, std::max( v5, std::max( v6, std::max( v7, v8 ) ) ) ) ) ) );
+
+                    // das ist das entscheidente kriterium. Wenn das falsch ist wird auch beim nicht-SpanSpace MC was falsch
+                    if( ( min <= isoValue ) && ( max >= isoValue ) )
+                    {
+                        // wlog::info( "MC Direkt" ) <<  x << " - " << y  << " - " << z;
+                        CellDef v( x, y, z );
+                        mcDirektListe.push_back( v );
+
+                        // geht, aber nur, wqenn wirklich alle Zellen bearbeitet werden die dem Isowert-kriterium entsprechen:
+                        // calculateMarchingCube(x,y,z,vals);
+                    }
+                }
+            }
+        }
+        // Debug End
+
         boost::shared_ptr< WSpanSpaceBase::cellids_t > cells = spanSpace->findCells( isoValue );
         for( typename WSpanSpaceBase::cellids_t::const_iterator i = cells->begin(); i < cells->end(); ++i )
         {
+            // Debug
+            CellDef v( ( *i )->m_x, ( *i )->m_y, ( *i )->m_z );
+            mcMitSSListe.push_back( v );
+            // Debug End
+
             calculateMarchingCube( ( *i )->m_x, ( *i )->m_y,  ( *i )->m_z, vals );
         }
+
+        // Debug: compare both lists
+        wlog::info( "MC Direkt - Zellen:" ) <<  mcDirektListe.size();
+        wlog::info( "MC mit SS - Zellen:" ) <<  mcMitSSListe.size();
+
+        // listen sortieren. Der vergleichsoperator "<" für boost::tuple erzeugt lexikographische Ordnung. Sortierung ist für
+        // std::set_difference nötig
+        std::sort( mcDirektListe.begin(), mcDirektListe.end() );
+        std::sort( mcMitSSListe.begin(), mcMitSSListe.end() );
+
+        // Set Difference - Mengen Unterschied. Ergebnis ist eine Liste mit den elementen die in der ersten vorhanden, aber in der 2. nicht
+        CellVec diffDirektZuSS( std::max( mcDirektListe.size(), mcMitSSListe.size() ) );
+        CellVec::iterator it = std::set_difference( mcDirektListe.begin(), mcDirektListe.end(),
+                                                    mcMitSSListe.begin(), mcMitSSListe.end(),
+                                                    diffDirektZuSS.begin() // Zielliste
+                );
+        // kürzen, daß der vektor nur so lang ist wie er gefüllt wurde
+        diffDirektZuSS.resize( it - diffDirektZuSS.begin() );
+
+        // und andersrum
+        CellVec diffSSZuDirekt( std::max( mcDirektListe.size(), mcMitSSListe.size() ) );
+        it = std::set_difference( mcMitSSListe.begin(), mcMitSSListe.end(),
+                                  mcDirektListe.begin(), mcDirektListe.end(),
+                                  diffSSZuDirekt.begin() // Zielliste
+                );
+        // kürzen, daß der vektor nur so lang ist wie er gefüllt wurde
+        diffSSZuDirekt.resize( it - diffSSZuDirekt.begin() );
+
+        // Den Kram ausgeben
+        wlog::debug( "Vergleichstest" ) << "Zellen im direkten MC, aber nicht im SS MC: " << diffDirektZuSS.size();
+        wlog::debug( "Vergleichstest" ) << "Zellen im SS MC, aber nicht im direkten MC: " << diffSSZuDirekt.size();
+
+        // ICh hoffe mal dass die zweite zahl immer 0 sein wird.
+
+        // Das könnte die GUI einfrieren ;-)
+        for( it = diffDirektZuSS.begin(); it != diffDirektZuSS.end(); ++it )
+        {
+            wlog::debug( "Diff: Direkt zu SS" ) << ( *it ).get< 0 >() << ", " << ( *it ).get< 1 >() << ", " << ( *it ).get< 2 >();
+        }
+        for( it = diffSSZuDirekt.begin(); it != diffSSZuDirekt.end(); ++it )
+        {
+            wlog::debug( "Diff: SS zu Dirtekt" ) << ( *it ).get< 0 >() << ", " << ( *it ).get< 1 >() << ", " << ( *it ).get< 2 >();
+        }
+
+        // Debug End
     }
     else
     {

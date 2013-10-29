@@ -109,7 +109,7 @@ const std::string WMIsosurface::getDescription() const
 }
 
 /**
- * Class to initial SpanSpace algorithm without typ conflicts
+ * Class to initial SpanSpace algorithm without type conflicts
  */
 class ValueSetVisitor: public boost::static_visitor< boost::shared_ptr< WSpanSpaceBase > >
 {
@@ -130,7 +130,7 @@ public:
     }
 
     /**
-     * Initial spanSpace algorith
+     * Initial spanSpace algorith,
      *
      * \param valueSet Set of coordinates
      * \return spanSpaceBase class
@@ -139,7 +139,7 @@ public:
     WSpanSpaceBase::SPtr  operator()( WValueSet< T > const* valueSet ) const
     {
          return WSpanSpaceBase::SPtr( new WSpanSpace< T >( m_cordsX, m_cordsY, m_cordsZ,
-                                     valueSet->rawDataVectorPointer(), m_progress ) );
+                                      valueSet->rawDataVectorPointer(), m_progress ) );
     }
 private:
     size_t m_cordsX; //!< X coordinate of cell
@@ -221,8 +221,8 @@ void WMIsosurface::moduleMain()
             m_grid = gridRegular3D;
             // new data new span space
             boost::shared_ptr< WValueSetBase > valueSet( m_dataSet->getValueSet() );
-            m_spanSpace = valueSet->applyFunction(
-                ValueSetVisitor( m_grid->getNbCoordsX(), m_grid->getNbCoordsY(), m_grid->getNbCoordsZ() , m_progress ) );
+            m_spanSpace = valueSet->applyFunction( ValueSetVisitor( m_grid->getNbCoordsX(), m_grid->getNbCoordsY(), m_grid->getNbCoordsZ(),
+                                                   m_progress ) );
 
             // set appropriate constraints for properties
             m_isoValueProp->setMin( m_dataSet->getMin() );
@@ -466,7 +466,7 @@ void WMIsosurface::renderMesh()
     osg::ref_ptr< osg::DrawElementsUInt > surfaceElement( new osg::DrawElementsUInt( osg::PrimitiveSet::TRIANGLES, 0 ) );
 
     std::vector< size_t > tris = m_triMesh->getTriangles();
-    debugLog() << "Hallo " << tris.size();
+    debugLog() << "Number of triangles: " << tris.size();
     surfaceElement->reserve( tris.size() );
 
     for( unsigned int vertId = 0; vertId < tris.size(); ++vertId )
