@@ -167,9 +167,15 @@ template< class T > boost::shared_ptr< SSKdTreeNode< T > > WSpanSpaceKdTree< T >
     boost::shared_ptr< SSKdTreeNode< T > > kdNode( new SSKdTreeNode< T >() );
     m_depth = depth;
 
+    // wlog::debug( "kdTree" ) << "---depth" << depth << "---";
+    // for( unsigned int fi = first; fi < last; fi++ )
+    //     wlog::debug( "kdTree" ) << points[ fi ].m_id.m_x << " - " << points[ fi ].m_id.m_y << " - " << points[ fi ].m_id.m_z << "|" << points[ fi ].m_minMax.m_min << "->" << points[ fi ].m_minMax.m_max;
     if( size <=  1 )
     {
         kdNode->m_location = points[ first + median ];
+        // wlog::debug( "SS Zelle" ) << kdNode->m_location.m_id.m_x << ", " << kdNode->m_location.m_id.m_y << ", " << kdNode->m_location.m_id.m_z << "|" << kdNode->m_location.m_minMax.m_min << "->"
+        //     << kdNode->m_location.m_minMax.m_max ;
+
         return kdNode;
     }
 
@@ -266,9 +272,6 @@ public:
      */
     boost::shared_ptr< cellids_t > findCells( double iso ) const;
 
-
-protected:
-private:
     /**
      * Get the minimum and maximun isovalue of a special cell with given x,y,z coordinates
      *
@@ -279,6 +282,9 @@ private:
      * \return minMax isovalue
      */
     minmax_t getCellMinMax( unsigned int coordX, unsigned int coordY, unsigned int coordZ );
+
+protected:
+private:
 
     /**
      * Calculate the id of a cell
@@ -306,7 +312,7 @@ private:
      * \param isovalue search in KdTree for this isovalue
      * \param cellVector write in this vector the cells which this isovalue
      */
-    void searchKdTree( T isovalue, cellids_t& cellVector ) const;
+    void searchKdTree( double isovalue, cellids_t& cellVector ) const;
 
     /**
      * Search the minimun isovalues in KdTree
@@ -315,7 +321,7 @@ private:
      * \param isovalue which is search for
      * \param cellVector pointer of vector in which cells are written
      */
-    void searchKdMinMax( boost::shared_ptr< SSKdTreeNode< T > > root, T isovalue, cellids_t& cellVector ) const;
+    void searchKdMinMax( boost::shared_ptr< SSKdTreeNode< T > > root, double isovalue, cellids_t& cellVector ) const;
 
     /**
      * Search the maximum values in KdTree
@@ -324,7 +330,7 @@ private:
      * \param isovalue which is search for
      * \param cellVector pointer of vector in which cells are written
      */
-    void searchKdMaxMin( boost::shared_ptr< SSKdTreeNode< T > > root, T isovalue, cellids_t& cellVector ) const;
+    void searchKdMaxMin( boost::shared_ptr< SSKdTreeNode< T > > root, double isovalue, cellids_t& cellVector ) const;
     cellids_t m_activeCells; //!< variable is used to get the number of active cells
 };
 
@@ -373,7 +379,7 @@ template< class T > WSpanSpace<T>::WSpanSpace( size_t nbCoordsX, size_t nbCoords
     progressKd->finish();
     wlog::debug( "SpanSpace" ) << "finished";
 }
-template< class T > void WSpanSpace<T>::searchKdTree( T isovalue,
+template< class T > void WSpanSpace<T>::searchKdTree( double isovalue,
                                                       cellids_t& cellVector ) const
 {
     if( m_kdTreeNode )
@@ -385,15 +391,17 @@ template< class T > void WSpanSpace<T>::searchKdTree( T isovalue,
     else
         cellVector.push_back( &m_kdTreeNode->m_location.m_id );
 }
-template< class T > void WSpanSpace<T>::searchKdMaxMin( boost::shared_ptr< SSKdTreeNode< T > > root, T isovalue,
+template< class T > void WSpanSpace<T>::searchKdMaxMin( boost::shared_ptr< SSKdTreeNode< T > > root, double isovalue,
                                          cellids_t& cellVector ) const
 {
-    if( root->m_location.m_minMax.m_max > isovalue )
+    if( root->m_location.m_minMax.m_max >= isovalue )
     {
-        if( root->m_location.m_minMax.m_min > isovalue )
+        if( root->m_location.m_minMax.m_min <= isovalue )
         {
             if( !root->m_rightTree && !root->m_leftTree )
+            {
                 cellVector.push_back( &root->m_location.m_id );
+            }
         }
 
         if( root->m_leftTree )
@@ -406,15 +414,17 @@ template< class T > void WSpanSpace<T>::searchKdMaxMin( boost::shared_ptr< SSKdT
         searchKdMinMax( root->m_rightTree, isovalue, cellVector );
     }
 }
-template< class T > void WSpanSpace<T>::searchKdMinMax( boost::shared_ptr< SSKdTreeNode< T > > root, T isovalue,
+template< class T > void WSpanSpace<T>::searchKdMinMax( boost::shared_ptr< SSKdTreeNode< T > > root, double isovalue,
                                          cellids_t& cellVector ) const
 {
-    if( root->m_location.m_minMax.m_min < isovalue )
+    if( root->m_location.m_minMax.m_min <= isovalue )
     {
-        if( root->m_location.m_minMax.m_max > isovalue )
+        if( root->m_location.m_minMax.m_max >= isovalue )
         {
             if( !root->m_rightTree && !root->m_leftTree )
+            {
                 cellVector.push_back( &root->m_location.m_id );
+            }
         }
         if( root->m_rightTree )
         {
@@ -432,11 +442,16 @@ template< class T > typename WSpanSpace< T >::minmax_t WSpanSpace< T >::getCellM
     valMax = valMin = getValue( coordX, coordY, coordZ  );
 
     // get point neighbours
+
+    // Not needed since we already initialize valMin and valMax using this voxel's value
+    // valMin = std::min( valMin, getValue( coordX, coordY, coordZ ) );
+    // valMax = std::max( valMax, getValue( coordX, coordY, coordZ ) );
+
+    valMin = std::min( valMin, getValue( coordX + 1, coordY + 1, coordZ + 1 ) );
+    valMax = std::max( valMax, getValue( coordX + 1, coordY + 1, coordZ + 1 ) );
+
     valMin = std::min( valMin, getValue( coordX + 1, coordY, coordZ ) );
     valMax = std::max( valMax, getValue( coordX + 1, coordY, coordZ  ) );
-
-    valMin = std::min( valMin, getValue( coordX + 1, coordY, coordZ + 1 ) );
-    valMax = std::max( valMax, getValue( coordX + 1, coordY, coordZ + 1 ) );
 
     valMin = std::min( valMin, getValue( coordX + 1, coordY + 1, coordZ ) );
     valMax = std::max( valMax, getValue( coordX + 1, coordY + 1, coordZ ) );

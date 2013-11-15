@@ -404,6 +404,7 @@ template<typename T> boost::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::g
                     double max = std::max( v1, std::max( v2, std::max( v3, std::max( v4, std::max( v5, std::max( v6, std::max( v7, v8 ) ) ) ) ) ) );
 
                     // das ist das entscheidente kriterium. Wenn das falsch ist wird auch beim nicht-SpanSpace MC was falsch
+                    //wlog::debug( "MC Zelle" ) <<  x << " - " << y  << " - " << z << "|" << min << "->" << max;
                     if( ( min <= isoValue ) && ( max >= isoValue ) )
                     {
                         // wlog::info( "MC Direkt" ) <<  x << " - " << y  << " - " << z;
@@ -418,12 +419,21 @@ template<typename T> boost::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::g
         }
         // Debug End
 
+        boost::shared_ptr< WSpanSpace< T > > sstyped = boost::dynamic_pointer_cast< WSpanSpace< T > >( spanSpace );
         boost::shared_ptr< WSpanSpaceBase::cellids_t > cells = spanSpace->findCells( isoValue );
         for( typename WSpanSpaceBase::cellids_t::const_iterator i = cells->begin(); i < cells->end(); ++i )
         {
             // Debug
+            // wlog::info( "MC SS" ) << ( *i )->m_x << " - " << ( *i )->m_y << " - " << ( *i )->m_z;
             CellDef v( ( *i )->m_x, ( *i )->m_y, ( *i )->m_z );
             mcMitSSListe.push_back( v );
+
+            // Alle Cellen ausgeben die laut spanspace im Isobereich liegen es aber nicht sind
+            typename WSpanSpace< T >::minmax_t mm = sstyped->getCellMinMax( v.get< 0 >(), v.get< 1 >() , v.get< 2 >() );
+            if( !( ( mm.m_min <= isoValue ) && ( mm.m_max >= isoValue ) ) )
+            {
+                wlog::debug( "MC SS Liste" ) <<  v.get< 0 >() << ", " <<  v.get< 1 >() << ", " <<  v.get< 2 >() <<  " -- [" << static_cast< float >( mm.m_min ) << ", " << static_cast< float >( mm.m_max ) << "]";
+            }
             // Debug End
 
             calculateMarchingCube( ( *i )->m_x, ( *i )->m_y,  ( *i )->m_z, vals );
@@ -432,46 +442,7 @@ template<typename T> boost::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::g
         // Debug: compare both lists
         wlog::info( "MC Direkt - Zellen:" ) <<  mcDirektListe.size();
         wlog::info( "MC mit SS - Zellen:" ) <<  mcMitSSListe.size();
-
-        // listen sortieren. Der vergleichsoperator "<" für boost::tuple erzeugt lexikographische Ordnung. Sortierung ist für
-        // std::set_difference nötig
-        std::sort( mcDirektListe.begin(), mcDirektListe.end() );
-        std::sort( mcMitSSListe.begin(), mcMitSSListe.end() );
-
-        // Set Difference - Mengen Unterschied. Ergebnis ist eine Liste mit den elementen die in der ersten vorhanden, aber in der 2. nicht
-        CellVec diffDirektZuSS( std::max( mcDirektListe.size(), mcMitSSListe.size() ) );
-        CellVec::iterator it = std::set_difference( mcDirektListe.begin(), mcDirektListe.end(),
-                                                    mcMitSSListe.begin(), mcMitSSListe.end(),
-                                                    diffDirektZuSS.begin() // Zielliste
-                );
-        // kürzen, daß der vektor nur so lang ist wie er gefüllt wurde
-        diffDirektZuSS.resize( it - diffDirektZuSS.begin() );
-
-        // und andersrum
-        CellVec diffSSZuDirekt( std::max( mcDirektListe.size(), mcMitSSListe.size() ) );
-        it = std::set_difference( mcMitSSListe.begin(), mcMitSSListe.end(),
-                                  mcDirektListe.begin(), mcDirektListe.end(),
-                                  diffSSZuDirekt.begin() // Zielliste
-                );
-        // kürzen, daß der vektor nur so lang ist wie er gefüllt wurde
-        diffSSZuDirekt.resize( it - diffSSZuDirekt.begin() );
-
-        // Den Kram ausgeben
-        wlog::debug( "Vergleichstest" ) << "Zellen im direkten MC, aber nicht im SS MC: " << diffDirektZuSS.size();
-        wlog::debug( "Vergleichstest" ) << "Zellen im SS MC, aber nicht im direkten MC: " << diffSSZuDirekt.size();
-
-        // ICh hoffe mal dass die zweite zahl immer 0 sein wird.
-
-        // Das könnte die GUI einfrieren ;-)
-        for( it = diffDirektZuSS.begin(); it != diffDirektZuSS.end(); ++it )
-        {
-            wlog::debug( "Diff: Direkt zu SS" ) << ( *it ).get< 0 >() << ", " << ( *it ).get< 1 >() << ", " << ( *it ).get< 2 >();
-        }
-        for( it = diffSSZuDirekt.begin(); it != diffSSZuDirekt.end(); ++it )
-        {
-            wlog::debug( "Diff: SS zu Dirtekt" ) << ( *it ).get< 0 >() << ", " << ( *it ).get< 1 >() << ", " << ( *it ).get< 2 >();
-        }
-
+        wlog::info( "DIfferenz: " ) << mcMitSSListe.size() - mcDirektListe.size();
         // Debug End
     }
     else
