@@ -167,15 +167,9 @@ template< class T > boost::shared_ptr< SSKdTreeNode< T > > WSpanSpaceKdTree< T >
     boost::shared_ptr< SSKdTreeNode< T > > kdNode( new SSKdTreeNode< T >() );
     m_depth = depth;
 
-    // wlog::debug( "kdTree" ) << "---depth" << depth << "---";
-    // for( unsigned int fi = first; fi < last; fi++ )
-    //     wlog::debug( "kdTree" ) << points[ fi ].m_id.m_x << " - " << points[ fi ].m_id.m_y << " - " << points[ fi ].m_id.m_z << "|" << points[ fi ].m_minMax.m_min << "->" << points[ fi ].m_minMax.m_max;
     if( size <=  1 )
     {
         kdNode->m_location = points[ first + median ];
-        // wlog::debug( "SS Zelle" ) << kdNode->m_location.m_id.m_x << ", " << kdNode->m_location.m_id.m_y << ", " << kdNode->m_location.m_id.m_z << "|" << kdNode->m_location.m_minMax.m_min << "->"
-        //     << kdNode->m_location.m_minMax.m_max ;
-
         return kdNode;
     }
 
@@ -340,7 +334,6 @@ template< class T > boost::shared_ptr< WSpanSpaceBase::cellids_t > WSpanSpace<T>
         T isoValue = static_cast< T >( iso );
         // fill cellVec with content
         searchKdTree( isoValue, *cellVector );
-        wlog::debug( "WSpanSpace" ) << "active cells:" << cellVector->size();
         return cellVector;
 }
 
@@ -353,9 +346,7 @@ template< class T > WSpanSpace<T>::WSpanSpace( size_t nbCoordsX, size_t nbCoords
     m_nCellsZ = nbCoordsZ - 1;
 
     boost::shared_ptr< WProgress > progressSpan = boost::shared_ptr< WProgress >( new WProgress( "Span Space", m_nCellsZ ) );
-    boost::shared_ptr< WProgress > progressKd = boost::shared_ptr< WProgress >( new WProgress( "Kd-Tree" ) );
     mainProgress->addSubProgress( progressSpan );
-    mainProgress->addSubProgress( progressKd );
 
     m_vals = vals;
 
@@ -373,19 +364,15 @@ template< class T > WSpanSpace<T>::WSpanSpace( size_t nbCoordsX, size_t nbCoords
     }
 
     progressSpan->finish();
-    wlog::debug( "SpanSpace" ) << "started";
     WSpanSpaceKdTree< T > kdTree;
     m_kdTreeNode = kdTree.createTree( m_spanSpace, 0, 0, m_spanSpace.size() );
-    progressKd->finish();
-    wlog::debug( "SpanSpace" ) << "finished";
 }
+
 template< class T > void WSpanSpace<T>::searchKdTree( double isovalue,
                                                       cellids_t& cellVector ) const
 {
     if( m_kdTreeNode )
     {
-        searchKdMinMax( m_kdTreeNode, isovalue, cellVector );
-        wlog::debug( "veea" ) << "kj";
         searchKdMaxMin( m_kdTreeNode, isovalue, cellVector );
     }
     else
@@ -394,7 +381,7 @@ template< class T > void WSpanSpace<T>::searchKdTree( double isovalue,
 template< class T > void WSpanSpace<T>::searchKdMaxMin( boost::shared_ptr< SSKdTreeNode< T > > root, double isovalue,
                                          cellids_t& cellVector ) const
 {
-    if( root->m_location.m_minMax.m_max >= isovalue )
+    if( root->m_location.m_minMax.m_max > isovalue )
     {
         if( root->m_location.m_minMax.m_min <= isovalue )
         {
@@ -419,7 +406,7 @@ template< class T > void WSpanSpace<T>::searchKdMinMax( boost::shared_ptr< SSKdT
 {
     if( root->m_location.m_minMax.m_min <= isovalue )
     {
-        if( root->m_location.m_minMax.m_max >= isovalue )
+        if( root->m_location.m_minMax.m_max > isovalue )
         {
             if( !root->m_rightTree && !root->m_leftTree )
             {

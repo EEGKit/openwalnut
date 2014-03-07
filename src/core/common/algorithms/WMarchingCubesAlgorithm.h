@@ -371,79 +371,12 @@ template<typename T> boost::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::g
         progress = boost::shared_ptr< WProgress >( new WProgress( "Marching Cubes" ) );
         mainProgress->addSubProgress( progress );
 
-        // Debug: print the expected cell IDs using manual check
-        typedef boost::tuple< unsigned int, unsigned int, unsigned int > CellDef;
-
-        // collect cell coordinates in two separate lists -> allows comparison afterwards
-        typedef std::vector< CellDef > CellVec;
-        CellVec mcDirektListe;
-        CellVec mcMitSSListe;
-
-        // first: find all cells, where the isovalue can be found inside
-        for( unsigned int z = 0; z < m_nCellsZ; z++ )
-        {
-            for( unsigned int y = 0; y < m_nCellsY; y++ )
-            {
-                for( unsigned int x = 0; x < m_nCellsX; x++ )
-                {
-                    unsigned int nX = m_nCellsX + 1;
-                    unsigned int nY = m_nCellsY + 1;
-
-                    unsigned int nPointsInSlice = nX * nY;
-
-                    double v1 = ( *vals )[ z * nPointsInSlice + y * nX + x ];
-                    double v2 = ( *vals )[ z * nPointsInSlice + ( y + 1 ) * nX + x ];
-                    double v3 = ( *vals )[ z * nPointsInSlice + ( y + 1 ) * nX + ( x + 1 ) ];
-                    double v4 = ( *vals )[ z * nPointsInSlice + y * nX + ( x + 1 ) ];
-                    double v5 = ( *vals )[ ( z + 1 ) * nPointsInSlice + y * nX + x ];
-                    double v6 = ( *vals )[ ( z + 1 ) * nPointsInSlice + ( y + 1 ) * nX + x ];
-                    double v7 = ( *vals )[ ( z + 1 ) * nPointsInSlice + ( y + 1 ) * nX + ( x + 1 ) ];
-                    double v8 = ( *vals )[ ( z + 1 ) * nPointsInSlice + y * nX + ( x + 1 ) ];
-
-                    double min = std::min( v1, std::min( v2, std::min( v3, std::min( v4, std::min( v5, std::min( v6, std::min( v7, v8 ) ) ) ) ) ) );
-                    double max = std::max( v1, std::max( v2, std::max( v3, std::max( v4, std::max( v5, std::max( v6, std::max( v7, v8 ) ) ) ) ) ) );
-
-                    // das ist das entscheidente kriterium. Wenn das falsch ist wird auch beim nicht-SpanSpace MC was falsch
-                    //wlog::debug( "MC Zelle" ) <<  x << " - " << y  << " - " << z << "|" << min << "->" << max;
-                    if( ( min <= isoValue ) && ( max >= isoValue ) )
-                    {
-                        // wlog::info( "MC Direkt" ) <<  x << " - " << y  << " - " << z;
-                        CellDef v( x, y, z );
-                        mcDirektListe.push_back( v );
-
-                        // geht, aber nur, wqenn wirklich alle Zellen bearbeitet werden die dem Isowert-kriterium entsprechen:
-                        // calculateMarchingCube(x,y,z,vals);
-                    }
-                }
-            }
-        }
-        // Debug End
-
         boost::shared_ptr< WSpanSpace< T > > sstyped = boost::dynamic_pointer_cast< WSpanSpace< T > >( spanSpace );
         boost::shared_ptr< WSpanSpaceBase::cellids_t > cells = spanSpace->findCells( isoValue );
         for( typename WSpanSpaceBase::cellids_t::const_iterator i = cells->begin(); i < cells->end(); ++i )
         {
-            // Debug
-            // wlog::info( "MC SS" ) << ( *i )->m_x << " - " << ( *i )->m_y << " - " << ( *i )->m_z;
-            CellDef v( ( *i )->m_x, ( *i )->m_y, ( *i )->m_z );
-            mcMitSSListe.push_back( v );
-
-            // Alle Cellen ausgeben die laut spanspace im Isobereich liegen es aber nicht sind
-            typename WSpanSpace< T >::minmax_t mm = sstyped->getCellMinMax( v.get< 0 >(), v.get< 1 >() , v.get< 2 >() );
-            if( !( ( mm.m_min <= isoValue ) && ( mm.m_max >= isoValue ) ) )
-            {
-                wlog::debug( "MC SS Liste" ) <<  v.get< 0 >() << ", " <<  v.get< 1 >() << ", " <<  v.get< 2 >() <<  " -- [" << static_cast< float >( mm.m_min ) << ", " << static_cast< float >( mm.m_max ) << "]";
-            }
-            // Debug End
-
             calculateMarchingCube( ( *i )->m_x, ( *i )->m_y,  ( *i )->m_z, vals );
         }
-
-        // Debug: compare both lists
-        wlog::info( "MC Direkt - Zellen:" ) <<  mcDirektListe.size();
-        wlog::info( "MC mit SS - Zellen:" ) <<  mcMitSSListe.size();
-        wlog::info( "DIfferenz: " ) << mcMitSSListe.size() - mcDirektListe.size();
-        // Debug End
     }
     else
     {
