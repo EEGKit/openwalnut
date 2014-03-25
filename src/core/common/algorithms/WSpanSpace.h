@@ -29,6 +29,7 @@
 #include <algorithm>
 #include <utility>
 #include <tr1/functional>
+#include <sys/time.h>
 
 #include "../../common/WLogger.h"
 #include "../../common/WProgressCombiner.h"
@@ -341,6 +342,8 @@ template< class T > boost::shared_ptr< WSpanSpaceBase::cellids_t > WSpanSpace<T>
 template< class T > WSpanSpace<T>::WSpanSpace( size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
                                              const std::vector< T >*  vals,  boost::shared_ptr< WProgressCombiner > mainProgress )
 {
+    timeval timer1, timer2;
+
     m_nCellsX = nbCoordsX - 1;
     m_nCellsY = nbCoordsY - 1;
     m_nCellsZ = nbCoordsZ - 1;
@@ -365,7 +368,12 @@ template< class T > WSpanSpace<T>::WSpanSpace( size_t nbCoordsX, size_t nbCoords
 
     progressSpan->finish();
     WSpanSpaceKdTree< T > kdTree;
+    
+    gettimeofday( &timer1, NULL );
     m_kdTreeNode = kdTree.createTree( m_spanSpace, 0, 0, m_spanSpace.size() );
+    gettimeofday( &timer2, NULL );
+    long millis = ( (timer2.tv_sec * 1000) + (timer2.tv_usec / 1000) ) - ( (timer1.tv_sec * 1000) + (timer1.tv_usec / 1000) );
+    wlog::info( "build" ) << millis;
 }
 
 template< class T > void WSpanSpace<T>::searchKdTree( double isovalue,
