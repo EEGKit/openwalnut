@@ -106,6 +106,8 @@ public:
      * Initial min/max iso values
      */
     SSKdTreeNode():
+        m_leftTree( NULL ),
+        m_rightTree( NULL ),
         m_location( minmax_t( T(), T() ), ( unsigned int ) 0, ( unsigned int ) 0, ( unsigned int ) 0 )
     {
     }
@@ -379,16 +381,21 @@ template< class T > WSpanSpace<T>::WSpanSpace( size_t nbCoordsX, size_t nbCoords
 template< class T > void WSpanSpace<T>::searchKdTree( double isovalue,
                                                       cellids_t& cellVector ) const
 {
+    cellVector.reserve( m_nCellsX * m_nCellsY * m_nCellsZ );
+
     if( m_kdTreeNode )
     {
         searchKdMaxMin( m_kdTreeNode, isovalue, cellVector );
     }
     else
+    {
         cellVector.push_back( &m_kdTreeNode->m_location.m_id );
+    }
 }
 template< class T > void WSpanSpace<T>::searchKdMaxMin( SSKdTreeNode< T >* root, double isovalue,
                                          cellids_t& cellVector ) const
 {
+ //wlog::info( "max min" ) << "1";
     if( root->m_location.m_minMax.m_max > isovalue )
     {
         if( root->m_location.m_minMax.m_min <= isovalue )
@@ -398,12 +405,13 @@ template< class T > void WSpanSpace<T>::searchKdMaxMin( SSKdTreeNode< T >* root,
                 cellVector.push_back( &root->m_location.m_id );
             }
         }
-
+//wlog::info( "max min" ) << "left";
         if( root->m_leftTree )
         {
             searchKdMinMax( root->m_leftTree, isovalue, cellVector );
         }
     }
+ //wlog::info( "max min" ) << "right";
     if( root->m_rightTree )
     {
         searchKdMinMax( root->m_rightTree, isovalue, cellVector );
@@ -412,6 +420,7 @@ template< class T > void WSpanSpace<T>::searchKdMaxMin( SSKdTreeNode< T >* root,
 template< class T > void WSpanSpace<T>::searchKdMinMax( SSKdTreeNode< T >* root, double isovalue,
                                          cellids_t& cellVector ) const
 {
+//wlog::info( "min max" ) << "1";
     if( root->m_location.m_minMax.m_min <= isovalue )
     {
         if( root->m_location.m_minMax.m_max > isovalue )
@@ -421,11 +430,13 @@ template< class T > void WSpanSpace<T>::searchKdMinMax( SSKdTreeNode< T >* root,
                 cellVector.push_back( &root->m_location.m_id );
             }
         }
+//wlog::info( "min max" ) << "right";
         if( root->m_rightTree )
         {
             searchKdMaxMin( root->m_rightTree, isovalue, cellVector );
         }
     }
+//wlog::info( "min max" ) << "left";
     if( root->m_leftTree )
     {
         searchKdMaxMin( root->m_leftTree, isovalue, cellVector );

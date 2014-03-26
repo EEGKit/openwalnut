@@ -191,7 +191,7 @@ private:
      * \param z number of vertices in Z direction
      * \param vals the values at the vertices
      */
-    template< typename T > void calculateMarchingCube( unsigned int x, unsigned int y, unsigned int z, const std::vector< T >* vals );
+    template< typename T > void calculateMarchingCube( const unsigned int& x, const unsigned int& y, const unsigned int& z, const std::vector< T >* vals );
 
     unsigned int m_nCellsX;  //!< No. of cells in x direction.
     unsigned int m_nCellsY;  //!< No. of cells in y direction.
@@ -206,7 +206,7 @@ private:
 };
 
 template<typename T> void WMarchingCubesAlgorithm::calculateMarchingCube(
-    unsigned int x, unsigned int y, unsigned int z, const std::vector< T >* vals )
+    const unsigned int& x, const unsigned int& y, const unsigned int& z, const std::vector< T >* vals )
 {
     unsigned int nX = m_nCellsX + 1;
     unsigned int nY = m_nCellsY + 1;
@@ -337,6 +337,15 @@ template<typename T> void WMarchingCubesAlgorithm::calculateMarchingCube(
     }
 }
 
+
+
+bool cellSort( WSpanSpaceBase::cellids_t::value_type i, WSpanSpaceBase::cellids_t::value_type j )
+{
+    return ( ( i->m_z < j->m_z ) ) ||
+    ( ( i->m_z == j->m_z ) && ( i->m_y < j->m_y) ) ||
+    ( ( i->m_z == j->m_z ) && ( i->m_y == j->m_y ) && ( i->m_x < j->m_x ) );
+}
+
 template<typename T> boost::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::generateSurface( size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
                                                                                                  const WMatrix< double >& mat,
                                                                                                  const std::vector< T >* vals,
@@ -344,7 +353,7 @@ template<typename T> boost::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::g
                                                                                                  boost::shared_ptr< WSpanSpaceBase > spanSpace,
                                                                                                  boost::shared_ptr< WProgressCombiner > mainProgress )
 {
-    timeval timer1, timer2;
+    timeval timer1, timer2, timer3, timer4;
     long millis;
     double activeCells = 0, allCells;
 
@@ -364,7 +373,7 @@ template<typename T> boost::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::g
     // unsigned int nX = m_nCellsX + 1;
     // unsigned int nY = m_nCellsY + 1;
     // unsigned int nPointsInSlice = nX * nY;
-    
+
     boost::shared_ptr< WProgress > progress;
     progress = boost::shared_ptr< WProgress >( new WProgress( "Marching Cubes" ) );
     mainProgress->addSubProgress( progress );
@@ -387,23 +396,61 @@ template<typename T> boost::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::g
     millis = ( (timer2.tv_sec * 1000) + (timer2.tv_usec / 1000) ) - ( (timer1.tv_sec * 1000) + (timer1.tv_usec / 1000) );
     wlog::info( "Time - MC" ) << millis;
 
+    // Cache unoptimale version!
+
+    // calculate normal marching cubes algorithm
+    gettimeofday( &timer1, NULL );
+    for( unsigned int x = 0; x < m_nCellsX; x++ )
+    {
+        ++*progress;
+        for( unsigned int y = 0; y < m_nCellsY; y++ )
+        {
+            for( unsigned int z = 0; z < m_nCellsZ; z++ )
+            {
+                // calculate
+                calculateMarchingCube( x, y, z, vals );
+            }
+        }
+    }
+    gettimeofday( &timer2, NULL );
+    millis = ( (timer2.tv_sec * 1000) + (timer2.tv_usec / 1000) ) - ( (timer1.tv_sec * 1000) + (timer1.tv_usec / 1000) );
+    wlog::info( "Time - MC - Cacheunoptimaal" ) << millis;
+
+
+
     // calculate marching cubes algorithm
     gettimeofday( &timer1, NULL );
     boost::shared_ptr< WSpanSpace< T > > sstyped = boost::dynamic_pointer_cast< WSpanSpace< T > >( spanSpace );
     boost::shared_ptr< WSpanSpaceBase::cellids_t > cells = spanSpace->findCells( isoValue );
+    gettimeofday( &timer2, NULL );
+    millis = ( (timer2.tv_sec * 1000) + (timer2.tv_usec / 1000) ) - ( (timer1.tv_sec * 1000) + (timer1.tv_usec / 1000) );
+    wlog::info( "Time - SS-find" ) << millis;
+
+    std::sort( cells->begin(), cells->end(), cellSort );
+
+    gettimeofday( &timer3, NULL );
+    millis = ( (timer3.tv_sec * 1000) + (timer3.tv_usec / 1000) ) - ( (timer2.tv_sec * 1000) + (timer2.tv_usec / 1000) );
+    wlog::info( "Time - Sort" ) << millis;
+
     for( typename WSpanSpaceBase::cellids_t::const_iterator i = cells->begin(); i < cells->end(); ++i )
     {
         calculateMarchingCube( ( *i )->m_x, ( *i )->m_y,  ( *i )->m_z, vals );
+    //wlog::info( "Time - SS" ) << ( *i )->m_x ;
         activeCells++;
     }
-    gettimeofday( &timer2, NULL );
-    millis = ( (timer2.tv_sec * 1000) + (timer2.tv_usec / 1000) ) - ( (timer1.tv_sec * 1000) + (timer1.tv_usec / 1000) );
+    gettimeofday( &timer4, NULL );
+    millis = ( (timer4.tv_sec * 1000) + (timer4.tv_usec / 1000) ) - ( (timer3.tv_sec * 1000) + (timer3.tv_usec / 1000) );
     wlog::info( "Time - SS" ) << millis;
-    
+
+    gettimeofday( &timer4, NULL );
+    millis = ( (timer4.tv_sec * 1000) + (timer4.tv_usec / 1000) ) - ( (timer1.tv_sec * 1000) + (timer1.tv_usec / 1000) );
+    wlog::info( "Time - SS insgesamt" ) << millis;
+
+
     // debug - show how many cells are active
     allCells = m_nCellsZ * m_nCellsY * m_nCellsX;
     wlog::info( "Cells" ) << allCells << " - " << activeCells << " -> " << (activeCells / allCells ) * 100;
-    
+
     unsigned int nextID = 0;
     boost::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( m_idToVertices.size(), m_trivecTriangles.size() ) );
 
