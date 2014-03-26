@@ -1,3 +1,4 @@
 ADD_MODULE( isosurface )
 ADD_MODULE( data )
 ADD_MODULE( dataTypeConversion )
+ADD_MODULE( dataCreator )
