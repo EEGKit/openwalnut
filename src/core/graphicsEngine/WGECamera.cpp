@@ -44,8 +44,8 @@ WGECamera::WGECamera( int width, int height, ProjectionMode projectionMode )
 
     // near-far computation is done using the bounding volumes
     setComputeNearFarMode(
-        osg::CullSettings::COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES
-        // osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR
+        // osg::CullSettings::COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES
+        osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR
         // osg::CullSettings::COMPUTE_NEAR_FAR_USING_PRIMITIVES
     );
     reset();
@@ -64,8 +64,8 @@ WGECamera::WGECamera()
 
     // near-far computation is done using the bounding volumes
     setComputeNearFarMode(
-        osg::CullSettings::COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES
-        // osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR
+        // osg::CullSettings::COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES
+        osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR
         // osg::CullSettings::COMPUTE_NEAR_FAR_USING_PRIMITIVES
     );
 }
@@ -91,7 +91,7 @@ void WGECamera::reset()
     {
         case ORTHOGRAPHIC:
             setProjectionMatrixAsOrtho( -120.0 * getViewport()->aspectRatio(), 120.0 * getViewport()->aspectRatio(),
-                -120.0, 120.0, -1000.0, +1000.0 );
+                -120.0, 120.0, -1000.0, +20000.0 );
             setProjectionResizePolicy( HORIZONTAL );
             break;
         case PERSPECTIVE:
