@@ -25,6 +25,8 @@
 #ifndef WUI_H
 #define WUI_H
 
+#include <string>
+
 #include <boost/shared_ptr.hpp>
 
 #include "../common/WFlag.h"
@@ -83,6 +85,21 @@ public:
      * \return the factory. Use this to create your widget instances.
      */
     virtual WUIWidgetFactory::SPtr getWidgetFactory() const = 0;
+
+    /**
+     * Returns the format string used to construct screenshot filenames.
+     *
+     * \return The format string.
+     */
+    virtual std::string getOutputFormatString() const = 0;
+
+    /**
+     * Set the format string used to construct the screenshot filenames.
+     *
+     * \param fmt The new format string.
+     */
+    virtual void setOutputFormatString( std::string const& fmt ) = 0;
+
 protected:
     /**
      * Flag determining whether the UI is properly initialized.

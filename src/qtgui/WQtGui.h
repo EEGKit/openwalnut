@@ -172,6 +172,20 @@ public:
     static WIconManager* getIconManager();
 
     /**
+     * Returns the format string used to construct screenshot filenames.
+     *
+     * \return The format string.
+     */
+    virtual std::string getOutputFormatString() const;
+
+    /**
+     * Set the format string used to construct the screenshot filenames.
+     *
+     * \param fmt The new format string.
+     */
+    virtual void setOutputFormatString( std::string const& fmt );
+
+    /**
      * Returns the option map for the current instance of this GUI. This can be useful to parse further commandline parameters
      *
      * \return the option map

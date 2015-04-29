@@ -26,8 +26,10 @@
 #define WQTGLSCREENCAPTURE_H
 
 #include <limits>
+#include <string>
 
 #include <boost/signals2.hpp>
+#include <boost/thread/mutex.hpp>
 
 #include <QWidget>
 #include <QToolBox>
@@ -71,6 +73,20 @@ public:
      * \return the action.
      */
     QAction* getScreenshotTrigger() const;
+
+    /**
+     * Returns the format string used to construct screenshot filenames.
+     *
+     * \return The format string.
+     */
+    std::string getOutputFormatString();
+
+    /**
+     * Set the format string used to construct the screenshot filenames.
+     *
+     * \param fmt The new format string.
+     */
+    void setOutputFormatString( std::string const& fmt );
 
     /**
      * Save settings.
@@ -232,6 +248,9 @@ private:
      * Widget for entering a custom resolution height
      */
     QLineEdit* m_customHeight;
+
+    //! A mutex for threadsafe access to the screenshot format edit.
+    mutable boost::mutex m_filenameMutex;
 };
 
 #endif  // WQTGLSCREENCAPTURE_H

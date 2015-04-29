@@ -226,3 +226,13 @@ WUIWidgetFactory::SPtr WScriptUI::getWidgetFactory() const
 {
     return WUIWidgetFactory::SPtr();
 }
+
+std::string WScriptUI::getOutputFormatString() const
+{
+    return "Not used.";
+}
+
+void WScriptUI::setOutputFormatString( std::string const& /* fmt */ )
+{
+}
+

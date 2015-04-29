@@ -71,6 +71,18 @@ public:
      */
     virtual WUIWidgetFactory::SPtr getWidgetFactory() const;
 
+    /**
+     * Returns the format string used to construct screenshot filenames.
+     *
+     * \return The format string.
+     */
+    virtual std::string getOutputFormatString() const;
+
+    /**
+     * Set the format string used to construct the screenshot filenames.
+     */
+    virtual void setOutputFormatString( std::string const& /* fmt */ );
+
 protected:
     /**
      * If you need to load additional modules from your toolboxes, you might want specify these paths in a config file.

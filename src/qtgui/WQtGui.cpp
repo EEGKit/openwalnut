@@ -62,6 +62,7 @@
 #include "events/WLogEvent.h"
 #include "WQtModuleConfig.h"
 
+#include "WQtGLDockWidget.h"
 #include "WQtGui.h"
 
 #ifdef Q_WS_X11
@@ -99,6 +100,16 @@ WMainWindow* WQtGui::getMainWindow()
 WIconManager* WQtGui::getIconManager()
 {
     return getMainWindow()->getIconManager();
+}
+
+std::string WQtGui::getOutputFormatString() const
+{
+    return getMainWindow()->getGLDockWidget()->getScreenCapture()->getOutputFormatString();
+}
+
+void WQtGui::setOutputFormatString( std::string const& fmt )
+{
+    getMainWindow()->getGLDockWidget()->getScreenCapture()->setOutputFormatString( fmt );
 }
 
 void WQtGui::deferredLoad()

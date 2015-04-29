@@ -25,10 +25,24 @@
 #ifndef WUTILITYFUNCTIONS_H_
 #define WUTILITYFUNCTIONS_H_
 
+#include <string>
+
 /**
  * A function that creates a screenshot of the main view as-is.
  */
 void screenshot();
+
+/**
+ * Set the format string for screenshots.
+ *
+ * \param fmt The format string as you would put it in the screenshot menu.
+ */
+void setScreenshotFormat( std::string const& fmt );
+
+/**
+ * Get the format string for screenshots.
+ */
+std::string getScreenshotFormat();
 
 /**
  * Set the camera to a standard view.

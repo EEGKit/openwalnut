@@ -22,6 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
+#include <string>
+
 #include <osgGA/TrackballManipulator>
 
 #include "../../common/WLogger.h"
@@ -29,6 +31,8 @@
 #include "../../graphicsEngine/WGraphicsEngine.h"
 
 #include "../../kernel/WKernel.h"
+
+#include "../../ui/WUI.h"
 
 #include "WUtilityFunctions.h"
 
@@ -44,11 +48,53 @@ void screenshot()
     }
 }
 
+void setScreenshotFormat( std::string const& fmt )
+{
+    if( WKernel::getRunningKernel()->getGraphicsEngine() )
+    {
+        if( WKernel::getRunningKernel()->getUI() )
+        {
+            WKernel::getRunningKernel()->getUI()->setOutputFormatString( fmt );
+        }
+        else
+        {
+            wlog::error( "Script" ) << "No Qt UI found!";
+        }
+    }
+    else
+    {
+        wlog::error( "Script" ) << "No graphics engine! Cannot make screenshot!";
+    }
+}
+
+std::string getScreenshotFormat()
+{
+    if( WKernel::getRunningKernel()->getGraphicsEngine() )
+    {
+        if( WKernel::getRunningKernel()->getUI() )
+        {
+            return WKernel::getRunningKernel()->getUI()->getOutputFormatString();
+        }
+        else
+        {
+            wlog::error( "Script" ) << "No Qt UI found!";
+            return "";
+        }
+    }
+    else
+    {
+        wlog::error( "Script" ) << "No graphics engine! Cannot make screenshot!";
+        return "";
+    }
+}
+
 void initCamera( std::string const& view )
 {
     if( WKernel::getRunningKernel()->getGraphicsEngine() )
     {
-        osg::ref_ptr< osgGA::TrackballManipulator > cm = osg::dynamic_pointer_cast< osgGA::TrackballManipulator >( WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCameraManipulator() );
+        osg::ref_ptr< osgGA::TrackballManipulator > cm
+              = osg::dynamic_pointer_cast< osgGA::TrackballManipulator >(
+                    WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCameraManipulator() );
         if( cm )
         {
             osg::Quat q;

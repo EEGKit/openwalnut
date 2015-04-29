@@ -229,6 +229,20 @@ void WQtGLScreenCapture::restoreSettings()
     m_resolutionCombo->setCurrentIndex(  WQtGui::getSettings().value( objectName() + "/resolution", m_resolutionCombo->currentIndex() ).toInt() );
 }
 
+std::string WQtGLScreenCapture::getOutputFormatString()
+{
+    boost::unique_lock< boost::mutex > lock( m_filenameMutex );
+
+    return m_configFileEdit->text().toStdString();
+}
+
+void WQtGLScreenCapture::setOutputFormatString( std::string const& fmt )
+{
+    boost::unique_lock< boost::mutex > lock( m_filenameMutex );
+
+    m_configFileEdit->setText( QString( fmt.c_str() ) );
+}
+
 QAction* WQtGLScreenCapture::getScreenshotTrigger() const
 {
     return m_screenshotAction;
@@ -236,7 +250,10 @@ QAction* WQtGLScreenCapture::getScreenshotTrigger() const
 
 void WQtGLScreenCapture::handleImage( size_t /* framesLeft */, size_t totalFrames, osg::ref_ptr< osg::Image > image ) const
 {
+    m_filenameMutex.lock();
     std::string filename = m_configFileEdit->text().toStdString();
+    m_filenameMutex.unlock();
+
     std::ostringstream ss;
 
     // this allows 999999 frames -> over 11h of movie material -> should be enough

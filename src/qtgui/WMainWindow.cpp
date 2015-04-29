@@ -556,6 +556,11 @@ WQtNetworkEditor* WMainWindow::getNetworkEditor()
     return m_networkEditor;
 }
 
+WQtGLDockWidget* WMainWindow::getGLDockWidget()
+{
+    return m_mainGLDock;
+}
+
 bool WMainWindow::projectSave( const std::vector< boost::shared_ptr< WProjectFileIO > >& writer )
 {
     QString lastPath = WQtGui::getSettings().value( "LastProjectSavePath", "" ).toString();

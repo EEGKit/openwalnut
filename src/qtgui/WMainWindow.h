@@ -106,6 +106,13 @@ public:
     WIconManager* getIconManager();
 
     /**
+     * Return the gl dock widget.
+     *
+     * \return the gl dock widget
+     */
+    WQtGLDockWidget* getGLDockWidget();
+
+    /**
      * Returns a pointer to a signal object which signals a list of filenames to load
      *
      * \return the signal
