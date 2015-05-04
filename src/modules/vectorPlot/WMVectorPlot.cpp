@@ -38,6 +38,7 @@
 #include "core/dataHandler/WDataHandlerEnums.h"
 #include "core/kernel/WKernel.h"
 #include "core/kernel/WSelectionManager.h"
+#include "core/graphicsEngine/callbacks/WGENodeMaskCallback.h"
 
 #include "WMVectorPlot.h"
 #include "WMVectorPlot.xpm"
@@ -159,6 +160,7 @@ void WMVectorPlot::moduleMain()
 
             osg::ref_ptr< osg::Geode > newRootNode = new osg::Geode();
             newRootNode->addDrawable( buildPlotSlices() );
+            newRootNode->addUpdateCallback( new WGENodeMaskCallback( m_active ) );
 
             ++*progress;
 
@@ -223,18 +225,6 @@ void WMVectorPlot::updateCallback()
 
 void WMVectorPlot::activate()
 {
-    if( m_rootNode )   // always ensure the root node exists
-    {
-        if( m_active->get() )
-        {
-            m_rootNode->setNodeMask( 0xFFFFFFFF );
-        }
-        else
-        {
-            m_rootNode->setNodeMask( 0x0 );
-        }
-    }
-
     // Always call WModule's activate!
     WModule::activate();
 }
