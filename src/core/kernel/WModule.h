@@ -428,6 +428,13 @@ public:
      */
     const WRequirement* checkRequirements() const;
 
+    /**
+     * Set whether this module shall be active. Deactivating a module will deactivate its graphics, etc.
+     *
+     * \param active true, if the module should be active, false otherwise
+     */
+    void setActive( bool active = true );
+
 protected:
     /**
      * Entry point after loading the module. Runs in separate thread.

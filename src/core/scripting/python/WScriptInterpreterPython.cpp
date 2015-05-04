@@ -137,7 +137,8 @@ void WScriptInterpreterPython::initBindings()
                                      .def( "getProperties", &WModuleWrapper::getProperties )
                                      .def( "getInformationProperties", &WModuleWrapper::getInformationProperties )
                                      .def( "getInputConnector", &WModuleWrapper::getInputConnector )
-                                     .def( "getOutputConnector", &WModuleWrapper::getOutputConnector );
+                                     .def( "getOutputConnector", &WModuleWrapper::getOutputConnector )
+                                     .def( "active", &WModuleWrapper::setActive );
 
     // bind the kernel's root container to the "rootContainer" variable in the python namespace
     // this allows access to the modules via this variable

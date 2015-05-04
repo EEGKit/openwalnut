@@ -603,6 +603,11 @@ boost::filesystem::path WModule::getLibPath() const
     return m_libPath;
 }
 
+void WModule::setActive( bool active )
+{
+    m_active->set( active, true );
+}
+
 void WModule::setPackageName( std::string name )
 {
     m_packageName = name;

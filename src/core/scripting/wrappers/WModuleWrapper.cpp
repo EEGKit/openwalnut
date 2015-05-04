@@ -72,3 +72,9 @@ WOutputConnectorWrapper WModuleWrapper::getOutputConnector( std::string const& n
 {
     return WOutputConnectorWrapper( m_module->getOutputConnector( name ) );
 }
+
+void WModuleWrapper::setActive( bool active )
+{
+    m_module->setActive( active );
+}
+

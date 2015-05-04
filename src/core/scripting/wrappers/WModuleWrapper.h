@@ -107,6 +107,13 @@ public:
      */
     WOutputConnectorWrapper getOutputConnector( std::string const& name );
 
+    /**
+     * Set whether this module shall be active. Deactivating a module will deactivate its graphics, etc.
+     *
+     * \param active true, if the module should be active, false otherwise
+     */
+    void setActive( bool active );
+
 private:
     //! A pointer to the module.
     boost::shared_ptr< WModule > m_module;
