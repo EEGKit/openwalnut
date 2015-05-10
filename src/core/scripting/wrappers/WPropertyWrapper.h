@@ -169,6 +169,15 @@ public:
     void setColor( WColorWrapper col );
 
     /**
+     * Set the vector elements of a vector property.
+     *
+     * \param x The x-component.
+     * \param y The y-component.
+     * \param z The z-component.
+     */
+    void setVector( double x, double y, double z );
+
+    /**
      * Trigger a trigger property.
      */
     void click();

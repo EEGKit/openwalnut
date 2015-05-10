@@ -118,6 +118,11 @@ void WPropertyWrapper::setColor( WColorWrapper c )
     m_prop->toPropColor()->set( c.get(), false );
 }
 
+void WPropertyWrapper::setVector( double x, double y, double z )
+{
+    m_prop->toPropPosition()->set( WPosition( x, y, z ), false );
+}
+
 void WPropertyWrapper::click()
 {
     m_prop->toPropTrigger()->set( WPVBaseTypes::PV_TRIGGER_TRIGGERED, false );
