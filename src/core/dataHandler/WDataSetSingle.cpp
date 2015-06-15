@@ -74,6 +74,11 @@ WDataSetSingle::~WDataSetSingle()
 {
 }
 
+WDataSetSingle::SPtr WDataSetSingle::clone( boost::shared_ptr< WValueSetBase > newValueSet, boost::shared_ptr< WGrid > newGrid ) const
+{
+    return WDataSetSingle::SPtr( new WDataSetSingle( newValueSet, newGrid ) );
+}
+
 WDataSetSingle::SPtr WDataSetSingle::clone( boost::shared_ptr< WValueSetBase > newValueSet ) const
 {
     return WDataSetSingle::SPtr( new WDataSetSingle( newValueSet, getGrid() ) );
@@ -139,6 +144,10 @@ double WDataSetSingle::getValueAt( size_t id ) const
         case W_DT_UNSIGNED_CHAR:
         {
             return static_cast< double >( boost::dynamic_pointer_cast< WValueSet< uint8_t > >( getValueSet() )->getScalar( id ) );
+        }
+        case W_DT_UINT16:
+        {
+            return static_cast< double >( boost::dynamic_pointer_cast< WValueSet< uint16_t > >( getValueSet() )->getScalar( id ) );
         }
         case W_DT_INT16:
         {
