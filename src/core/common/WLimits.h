@@ -46,6 +46,20 @@ namespace wlimits
 
     extern const double MIN_DOUBLE; //!< Positive minimum double value
 
+    extern const float MIN_FLOAT; //!< Positive minimum float value
+
+    extern const size_t MIN_SIZE_T; //!< Lowest/Minimum size value (equivalent to LOWEST_SIZE_T)
+
+    extern const int32_t MIN_INT32_T; //!< Lowest/Minimum int32_t value (equivalent to LOWEST_INT32_T)
+
+    extern const double LOWEST_DOUBLE; //!< Minimum double value
+
+    extern const float LOWEST_FLOAT; //!< Minimum float value
+
+    extern const size_t LOWEST_SIZE_T; //!< Lowest/Minimum size value (equivalent to MIN_SIZE_T)
+
+    extern const int32_t LOWEST_INT32_T; //!< Lowest/Minimum int32_t value (equivalent to MIN_INT32_T)
+
     /**
      * Smallest double such: 1.0 + DBL_EPS == 1.0 is still true.
      */

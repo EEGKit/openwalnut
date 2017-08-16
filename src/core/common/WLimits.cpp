@@ -32,7 +32,17 @@ namespace wlimits
     const float MAX_FLOAT = std::numeric_limits< float >::max();
     const size_t MAX_SIZE_T = std::numeric_limits< size_t >::max();
     const int32_t MAX_INT32_T = std::numeric_limits< int32_t >::max();
+
     const double MIN_DOUBLE = std::numeric_limits< double >::min();
+    const float MIN_FLOAT = std::numeric_limits< float >::min();
+    const size_t MIN_SIZE_T = std::numeric_limits< size_t >::min();
+    const int32_t MIN_INT32_T = std::numeric_limits< int32_t >::min();
+
+    const double LOWEST_DOUBLE = std::numeric_limits< double >::lowest();
+    const float LOWEST_FLOAT = std::numeric_limits< float >::lowest();
+    const size_t LOWEST_SIZE_T = std::numeric_limits< size_t >::lowest();
+    const int32_t LOWEST_INT32_T = std::numeric_limits< int32_t >::lowest();
+
     const double DBL_EPS = std::numeric_limits< double >::epsilon();
     const float FLT_EPS = std::numeric_limits< float >::epsilon();
 }
