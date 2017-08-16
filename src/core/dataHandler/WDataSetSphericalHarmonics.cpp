@@ -141,6 +141,7 @@ WSymmetricSphericalHarmonic< double > WDataSetSphericalHarmonics::interpolate( c
 WSymmetricSphericalHarmonic< double > WDataSetSphericalHarmonics::getSphericalHarmonicAt( size_t index ) const
 {
     if( index < m_valueSet->size() ) return WSymmetricSphericalHarmonic< double >( m_valueSet->getWValueDouble( index ) );
+    wlog::warn( "WDataSetSphericalHarmonics" ) << "Invalid index. Must be smaller than " << m_valueSet->size();
     return WSymmetricSphericalHarmonic< double >();
 }
 
