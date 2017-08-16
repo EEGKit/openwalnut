@@ -775,7 +775,7 @@ template< typename T >
 inline int WGridRegular3DTemplate< T >::getVoxelNum( const size_t x, const size_t y, const size_t z ) const
 {
     // since we use size_t here only a check for the upper bounds is needed
-    if( x > m_nbPosX || y > m_nbPosY || z > m_nbPosZ )
+    if( x >= m_nbPosX || y >= m_nbPosY || z >= m_nbPosZ )
     {
         return -1;
     }
