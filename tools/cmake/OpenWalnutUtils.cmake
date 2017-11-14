@@ -68,7 +68,7 @@ FUNCTION( COLLECT_COMPILE_FILES _DirString _CPPFiles _HFiles _TestFiles )
     FOREACH( file ${H_FILES} )
         # the test directories should be excluded from normal compilation completely
         STRING( REGEX MATCH "^.*\\/test\\/.*" IsTest "${file}" )
-        # ext sources should be build seperatly 
+        # ext sources should be build separately 
         STRING( REGEX MATCH "^.*\\/ext\\/.*" IsExternal "${file}" )
         IF( IsTest )
             LIST( REMOVE_ITEM H_FILES ${file} )
@@ -80,7 +80,7 @@ FUNCTION( COLLECT_COMPILE_FILES _DirString _CPPFiles _HFiles _TestFiles )
     FOREACH( file ${CPP_FILES} )
         # the test directories should be excluded from normal compilation completely
         STRING( REGEX MATCH "^.*\\/test\\/.*" IsTest "${file}" )
-        # ext sources should be build seperatly 
+        # ext. sources should be build seperatly 
         STRING( REGEX MATCH "^.*\\/ext\\/.*" IsExternal "${file}" )
         IF( IsTest )
             LIST( REMOVE_ITEM CPP_FILES ${file} )
@@ -666,7 +666,7 @@ ENDFUNCTION( ADD_MODULE )
 
 # Comfortably setup a module for compilation. This automatically handles the target creation, stylecheck and tests (with fixtures).
 # _MODULE_NAME the name of the module
-# _MODULE_SOURCE_DIR where to finx the code for the module
+# _MODULE_SOURCE_DIR where to find the code for the module
 # _MODULE_DEPENDENCIES additional dependencies can be added here. This is a list. Use ";" to add multiple additional dependencies
 # _MODULE_STYLE_EXCLUDES exclude files from stylecheck matching these regular expressions (list)
 FUNCTION( SETUP_MODULE _MODULE_NAME _MODULE_SOURCE_DIR _MODULE_DEPENDENCIES _MODULE_STYLE_EXCLUDES )
