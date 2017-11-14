@@ -36,6 +36,7 @@
 // forward declarations to reduce compile dependencies
 template< class T > class WModuleInputData;
 class WDataSetScalar;
+class WSinglePosition;
 class WGEManagedGroupNode;
 
 /**
@@ -105,13 +106,21 @@ private:
     void pickHandler( WPickInfo pickInfo );
 
     /**
+     * Check if a \ref WSinglePosition is connected and dis/connects pick signal from clicking accordingly.
+     */
+    void setPickPositionSource();
+
+    /**
+     * Set the current pick position to the \ref WSinglePosition from the connector.
+     */
+    void setPickPositionFromConnector();
+
+    /**
      * Shows and hide relevant properties according to chosen picking mode.
      *
      * \param pickingMode The type of picking criterion used
      */
     void updateModuleGUI( std::string pickingMode );
-
-
 
     /**
      * Calculates which interval is the most visible according
@@ -196,6 +205,8 @@ private:
 
     boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_transferFunction; //!< The transfer function as an input data set
 
+    boost::shared_ptr< WModuleInputData< WSinglePosition > > m_externalScreenPos; //!< External screen position for picking instead of by clicking.
+
     osg::ref_ptr< WGEManagedGroupNode > m_rootNode; //!< All other geodes or OSG nodes of this module will be attached on this node.
 
     osg::ref_ptr< osg::Geode > m_geode; //!< The geometry rendered by this module.
@@ -247,6 +258,8 @@ private:
     WVisiTrace m_visiTrace; //!< Class providing VisiTrace optimization.
 
     WPosition m_oldRayStart; //!< Used to check if position of picking has changed
+
+    bool m_pickHandlerConnected; //!< Is the signal from the pick handler connected?
 };
 
 #endif  // WMPICKINGDVR_H

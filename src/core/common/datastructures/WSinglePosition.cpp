@@ -2,7 +2,7 @@
 //
 // Project: OpenWalnut ( http://www.openwalnut.org )
 //
-// Copyright 2009 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
+// Copyright 2017 OpenWalnut Community, Hochschule Worms
 // For more information see http://www.openwalnut.org/copying
 //
 // This file is part of OpenWalnut.
@@ -22,27 +22,34 @@
 //
 //---------------------------------------------------------------------------
 
-#include <string>
+#include "../../common/math/linearAlgebra/WPosition.h"
+#include "../../common/WTransferable.h"
+#include "WSinglePosition.h"
 
-#include "../../common/WIOTools.h"
-#include "../exceptions/WDHNoSuchFile.h"
-#include "WReader.h"
+// The prototype as singleton. Created during first getPrototype() call
+boost::shared_ptr< WPrototyped > WSinglePosition::m_prototype = boost::shared_ptr< WPrototyped >();
 
-WReader::WReader( std::string fname )
+WSinglePosition::WSinglePosition()
+    : WTransferable(),
+      WPosition()
 {
-    setFilename( fname ); // not in constructor list since fileExcsits check
 }
 
-void WReader::setFileName( std::string fname )
+WSinglePosition::WSinglePosition( const WPosition& position )
+    : WTransferable(),
+      WPosition( position )
 {
-    setFilename( fname );
 }
 
-void WReader::setFilename( std::string fname )
+WSinglePosition::~WSinglePosition()
 {
-    m_fname = fname;
-    if( !fileExists( m_fname ) )
+}
+
+boost::shared_ptr< WPrototyped > WSinglePosition::getPrototype()
+{
+    if( !m_prototype )
     {
-        throw WDHNoSuchFile( m_fname );
+        m_prototype = boost::shared_ptr< WPrototyped >( new WSinglePosition() );
     }
+    return m_prototype;
 }
