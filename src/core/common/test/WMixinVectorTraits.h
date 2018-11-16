@@ -33,7 +33,6 @@
 #ifdef CXXTEST_RUNNING
 namespace CxxTest
 {
-CXXTEST_TEMPLATE_INSTANTIATION
 /**
  * Enables better UnitTest OutPut if something fails with a mixin vector, so
  * you see immedeatly what is failing.
