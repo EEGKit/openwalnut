@@ -234,10 +234,8 @@ WDataSetScalarSPtr WIGTLinkRemote::receiveImage( igtl::MessageHeader::Pointer he
         float spacing[ 3 ];
         int svsize[ 3 ];
         int svoffset[ 3 ];
-        int scalarType;
         igtl::Matrix4x4 mat;
 
-        scalarType = imgMsg->GetScalarType();
         imgMsg->GetDimensions( size );
         imgMsg->GetSpacing( spacing );
         imgMsg->GetSubVolume( svsize, svoffset );
