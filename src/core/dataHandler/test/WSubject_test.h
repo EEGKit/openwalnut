@@ -51,7 +51,7 @@ public:
     void testInstantiationWithName( void )
     {
         WPersonalInformation testInfo( WPersonalInformation::createDummyInformation() );
-        TS_ASSERT_THROWS_NOTHING( WSubject( testInfo ) );
+        TS_ASSERT_THROWS_NOTHING( WSubject subject( testInfo ) );
     }
 
     /**
