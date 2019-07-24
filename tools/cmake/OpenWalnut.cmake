@@ -344,8 +344,12 @@ IF( ANDROID )
   SET( OPENGL_FOUND ON )
   # link against GLES 2
   SET( OPENGL_LIBRARIES "GLESv2" )
-  SET( OPENGL_gl_LIBRARY "GLESv2" )
 ELSE()
+  # The explicit setting of GLVND can be removed, when we set the minimum cmake version to 3.11 or higher.
+  # CMake Policy: CMP0072 https://cmake.org/cmake/help/git-stage/policy/CMP0072.html
+  IF( CMAKE_HOST_SYSTEM MATCHES "Linux" )
+      SET( OpenGL_GL_PREFERENCE "GLVND" )
+  ENDIF()
   FIND_PACKAGE( OpenGL REQUIRED )
   # include the OpenGL header paths
   INCLUDE_DIRECTORIES( SYSTEM ${OPENGL_INCLUDE_DIR} )

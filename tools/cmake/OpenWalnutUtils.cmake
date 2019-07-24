@@ -701,7 +701,7 @@ FUNCTION( SETUP_MODULE _MODULE_NAME _MODULE_SOURCE_DIR _MODULE_DEPENDENCIES _MOD
     TARGET_LINK_LIBRARIES( ${MODULE_NAME} ${CMAKE_STANDARD_LIBRARIES}
                                           ${OW_LIB_OPENWALNUT} 
                                           ${Boost_LIBRARIES}
-                                          ${OPENGL_gl_LIBRARY}
+                                          ${OPENGL_LIBRARIES}
                                           ${OPENSCENEGRAPH_LIBRARIES} 
                                           ${ADDITIONAL_TARGET_LINK_LIBRARIES} 
                                           ${_MODULE_DEPENDENCIES}
