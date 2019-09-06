@@ -38,7 +38,8 @@ Find_Package( OpenIGTLink QUIET )
 
 IF( OpenIGTLink_FOUND )
     # 2: INCLUDE_DIRECTORIES( ${LIBYOUNEED_INCLUDE_DIR} )
-    INCLUDE_DIRECTORIES( ${OpenIGTLink_INCLUDE_DIRS} )
+    # Use system include to suppress warnings (during compilation) caused by the faulty OpenIGTLink header file
+    INCLUDE_DIRECTORIES( SYSTEM ${OpenIGTLink_INCLUDE_DIRS} )
 
     # 3: LINK_DIRECTORIES( ${LIBYOUNEED_LIBRARY_DIRS} )
     LINK_DIRECTORIES( ${OpenIGTLink_LIBRARY_DIRS} )
