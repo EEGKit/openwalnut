@@ -72,14 +72,14 @@ public:
         boost::shared_ptr< WDataSetSingle > ds = buildTestData();
 
         TS_ASSERT_THROWS( TPVO t( boost::shared_ptr< WDataSetSingle >(),
-                                  boost::bind( &WThreadedPerVoxelOperationTest::func, this, _1 ) ), WException );
-        TS_ASSERT_THROWS( TPVO t( ds, TPVO::FunctionType() ), WException );
+                                  boost::bind( &WThreadedPerVoxelOperationTest::func, this, _1 ) ), const WException& );
+        TS_ASSERT_THROWS( TPVO t( ds, TPVO::FunctionType() ), const WException& );
         TS_ASSERT_THROWS( TPVO t( boost::shared_ptr< WDataSetSingle >( new WDataSetSingle( ds->getValueSet(),
                                                                                            boost::shared_ptr< WGrid >() ) ),
-                                  boost::bind( &WThreadedPerVoxelOperationTest::func, this, _1 ) ), WException );
+                                  boost::bind( &WThreadedPerVoxelOperationTest::func, this, _1 ) ), const WException& );
         TS_ASSERT_THROWS( TPVO t( boost::shared_ptr< WDataSetSingle >( new WDataSetSingle( boost::shared_ptr< WValueSetBase >(),
                                                                                            ds->getGrid() ) ),
-                                  boost::bind( &WThreadedPerVoxelOperationTest::func, this, _1 ) ), WException );
+                                  boost::bind( &WThreadedPerVoxelOperationTest::func, this, _1 ) ), const WException& );
 
         TS_ASSERT_THROWS_NOTHING( TPVO t( ds, boost::bind( &WThreadedPerVoxelOperationTest::func, this, _1 ) ) );
 

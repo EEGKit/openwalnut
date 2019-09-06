@@ -98,7 +98,7 @@ public:
 
         // add a malformed (name) property
         // The name is malformed since the "/" is used as group separator
-        TS_ASSERT_THROWS( p->addProperty( "4/5", "test4", 1.0 ), WPropertyNameMalformed );
+        TS_ASSERT_THROWS( p->addProperty( "4/5", "test4", 1.0 ), const WPropertyNameMalformed& );
 
         // this should have created 3 props
         TS_ASSERT( p->m_properties.getReadTicket()->get().size() == 3 );
@@ -109,7 +109,7 @@ public:
         TS_ASSERT( p3->getType() == PV_DOUBLE );
 
         // try to add another property with the same name ( regardless of actual type )
-        TS_ASSERT_THROWS( p->addProperty( "1", "test1", 1.0 ), WPropertyNotUnique );
+        TS_ASSERT_THROWS( p->addProperty( "1", "test1", 1.0 ), const WPropertyNotUnique& );
     }
 
     /**
@@ -249,7 +249,7 @@ public:
         TS_ASSERT( someProp );
 
         // this one does not exist
-        TS_ASSERT_THROWS( someProp = p->getProperty( "shouldNotBeInTheList" ), WPropertyUnknown );
+        TS_ASSERT_THROWS( someProp = p->getProperty( "shouldNotBeInTheList" ), const WPropertyUnknown& );
     }
 
     /**
@@ -267,7 +267,7 @@ public:
         boost::shared_ptr< WPropertyBase > p4 = psub->addProperty( "4", "test4", std::string( "hello" ) );
 
         // insert a prop with the same name as a sub property
-        TS_ASSERT_THROWS( p->addProperty( "heySub", "test1", true ), WPropertyNotUnique );
+        TS_ASSERT_THROWS( p->addProperty( "heySub", "test1", true ), const WPropertyNotUnique& );
 
         /////////////
         // exists
@@ -301,7 +301,7 @@ public:
         TS_ASSERT_THROWS_NOTHING( p->getProperty( "heySub/4" ) );
 
         // ensure nothing is found if wrong name is specified
-        TS_ASSERT_THROWS( p->getProperty( "heySub/1" ), WPropertyUnknown );
+        TS_ASSERT_THROWS( p->getProperty( "heySub/1" ), const WPropertyUnknown& );
     }
 
     /**

@@ -64,23 +64,23 @@ public:
             TimesVector t;
 
             // test what happens when the input is empty
-            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), WException );
+            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), const WException& );
 
             // test what happens when the vector sizes don't match
             createData( data, 3, d, t );
             TS_ASSERT_THROWS_NOTHING( WDataSetTimeSeries( d, t ) );
             t.push_back( 4.0f );
-            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), WException );
+            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), const WException& );
 
             // test what happens when there is an invalid time value
             t.resize( 3 );
             TS_ASSERT_THROWS_NOTHING( WDataSetTimeSeries( d, t ) );
             t[ 2 ] = -0.0 / 0.0;
-            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), WException );
+            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), const WException& );
 
             // test what happens when there are equal time values
             t[ 2 ] = t[ 1 ];
-            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), WException );
+            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), const WException& );
 
             // test what happens if the grids don't match
             t[ 2 ] = 2.0;
@@ -100,7 +100,7 @@ public:
 
             boost::shared_ptr< WValueSet< double > > vs( new WValueSet< double >( 0, 1, v, W_DT_DOUBLE ) );
             d.push_back( boost::shared_ptr< WDataSetScalar const >( new WDataSetScalar( vs, g ) ) );
-            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), WException );
+            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), const WException& );
 
             // test what happens if the valuesets data types don't match
             d.resize( 3 );
@@ -111,7 +111,7 @@ public:
             boost::shared_ptr< std::vector< float > > v2( new std::vector< float >( 27, 4 ) );
             boost::shared_ptr< WValueSet< float > > vs2( new WValueSet< float >( 0, 1, v2, W_DT_FLOAT ) );
             d.push_back( boost::shared_ptr< WDataSetScalar const >( new WDataSetScalar( vs2, d.front()->getGrid() ) ) );
-            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), WException );
+            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), const WException& );
         }
 
         // test with 2 time slices
@@ -121,23 +121,23 @@ public:
             TimesVector t;
 
             // test what happens when the input is empty
-            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), WException );
+            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), const WException& );
 
             // test what happens when the vector sizes don't match
             createData( data, 2, d, t );
             TS_ASSERT_THROWS_NOTHING( WDataSetTimeSeries( d, t ) );
             t.push_back( 4.0f );
-            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), WException );
+            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), const WException& );
 
             // test what happens when there is an invalid time value
             t.resize( 2 );
             TS_ASSERT_THROWS_NOTHING( WDataSetTimeSeries( d, t ) );
             t[ 1 ] = 0.0f / 0.0f;
-            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), WException );
+            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), const WException& );
 
             // test what happens when there are equal time values
             t[ 1 ] = t[ 0 ];
-            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), WException );
+            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), const WException& );
 
             // test what happens if the grids don't match
             t[ 1 ] = 2.0;
@@ -157,7 +157,7 @@ public:
 
             boost::shared_ptr< WValueSet< double > > vs( new WValueSet< double >( 0, 1, v, W_DT_DOUBLE ) );
             d.push_back( boost::shared_ptr< WDataSetScalar const >( new WDataSetScalar( vs, g ) ) );
-            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), WException );
+            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), const WException& );
 
             // test what happens if the valuesets data types don't match
             d.resize( 2 );
@@ -168,7 +168,7 @@ public:
             boost::shared_ptr< std::vector< float > > v2( new std::vector< float >( 27, 4 ) );
             boost::shared_ptr< WValueSet< float > > vs2( new WValueSet< float >( 0, 1, v2, W_DT_FLOAT ) );
             d.push_back( boost::shared_ptr< WDataSetScalar const >( new WDataSetScalar( vs2, d.front()->getGrid() ) ) );
-            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), WException );
+            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), const WException& );
         }
 
         // test with 1 time slice
@@ -178,19 +178,19 @@ public:
             TimesVector t;
 
             // test what happens when the input is empty
-            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), WException );
+            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), const WException& );
 
             // test what happens when the vector sizes don't match
             createData( data, 1, d, t );
             TS_ASSERT_THROWS_NOTHING( WDataSetTimeSeries( d, t ) );
             t.push_back( 4.0f );
-            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), WException );
+            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), const WException& );
 
             // test what happens when there is an invalid time value
             t.resize( 1 );
             TS_ASSERT_THROWS_NOTHING( WDataSetTimeSeries( d, t ) );
             t[ 0 ] = -0.0f / 0.0f;
-            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), WException );
+            TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), const WException& );
         }
 
         // datasets should be sorted by time
@@ -325,7 +325,7 @@ public:
         TS_ASSERT_EQUALS( 2.0f, f );
         f = ts.findNearestTimeSlice( std::numeric_limits< float >::infinity() );
         TS_ASSERT_EQUALS( 2.0f, f );
-        TS_ASSERT_THROWS( ts.findNearestTimeSlice( 0.0 / 0.0 ), WException );
+        TS_ASSERT_THROWS( ts.findNearestTimeSlice( 0.0 / 0.0 ), const WException& );
     }
 
     /**
@@ -444,15 +444,15 @@ public:
         // test invalid times
         WVector3d pos( 1.0, 0.5, 1.0 );
 
-        TS_ASSERT_THROWS( h = ts.interpolate< double >( pos, -inf, &success ), WException );
+        TS_ASSERT_THROWS( h = ts.interpolate< double >( pos, -inf, &success ), const WException& );
         TS_ASSERT( !success );
-        TS_ASSERT_THROWS( h = ts.interpolate< double >( pos, -3.0f, &success ), WException );
+        TS_ASSERT_THROWS( h = ts.interpolate< double >( pos, -3.0f, &success ), const WException& );
         TS_ASSERT( !success );
-        TS_ASSERT_THROWS( h = ts.interpolate< double >( pos, -wlimits::FLT_EPS, &success ), WException );
+        TS_ASSERT_THROWS( h = ts.interpolate< double >( pos, -wlimits::FLT_EPS, &success ), const WException& );
         TS_ASSERT( !success );
-        TS_ASSERT_THROWS( h = ts.interpolate< double >( pos, 2.0f + 2.0f * wlimits::FLT_EPS, &success ), WException );
+        TS_ASSERT_THROWS( h = ts.interpolate< double >( pos, 2.0f + 2.0f * wlimits::FLT_EPS, &success ), const WException& );
         TS_ASSERT( !success );
-        TS_ASSERT_THROWS( h = ts.interpolate< double >( pos, inf, &success ), WException );
+        TS_ASSERT_THROWS( h = ts.interpolate< double >( pos, inf, &success ), const WException& );
         TS_ASSERT( !success );
 
         // test invalid position

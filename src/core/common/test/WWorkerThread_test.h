@@ -202,7 +202,7 @@ public:
     void testNoFunction()
     {
         boost::shared_ptr< FuncType > func;
-        TS_ASSERT_THROWS( WWorkerThread< FuncType > w( func, 0, 1 ), WException );
+        TS_ASSERT_THROWS( WWorkerThread< FuncType > w( func, 0, 1 ), const WException& );
     }
 
     /**
@@ -211,7 +211,7 @@ public:
     void testThreadId()
     {
         boost::shared_ptr< FuncType > func( new FuncType( 5 ) );
-        TS_ASSERT_THROWS( WWorkerThread< FuncType > w( func, 1, 0 ), WException );
+        TS_ASSERT_THROWS( WWorkerThread< FuncType > w( func, 1, 0 ), const WException& );
     }
 // restore WASSERT_AS_CASSERT flag
 #ifdef WASSERT_FLAG_CHANGED

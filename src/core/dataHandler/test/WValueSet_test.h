@@ -158,9 +158,9 @@ public:
         WValueSet< int8_t > set( 1, 2, v, W_DT_INT8 );
         TS_ASSERT_THROWS_NOTHING( set.getSubArray( 0, 2 ) );
         TS_ASSERT_THROWS_NOTHING( set.getSubArray( 3, 1 ) );
-        TS_ASSERT_THROWS( set.getSubArray( 4, 1 ), WException );
-        TS_ASSERT_THROWS( set.getSubArray( 3, 2 ), WException );
-        TS_ASSERT_THROWS( set.getSubArray( 2, 0 ), WException );
+        TS_ASSERT_THROWS( set.getSubArray( 4, 1 ), const WException& );
+        TS_ASSERT_THROWS( set.getSubArray( 3, 2 ), const WException& );
+        TS_ASSERT_THROWS( set.getSubArray( 2, 0 ), const WException& );
     }
 
     /**

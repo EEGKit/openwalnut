@@ -57,11 +57,11 @@ public:
 
         TS_ASSERT_THROWS( parseFromFile(
             boost::filesystem::path( W_FIXTURE_PATH + "WStructuredTextParser_test_invalid.txt" )
-        ), WParseError );
+        ), const WParseError& );
 
         TS_ASSERT_THROWS( parseFromFile(
             boost::filesystem::path( W_FIXTURE_PATH + "WStructuredTextParser_test_doesnotexist.txt" )
-        ), WFileNotFound );
+        ), const WFileNotFound& );
 
         // NOTE: we do not test parseFromString as both use the same backend functionality
     }
@@ -170,11 +170,11 @@ public:
         TS_ASSERT( t.getValues< std::string >( "level0/notexists" ).size() == 0 );
 
         // check operator[] (it uses getValue internally. So we only check for the WNotFound exception)
-        TS_ASSERT_THROWS( t.operator[]< std::string >( "level0/notexists" ), WNotFound );
+        TS_ASSERT_THROWS( t.operator[]< std::string >( "level0/notexists" ), const WNotFound& );
 
         // check type conversion
         // this is valid for getValue, getValues and [] as they utilize the same function
-        TS_ASSERT_THROWS( t.operator[]< size_t >( "level0/notuniquekv" ), WTypeMismatch );
+        TS_ASSERT_THROWS( t.operator[]< size_t >( "level0/notuniquekv" ), const WTypeMismatch& );
         TS_ASSERT( t.operator[]< size_t >( "level0/level1/somekv" ) == 123 );
 
         // to ensure case sensitivity:

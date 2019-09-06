@@ -139,7 +139,7 @@ public:
         TS_ASSERT_DELTA( wtracking::WTrackingUtility::getDistanceToBoundary( g, v, z ), 0.75, TRACKING_EPS );
 
         v = WVector3d( 1.0, 0.0, 0.0 ) + x * 0.5;
-        TS_ASSERT_THROWS( wtracking::WTrackingUtility::getDistanceToBoundary( g, v, x ), WException );
+        TS_ASSERT_THROWS( wtracking::WTrackingUtility::getDistanceToBoundary( g, v, x ), const WException& );
 
         v -= x * 2.0 * TRACKING_EPS;
         TS_ASSERT_DELTA( wtracking::WTrackingUtility::getDistanceToBoundary( g, v, x ), 2.0 * TRACKING_EPS, TRACKING_EPS );
@@ -330,10 +330,10 @@ public:
             // now lets do something wrong
             wtracking::WThreadedTrackingFunction::IndexType i;
             v0[ 0 ] = -1;
-            TS_ASSERT_THROWS( i = wtracking::WThreadedTrackingFunction::IndexType( g, v0, v1, numSeeds, seedsPerPosition ), WException );
+            TS_ASSERT_THROWS( i = wtracking::WThreadedTrackingFunction::IndexType( g, v0, v1, numSeeds, seedsPerPosition ), const WException& );
             v0[ 0 ] = 0;
             v1[ 1 ] = 5;
-            TS_ASSERT_THROWS( i = wtracking::WThreadedTrackingFunction::IndexType( g, v0, v1, numSeeds, seedsPerPosition ), WException );
+            TS_ASSERT_THROWS( i = wtracking::WThreadedTrackingFunction::IndexType( g, v0, v1, numSeeds, seedsPerPosition ), const WException& );
         }
     }
 

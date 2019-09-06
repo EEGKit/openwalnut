@@ -94,7 +94,7 @@ public:
 
         boost::shared_ptr< WPropertyVariable< bool > > p;
         TS_ASSERT_THROWS( p = boost::shared_ptr< WPropertyVariable< bool > >( new WPropertyVariable< bool >( "hey/you", "you", false ) ),
-                          WPropertyNameMalformed );
+                          const WPropertyNameMalformed& );
     }
 
     /**

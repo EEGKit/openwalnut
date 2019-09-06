@@ -461,7 +461,7 @@ public:
         initModules();
 
         // try initializing twice
-        TS_ASSERT_THROWS( m1->initialize(), WModuleConnectorInitFailed );
+        TS_ASSERT_THROWS( m1->initialize(), const WModuleConnectorInitFailed& );
         TS_ASSERT( m1->isInitialized()() );
     }
 
@@ -476,8 +476,8 @@ public:
         initModules();
 
         // connect input with input and output with output should fail
-        TS_ASSERT_THROWS( m1->m_input->connect( m2->m_input ), WModuleConnectorsIncompatible );
-        TS_ASSERT_THROWS( m1->m_output->connect( m2->m_output ), WModuleConnectorsIncompatible );
+        TS_ASSERT_THROWS( m1->m_input->connect( m2->m_input ), const WModuleConnectorsIncompatible& );
+        TS_ASSERT_THROWS( m1->m_output->connect( m2->m_output ), const WModuleConnectorsIncompatible& );
 
         // there should be nothing connected.
         TS_ASSERT( m1->m_output->m_connected.size() == 0 );
@@ -507,7 +507,7 @@ public:
         TS_ASSERT( m2->m_outputDerived->m_connected.size() == 1 );
 
         // connect an input of derived type with output of base type
-        TS_ASSERT_THROWS( m1->m_output->connect( m2->m_inputDerived ), WModuleConnectorsIncompatible );
+        TS_ASSERT_THROWS( m1->m_output->connect( m2->m_inputDerived ), const WModuleConnectorsIncompatible& );
         TS_ASSERT( m1->m_output->m_connected.size() == 0 );
         TS_ASSERT( m1->m_inputDerived->m_connected.size() == 0 );
     }

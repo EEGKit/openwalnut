@@ -66,9 +66,9 @@ public:
         }
         {
             TS_ASSERT_THROWS_NOTHING( WGridTransformOrtho v( 2.2, 3.3, -1.0 ) );
-            TS_ASSERT_THROWS( WGridTransformOrtho v( 0.0, 0.0, 1.0 ), WPreconditionNotMet );
-            TS_ASSERT_THROWS( WGridTransformOrtho v( 0.0, 2.0, 1.0 ), WPreconditionNotMet );
-            TS_ASSERT_THROWS( WGridTransformOrtho v( 1.0, 1.0, 0.0 ), WPreconditionNotMet );
+            TS_ASSERT_THROWS( WGridTransformOrtho v( 0.0, 0.0, 1.0 ), const WPreconditionNotMet& );
+            TS_ASSERT_THROWS( WGridTransformOrtho v( 0.0, 2.0, 1.0 ), const WPreconditionNotMet& );
+            TS_ASSERT_THROWS( WGridTransformOrtho v( 1.0, 1.0, 0.0 ), const WPreconditionNotMet& );
         }
         {
             WGridTransformOrtho v( 2.2, 3.3, -1.0 );
@@ -90,7 +90,7 @@ public:
             mat( 1, 1 ) = 3.3;
             mat( 2, 2 ) = 0.0;
 
-            TS_ASSERT_THROWS( WGridTransformOrtho v( mat ), WPreconditionNotMet );
+            TS_ASSERT_THROWS( WGridTransformOrtho v( mat ), const WPreconditionNotMet& );
         }
         {
             WMatrix< double > mat( 4, 4 );
@@ -100,7 +100,7 @@ public:
             mat( 1, 1 ) = 3.3;
             mat( 2, 2 ) = 1.0;
 
-            TS_ASSERT_THROWS( WGridTransformOrtho v( mat ), WPreconditionNotMet );
+            TS_ASSERT_THROWS( WGridTransformOrtho v( mat ), const WPreconditionNotMet& );
         }
         {
             WMatrix< double > mat( 4, 4 );

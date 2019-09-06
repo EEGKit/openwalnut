@@ -163,12 +163,12 @@ public:
             }
         }
 
-        TS_ASSERT_THROWS( matrix.at( 0, 4 ), WOutOfBounds );
-        TS_ASSERT_THROWS( matrix.at( 1, 5 ), WOutOfBounds );
-        TS_ASSERT_THROWS( matrix.at( 1, 4 ), WOutOfBounds );
-        TS_ASSERT_THROWS( matrix.at( 1, 100000 ), WOutOfBounds );
-        TS_ASSERT_THROWS( matrix.at( 3, 1 ), WOutOfBounds );
-        TS_ASSERT_THROWS( matrix.at( -1, 0 ), WOutOfBounds );
+        TS_ASSERT_THROWS( matrix.at( 0, 4 ), const WOutOfBounds& );
+        TS_ASSERT_THROWS( matrix.at( 1, 5 ), const WOutOfBounds& );
+        TS_ASSERT_THROWS( matrix.at( 1, 4 ), const WOutOfBounds& );
+        TS_ASSERT_THROWS( matrix.at( 1, 100000 ), const WOutOfBounds& );
+        TS_ASSERT_THROWS( matrix.at( 3, 1 ), const WOutOfBounds& );
+        TS_ASSERT_THROWS( matrix.at( -1, 0 ), const WOutOfBounds& );
     }
 
     /**

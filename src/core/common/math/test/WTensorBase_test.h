@@ -393,18 +393,18 @@ public:
 
             // try some invalid indices, indices of a tensor of dimension 4 may only be 0, 1, 2 or 3
             idx[ 3 ] = 4; // idx == [ 0, 1, 2, 4 ]
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             // indices are cast to std::size_t (which should be unsigned)
             idx[ 3 ] = -1; // idx == [ 0, 1, 2, -1 ]
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 3 ] = 2;
             idx[ 0 ] = 4537; // idx == [ 4537, 1, 2, 2 ]
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 0 ] = -434; // idx == [ -434, 1, 2, 2 ]
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             // some indices that should be valid
             idx[ 0 ] = 3;
@@ -446,10 +446,10 @@ public:
             TS_ASSERT_THROWS_NOTHING( t[ idx ] );
 
             idx[ 0 ] = 4;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 0 ] = 4537;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 0 ] = 1;
             TS_ASSERT_THROWS_NOTHING( t[ idx ] );
@@ -473,14 +473,14 @@ public:
             TS_ASSERT_THROWS_NOTHING( t[ idx ] );
 
             idx[ 2 ] = 3;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 0 ] = -1;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 2 ] = 2;
             idx[ 0 ] = 4537;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 0 ] = 0;
             idx[ 1 ] = 1;
@@ -651,14 +651,14 @@ public:
             std::vector< int > idx;
 
             // this should throw a WException (using the WAssert macro)
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx.push_back( 0 ); // idx == [ 0 ]
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
             idx.push_back( 1 ); // idx == [ 0, 1 ]
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
             idx.push_back( 2 ); // idx == [ 0, 1, 2 ]
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx.push_back( 3 ); // idx == [ 0, 1, 2, 3 ]
             // now idx has the correct size and all valid indices
@@ -677,17 +677,17 @@ public:
             // which is called by the vector version
             // I'll add some tests here though, in case this changes in the future
             idx[ 0 ] = -1;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 0 ] = 4;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 0 ] = 3;
             idx[ 3 ] = -1;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 3 ] = 4;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 3 ] = 2;
             TS_ASSERT_THROWS_NOTHING( t[ idx ] );
@@ -696,7 +696,7 @@ public:
             T14 t;
 
             std::vector< int > idx;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx.push_back( 0 ); // idx == [ 0 ]
             TS_ASSERT_THROWS_NOTHING( t[ idx ] );
@@ -714,18 +714,18 @@ public:
             T62 t;
 
             std::vector< int > idx;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx.push_back( 0 ); // idx == [ 0 ]
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
             idx.push_back( 1 ); // idx == [ 0, 1 ]
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
             idx.push_back( 0 ); // idx == [ 0, 1, 0 ]
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
             idx.push_back( 1 );
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
             idx.push_back( 1 );
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
             idx.push_back( 0 );
             TS_ASSERT_THROWS_NOTHING( t[ idx ] );
 
@@ -1327,18 +1327,18 @@ public:
 
             // try some invalid indices, indices of a tensor of dimension 4 may only be 0, 1, 2 or 3
             idx[ 3 ] = 4; // idx == [ 0, 1, 2, 4 ]
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             // indices are cast to std::size_t (which should be unsigned)
             idx[ 3 ] = -1; // idx == [ 0, 1, 2, -1 ]
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 3 ] = 2;
             idx[ 0 ] = 4537; // idx == [ 4537, 1, 2, 2 ]
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 0 ] = -434; // idx == [ -434, 1, 2, 2 ]
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             // some indices that should be valid
             idx[ 0 ] = 3;
@@ -1380,10 +1380,10 @@ public:
             TS_ASSERT_THROWS_NOTHING( t[ idx ] );
 
             idx[ 0 ] = 4;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 0 ] = 4537;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 0 ] = 1;
             TS_ASSERT_THROWS_NOTHING( t[ idx ] );
@@ -1407,14 +1407,14 @@ public:
             TS_ASSERT_THROWS_NOTHING( t[ idx ] );
 
             idx[ 2 ] = 3;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 0 ] = -1;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 2 ] = 2;
             idx[ 0 ] = 4537;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 0 ] = 0;
             idx[ 1 ] = 1;
@@ -1642,14 +1642,14 @@ public:
             std::vector< int > idx;
 
             // this should throw a WException (using the WAssert macro)
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx.push_back( 0 ); // idx == [ 0 ]
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
             idx.push_back( 1 ); // idx == [ 0, 1 ]
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
             idx.push_back( 2 ); // idx == [ 0, 1, 2 ]
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx.push_back( 3 ); // idx == [ 0, 1, 2, 3 ]
             // now idx has the correct size and all valid indices
@@ -1668,17 +1668,17 @@ public:
             // which is called by the vector version
             // I'll add some tests here though, in case this changes in the future
             idx[ 0 ] = -1;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 0 ] = 4;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 0 ] = 3;
             idx[ 3 ] = -1;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 3 ] = 4;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx[ 3 ] = 2;
             TS_ASSERT_THROWS_NOTHING( t[ idx ] );
@@ -1687,7 +1687,7 @@ public:
             T14 t;
 
             std::vector< int > idx;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx.push_back( 0 ); // idx == [ 0 ]
             TS_ASSERT_THROWS_NOTHING( t[ idx ] );
@@ -1705,18 +1705,18 @@ public:
             T62 t;
 
             std::vector< int > idx;
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
 
             idx.push_back( 0 ); // idx == [ 0 ]
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
             idx.push_back( 1 ); // idx == [ 0, 1 ]
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
             idx.push_back( 0 ); // idx == [ 0, 1, 0 ]
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
             idx.push_back( 1 );
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
             idx.push_back( 1 );
-            TS_ASSERT_THROWS( t[ idx ], WException );
+            TS_ASSERT_THROWS( t[ idx ], const WException& );
             idx.push_back( 0 );
             TS_ASSERT_THROWS_NOTHING( t[ idx ] );
 
@@ -1979,12 +1979,12 @@ public:
 
             // try some invalid indices
             // negative indices are not allowed as the parameters are of type std::size_t
-            TS_ASSERT_THROWS( f( 0, 0, 3 ), WException );
-            TS_ASSERT_THROWS( f( 0, 654465, 0 ), WException );
-            TS_ASSERT_THROWS( f( 4, 0, 0 ), WException );
-            TS_ASSERT_THROWS( f( 0, 0, 45 ), WException );
-            TS_ASSERT_THROWS( f( 0, 64, 0 ), WException );
-            TS_ASSERT_THROWS( f( 792, 981, 5645 ), WException );
+            TS_ASSERT_THROWS( f( 0, 0, 3 ), const WException& );
+            TS_ASSERT_THROWS( f( 0, 654465, 0 ), const WException& );
+            TS_ASSERT_THROWS( f( 4, 0, 0 ), const WException& );
+            TS_ASSERT_THROWS( f( 0, 0, 45 ), const WException& );
+            TS_ASSERT_THROWS( f( 0, 64, 0 ), const WException& );
+            TS_ASSERT_THROWS( f( 792, 981, 5645 ), const WException& );
         }
         {
             F15 f;
@@ -1995,8 +1995,8 @@ public:
             TS_ASSERT_THROWS_NOTHING( f( 3 ) );
             TS_ASSERT_THROWS_NOTHING( f( 4 ) );
 
-            TS_ASSERT_THROWS( f( 5 ), WException );
-            TS_ASSERT_THROWS( f( 5436 ), WException );
+            TS_ASSERT_THROWS( f( 5 ), const WException& );
+            TS_ASSERT_THROWS( f( 5436 ), const WException& );
         }
 
         // now try a symmetric tensor base
@@ -2011,8 +2011,8 @@ public:
             TS_ASSERT_THROWS_NOTHING( f( 3, 3 ) );
             TS_ASSERT_THROWS_NOTHING( f( 0, 1 ) );
 
-            TS_ASSERT_THROWS( f( 4, 0 ), WException );
-            TS_ASSERT_THROWS( f( 3, 457 ), WException );
+            TS_ASSERT_THROWS( f( 4, 0 ), const WException& );
+            TS_ASSERT_THROWS( f( 3, 457 ), const WException& );
         }
     }
 
