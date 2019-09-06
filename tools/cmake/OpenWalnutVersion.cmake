@@ -22,7 +22,7 @@
 #
 #---------------------------------------------------------------------------
 
-# This is a script executed during build time to genertae the WVersion.h headers. This is needed since CMake does not allow us to define the
+# This is a script executed during build time to generate the WVersion.h headers. This is needed since CMake does not allow us to define the
 # commands directly inside an ADD_CUSTOM_COMMAND call. An alternative to this would be SET_SOURCE_FILE_PROPERTIES which should be able to set the
 # version as define for some files. But this caused the whole source to rebuild although it was only set for one file (bug? feature? we do not
 # know.)
