@@ -70,13 +70,6 @@ public:
     explicit WInterval( const StoreType& c );
 
     /**
-     * Copy constructor.
-     *
-     * \param c the interval to copy
-     */
-    WInterval( const Type& c );  // NOLINT
-
-    /**
      * Create a new interval instance using the given values.
      *
      * \param l the lower border
@@ -239,13 +232,6 @@ WInterval< T >::WInterval( const StoreType& c )
     // ensure order
     m_interval.first = std::min( c.first, c.second );
     m_interval.second = std::min( c.first, c.second );
-}
-
-template < typename T >
-WInterval< T >::WInterval( const Type& c ):
-    m_interval( c.m_interval )
-{
-    // nothing else to do
 }
 
 template < typename T >
