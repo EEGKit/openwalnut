@@ -246,7 +246,7 @@ namespace wlog
          * \param rhs The instance which SHOULD be copied over
          * \return A reference to the variable for which assignment was INTENDED.
          */
-        WStreamedLogger& operator=( const WStreamedLogger& rhs );
+        WStreamedLogger& operator=( const WStreamedLogger& rhs ) = delete;
 
         boost::shared_ptr< Buffer > m_buffer; //!< Collects the message parts.
     };
