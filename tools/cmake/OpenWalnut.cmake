@@ -276,6 +276,10 @@ ENDFUNCTION( BUILD_SYSTEM_COMPILER )
 # Unfortunately, this variable is empty. We fill it here and hopefully this is fixed in the near future.
 LIST( APPEND CMAKE_STANDARD_LIBRARIES "stdc++" "m" )
 
+IF( CMAKE_HOST_SYSTEM MATCHES "Windows" )
+	link_libraries( bcrypt )
+ENDIF()
+
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 # Compiler setup
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -322,9 +326,9 @@ OPTION( BUILD_PYTHON_INTERPRETER OFF )
 
 # find the boost packages
 IF( BUILD_PYTHON_INTERPRETER )
-    FIND_PACKAGE( Boost 1.46.0 REQUIRED program_options thread filesystem date_time system signals regex python )
+    FIND_PACKAGE( Boost 1.46.0 REQUIRED program_options thread filesystem date_time system regex python )
 ELSE()
-    FIND_PACKAGE( Boost 1.46.0 REQUIRED program_options thread filesystem date_time system signals regex )
+    FIND_PACKAGE( Boost 1.46.0 REQUIRED program_options thread filesystem date_time system regex )
 ENDIF() #BUILD_SCRIPTENGINE
 
 # include the boost headers
