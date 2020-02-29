@@ -37,7 +37,7 @@
 
 /**
  * This module writes the triangle mesh given at its input connector
- * as a VTK ASCII file or .json file
+ * as a VTK ASCII file or .json file or STL file
  *
  * \ingroup modules
  */
