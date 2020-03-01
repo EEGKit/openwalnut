@@ -269,10 +269,10 @@ FUNCTION( SETUP_STYLECHECKER _TargetName _CheckFiles _Excludes )
     LIST( REMOVE_ITEM _CheckFiles "" )
     STRING( REPLACE ";" "\n" _CheckFiles "${_CheckFiles}" )
     FILE( WRITE ${BrainLinterListFile} "${_CheckFiles}\n" )
-	SET( BrainLinterCommandFile_Errors "${PROJECT_BINARY_DIR}/brainlint/brainlintcommand_errors_${_TargetName}" )
-	FILE( WRITE ${BrainLinterCommandFile_Errors} "#!/bin/bash\n declare BRAINLINTFILES=$(cat ${BrainLinterListFile}); for B_FILE in $BRAINLINTFILES; do B_FILE=$(echo $B_FILE | tr -d '\r'); ${PROJECT_SOURCE_DIR}/../tools/style/brainlint/brainlint.py ${STYLECHECK_OPTIONS} $B_FILE;done 2>&1 | grep -iv 'Total errors found: 0$' | cat")
-	SET( BrainLinterCommandFile_Exitcode "${PROJECT_BINARY_DIR}/brainlint/brainlintcommand_exitcode_${_TargetName}" )
-	FILE( WRITE ${BrainLinterCommandFile_Exitcode} "#!/bin/bash\n declare BRAINLINTFILES=$(cat ${BrainLinterListFile}); for B_FILE in $BRAINLINTFILES; do B_FILE=$(echo $B_FILE | tr -d '\r'); ${PROJECT_SOURCE_DIR}/../tools/style/brainlint/brainlint.py ${STYLECHECK_OPTIONS} $B_FILE;done 2>&1| grep -qi 'Total errors found: 0$'")
+    SET( BrainLinterCommandFile_Errors "${PROJECT_BINARY_DIR}/brainlint/brainlintcommand_errors_${_TargetName}" )
+    FILE( WRITE ${BrainLinterCommandFile_Errors} "#!/bin/bash\n declare BRAINLINTFILES=$(cat ${BrainLinterListFile}); for B_FILE in $BRAINLINTFILES; do B_FILE=$(echo $B_FILE | tr -d '\r'); ${PROJECT_SOURCE_DIR}/../tools/style/brainlint/brainlint.py ${STYLECHECK_OPTIONS} $B_FILE;done 2>&1 | grep -iv 'Total errors found: 0$' | cat")
+    SET( BrainLinterCommandFile_Exitcode "${PROJECT_BINARY_DIR}/brainlint/brainlintcommand_exitcode_${_TargetName}" )
+    FILE( WRITE ${BrainLinterCommandFile_Exitcode} "#!/bin/bash\n declare BRAINLINTFILES=$(cat ${BrainLinterListFile}); for B_FILE in $BRAINLINTFILES; do B_FILE=$(echo $B_FILE | tr -d '\r'); ${PROJECT_SOURCE_DIR}/../tools/style/brainlint/brainlint.py ${STYLECHECK_OPTIONS} $B_FILE;done 2>&1| grep -qi 'Total errors found: 0$'")
 
     # add a new target for this lib
     ADD_CUSTOM_TARGET( stylecheck_${_TargetName}
