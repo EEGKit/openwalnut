@@ -269,15 +269,19 @@ FUNCTION( SETUP_STYLECHECKER _TargetName _CheckFiles _Excludes )
     LIST( REMOVE_ITEM _CheckFiles "" )
     STRING( REPLACE ";" "\n" _CheckFiles "${_CheckFiles}" )
     FILE( WRITE ${BrainLinterListFile} "${_CheckFiles}\n" )
+	SET( BrainLinterCommandFile_Errors "${PROJECT_BINARY_DIR}/brainlint/brainlintcommand_errors_${_TargetName}" )
+	FILE( WRITE ${BrainLinterCommandFile_Errors} "#!/bin/bash\n declare BRAINLINTFILES=$(cat ${BrainLinterListFile}); for B_FILE in $BRAINLINTFILES; do B_FILE=$(echo $B_FILE | tr -d '\r'); ${PROJECT_SOURCE_DIR}/../tools/style/brainlint/brainlint.py ${STYLECHECK_OPTIONS} $B_FILE;done 2>&1 | grep -iv 'Total errors found: 0$' | cat")
+	SET( BrainLinterCommandFile_Exitcode "${PROJECT_BINARY_DIR}/brainlint/brainlintcommand_exitcode_${_TargetName}" )
+	FILE( WRITE ${BrainLinterCommandFile_Exitcode} "#!/bin/bash\n declare BRAINLINTFILES=$(cat ${BrainLinterListFile}); for B_FILE in $BRAINLINTFILES; do B_FILE=$(echo $B_FILE | tr -d '\r'); ${PROJECT_SOURCE_DIR}/../tools/style/brainlint/brainlint.py ${STYLECHECK_OPTIONS} $B_FILE;done 2>&1| grep -qi 'Total errors found: 0$'")
 
     # add a new target for this lib
     ADD_CUSTOM_TARGET( stylecheck_${_TargetName}
                        # The following COMMAND will cause printing of the errors if there are errors
                        # and no ouput if no errors occured (not even the number of errors, i.e. 0)
-                       COMMAND  cat ${BrainLinterListFile} | xargs ${XARGS_OPTIONS} ${PROJECT_SOURCE_DIR}/../tools/style/brainlint/brainlint.py ${STYLECHECK_OPTIONS} 2>&1 | grep -iv 'Total errors found: 0$$' | cat
+					   COMMAND ${BrainLinterCommandFile_Errors}
                        # The following COMMAND will cause will produce the exit code corresponding to
-                       # whether there have been errors (2) or not (0).
-                       COMMAND  cat ${BrainLinterListFile} | xargs ${XARGS_OPTIONS} ${PROJECT_SOURCE_DIR}/../tools/style/brainlint/brainlint.py ${STYLECHECK_OPTIONS} 2>&1 | grep -qi 'Total errors found: 0$$'
+                       # whether there have been errors (2) or not (0).					   
+					   COMMAND ${BrainLinterCommandFile_Exitcode}  
                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                        COMMENT "Check if ${_TargetName} complies to CodingStandard"
     )
