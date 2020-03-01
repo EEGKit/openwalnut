@@ -278,10 +278,10 @@ FUNCTION( SETUP_STYLECHECKER _TargetName _CheckFiles _Excludes )
     ADD_CUSTOM_TARGET( stylecheck_${_TargetName}
                        # The following COMMAND will cause printing of the errors if there are errors
                        # and no ouput if no errors occured (not even the number of errors, i.e. 0)
-					   COMMAND ${BrainLinterCommandFile_Errors}
+		       COMMAND ${BrainLinterCommandFile_Errors}
                        # The following COMMAND will cause will produce the exit code corresponding to
                        # whether there have been errors (2) or not (0).					   
-					   COMMAND ${BrainLinterCommandFile_Exitcode}  
+		       COMMAND ${BrainLinterCommandFile_Exitcode}  
                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                        COMMENT "Check if ${_TargetName} complies to CodingStandard"
     )
