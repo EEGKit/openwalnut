@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 #
 # Copyright (c) 2009 Google Inc. All rights reserved.
 #
@@ -91,7 +91,7 @@ import unicodedata
 
 
 _USAGE = """
-Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
+Syntax: brainlint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
                    [--counting=total|toplevel|detailed]
         <file> [file] ...
 
@@ -130,7 +130,7 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
                 --filter=whitespace,runtime/printf,+runtime/printf_format
                 --filter=-,+build/include_what_you_use
 
-      To see a list of all the categories used in cpplint, pass no arg:
+      To see a list of all the categories used in brainlint, pass no arg:
          --filter=
 
     counting=total|toplevel|detailed
@@ -142,9 +142,9 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
 """
 
 # We categorize each error message we print.  Here are the categories.
-# We want an explicit list so we can list them all in cpplint --filter=.
+# We want an explicit list so we can list them all in brainlint --filter=.
 # If you add a new error message with a new category, add it to the list
-# here!  cpplint_unittest.py should tell you if you forget to do this.
+# here!  brainlint_unittest.py should tell you if you forget to do this.
 # \ used for clearer layout -- pylint: disable-msg=C6013
 _ERROR_CATEGORIES = [
   'build/class',
