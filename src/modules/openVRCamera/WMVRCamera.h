@@ -26,19 +26,12 @@
 #define WMVRCAMERA_H
 
 #include <string>
+#include <vector>
 
-#include <osg/Node>
-#include <osg/Geode>
-#include <osg/Uniform>
+#include <boost/thread.hpp>
 
-#include "core/graphicsEngine/WGEManagedGroupNode.h"
-#include "core/graphicsEngine/WTriangleMesh.h"
-#include "core/dataHandler/WDataSetScalar.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
-#include "core/kernel/WModuleOutputData.h"
-#include "core/dataHandler/WGridRegular3D.h"
-#include "core/graphicsEngine/shaders/WGEShader.h"
 
 /**
  * Module starting and connecting to an OpenVR session
@@ -120,6 +113,11 @@ protected:
     virtual void activate();
 
 private:
+
+    /**
+     * The pointer to the hud used to render the texture buffer.
+     */
+    osg::ref_ptr< WGETextureHud > m_hud;
 
     //! A condition for property updates.
     boost::shared_ptr< WCondition > m_propCondition;

@@ -31,9 +31,10 @@
 //    * your own header file
 
 #include <string>
-#include <vector>
 
 #include <osg/StateAttribute>
+#include <osg/Texture2D>
+#include <osg/TexMat>
 
 #include "core/kernel/WKernel.h"
 
@@ -42,7 +43,10 @@
 #include "core/graphicsEngine/WGERequirement.h"
 #include "core/graphicsEngine/offscreen/WGEOffscreenRenderNode.h"    // <- this is the awesome new header you will need
 #include "core/graphicsEngine/shaders/WGEShader.h"
+#include "core/graphicsEngine/WGETextureHud.h"
+#include "core/graphicsEngine/WGECamera.h"
 
+#include "WDemoGeometry.h"
 #include "WMVRCamera.h"
 #include "WMVRCamera.xpm"
 
@@ -54,12 +58,13 @@ WMVRCamera::WMVRCamera():
 {
     // WARNING: initializing connectors inside the constructor will lead to an exception.
     // Implement WModule::initializeConnectors instead.
+    
 }
 
 WMVRCamera::~WMVRCamera()
 {
     // cleanup
-    //removeConnectors();
+    // removeConnectors();
 }
 
 boost::shared_ptr< WModule > WMVRCamera::factory() const
@@ -83,38 +88,6 @@ const std::string WMVRCamera::getDescription() const
 " right now it only adds an extra camera that renders to a texture";
 }
 
-void WMVRCamera::moduleMain()
-{
-    
-    m_moduleState.setResetable( true, true );
-    m_moduleState.add( m_propCondition );
-
-    // Now, we can mark the module ready.
-    ready();
-
-    
-    osg::ref_ptr< WGEGroupNode > rootNode = new WGEGroupNode();
-    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( rootNode );
-    
-    // loop until the module container requests the module to quit
-    while( !m_shutdownFlag() )
-    {
-        m_moduleState.wait();
-
-        updateGraphicsCallback();
-
-        // woke up since the module is requested to finish
-        if( m_shutdownFlag() )
-        {
-            break;
-        }
-    }
-
-    // Never miss to clean up. Especially remove your OSG nodes. Everything else you add to these nodes will be removed automatically.
-    debugLog() << "Shutting down VRCamera";
-    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( rootNode );
-}
-
 void WMVRCamera::connectors()
 {
 
@@ -132,12 +105,40 @@ void WMVRCamera::properties()
 
     WModule::properties();
 }
+
 void WMVRCamera::requirements()
 {
     // NOTE: Refer to WMTemplate.cpp if you do not understand these commands.
 
     // We need graphics to draw anything:
     m_requirements.push_back( new WGERequirement() );
+}
+
+void WMVRCamera::moduleMain()
+{
+    m_moduleState.setResetable( true, true );
+    m_moduleState.add( m_propCondition );
+
+    // Now, we can mark the module ready.
+    ready();
+
+    // loop until the module container requests the module to quit
+    while( !m_shutdownFlag() )
+    {
+        debugLog() << "Waiting...";
+
+        m_moduleState.wait();
+
+        // woke up since the module is requested to finish
+        if( m_shutdownFlag() )
+        {
+            break;
+        }
+    }
+
+    // Never miss to clean up. Especially remove your OSG nodes. Everything else you add to these nodes will be removed automatically.
+    debugLog() << "Shutting down VRCamera";
+    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( rootNode );
 }
 
 void WMVRCamera::updateGraphicsCallback()
@@ -151,4 +152,22 @@ void WMVRCamera::updateGraphicsCallback()
     }
 
     lock.unlock();
+}
+void WMVRCamera::activate()
+{
+    // This method gets called, whenever the m_active property changes. Your module should always handle this if you do not use the
+    // WGEManagedGroupNode for your scene. The user can (de-)activate modules in his GUI and you can handle this case here:
+    if( m_active->get() )
+    {
+        debugLog() << "Activate.";
+    }
+    else
+    {
+        debugLog() << "Deactivate.";
+    }
+
+    // The simpler way is by using WGEManagedGroupNode which deactivates itself according to m_active. See moduleMain for details.
+
+    // Always call WModule's activate!
+    WModule::activate();
 }
