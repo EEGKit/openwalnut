@@ -424,7 +424,7 @@ void WMainWindow::setupGUI()
             m_navLeftEye = boost::shared_ptr< WQtNavGLWidget >( new WQtNavGLWidget( "Left Eye View", "Left Eye View", this, "Left Eye Slice",
                                                                                   m_mainGLWidget ) );
             m_navLeftEye->setFeatures( QDockWidget::AllDockWidgetFeatures );
-            m_navLeftEye->setSliderProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropAxialPos() );
+            m_navLeftEye->setSliderProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropCoronalPos() );
             m_navLeftEye->getGLWidget()->setCameraManipulator( WQtGLWidget::NO_OP );
 
             addDockWidget( Qt::LeftDockWidgetArea, m_navLeftEye.get(), Qt::Vertical );
@@ -450,6 +450,12 @@ void WMainWindow::setupGUI()
     showSagittal->setText( "Toggle Sagittal Slice" );
     showSagittal->setIcon( m_iconManager.getIcon( "sagittal icon" ) );
 
+    WQtPropertyBoolAction* showLeftEye = new WQtPropertyBoolAction( WKernel::getRunningKernel()->getSelectionManager()->getPropSagittalShow(),
+                                                                     m_permanentToolBar );
+    showLeftEye->setToolTip( "Toggle left eye slice" );
+    showLeftEye->setText( "Toggle left eye Slice" );
+    showLeftEye->setIcon( m_iconManager.getIcon( "sagittal icon" ) );
+
     // setup permanent toolbar
     m_permanentToolBar->addAction( m_newAction );
     m_permanentToolBar->addAction( m_loadButton );
@@ -460,6 +466,7 @@ void WMainWindow::setupGUI()
     m_permanentToolBar->addAction( showAxial );
     m_permanentToolBar->addAction( showCoronal );
     m_permanentToolBar->addAction( showSagittal );
+    m_permanentToolBar->addAction( showLeftEye );
     m_permanentToolBar->addSeparator();
 
     // set the according actions to the toolbars

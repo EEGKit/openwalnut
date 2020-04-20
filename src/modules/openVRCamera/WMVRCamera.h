@@ -219,11 +219,7 @@ private:
 
     WPropBool     m_showonLeftEye; //!< indicates whether the vector should be shown on slice X
 
-    WPropDouble    m_xPos; //!< x position of the slice
-
-    WPropDouble    m_yPos; //!< y position of the slice
-
-    WPropDouble    m_zPos; //!< z position of the slice
+    WPropDouble    m_leftEyePos; //!< x position of the slice
 };
 
 #endif  // WMVRCAMERA_H

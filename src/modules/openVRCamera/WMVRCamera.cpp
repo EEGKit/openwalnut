@@ -116,11 +116,9 @@ void WMVRCamera::properties()
     m_sliceGroup      = m_properties->addPropertyGroup( "Slices",  "Slice Options." );
     // enable slices
     // Flags denoting whether the glyphs should be shown on the specific slice
-    m_showonLeftEye = m_sliceGroup->addProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropSagittalShow() );
+    m_showonLeftEye = m_sliceGroup->addProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropCoronalShow() );
     // The slice positions.
-    m_xPos    = m_sliceGroup->addProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropSagittalPos() );
-    m_yPos    = m_sliceGroup->addProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropCoronalPos() );
-    m_zPos    = m_sliceGroup->addProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropAxialPos() );
+    m_leftEyePos    = m_sliceGroup->addProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropCoronalPos() );
     // show hud?
     m_showHUD = m_properties->addProperty( "Show HUD", "Check to enable the debugging texture HUD.", true );
 
@@ -195,9 +193,7 @@ void WMVRCamera::initOSG()
     if( empty )
     {
         // hide the slider properties.
-        m_xPos->setHidden();
-        m_yPos->setHidden();
-        m_zPos->setHidden(); 
+        m_leftEyePos->setHidden();
         return;
     }
 
@@ -209,21 +205,13 @@ void WMVRCamera::initOSG()
     WVector3d midBB = minV + ( sizes * 0.5 );
 
     // update the properties
-    m_xPos->setMin( minV[0] );
-    m_xPos->setMax( maxV[0] );
-    m_yPos->setMin( minV[1] );
-    m_yPos->setMax( maxV[1] );
-    m_zPos->setMin( minV[2] );
-    m_zPos->setMax( maxV[2] );
+    m_leftEyePos->setMin( minV[1] );
+    m_leftEyePos->setMax( maxV[1] );
     // un-hide the slider properties.
-    m_xPos->setHidden( false );
-    m_yPos->setHidden( false );
-    m_zPos->setHidden( false );
+    m_leftEyePos->setHidden( false );
 
     // always update slice positions if they happen to be outside the bounding box (i.e. after shrinking the box)
-    m_xPos->setRecommendedValue( midBB[0] );
-    m_yPos->setRecommendedValue( midBB[1] );
-    m_zPos->setRecommendedValue( midBB[2] );
+    m_leftEyePos->setRecommendedValue( midBB[1] );
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Navigation View Setup
@@ -244,7 +232,7 @@ void WMVRCamera::initOSG()
     // create a new geode containing the slices
 
     // X Slice
-    osg::ref_ptr< osg::Node > leftEyeSlice = wge::genFinitePlane( minV, osg::Vec3( 0.0, sizes[1], 0.0 ),
+    osg::ref_ptr< osg::Node > leftEyeSlice = wge::genFinitePlane( minV, osg::Vec3( sizes[0], 0.0, 0.0 ),
                                                                   osg::Vec3( 0.0, 0.0, sizes[2] ) );
     leftEyeSlice->setName( "Left Eye Slice" );
     osg::Uniform* leftEyeSliceUniform = new osg::Uniform( "u_WorldTransform", osg::Matrixf::identity() );
@@ -264,13 +252,13 @@ void WMVRCamera::initOSG()
 
     // Control transformation node by properties. We use an additional uniform here to provide the shader the transformation matrix used to
     // translate the slice.
-    mLeftEye->addUpdateCallback( new WGELinearTranslationCallback< WPropDouble >( osg::Vec3( 1.0, 0.0, 0.0 ), m_xPos, leftEyeSliceUniform ) );
+    mLeftEye->addUpdateCallback( new WGELinearTranslationCallback< WPropDouble >( osg::Vec3( 0.0, 1.0, 0.0 ), m_leftEyePos, leftEyeSliceUniform ) );
 
     // set callbacks for en-/disabling the nodes
     leftEyeSlice->addUpdateCallback( new WGENodeMaskCallback( m_showonLeftEye ) );
 
     // set the pick callbacks for each slice
-    m_leftEyeSlicePicker = PickCallback::SPtr( new PickCallback( leftEyeSlice, m_xPos ) );
+    m_leftEyeSlicePicker = PickCallback::SPtr( new PickCallback( leftEyeSlice, m_leftEyePos ) );
 
     // transparency property
     osg::ref_ptr< osg::Uniform > transparencyUniform = new osg::Uniform( "u_noTransparency", false );
