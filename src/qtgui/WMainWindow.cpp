@@ -147,6 +147,13 @@ void WMainWindow::setupGUI()
                                                                false,
                                                                true    // this requires a restart
                                                        );
+    WSettingAction* showVRWidgets = new WSettingAction( this, "qtgui/showVREyeWidgets",
+                                                               "Show VR Eye Views",
+                                                               "Disables the eye views completely. This can lead to a speed-up and is "
+                                                               "recommended for those who do not need them.",
+                                                               true,   // for testing
+                                                               true    // this requires a restart
+                                                       );
     m_sliderMinMaxEditSetting = new WSettingAction( this, std::string( "qtgui/" ) +  std::string( "sliderMinMaxEdit" ),
                                                     "Slider Min/Max Editing",
                                                     "If enabled, the maximum and minimum values of slider can be edited.",
@@ -346,6 +353,7 @@ void WMainWindow::setupGUI()
     m_viewMenu->addAction( hideMenuAction );
     m_viewMenu->addSeparator();
     m_viewMenu->addAction( showNavWidgets );
+    m_viewMenu->addAction( showVRWidgets );
     m_viewMenu->addSeparator();
     m_viewMenu->addMenu( m_permanentToolBar->getStyleMenu() );
     m_settingsMenu->addAction( m_sliderMinMaxEditSetting );
@@ -406,6 +414,20 @@ void WMainWindow::setupGUI()
             m_navSagittal->getGLWidget()->setCameraManipulator( WQtGLWidget::NO_OP );
 
             addDockWidget( Qt::LeftDockWidgetArea, m_navSagittal.get(), Qt::Vertical );
+        }
+    }
+
+    // initially 1 left eye view
+    {
+        if( showVRWidgets->get() )
+        {
+            m_navLeftEye = boost::shared_ptr< WQtNavGLWidget >( new WQtNavGLWidget( "Left Eye View", "Left Eye View", this, "Left Eye Slice",
+                                                                                  m_mainGLWidget ) );
+            m_navLeftEye->setFeatures( QDockWidget::AllDockWidgetFeatures );
+            m_navLeftEye->setSliderProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropAxialPos() );
+            m_navLeftEye->getGLWidget()->setCameraManipulator( WQtGLWidget::NO_OP );
+
+            addDockWidget( Qt::LeftDockWidgetArea, m_navLeftEye.get(), Qt::Vertical );
         }
     }
 

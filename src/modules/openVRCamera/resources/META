@@ -1,0 +1,13 @@
+"OpenVRCamera"
+{
+  icon="WMVRCamera.png";
+  website = "http://www.openwalnut.org";
+  description = "This Module starts an Open VR Session to use OpenWalnut on a Headset.";
+  author = "Jonas Bürger";
+  "Jonas Bürger"
+  {
+    email="inf2336@hs-worms.de";
+    what="Development of OpenVR Module";
+  };
+  tag = "Bachelor";
+};
