@@ -182,7 +182,6 @@ void WMVRCamera::PickCallback::pick( WPickInfo pickInfo )
 
 void WMVRCamera::initOSG()
 {
-    debugLog() << "Starting2.1...";
     // remove the old slices
     m_output->clear();
     m_leftEye->clear();
@@ -191,21 +190,17 @@ void WMVRCamera::initOSG()
     // Property Setup
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    debugLog() << "Starting2.5...";
     // no colormaps -> no slices
     bool empty = !WGEColormapping::instance()->size();
     if( empty )
     {
-        debugLog() << "Starting2.6...";
         // hide the slider properties.
         m_xPos->setHidden();
         m_yPos->setHidden();
         m_zPos->setHidden(); 
-        debugLog() << "Starting2.7...";
         return;
     }
 
-    debugLog() << "Starting3...";
     // grab the current bounding box
     WBoundingBox bb = WGEColormapping::instance()->getBoundingBox();
     WVector3d minV = bb.getMin();
@@ -238,10 +233,10 @@ void WMVRCamera::initOSG()
     m_leftEye->setMatrix(
         osg::Matrixd::translate( -midBB[0], -midBB[1], -midBB[2] ) *
         osg::Matrixd::scale( maxSizeInv, maxSizeInv, maxSizeInv ) *
+        osg::Matrixd::rotate( -0.5 * pi(), 1.0, 0.0 , 0.0 ) *
         osg::Matrixd::translate( 0.0, 0.0, -0.5 )
     );
 
-    debugLog() << "Starting4...";
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Slice Setup
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -287,7 +282,6 @@ void WMVRCamera::initOSG()
     osg::ref_ptr< osg::StateSet > state = m_output->getOrCreateStateSet();
     state->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
 
-    debugLog() << "Starting5...";
     // we want some nice animations: add timer
     osg::ref_ptr< osg::Uniform > animationUniform = new osg::Uniform( "u_timer", 0 );
     state->addUniform( animationUniform );
@@ -305,7 +299,6 @@ void WMVRCamera::initOSG()
 
     m_output->dirtyBound();
 
-    debugLog() << "Starting6...";
     m_leftEye->insert( mLeftEye );
 }
 
@@ -351,10 +344,13 @@ void WMVRCamera::moduleMain()
     nodes.push_back( m_leftEye );
     WGEColormapping::apply( nodes, shader ); // this automatically applies the shader
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Main loop
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     // we need to be informed if the bounding box of the volume containing all the data changes.
     m_moduleState.add( WGEColormapping::instance()->getChangeCondition() );
 
-    debugLog() << "Starting2...";
     // loop until the module container requests the module to quit
     while( !m_shutdownFlag() )
     {

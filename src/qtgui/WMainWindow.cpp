@@ -151,7 +151,7 @@ void WMainWindow::setupGUI()
                                                                "Show VR Eye Views",
                                                                "Disables the eye views completely. This can lead to a speed-up and is "
                                                                "recommended for those who do not need them.",
-                                                               true,   // for testing
+                                                               false,
                                                                true    // this requires a restart
                                                        );
     m_sliderMinMaxEditSetting = new WSettingAction( this, std::string( "qtgui/" ) +  std::string( "sliderMinMaxEdit" ),
