@@ -71,7 +71,6 @@ WMVRCamera::WMVRCamera():
 {
     // WARNING: initializing connectors inside the constructor will lead to an exception.
     // Implement WModule::initializeConnectors instead.
-    
 }
 
 WMVRCamera::~WMVRCamera()
@@ -103,7 +102,6 @@ const std::string WMVRCamera::getDescription() const
 
 void WMVRCamera::connectors()
 {
-
     // call WModules initialization
     WModule::connectors();
 }
@@ -115,13 +113,10 @@ void WMVRCamera::properties()
 
     m_noTransparency  = m_properties->addProperty( "No transparency", "If checked, transparency is not used. This will show the complete slices.",
                                                    false );
-                                                   
     m_sliceGroup      = m_properties->addPropertyGroup( "Slices",  "Slice Options." );
     // enable slices
     // Flags denoting whether the glyphs should be shown on the specific slice
     m_showonLeftEye = m_sliceGroup->addProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropSagittalShow() );
-    
-
     // The slice positions.
     m_xPos    = m_sliceGroup->addProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropSagittalPos() );
     m_yPos    = m_sliceGroup->addProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropCoronalPos() );
@@ -187,7 +182,6 @@ void WMVRCamera::PickCallback::pick( WPickInfo pickInfo )
 
 void WMVRCamera::initOSG()
 {
-    
     debugLog() << "Starting2.1...";
     // remove the old slices
     m_output->clear();
@@ -210,7 +204,7 @@ void WMVRCamera::initOSG()
         debugLog() << "Starting2.7...";
         return;
     }
-    
+
     debugLog() << "Starting3...";
     // grab the current bounding box
     WBoundingBox bb = WGEColormapping::instance()->getBoundingBox();
@@ -219,7 +213,6 @@ void WMVRCamera::initOSG()
     WVector3d sizes = ( maxV - minV );
     WVector3d midBB = minV + ( sizes * 0.5 );
 
-    
     // update the properties
     m_xPos->setMin( minV[0] );
     m_xPos->setMax( maxV[0] );
@@ -236,7 +229,7 @@ void WMVRCamera::initOSG()
     m_xPos->setRecommendedValue( midBB[0] );
     m_yPos->setRecommendedValue( midBB[1] );
     m_zPos->setRecommendedValue( midBB[2] );
-    
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Navigation View Setup
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -261,7 +254,7 @@ void WMVRCamera::initOSG()
     leftEyeSlice->setName( "Left Eye Slice" );
     osg::Uniform* leftEyeSliceUniform = new osg::Uniform( "u_WorldTransform", osg::Matrixf::identity() );
     leftEyeSlice->getOrCreateStateSet()->addUniform( leftEyeSliceUniform );
-    
+
     // disable culling.
     // NOTE: Somehow, this is ignore by OSG. If you know why: tell me please
     leftEyeSlice->setCullingActive( false );
@@ -335,7 +328,6 @@ void WMVRCamera::moduleMain()
     // create the roots for the Eyes
     m_leftEye = osg::ref_ptr< WGEGroupNode > ( new WGEGroupNode() );
 
-    
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_output );
 
     // add for side-views
@@ -352,7 +344,6 @@ void WMVRCamera::moduleMain()
     m_output->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
     m_leftEye->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
 
-    
     // apply colormapping to all the nodes
     osg::ref_ptr< WGEShader > shader = new WGEShader( "WMNavigationSlices", m_localPath );
     WGEColormapping::NodeList nodes;
@@ -373,10 +364,8 @@ void WMVRCamera::moduleMain()
             break;
         }
 
-        
         // create the Eyes. This loop is only entered if WGEColormapper was fired or shutdown.
         initOSG();
-
 
         debugLog() << "Waiting...";
 
