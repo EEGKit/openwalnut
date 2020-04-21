@@ -453,6 +453,7 @@ private:
     boost::shared_ptr< WQtNavGLWidget > m_navCoronal; //!< the coronal view widget GL widget of the GUI
     boost::shared_ptr< WQtNavGLWidget > m_navSagittal; //!< the sgittal view widget GL widget of the GUI
     boost::shared_ptr< WQtGLDockWidget > m_widgetLeftEye; //!< the left eye view widget GL widget of the GUI
+    boost::shared_ptr< WQtGLDockWidget > m_widgetRightEye; //!< the right eye view widget GL widget of the GUI
     QMainWindow* m_glDock;  //!< the dock that is used for gl widgets
     QDockWidget* m_dummyWidget; //!< The dummywidget serves as spacer in the dockwidget area;
     WQtGLDockWidget* m_mainGLDock; //!< the dock containing the main gl widget

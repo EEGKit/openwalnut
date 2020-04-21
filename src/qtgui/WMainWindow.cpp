@@ -422,10 +422,18 @@ void WMainWindow::setupGUI()
         if( showVRWidgets->get() )
         {
             m_widgetLeftEye = boost::shared_ptr< WQtGLDockWidget >( new WQtGLDockWidget( "Left Eye View", "Left Eye View",
-                                                                                         this, WGECamera::ProjectionMode::PERSPECTIVE ) );
-            m_widgetLeftEye->getGLWidget()->setCameraManipulator( WQtGLWidget::NO_OP );
+                                                                    this, WGECamera::ProjectionMode::PERSPECTIVE, m_mainGLWidget ) );
+            m_widgetLeftEye->getGLWidget()->setCameraManipulator( WQtGLWidget::CameraManipulators::TRACKBALL );
+            m_widgetLeftEye->getGLWidget()->getViewer()->reset();
 
             addDockWidget( Qt::LeftDockWidgetArea, m_widgetLeftEye.get(), Qt::Vertical );
+
+            m_widgetRightEye = boost::shared_ptr< WQtGLDockWidget >( new WQtGLDockWidget( "Left Eye View", "Left Eye View",
+                                                                    this, WGECamera::ProjectionMode::PERSPECTIVE, m_mainGLWidget ) );
+            m_widgetRightEye->getGLWidget()->setCameraManipulator( WQtGLWidget::CameraManipulators::TRACKBALL );
+            m_widgetRightEye->getGLWidget()->getViewer()->reset();
+
+            addDockWidget( Qt::LeftDockWidgetArea, m_widgetRightEye.get(), Qt::Vertical );
         }
     }
 
@@ -944,6 +952,14 @@ void WMainWindow::closeEvent( QCloseEvent* e )
         {
             m_navSagittal->close();
         }
+        if( m_widgetLeftEye )
+        {
+            m_widgetLeftEye->close();
+        }
+        if( m_widgetRightEye )
+        {
+            m_widgetRightEye->close();
+        }
 
         // finally close
         e->accept();
@@ -1147,6 +1163,14 @@ void WMainWindow::restoreSavedState()
     if( m_navSagittal )
     {
         m_navSagittal->restoreSettings();
+    }
+    if( m_widgetLeftEye )
+    {
+        m_widgetLeftEye->restoreSettings();
+    }
+    if( m_widgetRightEye )
+    {
+        m_widgetRightEye->restoreSettings();
     }
 }
 
