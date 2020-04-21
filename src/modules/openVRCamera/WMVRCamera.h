@@ -114,7 +114,7 @@ private:
      * Initializes the needed geodes, transformations and vertex arrays.
      */
     void initOSG();
-    
+
     /**
      * Handles picking events.
      */

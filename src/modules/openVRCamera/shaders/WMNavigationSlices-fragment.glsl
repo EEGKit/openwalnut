@@ -27,7 +27,7 @@
 #include "WGEColormapping-fragment.glsl"
 
 // this color is used if currently picking the slice
-const vec4 pickColor = vec4( 0.25, 0.0, 0.75, 1.0 );
+const vec4 pickColor = vec4( 0.10, 0.10, 0.85, 1.0 );
 
 // if this is 1, the slice is currently in pick mode
 uniform float u_picked;
@@ -52,8 +52,8 @@ void main()
     // this creates a sinuidal blending in [0,1] with one complete 2pi cycle per second
     // NOTE: the 100.0 depends on the timer tick. We have a timer that counts one per a hundreth of a second.
     float pickColorIntensity = 0.5 * ( 1.0 + sin( 3.0 * 3.1472 * float( u_timer ) / 100.0 ) );
-    // as we use this for blending, we want it to swing in [0.5-0.75]
-    pickColorIntensity = ( pickColorIntensity * 0.25 ) + 0.5;
+    // as we use this for blending, we want it to swing in [0.2-0.35]
+    pickColorIntensity = ( pickColorIntensity * 0.15 ) + 0.2;
 
     // pick-coloring?
     float picked = u_pickColorEnabled * u_picked;

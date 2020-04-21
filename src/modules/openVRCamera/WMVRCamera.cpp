@@ -30,6 +30,7 @@
 //    * headers of other classes inside OpenWalnut
 //    * your own header file
 
+#include <algorithm>
 #include <string>
 
 #include <osg/StateAttribute>
