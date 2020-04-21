@@ -421,13 +421,10 @@ void WMainWindow::setupGUI()
     {
         if( showVRWidgets->get() )
         {
-            m_navLeftEye = boost::shared_ptr< WQtNavGLWidget >( new WQtNavGLWidget( "Left Eye View", "Left Eye View", this, "Left Eye Slice",
-                                                                                  m_mainGLWidget ) );
-            m_navLeftEye->setFeatures( QDockWidget::AllDockWidgetFeatures );
-            m_navLeftEye->setSliderProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropCoronalPos() );
-            m_navLeftEye->getGLWidget()->setCameraManipulator( WQtGLWidget::NO_OP );
+            m_widgetLeftEye = boost::shared_ptr< WQtGLDockWidget >( new WQtGLDockWidget( "Left Eye View", "Left Eye View", this, WGECamera::ProjectionMode::PERSPECTIVE ) );
+            m_widgetLeftEye->getGLWidget()->setCameraManipulator( WQtGLWidget::NO_OP );
 
-            addDockWidget( Qt::LeftDockWidgetArea, m_navLeftEye.get(), Qt::Vertical );
+            addDockWidget( Qt::LeftDockWidgetArea, m_widgetLeftEye.get(), Qt::Vertical );
         }
     }
 
