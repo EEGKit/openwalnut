@@ -421,7 +421,8 @@ void WMainWindow::setupGUI()
     {
         if( showVRWidgets->get() )
         {
-            m_widgetLeftEye = boost::shared_ptr< WQtGLDockWidget >( new WQtGLDockWidget( "Left Eye View", "Left Eye View", this, WGECamera::ProjectionMode::PERSPECTIVE ) );
+            m_widgetLeftEye = boost::shared_ptr< WQtGLDockWidget >( new WQtGLDockWidget( "Left Eye View", "Left Eye View",
+                                                                                         this, WGECamera::ProjectionMode::PERSPECTIVE ) );
             m_widgetLeftEye->getGLWidget()->setCameraManipulator( WQtGLWidget::NO_OP );
 
             addDockWidget( Qt::LeftDockWidgetArea, m_widgetLeftEye.get(), Qt::Vertical );
