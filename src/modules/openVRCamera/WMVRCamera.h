@@ -31,8 +31,6 @@
 #include <boost/thread.hpp>
 
 #include "core/kernel/WModule.h"
-#include "core/kernel/WModuleInputData.h"
-#include "core/graphicsEngine/WPickInfo.h"
 
 /**
  * Module starting and connecting to an OpenVR session
@@ -110,89 +108,6 @@ protected:
     virtual void activate();
 
 private:
-    /**
-     * Initializes the needed geodes, transformations and vertex arrays.
-     */
-    void initOSG();
-
-    /**
-     * Handles picking events.
-     */
-    class PickCallback
-        {
-        public:
-            /**
-             * For the lazy guys.
-             */
-            typedef boost::shared_ptr< PickCallback > SPtr;
-
-            /**
-             * The callback, controlling
-             *
-             * \param property the property controlling the position of the slice
-             * \param node the node getting controlled by this instance.
-             * \param negateDirection if true, the translation direction is switched.
-             */
-            PickCallback( osg::ref_ptr< osg::Node > node, WPropDouble property, bool negateDirection = false );
-
-        private:
-            /**
-             * Pick event handler. Uses for dragging the slices
-             *
-             * \param pickInfo the pick information.
-             */
-            void pick( WPickInfo pickInfo );
-
-            /**
-             * The pick connection for the pick() event handler.
-             */
-            boost::signals2::scoped_connection m_pickConnection;
-
-            /**
-             * The slice node. Used for checking if picked.
-             */
-            osg::ref_ptr< osg::Node > m_node;
-
-            /**
-             * The property controlling the position of the slice
-             */
-            WPropDouble m_property;
-
-            /**
-             * The camera under which the node is placed. Needed for proper back-projection.
-             */
-            osg::ref_ptr< WGECamera > m_camera;
-
-            /**
-             * If true, the item is still picked.
-             */
-            bool m_isPicked;
-
-            /**
-             * This uniform is used to inform the shader about current pick-state
-             */
-            osg::ref_ptr< osg::Uniform > m_pickUniform;
-
-            /**
-             * The stored pixel position of a previous drag event.
-             */
-            WVector2d m_oldPixelPosition;
-
-            /**
-             * The transformation direction. This is needed since the OSG coord system has a mirrored coronal direction.
-             */
-            float m_dir;
-        };
-    /**
-     * Left Eye-Slice pick callback.
-     */
-    PickCallback::SPtr m_leftEyeSlicePicker;
-
-    /**
-     * The pointer to the hud used to render the texture buffer.
-     */
-    osg::ref_ptr< WGETextureHud > m_hud;
-
     //! A condition for property updates.
     boost::shared_ptr< WCondition > m_propCondition;
 
@@ -213,13 +128,14 @@ private:
      */
     osg::ref_ptr< WGEGroupNode > m_leftEye;
 
-    WPropGroup    m_sliceGroup; //!< the group contains several slice properties
-
-    WPropBool    m_noTransparency;  //!< if true, the whole slices are shown.
-
-    WPropBool     m_showonLeftEye; //!< indicates whether the vector should be shown on slice X
+    /**
+     * The geode with the the right Eye geometry
+     */
+    osg::ref_ptr< WGEGroupNode > m_rightEye;
 
     WPropDouble    m_leftEyePos; //!< x position of the slice
+
+    WPropDouble    m_rightEyePos; //!< x position of the slice
 };
 
 #endif  // WMVRCAMERA_H

@@ -37,30 +37,16 @@
 #include <osg/Texture2D>
 #include <osg/TexMat>
 
-#include "core/graphicsEngine/callbacks/WGELinearTranslationCallback.h"
-#include "core/graphicsEngine/callbacks/WGENodeMaskCallback.h"
-#include "core/graphicsEngine/callbacks/WGEPropertyUniformCallback.h"
-#include "core/graphicsEngine/callbacks/WGEShaderAnimationCallback.h"
-#include "core/graphicsEngine/shaders/WGEPropertyUniform.h"
-#include "core/graphicsEngine/shaders/WGEShader.h"
-#include "core/graphicsEngine/shaders/WGEShaderDefineOptions.h"
-#include "core/graphicsEngine/shaders/WGEShaderPropertyDefineOptions.h"
 #include "core/graphicsEngine/WGEManagedGroupNode.h"
-#include "core/graphicsEngine/WGERequirement.h"
-#include "core/graphicsEngine/WGETextureHud.h"
 #include "core/graphicsEngine/WGECamera.h"
-#include "core/graphicsEngine/WGEColormapping.h"
 #include "core/graphicsEngine/WGEGeodeUtils.h"
+#include "core/graphicsEngine/WGERequirement.h"
 
-#include "core/common/math/WMath.h"
 #include "core/common/WPropertyHelper.h"
 #include "core/graphicsEngine/WGEUtils.h"
 #include "core/graphicsEngine/WGraphicsEngine.h"
-#include "core/graphicsEngine/WPickHandler.h"
 #include "core/kernel/WKernel.h"
-#include "core/kernel/WSelectionManager.h"
 
-#include "WDemoGeometry.h"
 #include "WMVRCamera.h"
 #include "WMVRCamera.xpm"
 
@@ -112,14 +98,6 @@ void WMVRCamera::properties()
     // NOTE: Refer to WMTemplate.cpp if you do not understand these commands.
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
 
-    m_noTransparency  = m_properties->addProperty( "No transparency", "If checked, transparency is not used. This will show the complete slices.",
-                                                   false );
-    m_sliceGroup      = m_properties->addPropertyGroup( "Slices",  "Slice Options." );
-    // enable slices
-    // Flags denoting whether the glyphs should be shown on the specific slice
-    m_showonLeftEye = m_sliceGroup->addProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropCoronalShow() );
-    // The slice positions.
-    m_leftEyePos    = m_sliceGroup->addProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropCoronalPos() );
     // show hud?
     m_showHUD = m_properties->addProperty( "Show HUD", "Check to enable the debugging texture HUD.", true );
 
@@ -132,163 +110,6 @@ void WMVRCamera::requirements()
 
     // We need graphics to draw anything:
     m_requirements.push_back( new WGERequirement() );
-}
-
-WMVRCamera::PickCallback::PickCallback( osg::ref_ptr< osg::Node > node, WPropDouble property, bool negateDirection ):
-    m_node( node ),
-    m_property( property ),
-    m_pickUniform( new osg::Uniform( "u_picked", 0.0f ) ),
-    m_dir( negateDirection ? -1.0 : 1.0 )
-{
-    boost::shared_ptr< WGraphicsEngine > ge = WGraphicsEngine::getGraphicsEngine();
-    boost::shared_ptr< WGEViewer > viewer = ge->getViewerByName( "Main View" );
-    m_camera = viewer->getCamera();
-    m_pickConnection = viewer->getPickHandler()->getPickSignal()->connect( boost::bind( &WMVRCamera::PickCallback::pick, this, _1 ) );
-    node->getOrCreateStateSet()->addUniform( m_pickUniform );
-}
-
-void WMVRCamera::PickCallback::pick( WPickInfo pickInfo )
-{
-    if( pickInfo.getName() == m_node->getName() )
-    {
-        WVector3d normal = pickInfo.getPickNormal();
-        WVector2d newPixelPos = pickInfo.getPickPixel();
-        // dragging was initialized earlier
-        if( m_isPicked )
-        {
-            osg::Vec3 startPosScreen( m_oldPixelPosition[ 0 ], m_oldPixelPosition[ 1 ], 0.0 );
-            osg::Vec3 endPosScreen( newPixelPos[ 0 ], newPixelPos[ 1 ], 0.0 );
-
-            osg::Vec3 startPosWorld = wge::unprojectFromScreen( startPosScreen, m_camera );
-            osg::Vec3 endPosWorld = wge::unprojectFromScreen( endPosScreen, m_camera );
-
-            osg::Vec3 moveDirWorld = endPosWorld - startPosWorld;
-            float diff = moveDirWorld * static_cast< osg::Vec3 >( normal );
-
-            m_property->set( m_property->get() + m_dir * diff );
-        }
-        // this might have initialized dragging. Keep track of old position
-        m_oldPixelPosition = newPixelPos;
-        m_isPicked = true;
-        m_pickUniform->set( 1.0f );
-    }
-    else    // someone else got picked.
-    {
-        m_isPicked = false;
-        m_pickUniform->set( 0.0f );
-    }
-}
-
-void WMVRCamera::initOSG()
-{
-    // remove the old slices
-    m_output->clear();
-    m_leftEye->clear();
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Property Setup
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    // no colormaps -> no slices
-    bool empty = !WGEColormapping::instance()->size();
-    if( empty )
-    {
-        // hide the slider properties.
-        m_leftEyePos->setHidden();
-        return;
-    }
-
-    // grab the current bounding box
-    WBoundingBox bb = WGEColormapping::instance()->getBoundingBox();
-    WVector3d minV = bb.getMin();
-    WVector3d maxV = bb.getMax();
-    WVector3d sizes = ( maxV - minV );
-    WVector3d midBB = minV + ( sizes * 0.5 );
-
-    // update the properties
-    m_leftEyePos->setMin( minV[1] );
-    m_leftEyePos->setMax( maxV[1] );
-    // un-hide the slider properties.
-    m_leftEyePos->setHidden( false );
-
-    // always update slice positions if they happen to be outside the bounding box (i.e. after shrinking the box)
-    m_leftEyePos->setRecommendedValue( midBB[1] );
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Navigation View Setup
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    double maxSizeInv = 1.0 / std::max( sizes[0], std::max( sizes[1], sizes[2] ) );
-    m_leftEye->setMatrix(
-        osg::Matrixd::translate( -midBB[0], -midBB[1], -midBB[2] ) *
-        osg::Matrixd::scale( maxSizeInv, maxSizeInv, maxSizeInv ) *
-        osg::Matrixd::rotate( -0.5 * pi(), 1.0, 0.0 , 0.0 ) *
-        osg::Matrixd::translate( 0.0, 0.0, -0.5 )
-    );
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Slice Setup
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    // create a new geode containing the slices
-
-    // X Slice
-    osg::ref_ptr< osg::Node > leftEyeSlice = wge::genFinitePlane( minV, osg::Vec3( sizes[0], 0.0, 0.0 ),
-                                                                  osg::Vec3( 0.0, 0.0, sizes[2] ) );
-    leftEyeSlice->setName( "Left Eye Slice" );
-    osg::Uniform* leftEyeSliceUniform = new osg::Uniform( "u_WorldTransform", osg::Matrixf::identity() );
-    leftEyeSlice->getOrCreateStateSet()->addUniform( leftEyeSliceUniform );
-
-    // disable culling.
-    // NOTE: Somehow, this is ignore by OSG. If you know why: tell me please
-    leftEyeSlice->setCullingActive( false );
-
-    // each slice is child of an transformation node
-    osg::ref_ptr< osg::MatrixTransform > mLeftEye = new osg::MatrixTransform();
-    mLeftEye->addChild( leftEyeSlice );
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Callback Setup
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    // Control transformation node by properties. We use an additional uniform here to provide the shader the transformation matrix used to
-    // translate the slice.
-    mLeftEye->addUpdateCallback( new WGELinearTranslationCallback< WPropDouble >( osg::Vec3( 0.0, 1.0, 0.0 ), m_leftEyePos, leftEyeSliceUniform ) );
-
-    // set callbacks for en-/disabling the nodes
-    leftEyeSlice->addUpdateCallback( new WGENodeMaskCallback( m_showonLeftEye ) );
-
-    // set the pick callbacks for each slice
-    m_leftEyeSlicePicker = PickCallback::SPtr( new PickCallback( leftEyeSlice, m_leftEyePos ) );
-
-    // transparency property
-    osg::ref_ptr< osg::Uniform > transparencyUniform = new osg::Uniform( "u_noTransparency", false );
-    transparencyUniform->setUpdateCallback( new WGEPropertyUniformCallback< WPropBool >( m_noTransparency ) );
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Done
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    osg::ref_ptr< osg::StateSet > state = m_output->getOrCreateStateSet();
-    state->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
-
-    // we want some nice animations: add timer
-    osg::ref_ptr< osg::Uniform > animationUniform = new osg::Uniform( "u_timer", 0 );
-    state->addUniform( animationUniform );
-    animationUniform->setUpdateCallback( new WGEShaderAnimationCallback() );
-
-    // transparency property
-    state->addUniform( transparencyUniform );
-    m_leftEye->getOrCreateStateSet()->addUniform( transparencyUniform );
-
-    // add the transformation nodes to the output group
-    m_output->insert( mLeftEye );
-
-    // add proxy
-    m_output->insert( wge::generateCullProxy( bb ) );
-
-    m_output->dirtyBound();
-
-    m_leftEye->insert( mLeftEye );
 }
 
 void WMVRCamera::moduleMain()
@@ -309,6 +130,7 @@ void WMVRCamera::moduleMain()
 
     // create the roots for the Eyes
     m_leftEye = osg::ref_ptr< WGEGroupNode > ( new WGEGroupNode() );
+    m_rightEye = osg::ref_ptr< WGEGroupNode > ( new WGEGroupNode() );
 
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_output );
 
@@ -318,27 +140,15 @@ void WMVRCamera::moduleMain()
     {
         v->getScene()->insert( m_leftEye );
     }
-
-    // disable the pick-coloring for the side views
-    m_output->getOrCreateStateSet()->addUniform( new osg::Uniform( "u_pickColorEnabled", 1.0f ) );
-    m_leftEye->getOrCreateStateSet()->addUniform( new osg::Uniform( "u_pickColorEnabled", 1.0f ) );
-
-    m_output->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
-    m_leftEye->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
-
-    // apply colormapping to all the nodes
-    osg::ref_ptr< WGEShader > shader = new WGEShader( "WMNavigationSlices", m_localPath );
-    WGEColormapping::NodeList nodes;
-    nodes.push_back( m_output );
-    nodes.push_back( m_leftEye );
-    WGEColormapping::apply( nodes, shader ); // this automatically applies the shader
+    v = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" );
+    if( v )
+    {
+        v->getScene()->insert( m_rightEye );
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Main loop
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // we need to be informed if the bounding box of the volume containing all the data changes.
-    m_moduleState.add( WGEColormapping::instance()->getChangeCondition() );
 
     // loop until the module container requests the module to quit
     while( !m_shutdownFlag() )
@@ -350,7 +160,7 @@ void WMVRCamera::moduleMain()
         }
 
         // create the Eyes. This loop is only entered if WGEColormapper was fired or shutdown.
-        initOSG();
+        // initOSG();
 
         debugLog() << "Waiting...";
 
@@ -360,14 +170,18 @@ void WMVRCamera::moduleMain()
     // Never miss to clean up. Especially remove your OSG nodes. Everything else you add to these nodes will be removed automatically.
     debugLog() << "Shutting down VRCamera";
 
-    m_leftEyeSlicePicker.reset();
-
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_output );
 
     v = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" );
     if( v )
     {
         v->getScene()->remove( m_leftEye );
+    }
+
+    v = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" );
+    if( v )
+    {
+        v->getScene()->remove( m_rightEye );
     }
 }
 
