@@ -54,7 +54,7 @@ IF( OPENVR_FOUND )
     # module.
     SETUP_MODULE( ${MODULE_NAME}                # name of the module
                  "${CMAKE_CURRENT_SOURCE_DIR}"  # where to find the source ${CMAKE_CURRENT_SOURCE_DIR} is a good idea here mostly
-                 "${OPENVR_LIBRARY}"   # does your module need additional libs to compile?
+                 "${OPENVR_LIBRARIES}"   # does your module need additional libs to compile?
                  ""                             # do you want to exclude files from stylechecking? (externals for example)
     )
 ENDIF()

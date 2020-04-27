@@ -2,17 +2,26 @@
 # NOTE: there is no default installation path as the code needs to be build
 # This module defines:
 # OPENVR_FOUND, if false do not try to link against the Open VR SDK
-# OPENVR_LIBRARY, the name of the Open VR SDK library to link against
+# OPENVR_LIBRARIES, the name of the Open VR SDK libraries to link against
 # OPENVR_INCLUDE_DIR, the Open VR SDK include directory
 #
 # You can also specify the environment variable OPENVR_DIR or define it with
 # -DOPENVR_DIR=... to hint at the module where to search for the Open VR SDK if it's
 # installed in a non-standard location.
 
-find_path(OPENVR_INCLUDE_DIR openvr.h
+IF (DEFINED ENV{OPENVR_DIR})
+    SET(OPENVR_DIR "$ENV{OPENVR_DIR}")
+ENDIF()
+
+SET(OPENVR_DIR
+    "${OPENVR_DIR}"
+    CACHE
+    PATH
+    "Root directory to search for OpenVR SDK")
+
+FIND_PATH(OPENVR_INCLUDE_DIR openvr.h
 	HINTS
 	${OPENVR_DIR}
-	$ENV{OPENVR_DIR}
 	PATH_SUFFIXES headers/
 	# TODO: Unsure on handling of the possible default install locations
 	PATHS
@@ -26,25 +35,25 @@ find_path(OPENVR_INCLUDE_DIR openvr.h
 	/opt
 )
 
-if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-	if (UNIX OR MINGW)
+IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
+	IF(UNIX OR MINGW)
 		set(LIB_PATH_SUFFIX "lib/linux64/")
-	elseif (MSVC)
+	ELSEIF(MSVC)
 		set(LIB_PATH_SUFFIX "lib/win64/")
-	else()
+	ELSE()
 		message(ERROR "Error: Unsupported 64 bit configuration")
-	endif()
-else()
-	if (UNIX OR MINGW)
+	ENDIF()
+ELSE()
+	IF(UNIX OR MINGW)
 		set(LIB_PATH_SUFFIX "lib/linux32/")
-	elseif (MSVC)
+	ELSEIF(MSVC)
 		set(LIB_PATH_SUFFIX "lib/win32/")
-	elseif(APPLE)
+	ELSEIF(APPLE)
 		set(LIB_PATH_SUFFIX "lib/osx32/")
-	else()
+	ELSE()
 		message(ERROR "Error: Unsupported 32 bit configuration")
-	endif()
-endif()
+	ENDIF()
+ENDIF()
 
 # This hack is inspired by FindBoost.cmake. It ensures that only shared objects are found. Linking a SO with a static lib is not possible 
 # in Linux. On other systems, this should be no problem.
@@ -53,10 +62,9 @@ IF( CMAKE_HOST_SYSTEM MATCHES "Linux" )
     SET( CMAKE_FIND_LIBRARY_SUFFIXES .so )
 ENDIF()
 
-find_library(OPENVR_LIBRARY_TMP NAMES openvr_api libopenvr_api
+FIND_LIBRARY(OPENVR_LIBRARY NAMES openvr_api openvr_api.lib libopenvr_api libopenvr_api.so
 	HINTS
 	${OPENVR_DIR}
-	$ENV{OPENVR_DIR}
 	PATH_SUFFIXES ${LIB_PATH_SUFFIX}
 	# TODO: I don't know if these will be correct if people have installed
 	# the library on to their system instead of just using the git repo or w/e
@@ -69,12 +77,14 @@ find_library(OPENVR_LIBRARY_TMP NAMES openvr_api libopenvr_api
 
 SET( CMAKE_FIND_LIBRARY_SUFFIXES ${_ORIG_CMAKE_FIND_LIBRARY_SUFFIXES} )
 
-set(OPENVR_FOUND FALSE)
-if (OPENVR_LIBRARY_TMP AND OPENVR_INCLUDE_DIR)
-	set(OPENVR_LIBRARY ${OPENVR_LIBRARY_TMP} CACHE STRING "Which OpenVR library to link against")
-	set(OPENVR_LIBRARY_TMP ${OPENVR_LIBRARY_TMP} CACHE INTERNAL "")
-	set(OPENVR_FOUND TRUE)
-endif()
+SET(OPENVR_FOUND FALSE)
+IF(OPENVR_LIBRARY AND OPENVR_INCLUDE_DIR)
+	SET(OPENVR_LIBRARY ${OPENVR_LIBRARY} CACHE STRING "Which OpenVR library to link against")
+	# No debug library for OpenVR
+	SET(OPENVR_LIBRARY_DEBUG ${OPENVR_LIBRARY})
+	SET(OPENVR_LIBRARIES optimized ${OPENVR_LIBRARY} debug ${OPENVR_LIBRARY_DEBUG})
+	SET(OPENVR_FOUND TRUE)
+ENDIF()
 
 IF( OPENVR_FOUND )
    IF( NOT openvr_FIND_QUIETLY )
@@ -86,5 +96,7 @@ ELSE()
    ENDIF()
 ENDIF()
 
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(OpenVRSDK REQUIRED_VARS OPENVR_LIBRARY OPENVR_INCLUDE_DIR)
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(OpenVRSDK REQUIRED_VARS OPENVR_LIBRARIES OPENVR_INCLUDE_DIR)
+
+MARK_AS_ADVANCED(OPENVR_LIBRARIES OPENVR_INCLUDE_DIR)
