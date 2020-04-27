@@ -135,16 +135,11 @@ void WMVRCamera::moduleMain()
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_output );
 
     // add for side-views
-    boost::shared_ptr< WGEViewer > v = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" );
-    if( v )
-    {
-        v->getScene()->insert( m_leftEye );
-    }
-    v = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" );
-    if( v )
-    {
-        v->getScene()->insert( m_rightEye );
-    }
+    boost::shared_ptr< WGEViewer > leftEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" );
+    boost::shared_ptr< WGEViewer > rightEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" );
+
+    leftEyeView->reset();
+    rightEyeView->reset();
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Main loop
@@ -171,18 +166,6 @@ void WMVRCamera::moduleMain()
     debugLog() << "Shutting down VRCamera";
 
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_output );
-
-    v = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" );
-    if( v )
-    {
-        v->getScene()->remove( m_leftEye );
-    }
-
-    v = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" );
-    if( v )
-    {
-        v->getScene()->remove( m_rightEye );
-    }
 }
 
 void WMVRCamera::activate()

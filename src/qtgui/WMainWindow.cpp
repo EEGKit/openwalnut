@@ -424,14 +424,12 @@ void WMainWindow::setupGUI()
             m_widgetLeftEye = boost::shared_ptr< WQtGLDockWidget >( new WQtGLDockWidget( "Left Eye View", "Left Eye View",
                                                                     this, WGECamera::ProjectionMode::PERSPECTIVE, m_mainGLWidget ) );
             m_widgetLeftEye->getGLWidget()->setCameraManipulator( WQtGLWidget::CameraManipulators::TRACKBALL );
-            m_widgetLeftEye->getGLWidget()->getViewer()->reset();
 
             addDockWidget( Qt::LeftDockWidgetArea, m_widgetLeftEye.get(), Qt::Vertical );
 
             m_widgetRightEye = boost::shared_ptr< WQtGLDockWidget >( new WQtGLDockWidget( "Right Eye View", "Right Eye View",
                                                                     this, WGECamera::ProjectionMode::PERSPECTIVE, m_mainGLWidget ) );
             m_widgetRightEye->getGLWidget()->setCameraManipulator( WQtGLWidget::CameraManipulators::TRACKBALL );
-            m_widgetRightEye->getGLWidget()->getViewer()->reset();
 
             addDockWidget( Qt::LeftDockWidgetArea, m_widgetRightEye.get(), Qt::Vertical );
         }
