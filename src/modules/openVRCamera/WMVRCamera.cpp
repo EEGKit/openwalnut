@@ -141,6 +141,25 @@ void WMVRCamera::moduleMain()
     leftEyeView->reset();
     rightEyeView->reset();
 
+    //m_HMD = osg::ref_ptr< OpenVRDevice >(new OpenVRDevice(0.0F, 1.0F, 1.0F));
+
+    // Loading the SteamVR Runtime
+	vr::EVRInitError eError = vr::VRInitError_None;
+	m_vrSystem = vr::VR_Init(&eError, vr::VRApplication_Scene);
+
+	if (eError != vr::VRInitError_None)
+	{
+		m_vrSystem = nullptr;
+		debugLog()
+			<< "Error: Unable to initialize the OpenVR library.\n"
+			<< "Reason: " << vr::VR_GetVRInitErrorAsEnglishDescription( eError ) << std::endl;
+		return;
+	}else{
+        debugLog() << "Erfolg...";
+		m_vrSystem = nullptr;
+		vr::VR_Shutdown();
+    }
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Main loop
     /////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -27,6 +27,7 @@
 
 #include <string>
 #include <vector>
+#include <openvr.h>
 
 #include <boost/thread.hpp>
 
@@ -122,6 +123,16 @@ private:
      * The Geode containing all the cameras and the mesh
      */
     osg::ref_ptr< WGEManagedGroupNode > m_output;
+
+    /**
+     * The Object interfacing with OpenVR
+     */
+    // osg::ref_ptr< OpenVRDevice > m_HMD;
+
+    /**
+     * The OpenVR Runtime
+     */
+    vr::IVRSystem* m_vrSystem;
 
     /**
      * The geode with the the left Eye geometry
