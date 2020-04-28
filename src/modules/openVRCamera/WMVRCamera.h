@@ -27,7 +27,7 @@
 
 #include <string>
 #include <vector>
-#include <openvr.h>
+#include <openvr.h>     // NOLINT: this is not a C system header as brainlint thinks
 
 #include <boost/thread.hpp>
 

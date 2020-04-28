@@ -13,4 +13,5 @@ cmake -G"Unix Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/c/ow_workspace/OpenWalnut_
 make -j10 ;
 cp /c/ow_workspace/nifticlib-2.0.0/build/bin/*.dll bin
 cp /c/ow_workspace/libLAS-1.8.0/build/libliblas* bin/
+cp /c/ow_workspace/openvr/bin/win64/*.dll bin
 exec $SHELL
