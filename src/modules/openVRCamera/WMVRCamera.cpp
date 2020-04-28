@@ -32,6 +32,7 @@
 
 #include <algorithm>
 #include <string>
+#include <openvr.h>     // NOLINT: this is not a C system header as brainlint thinks
 
 #include <osg/StateAttribute>
 #include <osg/Texture2D>
@@ -47,6 +48,7 @@
 #include "core/graphicsEngine/WGraphicsEngine.h"
 #include "core/kernel/WKernel.h"
 
+#include "OpenVRDevice.h"
 #include "WMVRCamera.h"
 #include "WMVRCamera.xpm"
 
@@ -141,9 +143,21 @@ void WMVRCamera::moduleMain()
     leftEyeView->reset();
     rightEyeView->reset();
 
-    //m_HMD = osg::ref_ptr< OpenVRDevice >(new OpenVRDevice(0.0F, 1.0F, 1.0F));
-
+    m_HMD = osg::ref_ptr< OpenVRDevice >(new OpenVRDevice(0.0F, 1.0F, 1.0F));
+    m_HMD->createRTTCamera(
+        OpenVRDevice::LEFT,
+        leftEyeView->getCamera()->getReferenceFrame(),
+        WColor((0.0),(0.0),(0.0),(0.0)),
+        leftEyeView->getCamera()->getGraphicsContext()
+        );
+    m_HMD->createRTTCamera(
+        OpenVRDevice::RIGHT,
+        rightEyeView->getCamera()->getReferenceFrame(),
+        WColor((0.0),(0.0),(0.0),(0.0)),
+        rightEyeView->getCamera()->getGraphicsContext()
+        );
     // Loading the SteamVR Runtime
+    /*
 	vr::EVRInitError eError = vr::VRInitError_None;
 	m_vrSystem = vr::VR_Init(&eError, vr::VRApplication_Scene);
 
@@ -159,7 +173,7 @@ void WMVRCamera::moduleMain()
 		m_vrSystem = nullptr;
 		vr::VR_Shutdown();
     }
-
+    */
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Main loop
     /////////////////////////////////////////////////////////////////////////////////////////////////////////

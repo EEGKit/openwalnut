@@ -41,7 +41,7 @@ GET_FILENAME_COMPONENT( MODULE_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME )
 # -----------------------------------------------------------------------------------------------------------------------------------------------
 # OpenVR, at least 1.11.11
 # See http://steamvr.com
-FIND_PACKAGE( openvr REQUIRED )
+FIND_PACKAGE( openvr QUIET )
 IF( OPENVR_FOUND )
    MESSAGE( STATUS "Using system installed openvr to build openVRCamera." )
    INCLUDE_DIRECTORIES( ${OPENVR_INCLUDE_DIR} )

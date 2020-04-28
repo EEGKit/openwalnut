@@ -27,7 +27,6 @@
 
 #include <string>
 #include <vector>
-#include <openvr.h>     // NOLINT: this is not a C system header as brainlint thinks
 
 #include <boost/thread.hpp>
 
@@ -127,7 +126,7 @@ private:
     /**
      * The Object interfacing with OpenVR
      */
-    // osg::ref_ptr< OpenVRDevice > m_HMD;
+    osg::ref_ptr< OpenVRDevice > m_HMD;
 
     /**
      * The OpenVR Runtime
