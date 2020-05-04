@@ -32,16 +32,40 @@
 
 #include "core/kernel/WModule.h"
 
+#if (OSG_VERSION_GREATER_OR_EQUAL(3, 4, 0))
+typedef osg::GLExtensions OSG_GLExtensions;
+typedef osg::GLExtensions OSG_Texture_Extensions;
+#else
+typedef osg::FBOExtensions OSG_GLExtensions;
+typedef osg::Texture::Extensions OSG_Texture_Extensions;
+#endif
+
+class OpenVRMirrorTexture : public osg::Referenced
+{
+public:
+    OpenVRMirrorTexture(osg::ref_ptr<osg::State> state, GLint width, GLint height);
+    void destroy(osg::GraphicsContext *gc);
+    void blitTexture(osg::GraphicsContext *gc, OpenVRTextureBuffer *leftEye, OpenVRTextureBuffer *rightEye);
+
+protected:
+    ~OpenVRMirrorTexture() {}
+
+    GLuint m_mirrorFBO;
+    GLuint m_mirrorTex;
+    GLint m_width;
+    GLint m_height;
+};
+
 /**
  * Module starting and connecting to an OpenVR session
  * \ingroup modules
  */
 class WMVRCamera : public WModule
 {
-/**
+    /**
  * Only UnitTests may be friends.
  */
-friend class WMVRCameraTest;
+    friend class WMVRCameraTest;
 
 public:
     /**
@@ -72,14 +96,43 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual boost::shared_ptr<WModule> factory() const;
 
     /**
      * Get the icon for this module in XPM format.
      * \return the icon.
      */
-    virtual const char** getXPMIcon() const;
+    virtual const char **getXPMIcon() const;
 
+    /**
+     * Returns a Deviceproperty from m_vrSystem as a string
+     */
+    std::string GetDeviceProperty(vr::TrackedDeviceProperty prop);
+
+    /**
+     * Initialize the textureBuffer for submitting textures to OpenVR
+     */
+    void createRenderBuffers(osg::ref_ptr<osg::State> state);
+
+    /**
+     * Submit frame from texturebuffer to OpenVR
+     */
+    bool submitFrame();
+
+    /**
+     * TODO
+     */
+    void blitMirrorTexture(osg::GraphicsContext *gc);
+
+    /**
+     * Buffer for Submitting to OpenVR
+     */
+    osg::ref_ptr<OpenVRTextureBuffer> m_textureBuffer[2];
+
+    /**
+     * TODO
+     */
+    osg::ref_ptr<OpenVRMirrorTexture> m_mirrorTexture;
 
 protected:
     /**
@@ -109,7 +162,7 @@ protected:
 
 private:
     //! A condition for property updates.
-    boost::shared_ptr< WCondition > m_propCondition;
+    boost::shared_ptr<WCondition> m_propCondition;
 
     boost::shared_mutex m_updateLock; //!< Lock to prevent concurrent threads trying to update the osg node
 
@@ -121,31 +174,52 @@ private:
     /**
      * The Geode containing all the cameras and the mesh
      */
-    osg::ref_ptr< WGEManagedGroupNode > m_output;
+    osg::ref_ptr<WGEManagedGroupNode> m_output;
 
     /**
      * The Object interfacing with OpenVR
      */
-    osg::ref_ptr< OpenVRDevice > m_HMD;
+    //osg::ref_ptr< OpenVRDevice > m_HMD;
 
     /**
-     * The OpenVR Runtime
+     * The OpenVR SDK Interface
      */
-    vr::IVRSystem* m_vrSystem;
+    vr::IVRSystem *m_vrSystem;
 
+    /**
+     * The OpenVR RenderModel Interface
+     */
+    vr::IVRRenderModels *m_vrRenderModels;
+
+    /*
+     * sample width for MSAA
+     */
+    int m_samples;
     /**
      * The geode with the the left Eye geometry
      */
-    osg::ref_ptr< WGEGroupNode > m_leftEye;
+    osg::ref_ptr<WGEGroupNode> m_leftEye;
 
     /**
      * The geode with the the right Eye geometry
      */
-    osg::ref_ptr< WGEGroupNode > m_rightEye;
+    osg::ref_ptr<WGEGroupNode> m_rightEye;
 
-    WPropDouble    m_leftEyePos; //!< x position of the slice
+    WPropDouble m_leftEyePos; //!< x position of the slice
 
-    WPropDouble    m_rightEyePos; //!< x position of the slice
+    WPropDouble m_rightEyePos; //!< x position of the slice
 };
 
-#endif  // WMVRCAMERA_H
+class OpenVRSwapCallback : public osg::GraphicsContext::SwapCallback
+{
+public:
+    explicit OpenVRSwapCallback(WMVRCamera *device) : m_device(device), m_frameIndex(0) {}
+    void swapBuffersImplementation(osg::GraphicsContext *gc);
+    int frameIndex() const { return m_frameIndex; }
+
+private:
+    boost::shared_ptr<WMVRCamera> m_device;
+    int m_frameIndex;
+};
+
+#endif // WMVRCAMERA_H
