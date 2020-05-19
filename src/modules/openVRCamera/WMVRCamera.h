@@ -167,11 +167,6 @@ private:
     boost::shared_mutex m_updateLock; //!< Lock to prevent concurrent threads trying to update the osg node
 
     /**
-     * Enable debug hud.
-     */
-    WPropBool m_showHUD;
-
-    /**
      * The Geode containing all the cameras and the mesh
      */
     osg::ref_ptr<WGEManagedGroupNode> m_output;

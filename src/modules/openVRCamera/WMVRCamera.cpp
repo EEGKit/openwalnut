@@ -123,9 +123,6 @@ void WMVRCamera::properties()
     // NOTE: Refer to WMTemplate.cpp if you do not understand these commands.
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
 
-    // show hud?
-    m_showHUD = m_properties->addProperty( "Show HUD", "Check to enable the debugging texture HUD.", true );
-
     WModule::properties();
 }
 
@@ -169,7 +166,7 @@ void WMVRCamera::moduleMain()
     // Exit if we do not have an HMD present
     if (!vr::VR_IsHmdPresent())
     {
-        debugLog() << "Error: No valid HMD present!" << std::endl;
+        errorLog() << "Error: No valid HMD present!" << std::endl;
         return;
     }
 
@@ -194,6 +191,7 @@ void WMVRCamera::moduleMain()
     leftEyeView->getView()->addEventHandler(new OpenVREventHandler(m_HMD));
     rightEyeView->getView()->addEventHandler(new OpenVREventHandler(m_HMD));
     */
+
     // Loading the SteamVR Runtime
     vr::EVRInitError eError = vr::VRInitError_None;
     m_vrSystem = vr::VR_Init(&eError, vr::VRApplication_Scene);
@@ -201,7 +199,7 @@ void WMVRCamera::moduleMain()
     if (eError != vr::VRInitError_None)
     {
         m_vrSystem = nullptr;
-        debugLog()
+        errorLog()
             << "Error: Unable to initialize the OpenVR library.\n"
             << "Reason: " << vr::VR_GetVRInitErrorAsEnglishDescription( eError ) << std::endl;
         return;
@@ -211,7 +209,7 @@ void WMVRCamera::moduleMain()
     {
         m_vrSystem = nullptr;
         vr::VR_Shutdown();
-        debugLog() << "Error: Compositor initialization failed" << std::endl;
+        errorLog() << "Error: Compositor initialization failed" << std::endl;
         return;
     }
 
@@ -324,12 +322,9 @@ bool WMVRCamera::submitFrame()
     vr::Texture_t leftEyeTexture = {(void*)m_textureBuffer[0]->getTexture()};
     vr::Texture_t rightEyeTexture = {(void*)m_textureBuffer[1]->getTexture()};
 
-    debugLog()<<"test2";
     vr::EVRCompositorError lError = vr::VRCompositor()->Submit(vr::Eye_Left, &leftEyeTexture);
-    debugLog()<<"test2.5";
     vr::EVRCompositorError rError = vr::VRCompositor()->Submit(vr::Eye_Right, &rightEyeTexture);
 
-    debugLog()<<"test3";
     return lError == vr::VRCompositorError_None && rError == vr::VRCompositorError_None;
 }
 
