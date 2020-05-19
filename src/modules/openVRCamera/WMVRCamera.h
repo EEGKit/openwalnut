@@ -32,30 +32,6 @@
 
 #include "core/kernel/WModule.h"
 
-#if (OSG_VERSION_GREATER_OR_EQUAL(3, 4, 0))
-typedef osg::GLExtensions OSG_GLExtensions;
-typedef osg::GLExtensions OSG_Texture_Extensions;
-#else
-typedef osg::FBOExtensions OSG_GLExtensions;
-typedef osg::Texture::Extensions OSG_Texture_Extensions;
-#endif
-
-class OpenVRMirrorTexture : public osg::Referenced
-{
-public:
-    OpenVRMirrorTexture(osg::ref_ptr<osg::State> state, GLint width, GLint height);
-    void destroy(osg::GraphicsContext *gc);
-    void blitTexture(osg::GraphicsContext *gc, OpenVRTextureBuffer *leftEye, OpenVRTextureBuffer *rightEye);
-
-protected:
-    ~OpenVRMirrorTexture() {}
-
-    GLuint m_mirrorFBO;
-    GLuint m_mirrorTex;
-    GLint m_width;
-    GLint m_height;
-};
-
 /**
  * Module starting and connecting to an OpenVR session
  * \ingroup modules
@@ -109,31 +85,6 @@ public:
      */
     std::string GetDeviceProperty(vr::TrackedDeviceProperty prop);
 
-    /**
-     * Initialize the textureBuffer for submitting textures to OpenVR
-     */
-    void createRenderBuffers(osg::ref_ptr<osg::State> state);
-
-    /**
-     * Submit frame from texturebuffer to OpenVR
-     */
-    bool submitFrame();
-
-    /**
-     * TODO
-     */
-    void blitMirrorTexture(osg::GraphicsContext *gc);
-
-    /**
-     * Buffer for Submitting to OpenVR
-     */
-    osg::ref_ptr<OpenVRTextureBuffer> m_textureBuffer[2];
-
-    /**
-     * TODO
-     */
-    osg::ref_ptr<OpenVRMirrorTexture> m_mirrorTexture;
-
 protected:
     /**
      * Entry point after loading the module. Runs in separate thread.
@@ -172,11 +123,6 @@ private:
     osg::ref_ptr<WGEManagedGroupNode> m_output;
 
     /**
-     * The Object interfacing with OpenVR
-     */
-    //osg::ref_ptr< OpenVRDevice > m_HMD;
-
-    /**
      * The OpenVR SDK Interface
      */
     vr::IVRSystem *m_vrSystem;
@@ -190,6 +136,17 @@ private:
      * sample width for MSAA
      */
     int m_samples;
+
+    /*
+     * texture to submit to left Eye
+     */
+    osg::ref_ptr<osg::Texture2D> m_leftTexture;
+
+    /*
+     * texture to submit to right Eye
+     */
+    osg::ref_ptr<osg::Texture2D> m_rightTexture;
+
     /**
      * The geode with the the left Eye geometry
      */
@@ -203,18 +160,6 @@ private:
     WPropDouble m_leftEyePos; //!< x position of the slice
 
     WPropDouble m_rightEyePos; //!< x position of the slice
-};
-
-class OpenVRSwapCallback : public osg::GraphicsContext::SwapCallback
-{
-public:
-    explicit OpenVRSwapCallback(WMVRCamera *device) : m_device(device), m_frameIndex(0) {}
-    void swapBuffersImplementation(osg::GraphicsContext *gc);
-    int frameIndex() const { return m_frameIndex; }
-
-private:
-    boost::shared_ptr<WMVRCamera> m_device;
-    int m_frameIndex;
 };
 
 #endif // WMVRCAMERA_H
