@@ -83,7 +83,7 @@ public:
     /**
      * Returns a Deviceproperty from m_vrSystem as a string
      */
-    std::string GetDeviceProperty(vr::TrackedDeviceProperty prop);
+    std::string GetDeviceProperty( vr::TrackedDeviceProperty prop );
 
 protected:
     /**
@@ -111,7 +111,54 @@ protected:
      */
     virtual void activate();
 
+    /**
+     * Callback for m_active. Overwrite this in your modules to handle m_active changes separately.
+     */
+    void setupVRInterface();
+
 private:
+    /**
+     * Callback which aligns and renders the textures.
+     */
+    class SafeUpdateCallback : public osg::NodeCallback
+    {
+    public: // NOLINT
+        /**
+         * Constructor.
+         *
+         * \param hud just set the creating HUD as pointer for later reference.
+         */
+        explicit SafeUpdateCallback( WMVRCamera* module ): m_module( module ), m_initialUpdate( true )
+        {
+        };
+
+        /**
+         * operator () - called during the update traversal.
+         *
+         * \param node the osg node
+         * \param nv the node visitor
+         */
+        virtual void operator()( osg::Node* node, osg::NodeVisitor* nv );
+
+        /**
+         * Pointer used to access members of the module to modify the node.
+         * Please do not use shared_ptr here as this would prevent deletion of the module as the callback contains
+         * a reference to it. It is safe to use a simple pointer here as callback get deleted before the module.
+         */
+        WMVRCamera* m_module;
+
+        /**
+         * The OpenVR SDK Interface
+         */
+        vr::IVRSystem *m_vrSystem;
+
+        /**
+         * Denotes whether the update callback is called the first time. It is especially useful
+         * to set some initial value even if the property has not yet changed.
+         */
+        bool m_initialUpdate;
+    };
+
     //! A condition for property updates.
     boost::shared_ptr<WCondition> m_propCondition;
 
@@ -160,6 +207,20 @@ private:
     WPropDouble m_leftEyePos; //!< x position of the slice
 
     WPropDouble m_rightEyePos; //!< x position of the slice
+
+    /**
+     * A nice feature trigger for turning VR on and off
+     */
+    WPropBool m_vrOn;
+
+    /**
+     * The recommended texture width from vr_system
+     */
+    uint32_t m_vrRenderWidth;
+    /**
+     * The recommended texture height from vr_system
+     */
+    uint32_t m_vrRenderHeight;
 };
 
-#endif // WMVRCAMERA_H
+#endif  // WMVRCAMERA_H

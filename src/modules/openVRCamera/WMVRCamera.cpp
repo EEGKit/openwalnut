@@ -39,6 +39,7 @@
 #include <osg/Texture2D>
 #include <osg/TexMat>
 
+#include "core/graphicsEngine/postprocessing/WGEPostprocessingNode.h"
 #include "core/graphicsEngine/WGEManagedGroupNode.h"
 #include "core/graphicsEngine/WGECamera.h"
 #include "core/graphicsEngine/WGEGeodeUtils.h"
@@ -100,6 +101,8 @@ void WMVRCamera::properties()
     // NOTE: Refer to WMTemplate.cpp if you do not understand these commands.
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
 
+    m_vrOn = m_properties->addProperty( "VR On", "Turns sending frames to Headset on or off", false );
+
     WModule::properties();
 }
 
@@ -111,14 +114,64 @@ void WMVRCamera::requirements()
     m_requirements.push_back( new WGERequirement() );
 }
 
+void WMVRCamera::setupVRInterface()
+{
+    // Exit if we do not have an HMD present
+    if(!vr::VR_IsHmdPresent())
+    {
+        errorLog() << "No valid HMD present!" << std::endl;
+        requestStop();
+    }
+
+    // Loading the SteamVR Runtime
+    vr::EVRInitError eError = vr::VRInitError_None;
+    m_vrSystem = vr::VR_Init( &eError, vr::VRApplication_Scene );
+
+    if(eError != vr::VRInitError_None )
+    {
+        m_vrSystem = nullptr;
+        errorLog()
+            << "Unable to initialize the OpenVR library." << std::endl
+            << "Reason: " << vr::VR_GetVRInitErrorAsEnglishDescription( eError ) << std::endl;
+        requestStop();
+    }
+
+    if( !vr::VRCompositor() )
+    {
+        m_vrSystem = nullptr;
+        vr::VR_Shutdown();
+        errorLog() << "Compositor initialization failed" << std::endl;
+        requestStop();
+    }
+
+    m_vrRenderModels = ( vr::IVRRenderModels * ) vr::VR_GetGenericInterface( vr::IVRRenderModels_Version, &eError );
+
+    if( m_vrRenderModels == nullptr )
+    {
+        m_vrSystem = nullptr;
+        vr::VR_Shutdown();
+        errorLog()
+            << "Unable to get render model interface!" << std::endl
+            << "Reason: " << vr::VR_GetVRInitErrorAsEnglishDescription( eError ) << std::endl;
+        requestStop();
+    }
+
+    vr::VRCompositor()->SetTrackingSpace( vr::TrackingUniverseSeated );
+
+    m_samples = 4U;
+    std::string driverName = GetDeviceProperty( vr::Prop_TrackingSystemName_String );
+    std::string deviceSerialNumber = GetDeviceProperty( vr::Prop_SerialNumber_String );
+
+    debugLog() << "HMD driver name: " << driverName;
+    debugLog() << "HMD device serial number: " << deviceSerialNumber;
+
+    m_vrSystem->GetRecommendedRenderTargetSize( &m_vrRenderWidth, &m_vrRenderHeight );
+}
+
 void WMVRCamera::moduleMain()
 {
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_propCondition );
-
-    // Now, we can mark the module ready.
-    ready();
-    debugLog() << "Starting...";
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // View Setup
@@ -131,105 +184,99 @@ void WMVRCamera::moduleMain()
     m_leftEye = osg::ref_ptr< WGEGroupNode > ( new WGEGroupNode() );
     m_rightEye = osg::ref_ptr< WGEGroupNode > ( new WGEGroupNode() );
 
+    // insert the created nodes
+    m_output->insert( m_leftEye );
+    m_output->insert( m_rightEye );
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_output );
 
-    // add for side-views
+    // updatecallback for submitting frames
+    m_output->addUpdateCallback( new SafeUpdateCallback( this ) );
+
+    // add side-views
     boost::shared_ptr< WGEViewer > leftEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" );
     boost::shared_ptr< WGEViewer > rightEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" );
 
     leftEyeView->reset();
     rightEyeView->reset();
 
+    //Trigger m_moduleState.wait if vr is turned on
+    //m_moduleState.add(m_vrOn->getCondition());
+
+    // Now, we can mark the module ready.
+    ready();
+    debugLog() << "Starting...";
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // HMD Setup
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Exit if we do not have an HMD present
-    if (!vr::VR_IsHmdPresent())
-    {
-        errorLog() << "No valid HMD present!" << std::endl;
-        requestStop();
-    }
-
-    // Loading the SteamVR Runtime
-    vr::EVRInitError eError = vr::VRInitError_None;
-    m_vrSystem = vr::VR_Init(&eError, vr::VRApplication_Scene);
-
-    if (eError != vr::VRInitError_None)
-    {
-        m_vrSystem = nullptr;
-        errorLog()
-            << "Unable to initialize the OpenVR library." << std::endl
-            << "Reason: " << vr::VR_GetVRInitErrorAsEnglishDescription( eError ) << std::endl;
-        requestStop();
-    }
-
-    if ( !vr::VRCompositor() )
-    {
-        m_vrSystem = nullptr;
-        vr::VR_Shutdown();
-        errorLog() << "Compositor initialization failed" << std::endl;
-        requestStop();
-    }
-
-    m_vrRenderModels = (vr::IVRRenderModels *)vr::VR_GetGenericInterface(vr::IVRRenderModels_Version, &eError);
-
-    if (m_vrRenderModels == nullptr)
-    {
-        m_vrSystem = nullptr;
-        vr::VR_Shutdown();
-        errorLog()
-            << "Unable to get render model interface!" << std::endl
-            << "Reason: " << vr::VR_GetVRInitErrorAsEnglishDescription( eError ) << std::endl;
-        requestStop();
-    }
-
-	vr::VRCompositor()->SetTrackingSpace(vr::TrackingUniverseSeated);
-
-    m_samples=4U;
-    std::string driverName = GetDeviceProperty(vr::Prop_TrackingSystemName_String);
-    std::string deviceSerialNumber = GetDeviceProperty(vr::Prop_SerialNumber_String);
-
-    debugLog() << "HMD driver name: "<< driverName;
-    debugLog() << "HMD device serial number: " << deviceSerialNumber;
+    setupVRInterface();
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // RTT-Camera Setup
+    // Render to Texture Setup
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	leftEyeView->getCamera()->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	leftEyeView->getCamera()->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
-	leftEyeView->getCamera()->setRenderOrder(osg::Camera::PRE_RENDER, vr::Eye_Left);
-	leftEyeView->getCamera()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
+    leftEyeView->getCamera()->setClearMask( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    leftEyeView->getCamera()->setRenderTargetImplementation( osg::Camera::FRAME_BUFFER_OBJECT );
+    leftEyeView->getCamera()->setRenderOrder( osg::Camera::PRE_RENDER, vr::Eye_Left );
+    leftEyeView->getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
 
-	rightEyeView->getCamera()->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	rightEyeView->getCamera()->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
-	rightEyeView->getCamera()->setRenderOrder(osg::Camera::PRE_RENDER, vr::Eye_Right);
-	rightEyeView->getCamera()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
-
-	uint32_t renderWidth = 16U;
-	uint32_t renderHeight = 16U;
-	m_vrSystem->GetRecommendedRenderTargetSize(&renderWidth, &renderHeight);
+    rightEyeView->getCamera()->setClearMask( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    rightEyeView->getCamera()->setRenderTargetImplementation( osg::Camera::FRAME_BUFFER_OBJECT );
+    rightEyeView->getCamera()->setRenderOrder( osg::Camera::PRE_RENDER, vr::Eye_Right );
+    rightEyeView->getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
 
     m_leftTexture = new osg::Texture2D;
-    m_leftTexture->setTextureSize(renderWidth, renderHeight);
-    m_leftTexture->setInternalFormat(GL_RGBA);
-    m_leftTexture->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::NEAREST);
-    m_leftTexture->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
+    m_leftTexture->setTextureSize( m_vrRenderWidth, m_vrRenderHeight );
+    m_leftTexture->setInternalFormat( GL_RGBA8 );
+    m_leftTexture->setFilter( osg::Texture2D::MIN_FILTER, osg::Texture2D::NEAREST );
+    m_leftTexture->setFilter( osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR );
 
     m_rightTexture = new osg::Texture2D;
-    m_rightTexture->setTextureSize(renderWidth, renderHeight);
-    m_rightTexture->setInternalFormat(GL_RGBA);
-    m_rightTexture->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::NEAREST);
-    m_rightTexture->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
+    m_rightTexture->setTextureSize( m_vrRenderWidth, m_vrRenderHeight );
+    m_rightTexture->setInternalFormat( GL_RGBA8 );
+    m_rightTexture->setFilter( osg::Texture2D::MIN_FILTER, osg::Texture2D::NEAREST );
+    m_rightTexture->setFilter( osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR );
 
-    // attach the texture and use it as the color buffer.
-    leftEyeView->getCamera()->attach(osg::Camera::COLOR_BUFFER, m_leftTexture, 0, 0, false, m_samples, 4U);
-    rightEyeView->getCamera()->attach(osg::Camera::COLOR_BUFFER, m_rightTexture, 0, 0, false, m_samples, 4U);
+    //create nodes in the scene-graph, which will encapsulate our render pipeline:
+    osg::ref_ptr< WGEOffscreenRenderNode > offscreenl(
+        new WGEOffscreenRenderNode(
+            leftEyeView->getCamera(),
+            m_vrRenderWidth,
+            m_vrRenderHeight,
+            true
+        )
+    );
+    osg::ref_ptr< WGEOffscreenRenderNode > offscreenr(
+        new WGEOffscreenRenderNode(
+            rightEyeView->getCamera(),
+            m_vrRenderWidth,
+            m_vrRenderHeight,
+            true
+        )
+    );
 
-    debugLog() << m_rightTexture->getTextureTarget();
-    debugLog() << m_rightTexture->getTextureWidth();
-    debugLog() << m_rightTexture->getTextureHeight();
+    osg::ref_ptr< WGEOffscreenFinalPass > renderToTexturel = offscreenl->addFinalOnScreenPass( "Output" );
+
+    osg::ref_ptr< WGEOffscreenFinalPass > renderToTexturer = offscreenr->addFinalOnScreenPass( "Output" );
+
+    // attach color0 output
+    renderToTexturel->attach( WGECamera::COLOR_BUFFER0, m_leftTexture );
+    // attach color0 output
+    renderToTexturer->attach( WGECamera::COLOR_BUFFER0, m_rightTexture );
+
+    // The final pass should also blend properly:
+    renderToTexturel->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
+    // The final pass should also blend properly:
+    renderToTexturer->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
+
+    // provide the Gbuffer input
+    renderToTexturel->bind( m_leftTexture, 0 );
+    // provide the Gbuffer input
+    renderToTexturer->bind( m_rightTexture, 0 );
+
+    m_leftEye->insert( offscreenl );
+    m_rightEye->insert( offscreenr );
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Main loop
@@ -244,22 +291,8 @@ void WMVRCamera::moduleMain()
             break;
         }
 
-        // create the Eyes. This loop is only entered if WGEColormapper was fired or shutdown.
-        // initOSG();
-
-        vr::TrackedDevicePose_t poses[vr::k_unMaxTrackedDeviceCount];
-        for (uint32_t i = 0; i < vr::k_unMaxTrackedDeviceCount; ++i) poses[i].bPoseIsValid = false;
-        vr::VRCompositor()->WaitGetPoses(poses, vr::k_unMaxTrackedDeviceCount, NULL, 0);
-
-        vr::Texture_t leftEyeTexture = {(void*)m_leftTexture->getTextureObject(leftEyeView->getCamera()->getGraphicsContext()->getState()->getContextID())->id(), vr::TextureType_OpenGL, vr::ColorSpace_Gamma};
-        vr::Texture_t rightEyeTexture = {(void*)m_rightTexture->getTextureObject(rightEyeView->getCamera()->getGraphicsContext()->getState()->getContextID())->id(), vr::TextureType_OpenGL, vr::ColorSpace_Gamma};
-
-        vr::EVRCompositorError lError = vr::VRCompositor()->Submit(vr::Eye_Left, &leftEyeTexture);
-        vr::EVRCompositorError rError = vr::VRCompositor()->Submit(vr::Eye_Right, &rightEyeTexture);
-
-        errorLog() << "Links:" << lError << "|Rechts:" << rError << std::endl;
-        //debugLog() << "Waiting...";
-        //m_moduleState.wait();
+        debugLog() << "Waiting...";
+        m_moduleState.wait();
     }
 
     // Shut down OpenVR
@@ -291,17 +324,55 @@ void WMVRCamera::activate()
     WModule::activate();
 }
 
-std::string WMVRCamera::GetDeviceProperty(vr::TrackedDeviceProperty prop)
+std::string WMVRCamera::GetDeviceProperty( vr::TrackedDeviceProperty prop )
 {
-    uint32_t bufferLen = m_vrSystem->GetStringTrackedDeviceProperty(vr::k_unTrackedDeviceIndex_Hmd, prop, NULL, 0);
-    if (bufferLen == 0)
+    uint32_t bufferLen = m_vrSystem->GetStringTrackedDeviceProperty( vr::k_unTrackedDeviceIndex_Hmd, prop, NULL, 0 );
+    if(bufferLen == 0)
     {
         return "";
     }
 
-    char* buffer = new char[bufferLen];
-    bufferLen = m_vrSystem->GetStringTrackedDeviceProperty(vr::k_unTrackedDeviceIndex_Hmd, prop, buffer, bufferLen);
+    char* buffer = new char[ bufferLen ];
+    bufferLen = m_vrSystem->GetStringTrackedDeviceProperty( vr::k_unTrackedDeviceIndex_Hmd, prop, buffer, bufferLen );
     std::string result = buffer;
     delete [] buffer;
     return result;
+}
+
+void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisitor* nv )
+{
+    if( !m_initialUpdate && m_module->m_vrOn->get() )
+    {
+        vr::TrackedDevicePose_t poses[vr::k_unMaxTrackedDeviceCount];           // NOLINT: the size is constant
+        for(uint32_t i = 0; i < vr::k_unMaxTrackedDeviceCount; ++i) poses[i].bPoseIsValid = false;
+        vr::VRCompositor()->WaitGetPoses( poses, vr::k_unMaxTrackedDeviceCount, NULL, 0 );
+/*
+        osg::ref_ptr< osg::Texture2D > randTexture = wge::genWhiteNoiseTexture( m_module->m_vrRenderWidth, m_module->m_vrRenderHeight, 4 );
+
+        randTexture->setInternalFormat(GL_RGBA8);
+
+        randTexture->generateAndAssignTextureObject(0U,randTexture->getTextureTarget());
+*/
+        vr::Texture_t leftEyeTexture = {
+            ( void* )( uintptr_t )m_module->m_rightTexture->getTextureObject( 0U )->id(),
+            vr::TextureType_OpenGL,
+            vr::ColorSpace_Gamma
+            };
+        vr::Texture_t rightEyeTexture = {
+            ( void* )( uintptr_t )m_module->m_leftTexture->getTextureObject( 0U )->id(),
+            vr::TextureType_OpenGL,
+            vr::ColorSpace_Gamma
+            };
+
+        vr::EVRCompositorError lError = vr::VRCompositor()->Submit( vr::Eye_Left, &leftEyeTexture );
+        vr::EVRCompositorError rError = vr::VRCompositor()->Submit( vr::Eye_Right, &rightEyeTexture );
+
+        if( lError != vr::VRCompositorError_None || rError !=vr::VRCompositorError_None )
+        {
+            m_module->errorLog() << "Links:" << lError << "|Rechts:" << rError << std::endl;
+        }
+    }
+    m_initialUpdate = false;
+
+    traverse( node, nv );
 }
