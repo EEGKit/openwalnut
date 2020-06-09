@@ -112,13 +112,14 @@ protected:
     virtual void activate();
 
     /**
-     * Callback for m_active. Overwrite this in your modules to handle m_active changes separately.
+     * Initialize OpenVR SDK.
+     * \return bool inicating success
      */
-    void setupVRInterface();
+    bool setupVRInterface();
 
 private:
     /**
-     * Callback which aligns and renders the textures.
+     * Callback which submits the textures to OpenVR SDK.
      */
     class SafeUpdateCallback : public osg::NodeCallback
     {
@@ -126,7 +127,7 @@ private:
         /**
          * Constructor.
          *
-         * \param hud just set the creating HUD as pointer for later reference.
+         * \param module just set the creating module as pointer for later reference.
          */
         explicit SafeUpdateCallback( WMVRCamera* module ): m_module( module ), m_initialUpdate( true )
         {
@@ -148,11 +149,6 @@ private:
         WMVRCamera* m_module;
 
         /**
-         * The OpenVR SDK Interface
-         */
-        vr::IVRSystem *m_vrSystem;
-
-        /**
          * Denotes whether the update callback is called the first time. It is especially useful
          * to set some initial value even if the property has not yet changed.
          */
@@ -162,12 +158,35 @@ private:
     //! A condition for property updates.
     boost::shared_ptr<WCondition> m_propCondition;
 
-    boost::shared_mutex m_updateLock; //!< Lock to prevent concurrent threads trying to update the osg node
+    /**
+     * A feature toggle for submitting frames to OpenVR SDK
+     */
+    WPropBool m_vrOn;
 
     /**
-     * The Geode containing all the cameras and the mesh
+     * A trigger for taking a screenshot of both Eyes.
      */
-    osg::ref_ptr<WGEManagedGroupNode> m_output;
+    WPropTrigger  m_debugTrigger1;
+
+    /**
+     * A trigger for taking a screenshot from the framebuffer.
+     */
+    WPropTrigger  m_debugTrigger2;
+
+    /**
+     * This modules root node mostly for cameras
+     */
+    osg::ref_ptr<WGEManagedGroupNode> m_rootnode;
+
+    /**
+     * A node for applying left Eye tracking
+     */
+    osg::ref_ptr<WGEGroupNode> m_leftEyeNode;
+
+    /**
+     * A node for applying right Eye tracking
+     */
+    osg::ref_ptr<WGEGroupNode> m_rightEyeNode;
 
     /**
      * The OpenVR SDK Interface
@@ -175,14 +194,14 @@ private:
     vr::IVRSystem *m_vrSystem;
 
     /**
+     * Denotes whether the OpenVR SDK was initialized successfully
+     */
+    bool m_vrIsInitialized;
+
+    /**
      * The OpenVR RenderModel Interface
      */
     vr::IVRRenderModels *m_vrRenderModels;
-
-    /*
-     * sample width for MSAA
-     */
-    int m_samples;
 
     /*
      * texture to submit to left Eye
@@ -194,29 +213,21 @@ private:
      */
     osg::ref_ptr<osg::Texture2D> m_rightTexture;
 
-    /**
-     * The geode with the the left Eye geometry
+    /*
+     * texture to submit to left Eye
      */
-    osg::ref_ptr<WGEGroupNode> m_leftEye;
+    osg::ref_ptr<osg::Texture2D> m_textureColorLeft;
 
-    /**
-     * The geode with the the right Eye geometry
+    /*
+     * texture to submit to right Eye
      */
-    osg::ref_ptr<WGEGroupNode> m_rightEye;
-
-    WPropDouble m_leftEyePos; //!< x position of the slice
-
-    WPropDouble m_rightEyePos; //!< x position of the slice
-
-    /**
-     * A nice feature trigger for turning VR on and off
-     */
-    WPropBool m_vrOn;
+    osg::ref_ptr<osg::Texture2D> m_textureColorRight;
 
     /**
      * The recommended texture width from vr_system
      */
     uint32_t m_vrRenderWidth;
+
     /**
      * The recommended texture height from vr_system
      */
