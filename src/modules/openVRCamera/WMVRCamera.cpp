@@ -39,7 +39,7 @@
 #include <osg/Texture2D>
 #include <osg/TexMat>
 #include <osgDB/WriteFile>
-#include <QtCore/QDir>
+//#include <QtCore/QDir>
 
 #include "core/graphicsEngine/postprocessing/WGEPostprocessingNode.h"
 #include "core/graphicsEngine/WGEManagedGroupNode.h"
