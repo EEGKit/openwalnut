@@ -400,6 +400,11 @@ std::string WMVRCamera::getDeviceProperty( vr::TrackedDeviceProperty prop )
 
 void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisitor* nv )
 {
+    std::string leftFilename = "./OpenWalnut - leftEye.png";
+    std::string rightFilename = "./OpenWalnut - rightEye.png";
+    osg::ref_ptr< osg::Image > leftImage;
+    osg::ref_ptr< osg::Image > rightImage;
+
     if( m_module->m_debugTrigger1->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
     {
         m_module->debugLog() << " Links Breite:" << m_module->m_textureColorLeft->getImage()->s() <<
@@ -423,6 +428,12 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
 
         osgDB::writeImageFile( *m_module->m_textureColorLeft->getImage(), leftFilename );
         osgDB::writeImageFile( *m_module->m_textureColorRight->getImage(), rightFilename );
+
+        leftImage = m_module->m_textureColorLeft->getImage();
+        rightImage = m_module->m_textureColorRight->getImage();
+
+        osgDB::writeImageFile( *leftImage, leftFilename );
+        osgDB::writeImageFile( *rightImage, rightFilename );
 
         m_module->m_debugTrigger1->set( WPVBaseTypes::PV_TRIGGER_READY, false );
     }
