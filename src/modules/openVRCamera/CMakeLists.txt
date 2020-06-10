@@ -41,9 +41,9 @@ GET_FILENAME_COMPONENT( MODULE_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME )
 # -----------------------------------------------------------------------------------------------------------------------------------------------
 # OpenVR, at least 1.11.11
 # See http://steamvr.com
-FIND_PACKAGE( openvr QUIET )
+FIND_PACKAGE( openvr )
 IF( OPENVR_FOUND )
-   MESSAGE( STATUS "Using system installed openvr to build openVRCamera." )
+   MESSAGE( STATUS "Using system installed openvr to build openVRCamera module." )
    INCLUDE_DIRECTORIES( ${OPENVR_INCLUDE_DIR} )
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
@@ -56,6 +56,9 @@ IF( OPENVR_FOUND )
                  "${CMAKE_CURRENT_SOURCE_DIR}"  # where to find the source ${CMAKE_CURRENT_SOURCE_DIR} is a good idea here mostly
                  "${OPENVR_LIBRARY}"   # does your module need additional libs to compile?
                  ""                             # do you want to exclude files from stylechecking? (externals for example)
-    )
+                 )
+             ELSE()
+               
+   MESSAGE( STATUS "No openVR installation found. Not building openVRCamera module." )
 ENDIF()
 
