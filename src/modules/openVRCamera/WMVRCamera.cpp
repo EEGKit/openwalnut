@@ -170,8 +170,8 @@ bool WMVRCamera::setupVRInterface()
     vr::VRCompositor()->SetTrackingSpace( vr::TrackingUniverseSeated );
     m_vrSystem->GetRecommendedRenderTargetSize( &m_vrRenderWidth, &m_vrRenderHeight );
 
-    std::string driverName = GetDeviceProperty( vr::Prop_TrackingSystemName_String );
-    std::string deviceSerialNumber = GetDeviceProperty( vr::Prop_SerialNumber_String );
+    std::string driverName = getDeviceProperty( vr::Prop_TrackingSystemName_String );
+    std::string deviceSerialNumber = getDeviceProperty( vr::Prop_SerialNumber_String );
     debugLog() << "HMD driver name: " << driverName;
     debugLog() << "HMD device serial number: " << deviceSerialNumber;
 
@@ -383,7 +383,7 @@ void WMVRCamera::activate()
     WModule::activate();
 }
 
-std::string WMVRCamera::GetDeviceProperty( vr::TrackedDeviceProperty prop )
+std::string WMVRCamera::getDeviceProperty( vr::TrackedDeviceProperty prop )
 {
     uint32_t bufferLen = m_vrSystem->GetStringTrackedDeviceProperty( vr::k_unTrackedDeviceIndex_Hmd, prop, NULL, 0 );
     if(bufferLen == 0)

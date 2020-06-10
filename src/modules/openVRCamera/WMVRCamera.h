@@ -85,7 +85,7 @@ public:
     /**
      * Returns a Deviceproperty from m_vrSystem as a string
      */
-    std::string GetDeviceProperty( vr::TrackedDeviceProperty prop );
+    std::string getDeviceProperty( vr::TrackedDeviceProperty prop );
 
 protected:
     /**
