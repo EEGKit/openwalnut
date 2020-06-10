@@ -426,23 +426,25 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
 
         m_module->m_debugTrigger1->set( WPVBaseTypes::PV_TRIGGER_READY, false );
     }
+
     if( m_module->m_debugTrigger2->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
     {
-        osg::ref_ptr< osg::Image > image = new osg::Image();
-        image->readPixels( 0, 0, m_module->m_vrRenderWidth, m_module->m_vrRenderHeight, GL_RGBA, GL_UNSIGNED_BYTE );
+        osg::ref_ptr< osg::Image > mainImage = new osg::Image();
+        mainImage->readPixels( 0, 0, m_module->m_vrRenderWidth, m_module->m_vrRenderHeight, GL_RGBA, GL_UNSIGNED_BYTE );
 
-        m_module->debugLog() << "Breite:" << image->s();
-        m_module->debugLog()  << "Pointer:" << image->getDataPointer();
-        m_module->debugLog() << "DatenMenge:" << image->getTotalDataSize();
+        m_module->debugLog() << "Breite:" << mainImage->s();
+        m_module->debugLog() << "Pointer:" << mainImage->getDataPointer();
+        m_module->debugLog() << "DatenMenge:" << mainImage->getTotalDataSize();
 
         //std::string filename = "C:/Users/Jonas/OpenWalnut - framebuffer.png";
         std::string filename = "./OpenWalnut - framebuffer.png";
         //std::string filename = ( QDir::homePath() + QDir::separator() + "OpenWalnut - framebuffer.png" ).toStdString();
 
-        osgDB::writeImageFile( *image, filename );
+        osgDB::writeImageFile( *mainImage, filename );
 
         m_module->m_debugTrigger2->set( WPVBaseTypes::PV_TRIGGER_READY, false );
     }
+
     if( m_module->m_vrOn->changed(true) )
     {
         if( m_module->m_vrOn->get() )
@@ -454,6 +456,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
             m_module->debugLog() << "Stop submitting frames to OpenVR";
         }
     }
+
     if( !m_initialUpdate && m_module->m_vrOn->get() && m_module->m_vrIsInitialized )
     {
         //get OpenVR tracking information
