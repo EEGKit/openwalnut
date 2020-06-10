@@ -424,8 +424,6 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
         //std::string leftFilename = ( QDir::homePath() + QDir::separator() + "OpenWalnut - leftEye.png" ).toStdString();
         //std::string rightFilename = ( QDir::homePath() + QDir::separator() + "OpenWalnut - rightEye.png" ).toStdString();
 
-        osgDB::writeImageFile( *m_module->m_textureColorLeft->getImage(), leftFilename );
-        osgDB::writeImageFile( *m_module->m_textureColorRight->getImage(), rightFilename );
 
         leftImage = m_module->m_textureColorLeft->getImage();
         rightImage = m_module->m_textureColorRight->getImage();
