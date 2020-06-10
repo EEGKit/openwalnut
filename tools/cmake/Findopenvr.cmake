@@ -28,6 +28,7 @@ FIND_PATH(OPENVR_INCLUDE_DIR openvr.h
 	~/Library/Frameworks
 	/Library/Frameworks
 	/usr/local/include/
+	/usr/include/openvr
 	/usr/include/
 	/sw # Fink
 	/opt/local # DarwinPorts
@@ -67,6 +68,7 @@ FIND_LIBRARY(OPENVR_LIBRARY
 	PATHS
 	${OPENVR_DIR}/bin/
 	${OPENVR_DIR}/lib/
+        /usr/lib/x86_64-linux-gnu
 	PATH_SUFFIXES ${LIB_PATH_SUFFIX}
 	DOC "Which OpenVR library to link against"
 	NO_DEFAULT_PATH
