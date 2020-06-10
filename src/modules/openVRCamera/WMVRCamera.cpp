@@ -278,9 +278,9 @@ void WMVRCamera::moduleMain()
 
     //Add a texture processing step to render pipeline
     osg::ref_ptr< WGEOffscreenTexturePass > texturePassLeft = offscreenRenderLeft->addTextureProcessingPass(
-         new WGEShader( "WMTemplateRenderPipelines-Render", m_localPath ), "TexturePassLeft" );
+         new WGEShader( "WMVRCameraTestShader", m_localPath ), "TexturePassLeft" );
     osg::ref_ptr< WGEOffscreenTexturePass> texturePassRight = offscreenRenderRight->addTextureProcessingPass(
-         new WGEShader( "WMTemplateRenderPipelines-Render", m_localPath ), "TexturePassRight" );
+         new WGEShader( "WMVRCameraTestShader", m_localPath ), "TexturePassRight" );
 
     //And a final pass
     osg::ref_ptr< WGEOffscreenFinalPass > finalPassLeft = offscreenRenderLeft->addFinalOnScreenPass( "FinalPassLeft" );
@@ -453,6 +453,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
     }
     if( !m_initialUpdate && m_module->m_vrOn->get() && m_module->m_vrIsInitialized )
     {
+        //get OpenVR tracking information
         vr::TrackedDevicePose_t poses[vr::k_unMaxTrackedDeviceCount];           // NOLINT: the size is constant
         for(uint32_t i = 0; i < vr::k_unMaxTrackedDeviceCount; ++i) poses[i].bPoseIsValid = false;
         vr::VRCompositor()->WaitGetPoses( poses, vr::k_unMaxTrackedDeviceCount, NULL, 0 );

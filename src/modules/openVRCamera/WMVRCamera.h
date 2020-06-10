@@ -30,6 +30,8 @@
 
 #include <boost/thread.hpp>
 
+#include "core/kernel/WModuleInputData.h"
+#include "core/kernel/WModuleOutputData.h"
 #include "core/kernel/WModule.h"
 
 /**
@@ -154,6 +156,8 @@ private:
          */
         bool m_initialUpdate;
     };
+
+    // boost::shared_ptr< WModuleInputData< WTriangleMesh > > m_input;  //!< Input connector required by this module.
 
     //! A condition for property updates.
     boost::shared_ptr<WCondition> m_propCondition;
