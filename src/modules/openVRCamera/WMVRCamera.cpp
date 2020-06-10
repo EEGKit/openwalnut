@@ -414,8 +414,10 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
         m_module->debugLog() << "Pointer:" << m_module->m_textureColorRight->getImage()->getDataPointer();
         m_module->debugLog() << "DatenMenge:" << m_module->m_textureColorRight->getImage()->getTotalDataSize();
 
-        std::string leftFilename = "C:/Users/Jonas/OpenWalnut - leftEye.png";
-        std::string rightFilename = "C:/Users/Jonas/OpenWalnut - rightEye.png";
+        //std::string leftFilename = "C:/Users/Jonas/OpenWalnut - leftEye.png";
+        //std::string rightFilename = "C:/Users/Jonas/OpenWalnut - rightEye.png";
+        std::string leftFilename = "./OpenWalnut - leftEye.png";
+        std::string rightFilename = "./OpenWalnut - rightEye.png";
         //std::string leftFilename = ( QDir::homePath() + QDir::separator() + "OpenWalnut - leftEye.png" ).toStdString();
         //std::string rightFilename = ( QDir::homePath() + QDir::separator() + "OpenWalnut - rightEye.png" ).toStdString();
 
@@ -433,7 +435,8 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
         m_module->debugLog()  << "Pointer:" << image->getDataPointer();
         m_module->debugLog() << "DatenMenge:" << image->getTotalDataSize();
 
-        std::string filename = "C:/Users/Jonas/OpenWalnut - framebuffer.png";
+        //std::string filename = "C:/Users/Jonas/OpenWalnut - framebuffer.png";
+        std::string filename = "./OpenWalnut - framebuffer.png";
         //std::string filename = ( QDir::homePath() + QDir::separator() + "OpenWalnut - framebuffer.png" ).toStdString();
 
         osgDB::writeImageFile( *image, filename );
