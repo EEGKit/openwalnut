@@ -41,8 +41,8 @@
 class WMVRCamera : public WModule
 {
     /**
- * Only UnitTests may be friends.
- */
+     * Only UnitTests may be friends.
+     */
     friend class WMVRCameraTest;
 
 public:
@@ -157,8 +157,6 @@ private:
         bool m_initialUpdate;
     };
 
-    // boost::shared_ptr< WModuleInputData< WTriangleMesh > > m_input;  //!< Input connector required by this module.
-
     //! A condition for property updates.
     boost::shared_ptr<WCondition> m_propCondition;
 
@@ -207,22 +205,22 @@ private:
      */
     vr::IVRRenderModels *m_vrRenderModels;
 
-    /*
+    /**
      * texture to submit to left Eye
      */
     osg::ref_ptr<osg::Texture2D> m_leftTexture;
 
-    /*
+    /**
      * texture to submit to right Eye
      */
     osg::ref_ptr<osg::Texture2D> m_rightTexture;
 
-    /*
+    /**
      * texture to submit to left Eye
      */
     osg::ref_ptr<osg::Texture2D> m_textureColorLeft;
 
-    /*
+    /**
      * texture to submit to right Eye
      */
     osg::ref_ptr<osg::Texture2D> m_textureColorRight;
