@@ -170,6 +170,8 @@ bool WMVRCamera::setupVRInterface()
     vr::VRCompositor()->SetTrackingSpace( vr::TrackingUniverseSeated );
     m_vrSystem->GetRecommendedRenderTargetSize( &m_vrRenderWidth, &m_vrRenderHeight );
 
+    m_grabber = vr::k_unTrackedDeviceIndexInvalid;
+
     std::string driverName = getDeviceProperty( vr::Prop_TrackingSystemName_String );
     std::string deviceSerialNumber = getDeviceProperty( vr::Prop_SerialNumber_String );
     debugLog() << "HMD driver name: " << driverName;
@@ -398,6 +400,51 @@ std::string WMVRCamera::getDeviceProperty( vr::TrackedDeviceProperty prop )
     return result;
 }
 
+void WMVRCamera::handleVREvent( vr::VREvent_t vrEvent)
+{
+    vr::ETrackedDeviceClass deviceClass = m_vrSystem->GetTrackedDeviceClass( vrEvent.trackedDeviceIndex );
+    switch( deviceClass )
+    {
+        case vr::TrackedDeviceClass_Controller :
+            handleControllerEvent( vrEvent );
+            break;
+        default:
+            break;
+    }
+
+}
+
+void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent)
+{
+    //debugLog() << "Trigger is:" << vr::EVRButtonId::k_EButton_SteamVR_Trigger;
+    //debugLog() << "Grip is:" << vr::EVRButtonId::k_EButton_Grip;
+    switch( vrEvent.eventType )
+    {
+        case vr::VREvent_ButtonPress:
+            debugLog() << "Pressed:" << vrEvent.data.controller.button;
+            if( 
+                vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_Grip ||
+                vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_SteamVR_Trigger
+                )
+                {
+                    m_grabber = vrEvent.trackedDeviceIndex;
+                }
+            break;
+        case vr::VREvent_ButtonUnpress:
+            debugLog() << "Unpressed:" << vrEvent.data.controller.button;
+            if( 
+                vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_Grip ||
+                vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_SteamVR_Trigger
+                )
+                {
+                    m_grabber = vr::k_unTrackedDeviceIndexInvalid;
+                }
+            break;
+        default:
+            break;
+    }
+}
+
 void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisitor* nv )
 {
     std::string leftFilename = "./OpenWalnut - leftEye.png";
@@ -464,40 +511,52 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
         }
     }
 
-    if( !m_initialUpdate && m_module->m_vrOn->get() && m_module->m_vrIsInitialized )
+    if( m_module->m_vrOn->get() && m_module->m_vrIsInitialized )
     {
-        //get OpenVR tracking information
-        vr::TrackedDevicePose_t poses[vr::k_unMaxTrackedDeviceCount];           // NOLINT: the size is constant
-        for(uint32_t i = 0; i < vr::k_unMaxTrackedDeviceCount; ++i) poses[i].bPoseIsValid = false;
-        vr::VRCompositor()->WaitGetPoses( poses, vr::k_unMaxTrackedDeviceCount, NULL, 0 );
-
-        unsigned int leftContextID = WKernel::getRunningKernel()->getGraphicsEngine()
-                                        ->getViewerByName( "Left Eye View" )->getCamera()
-                                        ->getGraphicsContext()->getState()->getContextID();
-        unsigned int rightContextID = WKernel::getRunningKernel()->getGraphicsEngine()
-                                        ->getViewerByName( "Right Eye View" )->getCamera()
-                                        ->getGraphicsContext()->getState()->getContextID();
-
-        vr::Texture_t leftEyeTexture = {
-            ( void* )( uintptr_t )m_module->m_textureColorLeft->getTextureObject( leftContextID )->id(),
-            vr::TextureType_OpenGL,
-            vr::ColorSpace_Gamma
-            };
-        vr::Texture_t rightEyeTexture = {
-            ( void* )( uintptr_t )m_module->m_textureColorRight->getTextureObject( rightContextID )->id(),
-            vr::TextureType_OpenGL,
-            vr::ColorSpace_Gamma
-            };
-
-        vr::EVRCompositorError lError = vr::VRCompositor()->Submit( vr::Eye_Left, &leftEyeTexture );
-        vr::EVRCompositorError rError = vr::VRCompositor()->Submit( vr::Eye_Right, &rightEyeTexture );
-
-        if( lError != vr::VRCompositorError_None || rError !=vr::VRCompositorError_None )
+        if( !m_initialUpdate )
         {
-            m_module->errorLog() << "Links:" << lError << "|Rechts:" << rError << std::endl;
+            unsigned int leftContextID = WKernel::getRunningKernel()->getGraphicsEngine()
+                                            ->getViewerByName( "Left Eye View" )->getCamera()
+                                            ->getGraphicsContext()->getState()->getContextID();
+            unsigned int rightContextID = WKernel::getRunningKernel()->getGraphicsEngine()
+                                            ->getViewerByName( "Right Eye View" )->getCamera()
+                                            ->getGraphicsContext()->getState()->getContextID();
+
+            vr::Texture_t leftEyeTexture = {
+                ( void* )( uintptr_t )m_module->m_textureColorLeft->getTextureObject( leftContextID )->id(),
+                vr::TextureType_OpenGL,
+                vr::ColorSpace_Gamma
+                };
+            vr::Texture_t rightEyeTexture = {
+                ( void* )( uintptr_t )m_module->m_textureColorRight->getTextureObject( rightContextID )->id(),
+                vr::TextureType_OpenGL,
+                vr::ColorSpace_Gamma
+                };
+
+            vr::EVRCompositorError lError = vr::VRCompositor()->Submit( vr::Eye_Left, &leftEyeTexture );
+            vr::EVRCompositorError rError = vr::VRCompositor()->Submit( vr::Eye_Right, &rightEyeTexture );
+
+            if( lError != vr::VRCompositorError_None || rError !=vr::VRCompositorError_None )
+            {
+                m_module->errorLog() << "Links:" << lError << "|Rechts:" << rError << std::endl;
+            }
         }
+
+        //get all OpenVR tracking information
+        for(uint32_t i = 0; i < vr::k_unMaxTrackedDeviceCount; ++i) m_module->m_poses[i].bPoseIsValid = false;
+        vr::VRCompositor()->WaitGetPoses( m_module->m_poses, vr::k_unMaxTrackedDeviceCount, NULL, 0 );
+
+        //handle controller events
+        vr::VREvent_t vrEvent;
+        while( m_module->m_vrSystem->PollNextEvent( &vrEvent, sizeof( vr::VREvent_t )) ) m_module->handleVREvent( vrEvent );
+
+        //adjust Scene according to inputs
+        if( m_module->m_grabber != vr::k_unTrackedDeviceIndexInvalid ){
+            
+        }
+
+        m_initialUpdate = false;
     }
-    m_initialUpdate = false;
 
     traverse( node, nv );
 }

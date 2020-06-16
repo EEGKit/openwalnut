@@ -87,6 +87,16 @@ public:
      */
     std::string getDeviceProperty( vr::TrackedDeviceProperty prop );
 
+    /**
+     * Handles generic VR events
+     */
+    void handleVREvent( vr::VREvent_t vrEvent );
+
+    /**
+     * Handles controller events
+     */
+    void handleControllerEvent( vr::VREvent_t vrEvent );
+
 protected:
     /**
      * Entry point after loading the module. Runs in separate thread.
@@ -234,6 +244,16 @@ private:
      * The recommended texture height from vr_system
      */
     uint32_t m_vrRenderHeight;
+
+    /**
+     * OpenVR tracking information
+     */
+    vr::TrackedDevicePose_t m_poses[vr::k_unMaxTrackedDeviceCount];         // NOLINT: the size is constant
+
+    /**
+     * OpenVR current grabbing device
+     */
+    vr::TrackedDeviceIndex_t m_grabber;
 };
 
 #endif  // WMVRCAMERA_H
