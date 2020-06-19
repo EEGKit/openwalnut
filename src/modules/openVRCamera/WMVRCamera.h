@@ -161,6 +161,11 @@ private:
         WMVRCamera* m_module;
 
         /**
+         * Last frame timing
+         */
+        std::chrono::_V2::system_clock::time_point m_lastFrame;
+
+        /**
          * Denotes whether the update callback is called the first time. It is especially useful
          * to set some initial value even if the property has not yet changed.
          */

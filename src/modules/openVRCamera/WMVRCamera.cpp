@@ -46,6 +46,7 @@
 #include "core/graphicsEngine/WGECamera.h"
 #include "core/graphicsEngine/WGEGeodeUtils.h"
 #include "core/graphicsEngine/WGERequirement.h"
+#include "core/graphicsEngine/WGEZoomTrackballManipulator.h"
 
 #include "core/common/WPropertyHelper.h"
 #include "core/graphicsEngine/WGEUtils.h"
@@ -542,6 +543,10 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
             }
         }
 
+        std::chrono::_V2::system_clock::time_point now = std::chrono::system_clock::now();
+        double elapsedSeconds = (now - m_lastFrame).count();
+        m_lastFrame = now;
+
         //get all OpenVR tracking information
         for(uint32_t i = 0; i < vr::k_unMaxTrackedDeviceCount; ++i) m_module->m_poses[i].bPoseIsValid = false;
         vr::VRCompositor()->WaitGetPoses( m_module->m_poses, vr::k_unMaxTrackedDeviceCount, NULL, 0 );
@@ -552,7 +557,23 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
 
         //adjust Scene according to inputs
         if( m_module->m_grabber != vr::k_unTrackedDeviceIndexInvalid ){
-            
+            vr::TrackedDevicePose_t controllerPose = m_module->m_poses[ m_module->m_grabber ];
+            osg::ref_ptr< osgGA::TrackballManipulator > cm = osg::dynamic_pointer_cast<osgGA::TrackballManipulator>(
+                WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCameraManipulator()
+                );
+            if( cm )
+            {
+                osg::Quat rot = cm->getRotation();
+                m_module->debugLog() << "Camera Rotation Quat " << rot.x() << " " << rot.y() << " " << rot.z() << " " << rot.w();
+                m_module->debugLog() << "Angular Velocity " << controllerPose.vAngularVelocity.v[0] << " " << controllerPose.vAngularVelocity.v[1] << " " << controllerPose.vAngularVelocity.v[2];
+                rot.makeRotate( 
+                    osg::PI_2,
+                    controllerPose.vAngularVelocity.v[0] / elapsedSeconds,
+                    controllerPose.vAngularVelocity.v[1] / elapsedSeconds,
+                    controllerPose.vAngularVelocity.v[2] / elapsedSeconds
+                    );
+                cm->setRotation( rot );
+            }
         }
 
         m_initialUpdate = false;
