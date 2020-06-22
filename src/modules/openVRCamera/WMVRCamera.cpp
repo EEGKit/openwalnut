@@ -224,8 +224,8 @@ void WMVRCamera::moduleMain()
     else
     {
         errorLog() << "OpenVR failed to initialize";
-        m_vrRenderWidth = 2160;
-        m_vrRenderHeight = 1200;
+        m_vrRenderWidth = 1736;
+        m_vrRenderHeight = 1928;
         m_vrIsInitialized = false;
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -236,11 +236,13 @@ void WMVRCamera::moduleMain()
     leftEyeView->getCamera()->setRenderTargetImplementation( osg::Camera::FRAME_BUFFER_OBJECT );
     leftEyeView->getCamera()->setRenderOrder( osg::Camera::PRE_RENDER, vr::Eye_Left );
     leftEyeView->getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
+    leftEyeView->getCamera()->setViewport( 0, 0, m_vrRenderWidth, m_vrRenderHeight );
 
     rightEyeView->getCamera()->setClearMask( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     rightEyeView->getCamera()->setRenderTargetImplementation( osg::Camera::FRAME_BUFFER_OBJECT );
     rightEyeView->getCamera()->setRenderOrder( osg::Camera::PRE_RENDER, vr::Eye_Right );
     rightEyeView->getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
+    rightEyeView->getCamera()->setViewport( 0, 0, m_vrRenderWidth, m_vrRenderHeight );
 
     m_leftTexture = new osg::Texture2D;
     m_leftTexture->setTextureSize( m_vrRenderWidth, m_vrRenderHeight );
@@ -467,11 +469,31 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
         m_module->debugLog() << "Pointer:" << m_module->m_textureColorRight->getImage()->getDataPointer();
         m_module->debugLog() << "DatenMenge:" << m_module->m_textureColorRight->getImage()->getTotalDataSize();
 
-        //std::string leftFilename = "C:/Users/Jonas/OpenWalnut - leftEye.png";
-        //std::string rightFilename = "C:/Users/Jonas/OpenWalnut - rightEye.png";
+        /*
+        osg::State *leftState=WKernel::getRunningKernel()->getGraphicsEngine()
+                                            ->getViewerByName( "Left Eye View" )->getCamera()
+                                            ->getGraphicsContext()->getState();
+        osg::State *rightState=WKernel::getRunningKernel()->getGraphicsEngine()
+                                            ->getViewerByName( "Right Eye View" )->getCamera()
+                                            ->getGraphicsContext()->getState();
+        m_module->m_textureColorLeft->copyTexImage2D(
+                                            *leftState,
+                                            0,
+                                            0,
+                                            m_module->m_vrRenderWidth,
+                                            m_module->m_vrRenderHeight
+                                            );
+        m_module->m_textureColorRight->copyTexImage2D(
+                                            *rightState,
+                                            0,
+                                            0,
+                                            m_module->m_vrRenderWidth,
+                                            m_module->m_vrRenderHeight
+                                            );
+        */
+
         //std::string leftFilename = ( QDir::homePath() + QDir::separator() + "OpenWalnut - leftEye.png" ).toStdString();
         //std::string rightFilename = ( QDir::homePath() + QDir::separator() + "OpenWalnut - rightEye.png" ).toStdString();
-
 
         leftImage = m_module->m_textureColorLeft->getImage();
         rightImage = m_module->m_textureColorRight->getImage();
