@@ -84,16 +84,20 @@ public:
 
     /**
      * Returns a Deviceproperty from m_vrSystem as a string
+     * \param prop a openVR device property
+     * \return the property value as string
      */
     std::string getDeviceProperty( vr::TrackedDeviceProperty prop );
 
     /**
      * Handles generic VR events
+     * \param vrEvent generic vr event like mousemove or buttonpress
      */
     void handleVREvent( vr::VREvent_t vrEvent );
 
     /**
      * Handles controller events
+     * \param vrEvent vr controller event like buttonpress
      */
     void handleControllerEvent( vr::VREvent_t vrEvent );
 
@@ -161,7 +165,7 @@ private:
         WMVRCamera* m_module;
 
         /**
-         * Last frame timing
+         * timestamp of the last frame
          */
         std::chrono::_V2::system_clock::time_point m_lastFrame;
 
