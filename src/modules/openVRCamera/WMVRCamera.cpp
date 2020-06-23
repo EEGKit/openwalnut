@@ -403,7 +403,7 @@ std::string WMVRCamera::getDeviceProperty( vr::TrackedDeviceProperty prop )
     return result;
 }
 
-void WMVRCamera::handleVREvent( vr::VREvent_t vrEvent)
+void WMVRCamera::handleVREvent( vr::VREvent_t vrEvent )
 {
     vr::ETrackedDeviceClass deviceClass = m_vrSystem->GetTrackedDeviceClass( vrEvent.trackedDeviceIndex );
     switch( deviceClass )
@@ -414,10 +414,9 @@ void WMVRCamera::handleVREvent( vr::VREvent_t vrEvent)
         default:
             break;
     }
-
 }
 
-void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent)
+void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent )
 {
     //debugLog() << "Trigger is:" << vr::EVRButtonId::k_EButton_SteamVR_Trigger;
     //debugLog() << "Grip is:" << vr::EVRButtonId::k_EButton_Grip;
@@ -425,7 +424,7 @@ void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent)
     {
         case vr::VREvent_ButtonPress:
             debugLog() << "Pressed:" << vrEvent.data.controller.button;
-            if( 
+            if(
                 vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_Grip ||
                 vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_SteamVR_Trigger
                 )
@@ -435,7 +434,7 @@ void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent)
             break;
         case vr::VREvent_ButtonUnpress:
             debugLog() << "Unpressed:" << vrEvent.data.controller.button;
-            if( 
+            if(
                 vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_Grip ||
                 vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_SteamVR_Trigger
                 )
@@ -566,7 +565,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
         }
 
         std::chrono::_V2::system_clock::time_point now = std::chrono::system_clock::now();
-        double elapsedSeconds = (now - m_lastFrame).count();
+        double elapsedSeconds = ( now - m_lastFrame ).count();
         m_lastFrame = now;
 
         //get all OpenVR tracking information
@@ -575,10 +574,11 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
 
         //handle controller events
         vr::VREvent_t vrEvent;
-        while( m_module->m_vrSystem->PollNextEvent( &vrEvent, sizeof( vr::VREvent_t )) ) m_module->handleVREvent( vrEvent );
+        while( m_module->m_vrSystem->PollNextEvent( &vrEvent, sizeof( vr::VREvent_t ) ) ) m_module->handleVREvent( vrEvent );
 
         //adjust Scene according to inputs
-        if( m_module->m_grabber != vr::k_unTrackedDeviceIndexInvalid ){
+        if( m_module->m_grabber != vr::k_unTrackedDeviceIndexInvalid )
+        {
             vr::TrackedDevicePose_t controllerPose = m_module->m_poses[ m_module->m_grabber ];
             osg::ref_ptr< osgGA::TrackballManipulator > cm = osg::dynamic_pointer_cast<osgGA::TrackballManipulator>(
                 WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCameraManipulator()
@@ -587,8 +587,11 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
             {
                 osg::Quat rot = cm->getRotation();
                 m_module->debugLog() << "Camera Rotation Quat " << rot.x() << " " << rot.y() << " " << rot.z() << " " << rot.w();
-                m_module->debugLog() << "Angular Velocity " << controllerPose.vAngularVelocity.v[0] << " " << controllerPose.vAngularVelocity.v[1] << " " << controllerPose.vAngularVelocity.v[2];
-                rot.makeRotate( 
+                m_module->debugLog() << "Angular Velocity " <<
+                    controllerPose.vAngularVelocity.v[0] << " " <<
+                    controllerPose.vAngularVelocity.v[1] << " " <<
+                    controllerPose.vAngularVelocity.v[2];
+                rot.makeRotate(
                     osg::PI_2,
                     controllerPose.vAngularVelocity.v[0] / elapsedSeconds,
                     controllerPose.vAngularVelocity.v[1] / elapsedSeconds,
