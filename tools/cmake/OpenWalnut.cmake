@@ -360,7 +360,7 @@ ELSE()
 ENDIF()
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------
-# OpenSceneGraph, at least 2.8.0
+# OpenSceneGraph
 # See http://www.openscenegraph.org
 
 # find the needed packages
