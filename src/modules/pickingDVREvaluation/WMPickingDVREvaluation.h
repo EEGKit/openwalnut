@@ -170,7 +170,7 @@ private:
      * Importance function
      * \param pos Location in space.
      *
-     * \return Importance at \param pos
+     * \return Importance at \p pos
      */
     double importance( WPosition pos );
 
@@ -179,7 +179,7 @@ private:
      * \param startPos Location in space where interaction takes place.
      * \param viewDir Viewing direction, i.e. direction interaction.
      *
-     * \return Result of mapping \param startPos
+     * \return Result of mapping \p startPos
      */
     WPosition interactionMapping( const WPosition& startPos, const WVector3d& viewDir );
 
@@ -188,7 +188,7 @@ private:
      * \param pos Location of data point in space.
      * \param viewDir Viewing direction, i.e. direction of projection.
      *
-     * \return Result of mapping \param pos
+     * \return Result of mapping \p pos
      */
     WPosition visualizationMapping( const WPosition& pos, const WVector3d& viewDir );
 };

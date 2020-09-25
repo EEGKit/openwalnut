@@ -127,7 +127,7 @@ public:
      * Get the scalar value stored at id-th position of the array of the value set. This is the id-th grid position \b only for scalar data sets.
      * \deprecated use getSingleRawValue
      *
-     * \param id The id'th value in the data set
+     * \param id The id of the value to be obtained
      *
      * \return Scalar value for that given position
      */
@@ -136,7 +136,7 @@ public:
     /**
      * Get the scalar value stored at id-th position of the array of the value set. This is the id-th grid position \b only for scalar data sets.
      *
-     * \param id The id'th value in the data set
+     * \param id The id of the value to be obtained
      *
      * \return Scalar value for that given position
      */
@@ -146,7 +146,7 @@ public:
      * Get the scalar value stored at id-th position of the array of the value set. This is the id-th grid position \b only for scalar data sets.
      * \deprecated use getSingleRawValue
      *
-     * \param id The id'th value in the data set
+     * \param id The id of the value to be obtained
      *
      * \return Scalar value for that given position
      */
