@@ -44,8 +44,6 @@ public:
      *
      * \param normal Direction of the plane
      * \param pos Position of the plane
-     *
-     * \return
      */
     WPlane( const WVector3d& normal, const WPosition& pos );
 

@@ -49,9 +49,7 @@ public:
     ~WSurface();
 
     /**
-     * Runs the algo and constructs a spine surface from the given input points
-     *
-     * \return a triangle mesh of the constructed spline surface
+     * Runs the algo and constructs a spine surface from the given input points.
      */
     void execute();
 

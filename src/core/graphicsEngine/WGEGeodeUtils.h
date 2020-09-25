@@ -93,8 +93,6 @@ namespace wge
      * terms) geometry here, the graphics will fail. Ensure that you have a color array, tex array, normal array and vertex array, where the
      * color array is used per primitive set and normals/tex are bound per vertex. The vertices/tex/normals need to be vec3 arrays. The color
      * array needs to be a vec4 array.
-     *
-     * \return the drawable.
      */
     void createCube( osg::ref_ptr< osg::Geometry > geometry, const WPosition& position, const WPosition& size, const WColor& color );
 

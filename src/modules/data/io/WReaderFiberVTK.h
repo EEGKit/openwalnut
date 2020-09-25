@@ -78,7 +78,6 @@ protected:
     /**
      * Read VTK header from file.
      *
-     * \return The offset where header ends, so we may skip this next operation.
      * \throws WDHIOFailure, WDHParseError
      */
     void readHeader();

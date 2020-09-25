@@ -129,7 +129,6 @@ namespace butterfly
          * \author schwarzkopf
          * \param fromID The first neighbor vertex ID where the new vertex lies between.
          * \param toID The second neighbor vertex ID where the new vertex lies between.
-         * \return The proposed ID of the new vertex.
          */
         void attachNewVertex( size_t fromID, size_t toID );
 
