@@ -26,10 +26,8 @@ See the "COPYING" and "COPYING.LESSER" files.
 If you have questions, comments, problems or find Bugs, contact us using:
 
 * **Mailing list**: openwalnut@lists.informatik.uni-leipzig.de
-    * Very low traffic at the moment ( < 1 mail per month). You might want to try
-   the developer mailing list below.
+    * Very low traffic at the moment ( < 1 mail per month). You might want to try the developer mailing list below.
     * To join the list visit http://lists.informatik.uni-leipzig.de/mailman/listinfo/openwalnut and follow the instructions.
-
 * **Developer Mailing list**: openwalnut-dev@lists.informatik.uni-leipzig.de
     * Medium traffic ( < 10 mails per week).
     * To join the list visit http://lists.informatik.uni-leipzig.de/mailman/listinfo/openwalnut-dev and follow the instructions.
@@ -54,7 +52,7 @@ and get the URL to our git repository.
 
 ## Required Dependencies:
 
-* Preferrably Qt4, build support also for Qt4 (>= 4.6) 
+* Qt (Preferrably Qt5, build support also for Qt4 >= 4.6) 
 * OpenSceneGraph (>= 2.8.0)
 * Boost (>= 1.46.0)
 
