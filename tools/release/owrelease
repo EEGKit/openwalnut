@@ -38,7 +38,7 @@ VERSION_TAGS=""
 VERSION_INCLUDE_HG=0
 
 # Where to grab the sources?
-REPO="ssh://ebaum@openwalnut.com//srv/hg/ow"
+REPO="ssh://ebaum@openwalnut.org//srv/hg/ow"
 REPO_BRANCH="OpenWalnut_1.4"
 # build from a release branch?
 #REPO_BRANCH="OpenWalnut_$VESION"

@@ -537,8 +537,8 @@ FUNCTION( SETUP_DEV_INSTALL _libName _targetRelative _headers _headerTargetRelat
     ENDFOREACH()
 ENDFUNCTION( SETUP_DEV_INSTALL )
 
-# This function tries to find a proper version string. It therefore uses the file src/../VERSION and mercurial. If the file exists and is not
-# empty, the contents of it get combined with the mercurial results if mercurial is installed. If not, only the file content will be used. If
+# This function tries to find a proper version string. It therefore uses the file src/../VERSION and git. If the file exists and is not
+# empty, the contents of it get combined with the git results if git is installed. If not, only the file content will be used. If
 # both methods fail, a default string is used.
 # _version the returned version string
 # _api_version returns only the API-version loaded from the version file. This is useful to set CMake version info for release compilation
@@ -582,7 +582,7 @@ FUNCTION( GET_VERSION_STRING _version _api_version )
         # be more nice if we do not find git version. The simply strip the +git tag.
         STRING( REGEX REPLACE "\\+gitX" "" OW_VERSION ${OW_VERSION_FILE} )
     ELSE()
-        # if we have the mercurial info -> complement the version string
+        # if we have the git info -> complement the version string
         STRING( REGEX REPLACE "\n$" "" OW_VERSION_GIT "${OW_VERSION_GIT}" )
         STRING( REGEX REPLACE "gitX" "git${OW_VERSION_GIT}" OW_VERSION ${OW_VERSION_FILE} )
     ENDIF()
