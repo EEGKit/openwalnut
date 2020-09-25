@@ -180,7 +180,7 @@ TAB_SIZE               = 4
 # You can put \n's in the value part of an alias to insert newlines.
 
 # for simple notes/problem notes
-ALIASES                +=  "problem=\par Problems:\n"
+ALIASES                +=  "problem=\par Problems: "
 
 # reminders and todos which are referenced on "related pages" tab
 ALIASES                +=  "reminder=\xrefitem reminders \"Reminder\" \"Reminders\""
