@@ -415,6 +415,10 @@ void WMNavigationSlices::moduleMain()
     m_ySlicePicker.reset();
     m_zSlicePicker.reset();
 
+    m_xPos->setHidden();
+    m_yPos->setHidden();
+    m_zPos->setHidden();
+
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_output );
 
     v = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Axial View" );
