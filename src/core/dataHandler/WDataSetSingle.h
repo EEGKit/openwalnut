@@ -133,6 +133,7 @@ public:
      */
     template< typename T >  OW_API_DEPRECATED T getValueAt( size_t id );
 
+    /// @cond Supress doxygen because it produces warning here becuase it does not correctly understand the C++ code.
     /**
      * Get the scalar value stored at id-th position of the array of the value set. This is the id-th grid position \b only for scalar data sets.
      *
@@ -141,6 +142,7 @@ public:
      * \return Scalar value for that given position
      */
     template< typename T >  T getSingleRawValue( size_t id );
+    /// @endcond
 
     /**
      * Get the scalar value stored at id-th position of the array of the value set. This is the id-th grid position \b only for scalar data sets.

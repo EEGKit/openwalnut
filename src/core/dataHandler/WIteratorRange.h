@@ -170,10 +170,12 @@ public:
      */
     void operator=( WIteratorRange< IteratorType > const& range );
 
+    /// @cond Supress doxygen because it produces warning here becuase it does not correctly understand the C++ code.
     /**
      * Copy constructor.
      */
     WIteratorRangeUnpacker( WIteratorRangeUnpacker const& ); // NOLINT used implicitly
+    /// @endcond
 
 private:
     /**
@@ -217,4 +219,3 @@ void WIteratorRangeUnpacker< IteratorType >::operator=( WIteratorRange< Iterator
 }
 
 #endif  // WITERATORRANGE_H_
-
