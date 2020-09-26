@@ -212,7 +212,7 @@ void WMNavigationSlices::initOSG()
     zSlice->getOrCreateStateSet()->addUniform( zSliceUniform );
 
     // disable culling.
-    // NOTE: Somehow, this is ignore by OSG. If you know why: tell me please
+    // NOTE: Somehow, this is ignore by OSG. If you know why: tell Sebastian Eichelbaum please
     xSlice->setCullingActive( false );
     ySlice->setCullingActive( false );
     zSlice->setCullingActive( false );
