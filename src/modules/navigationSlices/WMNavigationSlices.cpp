@@ -217,13 +217,25 @@ void WMNavigationSlices::initOSG()
     ySlice->setCullingActive( false );
     zSlice->setCullingActive( false );
 
-    // each slice is child of an transformation node
-    osg::ref_ptr< osg::MatrixTransform > mX = new osg::MatrixTransform();
-    mX->addChild( xSlice );
-    osg::ref_ptr< osg::MatrixTransform > mY = new osg::MatrixTransform();
-    mY->addChild( ySlice );
-    osg::ref_ptr< osg::MatrixTransform > mZ = new osg::MatrixTransform();
-    mZ->addChild( zSlice );
+    // Each slice is child of an transformation node
+    // These nodes are for the main view
+    // Seperate nodes are important to allow hiding of slices in the main view while keeping those in nav views
+    osg::ref_ptr< osg::MatrixTransform > matMainViewX = new osg::MatrixTransform();
+    matMainViewX->addChild( xSlice );
+    osg::ref_ptr< osg::MatrixTransform > matMainViewY = new osg::MatrixTransform();
+    matMainViewY->addChild( ySlice );
+    osg::ref_ptr< osg::MatrixTransform > matMainViewZ = new osg::MatrixTransform();
+    matMainViewZ->addChild( zSlice );
+
+    // Each slice is child of an transformation node
+    // These nodes are for the navigation views
+    // Seperate nodes are important to allow hiding of slice in the main view while keeping those in nav views
+    osg::ref_ptr< osg::MatrixTransform > matNavViewX = new osg::MatrixTransform();
+    matNavViewX->addChild( xSlice );
+    osg::ref_ptr< osg::MatrixTransform > matNavViewY = new osg::MatrixTransform();
+    matNavViewY->addChild( ySlice );
+    osg::ref_ptr< osg::MatrixTransform > matNavViewZ = new osg::MatrixTransform();
+    matNavViewZ->addChild( zSlice );
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Callback Setup
@@ -231,14 +243,17 @@ void WMNavigationSlices::initOSG()
 
     // Control transformation node by properties. We use an additional uniform here to provide the shader the transformation matrix used to
     // translate the slice.
-    mX->addUpdateCallback( new WGELinearTranslationCallback< WPropDouble >( osg::Vec3( 1.0, 0.0, 0.0 ), m_xPos, xSliceUniform ) );
-    mY->addUpdateCallback( new WGELinearTranslationCallback< WPropDouble >( osg::Vec3( 0.0, 1.0, 0.0 ), m_yPos, ySliceUniform ) );
-    mZ->addUpdateCallback( new WGELinearTranslationCallback< WPropDouble >( osg::Vec3( 0.0, 0.0, 1.0 ), m_zPos, zSliceUniform ) );
+    matMainViewX->addUpdateCallback( new WGELinearTranslationCallback< WPropDouble >( osg::Vec3( 1.0, 0.0, 0.0 ), m_xPos, xSliceUniform ) );
+    matMainViewY->addUpdateCallback( new WGELinearTranslationCallback< WPropDouble >( osg::Vec3( 0.0, 1.0, 0.0 ), m_yPos, ySliceUniform ) );
+    matMainViewZ->addUpdateCallback( new WGELinearTranslationCallback< WPropDouble >( osg::Vec3( 0.0, 0.0, 1.0 ), m_zPos, zSliceUniform ) );
+    matNavViewX->addUpdateCallback( new WGELinearTranslationCallback< WPropDouble >( osg::Vec3( 1.0, 0.0, 0.0 ), m_xPos, xSliceUniform ) );
+    matNavViewY->addUpdateCallback( new WGELinearTranslationCallback< WPropDouble >( osg::Vec3( 0.0, 1.0, 0.0 ), m_yPos, ySliceUniform ) );
+    matNavViewZ->addUpdateCallback( new WGELinearTranslationCallback< WPropDouble >( osg::Vec3( 0.0, 0.0, 1.0 ), m_zPos, zSliceUniform ) );
 
     // set callbacks for en-/disabling the nodes
-    xSlice->addUpdateCallback( new WGENodeMaskCallback( m_showonX ) );
-    ySlice->addUpdateCallback( new WGENodeMaskCallback( m_showonY ) );
-    zSlice->addUpdateCallback( new WGENodeMaskCallback( m_showonZ ) );
+    matMainViewX->addUpdateCallback( new WGENodeMaskCallback( m_showonX ) );
+    matMainViewY->addUpdateCallback( new WGENodeMaskCallback( m_showonY ) );
+    matMainViewZ->addUpdateCallback( new WGENodeMaskCallback( m_showonZ ) );
 
     // set the pick callbacks for each slice
     m_xSlicePicker = PickCallback::SPtr( new PickCallback( xSlice, m_xPos ) );
@@ -268,18 +283,18 @@ void WMNavigationSlices::initOSG()
     m_coronalOutput->getOrCreateStateSet()->addUniform( transparencyUniform );
 
     // add the transformation nodes to the output group
-    m_output->insert( mX );
-    m_output->insert( mY );
-    m_output->insert( mZ );
+    m_output->insert( matMainViewX );
+    m_output->insert( matMainViewY );
+    m_output->insert( matMainViewZ );
 
     // add proxy
     m_output->insert( wge::generateCullProxy( bb ) );
 
     m_output->dirtyBound();
 
-    m_axialOutput->insert( mZ );
-    m_sagittalOutput->insert( mX );
-    m_coronalOutput->insert( mY );
+    m_axialOutput->insert( matNavViewZ );
+    m_sagittalOutput->insert( matNavViewX );
+    m_coronalOutput->insert( matNavViewY );
 }
 
 WMNavigationSlices::PickCallback::PickCallback( osg::ref_ptr< osg::Node > node, WPropDouble property, bool negateDirection ):
