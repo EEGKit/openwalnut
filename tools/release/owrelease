@@ -34,11 +34,11 @@ VERSION_BASE=1.4.0
 # Any additonal tags?
 VERSION_TAGS=""
 
-# Should the package number contain the HG revision?
-VERSION_INCLUDE_HG=0
+# Should the package number contain the GIT revision?
+VERSION_INCLUDE_GIT=0
 
 # Where to grab the sources?
-REPO="ssh://ebaum@openwalnut.org//srv/hg/ow"
+REPO="ssh://git@bsvgit.informatik.uni-leipzig.de/openwalnut/openwalnut.git"
 REPO_BRANCH="OpenWalnut_1.4"
 # build from a release branch?
 #REPO_BRANCH="OpenWalnut_$VESION"
@@ -76,7 +76,7 @@ RELEASE_DIR="OpenWalnut-Release"
 export LC_ALL=C
 
 # Where to put the files
-CHECKOUT_DIR="OpenWalnut-hg"
+CHECKOUT_DIR="OpenWalnut-git"
 
 # the source config file
 CONFIG_FILE=owrelease.config
@@ -101,13 +101,13 @@ Bootstrap()
 
     # get code
     echo "* Cloning OpenWalnut repository \"$REPO\"."
-    hg clone --branch $REPO_BRANCH "$REPO" "$CHECKOUT_DIR"
+    git clone --branch $REPO_BRANCH "$REPO" "$CHECKOUT_DIR"
     if [ $? -ne 0 ]; then
         echo " * Cloning failed. Wrong repository?"
         exit 1
     fi
-    echo "* Creating CHANGELOG."
-    hg log --style changelog "$CHECKOUT_DIR" > "$CHECKOUT_DIR/CHANGELOG"
+    echo "* Creating CHANGELOG. ($CHECKOUT_DIR)"
+    git --git-dir "$CHECKOUT_DIR"/.git log --oneline --decorate  > "$CHECKOUT_DIR/CHANGELOG"
 
     echo "* Creating release directory \"$RELEASE_DIR\"."
     mkdir -p $RELEASE_DIR
@@ -122,8 +122,8 @@ Bootstrap()
     # The version. You can use shell commands to evaluate this. The command is
     # called inside the working dir of owpack script.
     echo "VERSION_BASE=$VERSION_BASE" >> $CONFIG_FILE
-    if [ $VERSION_INCLUDE_HG -ne 0 ]; then
-        echo "VERSION=$VERSION_BASE$VERSION_TAGS+hg`cd $CHECKOUT_DIR;hg parents --template "{node|short}"`" >> $CONFIG_FILE
+    if [ $VERSION_INCLUDE_GIT -ne 0 ]; then
+        echo "VERSION=$VERSION_BASE$VERSION_TAGS+git`cd $CHECKOUT_DIR;git rev-parse HEAD`" >> $CONFIG_FILE
     else
         echo "VERSION=$VERSION_BASE$VERSION_TAGS" >> $CONFIG_FILE
     fi
