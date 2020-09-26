@@ -2,7 +2,7 @@
 //
 // Project: OpenWalnut ( http://www.openwalnut.org )
 //
-// Copyright 2009 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
+// Copyright 2009-2020 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
 // For more information see http://www.openwalnut.org/copying
 //
 // This file is part of OpenWalnut.
@@ -350,20 +350,20 @@ void WMNavigationSlices::moduleMain()
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_output );
 
     // add for side-views
-    boost::shared_ptr< WGEViewer > v = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Axial View" );
-    if( v )
+    boost::shared_ptr< WGEViewer > viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Axial View" );
+    if( viewer )
     {
-        v->getScene()->insert( m_axialOutput );
+        viewer->getScene()->insert( m_axialOutput );
     }
-    v = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Coronal View" );
-    if( v )
+    viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Coronal View" );
+    if( viewer )
     {
-        v->getScene()->insert( m_coronalOutput );
+        viewer->getScene()->insert( m_coronalOutput );
     }
-    v = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Sagittal View" );
-    if( v )
+    viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Sagittal View" );
+    if( viewer )
     {
-        v->getScene()->insert( m_sagittalOutput );
+        viewer->getScene()->insert( m_sagittalOutput );
     }
 
     // disable the pick-coloring for the side views
@@ -421,19 +421,19 @@ void WMNavigationSlices::moduleMain()
 
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_output );
 
-    v = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Axial View" );
-    if( v )
+    viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Axial View" );
+    if( viewer )
     {
-        v->getScene()->remove( m_axialOutput );
+        viewer->getScene()->remove( m_axialOutput );
     }
-    v = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Coronal View" );
-    if( v )
+    viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Coronal View" );
+    if( viewer )
     {
-        v->getScene()->remove( m_coronalOutput );
+        viewer->getScene()->remove( m_coronalOutput );
     }
-    v = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Sagittal View" );
-    if( v )
+    viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Sagittal View" );
+    if( viewer )
     {
-        v->getScene()->remove( m_sagittalOutput );
+        viewer->getScene()->remove( m_sagittalOutput );
     }
 }
