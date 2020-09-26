@@ -14,12 +14,12 @@ GNU/Linux operating systems.
 
 # AUTHORS AND CONTRIBUTORS
 
-See the files "AUTHORS" and "CONTRIBUTORS".
+See the files "[AUTHORS](AUTHORS)" and "[CONTRIBUTORS](CONTRIBUTORS)".
 
 # LICENSE
 
 OpenWalnut is licensed under the terms of the LGPLv3.
-See the "COPYING" and "COPYING.LESSER" files.
+See the "[COPYING](COPYING)" and "[COPYING.LESSER](COPYING.LESSER)" files.
 
 # CONTACT
 
@@ -100,6 +100,6 @@ information is available online at http://www.openwalnut.org
 # DEVELOPING
 
 If you want to develop modules for OpenWalnut, have a look at 
-src/modules/template, which contains an extensively documented example module.
+[src/modules/template](src/modules/template), which contains an extensively documented example module.
 More information is available online. The wiki, especially the development
 section, is very helpful.
