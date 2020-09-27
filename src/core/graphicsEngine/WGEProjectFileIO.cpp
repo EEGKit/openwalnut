@@ -42,7 +42,9 @@
 WGEProjectFileIO::WGEProjectFileIO():
     WProjectFileIO()
 {
-    // initialize members
+    // Prevent the system from resetting the camera when the first node in the scenegraph appears.
+    // When loading a project file whith camera information we want to set the camera ourselves.
+    WGraphicsEngine::getGraphicsEngine()->getScene()->forceFirstHomePositionRequestFalse();
 }
 
 WGEProjectFileIO::~WGEProjectFileIO()
@@ -285,4 +287,3 @@ void WGEProjectFileIO::save( std::ostream& output ) // NOLINT
 
     output << "//Camera Matrices END: \"" << name << "\"" << std::endl;
 }
-
