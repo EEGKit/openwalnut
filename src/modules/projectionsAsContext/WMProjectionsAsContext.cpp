@@ -176,8 +176,6 @@ void WMProjectionsAsContext::requirements()
 
 void WMProjectionsAsContext::moduleMain()
 {
-    infoLog() << "Thrsholding example main routine started";
-
     // get notified about data changes
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_scalarIC->getDataChangedCondition() );
