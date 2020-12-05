@@ -1,0 +1,220 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Modules and Properties
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+MODULE:0:Scalar Data Creator
+// Property Group: Properties
+    PROPERTY:(0,Name)=Scalar Data Creator
+    PROPERTY:(0,active)=1
+    PROPERTY:(0,Voxels X)=128
+    PROPERTY:(0,Voxels Y)=128
+    PROPERTY:(0,Voxels Z)=128
+    PROPERTY:(0,Origin)=0;0;0;
+    PROPERTY:(0,Size)=20;20;20;
+    // Property Group: Dataset Creators
+        PROPERTY:(0,Dataset Creators/Creator)=3
+        // Property Group: Random
+            PROPERTY:(0,Dataset Creators/Random/Range Min)=0
+            PROPERTY:(0,Dataset Creators/Random/Range Max)=1
+        // Property Group END: Random
+        // Property Group: Spherical
+            PROPERTY:(0,Dataset Creators/Spherical/Center)=0.5;0.5;0.5;
+            PROPERTY:(0,Dataset Creators/Spherical/Radius)=0.5
+            PROPERTY:(0,Dataset Creators/Spherical/Lower Clamp Threshold)=0
+            PROPERTY:(0,Dataset Creators/Spherical/Upper Clamp Threshold)=1.79769e+308
+            PROPERTY:(0,Dataset Creators/Spherical/Lower Clamp Value)=0
+            PROPERTY:(0,Dataset Creators/Spherical/Upper Clamp Value)=0
+        // Property Group END: Spherical
+        // Property Group: Tangle
+            PROPERTY:(0,Dataset Creators/Tangle/Scale)=1
+        // Property Group END: Tangle
+        // Property Group: Breyzel5
+            PROPERTY:(0,Dataset Creators/Breyzel5/Scale)=1
+        // Property Group END: Breyzel5
+        // Property Group: LinearAscent
+            PROPERTY:(0,Dataset Creators/LinearAscent/Range Min)=0
+            PROPERTY:(0,Dataset Creators/LinearAscent/Range Max)=1
+        // Property Group END: LinearAscent
+        // Property Group: Constant
+            PROPERTY:(0,Dataset Creators/Constant/Value)=0
+        // Property Group END: Constant
+        // Property Group: Turing
+            PROPERTY:(0,Dataset Creators/Turing/Spot size)=0.65
+            PROPERTY:(0,Dataset Creators/Turing/Spot irregularity)=0
+            PROPERTY:(0,Dataset Creators/Turing/Turing integration steps)=100
+        // Property Group END: Turing
+    // Property Group END: Dataset Creators
+// Property Group END: Properties
+
+MODULE:1:Isosurface
+// Property Group: Properties
+    PROPERTY:(1,Name)=Isosurface
+    PROPERTY:(1,active)=1
+    PROPERTY:(1,Iso value)=0.899876
+    PROPERTY:(1,Opacity %)=35
+    PROPERTY:(1,Use texture)=0
+    PROPERTY:(1,Surface color)=1 1 1 1
+    PROPERTY:(1,Voxel surface)=0
+    // Property Group: Post-processing
+        PROPERTY:(1,Post-processing/Texture Debug)=0
+        PROPERTY:(1,Post-processing/Enable)=0
+        PROPERTY:(1,Post-processing/Postprocessor)=0
+        // Property Group: Settings for Edge Enhance
+            PROPERTY:(1,Post-processing/Settings for Edge Enhance/Effect Only)=0
+            PROPERTY:(1,Post-processing/Settings for Edge Enhance/Effect Scaling)=1
+            PROPERTY:(1,Post-processing/Settings for Edge Enhance/White Edge)=0
+            PROPERTY:(1,Post-processing/Settings for Edge Enhance/Edge Lower Threshold)=0
+            PROPERTY:(1,Post-processing/Settings for Edge Enhance/Edge Upper Threshold)=1
+        // Property Group END: Settings for Edge Enhance
+        // Property Group: Settings for Cel Shading
+            PROPERTY:(1,Post-processing/Settings for Cel Shading/Effect Only)=0
+            PROPERTY:(1,Post-processing/Settings for Cel Shading/Effect Scaling)=1
+            PROPERTY:(1,Post-processing/Settings for Cel Shading/Number of Bins)=10
+        // Property Group END: Settings for Cel Shading
+        // Property Group: Settings for Gauss Filtering
+            PROPERTY:(1,Post-processing/Settings for Gauss Filtering/Effect Only)=0
+            PROPERTY:(1,Post-processing/Settings for Gauss Filtering/Effect Scaling)=1
+        // Property Group END: Settings for Gauss Filtering
+        // Property Group: Settings for SSAO
+            PROPERTY:(1,Post-processing/Settings for SSAO/Effect Only)=0
+            PROPERTY:(1,Post-processing/Settings for SSAO/Effect Scaling)=1
+            PROPERTY:(1,Post-processing/Settings for SSAO/Samples)=16
+            PROPERTY:(1,Post-processing/Settings for SSAO/Radius)=10
+            PROPERTY:(1,Post-processing/Settings for SSAO/Total Strength)=2
+            PROPERTY:(1,Post-processing/Settings for SSAO/Strength)=1
+            PROPERTY:(1,Post-processing/Settings for SSAO/Falloff)=0
+        // Property Group END: Settings for SSAO
+        // Property Group: Settings for LineAO
+            PROPERTY:(1,Post-processing/Settings for LineAO/Effect Only)=0
+            PROPERTY:(1,Post-processing/Settings for LineAO/Effect Scaling)=1
+            PROPERTY:(1,Post-processing/Settings for LineAO/Samples)=32
+            PROPERTY:(1,Post-processing/Settings for LineAO/Hemispheres)=3
+            PROPERTY:(1,Post-processing/Settings for LineAO/Radius)=2
+            PROPERTY:(1,Post-processing/Settings for LineAO/Total Strength)=1
+            PROPERTY:(1,Post-processing/Settings for LineAO/Density Weight)=1
+            PROPERTY:(1,Post-processing/Settings for LineAO/Use Gaussed ND-Map)=0
+            PROPERTY:(1,Post-processing/Settings for LineAO/Use Occluder Light)=1
+        // Property Group END: Settings for LineAO
+        // Property Group: Settings for Halftone
+            PROPERTY:(1,Post-processing/Settings for Halftone/Effect Only)=0
+            PROPERTY:(1,Post-processing/Settings for Halftone/Effect Scaling)=1
+            PROPERTY:(1,Post-processing/Settings for Halftone/Rotation angle)=30
+            PROPERTY:(1,Post-processing/Settings for Halftone/Texture Size)=4
+            PROPERTY:(1,Post-processing/Settings for Halftone/Cross Hatch Threshold)=0.9
+            PROPERTY:(1,Post-processing/Settings for Halftone/Dither Clip)=0.6
+            PROPERTY:(1,Post-processing/Settings for Halftone/Hatch Color)=0.1 0.1 0.1 1
+            // Property Group: Settings for Edge Enhance
+                PROPERTY:(1,Post-processing/Settings for Halftone/Settings for Edge Enhance/Effect Only)=1
+                PROPERTY:(1,Post-processing/Settings for Halftone/Settings for Edge Enhance/Effect Scaling)=1
+                PROPERTY:(1,Post-processing/Settings for Halftone/Settings for Edge Enhance/White Edge)=0
+                PROPERTY:(1,Post-processing/Settings for Halftone/Settings for Edge Enhance/Edge Lower Threshold)=0
+                PROPERTY:(1,Post-processing/Settings for Halftone/Settings for Edge Enhance/Edge Upper Threshold)=1
+            // Property Group END: Settings for Edge Enhance
+        // Property Group END: Settings for Halftone
+        // Property Group: Additional Depth Shading
+            PROPERTY:(1,Post-processing/Additional Depth Shading/Enable)=0
+            PROPERTY:(1,Post-processing/Additional Depth Shading/Lower Depth Threshold)=0.25
+            PROPERTY:(1,Post-processing/Additional Depth Shading/Upper Depth Threshold)=0.75
+            PROPERTY:(1,Post-processing/Additional Depth Shading/Lower Shading Intensity)=0.75
+            PROPERTY:(1,Post-processing/Additional Depth Shading/Upper Shading Intensity)=1
+        // Property Group END: Additional Depth Shading
+    // Property Group END: Post-processing
+// Property Group END: Properties
+
+MODULE:2:Navigation Slices
+// Property Group: Properties
+    PROPERTY:(2,Name)=Navigation Slices
+    PROPERTY:(2,active)=1
+    PROPERTY:(2,No transparency)=0
+    // Property Group: Slices
+        PROPERTY:(2,Slices/Show Sagittal Slice)=1
+        PROPERTY:(2,Slices/Show Coronal Slice)=1
+        PROPERTY:(2,Slices/Show Axial Slice)=1
+        PROPERTY:(2,Slices/Sagittal Position)=15.8799
+        PROPERTY:(2,Slices/Coronal Position)=9.58072
+        PROPERTY:(2,Slices/Axial Position)=7.48032
+    // Property Group END: Slices
+// Property Group END: Properties
+
+MODULE:3:Colormapper
+// Property Group: Properties
+    PROPERTY:(3,Name)=Colormapper
+    PROPERTY:(3,active)=1
+    PROPERTY:(3,Default Name)=Unnamed
+    // Property Group: Colorbar
+        PROPERTY:(3,Colorbar/Show Colorbar)=1
+        // Property Group: Border
+            PROPERTY:(3,Colorbar/Border/Show Border)=1
+            PROPERTY:(3,Colorbar/Border/Border Color)=1 1 1 1
+        // Property Group END: Border
+        // Property Group: Name Label
+            PROPERTY:(3,Colorbar/Name Label/Show Name)=1
+            PROPERTY:(3,Colorbar/Name Label/Text Size)=0.015
+            PROPERTY:(3,Colorbar/Name Label/Name Color)=0.9 0.9 0.9 1
+            PROPERTY:(3,Colorbar/Name Label/Name Outline Color)=0 0 0 1
+            PROPERTY:(3,Colorbar/Name Label/Colorbar Name Position)=0
+        // Property Group END: Name Label
+        // Property Group: Labels
+            PROPERTY:(3,Colorbar/Labels/Colorbar Labels)=10
+            PROPERTY:(3,Colorbar/Labels/Text Size)=0.015
+            PROPERTY:(3,Colorbar/Labels/Label Color)=0.9 0.9 0.9 1
+            PROPERTY:(3,Colorbar/Labels/Label Outline Color)=0 0 0 1
+            PROPERTY:(3,Colorbar/Labels/Label Bar Color)=1 1 1 1
+        // Property Group END: Labels
+    // Property Group END: Colorbar
+    // Property Group: Texture Properties
+        PROPERTY:(3,Texture Properties/Name)=Scalar
+        PROPERTY:(3,Texture Properties/Sort Index)=0
+        PROPERTY:(3,Texture Properties/Minimum)=-0.099938
+        PROPERTY:(3,Texture Properties/Scale)=1.99963
+        PROPERTY:(3,Texture Properties/Alpha)=1
+        PROPERTY:(3,Texture Properties/Enable Zero Clip)=1
+        PROPERTY:(3,Texture Properties/Enable Threshold)=0
+        PROPERTY:(3,Texture Properties/Lower Threshold)=-0.099938
+        PROPERTY:(3,Texture Properties/Upper Threshold)=1.89969
+        PROPERTY:(3,Texture Properties/Enable Windowing)=0
+        PROPERTY:(3,Texture Properties/Window Level)=-0.099938;1.89969
+        PROPERTY:(3,Texture Properties/Interpolate)=1
+        PROPERTY:(3,Texture Properties/Colormap)=3
+        PROPERTY:(3,Texture Properties/Active)=1
+    // Property Group END: Texture Properties
+// Property Group END: Properties
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Connections
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+CONNECTION:(0,out)->(1,values)
+CONNECTION:(0,out)->(3,input)
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ROI Structure
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Camera definitions
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+CAMERA:0:Main View
+//Camera Matrices: "Main View"
+    MANIPULATOR:(0,Matrix)=-0.124378;-0.0750294;-0.0131372;0;0.0213138;-0.0584312;0.131922;0;-0.0731281;0.110582;0.0607939;0;-44.6297;95.1652;55.1773;1
+    MANIPULATOR:(0,HomeEye)=13.4377;-95.0406;13.4377
+    MANIPULATOR:(0,HomeCenter)=13.4377;13.4377;13.4377
+    MANIPULATOR:(0,HomeUp)=0;0;1
+//Camera Matrices END: "Main View"
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// QtGUI Network Information
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+QT5GUI_NETWORK:0=0;0
+QT5GUI_NETWORK_Flags:0=0;0
+QT5GUI_NETWORK:1=0;1
+QT5GUI_NETWORK_Flags:1=1;0
+QT5GUI_NETWORK:2=1;0
+QT5GUI_NETWORK_Flags:2=0;0
+QT5GUI_NETWORK:3=1;1
+QT5GUI_NETWORK_Flags:3=1;0
+QT5GUI_NETWORK_Scale:1
+
