@@ -122,7 +122,12 @@ int main( int argc, char** argv )
     po::notify( optionsMap );
 
     // print usage information if command line asks for help.
-    if( optionsMap.count( "help" ) || ( optionsMap.count( "interp" ) == 0 && optionsMap.count( "file" ) == 0 ) )
+    if( optionsMap.count( "version" ) )
+    {
+        printVersion();
+        return 0;
+    }
+    else if( optionsMap.count( "help" ) || ( optionsMap.count( "interp" ) == 0 && optionsMap.count( "file" ) == 0 ) )
     {
         // NOTE: if you modify this, check that help2man still works properly! (http://www.gnu.org/software/help2man) But be careful. There need
         // to be several manual changes to be done in the manual after help2man has done its job.
@@ -138,11 +143,6 @@ int main( int argc, char** argv )
                   << std::endl
                   << "  openwalnut-script -f doSth.py\t\tStart OpenWalnut and execute the doSth.py python script." << std::endl
                   << std::endl;
-        return 0;
-    }
-    else if( optionsMap.count( "version" ) )
-    {
-        printVersion();
         return 0;
     }
 
