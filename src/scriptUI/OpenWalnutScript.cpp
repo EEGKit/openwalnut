@@ -134,6 +134,8 @@ int main( int argc, char** argv )
                   << std::endl
                   << "Examples:" << std::endl
                   << "  openwalnut-script -i lua \t\tStartup OpenWalnut in lua interpreter mode." << std::endl
+                  << "  openwalnut-script -i python \t\tStartup OpenWalnut in python interpreter mode." << std::endl
+                  << std::endl
                   << "  openwalnut-script -f doSth.py\t\tStart OpenWalnut and execute the doSth.py python script." << std::endl
                   << std::endl;
         return 0;
