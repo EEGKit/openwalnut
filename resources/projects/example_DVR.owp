@@ -1,0 +1,173 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Modules and Properties
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+MODULE:0:Transfer Function 1D
+// Property Group: Properties
+    PROPERTY:(0,Name)=Transfer Function 1D
+    PROPERTY:(0,active)=1
+    PROPERTY:(0,Transfer Function)=c:0:0:0:1;c:0.36:0:1:0;c:0.716667:1:0.0941176:0.0941176;c:1:1:0:0;a:0:0.17;a:0.0933333:0.14;a:0.2:0;a:0.35:1;a:0.583333:0;a:0.71:0.13;a:0.806667:0;a:0.876667:0;a:1:0
+    PROPERTY:(0,Opacity Scaling)=0.2333
+    PROPERTY:(0,Histogram Resolution)=64
+    PROPERTY:(0,Number of Samples)=425
+// Property Group END: Properties
+
+MODULE:1:Direct Volume Rendering
+// Property Group: Properties
+    PROPERTY:(1,Name)=Direct Volume Rendering
+    PROPERTY:(1,active)=1
+    PROPERTY:(1,Sample count)=1550
+    PROPERTY:(1,Local illumination model)=1
+    // Property Group: Improvements
+        PROPERTY:(1,Improvements/Stochastic jitter)=1
+        PROPERTY:(1,Improvements/Opacity correction)=1
+        PROPERTY:(1,Improvements/MIP)=0
+        PROPERTY:(1,Improvements/Depth Projection)=0
+    // Property Group END: Improvements
+// Property Group END: Properties
+
+MODULE:2:Navigation Slices
+// Property Group: Properties
+    PROPERTY:(2,Name)=Navigation Slices
+    PROPERTY:(2,active)=1
+    PROPERTY:(2,No transparency)=0
+    // Property Group: Slices
+        PROPERTY:(2,Slices/Show Sagittal Slice)=0
+        PROPERTY:(2,Slices/Show Coronal Slice)=0
+        PROPERTY:(2,Slices/Show Axial Slice)=0
+        PROPERTY:(2,Slices/Sagittal Position)=51.6859
+        PROPERTY:(2,Slices/Coronal Position)=44.7623
+        PROPERTY:(2,Slices/Axial Position)=42.2308
+    // Property Group END: Slices
+// Property Group END: Properties
+
+MODULE:3:Colormapper
+// Property Group: Properties
+    PROPERTY:(3,Name)=Colormapper
+    PROPERTY:(3,active)=1
+    PROPERTY:(3,Default Name)=Unnamed
+    // Property Group: Colorbar
+        PROPERTY:(3,Colorbar/Show Colorbar)=0
+        // Property Group: Border
+            PROPERTY:(3,Colorbar/Border/Show Border)=1
+            PROPERTY:(3,Colorbar/Border/Border Color)=1 1 1 1
+        // Property Group END: Border
+        // Property Group: Name Label
+            PROPERTY:(3,Colorbar/Name Label/Show Name)=1
+            PROPERTY:(3,Colorbar/Name Label/Text Size)=0.015
+            PROPERTY:(3,Colorbar/Name Label/Name Color)=0.9 0.9 0.9 1
+            PROPERTY:(3,Colorbar/Name Label/Name Outline Color)=0 0 0 1
+            PROPERTY:(3,Colorbar/Name Label/Colorbar Name Position)=0
+        // Property Group END: Name Label
+        // Property Group: Labels
+            PROPERTY:(3,Colorbar/Labels/Colorbar Labels)=10
+            PROPERTY:(3,Colorbar/Labels/Text Size)=0.015
+            PROPERTY:(3,Colorbar/Labels/Label Color)=0.9 0.9 0.9 1
+            PROPERTY:(3,Colorbar/Labels/Label Outline Color)=0 0 0 1
+            PROPERTY:(3,Colorbar/Labels/Label Bar Color)=1 1 1 1
+        // Property Group END: Labels
+    // Property Group END: Colorbar
+    // Property Group: Texture Properties
+        PROPERTY:(3,Texture Properties/Name)=Unnamed
+        PROPERTY:(3,Texture Properties/Sort Index)=0
+        PROPERTY:(3,Texture Properties/Minimum)=-0.099938
+        PROPERTY:(3,Texture Properties/Scale)=1.99963
+        PROPERTY:(3,Texture Properties/Alpha)=1
+        PROPERTY:(3,Texture Properties/Enable Zero Clip)=1
+        PROPERTY:(3,Texture Properties/Enable Threshold)=0
+        PROPERTY:(3,Texture Properties/Lower Threshold)=-0.099938
+        PROPERTY:(3,Texture Properties/Upper Threshold)=1.89969
+        PROPERTY:(3,Texture Properties/Enable Windowing)=0
+        PROPERTY:(3,Texture Properties/Window Level)=-0.099938;1.89969
+        PROPERTY:(3,Texture Properties/Interpolate)=1
+        PROPERTY:(3,Texture Properties/Colormap)=0
+        PROPERTY:(3,Texture Properties/Active)=1
+    // Property Group END: Texture Properties
+// Property Group END: Properties
+
+MODULE:4:Scalar Data Creator
+// Property Group: Properties
+    PROPERTY:(4,Name)=Scalar Data Creator
+    PROPERTY:(4,active)=1
+    PROPERTY:(4,Voxels X)=128
+    PROPERTY:(4,Voxels Y)=128
+    PROPERTY:(4,Voxels Z)=128
+    PROPERTY:(4,Origin)=0;0;0;
+    PROPERTY:(4,Size)=100;100;100;
+    // Property Group: Dataset Creators
+        PROPERTY:(4,Dataset Creators/Creator)=3
+        // Property Group: Random
+            PROPERTY:(4,Dataset Creators/Random/Range Min)=0
+            PROPERTY:(4,Dataset Creators/Random/Range Max)=1
+        // Property Group END: Random
+        // Property Group: Spherical
+            PROPERTY:(4,Dataset Creators/Spherical/Center)=0.5;0.5;0.5;
+            PROPERTY:(4,Dataset Creators/Spherical/Radius)=0.5
+            PROPERTY:(4,Dataset Creators/Spherical/Lower Clamp Threshold)=0
+            PROPERTY:(4,Dataset Creators/Spherical/Upper Clamp Threshold)=1.79769e+308
+            PROPERTY:(4,Dataset Creators/Spherical/Lower Clamp Value)=0
+            PROPERTY:(4,Dataset Creators/Spherical/Upper Clamp Value)=0
+        // Property Group END: Spherical
+        // Property Group: Tangle
+            PROPERTY:(4,Dataset Creators/Tangle/Scale)=1
+        // Property Group END: Tangle
+        // Property Group: Breyzel5
+            PROPERTY:(4,Dataset Creators/Breyzel5/Scale)=1
+        // Property Group END: Breyzel5
+        // Property Group: LinearAscent
+            PROPERTY:(4,Dataset Creators/LinearAscent/Range Min)=0
+            PROPERTY:(4,Dataset Creators/LinearAscent/Range Max)=1
+        // Property Group END: LinearAscent
+        // Property Group: Constant
+            PROPERTY:(4,Dataset Creators/Constant/Value)=0
+        // Property Group END: Constant
+        // Property Group: Turing
+            PROPERTY:(4,Dataset Creators/Turing/Spot size)=0.65
+            PROPERTY:(4,Dataset Creators/Turing/Spot irregularity)=0
+            PROPERTY:(4,Dataset Creators/Turing/Turing integration steps)=100
+        // Property Group END: Turing
+    // Property Group END: Dataset Creators
+// Property Group END: Properties
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Connections
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+CONNECTION:(0,transferFunction1D)->(1,transfer function)
+CONNECTION:(4,out)->(0,histogram input)
+CONNECTION:(4,out)->(1,in)
+CONNECTION:(4,out)->(3,input)
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ROI Structure
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Camera definitions
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+CAMERA:0:Main View
+//Camera Matrices: "Main View"
+    MANIPULATOR:(0,Matrix)=-0.571585;0.450512;-0.0231787;0;-0.224694;-0.251885;0.645192;0;0.391165;0.513615;0.336744;0;80.0173;107.056;69.1464;1
+    MANIPULATOR:(0,HomeEye)=13.4377;-95.0406;13.4377
+    MANIPULATOR:(0,HomeCenter)=13.4377;13.4377;13.4377
+    MANIPULATOR:(0,HomeUp)=0;0;1
+//Camera Matrices END: "Main View"
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// QtGUI Network Information
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+QT5GUI_NETWORK:0=0;1
+QT5GUI_NETWORK_Flags:0=1;0
+QT5GUI_NETWORK:1=0;2
+QT5GUI_NETWORK_Flags:1=1;0
+QT5GUI_NETWORK:2=1;0
+QT5GUI_NETWORK_Flags:2=0;0
+QT5GUI_NETWORK:3=1;1
+QT5GUI_NETWORK_Flags:3=1;0
+QT5GUI_NETWORK:4=0;0
+QT5GUI_NETWORK_Flags:4=0;0
+QT5GUI_NETWORK_Scale:0.869565
+
