@@ -181,6 +181,10 @@ for dataset in niftiList:
     # We start with loading the dataset, which is done by creating a data module:
     data = rootContainer.createDataModule( fileToLoad )
 
+    # Here we should wait for data to be loaded ... but is an easy example so we just wait for 5 seconds
+    print( "Waiting for 5 seconds." )
+    time.sleep( 5 )
+    
     # Now we check if the data we loaded is a scalar dataset:
     if not data.getInformationProperties().getProperty( "Dataset type" ).getString( True ) == "WDataSetScalar":
         print( fileToLoad, "does not contain scalar data! Skipping." )
