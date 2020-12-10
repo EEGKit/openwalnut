@@ -24,20 +24,20 @@
 #
 # You can use this python interpreter just as you would use the normal one. For example, type
 #
-# print i
+# print( i )
 #
 # This yields an error, as 'i' was not defined. Try
 #
 # i = 1
-# print i
+# print( i )
 #
 # This yields the correct answer. You can also use all modules available to your python installation:
 #
 # import datetime
-# print datetime.datetime.now().strftime( "%A %Y-%m-%d %H:%M" )
+# print( datetime.datetime.now().strftime( "%A %Y-%m-%d %H:%M" ) )
 #
 # This will print the current day and time. You can also define and use functions and classes. Feel free to experiment a bit.
-# You can quit by typing 'quit'.
+# You can quit by typing 'quit()'.
 
 
 
@@ -85,29 +85,29 @@ signal.signal( signal.SIGINT, signal.SIG_DFL )
 # Now we can proceed by checking the parameters:
 
 if len( sys.argv ) < 3:
-    print "Too few parameters, quitting."
+    print( "Too few parameters for this script. Two directories are needed as parameters. Quitting." )
     exit( 1 )
 
 # This checks the input dir:
 
 inputDir = sys.argv[ 1 ]
-print "Input dir was set to", inputDir
+print( "Input dir was set to", inputDir )
 if not os.path.exists( inputDir ):
-    print "The directory", inputDir, "does not exist!"
+    print( "The directory", inputDir, "does not exist!" )
     exit( 1 )
 if not os.path.isdir( inputDir ):
-    print inputDir, "is not a directory!"
+    print( inputDir, "is not a directory!" )
     exit( 1 )
 
 # Now the same for our output directory:
 
 outputDir = sys.argv[ 2 ]
-print "Output dir was set to", outputDir
+print( "Output dir was set to", outputDir )
 if not os.path.exists( outputDir ):
-    print "The directory", outputDir, "does not exist!"
+    print( "The directory", outputDir, "does not exist!" )
     exit( 1 )
 if not os.path.isdir( outputDir ):
-    print outputDir, "is not a directory!"
+    print( outputDir, "is not a directory!" )
     exit( 1 )
 
 # The next step is to find all the files that we want to process:
@@ -123,9 +123,9 @@ for f in filesList:
             filename, extension = os.path.splitext( filename )
             if extension is not None and extension == '.nii':
                 niftiList.append( f )
-print "List of nifti files in input directory:", niftiList
+print( "List of nifti files in input directory:", niftiList )
 if len( niftiList ) == 0:
-    print "No nifti files found!"
+    print( "No nifti files found!" )
     exit( 1 )
 
 # Now that we have found all the datasets, we can proceed by initializing the
@@ -181,9 +181,13 @@ for dataset in niftiList:
     # We start with loading the dataset, which is done by creating a data module:
     data = rootContainer.createDataModule( fileToLoad )
 
+    # Here we should wait for data to be loaded ... but is an easy example so we just wait for 5 seconds
+    print( "Waiting for 5 seconds." )
+    time.sleep( 5 )
+    
     # Now we check if the data we loaded is a scalar dataset:
     if not data.getInformationProperties().getProperty( "Dataset type" ).getString( True ) == "WDataSetScalar":
-        print fileToLoad, "does not contain scalar data! Skipping."
+        print( fileToLoad, "does not contain scalar data! Skipping." )
         continue
 
     # If the dataset is a scalar dataset, we proceed by setting the output filename in the writer:
@@ -228,7 +232,8 @@ for dataset in niftiList:
 
 # Well, and that's it for this simple batch processing example.
 time.sleep( 3 )
-print "Everything done, bye!"
+print( "Everything done, bye!" )
+exit( 0 )
 
 # As python provides quite a lot of functionality, you can write lots of cool scripts to control
 # your pipelines. For example, using sockets, you could control multiple OpenWalnut instances on
