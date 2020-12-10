@@ -180,7 +180,7 @@ void WScriptInterpreterPython::setParameters( std::vector< std::string > const& 
     }
 
     // Needed for python 3
-    wchar_t** w_argv = static_cast<wchar_t**>( PyMem_Malloc(sizeof(wchar_t*)*m_argc) );
+    wchar_t** w_argv = static_cast<wchar_t**>( PyMem_Malloc( sizeof( wchar_t* ) * m_argc ) );
     for( int i = 0; i < m_argc; ++i )
     {
         wchar_t* arg = Py_DecodeLocale( m_argv[i], NULL );
