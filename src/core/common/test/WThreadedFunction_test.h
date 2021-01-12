@@ -243,7 +243,7 @@ public:
     {
         boost::shared_ptr< ExceptionalFuncType > func( new ExceptionalFuncType );
         WThreadedFunction< ExceptionalFuncType > f( 7, func );
-        f.subscribeExceptionSignal( boost::bind( &WThreadedFunctionTest::handleException, this, _1 ) );
+        f.subscribeExceptionSignal( boost::bind( &WThreadedFunctionTest::handleException, this, boost::placeholders::_1 ) );
 
         m_exceptionCounter.getWriteTicket()->get() = 0;
 

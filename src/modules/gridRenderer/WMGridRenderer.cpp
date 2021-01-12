@@ -207,7 +207,7 @@ void WMGridRenderer::connectors()
 
 void WMGridRenderer::properties()
 {
-    WPropertyBase::PropertyChangeNotifierType  notifier = boost::bind( &WMGridRenderer::updateNode, this, _1 );
+    WPropertyBase::PropertyChangeNotifierType  notifier = boost::bind( &WMGridRenderer::updateNode, this, boost::placeholders::_1 );
 
     m_bboxColor = m_properties->addProperty( "Bounding box color", "The color of the bounding box.", WColor( 0.3, 0.3, 0.3, 1.0 ), notifier );
     m_boxLineWidth = m_properties->addProperty( "Bounding box line width", "The width of the grid lines.", 4, notifier );

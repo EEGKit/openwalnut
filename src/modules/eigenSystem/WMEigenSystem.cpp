@@ -334,11 +334,11 @@ void WMEigenSystem::resetEigenFunction( boost::shared_ptr< WDataSetDTI > tensors
     {
         if( m_strategySelector->get().at( 0 )->getName() == "LibEigen" )
         {
-            m_eigenOperationDouble = boost::shared_ptr< TPVODouble >( new TPVODouble( tensors, boost::bind( &WMEigenSystem::eigenSolverDouble, this, _1 ) ) ); // NOLINT line length
+            m_eigenOperationDouble = boost::shared_ptr< TPVODouble >( new TPVODouble( tensors, boost::bind( &WMEigenSystem::eigenSolverDouble, this, boost::placeholders::_1 ) ) ); // NOLINT line length
         }
         else if( m_strategySelector->get().at( 0 )->getName() == "Jacobi" )
         {
-            m_eigenOperationDouble = boost::shared_ptr< TPVODouble >( new TPVODouble( tensors, boost::bind( &WMEigenSystem::eigenFuncDouble, this, _1 ) ) ); // NOLINT line length
+            m_eigenOperationDouble = boost::shared_ptr< TPVODouble >( new TPVODouble( tensors, boost::bind( &WMEigenSystem::eigenFuncDouble, this, boost::placeholders::_1 ) ) ); // NOLINT line length
         }
         else
         {
@@ -351,11 +351,11 @@ void WMEigenSystem::resetEigenFunction( boost::shared_ptr< WDataSetDTI > tensors
     {
         if( m_strategySelector->get().at( 0 )->getName() == "LibEigen" )
         {
-            m_eigenOperationFloat = boost::shared_ptr< TPVOFloat >( new TPVOFloat( tensors, boost::bind( &WMEigenSystem::eigenSolverFloat, this, _1 ) ) ); // NOLINT line length
+            m_eigenOperationFloat = boost::shared_ptr< TPVOFloat >( new TPVOFloat( tensors, boost::bind( &WMEigenSystem::eigenSolverFloat, this, boost::placeholders::_1 ) ) ); // NOLINT line length
         }
         else if( m_strategySelector->get().at( 0 )->getName() == "Jacobi" )
         {
-            m_eigenOperationFloat = boost::shared_ptr< TPVOFloat >( new TPVOFloat( tensors, boost::bind( &WMEigenSystem::eigenFuncFloat, this, _1 ) ) ); // NOLINT line length
+            m_eigenOperationFloat = boost::shared_ptr< TPVOFloat >( new TPVOFloat( tensors, boost::bind( &WMEigenSystem::eigenFuncFloat, this, boost::placeholders::_1 ) ) ); // NOLINT line length
         }
         else
         {

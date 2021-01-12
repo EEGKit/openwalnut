@@ -114,7 +114,7 @@ WGEGridNode::WGEGridNode( WGridRegular3D::ConstSPtr grid ):
     m_boundaryGeode->getOrCreateStateSet()->setAttributeAndModes( new osg::LineWidth( m_boxLineWidth ), osg::StateAttribute::ON );
     m_innerGridGeode->getOrCreateStateSet()->setAttributeAndModes( new osg::LineWidth( m_gridLineWidth ), osg::StateAttribute::ON );
 
-    addUpdateCallback( new WGEFunctorCallback< osg::Node >( boost::bind( &WGEGridNode::callback, this, _1 ) ) );
+    addUpdateCallback( new WGEFunctorCallback< osg::Node >( boost::bind( &WGEGridNode::callback, this, boost::placeholders::_1 ) ) );
 
     // no blending
     getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::OFF );

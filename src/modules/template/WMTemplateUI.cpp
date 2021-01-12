@@ -285,10 +285,10 @@ void WMTemplateUI::moduleMain()
     // To get notified about events, there are two possible solutions:
     //  1) derive from WUIViewEventHandler (not shown here)
     //  2) subscribe to each event:
-    eh->subscribeMove( boost::bind( &WMTemplateUI::handleMouseMove, this, _1 ) );
-    eh->subscribeDrag( boost::bind( &WMTemplateUI::handleMouseDrag, this, _1, _2 ) );
-    eh->subscribeRelease( boost::bind( &WMTemplateUI::handleButtonRelease, this, _1, _2 ) );
-    eh->subscribeResize( boost::bind( &WMTemplateUI::handleResize , this, _1, _2, _3, _4 ) );
+    eh->subscribeMove( boost::bind( &WMTemplateUI::handleMouseMove, this, boost::placeholders::_1 ) );
+    eh->subscribeDrag( boost::bind( &WMTemplateUI::handleMouseDrag, this, boost::placeholders::_1, boost::placeholders::_2 ) );
+    eh->subscribeRelease( boost::bind( &WMTemplateUI::handleButtonRelease, this, boost::placeholders::_1, boost::placeholders::_2 ) );
+    eh->subscribeResize( boost::bind( &WMTemplateUI::handleResize , this, boost::placeholders::_1, boost::placeholders::_2, boost::placeholders::_3, boost::placeholders::_4 ) );
     // This binds our member functions handleMouseMove, handleResize, and others to the event handler. You should consider reading the
     // boost::bind documentation in case you do not completely understand the above lines.
     // Finally, we add the event handler:

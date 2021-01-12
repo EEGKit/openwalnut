@@ -28,9 +28,8 @@
 
 #include <QVBoxLayout>
 
-#include <QWebView>
-#include <QWebFrame>
-#include <QWebPage>
+#include <QWebEngineView>
+#include <QWebEnginePage>
 #include <QToolBar>
 #include <QToolButton>
 #include <QHBoxLayout>
@@ -212,12 +211,13 @@ WQtModuleMetaInfo::WQtModuleMetaInfo( WModule::SPtr module, QWidget* parent ):
     layout->setContentsMargins( 0, 0, 0, 0 );
 
     // create the QT webview
-    QWebView* view = new QWebView( this );
+   QWebEngineView* view = new QWebEngineView( this );
 
     // create a webpage and add it to the view
-    QWebPage* page = new QWebPage( this );
-    page->setLinkDelegationPolicy( QWebPage::DelegateExternalLinks );
-    m_frame = page->mainFrame();
+    QWebEnginePage* page = new QWebEnginePage( this );
+    m_page = page;
+    // page->setLinkDelegationPolicy( QWebEnginePage::DelegateExternalLinks );
+    // m_frame = page->mainFrame();
     view->setPage( page );
 
     // add a toolbar for basic navigation
@@ -237,9 +237,9 @@ WQtModuleMetaInfo::WQtModuleMetaInfo( WModule::SPtr module, QWidget* parent ):
     homeBtn->setToolButtonStyle( Qt::ToolButtonTextBesideIcon );
 
     QToolButton* backBtn = new QToolButton( toolbar );
-    backBtn->setDefaultAction( page->action( QWebPage::Back ) );
+    backBtn->setDefaultAction( page->action( QWebEnginePage::Back ) );
     QToolButton* fwdBtn = new QToolButton( toolbar );
-    fwdBtn->setDefaultAction( page->action( QWebPage::Forward ) );
+    fwdBtn->setDefaultAction( page->action( QWebEnginePage::Forward ) );
 
     tbLayout->addWidget( backBtn );
     tbLayout->addWidget( fwdBtn );
@@ -272,5 +272,5 @@ void WQtModuleMetaInfo::resetContent()
 
     // set content
     std::string processedContent = htmlify( m_module->getMetaInformation() );
-    m_frame->setHtml( processedContent.c_str(), QUrl( locationURL ) );
+    m_page->setHtml( processedContent.c_str(), QUrl( locationURL ) );
 }

@@ -50,18 +50,18 @@ WFiberSelector::WFiberSelector( boost::shared_ptr< const WDataSetFibers > fibers
 
     m_assocRoiSignal =
         boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > >(
-            new boost::function< void( osg::ref_ptr< WROI > ) > ( boost::bind( &WFiberSelector::slotAddRoi, this, _1 ) ) );
+            new boost::function< void( osg::ref_ptr< WROI > ) > ( boost::bind( &WFiberSelector::slotAddRoi, this, boost::placeholders::_1 ) ) );
     WKernel::getRunningKernel()->getRoiManager()->addAddNotifier( m_assocRoiSignal );
 
     m_removeRoiSignal =
              boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > >(
-                 new boost::function< void( osg::ref_ptr< WROI > ) > ( boost::bind( &WFiberSelector::slotRemoveRoi, this, _1 ) ) );
+                 new boost::function< void( osg::ref_ptr< WROI > ) > ( boost::bind( &WFiberSelector::slotRemoveRoi, this, boost::placeholders::_1 ) ) );
     WKernel::getRunningKernel()->getRoiManager()->addRemoveNotifier( m_removeRoiSignal );
 
     m_removeBranchSignal =
              boost::shared_ptr< boost::function< void( boost::shared_ptr< WRMBranch >  ) > >(
                  new boost::function< void( boost::shared_ptr< WRMBranch > ) > (
-                     boost::bind( &WFiberSelector::slotRemoveBranch, this, _1 ) ) );
+                     boost::bind( &WFiberSelector::slotRemoveBranch, this, boost::placeholders::_1 ) ) );
     WKernel::getRunningKernel()->getRoiManager()->addRemoveBranchNotifier( m_removeBranchSignal );
 
     for( size_t i = 0; i < rois.size(); ++i )

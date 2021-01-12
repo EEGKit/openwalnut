@@ -166,7 +166,7 @@ void WGEColormapping::applyInst( NodeList nodes, WMatrix4d preTransform, osg::re
         info->m_preTransform = preTransform;
         m_nodeInfo.insert( std::make_pair( *i, info ) );
 
-        ( *i )->addUpdateCallback( new WGEFunctorCallback< osg::Node >( boost::bind( &WGEColormapping::callback, this, _1 ) ) );
+        ( *i )->addUpdateCallback( new WGEFunctorCallback< osg::Node >( boost::bind( &WGEColormapping::callback, this, boost::placeholders::_1 ) ) );
 
         // add the default shader if no other shader has been specified.
         s->apply( *i );

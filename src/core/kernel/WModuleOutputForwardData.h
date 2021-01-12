@@ -107,8 +107,8 @@ public:
         m_in = boost::shared_ptr< WModuleInputData< T > >( new WModuleInputData< T >( module, "[FWD]" + name, description ) );
 
         // subscribe both signals
-        m_in->subscribeSignal( CONNECTION_ESTABLISHED, boost::bind( &WModuleOutputForwardData::inputNotifyDataChange, this, _1, _2 ) );
-        m_in->subscribeSignal( DATA_CHANGED,           boost::bind( &WModuleOutputForwardData::inputNotifyDataChange, this, _1, _2 ) );
+        m_in->subscribeSignal( CONNECTION_ESTABLISHED, boost::bind( &WModuleOutputForwardData::inputNotifyDataChange, this, boost::placeholders::_1, boost::placeholders::_2 ) );
+        m_in->subscribeSignal( DATA_CHANGED,           boost::bind( &WModuleOutputForwardData::inputNotifyDataChange, this, boost::placeholders::_1, boost::placeholders::_2 ) );
     };
 
     /**

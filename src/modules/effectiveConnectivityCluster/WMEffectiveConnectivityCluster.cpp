@@ -155,7 +155,7 @@ void WMEffectiveConnectivityCluster::moduleMain()
 
     // as this module needs the centerline / longest line -> subscribe to the output connector DATA_CHANGE signal
     m_fiberSelection->getOutputConnector( "cluster" )->subscribeSignal( DATA_CHANGED,
-        boost::bind( &WMEffectiveConnectivityCluster::fiberDataChange, this, _1, _2 )
+        boost::bind( &WMEffectiveConnectivityCluster::fiberDataChange, this, boost::placeholders::_1, boost::placeholders::_2 )
     );
 
     //////////////////////////////////////////////////////////////////////

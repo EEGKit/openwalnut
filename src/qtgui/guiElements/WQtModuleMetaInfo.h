@@ -26,7 +26,7 @@
 #define WQTMODULEMETAINFO_H
 
 #include <QWidget>
-#include <QWebFrame>
+#include <QWebEnginePage>
 
 #include "core/kernel/WModule.h"
 
@@ -64,7 +64,7 @@ private:
     /**
      * the frame containing the module meta info
      */
-    QWebFrame* m_frame;
+    QWebEnginePage* m_page;
 };
 
 #endif  // WQTMODULEMETAINFO_H

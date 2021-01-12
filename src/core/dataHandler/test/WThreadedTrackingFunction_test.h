@@ -179,7 +179,7 @@ public:
 
             WVector3d v = j.first;
 
-            TS_ASSERT( wtracking::WTrackingUtility::followToNextVoxel( ds, j, boost::bind( &This::simpleDirFunc, this, _1, _2 ) ) );
+            TS_ASSERT( wtracking::WTrackingUtility::followToNextVoxel( ds, j, boost::bind( &This::simpleDirFunc, this, boost::placeholders::_1, boost::placeholders::_2 ) ) );
             TS_ASSERT( !wtracking::WTrackingUtility::onBoundary( g, j.first ) );
             TS_ASSERT( g->encloses( j.first ) );
             v += x * 0.8;
@@ -500,10 +500,10 @@ public:
 
         TS_ASSERT_THROWS_NOTHING(
                 wtracking::WThreadedTrackingFunction w( ds,
-                                                        boost::bind( &This::dirFunc, this, _1, _2, WVector3d( 1.0, 0.0, 0.0 ) ),
-                                                        boost::bind( &wtracking::WTrackingUtility::followToNextVoxel, _1, _2, _3 ),
-                                                        boost::bind( &This::fibVis, this, _1 ),
-                                                        boost::bind( &This::pntVis, this, _1 ) ) );
+                                                        boost::bind( &This::dirFunc, this, boost::placeholders::_1, boost::placeholders::_2, WVector3d( 1.0, 0.0, 0.0 ) ),
+                                                        boost::bind( &wtracking::WTrackingUtility::followToNextVoxel, boost::placeholders::_1, boost::placeholders::_2, boost::placeholders::_3 ),
+                                                        boost::bind( &This::fibVis, this, boost::placeholders::_1 ),
+                                                        boost::bind( &This::pntVis, this, boost::placeholders::_1 ) ) );
     }
 
     /**
@@ -515,10 +515,10 @@ public:
         boost::shared_ptr< WGridRegular3D > g = boost::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
         TS_ASSERT( g );
 
-        wtracking::WThreadedTrackingFunction w( ds, boost::bind( &This::dirFunc, this, _1, _2, WVector3d( 1.0, 0.0, 0.0 ) ),
-                                                    boost::bind( &wtracking::WTrackingUtility::followToNextVoxel, _1, _2, _3 ),
-                                                    boost::bind( &This::fibVis, this, _1 ),
-                                                    boost::bind( &This::pntVis, this, _1 ) );
+        wtracking::WThreadedTrackingFunction w( ds, boost::bind( &This::dirFunc, this, boost::placeholders::_1, boost::placeholders::_2, WVector3d( 1.0, 0.0, 0.0 ) ),
+                                                    boost::bind( &wtracking::WTrackingUtility::followToNextVoxel, boost::placeholders::_1, boost::placeholders::_2, boost::placeholders::_3 ),
+                                                    boost::bind( &This::fibVis, this, boost::placeholders::_1 ),
+                                                    boost::bind( &This::pntVis, this, boost::placeholders::_1 ) );
         wtracking::WThreadedTrackingFunction::JobType job;
         for( int i = 0; i < 125; ++i )
         {
@@ -542,10 +542,10 @@ public:
         boost::shared_ptr< WGridRegular3D > g = boost::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
         TS_ASSERT( g );
         {
-            wtracking::WThreadedTrackingFunction w( ds, boost::bind( &This::dirFunc, this, _1, _2, x ),
-                                                        boost::bind( &wtracking::WTrackingUtility::followToNextVoxel, _1, _2, _3 ),
-                                                        boost::bind( &This::fibVis, this, _1 ),
-                                                        boost::bind( &This::pntVis, this, _1 ) );
+            wtracking::WThreadedTrackingFunction w( ds, boost::bind( &This::dirFunc, this, boost::placeholders::_1, boost::placeholders::_2, x ),
+                                                        boost::bind( &wtracking::WTrackingUtility::followToNextVoxel, boost::placeholders::_1, boost::placeholders::_2, boost::placeholders::_3 ),
+                                                        boost::bind( &This::fibVis, this, boost::placeholders::_1 ),
+                                                        boost::bind( &This::pntVis, this, boost::placeholders::_1 ) );
             wtracking::WThreadedTrackingFunction::JobType job;
             m_points.getWriteTicket()->get() = 0;
             w.getJob( job );
@@ -553,10 +553,10 @@ public:
             TS_ASSERT_EQUALS( m_points.getReadTicket()->get(), 7 );
         }
         {
-            wtracking::WThreadedTrackingFunction w( ds, boost::bind( &This::dirFunc, this, _1, _2, y ),
-                                                        boost::bind( &wtracking::WTrackingUtility::followToNextVoxel, _1, _2, _3 ),
-                                                        boost::bind( &This::fibVis, this, _1 ),
-                                                        boost::bind( &This::pntVis, this, _1 ) );
+            wtracking::WThreadedTrackingFunction w( ds, boost::bind( &This::dirFunc, this, boost::placeholders::_1, boost::placeholders::_2, y ),
+                                                        boost::bind( &wtracking::WTrackingUtility::followToNextVoxel, boost::placeholders::_1, boost::placeholders::_2, boost::placeholders::_3 ),
+                                                        boost::bind( &This::fibVis, this, boost::placeholders::_1 ),
+                                                        boost::bind( &This::pntVis, this, boost::placeholders::_1 ) );
             wtracking::WThreadedTrackingFunction::JobType job;
             m_points.getWriteTicket()->get() = 0;
             w.getJob( job );

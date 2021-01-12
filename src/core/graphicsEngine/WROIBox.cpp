@@ -51,9 +51,9 @@ WROIBox::WROIBox( WPosition minPos, WPosition maxPos ) :
 {
     m_propGrp = m_properties->addPropertyGroup( "ROI Box", "Properties of this ROI Box" );
     m_minPos = m_propGrp->addProperty( "Min Position", "When a box is described by its diagonal, this is the lower, left, front corner of it.",
-                                          minPos, boost::bind( &WROIBox::boxPropertiesChanged, this, _1 ) );
+                                          minPos, boost::bind( &WROIBox::boxPropertiesChanged, this, boost::placeholders::_1 ) );
     m_maxPos = m_propGrp->addProperty( "Max Position", "When a box is described by its diagonal, this is the upper, right, back corner of it.",
-                                          maxPos, boost::bind( &WROIBox::boxPropertiesChanged, this, _1 ) );
+                                          maxPos, boost::bind( &WROIBox::boxPropertiesChanged, this, boost::placeholders::_1 ) );
 
     boost::shared_ptr< WGraphicsEngine > ge = WGraphicsEngine::getGraphicsEngine();
     assert( ge );
@@ -61,7 +61,7 @@ WROIBox::WROIBox( WPosition minPos, WPosition maxPos ) :
     assert( viewer );
     m_viewer = viewer;
     m_pickHandler = m_viewer->getPickHandler();
-    m_pickHandler->getPickSignal()->connect( boost::bind( &WROIBox::registerRedrawRequest, this, _1 ) );
+    m_pickHandler->getPickSignal()->connect( boost::bind( &WROIBox::registerRedrawRequest, this, boost::placeholders::_1 ) );
 
     std::stringstream ss;
     ss << "ROIBox" << boxId;
