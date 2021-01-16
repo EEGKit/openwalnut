@@ -386,7 +386,7 @@ void WMPickingDVR::setPickPositionSource()
         if( !m_pickHandlerConnected )
         {
             // Register PickHandler
-            mainView->getPickHandler()->getPickSignal()->connect( boost::bind( &WMPickingDVR::pickHandler, this, _1 ) );
+            mainView->getPickHandler()->getPickSignal()->connect( boost::bind( &WMPickingDVR::pickHandler, this, boost::placeholders::_1 ) );
             m_pickHandlerConnected = true;
         }
     }
@@ -395,7 +395,7 @@ void WMPickingDVR::setPickPositionSource()
         if( m_pickHandlerConnected )
         {
             // Register PickHandler
-            mainView->getPickHandler()->getPickSignal()->disconnect( boost::bind( &WMPickingDVR::pickHandler, this, _1 ) );
+            mainView->getPickHandler()->getPickSignal()->disconnect( boost::bind( &WMPickingDVR::pickHandler, this, boost::placeholders::_1 ) );
             m_pickHandlerConnected = false;
         }
     }

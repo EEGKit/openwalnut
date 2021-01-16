@@ -130,7 +130,7 @@ void WMPaintTexture::properties()
 void WMPaintTexture::moduleMain()
 {
     boost::signals2::connection con = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getPickHandler()->getPickSignal()->
-        connect( boost::bind( &WMPaintTexture::queuePaint, this, _1 ) );
+        connect( boost::bind( &WMPaintTexture::queuePaint, this, boost::placeholders::_1 ) );
 
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_input->getDataChangedCondition() );

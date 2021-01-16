@@ -60,7 +60,7 @@ WROISphere::WROISphere( WPosition position, float radius ) :
     assert( viewer );
     m_viewer = viewer;
     m_pickHandler = m_viewer->getPickHandler();
-    m_pickHandler->getPickSignal()->connect( boost::bind( &WROISphere::registerRedrawRequest, this, _1 ) );
+    m_pickHandler->getPickSignal()->connect( boost::bind( &WROISphere::registerRedrawRequest, this, boost::placeholders::_1 ) );
 
     redrawSphere();
     //**********************************************************

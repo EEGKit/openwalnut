@@ -852,12 +852,12 @@ void WMHierchClustDisplay::initTexture()
 void WMHierchClustDisplay::moduleMain()
 {
 // DEPRECATED    boost::signals2::connection con = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getPickHandler()->getPickSignal()->
-// DEPRECATED             connect( boost::bind( &WMHierchClustDisplay::dendrogramClick, this, _1 ) );
+// DEPRECATED             connect( boost::bind( &WMHierchClustDisplay::dendrogramClick, this, boost::placeholders::_1 ) );
 
     osg::ref_ptr< MainViewEventHandler > eh( new MainViewEventHandler );
-    eh->subscribeLeftButtonPush( boost::bind( &WMHierchClustDisplay::dendrogramClick, this, _1 ) );
+    eh->subscribeLeftButtonPush( boost::bind( &WMHierchClustDisplay::dendrogramClick, this, boost::placeholders::_1 ) );
 
-    eh->subscribeRightButtonPush( boost::bind( &WMHierchClustDisplay::dendrogramClickRight, this, _1 ) );
+    eh->subscribeRightButtonPush( boost::bind( &WMHierchClustDisplay::dendrogramClickRight, this, boost::placeholders::_1 ) );
 
     WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView()->addEventHandler( eh );
 
