@@ -304,7 +304,10 @@ void WMDeterministicFTMori::resetTracking()
     // create a new one
     boost::shared_ptr< Tracking > t( new Tracking( m_eigenField,
                                                    boost::bind( &This::getEigenDirection, this, boost::placeholders::_1, boost::placeholders::_2 ),
-                                                   boost::bind( &wtracking::WTrackingUtility::followToNextVoxel, boost::placeholders::_1, boost::placeholders::_2, boost::placeholders::_3 ),
+                                                   boost::bind( &wtracking::WTrackingUtility::followToNextVoxel,
+                                                                boost::placeholders::_1,
+                                                                boost::placeholders::_2,
+                                                                boost::placeholders::_3 ),
                                                    boost::bind( &This::fiberVis, this, boost::placeholders::_1 ),
                                                    boost::bind( &This::pointVis, this, boost::placeholders::_1 ) ) );
     m_trackingPool = boost::shared_ptr< TrackingFuncType >( new TrackingFuncType( WM_MORI_NUM_CORES, t ) );

@@ -182,7 +182,9 @@ void WMCalculateTensors::resetTensorPool()
         resetProgress( g->getNbCoordsX() * g->getNbCoordsY() * g->getNbCoordsZ() );
 
         // create a new one
-        m_tensorFunc = boost::shared_ptr< TensorFuncType >( new TensorFuncType( m_dataSet, boost::bind( &This::perVoxelTensorFunc, this, boost::placeholders::_1 ) ) );
+        m_tensorFunc = boost::shared_ptr< TensorFuncType >( new TensorFuncType( m_dataSet, boost::bind( &This::perVoxelTensorFunc,
+                                                                                                        this,
+                                                                                                        boost::placeholders::_1 ) ) );
         m_tensorPool = boost::shared_ptr< TensorPoolType >( new TensorPoolType( 0, m_tensorFunc ) );
         m_tensorPool->subscribeExceptionSignal( boost::bind( &This::handleException, this, boost::placeholders::_1 ) );
         m_moduleState.add( m_tensorPool->getThreadsDoneCondition() );

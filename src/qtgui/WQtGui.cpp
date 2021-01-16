@@ -224,11 +224,17 @@ int WQtGui::run()
     m_kernel->getRootContainer()->addDefaultNotifier( WM_REMOVED, removedSignal );
 
     // Connect Event
-    t_GenericSignalHandlerType connectionEstablishedSignal = boost::bind( &WQtGui::slotConnectionEstablished, this, boost::placeholders::_1, boost::placeholders::_2 );
+    t_GenericSignalHandlerType connectionEstablishedSignal = boost::bind( &WQtGui::slotConnectionEstablished,
+                                                                          this,
+                                                                          boost::placeholders::_1,
+                                                                          boost::placeholders::_2 );
     m_kernel->getRootContainer()->addDefaultNotifier( CONNECTION_ESTABLISHED, connectionEstablishedSignal );
 
     // Disconnect Event
-    t_GenericSignalHandlerType connectionClosedSignal = boost::bind( &WQtGui::slotConnectionClosed, this, boost::placeholders::_1, boost::placeholders::_2 );
+    t_GenericSignalHandlerType connectionClosedSignal = boost::bind( &WQtGui::slotConnectionClosed,
+                                                                     this,
+                                                                     boost::placeholders::_1,
+                                                                     boost::placeholders::_2 );
     m_kernel->getRootContainer()->addDefaultNotifier( CONNECTION_CLOSED, connectionClosedSignal );
 
     boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > assocRoiSignal;
@@ -420,4 +426,3 @@ void WQtGui::execInGUIThreadAsync( boost::function< void( void ) > functor, WCon
     WDeferredCallEvent* ev = new WDeferredCallEvent( functor, notify );
     QCoreApplication::postEvent( getMainWindow(), ev );
 }
-

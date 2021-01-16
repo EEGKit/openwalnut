@@ -25,8 +25,8 @@
 #ifndef WQTMODULEMETAINFO_H
 #define WQTMODULEMETAINFO_H
 
-#include <QWidget>
 #include <QWebEnginePage>
+#include <QWidget>
 
 #include "core/kernel/WModule.h"
 

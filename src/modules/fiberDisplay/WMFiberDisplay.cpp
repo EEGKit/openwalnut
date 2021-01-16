@@ -735,7 +735,9 @@ void WMFiberDisplay::createFiberGeode( boost::shared_ptr< WDataSetFibers > fiber
     }
 
     // add an update callback which later handles several things like the filter attribute array
-    geometry->setUpdateCallback( new WGEFunctorCallback< osg::Drawable >( boost::bind( &WMFiberDisplay::geometryUpdate, this, boost::placeholders::_1 ) ) );
+    geometry->setUpdateCallback( new WGEFunctorCallback< osg::Drawable >( boost::bind( &WMFiberDisplay::geometryUpdate,
+                                                                                       this,
+                                                                                       boost::placeholders::_1 ) ) );
 
     // set drawable
     fibGeode->addDrawable( geometry );

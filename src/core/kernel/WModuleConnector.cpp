@@ -64,8 +64,14 @@ WModuleConnector::WModuleConnector( boost::shared_ptr< WModule > module, std::st
     // connect standard signals
     // NOTE: these signals are NOT emitted by the connector this one is connected to, since a module can't send a "connection
     // closed" message if the connection is closed.
-    subscribeSignal( CONNECTION_ESTABLISHED, boost::bind( &WModuleConnector::notifyConnectionEstablished, this, boost::placeholders::_1, boost::placeholders::_2 ) );
-    subscribeSignal( CONNECTION_CLOSED, boost::bind( &WModuleConnector::notifyConnectionClosed, this, boost::placeholders::_1, boost::placeholders::_2 ) );
+    subscribeSignal( CONNECTION_ESTABLISHED, boost::bind( &WModuleConnector::notifyConnectionEstablished,
+                                                          this,
+                                                          boost::placeholders::_1,
+                                                          boost::placeholders::_2 ) );
+    subscribeSignal( CONNECTION_CLOSED, boost::bind( &WModuleConnector::notifyConnectionClosed,
+                                                     this,
+                                                     boost::placeholders::_1,
+                                                     boost::placeholders::_2 ) );
 
     signal_ConnectionEstablished.connect( getSignalHandler( CONNECTION_ESTABLISHED ) );
     signal_ConnectionClosed.connect( getSignalHandler( CONNECTION_CLOSED ) );

@@ -26,10 +26,9 @@
 #include <vector>
 #include <iostream>
 
+#include <QWebEngineView> //NOLINT
+#include <QWebEnginePage> //NOLINT
 #include <QVBoxLayout>
-
-#include <QWebEngineView>
-#include <QWebEnginePage>
 #include <QToolBar>
 #include <QToolButton>
 #include <QHBoxLayout>
@@ -211,7 +210,7 @@ WQtModuleMetaInfo::WQtModuleMetaInfo( WModule::SPtr module, QWidget* parent ):
     layout->setContentsMargins( 0, 0, 0, 0 );
 
     // create the QT webview
-   QWebEngineView* view = new QWebEngineView( this );
+    QWebEngineView* view = new QWebEngineView( this );
 
     // create a webpage and add it to the view
     QWebEnginePage* page = new QWebEnginePage( this );

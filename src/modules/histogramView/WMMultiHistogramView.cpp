@@ -221,7 +221,12 @@ void WMMultiHistogramView::moduleMain()
             WGECamera::TWO_D, m_shutdownFlag.getValueChangeCondition() );
     osg::ref_ptr< WUIViewEventHandler > eh = new WUIViewEventHandler( m_widget );
     eh->subscribeMove( boost::bind( &WMMultiHistogramView::handleMouseMove, this, boost::placeholders::_1 ) );
-    eh->subscribeResize( boost::bind( &WMMultiHistogramView::handleResize, this, boost::placeholders::_1, boost::placeholders::_2, boost::placeholders::_3, boost::placeholders::_4 ) );
+    eh->subscribeResize( boost::bind( &WMMultiHistogramView::handleResize,
+                                      this,
+                                      boost::placeholders::_1,
+                                      boost::placeholders::_2,
+                                      boost::placeholders::_3,
+                                      boost::placeholders::_4 ) );
     m_widget->addEventHandler( eh );
 
     m_widget->show();
@@ -1218,4 +1223,3 @@ void WMMultiHistogramView::createNothing()
 {
     errorLog() << "This histogram style is not yet implemented.";
 }
-

@@ -306,7 +306,9 @@ WMNavigationSlices::PickCallback::PickCallback( osg::ref_ptr< osg::Node > node, 
     boost::shared_ptr< WGraphicsEngine > ge = WGraphicsEngine::getGraphicsEngine();
     boost::shared_ptr< WGEViewer > viewer = ge->getViewerByName( "Main View" );
     m_camera = viewer->getCamera();
-    m_pickConnection = viewer->getPickHandler()->getPickSignal()->connect( boost::bind( &WMNavigationSlices::PickCallback::pick, this, boost::placeholders::_1 ) );
+    m_pickConnection = viewer->getPickHandler()->getPickSignal()->connect( boost::bind( &WMNavigationSlices::PickCallback::pick,
+                                                                                        this,
+                                                                                        boost::placeholders::_1 ) );
     node->getOrCreateStateSet()->addUniform( m_pickUniform );
 }
 

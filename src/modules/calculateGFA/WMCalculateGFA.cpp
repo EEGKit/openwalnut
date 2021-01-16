@@ -186,7 +186,9 @@ void WMCalculateGFA::resetGFAPool()
     resetProgress( g->getNbCoordsX() * g->getNbCoordsY() * g->getNbCoordsZ() );
 
     // create a new one
-    m_gfaFunc = boost::shared_ptr< GFAFuncType >( new GFAFuncType( m_dataSet, boost::bind( &This::perVoxelGFAFunc, this, boost::placeholders::_1 ) ) );
+    m_gfaFunc = boost::shared_ptr< GFAFuncType >( new GFAFuncType( m_dataSet, boost::bind( &This::perVoxelGFAFunc,
+                                                                                           this,
+                                                                                           boost::placeholders::_1 ) ) );
     m_gfaPool = boost::shared_ptr< GFAPoolType >( new GFAPoolType( 0, m_gfaFunc ) );
     m_gfaPool->subscribeExceptionSignal( boost::bind( &This::handleException, this, boost::placeholders::_1 ) );
     m_moduleState.add( m_gfaPool->getThreadsDoneCondition() );
