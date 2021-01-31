@@ -1,4 +1,4 @@
-#ADD_MODULE( HARDIToSphericalHarmonics ) # Does currently not compile on gcc -> see issue in tracker
+ADD_MODULE( HARDIToSphericalHarmonics ) # Does currently not compile on gcc -> see issue in tracker
 ADD_MODULE( anisotropicFiltering )
 ADD_MODULE( applyMask )
 #ADD_MODULE( butterfly ) Works on gcc does not compile on clang
