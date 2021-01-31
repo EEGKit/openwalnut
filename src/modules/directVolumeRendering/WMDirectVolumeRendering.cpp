@@ -89,11 +89,11 @@ const std::string WMDirectVolumeRendering::getDescription() const
 
 void WMDirectVolumeRendering::connectors()
 {
-    // The transfer function for our DVR
-    m_transferFunction = WModuleInputData< WDataSetSingle >::createAndAdd( shared_from_this(), "transfer function", "The 1D transfer function." );
-
     // DVR needs one input: the scalar dataset
     m_input = WModuleInputData< WDataSetScalar >::createAndAdd( shared_from_this(), "in", "The scalar dataset." );
+
+    // The transfer function for our DVR
+    m_transferFunction = WModuleInputData< WDataSetSingle >::createAndAdd( shared_from_this(), "transfer function", "The 1D transfer function." );
 
     // Optional: the gradient field
     m_gradients = WModuleInputData< WDataSetVector >::createAndAdd( shared_from_this(),
@@ -468,4 +468,3 @@ void WMDirectVolumeRendering::moduleMain()
     // allocated memory and remove all OSG nodes.
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( rootNode );
 }
-

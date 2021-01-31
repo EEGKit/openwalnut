@@ -469,7 +469,7 @@ boost::shared_ptr< WModule > WModuleProjectFileCombiner::mapToModule( unsigned i
 unsigned int WModuleProjectFileCombiner::mapFromModule( boost::shared_ptr< WModule > module ) const
 {
     ModuleIDMap::const_iterator it = std::find_if( m_modules.begin(), m_modules.end(),
-                                                   boost::bind( &ModuleIDMap::value_type::second, _1 ) == module
+                                                   boost::bind( &ModuleIDMap::value_type::second, boost::placeholders::_1 ) == module
                                                  );
     if( it == m_modules.end() )
     {

@@ -416,7 +416,7 @@ void WMFiberDisplay::moduleMain()
 
             // for line smoothing and width features
             geode->getOrCreateStateSet()->setUpdateCallback( new WGEFunctorCallback< osg::StateSet >(
-                boost::bind( &WMFiberDisplay::lineGeodeStateCallback, this, _1 ) )
+                boost::bind( &WMFiberDisplay::lineGeodeStateCallback, this, boost::placeholders::_1 ) )
             );
 
             // Add geometry
@@ -480,7 +480,7 @@ osg::ref_ptr< osg::Node > WMFiberDisplay::createClipPlane() const
     planeTransform->addUpdateCallback( new WGENodeMaskCallback( m_clipPlaneShowPlane ) );
     // add a callback which actually moves, scales and rotates the plane according to the plane parameter
     planeTransform->addUpdateCallback( new WGEFunctorCallback< osg::Node >(
-        boost::bind( &WMFiberDisplay::clipPlaneCallback, this, _1 ) )
+        boost::bind( &WMFiberDisplay::clipPlaneCallback, this, boost::placeholders::_1 ) )
     );
 
     // add the geode to the root and provide an callback
@@ -735,7 +735,9 @@ void WMFiberDisplay::createFiberGeode( boost::shared_ptr< WDataSetFibers > fiber
     }
 
     // add an update callback which later handles several things like the filter attribute array
-    geometry->setUpdateCallback( new WGEFunctorCallback< osg::Drawable >( boost::bind( &WMFiberDisplay::geometryUpdate, this, _1 ) ) );
+    geometry->setUpdateCallback( new WGEFunctorCallback< osg::Drawable >( boost::bind( &WMFiberDisplay::geometryUpdate,
+                                                                                       this,
+                                                                                       boost::placeholders::_1 ) ) );
 
     // set drawable
     fibGeode->addDrawable( geometry );

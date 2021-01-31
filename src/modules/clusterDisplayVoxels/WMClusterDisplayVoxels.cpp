@@ -260,7 +260,7 @@ void WMClusterDisplayVoxels::setPropertyBoundaries()
 void WMClusterDisplayVoxels::moduleMain()
 {
     boost::signals2::connection con = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getPickHandler()->getPickSignal()->
-            connect( boost::bind( &WMClusterDisplayVoxels::dendrogramClick, this, _1 ) );
+            connect( boost::bind( &WMClusterDisplayVoxels::dendrogramClick, this, boost::placeholders::_1 ) );
 
 
     m_moduleState.setResetable( true, true );

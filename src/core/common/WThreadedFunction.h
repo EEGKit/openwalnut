@@ -284,7 +284,7 @@ WThreadedFunction< Function_T >::WThreadedFunction( std::size_t numThreads, boos
     {
         boost::shared_ptr< WWorkerThread< Function_T > > t( new WWorkerThread< Function_T >( m_func, k, m_numThreads ) );
         t->subscribeStopSignal( boost::bind( &WThreadedFunction::handleThreadDone, this ) );
-        t->subscribeExceptionSignal( boost::bind( &WThreadedFunction::handleThreadException, this, _1 ) );
+        t->subscribeExceptionSignal( boost::bind( &WThreadedFunction::handleThreadException, this, boost::placeholders::_1 ) );
         m_threads.push_back( t );
     }
 }

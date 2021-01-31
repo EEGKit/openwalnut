@@ -203,7 +203,7 @@ void WPropertyGroupBase::addArbitraryProperty( WPropertyBase::SPtr prop )
 
     // check uniqueness:
     if( std::count_if( l->get().begin(), l->get().end(),
-            boost::bind( boost::mem_fn( &WPropertyGroupBase::propNamePredicate ), this, prop, _1 ) ) )
+            boost::bind( boost::mem_fn( &WPropertyGroupBase::propNamePredicate ), this, prop, boost::placeholders::_1 ) ) )
     {
         // unlock explicitly
         l.reset();

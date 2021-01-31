@@ -122,7 +122,7 @@ void WModuleContainer::add( boost::shared_ptr< WModule > module, bool run )
     ModuleSubscriptionsSharedType::WriteTicket subscriptionsLock = m_moduleSubscriptions.getWriteTicket();
 
     // connect the containers signal handler explicitly
-    t_ModuleErrorSignalHandlerType func = boost::bind( &WModuleContainer::moduleError, this, _1, _2 );
+    t_ModuleErrorSignalHandlerType func = boost::bind( &WModuleContainer::moduleError, this, boost::placeholders::_1, boost::placeholders::_2 );
     boost::signals2::connection signalCon = module->subscribeSignal( WM_ERROR, func );
     subscriptionsLock->get().insert( ModuleSubscription( module, signalCon ) );
 

@@ -203,7 +203,11 @@ WQtGLScreenCapture::WQtGLScreenCapture( WQtGLDockWidget* parent ):
 
     // we need to be notified about the screen grabbers state
     m_recordConnection = m_viewer->getScreenCapture()->getRecordCondition()->subscribeSignal( boost::bind( &WQtGLScreenCapture::recCallback, this ) );
-    m_imageConnection = m_viewer->getScreenCapture()->subscribeSignal( boost::bind( &WQtGLScreenCapture::handleImage, this, _1, _2, _3 ) );
+    m_imageConnection = m_viewer->getScreenCapture()->subscribeSignal( boost::bind( &WQtGLScreenCapture::handleImage,
+                                                                                    this,
+                                                                                    boost::placeholders::_1,
+                                                                                    boost::placeholders::_2,
+                                                                                    boost::placeholders::_3 ) );
 }
 
 WQtGLScreenCapture::~WQtGLScreenCapture()
@@ -368,4 +372,3 @@ void WQtGLScreenCapture::resolutionChange( bool force )
         m_glDockWidget->restoreGLWidgetSize();
     }
 }
-

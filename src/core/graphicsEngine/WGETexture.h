@@ -575,7 +575,7 @@ void WGETexture< TextureType >::setupProperties( double scale, double min )
 
     TextureType::setResizeNonPowerOfTwoHint( false );
     TextureType::setUpdateCallback( new WGEFunctorCallback< osg::StateAttribute >(
-        boost::bind( &WGETexture< TextureType >::updateCallback, this, _1 ) )
+        boost::bind( &WGETexture< TextureType >::updateCallback, this, boost::placeholders::_1 ) )
     );
 
     // init filters

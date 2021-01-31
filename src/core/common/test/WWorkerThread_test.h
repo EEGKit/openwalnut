@@ -228,7 +228,7 @@ public:
 
         boost::shared_ptr< ExceptionalFuncType > func( new ExceptionalFuncType );
         WWorkerThread< ExceptionalFuncType > w( func, 0, 1 );
-        w.subscribeExceptionSignal( boost::bind( &WWorkerThreadTest::handleException, this, _1 ) );
+        w.subscribeExceptionSignal( boost::bind( &WWorkerThreadTest::handleException, this, boost::placeholders::_1 ) );
 
         w.run();
         w.wait();

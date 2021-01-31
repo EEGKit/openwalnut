@@ -87,7 +87,7 @@ WQtTreeItem::WQtTreeItem( QTreeWidgetItem * parent, WTreeItemType type, boost::s
 
     // we need to get informed about updated outputs.
     const WModule::OutputConnectorList& outs = module->getOutputConnectors();
-    t_GenericSignalHandlerType changeSignal = boost::bind( &WQtTreeItem::slotDataChanged, this, _2 );
+    t_GenericSignalHandlerType changeSignal = boost::bind( &WQtTreeItem::slotDataChanged, this, boost::placeholders::_2 );
     for( WModule::OutputConnectorList::const_iterator iter = outs.begin(); iter != outs.end(); ++iter )
     {
         // subscribe each connectors update signal

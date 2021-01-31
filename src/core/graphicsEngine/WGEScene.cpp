@@ -39,6 +39,11 @@ WGEScene::~WGEScene()
     WLogger::getLogger()->addLogMessage( "Shutting down OpenSceneGraph Root Node", "GE", LL_INFO );
 }
 
+void WGEScene::forceFirstHomePositionRequestFalse()
+{
+    firstHomePositionRequest = false;
+}
+
 bool WGEScene::isHomePositionRequested()
 {
     if( firstHomePositionRequest && getNumChildren() > 0 )
@@ -48,4 +53,3 @@ bool WGEScene::isHomePositionRequested()
     }
     return false;
 }
-
