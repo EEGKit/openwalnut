@@ -26,9 +26,9 @@
 #define WQTMODULEMETAINFO_H
 
 #ifdef OW_FORCE_WEBKIT
-    #include <QWebFrame>
+    #include <QWebFrame> //NOLINT
 #else
-    #include <QWebEnginePage>
+    #include <QWebEnginePage> //NOLINT
 #endif
 #include <QWidget>
 
