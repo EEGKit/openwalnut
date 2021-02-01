@@ -25,7 +25,11 @@
 #ifndef WQTMODULEMETAINFO_H
 #define WQTMODULEMETAINFO_H
 
-#include <QWebEnginePage>
+#ifdef OW_FORCE_WEBKIT
+    #include <QWebFrame>
+#else
+    #include <QWebEnginePage>
+#endif
 #include <QWidget>
 
 #include "core/kernel/WModule.h"
@@ -62,9 +66,13 @@ private:
     WModule::SPtr m_module;
 
     /**
-     * the frame containing the module meta info
+     * The frame containing the module meta info
      */
+#ifdef OW_FORCE_WEBKIT
+    QWebFrame* m_frame;
+#else
     QWebEnginePage* m_page;
+#endif
 };
 
 #endif  // WQTMODULEMETAINFO_H
