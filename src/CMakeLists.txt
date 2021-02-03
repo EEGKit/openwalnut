@@ -78,7 +78,7 @@ ENDIF()
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 # some convenience install targets:
-ADD_CUSTOM_TARGET( list_install_tarets
+ADD_CUSTOM_TARGET( list_install_targets
                    COMMAND echo The following components can be installed:
                    COMMAND echo " * install - install everything."
                    COMMAND echo " * install_runtime - install the UIs."

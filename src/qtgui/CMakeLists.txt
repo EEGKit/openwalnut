@@ -39,11 +39,17 @@ SET( BinName "openwalnut-qt" )
 # Setup QT
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 
+OPTION( OW_GUI_QT5_WebKit "If building with Qt5 use deprecated WebKit" OFF )
+
 OPTION( OW_GUI_FORCE_QT4 "Enable this to build the QT4-based OpenWalnut GUI." OFF )
 IF( OW_GUI_FORCE_QT4 )
     FIND_PACKAGE( Qt4 REQUIRED QtGui QtOpenGL QtWebKit )
     SET( QT_Link_Libs Qt4::QtGui Qt4::QtOpenGL Qt4::QtWebKit ) 
 ELSE()
+    IF( OW_GUI_QT5_WebKit )
+        ADD_DEFINITIONS( "-DOW_FORCE_WEBKIT" )
+    ENDIF()
+
     # Special handling if the user specified a QT path manually. Useful when using multiple installations of Qt.
     IF( DEFINED ENV{QTDIR} )
         MESSAGE( "Using custom Qt path. Ensure you set the path to the directory containing the bin and lib directories." )
@@ -56,11 +62,19 @@ ELSE()
     # Package dependencies:
     FIND_PACKAGE( Qt5Widgets REQUIRED )
     FIND_PACKAGE( Qt5OpenGL REQUIRED )
-    FIND_PACKAGE( Qt5WebKitWidgets REQUIRED )
+    IF( OW_GUI_QT5_WebKit )    
+        FIND_PACKAGE( Qt5WebKitWidgets REQUIRED )
+    ELSE()
+        FIND_PACKAGE( Qt5WebEngineWidgets REQUIRED )
+    ENDIF()
 
     INCLUDE_DIRECTORIES( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
     INCLUDE_DIRECTORIES( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
-    INCLUDE_DIRECTORIES( SYSTEM ${Qt5WebKitWidgets_INCLUDE_DIRS} )
+    IF( OW_GUI_QT5_WebKit )    
+        INCLUDE_DIRECTORIES( SYSTEM ${Qt5WebKitWidgets_INCLUDE_DIRS} )
+    ELSE()
+        INCLUDE_DIRECTORIES( SYSTEM ${Qt5WebEngineWidgets_INCLUDE_DIRS} )
+    ENDIF()
 
     # Compiling with Qt5 requires some special definitions and flags to be set.
 
@@ -68,7 +82,11 @@ ELSE()
     SET( _QT5_DEFINITIONS "" )
     LIST( APPEND _QT5_DEFINITIONS ${Qt5Widgets_DEFINITIONS} )
     LIST( APPEND _QT5_DEFINITIONS ${Qt5OpenGL_DEFINITIONS} )
-    LIST( APPEND _QT5_DEFINITIONS ${Qt5WebKitWidgets_DEFINITIONS} )
+    IF( OW_GUI_QT5_WebKit )    
+        LIST( APPEND _QT5_DEFINITIONS ${Qt5WebKitWidgets_DEFINITIONS} )
+    ELSE()
+        LIST( APPEND _QT5_DEFINITIONS ${Qt5WebEngineWidgets_DEFINITIONS} )
+    ENDIF()
     LIST( REMOVE_DUPLICATES _QT5_DEFINITIONS )
     ADD_DEFINITIONS( ${_QT5_DEFINITIONS} )
 
@@ -76,11 +94,19 @@ ELSE()
     SET( _QT5_EXECUTABLE_COMPILE_FLAGS "" )
     LIST( APPEND _QT5_EXECUTABLE_COMPILE_FLAGS ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS} )
     LIST( APPEND _QT5_EXECUTABLE_COMPILE_FLAGS ${Qt5OpenGL_EXECUTABLE_COMPILE_FLAGS} )
-    LIST( APPEND _QT5_EXECUTABLE_COMPILE_FLAGS ${Qt5WebKitWidgets_EXECUTABLE_COMPILE_FLAGS} )
+    IF( OW_GUI_QT5_WebKit )    
+        LIST( APPEND _QT5_EXECUTABLE_COMPILE_FLAGS ${Qt5WebKitWidgets_EXECUTABLE_COMPILE_FLAGS} )
+    ELSE()    
+        LIST( APPEND _QT5_EXECUTABLE_COMPILE_FLAGS ${Qt5WebEngineWidgets_EXECUTABLE_COMPILE_FLAGS} )
+    ENDIF()
     LIST( REMOVE_DUPLICATES _QT5_EXECUTABLE_COMPILE_FLAGS )
     SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${_QT5_EXECUTABLE_COMPILE_FLAGS}" )
 
-    SET( QT_Link_Libs Qt5::Widgets Qt5::OpenGL Qt5::WebKitWidgets ) 
+    IF( OW_GUI_QT5_WebKit )    
+        SET( QT_Link_Libs Qt5::Widgets Qt5::OpenGL Qt5::WebKitWidgets ) 
+    ELSE()  
+        SET( QT_Link_Libs Qt5::Widgets Qt5::OpenGL Qt5::WebEngineWidgets ) 
+    ENDIF()
 ENDIF()
 
 # Includes:

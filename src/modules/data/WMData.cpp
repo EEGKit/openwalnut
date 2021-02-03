@@ -149,7 +149,7 @@ void WMData::properties()
     WPropertyHelper::PC_SELECTONLYONE::addTo( m_matrixSelection );
 
     // use this callback for the other properties
-    WPropertyBase::PropertyChangeNotifierType propertyCallback = boost::bind( &WMData::propertyChanged, this, _1 );
+    WPropertyBase::PropertyChangeNotifierType propertyCallback = boost::bind( &WMData::propertyChanged, this, boost::placeholders::_1 );
 }
 
 void WMData::propertyChanged( boost::shared_ptr< WPropertyBase > property )

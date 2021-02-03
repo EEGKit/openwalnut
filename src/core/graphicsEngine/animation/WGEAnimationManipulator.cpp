@@ -233,16 +233,14 @@ class Rotator: public Transformation
 {
 public:
     /**
-     * Create a rotation matrix which rotates a certain number of degree with a given speed. This means, that the time interval is defined by speed
+     * Create a rotation matrix which rotates a certain number of degrees with a given speed. This means, that the time interval is defined by speed
      * and degree.
      *
      * \param degree rotate this number of degree
-     * \param speed  rotation speed in degree per second
+     * \param speed  rotation speed in degrees per second
      * \param time   current time in seconds
      * \param startTime time offset. When to start rotation
      * \param axes the axes to rotate
-     *
-     * \return the rotation matrix at the current time.
      */
     Rotator( double time, double startTime, WVector3d axes, double degree, double speed ):
         Transformation()

@@ -56,19 +56,17 @@ public:
     boost::shared_ptr< WRMBranch > addBranch();
 
     /**
-     * adds a new master ROI
+     * Adds a new master ROI
      *
      * \param newRoi
-     * \return ROI representation which can be used to remove the ROI
      */
     void addRoi( osg::ref_ptr< WROI > newRoi );
 
     /**
-     * adds a new ROI below a master ROI
+     * Adds a new ROI below a master ROI
      *
      * \param newRoi
      * \param parentRoi
-     * \return ROI representation which can be used to remove the ROI
      */
     void addRoi( osg::ref_ptr< WROI > newRoi, osg::ref_ptr< WROI > parentRoi );
 
@@ -114,6 +112,8 @@ public:
      */
     bool dirty( bool reset = false );
 
+
+    /// @cond Supress doxygen because it produces warning here becuase it does not correctly understand the C++ code.
     /**
      * Add a specified notifier to the list of default notifiers which get connected to each added roi.
      *
@@ -156,6 +156,7 @@ public:
      * \param notifier  the notifier function
      */
     void removeRemoveBranchNotifier(  boost::shared_ptr< boost::function< void( boost::shared_ptr< WRMBranch > ) > > notifier );
+    /// @endcond
 
     /**
      * setter

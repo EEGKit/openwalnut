@@ -133,7 +133,7 @@ void WFlagForwarder< T >::forward( boost::shared_ptr< WFlag< T > >  to )
     to->set( m_source->get() );
 
     // NOTE: we do not need to store the signals2::connection here as the destructor disconnects ALL slots
-    signal_forward.connect( boost::bind( &WFlag< T >::set, to.get(), _1, false ) );
+    signal_forward.connect( boost::bind( &WFlag< T >::set, to.get(), boost::placeholders::_1, false ) );
 }
 
 template < typename T >

@@ -237,7 +237,7 @@ void WMColormapper::moduleMain()
                                                                                  osg::Vec3( 0.025 + 2.0 * borderWidth, 0.0, -0.1 ),
                                                                                  osg::Vec3( 0.0, 0.8 + 2.0 * borderWidth, -0.1 ) );
                 colorBarBorder->getDrawable( 0 )->setUpdateCallback( new WGEFunctorCallback< osg::Drawable >(
-                    boost::bind( &WMColormapper::updateColorbarBorder, this, _1 ) )
+                    boost::bind( &WMColormapper::updateColorbarBorder, this, boost::placeholders::_1 ) )
                 );
 
                 m_colorBar->getOrCreateStateSet()->addUniform( new WGEPropertyUniform< WPropSelection >( "u_colormap",
@@ -252,7 +252,7 @@ void WMColormapper::moduleMain()
                 nameLabel->setLayout( osgText::TextBase::LEFT_TO_RIGHT );
                 nameLabel->setAlignment( osgText::Text::BASE_LINE );
                 nameLabel->setUpdateCallback( new WGEFunctorCallback< osg::Drawable >(
-                    boost::bind( &WMColormapper::updateColorbarName, this, _1 ) )
+                    boost::bind( &WMColormapper::updateColorbarName, this, boost::placeholders::_1 ) )
                 );
 
                 // the bar and the labels need to be added in an identity modelview matrix node
@@ -266,7 +266,7 @@ void WMColormapper::moduleMain()
                 labels->addDrawable( nameLabel );
                 m_scaleLabels = new osg::Geode();
                 m_scaleLabels->addUpdateCallback( new WGEFunctorCallback< osg::Node >(
-                    boost::bind( &WMColormapper::updateColorbarScale, this, _1 )
+                    boost::bind( &WMColormapper::updateColorbarScale, this, boost::placeholders::_1 )
                 ) );
 
                 // we need to adapt the labels to the window level

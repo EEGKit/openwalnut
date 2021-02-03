@@ -388,7 +388,7 @@ void WMClusterDisplay::properties()
 void WMClusterDisplay::moduleMain()
 {
     osg::ref_ptr< MainViewEventHandler > eh( new MainViewEventHandler );
-    eh->subscribeLeftButtonPush( boost::bind( &WMClusterDisplay::dendrogramClick, this, _1 ) );
+    eh->subscribeLeftButtonPush( boost::bind( &WMClusterDisplay::dendrogramClick, this, boost::placeholders::_1 ) );
 
     WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView()->addEventHandler( eh );
 

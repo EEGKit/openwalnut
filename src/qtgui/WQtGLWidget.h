@@ -64,8 +64,6 @@ public:
      * \param parent Parent widget.
      * \param projectionMode decides whether the widget uses perspective or othographic projection
      * \param shareWidget this widget will share OpenGL display lists and texture objects with shareWidget
-     *
-     * \return
      */
     explicit WQtGLWidget( std::string nameOfViewer, QWidget* parent = 0,
         WGECamera::ProjectionMode projectionMode = WGECamera::ORTHOGRAPHIC, const QWidget * shareWidget = 0 );

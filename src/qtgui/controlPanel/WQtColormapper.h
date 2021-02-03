@@ -55,8 +55,6 @@ public:
      * Default constructor.
      *
      * \param parent Parent widget.
-     *
-     * \return
      */
     explicit WQtColormapper( QWidget* parent = 0 );
 

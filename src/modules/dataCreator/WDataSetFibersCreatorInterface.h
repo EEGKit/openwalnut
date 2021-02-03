@@ -52,8 +52,6 @@ public:
      * \param lengths the lengths array. Fill this.
      * \param fibIdxVertexMap inverse map. Fill this.
      * \param colors the color array. Fill this.
-     *
-     * \return fiber data
      */
     virtual void operator()( WProgress::SPtr progress,
                              const WColor& color,

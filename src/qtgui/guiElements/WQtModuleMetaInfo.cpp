@@ -26,11 +26,15 @@
 #include <vector>
 #include <iostream>
 
+#ifdef OW_FORCE_WEBKIT
+    #include <QWebView>
+    #include <QWebFrame>
+    #include <QWebPage>
+#else
+    #include <QWebEngineView> //NOLINT
+    #include <QWebEnginePage> //NOLINT
+#endif
 #include <QVBoxLayout>
-
-#include <QWebView>
-#include <QWebFrame>
-#include <QWebPage>
 #include <QToolBar>
 #include <QToolButton>
 #include <QHBoxLayout>
@@ -211,6 +215,7 @@ WQtModuleMetaInfo::WQtModuleMetaInfo( WModule::SPtr module, QWidget* parent ):
     layout->setSpacing( 0 );
     layout->setContentsMargins( 0, 0, 0, 0 );
 
+#ifdef OW_FORCE_WEBKIT
     // create the QT webview
     QWebView* view = new QWebView( this );
 
@@ -218,6 +223,14 @@ WQtModuleMetaInfo::WQtModuleMetaInfo( WModule::SPtr module, QWidget* parent ):
     QWebPage* page = new QWebPage( this );
     page->setLinkDelegationPolicy( QWebPage::DelegateExternalLinks );
     m_frame = page->mainFrame();
+#else
+    // create the QT webview
+    QWebEngineView* view = new QWebEngineView( this );
+
+    // create a webpage and add it to the view
+    QWebEnginePage* page = new QWebEnginePage( this );
+    m_page = page;
+#endif
     view->setPage( page );
 
     // add a toolbar for basic navigation
@@ -237,9 +250,17 @@ WQtModuleMetaInfo::WQtModuleMetaInfo( WModule::SPtr module, QWidget* parent ):
     homeBtn->setToolButtonStyle( Qt::ToolButtonTextBesideIcon );
 
     QToolButton* backBtn = new QToolButton( toolbar );
+#ifdef OW_FORCE_WEBKIT
     backBtn->setDefaultAction( page->action( QWebPage::Back ) );
+#else
+    backBtn->setDefaultAction( page->action( QWebEnginePage::Back ) );
+#endif
     QToolButton* fwdBtn = new QToolButton( toolbar );
+#ifdef OW_FORCE_WEBKIT
     fwdBtn->setDefaultAction( page->action( QWebPage::Forward ) );
+#else
+    fwdBtn->setDefaultAction( page->action( QWebEnginePage::Forward ) );
+#endif
 
     tbLayout->addWidget( backBtn );
     tbLayout->addWidget( fwdBtn );
@@ -272,5 +293,9 @@ void WQtModuleMetaInfo::resetContent()
 
     // set content
     std::string processedContent = htmlify( m_module->getMetaInformation() );
+#ifdef OW_FORCE_WEBKIT
     m_frame->setHtml( processedContent.c_str(), QUrl( locationURL ) );
+#else
+    m_page->setHtml( processedContent.c_str(), QUrl( locationURL ) );
+#endif
 }

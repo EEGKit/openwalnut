@@ -106,7 +106,7 @@ public:
     };
 
     /**
-     * returns the m_locationSignal to for registering to it.
+     * \return the m_locationSignal to for registering to it.
      */
     boost::signals2::signal< void( WMouseLocationInfo ) >* getLocationSignal();
 

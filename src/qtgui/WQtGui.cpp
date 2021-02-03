@@ -152,7 +152,7 @@ int WQtGui::run()
 {
     m_splash = NULL;
     // init logger
-    m_loggerConnection = WLogger::getLogger()->subscribeSignal( WLogger::AddLog, boost::bind( &WQtGui::slotAddLog, this, _1 ) );
+    m_loggerConnection = WLogger::getLogger()->subscribeSignal( WLogger::AddLog, boost::bind( &WQtGui::slotAddLog, this, boost::placeholders::_1 ) );
 
     // make qapp instance before using the applicationDirPath() function
     WApplication appl( m_argc, m_argv, true );
@@ -204,7 +204,7 @@ int WQtGui::run()
     m_kernel->run();
     m_kernel->subscribeSignal( WKernel::KERNEL_STARTUPCOMPLETE, boost::bind( &WQtGui::deferredLoad, this ) );
 
-    t_ModuleErrorSignalHandlerType func = boost::bind( &WQtGui::moduleError, this, _1, _2 );
+    t_ModuleErrorSignalHandlerType func = boost::bind( &WQtGui::moduleError, this, boost::placeholders::_1, boost::placeholders::_2 );
     m_kernel->getRootContainer()->addDefaultNotifier( WM_ERROR, func );
 
     // bind the GUI's slot with the signals provided by the kernel
@@ -212,35 +212,41 @@ int WQtGui::run()
     WDataHandler::getDefaultSubject()->getListChangeCondition()->subscribeSignal( newDatasetSignal );
 
     // Assoc Event
-    t_ModuleGenericSignalHandlerType assocSignal = boost::bind( &WQtGui::slotAddDatasetOrModuleToTree, this, _1 );
+    t_ModuleGenericSignalHandlerType assocSignal = boost::bind( &WQtGui::slotAddDatasetOrModuleToTree, this, boost::placeholders::_1 );
     m_kernel->getRootContainer()->addDefaultNotifier( WM_ASSOCIATED, assocSignal );
 
     // Ready Event
-    t_ModuleGenericSignalHandlerType readySignal = boost::bind( &WQtGui::slotActivateDatasetOrModuleInTree, this, _1 );
+    t_ModuleGenericSignalHandlerType readySignal = boost::bind( &WQtGui::slotActivateDatasetOrModuleInTree, this, boost::placeholders::_1 );
     m_kernel->getRootContainer()->addDefaultNotifier( WM_READY, readySignal );
 
     // Remove Event
-    t_ModuleGenericSignalHandlerType removedSignal = boost::bind( &WQtGui::slotRemoveDatasetOrModuleInTree, this, _1 );
+    t_ModuleGenericSignalHandlerType removedSignal = boost::bind( &WQtGui::slotRemoveDatasetOrModuleInTree, this, boost::placeholders::_1 );
     m_kernel->getRootContainer()->addDefaultNotifier( WM_REMOVED, removedSignal );
 
     // Connect Event
-    t_GenericSignalHandlerType connectionEstablishedSignal = boost::bind( &WQtGui::slotConnectionEstablished, this, _1, _2 );
+    t_GenericSignalHandlerType connectionEstablishedSignal = boost::bind( &WQtGui::slotConnectionEstablished,
+                                                                          this,
+                                                                          boost::placeholders::_1,
+                                                                          boost::placeholders::_2 );
     m_kernel->getRootContainer()->addDefaultNotifier( CONNECTION_ESTABLISHED, connectionEstablishedSignal );
 
     // Disconnect Event
-    t_GenericSignalHandlerType connectionClosedSignal = boost::bind( &WQtGui::slotConnectionClosed, this, _1, _2 );
+    t_GenericSignalHandlerType connectionClosedSignal = boost::bind( &WQtGui::slotConnectionClosed,
+                                                                     this,
+                                                                     boost::placeholders::_1,
+                                                                     boost::placeholders::_2 );
     m_kernel->getRootContainer()->addDefaultNotifier( CONNECTION_CLOSED, connectionClosedSignal );
 
     boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > assocRoiSignal;
     assocRoiSignal =
         boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > >(
-            new boost::function< void( osg::ref_ptr< WROI > ) > ( boost::bind( &WQtGui::slotAddRoiToTree, this, _1 ) ) );
+            new boost::function< void( osg::ref_ptr< WROI > ) > ( boost::bind( &WQtGui::slotAddRoiToTree, this, boost::placeholders::_1 ) ) );
     m_kernel->getRoiManager()->addAddNotifier( assocRoiSignal );
 
     boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > removeRoiSignal;
     removeRoiSignal =
         boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > >(
-            new boost::function< void( osg::ref_ptr< WROI > ) > ( boost::bind( &WQtGui::slotRemoveRoiFromTree, this, _1 ) ) );
+            new boost::function< void( osg::ref_ptr< WROI > ) > ( boost::bind( &WQtGui::slotRemoveRoiFromTree, this, boost::placeholders::_1 ) ) );
     m_kernel->getRoiManager()->addRemoveNotifier( removeRoiSignal );
 
     // create the window
@@ -254,9 +260,9 @@ int WQtGui::run()
 
     // connect loader signal with kernel
 #ifdef _WIN32
-    getLoadButtonSignal()->connect( boost::bind( &WKernel::loadDataSetsSynchronously, m_kernel, _1, false ) );
+    getLoadButtonSignal()->connect( boost::bind( &WKernel::loadDataSetsSynchronously, m_kernel, boost::placeholders::_1, false ) );
 #else
-    getLoadButtonSignal()->connect( boost::bind( &WKernel::loadDataSets, m_kernel, _1, false ) );
+    getLoadButtonSignal()->connect( boost::bind( &WKernel::loadDataSets, m_kernel, boost::placeholders::_1, false ) );
 #endif
 
     // now we are initialized
@@ -420,4 +426,3 @@ void WQtGui::execInGUIThreadAsync( boost::function< void( void ) > functor, WCon
     WDeferredCallEvent* ev = new WDeferredCallEvent( functor, notify );
     QCoreApplication::postEvent( getMainWindow(), ev );
 }
-

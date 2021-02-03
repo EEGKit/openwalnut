@@ -49,6 +49,11 @@ public:
      */
     bool isHomePositionRequested();
 
+    /**
+     * Manually force all following requests not to be considered the first one.
+     */
+    void forceFirstHomePositionRequestFalse();
+
 protected:
     /**
      * Destructor. Protected. To avoid accidental destruction of these root nodes.
@@ -62,4 +67,3 @@ private:
 
 
 #endif  // WGESCENE_H
-

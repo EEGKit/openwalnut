@@ -105,8 +105,6 @@ public:
      * \param force force connection even if incompatible. Used primarily for project file loader. If true, only a \ref lazyConnectable is used.
      *
      * \exception WModuleConnectionFailed if connection can not be established.
-     *
-     * \return true if successful
      */
     virtual void connect( boost::shared_ptr<WModuleConnector> con, bool force = false );
 

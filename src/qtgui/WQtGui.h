@@ -146,7 +146,8 @@ public:
     virtual void slotConnectionClosed( boost::shared_ptr<WModuleConnector> in, boost::shared_ptr<WModuleConnector> out );
 
     /**
-     * getter functions for the signales proved by the gui
+     * Getter functions for the signals provided by the gui
+     * \return the signal
      */
     boost::signals2::signal< void( std::vector< std::string > ) >* getLoadButtonSignal();
 
@@ -306,4 +307,3 @@ private:
 };
 
 #endif  // WQTGUI_H
-

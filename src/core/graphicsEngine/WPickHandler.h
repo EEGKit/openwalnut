@@ -84,7 +84,7 @@ public:
     WPickInfo getHitResult();
 
     /**
-     * returns the m_pickSignal to for registering to it.
+     * \return the m_pickSignal to for registering to it.
      */
     boost::signals2::signal< void( WPickInfo ) >* getPickSignal();
 

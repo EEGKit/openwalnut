@@ -580,7 +580,7 @@ public:
      \param thisPartition the starting partition
      \param depthLevel the number of levels down to look for sub-partitions
      \param excludeLeaves if set (1 ), the the algorithm will not further subdivide a base-node (where all its children are single leaves)
-     \retval partitionSet the vector of returned sub-partitions
+     \param partitionSet (is a return value) the vector of returned sub-partitions
      \return a set of integers identifying each of the clusters from the resulting sub-partitions with its parent cluster from the starting partition
      */
     std::vector< std::vector< unsigned int > > getBranching( const std::vector < nodeID_t > &thisPartition,
@@ -592,7 +592,7 @@ public:
      * gets all possble sets of sub-partitions in a tree given an initial partition and a depth level (where only non-leaf nodes are considered and are identified by a single integer)
      \param thisPartition the starting partition
      \param depthLevel the number of levels down to look for sub-partitions
-     \retval partitionSet the vector of returned sub-partitions
+     \param partitionSet (is a return value) the vector of returned sub-partitions
      \return a set of integers identifying each of the clusters from the resulting sub-partitions with its parent cluster from the starting partition
      */
     std::vector< std::vector< unsigned int > > getBranching( const std::vector < size_t > &thisPartition,

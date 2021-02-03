@@ -166,6 +166,7 @@ void WROIManager::setDirty()
     m_dirty->set( true );
 }
 
+/// @cond Supress doxygen because it produces warning here becuase it does not correctly understand the C++ code.
 void WROIManager::addAddNotifier( boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > notifier )
 {
     boost::unique_lock< boost::shared_mutex > lock;
@@ -228,6 +229,7 @@ void WROIManager::removeRemoveBranchNotifier(  boost::shared_ptr< boost::functio
     }
     lock.unlock();
 }
+/// @endcond
 
 void WROIManager::setSelectedRoi( osg::ref_ptr< WROI > roi )
 {
@@ -262,4 +264,3 @@ WROIManager::Branches WROIManager::getBranches() const
     }
     return returnVec;
 }
-

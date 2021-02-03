@@ -125,7 +125,7 @@ public:
      * Returns a const reference to the component an row i, columns j in order to
      * provide read-only access to the component.
      * \param i row
-     * \param j column
+     * \param j column     *
      * \return A const reference to the component (i,j)
      */
     const T& operator()( size_t i, size_t j ) const;
@@ -388,8 +388,8 @@ template< typename T > size_t WMatrix< T >::getNbCols() const
 /**
  * Returns a reference to the component an row i, columns j in order to
  * provide access to the component.
- * \param i row
- * \param j column
+ *
+ * For parameter documentations see overloaded function.
  */
 template< typename T > T& WMatrix< T >::operator()( size_t i, size_t j )
 {
@@ -400,8 +400,8 @@ template< typename T > T& WMatrix< T >::operator()( size_t i, size_t j )
 /**
  * Returns a const reference to the component an row i, columns j in order to
  * provide read-only access to the component.
- * \param i row
- * \param j column
+ *
+ * For parameter documentations see overloaded function.
  */
 template< typename T > const T& WMatrix< T >::operator()( size_t i, size_t j ) const
 {
@@ -411,7 +411,8 @@ template< typename T > const T& WMatrix< T >::operator()( size_t i, size_t j ) c
 
 /**
  * Compares two matrices and returns true if they are equal.
- * \param rhs The right hand side of the comparison
+ *
+ * For parameter documentations see overloaded function.
  */
 template< typename T > bool WMatrix< T >::operator==( const WMatrix& rhs ) const
 {
@@ -420,7 +421,8 @@ template< typename T > bool WMatrix< T >::operator==( const WMatrix& rhs ) const
 
 /**
  * Compares two matrices and returns true if they are not equal.
- * \param rhs The right hand side of the comparison
+ *
+ * For parameter documentations see overloaded function.
  */
 template< typename T > bool WMatrix< T >::operator!=( const WMatrix& rhs ) const
 {
@@ -429,7 +431,8 @@ template< typename T > bool WMatrix< T >::operator!=( const WMatrix& rhs ) const
 
 /**
  * Assigns the argument WMatrix to this WMatrix.
- * \param rhs The right hand side of the assignment
+ *
+ * For parameter documentations see overloaded function.
  */
 template< typename T > WMatrix< T >& WMatrix< T >::operator=( const WMatrix& rhs )
 {

@@ -414,11 +414,11 @@ const t_GenericSignalHandlerType WModule::getSignalHandler( MODULE_CONNECTOR_SIG
     switch( signal )
     {
         case CONNECTION_ESTABLISHED:
-            return boost::bind( &WModule::notifyConnectionEstablished, this, _1, _2 );
+            return boost::bind( &WModule::notifyConnectionEstablished, this, boost::placeholders::_1, boost::placeholders::_2 );
         case CONNECTION_CLOSED:
-            return boost::bind( &WModule::notifyConnectionClosed, this, _1, _2 );
+            return boost::bind( &WModule::notifyConnectionClosed, this, boost::placeholders::_1, boost::placeholders::_2 );
         case DATA_CHANGED:
-            return boost::bind( &WModule::notifyDataChange, this, _1, _2 );
+            return boost::bind( &WModule::notifyDataChange, this, boost::placeholders::_1, boost::placeholders::_2 );
         default:
             std::ostringstream s;
             s << "Could not subscribe to unknown signal. You need to implement this signal type explicitly in your module.";

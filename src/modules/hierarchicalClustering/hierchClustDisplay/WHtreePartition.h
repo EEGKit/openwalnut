@@ -136,8 +136,8 @@ public:
     /**
      * Filter a set of partitions across granularity levels in orther to keep only local maxima within a certain granularity "radius"
      * \param filterRadius radius (in granularity steps) within to keep the local maxima
-     * \retval partValPoint pointer to the partition value vector to be decimated
-     * \retval partVectorPoint  pointer to the partition vector to be decimated
+     * \param partValPoint (is a return value) pointer to the partition value vector to be decimated
+     * \param partVectorPoint (is a return value) pointer to the partition vector to be decimated
      * \return the index of the partition with the absolute maximum of quality vaule
      */
     size_t filterMaxPartitions( const unsigned int filterRadius,
@@ -173,7 +173,7 @@ public:
      * Gets a classic partition for the tree
      * (those where clusters are further subdivided until a condition is met, based on number of clusters, level or biggest cluster size)
      * \param compValue comparison value to select partition
-     * \retval partition vector where to save the partition
+     * \param partition (is a return value) vector where to save the partition
      * \param mode tipe of data on which to base the partition (distance, size h. level)
      * \param condition condition on which to build the partition (condition value or number of clusters)
      * \param excludeLeaves if set base nodes will not be further partitioned
@@ -188,7 +188,7 @@ public:
      * (those where a partition characteristic must be cosnidered for several partitions and levels at a time to decide which subset of the tree to continue navigating,
      * until a condition is met)
      * \param compValue comparison value to select partition
-     * \retval partition vector where to save the partition
+     * \param partition (is a return value) vector where to save the partition
      * \param mode tipe of data on which to base the partition ( spread-separation index, minimum size difference,
      * maximum allowed intra cluster distance, maximum allowed weighted intra cluster distance, minimum required inter cluster distance,
      * minimum required weighted inter cluster distance)
@@ -204,7 +204,7 @@ public:
     /**
      * Finds clusters with sharp boundaries (long branches) the tree
      * \param compValue comparison value to select partition
-     * \retval partition vector where to save the partition
+     * \param partition (is a return value) vector where to save the partition
      * \param excludeLeaves if set base nodes will not be further partitioned
      * \param root root of the subtree where to find the aprtition
      * \param normalized flag to indicate whether the absolute length of the brancghwes should be considered of if they should be normalized by distance level in the tree
@@ -219,7 +219,7 @@ public:
     /**
      * Finds regions without sharp inner boundaries the tree
      * \param compValue comparison value to select partition
-     * \retval partition vector where to save the partition
+     * \param partition (is a return value) vector where to save the partition
      * \param excludeLeaves if set base nodes will not be further partitioned
      * \param root root of the subtree where to find the aprtition
      * \return value at wich partition was found

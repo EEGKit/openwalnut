@@ -55,10 +55,11 @@ namespace boost
  * \par
  * http://www.openwalnut.org
  * \par
- * Copyright 2009-2020 The OpenWalnut Community,
- *           2009-2016 Nemtics,
- *           2009-2020 Abteilung fuer Bild- und Signalverarbeitung, Universitaet Leipzig,
- *           2009-2013 Max-Planck Institute of Cognitive Neuroscience, Leipzig, Germany.
+ * Copyright 2009-2021 The OpenWalnut Community,
+ *           2015-2021 Hochschule Worms
+ *           2009-2021 BSV at Universitaet Leipzig,
+ *           2012-2017 Nemtics & Sebastian Eichelbaum
+ *           2009-2013 MPI CBS, Leipzig, Germany.
  * For more information see http://www.openwalnut.org/copying
  */
 
@@ -69,10 +70,11 @@ void printVersion()
               << std::endl;
 
     std::cout <<
-    "Copyright 2009-2020 The OpenWalnut Community\n"
-    "          2012-2016 Nemtics\n"
-    "          2009-2020 Abteilung fuer Bild- und Signalverarbeitung, Universitaet Leipzig\n"
-    "          2009-2013 Max-Planck Institute of Cognitive Neuroscience, Leipzig, Germany\n"
+    "Copyright 2009-2021 The OpenWalnut Community\n"
+    "          2015-2021 Hochschule Worms\n"
+    "          2009-2021 BSV at Universitaet Leipzig\n"
+    "          2012-2017 Nemtics & Sebastian Eichelbaum\n"
+    "          2009-2013 MPI CBS, Leipzig, Germany\n"
     "For more information see http://www.openwalnut.org/copying\n"
     "This program comes with ABSOLUTELY NO WARRANTY.\n"
     "This is free software, and you are welcome to redistribute it\n"
@@ -219,4 +221,3 @@ int main( int argc, char** argv )
 
     return result;
 }
-

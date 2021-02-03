@@ -120,8 +120,6 @@ private:
      *
      * \param grid the grid
      * \param values the value set
-     *
-     * \return the vector value set basing on the same grid as the specified one
      */
     template< typename T >
     void derive( boost::shared_ptr< WGridRegular3D > grid, boost::shared_ptr< WValueSet< T > > values );

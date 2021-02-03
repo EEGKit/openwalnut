@@ -109,8 +109,6 @@ public:
      *
      * \tparam T the real integral type of the first value set.
      * \param vals the first valueset currently visited.
-     *
-     * \return the result from the operation with this and the second value set
      */
     template < typename T >
     void operator()( const WValueSet< T >* const& vals ) const             // NOLINT

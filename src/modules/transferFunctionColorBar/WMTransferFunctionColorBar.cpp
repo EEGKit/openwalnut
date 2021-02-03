@@ -219,7 +219,7 @@ void WMTransferFunctionColorBar::moduleMain()
                 nameLabel->setLayout( osgText::TextBase::VERTICAL );
                 nameLabel->setAlignment( osgText::Text::BASE_LINE );
                 // nameLabel->setUpdateCallback( new WGEFunctorCallback< osg::Drawable >(
-                //     boost::bind( &WMTransferFunctionColorBar::updateColorbarName, this, _1 ) )
+                //     boost::bind( &WMTransferFunctionColorBar::updateColorbarName, this, boost::placeholders::_1 ) )
                 // );
 
                 // the bar and the labels need to be added in an identity modelview matrix node
@@ -232,7 +232,7 @@ void WMTransferFunctionColorBar::moduleMain()
                 labels->addDrawable( nameLabel );
                 m_scaleLabels = new osg::Geode();
                 m_scaleLabels->addUpdateCallback( new WGEFunctorCallback< osg::Node >(
-                    boost::bind( &WMTransferFunctionColorBar::updateColorbarScale, this, _1 )
+                    boost::bind( &WMTransferFunctionColorBar::updateColorbarScale, this, boost::placeholders::_1 )
                 ) );
 
                 // set some callbacks

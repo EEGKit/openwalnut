@@ -87,7 +87,9 @@ void WMTransferFunction1D::properties()
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
     WTransferFunction tf;
     tf.addAlpha( 0.0, 0.0 );
-    tf.addColor( 0.0, WColor( 0.0, 0.0, 0.0, 1.0 ) );
+    tf.addColor( 0.0, WColor( 0.0, 0.0, 1.0, 1.0 ) );
+    tf.addColor( 0.5, WColor( 0.0, 1.0, 0.0, 1.0 ) );
+    tf.addAlpha( 0.75, 0.25 );
     tf.addAlpha( 1.0, 0.5 );
     tf.addColor( 1.0, WColor( 1.0, 0.0, 0.0, 1.0 ) );
     m_transferFunction = m_properties->addProperty( "Transfer Function", "The transfer function editor.", tf, m_propCondition, false );
