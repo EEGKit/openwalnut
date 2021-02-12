@@ -24,6 +24,7 @@
 
 #include <string>
 #include <vector>
+#include <modules/data/io/WReaderCSV.h>
 
 #include "core/common/WAssert.h"
 #include "core/common/WIOTools.h"
@@ -102,6 +103,7 @@ std::vector< WDataModuleInputFilter::ConstSPtr > WMData::getInputFilter() const
     // NOTE: plain extension. No wildcards or prefixing "."!
     filters.push_back( WDataModuleInputFilter::ConstSPtr( new WDataModuleInputFilterFile( "nii", "NIfTI files" ) ) );
     filters.push_back( WDataModuleInputFilter::ConstSPtr( new WDataModuleInputFilterFile( "nii.gz", "Compressed NIfTI files" ) ) );
+    filters.push_back( WDataModuleInputFilter::ConstSPtr( new WDataModuleInputFilterFile( "csv", "Comma separated values" ) ) );
 #ifdef WBIOSIG_ENABLED
     filters.push_back( WDataModuleInputFilter::ConstSPtr( new WDataModuleInputFilterFile( "edf", "EEG files (BioSig)" ) ) );
 #endif
@@ -560,6 +562,11 @@ void WMData::load()
     {
         WReaderVTK vtkReader( fileName );
         m_dataSet = vtkReader.read();
+    }
+    else if( suffix == ".csv" )
+    {
+        WReaderCSV csvReader( fileName );
+        m_dataSet = csvReader.read();
     }
     else
     {
