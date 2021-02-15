@@ -39,6 +39,16 @@ class WDataSetPointsAndSizes : public WDataSetPoints
 {
 public:
     /**
+     * Pointer to dataset.
+     */
+    typedef boost::shared_ptr< WDataSetPointsAndSizes > SPtr;
+
+    /**
+     * Pointer to const dataset.
+     */
+    typedef boost::shared_ptr< const WDataSetPoints > ConstSPtr;
+
+    /**
      * Sizes for each vertix in VertexArray
      */
     typedef boost::shared_ptr< std::vector< float > > SizeArray;

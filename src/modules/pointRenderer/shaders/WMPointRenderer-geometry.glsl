@@ -32,11 +32,6 @@
 // Uniforms
 /////////////////////////////////////////////////////////////////////////////
 
-/**
- * The size of the sprite
- */
-uniform float u_pointSize = 1.0;
-
 /////////////////////////////////////////////////////////////////////////////
 // Attributes
 /////////////////////////////////////////////////////////////////////////////
@@ -44,6 +39,11 @@ uniform float u_pointSize = 1.0;
 /////////////////////////////////////////////////////////////////////////////
 // Varyings
 /////////////////////////////////////////////////////////////////////////////
+
+/**
+ * The point size
+ */
+varying in float v_pointSize[];
 
 /**
  * The normal/tangent in scene-space
@@ -135,7 +135,7 @@ void main()
     gl_FrontColor = gl_FrontColorIn[0];
 
     v_worldScale = getModelViewScale();
-    v_worldSpaceRadius = v_worldScale * u_pointSize;
+    v_worldSpaceRadius = v_worldScale * v_pointSize[0];
     v_centerPoint = vertex;
     v_worldVertex = v_worldCenterVertex[0];
 
