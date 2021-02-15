@@ -39,18 +39,18 @@
  * Creates a random WDataSetPoints list.
  * \ingroup modules
  */
-class WMconverterCSVdataToPoints : public WModule
+class WMConverterCSVdataToPoints : public WModule
 {
 public:
     /**
      * Standard constructor.
      */
-    WMconverterCSVdataToPoints();
+    WMConverterCSVdataToPoints();
 
     /**
      * Destructor.
      */
-    virtual ~WMconverterCSVdataToPoints();
+    virtual ~WMConverterCSVdataToPoints();
 
     /**
      * Gives back the name of this module.
@@ -95,12 +95,15 @@ protected:
     virtual void properties();
 
 private:
-    boost::shared_ptr< WModuleOutputData< WDataSetCSV > > m_input;    //!< Output connector required for this module.
+    boost::shared_ptr< WModuleInputData< WDataSetCSV > > m_input;    //!< Input connector required for this module.
     boost::shared_ptr< WModuleOutputData< WDataSet > > m_output;    //!< Output connector required for this module.
 
+    boost::shared_ptr< std::vector < std::vector < std::string > > > m_content;
     boost::shared_ptr< std::vector < float > > m_vertices;
     boost::shared_ptr< std::vector < float > > m_colors;
     boost::shared_ptr< WDataSetPoints > m_points;
+
+    void createVertexSet();
 
 };
 

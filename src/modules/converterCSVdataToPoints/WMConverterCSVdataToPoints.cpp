@@ -2,61 +2,67 @@
 // Created by top2021 on 12.02.21.
 //
 
-#include "WMconverterCSVdataToPoints.h"
+#include "WMConverterCSVdataToPoints.h"
 
-W_LOADABLE_MODULE( WMconverterCSVdataToPoints )
+W_LOADABLE_MODULE(WMConverterCSVdataToPoints )
 
-WMconverterCSVdataToPoints::WMconverterCSVdataToPoints():
+WMConverterCSVdataToPoints::WMConverterCSVdataToPoints():
         WModule()
 {
 }
 
-WMconverterCSVdataToPoints::~WMconverterCSVdataToPoints()
+WMConverterCSVdataToPoints::~WMConverterCSVdataToPoints()
 {
 }
 
-const std::string WMconverterCSVdataToPoints::getName() const
+const std::string WMConverterCSVdataToPoints::getName() const
 {
     return "ConverterCSVdataToPoints";
 }
 
-const std::string WMconverterCSVdataToPoints::getDescription() const
+const std::string WMConverterCSVdataToPoints::getDescription() const
 {
     return "Converter CSV-data To WDataSetPoints";
 }
 
-boost::shared_ptr< WModule > WMconverterCSVdataToPoints::factory() const
+boost::shared_ptr< WModule > WMConverterCSVdataToPoints::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMconverterCSVdataToPoints() );
+    return boost::shared_ptr< WModule >( new WMConverterCSVdataToPoints() );
 }
 
-const char** WMconverterCSVdataToPoints::getXPMIcon() const
+const char** WMConverterCSVdataToPoints::getXPMIcon() const
 {
     return NULL;
 }
 
-void WMconverterCSVdataToPoints::moduleMain()
+void WMConverterCSVdataToPoints::moduleMain()
 {
     m_moduleState.setResetable( true, true );
+    m_moduleState.add(m_input->getDataChangedCondition());
 
     ready();
 
     waitRestored();
 
+    createVertexSet();
+
     while( !m_shutdownFlag() )
     {
         m_moduleState.wait();
+
+        boost::shared_ptr< WDataSetCSV > dataset = m_input->getData();
+        m_content = dataset->m_content;
+
+
+
     }
 }
 
-void WMconverterCSVdataToPoints::connectors()
+void WMConverterCSVdataToPoints::createVertexSet()
 {
-    /*m_output = boost::shared_ptr< WModuleOutputData< WDataSet > >(
-            new WModuleOutputData<WDataSet>(
-                    shared_from_this(),
-                    "out",
-                    "TEST")
-    );
+    //ToDo: Input instead of linear-Data-Set
+    m_vertices = boost::shared_ptr< std::vector< float > >(new std::vector<float>());
+    m_colors = boost::shared_ptr< std::vector< float > >(new std::vector<float>());
 
     for (int i = 0; i < 3000; ++i)
     {
@@ -71,19 +77,32 @@ void WMconverterCSVdataToPoints::connectors()
 
     m_points = boost::shared_ptr< WDataSetPoints >(
             new WDataSetPoints(
-                        m_vertices,
-                        m_colors
-                    )
-            );
+                    m_vertices,
+                    m_colors
+            )
+    );
 
     m_output->updateData(m_points);
+}
 
-    addConnector( m_output );*/
+void WMConverterCSVdataToPoints::connectors()
+{
+    m_input = WModuleInputData< WDataSetCSV >::createAndAdd(shared_from_this(), "in", "TEST_input");
+
+    m_output = boost::shared_ptr< WModuleOutputData< WDataSet > >(
+            new WModuleOutputData<WDataSet>(
+                    shared_from_this(),
+                    "out",
+                    "TEST_output")
+    );
+
+
+    addConnector( m_output );
 
     WModule::connectors();
 }
 
-void WMconverterCSVdataToPoints::properties()
+void WMConverterCSVdataToPoints::properties()
 {
 
 }

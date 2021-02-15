@@ -20,7 +20,6 @@ public:
 
     virtual ~WDataSetCSV();
 
-private:
     Content m_content;
 };
 
