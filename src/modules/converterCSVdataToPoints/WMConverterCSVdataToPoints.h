@@ -104,7 +104,7 @@ private:
 
     boost::shared_ptr< WDataSetPoints > m_points;
 
-    int getCol(std::string col, std::vector<std::string> in_row);
+    int getColumnNumberByName(std::string columnNameToMatch, std::vector<std::string> columnNames);
     void FilterPoints(boost::shared_ptr< std::vector < std::vector < std::string > > >  dataCSV);
 };
 

@@ -78,12 +78,12 @@ void WMConverterCSVdataToPoints::properties()
 
 }
 
-int WMConverterCSVdataToPoints::getCol(std::string col, std::vector<std::string> in_row)
+int WMConverterCSVdataToPoints::getColumnNumberByName(std::string columnNameToMatch, std::vector<std::string> columnNames)
 {
     int pos = 0;
-    for (std::vector<std::string>::iterator it = in_row.begin(); it != in_row.end(); it++)
+    for (std::vector<std::string>::iterator it = columnNames.begin(); it != columnNames.end(); it++)
     {
-        if (*it == col) return pos;
+        if (*it == columnNameToMatch) return pos;
         pos++;
     }
     return pos;
@@ -102,17 +102,15 @@ void WMConverterCSVdataToPoints::FilterPoints(boost::shared_ptr< std::vector < s
 
     for (std::vector< std::vector<std::string>>::iterator it = dataCSV->begin(); it != dataCSV->end(); it++)
     {
-        int posX;
-        int posY;
-        int posZ;
+        int posX, posY, posZ;
         int count = 0;
         int finish_flag = 0;
 
         if (is_header)
         {
-            xpos_arr_col = getCol("posX", *it);
-            ypos_arr_col = getCol("posY", *it);
-            zpos_arr_col = getCol("posZ", *it);
+            xpos_arr_col = getColumnNumberByName("posX", *it);
+            ypos_arr_col = getColumnNumberByName("posY", *it);
+            zpos_arr_col = getColumnNumberByName("posZ", *it);
 
             is_header = false;
             continue;
