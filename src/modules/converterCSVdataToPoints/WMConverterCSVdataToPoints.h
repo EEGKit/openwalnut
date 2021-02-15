@@ -101,10 +101,11 @@ private:
     boost::shared_ptr< std::vector < std::vector < std::string > > > m_content;
     boost::shared_ptr< std::vector < float > > m_vertices;
     boost::shared_ptr< std::vector < float > > m_colors;
+
     boost::shared_ptr< WDataSetPoints > m_points;
 
-    void createVertexSet();
-
+    int getCol(std::string col, std::vector<std::string> in_row);
+    void FilterPoints(boost::shared_ptr< std::vector < std::vector < std::string > > >  dataCSV);
 };
 
 #endif  // WMRANDOMDATA_H
