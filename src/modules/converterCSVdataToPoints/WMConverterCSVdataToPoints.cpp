@@ -4,7 +4,7 @@
 
 #include "WMConverterCSVdataToPoints.h"
 
-//W_LOADABLE_MODULE(WMConverterCSVdataToPoints )
+//W_LOADABLE_MODULE( WMConverterCSVdataToPoints )
 
 WMConverterCSVdataToPoints::WMConverterCSVdataToPoints():
         WModule()
