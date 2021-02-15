@@ -97,7 +97,7 @@ void WMPointRenderer::properties()
 
     m_useCorrectDepth = m_properties->addProperty( "Correct Depth", "If set, the depths of the sprites are calculated correctly. You can disable "
                                                                     "this to get higher framerates at the cost of visual correctness.", true );
-    
+
     m_useAttribute = m_properties->addProperty( "Use Attribute", "Decides whether attribute or uniform is used", false, true );
 
     // call WModule's initialization
