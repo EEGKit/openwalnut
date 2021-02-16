@@ -37,3 +37,6 @@ src/modules/modules-user.toolbox
 .cproject
 .settings
 
+# jetbrains CLion / IntelliJ files
+**/.idea
+
