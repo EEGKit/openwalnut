@@ -105,6 +105,24 @@ int WMConverterCSV::getColumnNumberByName(std::string col, std::vector<std::stri
     return pos;
 }
 
+bool WMConverterCSV::isParentID(std::vector < std::string > in_vec, int pos )
+{
+    int count = 0;
+
+    for (std::vector < std::string >::iterator i = in_vec.begin(); i != in_vec.end(); i++)
+    {
+        if(pos == count++)
+        {
+            if(!stoi(*i))
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
 void WMConverterCSV::FilterFibers(boost::shared_ptr< std::vector < std::vector < std::string > > > dataCSV)
 {
     m_vertices = boost::shared_ptr< std::vector< float > >(new std::vector<float>());
@@ -119,6 +137,7 @@ void WMConverterCSV::FilterFibers(boost::shared_ptr< std::vector < std::vector <
     int ypos_arr_col = 0;
     int zpos_arr_col = 0;
     int idpos_arr_col = 0;
+    int pID = 0;
 
     for (std::vector< std::vector<std::string>>::iterator it = dataCSV->begin(); it != dataCSV->end(); it++)
     {
@@ -132,6 +151,7 @@ void WMConverterCSV::FilterFibers(boost::shared_ptr< std::vector < std::vector <
             ypos_arr_col = getColumnNumberByName("posY", *it);
             zpos_arr_col = getColumnNumberByName("posZ", *it);
             idpos_arr_col = getColumnNumberByName("eventID", *it);
+            pID = getColumnNumberByName("parentID", *it);
 
             is_header = false;
             continue;
@@ -144,6 +164,10 @@ void WMConverterCSV::FilterFibers(boost::shared_ptr< std::vector < std::vector <
 
         for (std::vector<std::string>::iterator it_inner = it->begin(); it_inner != it->end(); it_inner++)
         {
+            if(isParentID(*it, pID))
+            {
+                break;
+            }
 
             if (count == xpos_arr_col)
             {
@@ -169,10 +193,13 @@ void WMConverterCSV::FilterFibers(boost::shared_ptr< std::vector < std::vector <
             count++;
         }
 
-        m_vertices->push_back(posX);
-        m_vertices->push_back(posY);
-        m_vertices->push_back(posZ);
-        event_id.push_back(id);
+        if(finish_flag == 4)
+        {
+            m_vertices->push_back(posX);
+            m_vertices->push_back(posY);
+            m_vertices->push_back(posZ);
+            event_id.push_back(id);
+        }
     }
 
     int length = 0;

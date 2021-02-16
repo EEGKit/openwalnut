@@ -123,7 +123,7 @@ private:
     void FilterFibers(boost::shared_ptr< std::vector < std::vector < std::string > > >  dataCSV);
     void FilterPoints(boost::shared_ptr< std::vector < std::vector < std::string > > >  dataCSV);
 
-    void createVertexSet();
+    bool isParentID(std::vector < std::string > in_vec, int pos );
 
 };
 
