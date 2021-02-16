@@ -1,3 +1,10 @@
+//
+// Created by top2021 on 15.02.21.
+//
+
+#ifndef OPENWALNUT_WMCONVERTERCSV_H
+#define OPENWALNUT_WMCONVERTERCSV_H
+
 //---------------------------------------------------------------------------
 //
 // Project: OpenWalnut ( http://www.openwalnut.org )
@@ -30,8 +37,9 @@
 
 
 #include "core/dataHandler/WDataSetCSV.h"
-#include "core/dataHandler/WDataSetPoints.h"
+#include "core/dataHandler/WDataSetFibers.h"
 #include "core/kernel/WModuleOutputData.h"
+#include "core/dataHandler/WDataSetPoints.h"
 
 #include "core/kernel/WModule.h"
 
@@ -39,18 +47,18 @@
  * Creates a random WDataSetPoints list.
  * \ingroup modules
  */
-class WMConverterCSVdataToPoints : public WModule
+class WMConverterCSV : public WModule
 {
 public:
     /**
      * Standard constructor.
      */
-    WMConverterCSVdataToPoints();
+    WMConverterCSV();
 
     /**
      * Destructor.
      */
-    virtual ~WMConverterCSVdataToPoints();
+    virtual ~WMConverterCSV();
 
     /**
      * Gives back the name of this module.
@@ -96,17 +104,32 @@ protected:
 
 private:
     boost::shared_ptr< WModuleInputData< WDataSetCSV > > m_input;    //!< Input connector required for this module.
-    boost::shared_ptr< WModuleOutputData< WDataSet > > m_output;    //!< Output connector required for this module.
+    boost::shared_ptr< WModuleOutputData< WDataSet > > m_output_points;    //!< Output connector required for this module.
+    boost::shared_ptr< WModuleOutputData< WDataSet  > > m_output_fibers;
+
 
     boost::shared_ptr< std::vector < std::vector < std::string > > > m_content;
     boost::shared_ptr< std::vector < float > > m_vertices;
+    boost::shared_ptr< std::vector < size_t > > m_lineStartIndexes;
+    boost::shared_ptr< std::vector < size_t > > m_lineLengths;
+    boost::shared_ptr< std::vector < size_t > > m_verticesReverse;
+
+    boost::shared_ptr< WDataSetFibers> m_fibers;
+    boost::shared_ptr< WDataSetPoints> m_points;
+
     boost::shared_ptr< std::vector < float > > m_colors;
 
-    boost::shared_ptr< WDataSetPoints > m_points;
-
-    int getColumnNumberByName(std::string columnNameToMatch, std::vector<std::string> columnNames);
+    int getColumnNumberByName(std::string col, std::vector<std::string> in_row);
+    void FilterFibers(boost::shared_ptr< std::vector < std::vector < std::string > > >  dataCSV);
     void FilterPoints(boost::shared_ptr< std::vector < std::vector < std::string > > >  dataCSV);
+
+    void createVertexSet();
+
 };
 
 #endif  // WMRANDOMDATA_H
 
+
+
+
+#endif //OPENWALNUT_WMCONVERTERCSV_H

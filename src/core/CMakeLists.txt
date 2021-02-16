@@ -67,7 +67,7 @@ COLLECT_COMPILE_FILES( "${CMAKE_CURRENT_SOURCE_DIR}" TARGET_CPP_FILES TARGET_H_F
 IF( OW_STATIC_BUILD )
     ADD_LIBRARY( ${LibName} STATIC ${TARGET_CPP_FILES} ${TARGET_H_FILES} ${OW_VERSION_HEADER} )
 ELSE()
-    ADD_LIBRARY( ${LibName} SHARED ${TARGET_CPP_FILES} ${TARGET_H_FILES} ${OW_VERSION_HEADER} ../modules/data/io/WReaderCSV.cpp ../modules/data/io/WReaderCSV.h dataHandler/WDataSetCSV.cpp dataHandler/WDataSetCSV.h ../modules/converterCSVdataToPoints/WMConverterCSVdataToPoints.cpp ../modules/converterCSVdataToPoints/WMConverterCSVdataToPoints.h ../modules/converterCSVdataToFibers/WMConverterCSVdataToFibers.cpp ../modules/converterCSVdataToFibers/WMConverterCSVdataToFibers.h)
+    ADD_LIBRARY( ${LibName} SHARED ${TARGET_CPP_FILES} ${TARGET_H_FILES} ${OW_VERSION_HEADER} ../modules/data/io/WReaderCSV.cpp ../modules/data/io/WReaderCSV.h dataHandler/WDataSetCSV.cpp dataHandler/WDataSetCSV.h ../modules/converterCSV/WMConverterCSV.cpp ../modules/converterCSV/WMConverterCSV.h)
 ENDIF()
 
 # Some Linux distributions need to explicitly link against X11. We add this lib here.
