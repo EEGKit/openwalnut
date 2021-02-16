@@ -122,11 +122,11 @@ int WMConverterCSV::getColumnNumberByName( std::string col, std::vector<std::str
     return pos;
 }
 
-bool WMConverterCSV::isParentID(std::vector < std::string > in_vec, int pos )
+bool WMConverterCSV::isParentID( std::vector < std::string > in_vec, int pos )
 {
     int count = 0;
 
-    for (std::vector < std::string >::iterator i = in_vec.begin(); i != in_vec.end(); i++)
+    for( std::vector < std::string >::iterator i = in_vec.begin(); i != in_vec.end(); i++ )
     {
         if(pos == count++)
         {
@@ -140,7 +140,7 @@ bool WMConverterCSV::isParentID(std::vector < std::string > in_vec, int pos )
     return true;
 }
 
-void WMConverterCSV::FilterFibers(boost::shared_ptr< std::vector < std::vector < std::string > > > dataCSV)
+void WMConverterCSV::FilterFibers( boost::shared_ptr< std::vector < std::vector < std::string > > > dataCSV )
 {
     m_vertices = boost::shared_ptr< std::vector< float > >( new std::vector<float>() );
     m_lineStartIndexes = boost::shared_ptr< std::vector < size_t > >( new std::vector < size_t >() );
@@ -186,7 +186,7 @@ void WMConverterCSV::FilterFibers(boost::shared_ptr< std::vector < std::vector <
                 break;
             }
 
-            if ( count == xpos_arr_col )
+            if( count == xpos_arr_col )
             {
                 posX = std::stof( *it_inner );
                 finish_flag++;
