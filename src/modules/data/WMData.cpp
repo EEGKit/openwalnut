@@ -24,8 +24,8 @@
 
 #include <string>
 #include <vector>
-#include <modules/data/io/WReaderCSV.h>
 
+#include "modules/data/io/WReaderCSV.h"
 #include "core/common/WAssert.h"
 #include "core/common/WIOTools.h"
 #include "core/common/WPropertyHelper.h"

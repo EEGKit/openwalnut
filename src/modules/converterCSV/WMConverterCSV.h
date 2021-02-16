@@ -1,10 +1,3 @@
-//
-// Created by top2021 on 15.02.21.
-//
-
-#ifndef OPENWALNUT_WMCONVERTERCSV_H
-#define OPENWALNUT_WMCONVERTERCSV_H
-
 //---------------------------------------------------------------------------
 //
 // Project: OpenWalnut ( http://www.openwalnut.org )
@@ -29,12 +22,11 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WMRANDOMDATA_H
-#define WMRANDOMDATA_H
+#ifndef WMCONVERTERCSV_H
+#define WMCONVERTERCSV_H
 
 #include <string>
 #include <vector>
-
 
 #include "core/dataHandler/WDataSetCSV.h"
 #include "core/dataHandler/WDataSetFibers.h"
@@ -44,7 +36,9 @@
 #include "core/kernel/WModule.h"
 
 /**
- * Creates a random WDataSetPoints list.
+ * This module simply registers a given csv dataset to the csv handling mechanism.
+ * This allows all outputs to be shown as a fiber- or a point-dataset.
+ *
  * \ingroup modules
  */
 class WMConverterCSV : public WModule
@@ -119,17 +113,9 @@ private:
 
     boost::shared_ptr< std::vector < float > > m_colors;
 
-    int getColumnNumberByName(std::string col, std::vector<std::string> in_row);
-    void FilterFibers(boost::shared_ptr< std::vector < std::vector < std::string > > >  dataCSV);
-    void FilterPoints(boost::shared_ptr< std::vector < std::vector < std::string > > >  dataCSV);
-
-    void createVertexSet();
-
+    int getColumnNumberByName( std::string col, std::vector<std::string> in_row );
+    void FilterFibers( boost::shared_ptr< std::vector < std::vector < std::string > > >  dataCSV );
+    void FilterPoints( boost::shared_ptr< std::vector < std::vector < std::string > > >  dataCSV );
 };
 
-#endif  // WMRANDOMDATA_H
-
-
-
-
-#endif //OPENWALNUT_WMCONVERTERCSV_H
+#endif  // WMCONVERTERCSV_H
