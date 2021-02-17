@@ -131,19 +131,6 @@ private:
      * Stores information for the point renderer
      */
     boost::shared_ptr< WDataSetPoints> m_points;
-    /*
-    std::vector < std::vector < std::string > > m_csvData;
-    std::vector < std::vector < std::string > > m_csvHeader;
-
-    boost::shared_ptr< std::vector < float > > m_vertices;
-    boost::shared_ptr< std::vector < size_t > > m_lineStartIndexes;
-    boost::shared_ptr< std::vector < size_t > > m_lineLengths;
-    boost::shared_ptr< std::vector < size_t > > m_verticesReverse;
-
-
-
-    boost::shared_ptr< std::vector < float > > m_colors;
-     */
 
     /**
      * Get column number by name from header
