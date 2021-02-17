@@ -205,47 +205,27 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
     SPFloatVector m_vertices = SPFloatVector( new std::vector< float >() );
     SPFloatVector m_colors = SPFloatVector( new std::vector< float >() );
 
-    int xpos_arr_col = getColumnNumberByName( "posX", header.at( 0 ) );
-    int ypos_arr_col = getColumnNumberByName( "posY", header.at( 0 ) );
-    int zpos_arr_col = getColumnNumberByName( "posZ", header.at( 0 ) );
+    int xPosIndex = getColumnNumberByName( "posX", header.at( 0 ) );
+    int yPosIndex = getColumnNumberByName( "posY", header.at( 0 ) );
+    int zPosIndex = getColumnNumberByName( "posZ", header.at( 0 ) );
 
     float posX, posY, posZ;
-    for( WDataSetCSV::Content::iterator it = data.begin(); it != data.end(); it++ )
+    for(WDataSetCSV::Content::iterator dataRow = data.begin(); dataRow != data.end(); dataRow++ )
     {
-        int count = 0;
-        int finish_flag = 0;
-
-        if( it->empty() )
+        if( dataRow->empty() )
         {
             continue;
         }
 
-        for( std::vector<std::string>::iterator it_inner = it->begin(); it_inner != it->end(); it_inner++ )
-        {
-            if( count == xpos_arr_col )
-            {
-                posX = std::stof( *it_inner );
-                finish_flag++;
-            }
-            if( count == ypos_arr_col )
-            {
-                posY = std::stof( *it_inner );
-                finish_flag++;
-            }
-            if( count == zpos_arr_col )
-            {
-                posZ = std::stof( *it_inner );
-                finish_flag++;
-            }
-            if( finish_flag == 3 )
-                break;
-            count++;
-        }
+        posX = std::stof( dataRow->at( xPosIndex ) );
+        posY = std::stof( dataRow->at( yPosIndex ) );
+        posZ = std::stof( dataRow->at( zPosIndex ) );
 
         m_vertices->push_back( posX );
         m_vertices->push_back( posY );
         m_vertices->push_back( posZ );
 
+        // TODO: disable this, when #35 is done
         m_colors->push_back( 0 );
         m_colors->push_back( 0 );
         m_colors->push_back( 0 );
