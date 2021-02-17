@@ -147,7 +147,7 @@ private:
      * \param header WDataSetCSV::Content object containing column names.
      * \param data WDataSetCSV::Content object containing data.
      */
-    void getFibersOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data );
+    void setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data );
 
     /**
      * Create output, so it can be displayed by the point renderer.
@@ -155,16 +155,7 @@ private:
      * \param header WDataSetCSV::Content object containing column names
      * \param data WDataSetCSV::Content object containing data
      */
-    void getPointsOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data );
-
-    /**
-     * Check if measured point is parent.
-     *
-     * \param in_vec Vector (aka point), that should be checked for parent property
-     * \param pos Position where parent property is in vector
-     * \return true, if pos in in_vec is parent, false if not
-     */
-    bool isParentID( std::vector < std::string > in_vec, int pos );
+    void setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data );
 };
 
 #endif  // WMCONVERTERCSV_H

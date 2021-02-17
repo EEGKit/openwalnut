@@ -76,8 +76,8 @@ void WMConverterCSV::moduleMain()
         WDataSetCSV::Content m_csvHeader = dataset->getHeader();
         WDataSetCSV::Content m_csvData = dataset->getData();
 
-        getPointsOutOfCSVData( m_csvHeader, m_csvData );
-        getFibersOutOfCSVData( m_csvHeader, m_csvData );
+        setPointsOutOfCSVData( m_csvHeader, m_csvData );
+        setFibersOutOfCSVData( m_csvHeader, m_csvData );
     }
 }
 
@@ -122,120 +122,73 @@ int WMConverterCSV::getColumnNumberByName( std::string columnNameToMatch, std::v
     return pos;
 }
 
-bool WMConverterCSV::isParentID( std::vector < std::string > in_vec, int pos )
+
+void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data )
 {
-    int count = 0;
-
-    for( std::vector < std::string >::iterator i = in_vec.begin(); i != in_vec.end(); i++ )
-    {
-        if(pos == count++)
-        {
-            if(!stoi(*i))
-            {
-                return false;
-            }
-        }
-    }
-
-    return true;
-}
-
-void WMConverterCSV::getFibersOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data )
-{
+    debugLog() << "Jump IN";
     SPFloatVector m_vertices = SPFloatVector( new std::vector<float>() );
     SPSizeVector m_lineStartIndexes = SPSizeVector( new std::vector < size_t >() );
     SPSizeVector m_lineLengths  = SPSizeVector( new std::vector < size_t >() );
     SPSizeVector m_verticesReverse = SPSizeVector( new std::vector < size_t >() );
 
-    std::vector< int > eventID;
+    std::vector< int > eventIDs;
 
     int xPosIndex = getColumnNumberByName( "posX", header.at( 0 ) );
     int yPosIndex = getColumnNumberByName( "posY", header.at( 0 ) );
     int zPosIndex = getColumnNumberByName( "posZ", header.at( 0 ) );
-    int eventIDIndex = getColumnNumberByName( "eventID", header.at( 0 ) );
+    int eventIDIndex = getColumnNumberByName( "currentEventID", header.at( 0 ) );
     int parentIDIndex = getColumnNumberByName( "parentID", header.at( 0 ) );
 
-    for( WDataSetCSV::Content::iterator it = data.begin(); it != data.end(); it++ )
+    for( WDataSetCSV::Content::iterator dataRow = data.begin(); dataRow != data.end(); dataRow++ )
     {
         float posX, posY, posZ;
-        int id;
-        int indexCounter = 0;
-        int finish_flag = 0;
+        int eventID;
 
-        if( it->empty() )
+        if( dataRow->empty() )
         {
             continue;
         }
 
-        for( std::vector<std::string>::iterator it_inner = it->begin(); it_inner != it->end(); it_inner++ )
+        if(std::stoi( dataRow->at(parentIDIndex ) ) != 0 )
         {
-            if( isParentID(*it, parentIDIndex ) )
-            {
-                break;
-            }
-
-            if(indexCounter == xPosIndex )
-            {
-                posX = std::stof( *it_inner );
-                finish_flag++;
-            }
-            if(indexCounter == yPosIndex )
-            {
-                posY = std::stof( *it_inner );
-                finish_flag++;
-            }
-            if(indexCounter == zPosIndex )
-            {
-                posZ = std::stof( *it_inner );
-                finish_flag++;
-            }
-            if(indexCounter == eventIDIndex )
-            {
-                id = std::stoi( *it_inner );
-                finish_flag++;
-            }
-            if( finish_flag == 4 )
-                break;
-            indexCounter++;
+            continue;
         }
 
-        if( finish_flag == 4 )
-        {
-            m_vertices->push_back( posX );
-            m_vertices->push_back( posY );
-            m_vertices->push_back( posZ );
-            eventID.push_back( id );
-        }
+        posX = std::stof( dataRow->at( xPosIndex ) );
+        posY = std::stof( dataRow->at( yPosIndex ) );
+        posZ = std::stof( dataRow->at( zPosIndex ) );
+        eventID = std::stoi( dataRow->at( eventIDIndex ) );
+
+        m_vertices->push_back( posX );
+        m_vertices->push_back( posY );
+        m_vertices->push_back( posZ );
+        eventIDs.push_back( eventID );
     }
 
-    int length = 0;
-    int indexPos = 0;
+    int fiberLength = 0;
+    int fiberStartIndex = 0;
     int reversePos = 0;
-    int eventid = eventID[0];
+    int currentEventID = eventIDs.at( 0 );
 
-    bool lastelement;
-    m_lineStartIndexes->push_back( indexPos );
+    m_lineStartIndexes->push_back( fiberStartIndex );
 
-    for( std::vector<int>::iterator it = eventID.begin(); it != eventID.end(); it++ )
+    for(std::vector<int>::iterator eID = eventIDs.begin(); eID != eventIDs.end(); eID++ )
     {
-        if( eventid != *it )
+        debugLog() << "Hier " << *eID;
+        if(currentEventID != *eID )
         {
-            eventid = *it;
-            m_lineStartIndexes->push_back( indexPos );
-            m_lineLengths->push_back( length );
-            length = 0;
+            currentEventID = *eID;
+            m_lineStartIndexes->push_back( fiberStartIndex );
+            m_lineLengths->push_back( fiberLength );
+            fiberLength = 0;
             reversePos++;
-            lastelement = true;
         }
-        length++;
-        indexPos++;
+        fiberLength++;
+        fiberStartIndex++;
         m_verticesReverse->push_back( reversePos );
-        lastelement = false;
     }
-    if( !lastelement )
-    {
-        m_lineLengths->push_back( length );
-    }
+
+    m_lineLengths->push_back( fiberLength );
 
     m_fibers = boost::shared_ptr< WDataSetFibers >(
             new WDataSetFibers(
@@ -249,7 +202,7 @@ void WMConverterCSV::getFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
     m_output_fibers->updateData( m_fibers );
 }
 
-void WMConverterCSV::getPointsOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data )
+void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data )
 {
     SPFloatVector m_vertices = SPFloatVector( new std::vector< float >() );
     SPFloatVector m_colors = SPFloatVector( new std::vector< float >() );
