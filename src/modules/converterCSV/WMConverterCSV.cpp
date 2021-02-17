@@ -125,7 +125,6 @@ int WMConverterCSV::getColumnNumberByName( std::string columnNameToMatch, std::v
 
 void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data )
 {
-    debugLog() << "Jump IN";
     SPFloatVector m_vertices = SPFloatVector( new std::vector<float>() );
     SPSizeVector m_lineStartIndexes = SPSizeVector( new std::vector < size_t >() );
     SPSizeVector m_lineLengths  = SPSizeVector( new std::vector < size_t >() );
@@ -136,7 +135,7 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
     int xPosIndex = getColumnNumberByName( "posX", header.at( 0 ) );
     int yPosIndex = getColumnNumberByName( "posY", header.at( 0 ) );
     int zPosIndex = getColumnNumberByName( "posZ", header.at( 0 ) );
-    int eventIDIndex = getColumnNumberByName( "currentEventID", header.at( 0 ) );
+    int eventIDIndex = getColumnNumberByName( "eventID", header.at( 0 ) );
     int parentIDIndex = getColumnNumberByName( "parentID", header.at( 0 ) );
 
     for( WDataSetCSV::Content::iterator dataRow = data.begin(); dataRow != data.end(); dataRow++ )
@@ -174,7 +173,6 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
 
     for(std::vector<int>::iterator eID = eventIDs.begin(); eID != eventIDs.end(); eID++ )
     {
-        debugLog() << "Hier " << *eID;
         if(currentEventID != *eID )
         {
             currentEventID = *eID;
