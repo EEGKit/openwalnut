@@ -40,3 +40,6 @@ src/modules/modules-user.toolbox
 # jetbrains CLion / IntelliJ files
 **/.idea
 
+.vscode
+
+openwalnut.log

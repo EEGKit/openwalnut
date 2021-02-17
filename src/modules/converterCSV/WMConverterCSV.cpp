@@ -204,12 +204,14 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
 {
     SPFloatVector m_vertices = SPFloatVector( new std::vector< float >() );
     SPFloatVector m_colors = SPFloatVector( new std::vector< float >() );
+    SPFloatVector m_sizes = SPFloatVector( new std::vector< float >() );
 
     int xPosIndex = getColumnNumberByName( "posX", header.at( 0 ) );
     int yPosIndex = getColumnNumberByName( "posY", header.at( 0 ) );
     int zPosIndex = getColumnNumberByName( "posZ", header.at( 0 ) );
+    int edepIndex = getColumnNumberByName( "edep", header.at( 0 ) );
 
-    float posX, posY, posZ;
+    float posX, posY, posZ, edep;
     for(WDataSetCSV::Content::iterator dataRow = data.begin(); dataRow != data.end(); dataRow++ )
     {
         if( dataRow->empty() )
@@ -220,10 +222,13 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
         posX = std::stof( dataRow->at( xPosIndex ) );
         posY = std::stof( dataRow->at( yPosIndex ) );
         posZ = std::stof( dataRow->at( zPosIndex ) );
+        edep = std::stof( dataRow->at( edepIndex ) );
 
         m_vertices->push_back( posX );
         m_vertices->push_back( posY );
         m_vertices->push_back( posZ );
+
+        m_sizes->push_back( edep );
 
         // TODO(robin.eschbach): disable this, when #35 is done
         m_colors->push_back( 0 );
@@ -231,10 +236,11 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
         m_colors->push_back( 0 );
     }
 
-    m_points = boost::shared_ptr< WDataSetPoints >(
-            new WDataSetPoints(
+    m_points = boost::shared_ptr< WDataSetPointsAndSizes >(
+            new WDataSetPointsAndSizes(
                     m_vertices,
-                    m_colors
+                    m_colors,
+                    m_sizes
             )
     );
 

@@ -32,6 +32,7 @@
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/kernel/WModuleOutputData.h"
 #include "core/dataHandler/WDataSetPoints.h"
+#include "core/dataHandler/WDataSetPointsAndSizes.h"
 
 #include "core/kernel/WModule.h"
 
@@ -125,12 +126,12 @@ private:
     /**
      * Stores information for the fiber display
      */
-    boost::shared_ptr< WDataSetFibers> m_fibers;
+    boost::shared_ptr< WDataSetFibers > m_fibers;
 
     /**
      * Stores information for the point renderer
      */
-    boost::shared_ptr< WDataSetPoints> m_points;
+    boost::shared_ptr< WDataSetPoints > m_points;
 
     /**
      * Get column number by name from header
