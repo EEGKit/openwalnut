@@ -73,22 +73,23 @@ void WMConverterCSV::moduleMain()
         m_moduleState.wait();
 
         boost::shared_ptr< WDataSetCSV > dataset = m_input->getData();
-        m_content = dataset->m_content;
+        WDataSetCSV::Content m_csvHeader = dataset->getHeader();
+        WDataSetCSV::Content m_csvData = dataset->getData();
 
-        FilterPoints( m_content );
-        FilterFibers( m_content );
+        getPointsOutOfCSVData( m_csvHeader, m_csvData );
+        getFibersOutOfCSVData( m_csvHeader, m_csvData );
     }
 }
 
 void WMConverterCSV::connectors()
 {
-    m_input = WModuleInputData< WDataSetCSV >::createAndAdd( shared_from_this(), "in", "TEST_input" );
+    m_input = WModuleInputData< WDataSetCSV >::createAndAdd( shared_from_this(), "in", "CSV_input" );
 
     m_output_points = boost::shared_ptr< WModuleOutputData< WDataSet > >(
             new WModuleOutputData< WDataSet >(
                     shared_from_this(),
                     "output points",
-                    "Output proton data as Point data" )
+                    "Output CSV data as Point data" )
 
     );
 
@@ -96,11 +97,10 @@ void WMConverterCSV::connectors()
             new WModuleOutputData< WDataSet >(
                     shared_from_this(),
                     "output fibers",
-                    "Output proton data as Fiber data" )
+                    "Output CSV data as Fiber data" )
 
     );
 
-    //std::vector< boost::shared_ptr< WModuleOutputConnector > >
     addConnector( m_output_points );
     addConnector( m_output_fibers );
 
@@ -111,12 +111,12 @@ void WMConverterCSV::properties()
 {
 }
 
-int WMConverterCSV::getColumnNumberByName( std::string col, std::vector<std::string> in_row )
+int WMConverterCSV::getColumnNumberByName( std::string columnNameToMatch, std::vector<std::string> headerToSearchIn )
 {
     int pos = 0;
-    for( std::vector<std::string>::iterator it = in_row.begin(); it != in_row.end(); it++ )
+    for( std::vector<std::string>::iterator it = headerToSearchIn.begin(); it != headerToSearchIn.end(); it++ )
     {
-        if( *it == col ) return pos;
+        if( *it == columnNameToMatch ) return pos;
         pos++;
     }
     return pos;
@@ -140,39 +140,27 @@ bool WMConverterCSV::isParentID( std::vector < std::string > in_vec, int pos )
     return true;
 }
 
-void WMConverterCSV::FilterFibers( boost::shared_ptr< std::vector < std::vector < std::string > > > dataCSV )
+void WMConverterCSV::getFibersOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data )
 {
-    m_vertices = boost::shared_ptr< std::vector< float > >( new std::vector<float>() );
-    m_lineStartIndexes = boost::shared_ptr< std::vector < size_t > >( new std::vector < size_t >() );
-    m_lineLengths  = boost::shared_ptr< std::vector < size_t > >( new std::vector < size_t >() );
-    m_verticesReverse = boost::shared_ptr< std::vector < size_t > >( new std::vector < size_t >() );
+    SPFloatVector m_vertices = SPFloatVector( new std::vector<float>() );
+    SPSizeVector m_lineStartIndexes = SPSizeVector( new std::vector < size_t >() );
+    SPSizeVector m_lineLengths  = SPSizeVector( new std::vector < size_t >() );
+    SPSizeVector m_verticesReverse = SPSizeVector( new std::vector < size_t >() );
 
-    std::vector< int > event_id;
-    int is_header = true;
+    std::vector< int > eventID;
 
-    int xpos_arr_col = 0;
-    int ypos_arr_col = 0;
-    int zpos_arr_col = 0;
-    int idpos_arr_col = 0;
-    int pID = 0;
+    int xPosIndex = getColumnNumberByName( "posX", header.at( 0 ) );
+    int yPosIndex = getColumnNumberByName( "posY", header.at( 0 ) );
+    int zPosIndex = getColumnNumberByName( "posZ", header.at( 0 ) );
+    int eventIDIndex = getColumnNumberByName( "eventID", header.at( 0 ) );
+    int parentIDIndex = getColumnNumberByName( "parentID", header.at( 0 ) );
 
-    for( std::vector< std::vector<std::string> >::iterator it = dataCSV->begin(); it != dataCSV->end(); it++ )
+    for( WDataSetCSV::Content::iterator it = data.begin(); it != data.end(); it++ )
     {
-        int posX, posY, posZ, id;
-        int count = 0;
+        float posX, posY, posZ;
+        int id;
+        int indexCounter = 0;
         int finish_flag = 0;
-
-        if( is_header )
-        {
-            xpos_arr_col = getColumnNumberByName( "posX", *it );
-            ypos_arr_col = getColumnNumberByName( "posY", *it );
-            zpos_arr_col = getColumnNumberByName( "posZ", *it );
-            idpos_arr_col = getColumnNumberByName( "eventID", *it );
-            pID = getColumnNumberByName( "parentID", *it );
-
-            is_header = false;
-            continue;
-        }
 
         if( it->empty() )
         {
@@ -181,34 +169,34 @@ void WMConverterCSV::FilterFibers( boost::shared_ptr< std::vector < std::vector 
 
         for( std::vector<std::string>::iterator it_inner = it->begin(); it_inner != it->end(); it_inner++ )
         {
-            if( isParentID( *it, pID ) )
+            if( isParentID(*it, parentIDIndex ) )
             {
                 break;
             }
 
-            if( count == xpos_arr_col )
+            if(indexCounter == xPosIndex )
             {
                 posX = std::stof( *it_inner );
                 finish_flag++;
             }
-            if( count == ypos_arr_col )
+            if(indexCounter == yPosIndex )
             {
                 posY = std::stof( *it_inner );
                 finish_flag++;
             }
-            if( count == zpos_arr_col )
+            if(indexCounter == zPosIndex )
             {
                 posZ = std::stof( *it_inner );
                 finish_flag++;
             }
-            if( count == idpos_arr_col )
+            if(indexCounter == eventIDIndex )
             {
                 id = std::stoi( *it_inner );
                 finish_flag++;
             }
             if( finish_flag == 4 )
                 break;
-            count++;
+            indexCounter++;
         }
 
         if( finish_flag == 4 )
@@ -216,19 +204,19 @@ void WMConverterCSV::FilterFibers( boost::shared_ptr< std::vector < std::vector 
             m_vertices->push_back( posX );
             m_vertices->push_back( posY );
             m_vertices->push_back( posZ );
-            event_id.push_back( id );
+            eventID.push_back( id );
         }
     }
 
     int length = 0;
     int indexPos = 0;
     int reversePos = 0;
-    int eventid = event_id[0];
+    int eventid = eventID[0];
 
     bool lastelement;
     m_lineStartIndexes->push_back( indexPos );
 
-    for( std::vector<int>::iterator it = event_id.begin(); it != event_id.end(); it++ )
+    for( std::vector<int>::iterator it = eventID.begin(); it != eventID.end(); it++ )
     {
         if( eventid != *it )
         {
@@ -261,32 +249,20 @@ void WMConverterCSV::FilterFibers( boost::shared_ptr< std::vector < std::vector 
     m_output_fibers->updateData( m_fibers );
 }
 
-void WMConverterCSV::FilterPoints( boost::shared_ptr< std::vector < std::vector < std::string > > > dataCSV )
+void WMConverterCSV::getPointsOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data )
 {
-    m_vertices = boost::shared_ptr< std::vector< float > >( new std::vector<float>() );
-    m_colors = boost::shared_ptr< std::vector< float > >( new std::vector<float>() );
+    SPFloatVector m_vertices = SPFloatVector( new std::vector< float >() );
+    SPFloatVector m_colors = SPFloatVector( new std::vector< float >() );
 
-    int is_header = true;
+    int xpos_arr_col = getColumnNumberByName( "posX", header.at( 0 ) );
+    int ypos_arr_col = getColumnNumberByName( "posY", header.at( 0 ) );
+    int zpos_arr_col = getColumnNumberByName( "posZ", header.at( 0 ) );
 
-    int xpos_arr_col = 0;
-    int ypos_arr_col = 0;
-    int zpos_arr_col = 0;
-
-    for( std::vector< std::vector<std::string> >::iterator it = dataCSV->begin(); it != dataCSV->end(); it++ )
+    float posX, posY, posZ;
+    for( WDataSetCSV::Content::iterator it = data.begin(); it != data.end(); it++ )
     {
-        int posX, posY, posZ;
         int count = 0;
         int finish_flag = 0;
-
-        if( is_header )
-        {
-            xpos_arr_col = getColumnNumberByName( "posX", *it );
-            ypos_arr_col = getColumnNumberByName( "posY", *it );
-            zpos_arr_col = getColumnNumberByName( "posZ", *it );
-
-            is_header = false;
-            continue;
-        }
 
         if( it->empty() )
         {

@@ -24,8 +24,8 @@
 
 #include "WDataSetCSV.h"
 
-WDataSetCSV::WDataSetCSV( WDataSetCSV::Content content )
-    : m_content( content )
+WDataSetCSV::WDataSetCSV( WDataSetCSV::Content header, WDataSetCSV::Content data )
+    : m_header( header ), m_data( data )
 {
 }
 
@@ -35,4 +35,14 @@ WDataSetCSV::WDataSetCSV()
 
 WDataSetCSV::~WDataSetCSV()
 {
+}
+
+WDataSetCSV::Content WDataSetCSV::getHeader()
+{
+    return m_header;
+}
+
+WDataSetCSV::Content WDataSetCSV::getData()
+{
+    return m_data;
 }

@@ -37,7 +37,7 @@
 
 /**
  * This module simply registers a given csv dataset to the csv handling mechanism.
- * This allows all outputs to be shown as a fiber- or a point-dataset.
+ * This allows all outputs to be shown as a fiber-dataset or a point-dataset.
  *
  * \ingroup modules
  */
@@ -45,23 +45,33 @@ class WMConverterCSV : public WModule
 {
 public:
     /**
+     * represents a boost::shared_ptr to a vector containing a vector of floats.
+     */
+    typedef boost::shared_ptr< std::vector< float > > SPFloatVector;
+
+    /**
+     * represents a boost::shared_ptr to a vector containing a vector of size_t.
+     */
+    typedef boost::shared_ptr< std::vector< size_t > > SPSizeVector;
+
+    /**
      * Standard constructor.
      */
     WMConverterCSV();
 
     /**
-     * Destructor.
+     * Standard destructor.
      */
     virtual ~WMConverterCSV();
 
     /**
-     * Gives back the name of this module.
+     * Returns the name of this module.
      * \return the module's name.
      */
     virtual const std::string getName() const;
 
     /**
-     * Gives back the description of this module.
+     * Retruns the description of this module.
      * \return description of the module.
      */
     virtual const std::string getDescription() const;
@@ -97,25 +107,76 @@ protected:
     virtual void properties();
 
 private:
-    boost::shared_ptr< WModuleInputData< WDataSetCSV > > m_input;    //!< Input connector required for this module.
-    boost::shared_ptr< WModuleOutputData< WDataSet > > m_output_points;    //!< Output connector required for this module.
+    /**
+     * Input connector (required for this module).
+     */
+    boost::shared_ptr< WModuleInputData< WDataSetCSV > > m_input;
+
+    /**
+     * WDataSetPoints output connector (required for this module).
+     */
+    boost::shared_ptr< WModuleOutputData< WDataSet > > m_output_points;
+
+    /**
+     * WDataSetFibers output connector (required for this module).
+     */
     boost::shared_ptr< WModuleOutputData< WDataSet  > > m_output_fibers;
 
+    /**
+     * Stores information for the fiber display
+     */
+    boost::shared_ptr< WDataSetFibers> m_fibers;
 
-    boost::shared_ptr< std::vector < std::vector < std::string > > > m_content;
+    /**
+     * Stores information for the point renderer
+     */
+    boost::shared_ptr< WDataSetPoints> m_points;
+    /*
+    std::vector < std::vector < std::string > > m_csvData;
+    std::vector < std::vector < std::string > > m_csvHeader;
+
     boost::shared_ptr< std::vector < float > > m_vertices;
     boost::shared_ptr< std::vector < size_t > > m_lineStartIndexes;
     boost::shared_ptr< std::vector < size_t > > m_lineLengths;
     boost::shared_ptr< std::vector < size_t > > m_verticesReverse;
 
-    boost::shared_ptr< WDataSetFibers> m_fibers;
-    boost::shared_ptr< WDataSetPoints> m_points;
+
 
     boost::shared_ptr< std::vector < float > > m_colors;
+     */
 
-    int getColumnNumberByName( std::string col, std::vector<std::string> in_row );
-    void FilterFibers( boost::shared_ptr< std::vector < std::vector < std::string > > >  dataCSV );
-    void FilterPoints( boost::shared_ptr< std::vector < std::vector < std::string > > >  dataCSV );
+    /**
+     * Get column number by name from header
+     *
+     * \param columnNameToMatch Search for the specified column name.
+     * \param headerToSearchIn Search in specified header.
+     * \return Column number, where columnToMatch is in headerToSearchIn
+     */
+    int getColumnNumberByName( std::string columnNameToMatch, std::vector<std::string> headerToSearchIn );
+
+    /**
+     * Create output, so it can be displayed by the fiber display.
+     *
+     * \param header WDataSetCSV::Content object containing column names.
+     * \param data WDataSetCSV::Content object containing data.
+     */
+    void getFibersOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data );
+
+    /**
+     * Create output, so it can be displayed by the point renderer.
+     *
+     * \param header WDataSetCSV::Content object containing column names
+     * \param data WDataSetCSV::Content object containing data
+     */
+    void getPointsOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data );
+
+    /**
+     * Check if measured point is parent.
+     *
+     * \param in_vec Vector (aka point), that should be checked for parent property
+     * \param pos Position where parent property is in vector
+     * \return true, if pos in in_vec is parent, false if not
+     */
     bool isParentID( std::vector < std::string > in_vec, int pos );
 };
 

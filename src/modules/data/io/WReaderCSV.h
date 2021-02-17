@@ -33,18 +33,31 @@
 #include <core/dataHandler/WDataSetCSV.h>
 #include "core/dataHandler/io/WReader.h"
 
+/**
+ * Read content from a CSV file.
+ * \ingroup dataHandler
+ */
 class WReaderCSV : WReader
 {
 public:
+    /**
+     * Constructs a CSV reader object.
+     *
+     * \param fname path of the file to load.
+     */
     explicit WReaderCSV( std::string fname );
+
+    /**
+     * Destroys this instance.
+     */
     virtual ~WReaderCSV() throw();
+
+    /**
+     * Read the file and create a dataset as a vector.
+     *
+     * \return pointer to a WDataSetCSV
+     */
     virtual boost::shared_ptr< WDataSetCSV > read();
-
-private:
-    boost::shared_ptr< std::vector<float> > m_vertices;
-    boost::shared_ptr< std::vector<float> > m_colors;
-    boost::shared_ptr< std::vector<std::vector<std::string>> > m_content;
 };
-
 
 #endif  // WREADERCSV_H
