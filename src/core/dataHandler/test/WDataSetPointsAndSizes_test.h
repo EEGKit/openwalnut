@@ -59,7 +59,7 @@ public:
         TS_ASSERT_THROWS_ANYTHING( WDataSetPointsAndSizes test( vertex, color, sizes ) );
     }
 
-    /*+
+    /**
      * Test instantiation of WDataSetPointsAndSizes class
      */
     void testInstantiation( void )
@@ -79,6 +79,30 @@ public:
         sizes->push_back( 1.2 );
 
         TS_ASSERT_THROWS_NOTHING( WDataSetPointsAndSizes test( vertex, color, sizes ) );
+    }
+
+    /**
+     * Test function getSize() of WDatatSetPointsAndSizes class
+     */
+    void testGetSize( void )
+    {
+        WDataSetPointsAndSizes::VertexArray vertex = boost::shared_ptr< std::vector< float > >( new std::vector< float >() );
+        WDataSetPointsAndSizes::ColorArray color = boost::shared_ptr< std::vector< float > >( new std::vector< float >() );
+        WDataSetPointsAndSizes::SizeArray sizes = boost::shared_ptr< std::vector< float > >( new std::vector< float >() );
+
+        vertex->push_back( 1.0 );
+        vertex->push_back( 2.0 );
+        vertex->push_back( 3.0 );
+
+        color->push_back( 0.2 );
+        color->push_back( 0.11 );
+        color->push_back( 0.7 );
+
+        sizes->push_back( 1.2 );
+
+        WDataSetPointsAndSizes testset( vertex, color, sizes );
+
+        TS_ASSERT_THROWS_ANYTHING( testset.getSize( 1 ) );
     }
 };
 
