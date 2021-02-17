@@ -225,7 +225,7 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
         m_vertices->push_back( posY );
         m_vertices->push_back( posZ );
 
-        // TODO: disable this, when #35 is done
+        // TODO(robin.eschbach): disable this, when #35 is done
         m_colors->push_back( 0 );
         m_colors->push_back( 0 );
         m_colors->push_back( 0 );
