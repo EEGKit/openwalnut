@@ -130,6 +130,11 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
     SPSizeVector m_lineLengths  = SPSizeVector( new std::vector < size_t >() );
     SPSizeVector m_verticesReverse = SPSizeVector( new std::vector < size_t >() );
 
+    SPFloatVector m_colors = SPFloatVector ( new std::vector<float>() );
+
+    boost::random::mt19937 gen( std::time( 0 ) );
+    boost::random::uniform_real_distribution<> distC( 0.0, 1.0 );
+
     std::vector< int > eventIDs;
 
     int xPosIndex = getColumnNumberByName( "posX", header.at( 0 ) );
@@ -162,6 +167,10 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
         m_vertices->push_back( posY );
         m_vertices->push_back( posZ );
         eventIDs.push_back( eventID );
+
+        m_colors->push_back( distC( gen ) );
+        m_colors->push_back( distC( gen ) );
+        m_colors->push_back( distC( gen ) );
     }
 
     int fiberLength = 0;
@@ -196,6 +205,8 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
                     m_verticesReverse
             )
     );
+
+    m_fibers->addColorScheme( m_colors, "Test", "Test scheme" );
 
     m_output_fibers->updateData( m_fibers );
 }
