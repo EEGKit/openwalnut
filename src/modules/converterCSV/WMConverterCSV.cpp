@@ -130,22 +130,23 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
     SPSizeVector m_lineLengths  = SPSizeVector( new std::vector < size_t >() );
     SPSizeVector m_verticesReverse = SPSizeVector( new std::vector < size_t >() );
 
-    SPFloatVector m_colors = SPFloatVector ( new std::vector<float>() );
-
-    boost::random::mt19937 gen( std::time( 0 ) );
-    boost::random::uniform_real_distribution<> distC( 0.0, 1.0 );
+    SPFloatVector m_colors = SPFloatVector( new std::vector< float >() );
 
     std::vector< int > eventIDs;
+    std::vector< float > edeps;
 
     int xPosIndex = getColumnNumberByName( "posX", header.at( 0 ) );
     int yPosIndex = getColumnNumberByName( "posY", header.at( 0 ) );
     int zPosIndex = getColumnNumberByName( "posZ", header.at( 0 ) );
     int eventIDIndex = getColumnNumberByName( "eventID", header.at( 0 ) );
     int parentIDIndex = getColumnNumberByName( "parentID", header.at( 0 ) );
+    int edepIndex = getColumnNumberByName( "edep", header.at( 0 ) );
+
+    float maxEdep = 0.0;
 
     for( WDataSetCSV::Content::iterator dataRow = data.begin(); dataRow != data.end(); dataRow++ )
     {
-        float posX, posY, posZ;
+        float posX, posY, posZ, edep;
         int eventID;
 
         if( dataRow->empty() )
@@ -162,15 +163,27 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
         posY = std::stof( dataRow->at( yPosIndex ) );
         posZ = std::stof( dataRow->at( zPosIndex ) );
         eventID = std::stoi( dataRow->at( eventIDIndex ) );
+        edep = boost::lexical_cast< float >( dataRow->at( edepIndex ) );
+
+        if( edep > maxEdep )
+        {
+            maxEdep = edep;
+        }
 
         m_vertices->push_back( posX );
         m_vertices->push_back( posY );
         m_vertices->push_back( posZ );
         eventIDs.push_back( eventID );
+        edeps.push_back( edep );
+    }
 
-        m_colors->push_back( distC( gen ) );
-        m_colors->push_back( distC( gen ) );
-        m_colors->push_back( distC( gen ) );
+    for( std::vector< float >::iterator currentEdep = edeps.begin(); currentEdep != edeps.end(); currentEdep++ )
+    {
+        *currentEdep = *currentEdep / maxEdep;
+
+        m_colors->push_back( *currentEdep * 1000 );
+        m_colors->push_back( *currentEdep * 100 );
+        m_colors->push_back( *currentEdep * 10 );
     }
 
     int fiberLength = 0;
@@ -206,7 +219,7 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
             )
     );
 
-    m_fibers->addColorScheme( m_colors, "Test", "Test scheme" );
+    m_fibers->addColorScheme( m_colors, "Energy deposition", "Color fibers based on their energy." );
 
     m_output_fibers->updateData( m_fibers );
 }
