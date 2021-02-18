@@ -243,10 +243,10 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
             continue;
         }
 
-        posX = std::stof( dataRow->at( xPosIndex ) );
-        posY = std::stof( dataRow->at( yPosIndex ) );
-        posZ = std::stof( dataRow->at( zPosIndex ) );
-        edep = std::stof( dataRow->at( edepIndex ) );
+        posX = boost::lexical_cast< float >( dataRow->at( xPosIndex ) );
+        posY = boost::lexical_cast< float >( dataRow->at( yPosIndex ) );
+        posZ = boost::lexical_cast< float >( dataRow->at( zPosIndex ) );
+        edep = boost::lexical_cast< float >( dataRow->at( edepIndex ) );
 
         m_vertices->push_back( posX );
         m_vertices->push_back( posY );
