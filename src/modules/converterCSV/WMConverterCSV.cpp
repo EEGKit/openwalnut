@@ -159,9 +159,9 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
             continue;
         }
 
-        posX = std::stof( dataRow->at( xPosIndex ) );
-        posY = std::stof( dataRow->at( yPosIndex ) );
-        posZ = std::stof( dataRow->at( zPosIndex ) );
+        posX = boost::lexical_cast< float >( dataRow->at( xPosIndex ) );
+        posY = boost::lexical_cast< float >( dataRow->at( yPosIndex ) );
+        posZ = boost::lexical_cast< float >( dataRow->at( zPosIndex ) );
         eventID = std::stoi( dataRow->at( eventIDIndex ) );
         edep = boost::lexical_cast< float >( dataRow->at( edepIndex ) );
 
