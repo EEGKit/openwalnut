@@ -28,6 +28,8 @@
 #include <string>
 #include <vector>
 
+#include <boost/lexical_cast.hpp>
+
 #include "core/dataHandler/WDataSetCSV.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/kernel/WModuleOutputData.h"
