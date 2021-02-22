@@ -306,12 +306,12 @@ void WMConverterCSV::updateProperty( WPropertyBase::SPtr property )
     }
     else
     {
-        if( property->getName() == "Show primaries" )
+        if( property == m_showPrimaries )
         {
             m_showPrimaries->set( true );
         }
 
-        if( property->getName() == "Show secondaries" )
+        if( property == m_showSecondaries )
         {
             m_showSecondaries->set( true );
         }
