@@ -181,9 +181,9 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
     {
         *currentEdep = *currentEdep / maxEdep;
 
-        m_colors->push_back( *currentEdep * 1000 );
-        m_colors->push_back( *currentEdep * 100 );
         m_colors->push_back( *currentEdep * 10 );
+        m_colors->push_back( *currentEdep * 1 );
+        m_colors->push_back( *currentEdep * 100 );
     }
 
     int fiberLength = 0;
@@ -230,11 +230,14 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
     SPFloatVector m_colors = SPFloatVector( new std::vector< float >() );
     SPFloatVector m_sizes = SPFloatVector( new std::vector< float >() );
 
+    std::vector< float > edeps;
+
     int xPosIndex = getColumnNumberByName( "posX", header.at( 0 ) );
     int yPosIndex = getColumnNumberByName( "posY", header.at( 0 ) );
     int zPosIndex = getColumnNumberByName( "posZ", header.at( 0 ) );
     int edepIndex = getColumnNumberByName( "edep", header.at( 0 ) );
 
+    float maxEdep = 0.0;
     float posX, posY, posZ, edep;
     for(WDataSetCSV::Content::iterator dataRow = data.begin(); dataRow != data.end(); dataRow++ )
     {
@@ -248,16 +251,26 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
         posZ = boost::lexical_cast< float >( dataRow->at( zPosIndex ) );
         edep = boost::lexical_cast< float >( dataRow->at( edepIndex ) );
 
+        if( edep > maxEdep )
+        {
+            maxEdep = edep;
+        }
+
         m_vertices->push_back( posX );
         m_vertices->push_back( posY );
         m_vertices->push_back( posZ );
 
         m_sizes->push_back( edep );
+        edeps.push_back( edep );
+    }
 
-        // TODO(robin.eschbach): disable this, when #35 is done
-        m_colors->push_back( 0 );
-        m_colors->push_back( 0 );
-        m_colors->push_back( 0 );
+    for( std::vector< float >::iterator currentEdep = edeps.begin(); currentEdep != edeps.end(); currentEdep++ )
+    {
+        *currentEdep = *currentEdep / maxEdep;
+
+        m_colors->push_back( *currentEdep * 10 );
+        m_colors->push_back( *currentEdep * 100 );
+        m_colors->push_back( *currentEdep * 1 );
     }
 
     m_points = boost::shared_ptr< WDataSetPointsAndSizes >(
