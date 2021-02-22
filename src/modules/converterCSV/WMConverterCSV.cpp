@@ -109,6 +109,12 @@ void WMConverterCSV::connectors()
 
 void WMConverterCSV::properties()
 {
+    WPropertyBase::PropertyChangeNotifierType notifier = boost::bind( &WMConverterCSV::updateProperty, this, boost::placeholders::_1 );
+
+    m_showPrimaries = m_properties->addProperty( "Show primaries", "Show/hide primaries", true, notifier );
+    m_showSecondaries = m_properties->addProperty( "Show secondaries", "Show/hide secondaries", true, notifier );
+
+    WModule::properties();
 }
 
 int WMConverterCSV::getColumnNumberByName( std::string columnNameToMatch, std::vector<std::string> headerToSearchIn )
@@ -154,7 +160,12 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
             continue;
         }
 
-        if(std::stoi( dataRow->at(parentIDIndex ) ) != 0 )
+        if( !m_showPrimaries->get() && std::stoi( dataRow->at(parentIDIndex ) ) == 0 )
+        {
+            continue;
+        }
+
+        if( !m_showSecondaries->get() && std::stoi( dataRow->at(parentIDIndex ) ) != 0 )
         {
             continue;
         }
@@ -234,11 +245,22 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
     int yPosIndex = getColumnNumberByName( "posY", header.at( 0 ) );
     int zPosIndex = getColumnNumberByName( "posZ", header.at( 0 ) );
     int edepIndex = getColumnNumberByName( "edep", header.at( 0 ) );
+    int parentIDIndex = getColumnNumberByName( "parentID", header.at( 0 ) );
 
     float posX, posY, posZ, edep;
     for(WDataSetCSV::Content::iterator dataRow = data.begin(); dataRow != data.end(); dataRow++ )
     {
         if( dataRow->empty() )
+        {
+            continue;
+        }
+
+        if( !m_showPrimaries->get() && std::stoi( dataRow->at(parentIDIndex ) ) == 0 )
+        {
+            continue;
+        }
+
+        if( !m_showSecondaries->get() && std::stoi( dataRow->at(parentIDIndex ) ) != 0 )
         {
             continue;
         }
@@ -269,4 +291,29 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
     );
 
     m_output_points->updateData( m_points );
+}
+
+void WMConverterCSV::updateProperty( WPropertyBase::SPtr property )
+{
+    if( m_showPrimaries->get() || m_showSecondaries->get() )
+    {
+        boost::shared_ptr <WDataSetCSV> dataset = m_input->getData();
+        WDataSetCSV::Content m_csvHeader = dataset->getHeader();
+        WDataSetCSV::Content m_csvData = dataset->getData();
+
+        setPointsOutOfCSVData( m_csvHeader, m_csvData );
+        setFibersOutOfCSVData( m_csvHeader, m_csvData );
+    }
+    else
+    {
+        if( property == m_showPrimaries )
+        {
+            m_showPrimaries->set( true );
+        }
+
+        if( property == m_showSecondaries )
+        {
+            m_showSecondaries->set( true );
+        }
+    }
 }
