@@ -167,7 +167,7 @@ private:
      * \param maxEdep maximum present energy deposition value in edeps vector
      */
     void normalizeEdeps( std::vector< float > edeps, SPFloatVector colorArray, float maxEdep );
-
+    /**
      * Decides whether to hide or show primaries.
      */
     WPropBool m_showPrimaries;
