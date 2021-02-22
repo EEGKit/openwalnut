@@ -177,14 +177,7 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
         edeps.push_back( edep );
     }
 
-    for( std::vector< float >::iterator currentEdep = edeps.begin(); currentEdep != edeps.end(); currentEdep++ )
-    {
-        *currentEdep = *currentEdep / maxEdep;
-
-        m_colors->push_back( *currentEdep * 10 );
-        m_colors->push_back( *currentEdep * 1 );
-        m_colors->push_back( *currentEdep * 100 );
-    }
+    normalizeEdeps( edeps, m_colors, maxEdep );
 
     int fiberLength = 0;
     int fiberStartIndex = 0;
@@ -264,14 +257,7 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
         edeps.push_back( edep );
     }
 
-    for( std::vector< float >::iterator currentEdep = edeps.begin(); currentEdep != edeps.end(); currentEdep++ )
-    {
-        *currentEdep = *currentEdep / maxEdep;
-
-        m_colors->push_back( *currentEdep * 10 );
-        m_colors->push_back( *currentEdep * 100 );
-        m_colors->push_back( *currentEdep * 1 );
-    }
+    normalizeEdeps( edeps, m_colors, maxEdep );
 
     m_points = boost::shared_ptr< WDataSetPointsAndSizes >(
             new WDataSetPointsAndSizes(
@@ -282,4 +268,16 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
     );
 
     m_output_points->updateData( m_points );
+}
+
+void WMConverterCSV::normalizeEdeps( std::vector< float > edeps, SPFloatVector colorArray, float maxEdep )
+{
+    for( std::vector< float >::iterator currentEdep = edeps.begin(); currentEdep != edeps.end(); currentEdep++ )
+    {
+        *currentEdep = *currentEdep / maxEdep;
+
+        colorArray->push_back( *currentEdep * 10 );
+        colorArray->push_back( *currentEdep * 100 );
+        colorArray->push_back( *currentEdep * 1 );
+    }
 }
