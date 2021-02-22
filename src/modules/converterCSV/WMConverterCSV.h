@@ -167,6 +167,22 @@ private:
      * \param maxEdep maximum present energy deposition value in edeps vector
      */
     void normalizeEdeps( std::vector< float > edeps, SPFloatVector colorArray, float maxEdep );
+
+     * Decides whether to hide or show primaries.
+     */
+    WPropBool m_showPrimaries;
+
+    /**
+     * Decides whether to hide or show secondaries.
+     */
+    WPropBool m_showSecondaries;
+
+    /**
+     * Reload data when properties for selection of primaries and secondaries changed
+     *
+     * \param property contains reference to the property which called updateProperty()
+     */
+    void updateProperty( WPropertyBase::SPtr property );
 };
 
 #endif  // WMCONVERTERCSV_H
