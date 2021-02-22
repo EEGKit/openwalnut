@@ -82,9 +82,18 @@ public:
      */
     virtual const char** getXPMIcon() const;
 
+    /**
+     * Redraws the current vertices with their colors.
+     */
     void redraw();
 
-    void handleClick(osg::Vec3 cameraPosition, osg::Vec3 direction);
+    /**
+     * Handles a click on the drawing area.
+     * It checks all vertices and whether they are clicked.
+     * \param cameraPosition The position of the camera.
+     * \param direction The direction of the click.
+     */
+    void handleClick( osg::Vec3 cameraPosition, osg::Vec3 direction );
 
 protected:
     /**
@@ -103,7 +112,15 @@ protected:
     virtual void properties();
 
 private:
-    float hitVertex(osg::Vec3 rayStart, osg::Vec3 rayDir, osg::Vec3 vertex, float radius);
+    /**
+     * Checks if a vertex with a certain radius is hit by a ray.
+     * \param rayStart The starting point of the ray.
+     * \param rayDir The direction of the ray.
+     * \param vertex The vertex to be checked.
+     * \param radius The radius of the vertex.
+     * \return < 0 if ray does not intersect. == 0 if ray is a tangent. > 0 if ray intersects.
+     */
+    float hitVertex( osg::Vec3 rayStart, osg::Vec3 rayDir, osg::Vec3 vertex, float radius );
 
     /**
      * A condition used to notify about changes in several properties.
@@ -130,9 +147,35 @@ private:
      */
     WPropBool m_useCorrectDepth;
 
-    osg::ref_ptr< osg::Vec3Array > vertices;
-    osg::ref_ptr< osg::Vec4Array > colors;
-    osg::ref_ptr< WGEPostprocessingNode > postNode;
+    /**
+     * The vertices that are drawn.
+     */
+    osg::ref_ptr< osg::Vec3Array > m_vertices;
+
+    /**
+     * The color of the vertices that are drawn.
+     */
+    osg::ref_ptr< osg::Vec4Array > m_colors;
+
+    /**
+     * The postprocessing node of the shader.
+     */
+    osg::ref_ptr< WGEPostprocessingNode > m_postNode;
+
+    /**
+     * The index of the selected vertex.
+     */
+    osg::MixinVector<osg::Vec3f>::size_type m_selectedIndex;
+
+    /**
+     * The color of the vertex before it has been selected.
+     */
+    osg::Vec4 m_selectedOldColor;
+
+    /**
+     * Whether a selection has been done or not.
+     */
+    bool m_hasSelected = false;
 };
 
 #endif  // WMPOINTCONNECTOR_H

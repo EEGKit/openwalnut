@@ -115,13 +115,13 @@ void WMPointConnector::moduleMain()
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // create the post-processing node which actually does the nice stuff to the rendered image
-    postNode = new WGEPostprocessingNode(
+    m_postNode = new WGEPostprocessingNode(
         WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()
     );
-    postNode->addUpdateCallback( new WGENodeMaskCallback( m_active ) ); // disable the postNode with m_active
+    m_postNode->addUpdateCallback( new WGENodeMaskCallback( m_active ) ); // disable the m_postNode with m_active
     // provide the properties of the post-processor to the user
-    m_properties->addProperty( postNode->getProperties() );
-    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( postNode );
+    m_properties->addProperty( m_postNode->getProperties() );
+    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_postNode );
 
     // load the GLSL shader:
     m_shader = new WGEShader( "WMPointConnector", m_localPath );
@@ -131,17 +131,17 @@ void WMPointConnector::moduleMain()
     m_shader->setParameter( GL_GEOMETRY_OUTPUT_TYPE_EXT, GL_TRIANGLE_STRIP );
 
     // insert some uniforms and defines
-    postNode->getOrCreateStateSet()->addUniform( new WGEPropertyUniform< WPropDouble >( "u_pointSize", m_size ) );
+    m_postNode->getOrCreateStateSet()->addUniform( new WGEPropertyUniform< WPropDouble >( "u_pointSize", m_size ) );
     m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
         new WGEShaderPropertyDefineOptions< WPropBool >( m_useCorrectDepth, "DEPTHWRITE_DISABLED", "DEPTHWRITE_ENABLED" ) )
     );
 
     osg::ref_ptr<osgViewer::View> viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView();
     osg::ref_ptr<WMClickHandler> handler = new WMClickHandler( this );
-    viewer->addEventHandler(handler.get());
+    viewer->addEventHandler( handler.get() );
 
-    vertices = osg::ref_ptr< osg::Vec3Array >( new osg::Vec3Array );
-    colors = osg::ref_ptr< osg::Vec4Array >( new osg::Vec4Array );
+    m_vertices = osg::ref_ptr< osg::Vec3Array >( new osg::Vec3Array );
+    m_colors = osg::ref_ptr< osg::Vec4Array >( new osg::Vec4Array );
 
     // signal ready state. The module is now ready to be used.
     ready();
@@ -165,13 +165,13 @@ void WMPointConnector::moduleMain()
         if( !points )
         {
             debugLog() << "Invalid Data. Disabling.";
-            postNode->clear();
+            m_postNode->clear();
             continue;
         }
 
         // convert point arrays to osg vec3 arrays
-        vertices = osg::ref_ptr< osg::Vec3Array >( new osg::Vec3Array );
-        colors = osg::ref_ptr< osg::Vec4Array >( new osg::Vec4Array );
+        m_vertices = osg::ref_ptr< osg::Vec3Array >( new osg::Vec3Array );
+        m_colors = osg::ref_ptr< osg::Vec4Array >( new osg::Vec4Array );
 
         WDataSetPoints::VertexArray pointVertices = points->getVertices();
         WDataSetPoints::ColorArray pointColors = points->getColors();
@@ -180,15 +180,15 @@ void WMPointConnector::moduleMain()
             osg::Vec3 vert = points->operator[]( pointIdx );
             osg::Vec4 color = points->getColor( pointIdx );
 
-            vertices->push_back( vert );
-            colors->push_back( color );
+            m_vertices->push_back( vert );
+            m_colors->push_back( color );
         }
 
         redraw();
     }
 
     // it is important to always remove the modules again
-    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( postNode );
+    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_postNode );
 }
 
 void WMPointConnector::redraw()
@@ -200,9 +200,9 @@ void WMPointConnector::redraw()
     state->setMode( GL_BLEND, osg::StateAttribute::ON );
 
     // combine to geometry
-    geometry->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::POINTS, 0, vertices->size() ) );
-    geometry->setVertexArray( vertices );
-    geometry->setColorArray( colors );
+    geometry->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::POINTS, 0, m_vertices->size() ) );
+    geometry->setVertexArray( m_vertices );
+    geometry->setColorArray( m_colors );
     geometry->setColorBinding( osg::Geometry::BIND_PER_VERTEX );
 
     // add geometry to geode
@@ -212,48 +212,56 @@ void WMPointConnector::redraw()
     m_shader->apply( geode );
 
     // add geode to group
-    postNode->clear();
-    postNode->insert( geode, m_shader );
+    m_postNode->clear();
+    m_postNode->insert( geode, m_shader );
 }
 
-void WMPointConnector::handleClick(osg::Vec3 cameraPosition, osg::Vec3 direction)
+void WMPointConnector::handleClick( osg::Vec3 cameraPosition, osg::Vec3 direction )
 {
-   // debugLog() << "HANDLE DA CLICK";
-    for(osg::MixinVector<osg::Vec3f>::size_type idx = 0; idx < vertices->size(); idx++)
+    float distance = 0;
+    osg::MixinVector<osg::Vec3f>::size_type hitIdx = 0;
+    bool hasHit = false;
+
+    for( osg::MixinVector<osg::Vec3f>::size_type idx = 0; idx < m_vertices->size(); idx++ )
     {
-        //debugLog() << "CHECK DA VERTEX " << idx;
-        osg::Vec3 vertex = vertices->at( idx );
+        osg::Vec3 vertex = m_vertices->at( idx );
 
         float hit = hitVertex( cameraPosition, direction, vertex, m_size->get() );
-        //debugLog() << hit;
         if( hit > 0.0 )
         {
-            //debugLog() << "HIT IT";
+            float dis = ( vertex - cameraPosition ).length2();
+            if( !hasHit )
+            {
+                hasHit = true;
+                distance = dis;
+                hitIdx = idx;
+            }
+            else if( dis < distance )
+            {
+                distance = dis;
+                hitIdx = idx;
+            }
         }
     }
-    //debugLog() << "WE ENDED DA CLICK";
+
+    if( hasHit )
+    {
+        if( m_hasSelected )
+        {
+            m_colors->operator[]( m_selectedIndex ) = m_selectedOldColor;
+        }
+
+        m_selectedOldColor = m_colors->operator[]( hitIdx );
+        m_selectedIndex = hitIdx;
+        m_colors->operator[]( hitIdx ) = osg::Vec4( 0.0, 1.0, 0.0, 1.0 );
+        m_hasSelected = true;
+        redraw();
+    }
 }
 
-float WMPointConnector::hitVertex(osg::Vec3 rayStart, osg::Vec3 rayDir, osg::Vec3 vertex, float radius)
+float WMPointConnector::hitVertex( osg::Vec3 rayStart, osg::Vec3 rayDir, osg::Vec3 vertex, float radius )
 {
     osg::Vec3 oc = rayStart - vertex;
-    float a = rayDir * rayDir;
-    float b = oc * rayDir;
-    float c = ( oc * oc ) - radius * radius;
-
-    if( c > 0.0 && b > 0.0 )
-    {
-        return -1;
-    }
-
-    float discriminant = b * b - c;
-    if( discriminant < 0 )
-    {
-        return -1.0;
-    }
-    return (-b - sqrt( discriminant ) );
-
-    /*osg::Vec3 oc = rayStart - vertex;
     float a = rayDir * rayDir;
     float b = 2.0 * ( oc * rayDir );
     float c = ( oc * oc ) - radius * radius;
@@ -280,5 +288,5 @@ float WMPointConnector::hitVertex(osg::Vec3 rayStart, osg::Vec3 rayDir, osg::Vec
         {
             return -1.0;
         }
-    }*/
+    }
 }
