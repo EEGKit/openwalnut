@@ -295,10 +295,25 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
 
 void WMConverterCSV::updateProperty( WPropertyBase::SPtr property )
 {
-    boost::shared_ptr< WDataSetCSV > dataset = m_input->getData();
-    WDataSetCSV::Content m_csvHeader = dataset->getHeader();
-    WDataSetCSV::Content m_csvData = dataset->getData();
+    if( m_showPrimaries->get() || m_showSecondaries->get() )
+    {
+        boost::shared_ptr <WDataSetCSV> dataset = m_input->getData();
+        WDataSetCSV::Content m_csvHeader = dataset->getHeader();
+        WDataSetCSV::Content m_csvData = dataset->getData();
 
-    setPointsOutOfCSVData( m_csvHeader, m_csvData );
-    setFibersOutOfCSVData( m_csvHeader, m_csvData );
+        setPointsOutOfCSVData( m_csvHeader, m_csvData );
+        setFibersOutOfCSVData( m_csvHeader, m_csvData );
+    }
+    else
+    {
+        if( property->getName() == "Show primaries" )
+        {
+            m_showPrimaries->set( true );
+        }
+
+        if( property->getName() == "Show secondaries" )
+        {
+            m_showSecondaries->set( true );
+        }
+    }
 }
