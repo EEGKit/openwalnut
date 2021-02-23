@@ -161,6 +161,21 @@ private:
     int zPosIndex = -1;
 
     /**
+     * Stores information for the index of eventID-header
+     */
+    int eventIDIndex = -1;
+
+    /**
+     * Stores information for the index of trackID-header
+     */
+    int trackIDIndex = -1;
+
+    /**
+     * Stores information for the index of parent-header
+     */
+    int parentIDIndex = -1;
+
+    /**
      * Get column number by name from header
      *
      * \param columnNameToMatch Search for the specified column name.
@@ -245,6 +260,21 @@ private:
      * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
      */
     WPropSelection m_singleSelectionForPosEdep;
+
+    /**
+     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
+     */
+    WPropSelection m_singleSelectionForEventID;
+
+    /**
+     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
+     */
+    WPropSelection m_singleSelectionForTrackID;
+
+    /**
+     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
+     */
+    WPropSelection m_singleSelectionForParentID;
 
      /**
      * represents the item type for item-selection
