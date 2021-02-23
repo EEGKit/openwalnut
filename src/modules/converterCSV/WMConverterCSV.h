@@ -136,6 +136,21 @@ private:
     boost::shared_ptr< WDataSetPoints > m_points;
 
     /**
+     * Set lower border of range of eventID selection.
+     */
+    WPropInt m_lowerBorderIndex;
+
+    /**
+     * Set upper border of range of eventID selection.
+     */
+    WPropInt m_upperBorderIndex;
+
+    /**
+     * Use trigger to update your range of eventID selection.
+     */
+    WPropTrigger m_selectionTrigger;
+
+    /**
      * Get column number by name from header
      *
      * \param columnNameToMatch Search for the specified column name.
@@ -159,6 +174,13 @@ private:
      * \param data WDataSetCSV::Content object containing data
      */
     void setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data );
+
+    /**
+     * Update range of selected eventID rows.
+     * \param minBorder Set the lower border of selection.
+     * \param maxBorder Set the upper border of selection.
+     */
+    void updateRangeOfEventIDSelection( int minBorder, int maxBorder );
 };
 
 #endif  // WMCONVERTERCSV_H

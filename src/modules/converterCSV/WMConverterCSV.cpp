@@ -60,13 +60,13 @@ const char** WMConverterCSV::getXPMIcon() const
 
 void WMConverterCSV::moduleMain()
 {
+    debugLog() << "\n\n" << "start modulemain()";
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_input->getDataChangedCondition() );
 
     ready();
 
     waitRestored();
-
 
     while( !m_shutdownFlag() )
     {
@@ -75,6 +75,8 @@ void WMConverterCSV::moduleMain()
         boost::shared_ptr< WDataSetCSV > dataset = m_input->getData();
         WDataSetCSV::Content m_csvHeader = dataset->getHeader();
         WDataSetCSV::Content m_csvData = dataset->getData();
+
+        updateRangeOfEventIDSelection(0, m_csvData.size());
 
         setPointsOutOfCSVData( m_csvHeader, m_csvData );
         setFibersOutOfCSVData( m_csvHeader, m_csvData );
@@ -109,6 +111,13 @@ void WMConverterCSV::connectors()
 
 void WMConverterCSV::properties()
 {
+    boost::shared_ptr< WCondition > m_propCondition = boost::shared_ptr< WCondition > ( new WCondition() );
+    WPropGroup m_group = m_properties->addPropertyGroup( "Event ID Limitation", "Adjust the range of eventIDs which are read.", 0);
+    m_lowerBorderIndex = m_group->addProperty( "Lower Border", "desc", 0, m_propCondition);
+    m_upperBorderIndex = m_group->addProperty( "Upper Border", "desc", 1000, m_propCondition);
+    m_selectionTrigger = m_group->addProperty( "Set Range Selection", "Apply Range", WPVBaseTypes::PV_TRIGGER_READY, m_propCondition );
+
+    WModule::properties();
 }
 
 int WMConverterCSV::getColumnNumberByName( std::string columnNameToMatch, std::vector<std::string> headerToSearchIn )
@@ -121,7 +130,6 @@ int WMConverterCSV::getColumnNumberByName( std::string columnNameToMatch, std::v
     }
     return pos;
 }
-
 
 void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data )
 {
@@ -269,4 +277,21 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
     );
 
     m_output_points->updateData( m_points );
+}
+
+void WMConverterCSV::updateRangeOfEventIDSelection( int minBorder, int maxBorder ) 
+{
+    m_lowerBorderIndex->setMin( minBorder );
+    m_upperBorderIndex->setMax( maxBorder );
+    m_upperBorderIndex->setMin( m_lowerBorderIndex->getMin()->getMin() );
+    m_lowerBorderIndex->setMax( m_upperBorderIndex->getMax()->getMax() );
+
+    int currentMinValue = *m_lowerBorderIndex.get();
+    int currentMaxValue = *m_upperBorderIndex.get();
+
+    if ( currentMaxValue < currentMinValue ) 
+        m_upperBorderIndex->set( currentMinValue );
+
+    if ( currentMinValue < 0 )
+        m_lowerBorderIndex->set( 0 );
 }
