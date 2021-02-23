@@ -66,6 +66,10 @@ void WMConverterCSV::moduleMain()
 
     waitRestored();
 
+    m_filteringGroup = m_properties->addPropertyGroup( "Filtering", "Filter primaries and secondaries" );
+    m_visualizationGroup = m_properties->addPropertyGroup( "Visualization", "Visualization options" );
+    m_columnSelectionGroup = m_properties->addPropertyGroup( "Select columns", "Select the columns which should be used" );
+
 
     while( !m_shutdownFlag() )
     {
@@ -176,25 +180,25 @@ void WMConverterCSV::properties()
             m_possibleSelectionsUsingTypes->addItem( ItemType::create( *colName, *colName, "",  NULL ) );
         }
 
-        m_singleSelectionForPosX = m_properties->addProperty( "X", "Choose the xPos column from csv",
+        m_singleSelectionForPosX = m_columnSelectionGroup->addProperty( "X", "Choose the xPos column from csv",
                                                                 m_possibleSelectionsUsingTypes->getSelectorFirst(), notifier );
 
-        m_singleSelectionForPosY = m_properties->addProperty( "Y", "Choose the yPos column from csv",
+        m_singleSelectionForPosY = m_columnSelectionGroup->addProperty( "Y", "Choose the yPos column from csv",
                                                                 m_possibleSelectionsUsingTypes->getSelectorFirst(), notifier );
 
-        m_singleSelectionForPosZ = m_properties->addProperty( "Z", "Choose the zPos column from csv",
+        m_singleSelectionForPosZ = m_columnSelectionGroup->addProperty( "Z", "Choose the zPos column from csv",
                                                                 m_possibleSelectionsUsingTypes->getSelectorFirst(), notifier );
 
-        m_singleSelectionForPosEdep = m_properties->addProperty( "edep", "Choose the edep column from csv",
+        m_singleSelectionForPosEdep = m_columnSelectionGroup->addProperty( "edep", "Choose the edep column from csv",
                                                                 m_possibleSelectionsUsingTypes->getSelectorFirst(), notifier );
 
-        m_singleSelectionForEventID = m_properties->addProperty( "Event ID", "Choose the eventID column from csv",
+        m_singleSelectionForEventID = m_columnSelectionGroup->addProperty( "Event ID", "Choose the eventID column from csv",
                                                                 m_possibleSelectionsUsingTypes->getSelectorFirst(), notifier );
 
-        m_singleSelectionForTrackID = m_properties->addProperty( "Track ID", "Choose the trackID column from csv",
+        m_singleSelectionForTrackID = m_columnSelectionGroup->addProperty( "Track ID", "Choose the trackID column from csv",
                                                                 m_possibleSelectionsUsingTypes->getSelectorFirst(), notifier );
 
-        m_singleSelectionForParentID = m_properties->addProperty( "Parent ID", "Choose the ParentID column from csv",
+        m_singleSelectionForParentID = m_columnSelectionGroup->addProperty( "Parent ID", "Choose the ParentID column from csv",
                                                                 m_possibleSelectionsUsingTypes->getSelectorFirst(), notifier );
 
 
@@ -219,11 +223,11 @@ void WMConverterCSV::properties()
         WPropertyHelper::PC_SELECTONLYONE::addTo( m_singleSelectionForParentID );
         WPropertyHelper::PC_NOTEMPTY::addTo( m_singleSelectionForParentID );
 
-        m_showPrimaries = m_properties->addProperty( "Show primaries", "Show/hide primaries", true, notifierCheckBox );
-        m_showSecondaries = m_properties->addProperty( "Show secondaries", "Show/hide secondaries", true, notifierCheckBox );
+        m_showPrimaries = m_filteringGroup->addProperty( "Show primaries", "Show/hide primaries", true, notifierCheckBox );
+        m_showSecondaries = m_filteringGroup->addProperty( "Show secondaries", "Show/hide secondaries", true, notifierCheckBox );
 
-        m_sizesFromEdep = m_properties->addProperty( "Scale point size", "Scale point size with energy deposition", true, notifierCheckBox );
-        m_colorFromEdep = m_properties->addProperty( "Color points", "Color points based on energy deposition", true, notifierCheckBox );
+        m_sizesFromEdep = m_visualizationGroup->addProperty( "Scale point size", "Scale point size with energy deposition", true, notifierCheckBox );
+        m_colorFromEdep = m_visualizationGroup->addProperty( "Color points", "Color points based on energy deposition", true, notifierCheckBox );
     }
 
     WModule::properties();

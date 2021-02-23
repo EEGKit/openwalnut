@@ -290,6 +290,21 @@ private:
      * Decides whether to scale the points sizes according to their deposited energy.
      */
     WPropBool m_sizesFromEdep;
+
+    /**
+     * Property group for filtering options
+     */
+    WPropGroup m_filteringGroup;
+
+    /**
+     * Property group for visualization modes
+     */
+    WPropGroup m_visualizationGroup;
+
+    /**
+     * Property group for column selection
+     */
+    WPropGroup m_columnSelectionGroup;
 };
 
 #endif  // WMCONVERTERCSV_H
