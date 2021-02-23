@@ -177,11 +177,10 @@ void WMConverterCSV::properties()
 
         WPropertyHelper::PC_SELECTONLYONE::addTo( m_singleSelectionForPosEdep );
         WPropertyHelper::PC_NOTEMPTY::addTo( m_singleSelectionForPosEdep );
+
+        m_showPrimaries = m_properties->addProperty( "Show primaries", "Show/hide primaries", true, notifierCheckBox );
+        m_showSecondaries = m_properties->addProperty( "Show secondaries", "Show/hide secondaries", true, notifierCheckBox );
     }
-
-
-    m_showPrimaries = m_properties->addProperty( "Show primaries", "Show/hide primaries", true, notifierCheckBox );
-    m_showSecondaries = m_properties->addProperty( "Show secondaries", "Show/hide secondaries", true, notifierCheckBox );
 
     WModule::properties();
 }
@@ -379,9 +378,8 @@ void WMConverterCSV::updateCheckboxProperty( WPropertyBase::SPtr property )
 {
     if( m_showPrimaries->get() || m_showSecondaries->get() )
     {
-        boost::shared_ptr <WDataSetCSV> dataset = m_input->getData();
-        WDataSetCSV::Content m_csvHeader = dataset->getHeader();
-        WDataSetCSV::Content m_csvData = dataset->getData();
+        WDataSetCSV::Content m_csvHeader = m_dataset->getHeader();
+        WDataSetCSV::Content m_csvData = m_dataset->getData();
 
         setPointsOutOfCSVData( m_csvHeader, m_csvData );
         setFibersOutOfCSVData( m_csvHeader, m_csvData );
