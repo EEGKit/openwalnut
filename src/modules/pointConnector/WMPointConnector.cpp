@@ -23,6 +23,7 @@
 //---------------------------------------------------------------------------
 
 #include <string>
+#include <vector>
 
 #include <osg/Geode>
 
@@ -99,13 +100,16 @@ void WMPointConnector::properties()
     m_size->setMin( 0.0001 );
     m_size->setMax( 10.0 );
 
-    m_useCorrectDepth = m_properties->addProperty( "Correct Depth", "If set, the depths of the sprites are calculated correctly. You can disable "
-                                                                    "this to get higher framerates at the cost of visual correctness.", true );
-    
+    m_useCorrectDepth = m_properties->addProperty( "Correct Depth",
+                                                   "If set, the depths of the sprites are calculated correctly. "
+                                                   "You can disable this to get higher framerates at the cost of visual correctness.",
+                                                   true );
+
     m_possibleLineSelections = WItemSelection::SPtr( new WItemSelection() );
     m_possibleLineSelections->addItem( ItemType::create( "Line 1", "Line 1", "", NULL ) );
     m_lineCount++;
-    m_lineSelection = m_properties->addProperty( "Selected Line", "The line to which the points are added", m_possibleLineSelections->getSelectorFirst(), notifier );
+    m_lineSelection = m_properties->addProperty( "Selected Line",
+                                                 "The line to which the points are added", m_possibleLineSelections->getSelectorFirst(), notifier );
     WPropertyHelper::PC_SELECTONLYONE::addTo( m_lineSelection );
     WPropertyHelper::PC_NOTEMPTY::addTo( m_lineSelection );
 

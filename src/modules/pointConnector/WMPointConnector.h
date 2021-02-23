@@ -27,6 +27,7 @@
 
 #include <cmath>
 #include <string>
+#include <vector>
 
 #include "core/common/math/linearAlgebra/WVectorFixed.h"
 #include "core/common/WItemSelectionItem.h"
@@ -201,7 +202,6 @@ private:
     WPropSelection m_lineSelection;
     WPropTrigger m_addLine;
     PCFiberListSPtr m_fibers;
-
 };
 
 #endif  // WMPOINTCONNECTOR_H
