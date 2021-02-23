@@ -36,6 +36,11 @@
 #include "core/dataHandler/WDataSetPoints.h"
 #include "core/dataHandler/WDataSetPointsAndSizes.h"
 
+#include "core/common/WItemSelectionItem.h"
+#include "core/common/WItemSelector.h"
+#include "core/common/WItemSelectionItemTyped.h"
+
+
 #include "core/kernel/WModule.h"
 
 /**
@@ -154,6 +159,41 @@ private:
      * Set upper border of range of eventID selection.
      */
     WPropInt m_maxCap;
+    
+    /*
+     * Stores information for the index of x-header
+     */
+    int xPosIndex = -1;
+
+    /**
+     * Stores information for the index of y-header
+     */
+    int yPosIndex = -1;
+
+    /**
+     * Stores information for the index of edeps-header
+     */
+    int edepIndex = -1;
+
+    /**
+     * Stores information for the index of z-header
+     */
+    int zPosIndex = -1;
+
+    /**
+     * Stores information for the index of eventID-header
+     */
+    int eventIDIndex = -1;
+
+    /**
+     * Stores information for the index of trackID-header
+     */
+    int trackIDIndex = -1;
+
+    /**
+     * Stores information for the index of parent-header
+     */
+    int parentIDIndex = -1;
 
     /**
      * Get column number by name from header
@@ -191,6 +231,88 @@ private:
      * Update your mesh when changing properties.
      */
     void updateMesh( WPropertyBase::SPtr property );
+    
+    /**
+     * Normalize energy deposition values to use as RGB values
+     * \param edeps vector containing energy deposition values
+     * \param colorArray vector containing colors per vertex
+     * \param maxEdep maximum present energy deposition value in edeps vector
+     */
+    void normalizeEdeps( std::vector< float > edeps, SPFloatVector colorArray, float maxEdep );
+    
+    /**
+     * Decides whether to hide or show primaries.
+     */
+    WPropBool m_showPrimaries;
+
+    /**
+     * Decides whether to hide or show secondaries.
+     */
+    WPropBool m_showSecondaries;
+
+    /**
+     * Reload data when properties for selection of columnnames changed
+     *
+     * \param property contains reference to the property which called updateProperty()
+     */
+    void updateProperty( WPropertyBase::SPtr property );
+
+    /**
+     * Reload data when properties for selection of primaries and secondaries changed
+     *
+     * \param property contains reference to the property which called updateProperty()
+     */
+    void updateCheckboxProperty( WPropertyBase::SPtr property );
+
+    /**
+     * A list of items that can be selected using m_aSingleSelectionUsingTypes property.
+     */
+    boost::shared_ptr< WItemSelection > m_possibleSelectionsUsingTypes;
+
+    /**
+     * Stores information of the input-csv-data
+     */
+    boost::shared_ptr< WDataSetCSV > m_dataset;
+
+    /**
+     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
+     */
+    WPropSelection m_singleSelectionForPosX;
+
+    /**
+     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
+     */
+    WPropSelection m_singleSelectionForPosY;
+
+    /**
+     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
+     */
+    WPropSelection m_singleSelectionForPosZ;
+
+    /**
+     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
+     */
+    WPropSelection m_singleSelectionForPosEdep;
+
+    /**
+     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
+     */
+    WPropSelection m_singleSelectionForEventID;
+
+    /**
+     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
+     */
+    WPropSelection m_singleSelectionForTrackID;
+
+    /**
+     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
+     */
+    WPropSelection m_singleSelectionForParentID;
+
+     /**
+     * represents the item type for item-selection
+     */
+    typedef WItemSelectionItemTyped< std::string > ItemType;
 };
 
 #endif  // WMCONVERTERCSV_H
