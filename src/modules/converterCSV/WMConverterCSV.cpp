@@ -62,7 +62,6 @@ void WMConverterCSV::moduleMain()
 {
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_input->getDataChangedCondition() );
-
     ready();
 
     waitRestored();
@@ -71,13 +70,8 @@ void WMConverterCSV::moduleMain()
     while( !m_shutdownFlag() )
     {
         m_moduleState.wait();
-
-        boost::shared_ptr< WDataSetCSV > dataset = m_input->getData();
-        WDataSetCSV::Content m_csvHeader = dataset->getHeader();
-        WDataSetCSV::Content m_csvData = dataset->getData();
-
-        setPointsOutOfCSVData( m_csvHeader, m_csvData );
-        setFibersOutOfCSVData( m_csvHeader, m_csvData );
+        m_dataset = m_input->getData();
+        properties();
     }
 }
 
@@ -107,20 +101,95 @@ void WMConverterCSV::connectors()
     WModule::connectors();
 }
 
+void WMConverterCSV::updateProperty( WPropertyBase::SPtr property )
+{
+    WDataSetCSV::Content m_csvHeader = m_dataset->getHeader();
+    WDataSetCSV::Content m_csvData = m_dataset->getData();
+
+    if( property == m_singleSelectionForPosX )
+    {
+        WItemSelector selector = m_singleSelectionForPosX->get( true );
+        std::string selectedValue = selector.at( 0 )->getAs< ItemType >()->getValue();
+        xPosIndex = getColumnNumberByName( selectedValue, m_csvHeader.at( 0 ) );
+    }
+
+    if( property == m_singleSelectionForPosY )
+    {
+        WItemSelector selector = m_singleSelectionForPosY->get( true );
+        std::string selectedValue = selector.at( 0 )->getAs< ItemType >()->getValue();
+        yPosIndex = getColumnNumberByName( selectedValue, m_csvHeader.at( 0 ) );
+    }
+
+    if( property == m_singleSelectionForPosZ )
+    {
+        WItemSelector selector = m_singleSelectionForPosZ->get( true );
+        std::string selectedValue = selector.at( 0 )->getAs< ItemType >()->getValue();
+        zPosIndex = getColumnNumberByName( selectedValue, m_csvHeader.at( 0 ) );
+    }
+
+    if( property == m_singleSelectionForPosEdep )
+    {
+        WItemSelector selector = m_singleSelectionForPosEdep->get( true );
+        std::string selectedValue = selector.at( 0 )->getAs< ItemType >()->getValue();
+        edepIndex = getColumnNumberByName( selectedValue, m_csvHeader.at( 0 ) );
+    }
+
+    setPointsOutOfCSVData( m_csvHeader, m_csvData );
+    setFibersOutOfCSVData( m_csvHeader, m_csvData );
+}
+
 void WMConverterCSV::properties()
 {
     WPropertyBase::PropertyChangeNotifierType notifier = boost::bind( &WMConverterCSV::updateProperty, this, boost::placeholders::_1 );
+    WPropertyBase::PropertyChangeNotifierType notifierCheckBox = boost::bind( &WMConverterCSV::updateCheckboxProperty, this, boost::placeholders::_1 );
 
-    m_showPrimaries = m_properties->addProperty( "Show primaries", "Show/hide primaries", true, notifier );
-    m_showSecondaries = m_properties->addProperty( "Show secondaries", "Show/hide secondaries", true, notifier );
+    m_possibleSelectionsUsingTypes = WItemSelection::SPtr( new WItemSelection() );
+
+    if( m_dataset != NULL )
+    {
+        std::vector< std::string > header = m_dataset->getHeader().at( 0 );
+
+        for( std::vector<std::string>::iterator colName = header.begin(); colName != header.end(); colName++ )
+        {
+            m_possibleSelectionsUsingTypes->addItem( ItemType::create( *colName, *colName, "",  NULL ) );
+        }
+
+        m_singleSelectionForPosX = m_properties->addProperty( "PosX", "Choose the xPos column from csv",
+                                                            m_possibleSelectionsUsingTypes->getSelectorFirst(), notifier );
+
+        m_singleSelectionForPosY = m_properties->addProperty( "PosY", "Choose the yPos column from csv",
+                                                            m_possibleSelectionsUsingTypes->getSelectorFirst(), notifier );
+
+        m_singleSelectionForPosZ = m_properties->addProperty( "PosZ", "Choose the zPos column from csv",
+                                                            m_possibleSelectionsUsingTypes->getSelectorFirst(), notifier );
+
+        m_singleSelectionForPosEdep = m_properties->addProperty( "edep", "Choose the edep column from csv",
+                                                            m_possibleSelectionsUsingTypes->getSelectorFirst(), notifier );
+
+        WPropertyHelper::PC_SELECTONLYONE::addTo( m_singleSelectionForPosX );
+        WPropertyHelper::PC_NOTEMPTY::addTo( m_singleSelectionForPosX );
+
+        WPropertyHelper::PC_SELECTONLYONE::addTo( m_singleSelectionForPosY );
+        WPropertyHelper::PC_NOTEMPTY::addTo( m_singleSelectionForPosY );
+
+        WPropertyHelper::PC_SELECTONLYONE::addTo( m_singleSelectionForPosZ );
+        WPropertyHelper::PC_NOTEMPTY::addTo( m_singleSelectionForPosZ );
+
+        WPropertyHelper::PC_SELECTONLYONE::addTo( m_singleSelectionForPosEdep );
+        WPropertyHelper::PC_NOTEMPTY::addTo( m_singleSelectionForPosEdep );
+    }
+
+
+    m_showPrimaries = m_properties->addProperty( "Show primaries", "Show/hide primaries", true, notifierCheckBox );
+    m_showSecondaries = m_properties->addProperty( "Show secondaries", "Show/hide secondaries", true, notifierCheckBox );
 
     WModule::properties();
 }
 
-int WMConverterCSV::getColumnNumberByName( std::string columnNameToMatch, std::vector<std::string> headerToSearchIn )
+int WMConverterCSV::getColumnNumberByName( std::string columnNameToMatch, std::vector< std::string > headerToSearchIn )
 {
     int pos = 0;
-    for( std::vector<std::string>::iterator it = headerToSearchIn.begin(); it != headerToSearchIn.end(); it++ )
+    for( std::vector< std::string >::iterator it = headerToSearchIn.begin(); it != headerToSearchIn.end(); it++ )
     {
         if( *it == columnNameToMatch ) return pos;
         pos++;
@@ -131,7 +200,12 @@ int WMConverterCSV::getColumnNumberByName( std::string columnNameToMatch, std::v
 
 void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data )
 {
-    SPFloatVector m_vertices = SPFloatVector( new std::vector<float>() );
+    if( xPosIndex < 0 || yPosIndex < 0 || zPosIndex < 0 || edepIndex < 0 )
+    {
+        return;
+    }
+
+    SPFloatVector m_vertices = SPFloatVector( new std::vector< float >() );
     SPSizeVector m_lineStartIndexes = SPSizeVector( new std::vector < size_t >() );
     SPSizeVector m_lineLengths  = SPSizeVector( new std::vector < size_t >() );
     SPSizeVector m_verticesReverse = SPSizeVector( new std::vector < size_t >() );
@@ -141,12 +215,9 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
     std::vector< int > eventIDs;
     std::vector< float > edeps;
 
-    int xPosIndex = getColumnNumberByName( "posX", header.at( 0 ) );
-    int yPosIndex = getColumnNumberByName( "posY", header.at( 0 ) );
-    int zPosIndex = getColumnNumberByName( "posZ", header.at( 0 ) );
+
     int eventIDIndex = getColumnNumberByName( "eventID", header.at( 0 ) );
     int parentIDIndex = getColumnNumberByName( "parentID", header.at( 0 ) );
-    int edepIndex = getColumnNumberByName( "edep", header.at( 0 ) );
 
     float maxEdep = 0.0;
 
@@ -230,16 +301,16 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
 
 void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data )
 {
+    if( xPosIndex < 0 || yPosIndex < 0 || zPosIndex < 0 || edepIndex < 0 )
+    {
+        return;
+    }
+
     SPFloatVector m_vertices = SPFloatVector( new std::vector< float >() );
     SPFloatVector m_colors = SPFloatVector( new std::vector< float >() );
     SPFloatVector m_sizes = SPFloatVector( new std::vector< float >() );
 
     std::vector< float > edeps;
-
-    int xPosIndex = getColumnNumberByName( "posX", header.at( 0 ) );
-    int yPosIndex = getColumnNumberByName( "posY", header.at( 0 ) );
-    int zPosIndex = getColumnNumberByName( "posZ", header.at( 0 ) );
-    int edepIndex = getColumnNumberByName( "edep", header.at( 0 ) );
     int parentIDIndex = getColumnNumberByName( "parentID", header.at( 0 ) );
 
     float maxEdep = 0.0;
@@ -304,7 +375,7 @@ void WMConverterCSV::normalizeEdeps( std::vector< float > edeps, SPFloatVector c
     }
 }
 
-void WMConverterCSV::updateProperty( WPropertyBase::SPtr property )
+void WMConverterCSV::updateCheckboxProperty( WPropertyBase::SPtr property )
 {
     if( m_showPrimaries->get() || m_showSecondaries->get() )
     {
