@@ -280,6 +280,16 @@ private:
      * represents the item type for item-selection
      */
     typedef WItemSelectionItemTyped< std::string > ItemType;
+
+    /**
+     * Decides whether to color points based on the deposited energy or not.
+     */
+    WPropBool m_colorFromEdep;
+
+    /**
+     * Decides whether to scale the points sizes according to their deposited energy.
+     */
+    WPropBool m_sizesFromEdep;
 };
 
 #endif  // WMCONVERTERCSV_H

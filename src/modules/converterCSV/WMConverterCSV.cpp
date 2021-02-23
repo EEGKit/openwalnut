@@ -162,7 +162,8 @@ void WMConverterCSV::updateProperty( WPropertyBase::SPtr property )
 void WMConverterCSV::properties()
 {
     WPropertyBase::PropertyChangeNotifierType notifier = boost::bind( &WMConverterCSV::updateProperty, this, boost::placeholders::_1 );
-    WPropertyBase::PropertyChangeNotifierType notifierCheckBox = boost::bind( &WMConverterCSV::updateCheckboxProperty, this, boost::placeholders::_1 );
+    WPropertyBase::PropertyChangeNotifierType notifierCheckBox = boost::bind( &WMConverterCSV::updateCheckboxProperty,
+                                                                              this, boost::placeholders::_1 );
 
     m_possibleSelectionsUsingTypes = WItemSelection::SPtr( new WItemSelection() );
 
@@ -220,6 +221,9 @@ void WMConverterCSV::properties()
 
         m_showPrimaries = m_properties->addProperty( "Show primaries", "Show/hide primaries", true, notifierCheckBox );
         m_showSecondaries = m_properties->addProperty( "Show secondaries", "Show/hide secondaries", true, notifierCheckBox );
+
+        m_sizesFromEdep = m_properties->addProperty( "Scale point size", "Scale point size with energy deposition", true, notifierCheckBox );
+        m_colorFromEdep = m_properties->addProperty( "Color points", "Color points based on energy deposition", true, notifierCheckBox );
     }
 
     WModule::properties();
@@ -380,19 +384,41 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
         m_vertices->push_back( posY );
         m_vertices->push_back( posZ );
 
+        if( !m_colorFromEdep->get() )
+        {
+            m_colors->push_back( 0.5 );
+            m_colors->push_back( 0 );
+            m_colors->push_back( 0.8 );
+        }
+
         m_sizes->push_back( edep );
         edeps.push_back( edep );
     }
 
-    normalizeEdeps( edeps, m_colors, maxEdep );
+    if( m_colorFromEdep->get() )
+    {
+        normalizeEdeps( edeps, m_colors, maxEdep );
+    }
 
-    m_points = boost::shared_ptr< WDataSetPointsAndSizes >(
-            new WDataSetPointsAndSizes(
-                    m_vertices,
-                    m_colors,
-                    m_sizes
-            )
-    );
+    if( m_sizesFromEdep->get() )
+    {
+        m_points = boost::shared_ptr< WDataSetPointsAndSizes >(
+                new WDataSetPointsAndSizes(
+                        m_vertices,
+                        m_colors,
+                        m_sizes
+                )
+        );
+    }
+    else
+    {
+        m_points = boost::shared_ptr < WDataSetPoints >(
+                new WDataSetPoints(
+                        m_vertices,
+                        m_colors
+                        )
+                );
+    }
 
     m_output_points->updateData( m_points );
 }
