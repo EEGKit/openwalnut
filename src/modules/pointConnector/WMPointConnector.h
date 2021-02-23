@@ -118,10 +118,22 @@ protected:
     virtual void properties();
 
 private:
+    /**
+     * Type of selectable items.
+     */
     typedef WItemSelectionItemTyped< std::string > ItemType;
 
+    /**
+     * Vector of 3D vectors, representing points
+     */
     typedef std::vector< osg::Vec3 >            PCFiber;
+    /**
+     * Vector, that could contain multiple fibers
+     */
     typedef std::vector< PCFiber >              PCFiberList;
+    /**
+     * Shared pointer to fibers-vector
+     */
     typedef boost::shared_ptr< PCFiberList >    PCFiberListSPtr;
 
 
@@ -135,8 +147,15 @@ private:
      */
     float hitVertex( osg::Vec3 rayStart, osg::Vec3 rayDir, osg::Vec3 vertex, float radius );
 
+    /**
+     * Update handler for the properties
+     * \param property updated property
+     */
     void updateProperty( WPropertyBase::SPtr property );
 
+    /**
+     * Updates the fiber output
+     */
     void updateOutput();
 
     /**
@@ -149,6 +168,9 @@ private:
      */
     boost::shared_ptr< WModuleInputData< WDataSetPoints > > m_pointInput;
 
+    /**
+     * An output connector used to provide fibers to other modules.
+     */
     boost::shared_ptr< WModuleOutputData< WDataSetFibers > > m_fiberOutput;
 
     /**
@@ -196,11 +218,34 @@ private:
      */
     bool m_hasSelected = false;
 
+    /**
+     * Stores the amount of new created fibers.
+     */
     int m_lineCount = 0;
+
+    /**
+     * Represents the index of the current active fiber.
+     */
     int m_selectedFiber = 0;
+
+    /**
+     * The list of possible fibers, which can be selected.
+     */
     boost::shared_ptr< WItemSelection > m_possibleLineSelections;
+
+    /**
+     * Represents the current active fiber selection property.
+     */
     WPropSelection m_lineSelection;
+
+    /**
+     * Property (button) to add a new Fiber.
+     */
     WPropTrigger m_addLine;
+
+    /**
+     * A pointer to the list of fibers.
+     */
     PCFiberListSPtr m_fibers;
 };
 
