@@ -37,7 +37,7 @@
 #include "core/kernel/WKernel.h"
 
 #include "core/dataHandler/WDataSetPoints.h"
-#include "core/dataHandler/WDataSetPointsAndSizes.h"
+#include "core/dataHandler/WDataSetFibers.h"
 
 #include "WMPointConnector.h"
 #include "WMClickHandler.h"
@@ -81,6 +81,7 @@ void WMPointConnector::connectors()
 {
     // this input contains the triangle data
     m_pointInput = WModuleInputData< WDataSetPoints >::createAndAdd( shared_from_this(), "points", "The data to display" );
+    m_fiberOutput = WModuleOutputData< WDataSetFibers >::createAndAdd( shared_from_this(), "fibers", "The created fibers" );
 
     // call WModule's initialization
     WModule::connectors();
@@ -88,6 +89,8 @@ void WMPointConnector::connectors()
 
 void WMPointConnector::properties()
 {
+    WPropertyBase::PropertyChangeNotifierType notifier = boost::bind( &WMPointConnector::updateProperty, this, boost::placeholders::_1 );
+
     // some properties need to trigger an update
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
 
@@ -98,6 +101,15 @@ void WMPointConnector::properties()
 
     m_useCorrectDepth = m_properties->addProperty( "Correct Depth", "If set, the depths of the sprites are calculated correctly. You can disable "
                                                                     "this to get higher framerates at the cost of visual correctness.", true );
+    
+    m_possibleLineSelections = WItemSelection::SPtr( new WItemSelection() );
+    m_possibleLineSelections->addItem( ItemType::create( "Line 1", "Line 1", "", NULL ) );
+    m_lineCount++;
+    m_lineSelection = m_properties->addProperty( "Selected Line", "The line to which the points are added", m_possibleLineSelections->getSelectorFirst(), notifier );
+    WPropertyHelper::PC_SELECTONLYONE::addTo( m_lineSelection );
+    WPropertyHelper::PC_NOTEMPTY::addTo( m_lineSelection );
+
+    m_addLine = m_properties->addProperty( "Add Line", "Add Line", WPVBaseTypes::PV_TRIGGER_READY, notifier );
 
     // call WModule's initialization
     WModule::properties();
@@ -142,6 +154,10 @@ void WMPointConnector::moduleMain()
 
     m_vertices = osg::ref_ptr< osg::Vec3Array >( new osg::Vec3Array );
     m_colors = osg::ref_ptr< osg::Vec4Array >( new osg::Vec4Array );
+
+    m_fibers = PCFiberListSPtr( new PCFiberList() );
+    m_fibers->push_back( PCFiber() );
+    m_selectedFiber = 0;
 
     // signal ready state. The module is now ready to be used.
     ready();
@@ -255,7 +271,11 @@ void WMPointConnector::handleClick( osg::Vec3 cameraPosition, osg::Vec3 directio
         m_selectedIndex = hitIdx;
         m_colors->operator[]( hitIdx ) = osg::Vec4( 0.0, 1.0, 0.0, 1.0 );
         m_hasSelected = true;
+
+        m_fibers->at( m_selectedFiber ).push_back( m_vertices->at( hitIdx ) );
+
         redraw();
+        updateOutput();
     }
 }
 
@@ -289,4 +309,76 @@ float WMPointConnector::hitVertex( osg::Vec3 rayStart, osg::Vec3 rayDir, osg::Ve
             return -1.0;
         }
     }
+}
+
+void WMPointConnector::updateProperty( WPropertyBase::SPtr property )
+{
+    if( property == m_addLine && m_addLine->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
+    {
+        m_addLine->set( WPVBaseTypes::PV_TRIGGER_READY, false );
+
+        m_lineCount++;
+        std::string name = "Line " + boost::lexical_cast< std::string >( m_lineCount );
+
+        m_fibers->push_back( PCFiber() );
+        m_possibleLineSelections->addItem( ItemType::create( name, name, "", NULL ) );
+        m_lineSelection->set( m_possibleLineSelections->getSelectorLast() );
+    }
+    if( property == m_lineSelection )
+    {
+        m_selectedFiber = m_lineSelection->get().getItemIndexOfSelected( 0 );
+        if( m_hasSelected )
+        {
+            m_colors->operator[]( m_selectedIndex ) = m_selectedOldColor;
+            m_hasSelected = false;
+        }
+
+        PCFiber fiber = m_fibers->at( m_selectedFiber );
+        if( !fiber.empty() )
+        {
+            std::vector< osg::Vec3 >::iterator vertexIterator = std::find( m_vertices->begin(), m_vertices->end(), fiber[fiber.size() - 1] );
+            size_t vIdx = std::distance( m_vertices->begin(), vertexIterator );
+
+            m_selectedOldColor = m_colors->operator[]( vIdx );
+            m_selectedIndex = vIdx;
+            m_colors->operator[]( vIdx ) = osg::Vec4( 0.0, 1.0, 0.0, 1.0 );
+            m_hasSelected = true;
+        }
+
+        redraw();
+    }
+}
+
+void WMPointConnector::updateOutput()
+{
+    boost::shared_ptr< std::vector< float > > vertices = boost::shared_ptr< std::vector< float > >( new std::vector< float >() );
+    boost::shared_ptr< std::vector< size_t > > lineStartIndexes = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
+    boost::shared_ptr< std::vector< size_t > > lineLength = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
+    boost::shared_ptr< std::vector< size_t > > verticesReverse = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
+
+    for( PCFiberList::size_type idx = 0; idx < m_fibers->size(); idx++ )
+    {
+        PCFiber fiber = m_fibers->at( idx );
+        lineStartIndexes->push_back( vertices->size() / 3 );
+        lineLength->push_back( fiber.size() );
+
+        for( PCFiber::size_type vIdx = 0; vIdx < fiber.size(); vIdx++ )
+        {
+            osg::Vec3 vertex = fiber[vIdx];
+            vertices->push_back( vertex.x() );
+            vertices->push_back( vertex.y() );
+            vertices->push_back( vertex.z() );
+
+            verticesReverse->push_back( idx );
+        }
+    }
+
+    m_fiberOutput->updateData( boost::shared_ptr< WDataSetFibers >(
+        new WDataSetFibers(
+            vertices,
+            lineStartIndexes,
+            lineLength,
+            verticesReverse
+        )
+    ) );
 }

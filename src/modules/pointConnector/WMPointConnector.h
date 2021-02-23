@@ -29,17 +29,22 @@
 #include <string>
 
 #include "core/common/math/linearAlgebra/WVectorFixed.h"
+#include "core/common/WItemSelectionItem.h"
+#include "core/common/WItemSelector.h"
+#include "core/common/WItemSelectionItemTyped.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
 
+
 class WDataSetPoints;
+class WDataSetFibers;
 class WGEShader;
 class WGEManagedGroupNode;
 class WGEPostprocessingNode;
 
 /**
- * This module renders the points in a point dataset.
+ * This module connects the points in a point dataset.
  *
  * \ingroup modules
  */
@@ -112,6 +117,13 @@ protected:
     virtual void properties();
 
 private:
+    typedef WItemSelectionItemTyped< std::string > ItemType;
+
+    typedef std::vector< osg::Vec3 >            PCFiber;
+    typedef std::vector< PCFiber >              PCFiberList;
+    typedef boost::shared_ptr< PCFiberList >    PCFiberListSPtr;
+
+
     /**
      * Checks if a vertex with a certain radius is hit by a ray.
      * \param rayStart The starting point of the ray.
@@ -122,6 +134,10 @@ private:
      */
     float hitVertex( osg::Vec3 rayStart, osg::Vec3 rayDir, osg::Vec3 vertex, float radius );
 
+    void updateProperty( WPropertyBase::SPtr property );
+
+    void updateOutput();
+
     /**
      * A condition used to notify about changes in several properties.
      */
@@ -131,6 +147,8 @@ private:
      * An input connector used to get points from other modules.
      */
     boost::shared_ptr< WModuleInputData< WDataSetPoints > > m_pointInput;
+
+    boost::shared_ptr< WModuleOutputData< WDataSetFibers > > m_fiberOutput;
 
     /**
      * The shader for the points
@@ -176,6 +194,14 @@ private:
      * Whether a selection has been done or not.
      */
     bool m_hasSelected = false;
+
+    int m_lineCount = 0;
+    int m_selectedFiber = 0;
+    boost::shared_ptr< WItemSelection > m_possibleLineSelections;
+    WPropSelection m_lineSelection;
+    WPropTrigger m_addLine;
+    PCFiberListSPtr m_fibers;
+
 };
 
 #endif  // WMPOINTCONNECTOR_H

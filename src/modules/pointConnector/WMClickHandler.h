@@ -31,7 +31,7 @@
 #include <osg/Geode>
 #include <osg/Viewport>
 #include <osgGA/GUIEventHandler>
-#include <osgViewer/viewer>
+#include <osgViewer/Viewer>
 
 #include "WMPointConnector.h"
 
