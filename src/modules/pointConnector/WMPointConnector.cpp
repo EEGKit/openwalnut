@@ -105,15 +105,15 @@ void WMPointConnector::properties()
                                                    "You can disable this to get higher framerates at the cost of visual correctness.",
                                                    true );
 
-    m_possibleLineSelections = WItemSelection::SPtr( new WItemSelection() );
-    m_possibleLineSelections->addItem( ItemType::create( "Line 1", "Line 1", "", NULL ) );
-    m_lineCount++;
-    m_lineSelection = m_properties->addProperty( "Selected Line",
-                                                 "The line to which the points are added", m_possibleLineSelections->getSelectorFirst(), notifier );
-    WPropertyHelper::PC_SELECTONLYONE::addTo( m_lineSelection );
-    WPropertyHelper::PC_NOTEMPTY::addTo( m_lineSelection );
+    m_possibleFiberSelections = WItemSelection::SPtr( new WItemSelection() );
+    m_possibleFiberSelections->addItem( ItemType::create( "Line 1", "Line 1", "", NULL ) );
+    m_fiberCount++;
+    m_fiberSelection = m_properties->addProperty( "Selected Line",
+                                                 "The line to which the points are added", m_possibleFiberSelections->getSelectorFirst(), notifier );
+    WPropertyHelper::PC_SELECTONLYONE::addTo( m_fiberSelection );
+    WPropertyHelper::PC_NOTEMPTY::addTo( m_fiberSelection );
 
-    m_addLine = m_properties->addProperty( "Add Line", "Add Line", WPVBaseTypes::PV_TRIGGER_READY, notifier );
+    m_addFiber = m_properties->addProperty( "Add Line", "Add Line", WPVBaseTypes::PV_TRIGGER_READY, notifier );
 
     // call WModule's initialization
     WModule::properties();
@@ -317,20 +317,20 @@ float WMPointConnector::hitVertex( osg::Vec3 rayStart, osg::Vec3 rayDir, osg::Ve
 
 void WMPointConnector::updateProperty( WPropertyBase::SPtr property )
 {
-    if( property == m_addLine && m_addLine->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
+    if(property == m_addFiber && m_addFiber->get(true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
     {
-        m_addLine->set( WPVBaseTypes::PV_TRIGGER_READY, false );
+        m_addFiber->set( WPVBaseTypes::PV_TRIGGER_READY, false );
 
-        m_lineCount++;
-        std::string name = "Line " + boost::lexical_cast< std::string >( m_lineCount );
+        m_fiberCount++;
+        std::string name = "Line " + boost::lexical_cast< std::string >( m_fiberCount );
 
         m_fibers->push_back( PCFiber() );
-        m_possibleLineSelections->addItem( ItemType::create( name, name, "", NULL ) );
-        m_lineSelection->set( m_possibleLineSelections->getSelectorLast() );
+        m_possibleFiberSelections->addItem( ItemType::create( name, name, "", NULL ) );
+        m_fiberSelection->set( m_possibleFiberSelections->getSelectorLast() );
     }
-    if( property == m_lineSelection )
+    if(property == m_fiberSelection )
     {
-        m_selectedFiber = m_lineSelection->get().getItemIndexOfSelected( 0 );
+        m_selectedFiber = m_fiberSelection->get().getItemIndexOfSelected( 0 );
         if( m_hasSelected )
         {
             m_colors->operator[]( m_selectedIndex ) = m_selectedOldColor;

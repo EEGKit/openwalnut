@@ -221,7 +221,7 @@ private:
     /**
      * Stores the amount of new created fibers.
      */
-    int m_lineCount = 0;
+    int m_fiberCount = 0;
 
     /**
      * Represents the index of the current active fiber.
@@ -231,17 +231,17 @@ private:
     /**
      * The list of possible fibers, which can be selected.
      */
-    boost::shared_ptr< WItemSelection > m_possibleLineSelections;
+    boost::shared_ptr< WItemSelection > m_possibleFiberSelections;
 
     /**
      * Represents the current active fiber selection property.
      */
-    WPropSelection m_lineSelection;
+    WPropSelection m_fiberSelection;
 
     /**
      * Property (button) to add a new Fiber.
      */
-    WPropTrigger m_addLine;
+    WPropTrigger m_addFiber;
 
     /**
      * A pointer to the list of fibers.
