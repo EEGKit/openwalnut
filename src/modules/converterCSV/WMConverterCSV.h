@@ -126,6 +126,16 @@ private:
     boost::shared_ptr< WModuleOutputData< WDataSet  > > m_output_fibers;
 
     /**
+     * Stores column index of data.
+     */
+    WDataSetCSV::Content m_csvHeader;
+
+    /**
+     * Stores data from obtained input file.
+     */
+    WDataSetCSV::Content m_csvData;
+
+    /**
      * Stores information for the fiber display
      */
     boost::shared_ptr< WDataSetFibers > m_fibers;
@@ -138,17 +148,12 @@ private:
     /**
      * Set lower border of range of eventID selection.
      */
-    WPropInt m_lowerBorderIndex;
+    WPropInt m_minCap;
 
     /**
      * Set upper border of range of eventID selection.
      */
-    WPropInt m_upperBorderIndex;
-
-    /**
-     * Use trigger to update your range of eventID selection.
-     */
-    WPropTrigger m_selectionTrigger;
+    WPropInt m_maxCap;
 
     /**
      * Get column number by name from header
@@ -181,6 +186,11 @@ private:
      * \param maxBorder Set the upper border of selection.
      */
     void updateRangeOfEventIDSelection( int minBorder, int maxBorder );
+
+    /**
+     * Update your mesh when changing properties.
+     */
+    void updateMesh( WPropertyBase::SPtr property );
 };
 
 #endif  // WMCONVERTERCSV_H

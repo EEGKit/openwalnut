@@ -60,7 +60,6 @@ const char** WMConverterCSV::getXPMIcon() const
 
 void WMConverterCSV::moduleMain()
 {
-    debugLog() << "\n\n" << "start modulemain()";
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_input->getDataChangedCondition() );
 
@@ -73,8 +72,8 @@ void WMConverterCSV::moduleMain()
         m_moduleState.wait();
 
         boost::shared_ptr< WDataSetCSV > dataset = m_input->getData();
-        WDataSetCSV::Content m_csvHeader = dataset->getHeader();
-        WDataSetCSV::Content m_csvData = dataset->getData();
+        m_csvHeader = dataset->getHeader();
+        m_csvData = dataset->getData();
 
         updateRangeOfEventIDSelection(0, m_csvData.size());
 
@@ -111,11 +110,11 @@ void WMConverterCSV::connectors()
 
 void WMConverterCSV::properties()
 {
-    boost::shared_ptr< WCondition > m_propCondition = boost::shared_ptr< WCondition > ( new WCondition() );
-    WPropGroup m_group = m_properties->addPropertyGroup( "Event ID Limitation", "Adjust the range of eventIDs which are read.", 0);
-    m_lowerBorderIndex = m_group->addProperty( "Lower Border", "desc", 0, m_propCondition);
-    m_upperBorderIndex = m_group->addProperty( "Upper Border", "desc", 1000, m_propCondition);
-    m_selectionTrigger = m_group->addProperty( "Set Range Selection", "Apply Range", WPVBaseTypes::PV_TRIGGER_READY, m_propCondition );
+    WPropertyBase::PropertyChangeNotifierType notifier = boost::bind( &WMConverterCSV::updateMesh, this, boost::placeholders::_1 );
+
+    WPropGroup m_eventIDGroup = m_properties->addPropertyGroup( "Event ID Limitation", "Adjust the range of eventIDs which are read.", 0 );
+    m_minCap = m_eventIDGroup->addProperty( "Lower Border", "desc", 0, notifier );
+    m_maxCap = m_eventIDGroup->addProperty( "Upper Border", "desc", 5000, notifier );
 
     WModule::properties();
 }
@@ -173,6 +172,9 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
         eventID = std::stoi( dataRow->at( eventIDIndex ) );
         edep = boost::lexical_cast< float >( dataRow->at( edepIndex ) );
 
+        if( eventID < *m_minCap.get() || eventID > *m_maxCap.get() )
+            continue;
+
         if( edep > maxEdep )
         {
             maxEdep = edep;
@@ -203,7 +205,7 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
 
     for(std::vector<int>::iterator eID = eventIDs.begin(); eID != eventIDs.end(); eID++ )
     {
-        if(currentEventID != *eID )
+        if( currentEventID != *eID )
         {
             currentEventID = *eID;
             m_lineStartIndexes->push_back( fiberStartIndex );
@@ -279,19 +281,25 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
     m_output_points->updateData( m_points );
 }
 
-void WMConverterCSV::updateRangeOfEventIDSelection( int minBorder, int maxBorder ) 
+void WMConverterCSV::updateRangeOfEventIDSelection( int minCap, int maxCap )
 {
-    m_lowerBorderIndex->setMin( minBorder );
-    m_upperBorderIndex->setMax( maxBorder );
-    m_upperBorderIndex->setMin( m_lowerBorderIndex->getMin()->getMin() );
-    m_lowerBorderIndex->setMax( m_upperBorderIndex->getMax()->getMax() );
+    m_minCap->setMin( minCap );
+    m_minCap->setMax( maxCap );
+    m_maxCap->setMin( minCap );
+    m_maxCap->setMax( maxCap );
 
-    int currentMinValue = *m_lowerBorderIndex.get();
-    int currentMaxValue = *m_upperBorderIndex.get();
+    int currentMinCap = *m_minCap.get();
+    int currentMaxCap = *m_maxCap.get();
 
-    if ( currentMaxValue < currentMinValue ) 
-        m_upperBorderIndex->set( currentMinValue );
+    if ( currentMaxCap < currentMinCap ) 
+        m_maxCap->set( currentMinCap );
 
-    if ( currentMinValue < 0 )
-        m_lowerBorderIndex->set( 0 );
+    if ( currentMinCap < 0 )
+        m_minCap->set( 0 );
+}
+
+void WMConverterCSV::updateMesh( WPropertyBase::SPtr property ) 
+{
+    WMConverterCSV::updateRangeOfEventIDSelection( 0, m_csvData.size() );
+    WMConverterCSV::setFibersOutOfCSVData( m_csvHeader, m_csvData );
 }
