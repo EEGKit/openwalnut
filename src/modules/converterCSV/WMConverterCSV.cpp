@@ -112,9 +112,9 @@ void WMConverterCSV::properties()
 {
     WPropertyBase::PropertyChangeNotifierType notifier = boost::bind( &WMConverterCSV::updateMesh, this, boost::placeholders::_1 );
 
-    WPropGroup m_eventIDGroup = m_properties->addPropertyGroup( "Event ID Limitation", "Adjust the range of eventIDs which are read.", 0 );
-    m_minCap = m_eventIDGroup->addProperty( "Lower Border", "desc", 0, notifier );
-    m_maxCap = m_eventIDGroup->addProperty( "Upper Border", "desc", 5000, notifier );
+    WPropGroup m_eventIDGroup = m_properties->addPropertyGroup( "Event ID Limitation", "Adjust the range of eventIDs to show.", 0 );
+    m_minCap = m_eventIDGroup->addProperty( "Min Cap", "Set your minium border of your range.", 0, notifier );
+    m_maxCap = m_eventIDGroup->addProperty( "Max Cap", "Set your minium border of your range.", 5000, notifier );
 
     WModule::properties();
 }
