@@ -66,11 +66,15 @@ void WMConverterCSV::moduleMain()
 
     waitRestored();
 
-
     while( !m_shutdownFlag() )
     {
         m_moduleState.wait();
+
         m_dataset = m_input->getData();
+
+        m_csvHeader = m_dataset->getHeader();
+        m_csvData = m_dataset->getData();
+
         properties();
     }
 }
@@ -84,7 +88,6 @@ void WMConverterCSV::connectors()
                     shared_from_this(),
                     "output points",
                     "Output CSV data as Point data" )
-
     );
 
     m_output_fibers = boost::shared_ptr< WModuleOutputData< WDataSet > >(
@@ -92,7 +95,6 @@ void WMConverterCSV::connectors()
                     shared_from_this(),
                     "output fibers",
                     "Output CSV data as Fiber data" )
-
     );
 
     addConnector( m_output_points );
@@ -103,9 +105,6 @@ void WMConverterCSV::connectors()
 
 void WMConverterCSV::updateProperty( WPropertyBase::SPtr property )
 {
-    WDataSetCSV::Content m_csvHeader = m_dataset->getHeader();
-    WDataSetCSV::Content m_csvData = m_dataset->getData();
-
     if( property == m_singleSelectionForPosX )
     {
         WItemSelector selector = m_singleSelectionForPosX->get( true );
@@ -163,6 +162,7 @@ void WMConverterCSV::properties()
 {
     WPropertyBase::PropertyChangeNotifierType notifier = boost::bind( &WMConverterCSV::updateProperty, this, boost::placeholders::_1 );
     WPropertyBase::PropertyChangeNotifierType notifierCheckBox = boost::bind( &WMConverterCSV::updateCheckboxProperty, this, boost::placeholders::_1 );
+    WPropertyBase::PropertyChangeNotifierType eventIDNotifier = boost::bind( &WMConverterCSV::updateMesh, this, boost::placeholders::_1 );
 
     m_possibleSelectionsUsingTypes = WItemSelection::SPtr( new WItemSelection() );
 
@@ -220,6 +220,12 @@ void WMConverterCSV::properties()
 
         m_showPrimaries = m_properties->addProperty( "Show primaries", "Show/hide primaries", true, notifierCheckBox );
         m_showSecondaries = m_properties->addProperty( "Show secondaries", "Show/hide secondaries", true, notifierCheckBox );
+
+        WPropGroup m_eventIDGroup = m_properties->addPropertyGroup( "Event ID Limitation", "Adjust the range of eventIDs to show.", 0 );
+        m_minCap = m_eventIDGroup->addProperty( "Min Cap", "Set your minium border of your range.", 0, eventIDNotifier );
+        m_maxCap = m_eventIDGroup->addProperty( "Max Cap", "Set your maximum border of your range.", 5000, eventIDNotifier );
+    
+        WMConverterCSV::determineMinMaxEventID();
     }
 
     WModule::properties();
@@ -235,7 +241,6 @@ int WMConverterCSV::getColumnNumberByName( std::string columnNameToMatch, std::v
     }
     return pos;
 }
-
 
 void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data )
 {
@@ -282,6 +287,9 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
         eventID = std::stoi( dataRow->at( eventIDIndex ) );
         edep = boost::lexical_cast< float >( dataRow->at( edepIndex ) );
 
+        if( eventID < *m_minCap.get() || eventID > *m_maxCap.get() )
+            continue;
+
         if( edep > maxEdep )
         {
             maxEdep = edep;
@@ -305,7 +313,7 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
 
     for(std::vector<int>::iterator eID = eventIDs.begin(); eID != eventIDs.end(); eID++ )
     {
-        if(currentEventID != *eID )
+        if( currentEventID != *eID )
         {
             currentEventID = *eID;
             m_lineStartIndexes->push_back( fiberStartIndex );
@@ -349,6 +357,7 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
 
     float maxEdep = 0.0;
     float posX, posY, posZ, edep;
+
     for(WDataSetCSV::Content::iterator dataRow = data.begin(); dataRow != data.end(); dataRow++ )
     {
         if( dataRow->empty() )
@@ -397,6 +406,38 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
     m_output_points->updateData( m_points );
 }
 
+void WMConverterCSV::updateRangeOfEventIDSelection( int minCap, int maxCap )
+{
+    m_minCap->setMin( minCap );
+    m_minCap->setMax( maxCap );
+    m_maxCap->setMin( minCap );
+    m_maxCap->setMax( maxCap );
+
+    int currentMinCap = m_minCap->get();
+    int currentMaxCap = m_maxCap->get();
+
+    if ( currentMaxCap < currentMinCap ) 
+        m_maxCap->set( currentMinCap );
+
+    if ( currentMinCap < 0 )
+        m_minCap->set( 0 );
+}
+
+void WMConverterCSV::updateMesh( WPropertyBase::SPtr property ) 
+{
+    WMConverterCSV::determineMinMaxEventID();
+    WMConverterCSV::setFibersOutOfCSVData( m_csvHeader, m_csvData );
+}
+
+void WMConverterCSV::determineMinMaxEventID() 
+{
+    int eventIDIndex = WMConverterCSV::getColumnNumberByName( "eventID", m_csvHeader.at( 0 ) );
+
+    WMConverterCSV::updateRangeOfEventIDSelection( 
+        std::stoi(m_csvData.front().at( eventIDIndex ) ), 
+        std::stoi(m_csvData.back().at( eventIDIndex ) ) );
+}
+
 void WMConverterCSV::normalizeEdeps( std::vector< float > edeps, SPFloatVector colorArray, float maxEdep )
 {
     for( std::vector< float >::iterator currentEdep = edeps.begin(); currentEdep != edeps.end(); currentEdep++ )
@@ -413,9 +454,6 @@ void WMConverterCSV::updateCheckboxProperty( WPropertyBase::SPtr property )
 {
     if( m_showPrimaries->get() || m_showSecondaries->get() )
     {
-        WDataSetCSV::Content m_csvHeader = m_dataset->getHeader();
-        WDataSetCSV::Content m_csvData = m_dataset->getData();
-
         setPointsOutOfCSVData( m_csvHeader, m_csvData );
         setFibersOutOfCSVData( m_csvHeader, m_csvData );
     }
