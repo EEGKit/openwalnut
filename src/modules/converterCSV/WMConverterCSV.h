@@ -181,7 +181,7 @@ private:
      * Set upper border of range of eventID selection.
      */
     WPropInt m_maxCap;
-    
+
     /*
      * Stores information for the index of PDGEncoding-header
      */
@@ -263,7 +263,7 @@ private:
      * Determines smalles und biggest eventID.
      */
     void determineMinMaxEventID();
-    
+
     /**
      * Collect all particle types from your input data.
      */
@@ -286,7 +286,7 @@ private:
      * \param maxEdep maximum present energy deposition value in edeps vector
      */
     void normalizeEdeps( std::vector< float > edeps, SPFloatVector colorArray, float maxEdep );
-    
+
     /**
      * Decides whether to hide or show primaries.
      */
@@ -360,6 +360,36 @@ private:
      * represents the item type for item-selection
      */
     typedef WItemSelectionItemTyped< std::string > ItemType;
+
+    /**
+     * Decides whether to color points based on the deposited energy or not.
+     */
+    WPropBool m_colorFromEdep;
+
+    /**
+     * Decides whether to scale the points sizes according to their deposited energy.
+     */
+    WPropBool m_sizesFromEdep;
+
+    /**
+     * Property group for filtering options
+     */
+    WPropGroup m_filteringGroup;
+
+    /**
+     * Property group for visualization modes
+     */
+    WPropGroup m_visualizationGroup;
+
+    /**
+     * Property group for column selection
+     */
+    WPropGroup m_columnSelectionGroup;
+
+    /**
+     * Property that holds the current selected color when not coloring points based on their deposited energy.
+     */
+    WPropColor m_colorSelection;
 };
 
 #endif  // WMCONVERTERCSV_H

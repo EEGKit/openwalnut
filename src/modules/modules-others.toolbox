@@ -64,6 +64,6 @@ ADD_MODULE( template )    # template has its own CMakeLists for demonstration pu
 
 ADD_MODULE( converterCSV )
 
-
+ADD_MODULE( pointConnector )
 
 
