@@ -231,6 +231,11 @@ private:
      * Update your mesh when changing properties.
      */
     void updateMesh( WPropertyBase::SPtr property );
+
+    /**
+     * Determines smalles und biggest eventID.
+     */
+    void determineMinMaxEventID();
     
     /**
      * Normalize energy deposition values to use as RGB values

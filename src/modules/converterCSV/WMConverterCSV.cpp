@@ -225,7 +225,7 @@ void WMConverterCSV::properties()
         m_minCap = m_eventIDGroup->addProperty( "Min Cap", "Set your minium border of your range.", 0, eventIDNotifier );
         m_maxCap = m_eventIDGroup->addProperty( "Max Cap", "Set your maximum border of your range.", 5000, eventIDNotifier );
     
-        updateRangeOfEventIDSelection(0, m_csvData.size());
+        WMConverterCSV::determineMinMaxEventID();
     }
 
     WModule::properties();
@@ -425,13 +425,17 @@ void WMConverterCSV::updateRangeOfEventIDSelection( int minCap, int maxCap )
 
 void WMConverterCSV::updateMesh( WPropertyBase::SPtr property ) 
 {
+    WMConverterCSV::determineMinMaxEventID();
+    WMConverterCSV::setFibersOutOfCSVData( m_csvHeader, m_csvData );
+}
+
+void WMConverterCSV::determineMinMaxEventID() 
+{
     int eventIDIndex = WMConverterCSV::getColumnNumberByName( "eventID", m_csvHeader.at( 0 ) );
 
     WMConverterCSV::updateRangeOfEventIDSelection( 
         std::stoi(m_csvData.front().at( eventIDIndex ) ), 
         std::stoi(m_csvData.back().at( eventIDIndex ) ) );
-        
-    WMConverterCSV::setFibersOutOfCSVData( m_csvHeader, m_csvData );
 }
 
 void WMConverterCSV::normalizeEdeps( std::vector< float > edeps, SPFloatVector colorArray, float maxEdep )
