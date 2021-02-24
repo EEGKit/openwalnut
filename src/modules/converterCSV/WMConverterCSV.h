@@ -25,6 +25,8 @@
 #ifndef WMCONVERTERCSV_H
 #define WMCONVERTERCSV_H
 
+#include <algorithm>
+
 #include <string>
 #include <vector>
 
@@ -131,6 +133,16 @@ private:
     boost::shared_ptr< WModuleOutputData< WDataSet  > > m_output_fibers;
 
     /**
+     * Stores column index of data.
+     */
+    WDataSetCSV::Content m_csvHeader;
+
+    /**
+     * Stores data from obtained input file.
+     */
+    WDataSetCSV::Content m_csvData;
+
+    /**
      * Stores information for the fiber display
      */
     boost::shared_ptr< WDataSetFibers > m_fibers;
@@ -141,6 +153,21 @@ private:
     boost::shared_ptr< WDataSetPoints > m_points;
 
     /**
+     * Stores every unique particle id.
+     */
+    std::vector < int > m_pdgTypes;
+
+    /**
+     * Set lower border of range of eventID selection.
+     */
+    WPropInt m_minCap;
+
+    /**
+     * Set upper border of range of eventID selection.
+     */
+    WPropInt m_maxCap;
+    
+    /*
      * Stores information for the index of x-header
      */
     int xPosIndex = -1;
@@ -201,12 +228,35 @@ private:
     void setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data );
 
     /**
+     * Update range of selected eventID rows.
+     * \param minBorder Set the lower border of selection.
+     * \param maxBorder Set the upper border of selection.
+     */
+    void updateRangeOfEventIDSelection( int minBorder, int maxBorder );
+
+    /**
+     * Update your mesh when changing properties.
+     */
+    void updateMesh( WPropertyBase::SPtr property );
+
+    /**
+     * Determines smalles und biggest eventID.
+     */
+    void determineMinMaxEventID();
+    
+    /**
+     * Collect all particle types in your input data.
+     */
+    void searchPDGTypes();
+
+    /**
      * Normalize energy deposition values to use as RGB values
      * \param edeps vector containing energy deposition values
      * \param colorArray vector containing colors per vertex
      * \param maxEdep maximum present energy deposition value in edeps vector
      */
     void normalizeEdeps( std::vector< float > edeps, SPFloatVector colorArray, float maxEdep );
+    
     /**
      * Decides whether to hide or show primaries.
      */
