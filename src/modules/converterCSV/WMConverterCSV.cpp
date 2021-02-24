@@ -76,6 +76,9 @@ void WMConverterCSV::moduleMain()
         m_csvData = m_dataset->getData();
 
         properties();
+
+        setPointsOutOfCSVData( m_csvHeader, m_csvData );
+        setFibersOutOfCSVData( m_csvHeader, m_csvData );
     }
 }
 
@@ -160,9 +163,14 @@ void WMConverterCSV::updateProperty( WPropertyBase::SPtr property )
 
 void WMConverterCSV::properties()
 {
-    WPropertyBase::PropertyChangeNotifierType notifier = boost::bind( &WMConverterCSV::updateProperty, this, boost::placeholders::_1 );
-    WPropertyBase::PropertyChangeNotifierType notifierCheckBox = boost::bind( &WMConverterCSV::updateCheckboxProperty, this, boost::placeholders::_1 );
-    WPropertyBase::PropertyChangeNotifierType eventIDNotifier = boost::bind( &WMConverterCSV::updateMesh, this, boost::placeholders::_1 );
+    WPropertyBase::PropertyChangeNotifierType notifier = boost::bind( &WMConverterCSV::updateProperty,
+                                                                this, boost::placeholders::_1 );
+
+    WPropertyBase::PropertyChangeNotifierType notifierCheckBox = boost::bind( &WMConverterCSV::updateCheckboxProperty,
+                                                                this, boost::placeholders::_1 );
+
+    WPropertyBase::PropertyChangeNotifierType eventIDNotifier = boost::bind( &WMConverterCSV::updateMesh,
+                                                                this, boost::placeholders::_1 );
 
     m_possibleSelectionsUsingTypes = WItemSelection::SPtr( new WItemSelection() );
 
@@ -175,26 +183,90 @@ void WMConverterCSV::properties()
             m_possibleSelectionsUsingTypes->addItem( ItemType::create( *colName, *colName, "",  NULL ) );
         }
 
-        m_singleSelectionForPosX = m_properties->addProperty( "X", "Choose the xPos column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelectorFirst(), notifier );
+        xPosIndex = WMConverterCSV::getColumnNumberByName( "posX", m_csvHeader.at( 0 ) );
+        yPosIndex = WMConverterCSV::getColumnNumberByName( "posY", m_csvHeader.at( 0 ) );
+        zPosIndex = WMConverterCSV::getColumnNumberByName( "posZ", m_csvHeader.at( 0 ) );
+        edepIndex = WMConverterCSV::getColumnNumberByName( "edep", m_csvHeader.at( 0 ) );
+        eventIDIndex = WMConverterCSV::getColumnNumberByName( "eventID", m_csvHeader.at( 0 ) );
+        trackIDIndex = WMConverterCSV::getColumnNumberByName( "trackID", m_csvHeader.at( 0 ) );
+        parentIDIndex = WMConverterCSV::getColumnNumberByName( "parentID", m_csvHeader.at( 0 ) );
 
-        m_singleSelectionForPosY = m_properties->addProperty( "Y", "Choose the yPos column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelectorFirst(), notifier );
+        if(xPosIndex < 0)
+        {
+            m_singleSelectionForPosX = m_properties->addProperty( "X", "Choose the xPos column from csv",
+                                                                m_possibleSelectionsUsingTypes->getSelectorNone(), notifier );
+        }
+        else
+        {
+            m_singleSelectionForPosX = m_properties->addProperty( "X", "Choose the xPos column from csv",
+                                                                m_possibleSelectionsUsingTypes->getSelector( xPosIndex ), notifier );
+        }
 
-        m_singleSelectionForPosZ = m_properties->addProperty( "Z", "Choose the zPos column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelectorFirst(), notifier );
+        if(yPosIndex < 0)
+        {
+            m_singleSelectionForPosY = m_properties->addProperty( "Y", "Choose the yPos column from csv",
+                                                                m_possibleSelectionsUsingTypes->getSelectorNone(), notifier );
+        }
+        else
+        {
+            m_singleSelectionForPosY = m_properties->addProperty( "Y", "Choose the yPos column from csv",
+                                                                m_possibleSelectionsUsingTypes->getSelector( yPosIndex ), notifier );
+        }
 
-        m_singleSelectionForPosEdep = m_properties->addProperty( "edep", "Choose the edep column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelectorFirst(), notifier );
+        if(zPosIndex < 0)
+        {
+            m_singleSelectionForPosZ = m_properties->addProperty( "Z", "Choose the zPos column from csv",
+                                                                m_possibleSelectionsUsingTypes->getSelectorNone(), notifier );
+        }
+        else
+        {
+            m_singleSelectionForPosZ = m_properties->addProperty( "Z", "Choose the zPos column from csv",
+                                                                m_possibleSelectionsUsingTypes->getSelector( zPosIndex ), notifier );
+        }
 
-        m_singleSelectionForEventID = m_properties->addProperty( "Event ID", "Choose the eventID column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelectorFirst(), notifier );
+        if(edepIndex < 0)
+        {
+            m_singleSelectionForPosEdep = m_properties->addProperty( "edep", "Choose the edep column from csv",
+                                                                m_possibleSelectionsUsingTypes->getSelectorNone(), notifier );
+        }
+        else
+        {
+            m_singleSelectionForPosEdep = m_properties->addProperty( "edep", "Choose the edep column from csv",
+                                                                m_possibleSelectionsUsingTypes->getSelector( edepIndex ), notifier );
+        }
 
-        m_singleSelectionForTrackID = m_properties->addProperty( "Track ID", "Choose the trackID column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelectorFirst(), notifier );
+        if(eventIDIndex < 0)
+        {
+            m_singleSelectionForEventID = m_properties->addProperty( "Event ID", "Choose the eventID column from csv",
+                                                                m_possibleSelectionsUsingTypes->getSelectorNone(), notifier );
+        }
+        else
+        {
+            m_singleSelectionForEventID = m_properties->addProperty( "Event ID", "Choose the eventID column from csv",
+                                                                m_possibleSelectionsUsingTypes->getSelector( eventIDIndex ), notifier );
+        }
 
-        m_singleSelectionForParentID = m_properties->addProperty( "Parent ID", "Choose the ParentID column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelectorFirst(), notifier );
+        if(trackIDIndex < 0)
+        {
+            m_singleSelectionForTrackID = m_properties->addProperty( "Track ID", "Choose the trackID column from csv",
+                                                                m_possibleSelectionsUsingTypes->getSelectorNone(), notifier );
+        }
+        else
+        {
+            m_singleSelectionForTrackID = m_properties->addProperty( "Track ID", "Choose the trackID column from csv",
+                                                                m_possibleSelectionsUsingTypes->getSelector( trackIDIndex ), notifier );
+        }
+
+        if(parentIDIndex < 0)
+        {
+            m_singleSelectionForParentID = m_properties->addProperty( "Parent ID", "Choose the ParentID column from csv",
+                                                                m_possibleSelectionsUsingTypes->getSelectorNone(), notifier );
+        }
+        else
+        {
+            m_singleSelectionForParentID = m_properties->addProperty( "Parent ID", "Choose the ParentID column from csv",
+                                                                m_possibleSelectionsUsingTypes->getSelector( parentIDIndex ), notifier );
+        }
 
 
         WPropertyHelper::PC_SELECTONLYONE::addTo( m_singleSelectionForPosX );
@@ -224,7 +296,7 @@ void WMConverterCSV::properties()
         WPropGroup m_eventIDGroup = m_properties->addPropertyGroup( "Event ID Limitation", "Adjust the range of eventIDs to show.", 0 );
         m_minCap = m_eventIDGroup->addProperty( "Min Cap", "Set your minium border of your range.", 0, eventIDNotifier );
         m_maxCap = m_eventIDGroup->addProperty( "Max Cap", "Set your maximum border of your range.", 5000, eventIDNotifier );
-    
+
         WMConverterCSV::determineMinMaxEventID();
     }
 
@@ -239,7 +311,7 @@ int WMConverterCSV::getColumnNumberByName( std::string columnNameToMatch, std::v
         if( *it == columnNameToMatch ) return pos;
         pos++;
     }
-    return pos;
+    return -1;
 }
 
 void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data )
@@ -416,26 +488,26 @@ void WMConverterCSV::updateRangeOfEventIDSelection( int minCap, int maxCap )
     int currentMinCap = m_minCap->get();
     int currentMaxCap = m_maxCap->get();
 
-    if ( currentMaxCap < currentMinCap ) 
+    if( currentMaxCap < currentMinCap )
         m_maxCap->set( currentMinCap );
 
-    if ( currentMinCap < 0 )
+    if( currentMinCap < 0 )
         m_minCap->set( 0 );
 }
 
-void WMConverterCSV::updateMesh( WPropertyBase::SPtr property ) 
+void WMConverterCSV::updateMesh( WPropertyBase::SPtr property )
 {
     WMConverterCSV::determineMinMaxEventID();
     WMConverterCSV::setFibersOutOfCSVData( m_csvHeader, m_csvData );
 }
 
-void WMConverterCSV::determineMinMaxEventID() 
+void WMConverterCSV::determineMinMaxEventID()
 {
     int eventIDIndex = WMConverterCSV::getColumnNumberByName( "eventID", m_csvHeader.at( 0 ) );
 
-    WMConverterCSV::updateRangeOfEventIDSelection( 
-        std::stoi(m_csvData.front().at( eventIDIndex ) ), 
-        std::stoi(m_csvData.back().at( eventIDIndex ) ) );
+    WMConverterCSV::updateRangeOfEventIDSelection(
+        std::stoi( m_csvData.front().at( eventIDIndex ) ),
+        std::stoi( m_csvData.back().at( eventIDIndex ) ) );
 }
 
 void WMConverterCSV::normalizeEdeps( std::vector< float > edeps, SPFloatVector colorArray, float maxEdep )

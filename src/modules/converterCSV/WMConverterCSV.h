@@ -159,7 +159,7 @@ private:
      * Set upper border of range of eventID selection.
      */
     WPropInt m_maxCap;
-    
+
     /*
      * Stores information for the index of x-header
      */
@@ -236,7 +236,7 @@ private:
      * Determines smalles und biggest eventID.
      */
     void determineMinMaxEventID();
-    
+
     /**
      * Normalize energy deposition values to use as RGB values
      * \param edeps vector containing energy deposition values
@@ -244,7 +244,7 @@ private:
      * \param maxEdep maximum present energy deposition value in edeps vector
      */
     void normalizeEdeps( std::vector< float > edeps, SPFloatVector colorArray, float maxEdep );
-    
+
     /**
      * Decides whether to hide or show primaries.
      */
