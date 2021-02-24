@@ -305,6 +305,11 @@ private:
      * Property group for column selection
      */
     WPropGroup m_columnSelectionGroup;
+
+    /**
+     * Property that holds the current selected color when not coloring points based on their deposited energy.
+     */
+    WPropColor m_colorSelection;
 };
 
 #endif  // WMCONVERTERCSV_H

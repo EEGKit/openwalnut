@@ -227,7 +227,10 @@ void WMConverterCSV::properties()
         m_showSecondaries = m_filteringGroup->addProperty( "Show secondaries", "Show/hide secondaries", true, notifierCheckBox );
 
         m_sizesFromEdep = m_visualizationGroup->addProperty( "Scale point size", "Scale point size with energy deposition", true, notifierCheckBox );
-        m_colorFromEdep = m_visualizationGroup->addProperty( "Color points", "Color points based on energy deposition", true, notifierCheckBox );
+        m_colorFromEdep = m_visualizationGroup->addProperty( "Color by edep", "Color points based on energy deposition", true, notifierCheckBox );
+
+        m_colorSelection = m_visualizationGroup->addProperty( "Plain color", "Choose how to color the points when not coloring by edep.",
+                                                              defaultColor::WHITE, notifierCheckBox );
     }
 
     WModule::properties();
@@ -355,6 +358,8 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
 
     std::vector< float > edeps;
 
+    WColor plainColor = m_colorSelection->get( true );
+
     float maxEdep = 0.0;
     float posX, posY, posZ, edep;
     for(WDataSetCSV::Content::iterator dataRow = data.begin(); dataRow != data.end(); dataRow++ )
@@ -390,9 +395,9 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
 
         if( !m_colorFromEdep->get() )
         {
-            m_colors->push_back( 0.5 );
-            m_colors->push_back( 0 );
-            m_colors->push_back( 0.8 );
+            m_colors->push_back( plainColor[0] );
+            m_colors->push_back( plainColor[1] );
+            m_colors->push_back( plainColor[2] );
         }
 
         m_sizes->push_back( edep );
