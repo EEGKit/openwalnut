@@ -201,11 +201,9 @@ void WMConverterCSV::properties()
             m_possibleSelection->addItem( std::to_string( pdgType ) );
         }
 
-        m_multiSelection = m_properties->addProperty( "PDGEncoding", "Choose particle type(s) you want show", m_possibleSelection->getSelectorFirst(), pdgEncodingnotifier );
+        m_multiSelection = m_columnSelectionGroup->addProperty( "PDGEncoding", "Choose particle type(s) you want show", m_possibleSelection->getSelectorFirst(), pdgEncodingnotifier );
         WPropertyHelper::PC_NOTEMPTY::addTo( m_multiSelection );
 
-        m_singleSelectionForPosX = m_properties->addProperty( "X", "Choose the xPos column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelectorFirst(), notifier );
         xPosIndex = WMConverterCSV::getColumnNumberByName( "posX", m_csvHeader.at( 0 ) );
         yPosIndex = WMConverterCSV::getColumnNumberByName( "posY", m_csvHeader.at( 0 ) );
         zPosIndex = WMConverterCSV::getColumnNumberByName( "posZ", m_csvHeader.at( 0 ) );
@@ -388,7 +386,7 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
         eventID = std::stoi( dataRow->at( eventIDIndex ) );
         edep = boost::lexical_cast< float >( dataRow->at( edepIndex ) );
         
-        if ( !WMConverterCSV::isPDGTypeSelected( pdgType ) )
+        if( !WMConverterCSV::isPDGTypeSelected( pdgType ) )
         {
             continue;
         }
@@ -578,8 +576,10 @@ void WMConverterCSV::searchPDGTypes()
     {
         int currentParticleID = std::stoi( dataRow->at( pdgColumnIndex ) );
         
-        if( std::find( m_pdgTypes.begin(), m_pdgTypes.end(), currentParticleID ) == m_pdgTypes.end() )
+        if( std::find( m_pdgTypes.begin(), m_pdgTypes.end(), currentParticleID ) == m_pdgTypes.end() ) 
+        {
             m_pdgTypes.push_back( currentParticleID );
+        }
     }
 }
 
