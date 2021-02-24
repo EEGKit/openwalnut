@@ -158,6 +158,21 @@ private:
     std::vector < int > m_pdgTypes;
 
     /**
+     * Stores selectable items.
+     */
+    boost::shared_ptr< WItemSelection > m_possibleSelection;
+
+    /**
+     * Stores users selected items.
+     */
+    WPropSelection m_multiSelection;
+
+    /**
+     * 
+     */
+    std::vector < std::string > m_selectedPDGTypes;
+
+    /**
      * Set lower border of range of eventID selection.
      */
     WPropInt m_minCap;
@@ -167,6 +182,11 @@ private:
      */
     WPropInt m_maxCap;
     
+    /*
+     * Stores information for the index of PDGEncoding-header
+     */
+    int PDGEncodingIndex = -1;
+
     /*
      * Stores information for the index of x-header
      */
@@ -245,9 +265,19 @@ private:
     void determineMinMaxEventID();
     
     /**
-     * Collect all particle types in your input data.
+     * Collect all particle types from your input data.
      */
     void searchPDGTypes();
+
+    /**
+     * 
+     */
+    void updateSelectedPDGTypes( WPropertyBase::SPtr property );
+
+    /**
+     * 
+     */
+    bool isPDGTypeSelected( int pdgType );
 
     /**
      * Normalize energy deposition values to use as RGB values
