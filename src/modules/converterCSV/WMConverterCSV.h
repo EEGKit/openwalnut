@@ -158,20 +158,12 @@ private:
     WPropInt m_maxCap;
 
     /**
-     * Create output, so it can be displayed by the fiber display.
+     * Create outputs, so it can be displayed by the fiber display and the point renderer.
      *
      * \param header WDataSetCSV::Content object containing column names.
      * \param data WDataSetCSV::Content object containing data.
      */
-    void setFibersOutOfCSVData( WDataSetCSV::ContentSPtr header, WDataSetCSV::ContentSPtr data );
-
-    /**
-     * Create output, so it can be displayed by the point renderer.
-     *
-     * \param header WDataSetCSV::Content object containing column names
-     * \param data WDataSetCSV::Content object containing data
-     */
-    void setPointsOutOfCSVData( WDataSetCSV::ContentSPtr header, WDataSetCSV::ContentSPtr data );
+    void setOutputFromCSV( WDataSetCSV::ContentSPtr header, WDataSetCSV::ContentSPtr data );
 
     /**
      * Update range of selected eventID rows.

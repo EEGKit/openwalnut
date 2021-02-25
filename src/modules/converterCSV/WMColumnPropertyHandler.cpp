@@ -114,8 +114,6 @@ void WMColumnPropertyHandler::propertyNotifier( WPropertyBase::SPtr property )
         m_protonData->setColumnIndex( columnName, getColumnNumberByName( selectedValue, m_protonData->getCSVHeader()->at( 0 ) ) );
 
         m_dataUpdate( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
-        //setPointsOutOfCSVData( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
-        //setFibersOutOfCSVData( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
     }
 }
 
@@ -162,7 +160,7 @@ void WMColumnPropertyHandler::updateSelectedPDGTypes( WPropertyBase::SPtr proper
         }
     }
 
-    //WMConverterCSV::setFibersOutOfCSVData( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
+    m_dataUpdate( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
 }
 
 bool WMColumnPropertyHandler::isPDGTypeSelected( int pdgType ) 

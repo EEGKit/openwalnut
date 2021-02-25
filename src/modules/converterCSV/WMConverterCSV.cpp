@@ -87,7 +87,7 @@ void WMConverterCSV::moduleMain()
                     m_protonData,
                     m_properties,
                     boost::bind(
-                        &WMConverterCSV::setPointsOutOfCSVData,
+                        &WMConverterCSV::setOutputFromCSV,
                         this,
                         boost::placeholders::_1,
                         boost::placeholders::_2
@@ -106,8 +106,7 @@ void WMConverterCSV::moduleMain()
         properties();
         m_columnPropertyHandler->createProperties();
 
-        setPointsOutOfCSVData( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
-        setFibersOutOfCSVData( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
+        setOutputFromCSV( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
     }
 }
 
@@ -167,24 +166,27 @@ void WMConverterCSV::properties()
     WModule::properties();
 }
 
-void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::ContentSPtr header, WDataSetCSV::ContentSPtr data )
+void WMConverterCSV::setOutputFromCSV( WDataSetCSV::ContentSPtr header, WDataSetCSV::ContentSPtr data )
 {
     if( !m_protonData->columnsInitialized() )
     {
         return;
     }
 
-    SPFloatVector m_vertices = SPFloatVector( new std::vector< float >() );
-    SPSizeVector m_lineStartIndexes = SPSizeVector( new std::vector < size_t >() );
-    SPSizeVector m_lineLengths  = SPSizeVector( new std::vector < size_t >() );
-    SPSizeVector m_verticesReverse = SPSizeVector( new std::vector < size_t >() );
-
-    SPFloatVector m_colors = SPFloatVector( new std::vector< float >() );
+    SPFloatVector vertices = SPFloatVector( new std::vector< float >() );
+    SPSizeVector lineStartIndexes = SPSizeVector( new std::vector < size_t >() );
+    SPSizeVector lineLengths  = SPSizeVector( new std::vector < size_t >() );
+    SPSizeVector verticesReverse = SPSizeVector( new std::vector < size_t >() );
+    SPFloatVector sizes = SPFloatVector( new std::vector< float >() );
+    SPFloatVector colors = SPFloatVector( new std::vector< float >() );
 
     std::vector< int > eventIDs;
     std::vector< float > edeps;
 
+    WColor plainColor = m_colorSelection->get( true );
+
     float maxEdep = 0.0;
+
     int parentIDIndex = m_protonData->getColumnIndex( "parentID" );
     int posXIndex = m_protonData->getColumnIndex( "posX" );
     int posYIndex = m_protonData->getColumnIndex( "posY" );
@@ -236,134 +238,59 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::ContentSPtr header, WDa
             maxEdep = edep;
         }
 
-        m_vertices->push_back( posX );
-        m_vertices->push_back( posY );
-        m_vertices->push_back( posZ );
+        vertices->push_back( posX );
+        vertices->push_back( posY );
+        vertices->push_back( posZ );
+
+        if( !m_colorFromEdep->get() )
+        {
+            colors->push_back( plainColor[0] );
+            colors->push_back( plainColor[1] );
+            colors->push_back( plainColor[2] );
+        }
+
+        sizes->push_back( edep );
+
         eventIDs.push_back( eventID );
         edeps.push_back( edep );
     }
 
-    normalizeEdeps( edeps, m_colors, maxEdep );
+    if( m_colorFromEdep->get() )
+    {
+        normalizeEdeps( edeps, colors, maxEdep );
+    }
 
     int fiberLength = 0;
     int fiberStartIndex = 0;
     int reversePos = 0;
     int currentEventID = eventIDs.at( 0 );
 
-    m_lineStartIndexes->push_back( fiberStartIndex );
+    lineStartIndexes->push_back( fiberStartIndex );
 
     for(std::vector<int>::iterator eID = eventIDs.begin(); eID != eventIDs.end(); eID++ )
     {
         if( currentEventID != *eID )
         {
             currentEventID = *eID;
-            m_lineStartIndexes->push_back( fiberStartIndex );
-            m_lineLengths->push_back( fiberLength );
+            lineStartIndexes->push_back( fiberStartIndex );
+            lineLengths->push_back( fiberLength );
             fiberLength = 0;
             reversePos++;
         }
         fiberLength++;
         fiberStartIndex++;
-        m_verticesReverse->push_back( reversePos );
+        verticesReverse->push_back( reversePos );
     }
 
-    m_lineLengths->push_back( fiberLength );
-
-    m_fibers = boost::shared_ptr< WDataSetFibers >(
-            new WDataSetFibers(
-                    m_vertices,
-                    m_lineStartIndexes,
-                    m_lineLengths,
-                    m_verticesReverse
-            )
-    );
-
-    m_fibers->addColorScheme( m_colors, "Energy deposition", "Color fibers based on their energy." );
-
-    m_output_fibers->updateData( m_fibers );
-}
-
-void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::ContentSPtr header, WDataSetCSV::ContentSPtr data )
-{
-    if( !m_protonData->columnsInitialized() )
-    {
-        return;
-    }
-
-    SPFloatVector m_vertices = SPFloatVector( new std::vector< float >() );
-    SPFloatVector m_colors = SPFloatVector( new std::vector< float >() );
-    SPFloatVector m_sizes = SPFloatVector( new std::vector< float >() );
-
-    std::vector< float > edeps;
-
-    WColor plainColor = m_colorSelection->get( true );
-
-    float maxEdep = 0.0;
-    float posX, posY, posZ, edep;
-
-    int parentIDIndex = m_protonData->getColumnIndex( "parentID" );
-    int posXIndex = m_protonData->getColumnIndex( "posX" );
-    int posYIndex = m_protonData->getColumnIndex( "posY" );
-    int posZIndex = m_protonData->getColumnIndex( "posZ" );
-    int edepIndex = m_protonData->getColumnIndex( "edep" );
-
-    //for(WDataSetCSV::Content::iterator dataRow = data->begin(); dataRow != data->end(); dataRow++ )
-    for( int idx = 0; idx < data->size(); idx++ )
-    {
-        std::vector< std::string > row = data->at( idx );
-
-        if( row.empty() )
-        {
-            continue;
-        }
-
-        if( !m_showPrimaries->get() && std::stoi( row.at( parentIDIndex ) ) == 0 )
-        {
-            continue;
-        }
-
-        if( !m_showSecondaries->get() && std::stoi( row.at( parentIDIndex ) ) != 0 )
-        {
-            continue;
-        }
-
-        posX = boost::lexical_cast< float >( row.at( posXIndex ) );
-        posY = boost::lexical_cast< float >( row.at( posYIndex ) );
-        posZ = boost::lexical_cast< float >( row.at( posZIndex ) );
-        edep = boost::lexical_cast< float >( row.at( edepIndex ) );
-
-        if( edep > maxEdep )
-        {
-            maxEdep = edep;
-        }
-
-        m_vertices->push_back( posX );
-        m_vertices->push_back( posY );
-        m_vertices->push_back( posZ );
-
-        if( !m_colorFromEdep->get() )
-        {
-            m_colors->push_back( plainColor[0] );
-            m_colors->push_back( plainColor[1] );
-            m_colors->push_back( plainColor[2] );
-        }
-
-        m_sizes->push_back( edep );
-        edeps.push_back( edep );
-    }
-
-    if( m_colorFromEdep->get() )
-    {
-        normalizeEdeps( edeps, m_colors, maxEdep );
-    }
+    lineLengths->push_back( fiberLength );
 
     if( m_sizesFromEdep->get() )
     {
         m_points = boost::shared_ptr< WDataSetPointsAndSizes >(
                 new WDataSetPointsAndSizes(
-                        m_vertices,
-                        m_colors,
-                        m_sizes
+                        vertices,
+                        colors,
+                        sizes
                 )
         );
     }
@@ -371,13 +298,26 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::ContentSPtr header, WDa
     {
         m_points = boost::shared_ptr < WDataSetPoints >(
                 new WDataSetPoints(
-                        m_vertices,
-                        m_colors
+                        vertices,
+                        colors
                         )
                 );
     }
 
     m_output_points->updateData( m_points );
+
+    m_fibers = boost::shared_ptr< WDataSetFibers >(
+            new WDataSetFibers(
+                    vertices,
+                    lineStartIndexes,
+                    lineLengths,
+                    verticesReverse
+            )
+    );
+
+    m_fibers->addColorScheme( colors, "Energy deposition", "Color fibers based on their energy." );
+
+    m_output_fibers->updateData( m_fibers );
 }
 
 void WMConverterCSV::updateRangeOfEventIDSelection( int minCap, int maxCap )
@@ -400,7 +340,7 @@ void WMConverterCSV::updateRangeOfEventIDSelection( int minCap, int maxCap )
 void WMConverterCSV::updateMesh( WPropertyBase::SPtr property )
 {
     WMConverterCSV::determineMinMaxEventID();
-    WMConverterCSV::setFibersOutOfCSVData( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
+    WMConverterCSV::setOutputFromCSV( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
 }
 
 void WMConverterCSV::determineMinMaxEventID()
@@ -428,8 +368,7 @@ void WMConverterCSV::updateCheckboxProperty( WPropertyBase::SPtr property )
 {
     if( m_showPrimaries->get() || m_showSecondaries->get() )
     {
-        setPointsOutOfCSVData( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
-        setFibersOutOfCSVData( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
+        setOutputFromCSV( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
     }
     else
     {
