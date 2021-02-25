@@ -3,8 +3,11 @@
 
 #include "core/dataHandler/WDataSetCSV.h"
 
-class WMProtonData {
+class WMProtonData
+{
 public:
+    typedef boost::shared_ptr< WMProtonData > SPtr;
+
     explicit WMProtonData( WDataSetCSV::ContentSPtr csvHeader, WDataSetCSV::ContentSPtr csvData );
 
     WDataSetCSV::ContentSPtr getCSVHeader()

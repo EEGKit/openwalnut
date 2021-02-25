@@ -41,6 +41,9 @@ public:
      */
     typedef std::vector< std::vector< std::string > > Content;
 
+    /**
+     * represents a pointer to the Content
+     */
     typedef boost::shared_ptr< std::vector< std::vector< std::string > > > ContentSPtr;
 
     /**

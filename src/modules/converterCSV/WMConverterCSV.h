@@ -40,11 +40,11 @@
 
 #include "core/common/WItemSelectionItem.h"
 #include "core/common/WItemSelector.h"
-#include "core/common/WItemSelectionItemTyped.h"
 
 #include "core/kernel/WModule.h"
 
 #include "WMProtonData.h"
+#include "WMColumnPropertyHandler.h"
 
 /**
  * This module simply registers a given csv dataset to the csv handling mechanism.
@@ -118,7 +118,9 @@ protected:
     virtual void properties();
 
 private:
-    boost::shared_ptr< WMProtonData > m_protonData;
+    WMProtonData::SPtr m_protonData;
+
+    WMColumnPropertyHandler::SPtr m_columnPropertyHandler;
 
     /**
      * Input connector (required for this module).
@@ -146,26 +148,6 @@ private:
     boost::shared_ptr< WDataSetPoints > m_points;
 
     /**
-     * Stores every unique particle id.
-     */
-    std::vector < int > m_pdgTypes;
-
-    /**
-     * Stores selectable items.
-     */
-    boost::shared_ptr< WItemSelection > m_possibleSelection;
-
-    /**
-     * Stores users selected items.
-     */
-    WPropSelection m_multiSelection;
-
-    /**
-     * 
-     */
-    std::vector < std::string > m_selectedPDGTypes;
-
-    /**
      * Set lower border of range of eventID selection.
      */
     WPropInt m_minCap;
@@ -174,15 +156,6 @@ private:
      * Set upper border of range of eventID selection.
      */
     WPropInt m_maxCap;
-
-    /**
-     * Get column number by name from header
-     *
-     * \param columnNameToMatch Search for the specified column name.
-     * \param headerToSearchIn Search in specified header.
-     * \return Column number, where columnToMatch is in headerToSearchIn
-     */
-    int getColumnNumberByName( std::string columnNameToMatch, std::vector<std::string> headerToSearchIn );
 
     /**
      * Create output, so it can be displayed by the fiber display.
@@ -218,21 +191,6 @@ private:
     void determineMinMaxEventID();
 
     /**
-     * Collect all particle types from your input data.
-     */
-    void searchPDGTypes();
-
-    /**
-     * 
-     */
-    void updateSelectedPDGTypes( WPropertyBase::SPtr property );
-
-    /**
-     * 
-     */
-    bool isPDGTypeSelected( int pdgType );
-
-    /**
      * Normalize energy deposition values to use as RGB values
      * \param edeps vector containing energy deposition values
      * \param colorArray vector containing colors per vertex
@@ -251,70 +209,16 @@ private:
     WPropBool m_showSecondaries;
 
     /**
-     * Reload data when properties for selection of columnnames changed
-     *
-     * \param property contains reference to the property which called updateProperty()
-     */
-    void updateProperty( WPropertyBase::SPtr property );
-
-    /**
      * Reload data when properties for selection of primaries and secondaries changed
      *
      * \param property contains reference to the property which called updateProperty()
      */
     void updateCheckboxProperty( WPropertyBase::SPtr property );
 
-    WPropSelection addHeaderProperty( std::string headerName, WPropertyBase::PropertyChangeNotifierType notifier );
-
-    /**
-     * A list of items that can be selected using m_aSingleSelectionUsingTypes property.
-     */
-    boost::shared_ptr< WItemSelection > m_possibleSelectionsUsingTypes;
-
     /**
      * Stores information of the input-csv-data
      */
     boost::shared_ptr< WDataSetCSV > m_dataset;
-
-    /**
-     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
-     */
-    WPropSelection m_singleSelectionForPosX;
-
-    /**
-     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
-     */
-    WPropSelection m_singleSelectionForPosY;
-
-    /**
-     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
-     */
-    WPropSelection m_singleSelectionForPosZ;
-
-    /**
-     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
-     */
-    WPropSelection m_singleSelectionForEdep;
-
-    /**
-     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
-     */
-    WPropSelection m_singleSelectionForEventID;
-
-    /**
-     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
-     */
-    WPropSelection m_singleSelectionForTrackID;
-
-    /**
-     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
-     */
-    WPropSelection m_singleSelectionForParentID;
-
-     /**
-     * represents the item type for item-selection
-     */
-    typedef WItemSelectionItemTyped< std::string > ItemType;
 
     /**
      * Decides whether to color points based on the deposited energy or not.
@@ -335,11 +239,6 @@ private:
      * Property group for visualization modes
      */
     WPropGroup m_visualizationGroup;
-
-    /**
-     * Property group for column selection
-     */
-    WPropGroup m_columnSelectionGroup;
 
     /**
      * Property that holds the current selected color when not coloring points based on their deposited energy.
