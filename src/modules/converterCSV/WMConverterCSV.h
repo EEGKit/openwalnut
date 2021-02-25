@@ -25,6 +25,8 @@
 #ifndef WMCONVERTERCSV_H
 #define WMCONVERTERCSV_H
 
+#include <algorithm>
+
 #include <string>
 #include <vector>
 
@@ -151,6 +153,26 @@ private:
     boost::shared_ptr< WDataSetPoints > m_points;
 
     /**
+     * Stores every unique particle id.
+     */
+    std::vector < int > m_pdgTypes;
+
+    /**
+     * Stores selectable items.
+     */
+    boost::shared_ptr< WItemSelection > m_possibleSelection;
+
+    /**
+     * Stores users selected items.
+     */
+    WPropSelection m_multiSelection;
+
+    /**
+     * 
+     */
+    std::vector < std::string > m_selectedPDGTypes;
+
+    /**
      * Set lower border of range of eventID selection.
      */
     WPropInt m_minCap;
@@ -159,6 +181,11 @@ private:
      * Set upper border of range of eventID selection.
      */
     WPropInt m_maxCap;
+
+    /*
+     * Stores information for the index of PDGEncoding-header
+     */
+    int PDGEncodingIndex = -1;
 
     /*
      * Stores information for the index of x-header
@@ -236,6 +263,21 @@ private:
      * Determines smalles und biggest eventID.
      */
     void determineMinMaxEventID();
+
+    /**
+     * Collect all particle types from your input data.
+     */
+    void searchPDGTypes();
+
+    /**
+     * 
+     */
+    void updateSelectedPDGTypes( WPropertyBase::SPtr property );
+
+    /**
+     * 
+     */
+    bool isPDGTypeSelected( int pdgType );
 
     /**
      * Normalize energy deposition values to use as RGB values
