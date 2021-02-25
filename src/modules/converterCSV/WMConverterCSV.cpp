@@ -77,10 +77,8 @@ void WMConverterCSV::moduleMain()
 
         m_dataset = m_input->getData();
 
-        WDataSetCSV::Content csvH = m_dataset->getHeader();
-        WDataSetCSV::Content csvD = m_dataset->getData();
-        boost::shared_ptr< WDataSetCSV::Content > csvHeader = boost::shared_ptr< WDataSetCSV::Content >( &csvH );
-        boost::shared_ptr< WDataSetCSV::Content > csvData = boost::shared_ptr< WDataSetCSV::Content >( &csvD );
+        WDataSetCSV::ContentSPtr csvHeader = m_dataset->getHeader();
+        WDataSetCSV::ContentSPtr csvData = m_dataset->getData();
 
         if( m_protonData == NULL )
         {
@@ -197,7 +195,7 @@ void WMConverterCSV::properties()
 
     if( m_dataset != NULL )
     {
-        std::vector< std::string > header = m_dataset->getHeader().at( 0 );
+        std::vector< std::string > header = m_dataset->getHeader()->at( 0 );
 
         for( std::vector<std::string>::iterator colName = header.begin(); colName != header.end(); colName++ )
         {
@@ -269,7 +267,7 @@ int WMConverterCSV::getColumnNumberByName( std::string columnNameToMatch, std::v
     return -1;
 }
 
-void WMConverterCSV::setFibersOutOfCSVData( boost::shared_ptr< WDataSetCSV::Content > header, boost::shared_ptr< WDataSetCSV::Content > data )
+void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::ContentSPtr header, WDataSetCSV::ContentSPtr data )
 {
     if( !m_protonData->columnsInitialized() )
     {
@@ -385,16 +383,13 @@ void WMConverterCSV::setFibersOutOfCSVData( boost::shared_ptr< WDataSetCSV::Cont
     m_output_fibers->updateData( m_fibers );
 }
 
-void WMConverterCSV::setPointsOutOfCSVData( boost::shared_ptr< WDataSetCSV::Content > header, boost::shared_ptr< WDataSetCSV::Content > data )
+void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::ContentSPtr header, WDataSetCSV::ContentSPtr data )
 {
-    debugLog() << "1";
     if( !m_protonData->columnsInitialized() )
     {
-        debugLog() << "2";
         return;
     }
 
-    debugLog() << "3";
     SPFloatVector m_vertices = SPFloatVector( new std::vector< float >() );
     SPFloatVector m_colors = SPFloatVector( new std::vector< float >() );
     SPFloatVector m_sizes = SPFloatVector( new std::vector< float >() );
@@ -406,51 +401,39 @@ void WMConverterCSV::setPointsOutOfCSVData( boost::shared_ptr< WDataSetCSV::Cont
     float maxEdep = 0.0;
     float posX, posY, posZ, edep;
 
-    debugLog() << "4";
     int parentIDIndex = m_protonData->getColumnIndex( "parentID" );
     int posXIndex = m_protonData->getColumnIndex( "posX" );
     int posYIndex = m_protonData->getColumnIndex( "posY" );
     int posZIndex = m_protonData->getColumnIndex( "posZ" );
     int edepIndex = m_protonData->getColumnIndex( "edep" );
 
-    debugLog() << "5 " << data->size();
     //for(WDataSetCSV::Content::iterator dataRow = data->begin(); dataRow != data->end(); dataRow++ )
     for( int idx = 0; idx < data->size(); idx++ )
     {
         std::vector< std::string > row = data->at( idx );
-        debugLog() << "6";
 
         if( row.empty() )
         {
-            debugLog() << "7";
             continue;
         }
 
-        debugLog() << "8 " << row.size();
-        debugLog() << row.at( parentIDIndex );
         if( !m_showPrimaries->get() && std::stoi( row.at( parentIDIndex ) ) == 0 )
         {
-            debugLog() << "9";
             continue;
         }
 
-        debugLog() << "10";
         if( !m_showSecondaries->get() && std::stoi( row.at( parentIDIndex ) ) != 0 )
         {
-            debugLog() << "11";
             continue;
         }
 
-        debugLog() << "12";
         posX = boost::lexical_cast< float >( row.at( posXIndex ) );
         posY = boost::lexical_cast< float >( row.at( posYIndex ) );
         posZ = boost::lexical_cast< float >( row.at( posZIndex ) );
         edep = boost::lexical_cast< float >( row.at( edepIndex ) );
 
-        debugLog() << "13";
         if( edep > maxEdep )
         {
-            debugLog() << "14";
             maxEdep = edep;
         }
 
@@ -458,29 +441,22 @@ void WMConverterCSV::setPointsOutOfCSVData( boost::shared_ptr< WDataSetCSV::Cont
         m_vertices->push_back( posY );
         m_vertices->push_back( posZ );
 
-        debugLog() << "15";
         if( !m_colorFromEdep->get() )
         {
-            debugLog() << "16";
             m_colors->push_back( plainColor[0] );
             m_colors->push_back( plainColor[1] );
             m_colors->push_back( plainColor[2] );
         }
 
-        debugLog() << "17";
         m_sizes->push_back( edep );
         edeps.push_back( edep );
-        debugLog() << "18";
     }
 
-    debugLog() << "19";
     if( m_colorFromEdep->get() )
     {
-        debugLog() << "20";
         normalizeEdeps( edeps, m_colors, maxEdep );
     }
 
-    debugLog() << "21";
     if( m_sizesFromEdep->get() )
     {
         m_points = boost::shared_ptr< WDataSetPointsAndSizes >(

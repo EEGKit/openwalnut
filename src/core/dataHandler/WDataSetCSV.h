@@ -39,7 +39,9 @@ public:
     /**
      * represents a vector containing a vector of strings.
      */
-    typedef std::vector< std::vector<std::string> > Content;
+    typedef std::vector< std::vector< std::string > > Content;
+
+    typedef boost::shared_ptr< std::vector< std::vector< std::string > > > ContentSPtr;
 
     /**
      * Construct WDataSetCSV object
@@ -47,7 +49,7 @@ public:
      * \param header Column names of the CSV file.
      * \param data Data content of the CSV file.
      */
-    explicit WDataSetCSV( Content header, Content data );
+    explicit WDataSetCSV( WDataSetCSV::ContentSPtr header, WDataSetCSV::ContentSPtr data );
 
     /**
      * The standard constructor.
@@ -64,25 +66,25 @@ public:
      *
      * \return m_header as WDataSetCSV::Content object
      */
-    WDataSetCSV::Content getHeader();
+    WDataSetCSV::ContentSPtr getHeader();
 
     /**
      * Getter method to receive csv data
      *
      * \return m_data as WDataSetCSV::Content object
      */
-    WDataSetCSV::Content getData();
+    WDataSetCSV::ContentSPtr getData();
 
 private:
     /**
      * Stores the column titles of a loaded CSV file.
      */
-    Content m_header;
+    WDataSetCSV::ContentSPtr m_header;
 
     /**
      * Stores the data of a loaded CSV file.
      */
-    Content m_data;
+    WDataSetCSV::ContentSPtr m_data;
 };
 
 #endif  // WDATASETCSV_H

@@ -1,12 +1,12 @@
 #include "WMProtonData.h"
 
-WMProtonData::WMProtonData( boost::shared_ptr< WDataSetCSV::Content > csvHeader, boost::shared_ptr< WDataSetCSV::Content > csvData )
+WMProtonData::WMProtonData( WDataSetCSV::ContentSPtr csvHeader, WDataSetCSV::ContentSPtr csvData )
 {
     setCSVHeader( csvHeader );
     setCSVData( csvData );
 }
 
-void WMProtonData::setCSVHeader( boost::shared_ptr< WDataSetCSV::Content > csvHeader )
+void WMProtonData::setCSVHeader( WDataSetCSV::ContentSPtr csvHeader )
 {
     if ( csvHeader->empty() )
     {

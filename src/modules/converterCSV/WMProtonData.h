@@ -5,21 +5,21 @@
 
 class WMProtonData {
 public:
-    explicit WMProtonData( boost::shared_ptr< WDataSetCSV::Content > csvHeader, boost::shared_ptr< WDataSetCSV::Content > csvData );
+    explicit WMProtonData( WDataSetCSV::ContentSPtr csvHeader, WDataSetCSV::ContentSPtr csvData );
 
-    boost::shared_ptr< WDataSetCSV::Content > getCSVHeader()
+    WDataSetCSV::ContentSPtr getCSVHeader()
     {
         return m_csvHeader;
     }
 
-    boost::shared_ptr< WDataSetCSV::Content > getCSVData()
+    WDataSetCSV::ContentSPtr getCSVData()
     {
         return m_csvData;
     }
 
-    void setCSVHeader( boost::shared_ptr< WDataSetCSV::Content > csvHeader );
+    void setCSVHeader( WDataSetCSV::ContentSPtr csvHeader );
 
-    void setCSVData( boost::shared_ptr< WDataSetCSV::Content > csvData )
+    void setCSVData( WDataSetCSV::ContentSPtr csvData )
     {
         m_csvData = csvData;
     }
@@ -34,12 +34,12 @@ private:
     /**
      * Stores column index of data.
      */
-    boost::shared_ptr< WDataSetCSV::Content > m_csvHeader;
+    WDataSetCSV::ContentSPtr m_csvHeader;
 
     /**
      * Stores data from obtained input file.
      */
-    boost::shared_ptr< WDataSetCSV::Content > m_csvData;
+    WDataSetCSV::ContentSPtr m_csvData;
 
     std::map< std::string, int > m_columnMap;
 };

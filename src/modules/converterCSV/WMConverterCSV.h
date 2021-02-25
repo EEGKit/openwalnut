@@ -190,7 +190,7 @@ private:
      * \param header WDataSetCSV::Content object containing column names.
      * \param data WDataSetCSV::Content object containing data.
      */
-    void setFibersOutOfCSVData( boost::shared_ptr< WDataSetCSV::Content > header, boost::shared_ptr< WDataSetCSV::Content > data );
+    void setFibersOutOfCSVData( WDataSetCSV::ContentSPtr header, WDataSetCSV::ContentSPtr data );
 
     /**
      * Create output, so it can be displayed by the point renderer.
@@ -198,7 +198,7 @@ private:
      * \param header WDataSetCSV::Content object containing column names
      * \param data WDataSetCSV::Content object containing data
      */
-    void setPointsOutOfCSVData( boost::shared_ptr< WDataSetCSV::Content > header, boost::shared_ptr< WDataSetCSV::Content > data );
+    void setPointsOutOfCSVData( WDataSetCSV::ContentSPtr header, WDataSetCSV::ContentSPtr data );
 
     /**
      * Update range of selected eventID rows.
