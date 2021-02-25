@@ -42,8 +42,9 @@
 #include "core/common/WItemSelector.h"
 #include "core/common/WItemSelectionItemTyped.h"
 
-
 #include "core/kernel/WModule.h"
+
+#include "WMProtonData.h"
 
 /**
  * This module simply registers a given csv dataset to the csv handling mechanism.
@@ -117,6 +118,8 @@ protected:
     virtual void properties();
 
 private:
+    boost::shared_ptr< WMProtonData > m_protonData;
+
     /**
      * Input connector (required for this module).
      */
@@ -131,16 +134,6 @@ private:
      * WDataSetFibers output connector (required for this module).
      */
     boost::shared_ptr< WModuleOutputData< WDataSet  > > m_output_fibers;
-
-    /**
-     * Stores column index of data.
-     */
-    WDataSetCSV::Content m_csvHeader;
-
-    /**
-     * Stores data from obtained input file.
-     */
-    WDataSetCSV::Content m_csvData;
 
     /**
      * Stores information for the fiber display
@@ -182,46 +175,6 @@ private:
      */
     WPropInt m_maxCap;
 
-    /*
-     * Stores information for the index of PDGEncoding-header
-     */
-    int PDGEncodingIndex = -1;
-
-    /*
-     * Stores information for the index of x-header
-     */
-    int xPosIndex = -1;
-
-    /**
-     * Stores information for the index of y-header
-     */
-    int yPosIndex = -1;
-
-    /**
-     * Stores information for the index of edeps-header
-     */
-    int edepIndex = -1;
-
-    /**
-     * Stores information for the index of z-header
-     */
-    int zPosIndex = -1;
-
-    /**
-     * Stores information for the index of eventID-header
-     */
-    int eventIDIndex = -1;
-
-    /**
-     * Stores information for the index of trackID-header
-     */
-    int trackIDIndex = -1;
-
-    /**
-     * Stores information for the index of parent-header
-     */
-    int parentIDIndex = -1;
-
     /**
      * Get column number by name from header
      *
@@ -237,7 +190,7 @@ private:
      * \param header WDataSetCSV::Content object containing column names.
      * \param data WDataSetCSV::Content object containing data.
      */
-    void setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data );
+    void setFibersOutOfCSVData( boost::shared_ptr< WDataSetCSV::Content > header, boost::shared_ptr< WDataSetCSV::Content > data );
 
     /**
      * Create output, so it can be displayed by the point renderer.
@@ -245,7 +198,7 @@ private:
      * \param header WDataSetCSV::Content object containing column names
      * \param data WDataSetCSV::Content object containing data
      */
-    void setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data );
+    void setPointsOutOfCSVData( boost::shared_ptr< WDataSetCSV::Content > header, boost::shared_ptr< WDataSetCSV::Content > data );
 
     /**
      * Update range of selected eventID rows.
@@ -311,6 +264,8 @@ private:
      */
     void updateCheckboxProperty( WPropertyBase::SPtr property );
 
+    WPropSelection addHeaderProperty( std::string headerName, WPropertyBase::PropertyChangeNotifierType notifier );
+
     /**
      * A list of items that can be selected using m_aSingleSelectionUsingTypes property.
      */
@@ -339,7 +294,7 @@ private:
     /**
      * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
      */
-    WPropSelection m_singleSelectionForPosEdep;
+    WPropSelection m_singleSelectionForEdep;
 
     /**
      * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.

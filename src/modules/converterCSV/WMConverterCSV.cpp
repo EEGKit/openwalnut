@@ -77,15 +77,27 @@ void WMConverterCSV::moduleMain()
 
         m_dataset = m_input->getData();
 
-        m_csvHeader = m_dataset->getHeader();
-        m_csvData = m_dataset->getData();
+        WDataSetCSV::Content csvH = m_dataset->getHeader();
+        WDataSetCSV::Content csvD = m_dataset->getData();
+        boost::shared_ptr< WDataSetCSV::Content > csvHeader = boost::shared_ptr< WDataSetCSV::Content >( &csvH );
+        boost::shared_ptr< WDataSetCSV::Content > csvData = boost::shared_ptr< WDataSetCSV::Content >( &csvD );
+
+        if( m_protonData == NULL )
+        {
+            m_protonData = boost::shared_ptr< WMProtonData >( new WMProtonData( csvHeader, csvData ) );
+        }
+        else
+        {
+            m_protonData->setCSVHeader( csvHeader );
+            m_protonData->setCSVData( csvData );
+        }
 
         WMConverterCSV::searchPDGTypes();
 
         properties();
 
-        setPointsOutOfCSVData( m_csvHeader, m_csvData );
-        setFibersOutOfCSVData( m_csvHeader, m_csvData );
+        setPointsOutOfCSVData( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
+        setFibersOutOfCSVData( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
     }
 }
 
@@ -115,57 +127,53 @@ void WMConverterCSV::connectors()
 
 void WMConverterCSV::updateProperty( WPropertyBase::SPtr property )
 {
+    const WItemSelector* selector;
+    std::string columnName;
+
     if( property == m_singleSelectionForPosX )
     {
-        WItemSelector selector = m_singleSelectionForPosX->get( true );
-        std::string selectedValue = selector.at( 0 )->getAs< ItemType >()->getValue();
-        xPosIndex = getColumnNumberByName( selectedValue, m_csvHeader.at( 0 ) );
+        selector = &m_singleSelectionForPosX->get( true );
+        columnName = "posX";
     }
-
-    if( property == m_singleSelectionForPosY )
+    else if( property == m_singleSelectionForPosY )
     {
-        WItemSelector selector = m_singleSelectionForPosY->get( true );
-        std::string selectedValue = selector.at( 0 )->getAs< ItemType >()->getValue();
-        yPosIndex = getColumnNumberByName( selectedValue, m_csvHeader.at( 0 ) );
+        selector = &m_singleSelectionForPosY->get( true );
+        columnName = "posY";
     }
-
-    if( property == m_singleSelectionForPosZ )
+    else if( property == m_singleSelectionForPosZ )
     {
-        WItemSelector selector = m_singleSelectionForPosZ->get( true );
-        std::string selectedValue = selector.at( 0 )->getAs< ItemType >()->getValue();
-        zPosIndex = getColumnNumberByName( selectedValue, m_csvHeader.at( 0 ) );
+        selector = &m_singleSelectionForPosZ->get( true );
+        columnName = "posZ";
     }
-
-    if( property == m_singleSelectionForPosEdep )
+    else if( property == m_singleSelectionForEdep )
     {
-        WItemSelector selector = m_singleSelectionForPosEdep->get( true );
-        std::string selectedValue = selector.at( 0 )->getAs< ItemType >()->getValue();
-        edepIndex = getColumnNumberByName( selectedValue, m_csvHeader.at( 0 ) );
+        selector = &m_singleSelectionForEdep->get( true );
+        columnName = "edep";
     }
-
-    if( property == m_singleSelectionForEventID )
+    else if( property == m_singleSelectionForEventID )
     {
-        WItemSelector selector = m_singleSelectionForEventID->get( true );
-        std::string selectedValue = selector.at( 0 )->getAs< ItemType >()->getValue();
-        eventIDIndex = getColumnNumberByName( selectedValue, m_csvHeader.at( 0 ) );
+        selector = &m_singleSelectionForEventID->get( true );
+        columnName = "eventID";
     }
-
-    if( property == m_singleSelectionForTrackID )
+    else if( property == m_singleSelectionForTrackID )
     {
-        WItemSelector selector = m_singleSelectionForTrackID->get( true );
-        std::string selectedValue = selector.at( 0 )->getAs< ItemType >()->getValue();
-        trackIDIndex = getColumnNumberByName( selectedValue, m_csvHeader.at( 0 ) );
+        selector = &m_singleSelectionForTrackID->get( true );
+        columnName = "trackID";
     }
-
-    if( property == m_singleSelectionForParentID )
+    else if( property == m_singleSelectionForParentID )
     {
-        WItemSelector selector = m_singleSelectionForParentID->get( true );
-        std::string selectedValue = selector.at( 0 )->getAs< ItemType >()->getValue();
-        parentIDIndex = getColumnNumberByName( selectedValue, m_csvHeader.at( 0 ) );
+        selector = &m_singleSelectionForParentID->get( true );
+        columnName = "parentID";
     }
 
-    setPointsOutOfCSVData( m_csvHeader, m_csvData );
-    setFibersOutOfCSVData( m_csvHeader, m_csvData );
+    if( selector != NULL )
+    {
+        std::string selectedValue = selector->at( 0 )->getAs< ItemType >()->getValue();
+        m_protonData->setColumnIndex( columnName, getColumnNumberByName( selectedValue, m_protonData->getCSVHeader()->at( 0 ) ) );
+
+        setPointsOutOfCSVData( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
+        setFibersOutOfCSVData( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
+    }
 }
 
 void WMConverterCSV::properties()
@@ -201,114 +209,18 @@ void WMConverterCSV::properties()
             m_possibleSelection->addItem( std::to_string( pdgType ) );
         }
 
+        m_selectedPDGTypes.push_back( std::to_string( m_pdgTypes[0] ) );
+
         m_multiSelection = m_columnSelectionGroup->addProperty( "PDGEncoding", "Choose particle type(s) you want show", m_possibleSelection->getSelectorFirst(), pdgEncodingnotifier );
         WPropertyHelper::PC_NOTEMPTY::addTo( m_multiSelection );
 
-        xPosIndex = WMConverterCSV::getColumnNumberByName( "posX", m_csvHeader.at( 0 ) );
-        yPosIndex = WMConverterCSV::getColumnNumberByName( "posY", m_csvHeader.at( 0 ) );
-        zPosIndex = WMConverterCSV::getColumnNumberByName( "posZ", m_csvHeader.at( 0 ) );
-        edepIndex = WMConverterCSV::getColumnNumberByName( "edep", m_csvHeader.at( 0 ) );
-        eventIDIndex = WMConverterCSV::getColumnNumberByName( "eventID", m_csvHeader.at( 0 ) );
-        trackIDIndex = WMConverterCSV::getColumnNumberByName( "trackID", m_csvHeader.at( 0 ) );
-        parentIDIndex = WMConverterCSV::getColumnNumberByName( "parentID", m_csvHeader.at( 0 ) );
-
-        if(xPosIndex < 0)
-        {
-            m_singleSelectionForPosX = m_columnSelectionGroup->addProperty( "X", "Choose the xPos column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelectorNone(), notifier );
-        }
-        else
-        {
-            m_singleSelectionForPosX = m_columnSelectionGroup->addProperty( "X", "Choose the xPos column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelector( xPosIndex ), notifier );
-        }
-
-        if(yPosIndex < 0)
-        {
-            m_singleSelectionForPosY = m_columnSelectionGroup->addProperty( "Y", "Choose the yPos column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelectorNone(), notifier );
-        }
-        else
-        {
-            m_singleSelectionForPosY = m_columnSelectionGroup->addProperty( "Y", "Choose the yPos column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelector( yPosIndex ), notifier );
-        }
-
-        if(zPosIndex < 0)
-        {
-            m_singleSelectionForPosZ = m_columnSelectionGroup->addProperty( "Z", "Choose the zPos column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelectorNone(), notifier );
-        }
-        else
-        {
-            m_singleSelectionForPosZ = m_columnSelectionGroup->addProperty( "Z", "Choose the zPos column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelector( zPosIndex ), notifier );
-        }
-
-        if(edepIndex < 0)
-        {
-            m_singleSelectionForPosEdep = m_columnSelectionGroup->addProperty( "edep", "Choose the edep column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelectorNone(), notifier );
-        }
-        else
-        {
-            m_singleSelectionForPosEdep = m_columnSelectionGroup->addProperty( "edep", "Choose the edep column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelector( edepIndex ), notifier );
-        }
-
-        if(eventIDIndex < 0)
-        {
-            m_singleSelectionForEventID = m_columnSelectionGroup->addProperty( "Event ID", "Choose the eventID column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelectorNone(), notifier );
-        }
-        else
-        {
-            m_singleSelectionForEventID = m_columnSelectionGroup->addProperty( "Event ID", "Choose the eventID column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelector( eventIDIndex ), notifier );
-        }
-
-        if(trackIDIndex < 0)
-        {
-            m_singleSelectionForTrackID = m_columnSelectionGroup->addProperty( "Track ID", "Choose the trackID column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelectorNone(), notifier );
-        }
-        else
-        {
-            m_singleSelectionForTrackID = m_columnSelectionGroup->addProperty( "Track ID", "Choose the trackID column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelector( trackIDIndex ), notifier );
-        }
-
-        if(parentIDIndex < 0)
-        {
-            m_singleSelectionForParentID = m_columnSelectionGroup->addProperty( "Parent ID", "Choose the ParentID column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelectorNone(), notifier );
-        }
-        else
-        {
-            m_singleSelectionForParentID = m_columnSelectionGroup->addProperty( "Parent ID", "Choose the ParentID column from csv",
-                                                                m_possibleSelectionsUsingTypes->getSelector( parentIDIndex ), notifier );
-        }
-
-        WPropertyHelper::PC_SELECTONLYONE::addTo( m_singleSelectionForPosX );
-        WPropertyHelper::PC_NOTEMPTY::addTo( m_singleSelectionForPosX );
-
-        WPropertyHelper::PC_SELECTONLYONE::addTo( m_singleSelectionForPosY );
-        WPropertyHelper::PC_NOTEMPTY::addTo( m_singleSelectionForPosY );
-
-        WPropertyHelper::PC_SELECTONLYONE::addTo( m_singleSelectionForPosZ );
-        WPropertyHelper::PC_NOTEMPTY::addTo( m_singleSelectionForPosZ );
-
-        WPropertyHelper::PC_SELECTONLYONE::addTo( m_singleSelectionForPosEdep );
-        WPropertyHelper::PC_NOTEMPTY::addTo( m_singleSelectionForPosEdep );
-
-        WPropertyHelper::PC_SELECTONLYONE::addTo( m_singleSelectionForEventID );
-        WPropertyHelper::PC_NOTEMPTY::addTo( m_singleSelectionForEventID );
-
-        WPropertyHelper::PC_SELECTONLYONE::addTo( m_singleSelectionForTrackID );
-        WPropertyHelper::PC_NOTEMPTY::addTo( m_singleSelectionForTrackID );
-
-        WPropertyHelper::PC_SELECTONLYONE::addTo( m_singleSelectionForParentID );
-        WPropertyHelper::PC_NOTEMPTY::addTo( m_singleSelectionForParentID );
+        m_singleSelectionForPosX = addHeaderProperty( "posX", notifier );
+        m_singleSelectionForPosY = addHeaderProperty( "posY", notifier );
+        m_singleSelectionForPosZ = addHeaderProperty( "posZ", notifier );
+        m_singleSelectionForEdep = addHeaderProperty( "edep", notifier );
+        m_singleSelectionForEventID = addHeaderProperty( "eventID", notifier );
+        m_singleSelectionForTrackID = addHeaderProperty( "trackID", notifier );
+        m_singleSelectionForParentID = addHeaderProperty( "parentID", notifier );
 
         m_showPrimaries = m_filteringGroup->addProperty( "Show primaries", "Show/hide primaries", true, notifierCheckBox );
         m_showSecondaries = m_filteringGroup->addProperty( "Show secondaries", "Show/hide secondaries", true, notifierCheckBox );
@@ -329,6 +241,23 @@ void WMConverterCSV::properties()
     WModule::properties();
 }
 
+WPropSelection WMConverterCSV::addHeaderProperty( std::string headerName, WPropertyBase::PropertyChangeNotifierType notifier )
+{
+    int index = m_protonData->getColumnIndex( headerName );
+    WItemSelector selector = index > 0 ? m_possibleSelectionsUsingTypes->getSelectorNone() : m_possibleSelectionsUsingTypes->getSelector( index );
+    WPropSelection selection = m_columnSelectionGroup->addProperty(
+                                                headerName,
+                                                "Choose the " + headerName + " column from csv",
+                                                selector ,
+                                                notifier );
+
+    WPropertyHelper::PC_SELECTONLYONE::addTo( selection );
+    WPropertyHelper::PC_NOTEMPTY::addTo( selection );
+
+    return selection;
+}
+
+
 int WMConverterCSV::getColumnNumberByName( std::string columnNameToMatch, std::vector< std::string > headerToSearchIn )
 {
     int pos = 0;
@@ -340,9 +269,9 @@ int WMConverterCSV::getColumnNumberByName( std::string columnNameToMatch, std::v
     return -1;
 }
 
-void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data )
+void WMConverterCSV::setFibersOutOfCSVData( boost::shared_ptr< WDataSetCSV::Content > header, boost::shared_ptr< WDataSetCSV::Content > data )
 {
-    if( PDGEncodingIndex < 0|| xPosIndex < 0 || yPosIndex < 0 || zPosIndex < 0 || edepIndex < 0 || eventIDIndex < 0 || trackIDIndex < 0 || parentIDIndex < 0 )
+    if( !m_protonData->columnsInitialized() )
     {
         return;
     }
@@ -358,8 +287,15 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
     std::vector< float > edeps;
 
     float maxEdep = 0.0;
+    int parentIDIndex = m_protonData->getColumnIndex( "parentID" );
+    int posXIndex = m_protonData->getColumnIndex( "posX" );
+    int posYIndex = m_protonData->getColumnIndex( "posY" );
+    int posZIndex = m_protonData->getColumnIndex( "posZ" );
+    int edepIndex = m_protonData->getColumnIndex( "edep" );
+    int PDGEncodingIndex = m_protonData->getColumnIndex( "PDGEncoding" );
+    int eventIDIndex = m_protonData->getColumnIndex( "eventID" );
 
-    for( WDataSetCSV::Content::iterator dataRow = data.begin(); dataRow != data.end(); dataRow++ )
+    for( WDataSetCSV::Content::iterator dataRow = data->begin(); dataRow < data->end(); dataRow++ )
     {
         float posX, posY, posZ, edep;
         int eventID, pdgType;
@@ -369,20 +305,21 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
             continue;
         }
 
-        if( !m_showPrimaries->get() && std::stoi( dataRow->at(parentIDIndex ) ) == 0 )
+        if( !m_showPrimaries->get() && std::stoi( dataRow->at( parentIDIndex ) ) == 0 )
         {
             continue;
         }
 
-        if( !m_showSecondaries->get() && std::stoi( dataRow->at(parentIDIndex ) ) != 0 )
+        if( !m_showSecondaries->get() && std::stoi( dataRow->at( parentIDIndex ) ) != 0 )
         {
             continue;
         }
 
         pdgType = std::stoi( dataRow->at( PDGEncodingIndex ) );
-        posX = boost::lexical_cast< float >( dataRow->at( xPosIndex ) );
-        posY = boost::lexical_cast< float >( dataRow->at( yPosIndex ) );
-        posZ = boost::lexical_cast< float >( dataRow->at( zPosIndex ) );
+        posX = boost::lexical_cast< float >( dataRow->at( posXIndex ) );
+        posY = boost::lexical_cast< float >( dataRow->at( posYIndex ) );
+        posZ = boost::lexical_cast< float >( dataRow->at( posZIndex ) );
+
         eventID = std::stoi( dataRow->at( eventIDIndex ) );
         edep = boost::lexical_cast< float >( dataRow->at( edepIndex ) );
         
@@ -448,13 +385,16 @@ void WMConverterCSV::setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSe
     m_output_fibers->updateData( m_fibers );
 }
 
-void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data )
+void WMConverterCSV::setPointsOutOfCSVData( boost::shared_ptr< WDataSetCSV::Content > header, boost::shared_ptr< WDataSetCSV::Content > data )
 {
-    if( xPosIndex < 0 || yPosIndex < 0 || zPosIndex < 0 || edepIndex < 0 || eventIDIndex < 0 || trackIDIndex < 0 || parentIDIndex < 0 )
+    debugLog() << "1";
+    if( !m_protonData->columnsInitialized() )
     {
+        debugLog() << "2";
         return;
     }
 
+    debugLog() << "3";
     SPFloatVector m_vertices = SPFloatVector( new std::vector< float >() );
     SPFloatVector m_colors = SPFloatVector( new std::vector< float >() );
     SPFloatVector m_sizes = SPFloatVector( new std::vector< float >() );
@@ -466,30 +406,51 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
     float maxEdep = 0.0;
     float posX, posY, posZ, edep;
 
-    for(WDataSetCSV::Content::iterator dataRow = data.begin(); dataRow != data.end(); dataRow++ )
+    debugLog() << "4";
+    int parentIDIndex = m_protonData->getColumnIndex( "parentID" );
+    int posXIndex = m_protonData->getColumnIndex( "posX" );
+    int posYIndex = m_protonData->getColumnIndex( "posY" );
+    int posZIndex = m_protonData->getColumnIndex( "posZ" );
+    int edepIndex = m_protonData->getColumnIndex( "edep" );
+
+    debugLog() << "5 " << data->size();
+    //for(WDataSetCSV::Content::iterator dataRow = data->begin(); dataRow != data->end(); dataRow++ )
+    for( int idx = 0; idx < data->size(); idx++ )
     {
-        if( dataRow->empty() )
+        std::vector< std::string > row = data->at( idx );
+        debugLog() << "6";
+
+        if( row.empty() )
         {
+            debugLog() << "7";
             continue;
         }
 
-        if( !m_showPrimaries->get() && std::stoi( dataRow->at(parentIDIndex ) ) == 0 )
+        debugLog() << "8 " << row.size();
+        debugLog() << row.at( parentIDIndex );
+        if( !m_showPrimaries->get() && std::stoi( row.at( parentIDIndex ) ) == 0 )
         {
+            debugLog() << "9";
             continue;
         }
 
-        if( !m_showSecondaries->get() && std::stoi( dataRow->at(parentIDIndex ) ) != 0 )
+        debugLog() << "10";
+        if( !m_showSecondaries->get() && std::stoi( row.at( parentIDIndex ) ) != 0 )
         {
+            debugLog() << "11";
             continue;
         }
 
-        posX = boost::lexical_cast< float >( dataRow->at( xPosIndex ) );
-        posY = boost::lexical_cast< float >( dataRow->at( yPosIndex ) );
-        posZ = boost::lexical_cast< float >( dataRow->at( zPosIndex ) );
-        edep = boost::lexical_cast< float >( dataRow->at( edepIndex ) );
+        debugLog() << "12";
+        posX = boost::lexical_cast< float >( row.at( posXIndex ) );
+        posY = boost::lexical_cast< float >( row.at( posYIndex ) );
+        posZ = boost::lexical_cast< float >( row.at( posZIndex ) );
+        edep = boost::lexical_cast< float >( row.at( edepIndex ) );
 
+        debugLog() << "13";
         if( edep > maxEdep )
         {
+            debugLog() << "14";
             maxEdep = edep;
         }
 
@@ -497,22 +458,29 @@ void WMConverterCSV::setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSe
         m_vertices->push_back( posY );
         m_vertices->push_back( posZ );
 
+        debugLog() << "15";
         if( !m_colorFromEdep->get() )
         {
+            debugLog() << "16";
             m_colors->push_back( plainColor[0] );
             m_colors->push_back( plainColor[1] );
             m_colors->push_back( plainColor[2] );
         }
 
+        debugLog() << "17";
         m_sizes->push_back( edep );
         edeps.push_back( edep );
+        debugLog() << "18";
     }
 
+    debugLog() << "19";
     if( m_colorFromEdep->get() )
     {
+        debugLog() << "20";
         normalizeEdeps( edeps, m_colors, maxEdep );
     }
 
+    debugLog() << "21";
     if( m_sizesFromEdep->get() )
     {
         m_points = boost::shared_ptr< WDataSetPointsAndSizes >(
@@ -556,25 +524,28 @@ void WMConverterCSV::updateRangeOfEventIDSelection( int minCap, int maxCap )
 void WMConverterCSV::updateMesh( WPropertyBase::SPtr property )
 {
     WMConverterCSV::determineMinMaxEventID();
-    WMConverterCSV::setFibersOutOfCSVData( m_csvHeader, m_csvData );
+    WMConverterCSV::setFibersOutOfCSVData( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
 }
 
 void WMConverterCSV::determineMinMaxEventID()
 {
-    int eventIDIndex = WMConverterCSV::getColumnNumberByName( "eventID", m_csvHeader.at( 0 ) );
+    int eventIDIndex = m_protonData->getColumnIndex( "eventID" );
 
     WMConverterCSV::updateRangeOfEventIDSelection(
-        std::stoi( m_csvData.front().at( eventIDIndex ) ),
-        std::stoi( m_csvData.back().at( eventIDIndex ) ) );
+        std::stoi( m_protonData->getCSVData()->front().at( eventIDIndex ) ),
+        std::stoi( m_protonData->getCSVData()->back().at( eventIDIndex ) ) );
 }
 
 void WMConverterCSV::searchPDGTypes() 
 {
-    int pdgColumnIndex = WMConverterCSV::getColumnNumberByName( "PDGEncoding", m_csvHeader.at( 0 ) );
+    int pdgColumnIndex = m_protonData->getColumnIndex( "PDGEncoding" );
 
-    for( WDataSetCSV::Content::iterator dataRow = m_csvData.begin(); dataRow != m_csvData.end(); dataRow++ )
+
+    //for( WDataSetCSV::Content::iterator dataRow = m_protonData->getCSVData().begin(); dataRow < m_protonData->getCSVData().end(); dataRow++ )
+    for( auto idx = 0; idx < m_protonData->getCSVData()->size(); idx++)
     {
-        int currentParticleID = std::stoi( dataRow->at( pdgColumnIndex ) );
+        std::vector< std::string > row = m_protonData->getCSVData()->at( idx );
+        int currentParticleID = std::stoi( row.at( pdgColumnIndex ) );
         
         if( std::find( m_pdgTypes.begin(), m_pdgTypes.end(), currentParticleID ) == m_pdgTypes.end() ) 
         {
@@ -589,7 +560,7 @@ void WMConverterCSV::updateSelectedPDGTypes( WPropertyBase::SPtr property )
     
     if( m_multiSelection->changed() ) {
         WItemSelector selectedItems = m_multiSelection->get( true );
-        PDGEncodingIndex = getColumnNumberByName( "PDGEncoding", m_csvHeader.at( 0 ) );
+        //PDGEncodingIndex = getColumnNumberByName( "PDGEncoding", m_csvHeader.at( 0 ) );
 
         for( int i = 0; i < selectedItems.size(); ++i ) 
         {
@@ -597,19 +568,29 @@ void WMConverterCSV::updateSelectedPDGTypes( WPropertyBase::SPtr property )
         }
     }
 
-    WMConverterCSV::setFibersOutOfCSVData( m_csvHeader, m_csvData );
+    WMConverterCSV::setFibersOutOfCSVData( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
 }
 
 bool WMConverterCSV::isPDGTypeSelected( int pdgType ) 
 {
-    for ( auto selectedPDGType : m_selectedPDGTypes ) 
+    for( auto idx = 0; idx < m_selectedPDGTypes.size(); idx++ )
     {
+        if (pdgType == std::stoi( m_selectedPDGTypes[idx] ) ) 
+        {
+            return true;
+        }
+    }
+    return false;
+
+    /*for ( auto selectedPDGType : m_selectedPDGTypes ) 
+    {
+        debugLog() << "STOI 9";
         if (pdgType == std::stoi( selectedPDGType ) ) 
         {
             return true;
         }   
     }
-    return false;
+    return false;*/
 }
 
 void WMConverterCSV::normalizeEdeps( std::vector< float > edeps, SPFloatVector colorArray, float maxEdep )
@@ -628,8 +609,8 @@ void WMConverterCSV::updateCheckboxProperty( WPropertyBase::SPtr property )
 {
     if( m_showPrimaries->get() || m_showSecondaries->get() )
     {
-        setPointsOutOfCSVData( m_csvHeader, m_csvData );
-        setFibersOutOfCSVData( m_csvHeader, m_csvData );
+        setPointsOutOfCSVData( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
+        setFibersOutOfCSVData( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
     }
     else
     {
