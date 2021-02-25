@@ -51,7 +51,7 @@ boost::shared_ptr< WDataSetCSV > WReaderCSV::read()
 
     if( !file.is_open() )
     {
-        //throw()
+        throw WException( "File could not be opened!" );
     }
 
     while( std::getline( file, col ) )

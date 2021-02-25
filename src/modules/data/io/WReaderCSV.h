@@ -55,7 +55,8 @@ public:
     /**
      * Read the file and create a dataset as a vector.
      *
-     * \return pointer to a WDataSetCSV
+     * \return pointer to a WDataSetCSV.
+     * \throws WException If the file could not be opened.
      */
     virtual boost::shared_ptr< WDataSetCSV > read();
 };
