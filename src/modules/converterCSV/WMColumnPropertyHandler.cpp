@@ -1,6 +1,35 @@
+//---------------------------------------------------------------------------
+//
+// Project: OpenWalnut ( http://www.openwalnut.org )
+//
+// Copyright 2009 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
+// For more information see http://www.openwalnut.org/copying
+//
+// This file is part of OpenWalnut.
+//
+// OpenWalnut is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// OpenWalnut is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with OpenWalnut. If not, see <http://www.gnu.org/licenses/>.
+//
+//---------------------------------------------------------------------------
+
+#include <string>
+#include <vector>
+
 #include "WMColumnPropertyHandler.h"
 
-WMColumnPropertyHandler::WMColumnPropertyHandler( WMProtonData::SPtr protonData, WPropertyGroup::SPtr properties, WMColumnPropertyHandler::CallbackPtr dataUpdate ):
+WMColumnPropertyHandler::WMColumnPropertyHandler( WMProtonData::SPtr protonData,
+                                            WPropertyGroup::SPtr properties,
+                                            WMColumnPropertyHandler::CallbackPtr dataUpdate ):
     m_protonData( protonData ),
     m_properties( properties ),
     m_dataUpdate( dataUpdate )
@@ -26,14 +55,15 @@ void WMColumnPropertyHandler::createProperties()
         m_possibleSelectionsUsingTypes->addItem( ItemType::create( *colName, *colName, "",  NULL ) );
     }
 
-    for( auto pdgType : m_pdgTypes ) 
+    for( auto pdgType : m_pdgTypes )
     {
         m_possibleSelection->addItem( std::to_string( pdgType ) );
     }
 
     m_selectedPDGTypes.push_back( std::to_string( m_pdgTypes[0] ) );
 
-    m_multiSelection = m_columnSelectionGroup->addProperty( "PDGEncoding", "Choose particle type(s) you want show", m_possibleSelection->getSelectorFirst(), pdgEncodingnotifier );
+    m_multiSelection = m_columnSelectionGroup->addProperty( "PDGEncoding", "Choose particle type(s) you want show",
+                                                            m_possibleSelection->getSelectorFirst(), pdgEncodingnotifier );
     WPropertyHelper::PC_NOTEMPTY::addTo( m_multiSelection );
 
     m_singleSelectionForPosX = addHeaderProperty( "posX", notifier );
@@ -47,7 +77,7 @@ void WMColumnPropertyHandler::createProperties()
 
 void WMColumnPropertyHandler::updateProperty()
 {
-    // TODO
+    // TODO(robin.eschbach) Dynamic update of properties (when data is changed)
 }
 
 WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string headerName, WPropertyBase::PropertyChangeNotifierType notifier )
@@ -128,33 +158,33 @@ int WMColumnPropertyHandler::getColumnNumberByName( std::string columnNameToMatc
     return -1;
 }
 
-void WMColumnPropertyHandler::searchPDGTypes() 
+void WMColumnPropertyHandler::searchPDGTypes()
 {
     int pdgColumnIndex = m_protonData->getColumnIndex( "PDGEncoding" );
-
 
     //for( WDataSetCSV::Content::iterator dataRow = m_protonData->getCSVData().begin(); dataRow < m_protonData->getCSVData().end(); dataRow++ )
     for( auto idx = 0; idx < m_protonData->getCSVData()->size(); idx++)
     {
         std::vector< std::string > row = m_protonData->getCSVData()->at( idx );
         int currentParticleID = std::stoi( row.at( pdgColumnIndex ) );
-        
-        if( std::find( m_pdgTypes.begin(), m_pdgTypes.end(), currentParticleID ) == m_pdgTypes.end() ) 
+
+        if( std::find( m_pdgTypes.begin(), m_pdgTypes.end(), currentParticleID ) == m_pdgTypes.end() )
         {
             m_pdgTypes.push_back( currentParticleID );
         }
     }
 }
 
-void WMColumnPropertyHandler::updateSelectedPDGTypes( WPropertyBase::SPtr property ) 
+void WMColumnPropertyHandler::updateSelectedPDGTypes( WPropertyBase::SPtr property )
 {
     m_selectedPDGTypes.clear();
-    
-    if( m_multiSelection->changed() ) {
+
+    if( m_multiSelection->changed() )
+    {
         WItemSelector selectedItems = m_multiSelection->get( true );
         //PDGEncodingIndex = getColumnNumberByName( "PDGEncoding", m_csvHeader.at( 0 ) );
 
-        for( int i = 0; i < selectedItems.size(); ++i ) 
+        for( int i = 0; i < selectedItems.size(); ++i )
         {
            m_selectedPDGTypes.push_back( selectedItems.at( i )->getName() );
         }
@@ -163,24 +193,14 @@ void WMColumnPropertyHandler::updateSelectedPDGTypes( WPropertyBase::SPtr proper
     m_dataUpdate( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
 }
 
-bool WMColumnPropertyHandler::isPDGTypeSelected( int pdgType ) 
+bool WMColumnPropertyHandler::isPDGTypeSelected( int pdgType )
 {
     for( auto idx = 0; idx < m_selectedPDGTypes.size(); idx++ )
     {
-        if (pdgType == std::stoi( m_selectedPDGTypes[idx] ) ) 
+        if(pdgType == std::stoi( m_selectedPDGTypes[idx] ) )
         {
             return true;
         }
     }
     return false;
-
-    /*for ( auto selectedPDGType : m_selectedPDGTypes ) 
-    {
-        debugLog() << "STOI 9";
-        if (pdgType == std::stoi( selectedPDGType ) ) 
-        {
-            return true;
-        }   
-    }
-    return false;*/
 }

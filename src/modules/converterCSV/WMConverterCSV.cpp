@@ -136,14 +136,11 @@ void WMConverterCSV::connectors()
 
 void WMConverterCSV::properties()
 {
-
     WPropertyBase::PropertyChangeNotifierType notifierCheckBox = boost::bind( &WMConverterCSV::updateCheckboxProperty,
                                                                 this, boost::placeholders::_1 );
 
     WPropertyBase::PropertyChangeNotifierType eventIDNotifier = boost::bind( &WMConverterCSV::updateMesh,
                                                                 this, boost::placeholders::_1 );
-
-    
 
     if( m_dataset != NULL )
     {
@@ -159,7 +156,7 @@ void WMConverterCSV::properties()
         WPropGroup m_eventIDGroup = m_properties->addPropertyGroup( "Event ID Limitation", "Adjust the range of eventIDs to show.", 0 );
         m_minCap = m_eventIDGroup->addProperty( "Min Cap", "Set your minium border of your range.", 1, eventIDNotifier );
         m_maxCap = m_eventIDGroup->addProperty( "Max Cap", "Set your maximum border of your range.", 2000, eventIDNotifier );
-    
+
         WMConverterCSV::determineMinMaxEventID();
     }
 
@@ -222,13 +219,13 @@ void WMConverterCSV::setOutputFromCSV( WDataSetCSV::ContentSPtr header, WDataSet
 
         eventID = std::stoi( dataRow->at( eventIDIndex ) );
         edep = boost::lexical_cast< float >( dataRow->at( edepIndex ) );
-        
+
         if( !m_columnPropertyHandler->isPDGTypeSelected( pdgType ) )
         {
             continue;
         }
 
-        if( eventID < m_minCap->get() || eventID > m_maxCap->get() ) 
+        if( eventID < m_minCap->get() || eventID > m_maxCap->get() )
         {
             continue;
         }
