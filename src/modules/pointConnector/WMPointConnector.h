@@ -51,6 +51,11 @@ class WGEPostprocessingNode;
  */
 class WMPointConnector: public WModule
 {
+    /**
+     * Test is your best ... friend
+     */
+    friend class WMPointConnectorTest;
+
 public:
     /**
      * Constructor. Creates the module skeleton.
