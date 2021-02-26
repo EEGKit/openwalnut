@@ -38,8 +38,11 @@ WMColumnPropertyHandler::WMColumnPropertyHandler( WMProtonData::SPtr protonData,
 
 void WMColumnPropertyHandler::createProperties()
 {
+    searchPDGTypes();
+
     WPropertyBase::PropertyChangeNotifierType notifier = boost::bind( &WMColumnPropertyHandler::propertyNotifier,
                                                                 this, boost::placeholders::_1 );
+
     WPropertyBase::PropertyChangeNotifierType pdgEncodingnotifier = boost::bind( &WMColumnPropertyHandler::updateSelectedPDGTypes,
                                                                 this, boost::placeholders::_1 );
 
@@ -65,6 +68,7 @@ void WMColumnPropertyHandler::createProperties()
     m_multiSelection = m_columnSelectionGroup->addProperty( "PDGEncoding", "Choose particle type(s) you want show",
                                                             m_possibleSelection->getSelectorFirst(), pdgEncodingnotifier );
     WPropertyHelper::PC_NOTEMPTY::addTo( m_multiSelection );
+
 
     m_singleSelectionForPosX = addHeaderProperty( "posX", notifier );
     m_singleSelectionForPosY = addHeaderProperty( "posY", notifier );
@@ -204,3 +208,4 @@ bool WMColumnPropertyHandler::isPDGTypeSelected( int pdgType )
     }
     return false;
 }
+

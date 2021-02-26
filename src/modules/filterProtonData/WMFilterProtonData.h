@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WMCONVERTERCSV_H
-#define WMCONVERTERCSV_H
+#ifndef WMFilterProtonData_H
+#define WMFilterProtonData_H
 
 #include <algorithm>
 
@@ -46,13 +46,16 @@
 #include "WMProtonData.h"
 #include "WMColumnPropertyHandler.h"
 
+#include "WMPropertyStatus.h"
+#include "WMCsvConverter.h"
+
 /**
  * This module simply registers a given csv dataset to the csv handling mechanism.
  * This allows all outputs to be shown as a fiber-dataset or a point-dataset.
  *
  * \ingroup modules
  */
-class WMConverterCSV : public WModule
+class WMFilterProtonData : public WModule
 {
 public:
     /**
@@ -68,12 +71,12 @@ public:
     /**
      * Standard constructor.
      */
-    WMConverterCSV();
+    WMFilterProtonData();
 
     /**
      * Standard destructor.
      */
-    virtual ~WMConverterCSV();
+    virtual ~WMFilterProtonData();
 
     /**
      * Returns the name of this module.
@@ -138,24 +141,19 @@ private:
     boost::shared_ptr< WModuleOutputData< WDataSet  > > m_output_fibers;
 
     /**
-     * Stores information for the fiber display
+     * Stores information of the input-csv-data
      */
-    boost::shared_ptr< WDataSetFibers > m_fibers;
+    boost::shared_ptr< WDataSetCSV > m_dataset;
 
     /**
-     * Stores information for the point renderer
+     * 
      */
-    boost::shared_ptr< WDataSetPoints > m_points;
+    boost::shared_ptr < WMPropertyStatus > m_propertyStatus;
 
     /**
-     * Set lower border of range of eventID selection.
+     * 
      */
-    WPropInt m_minCap;
-
-    /**
-     * Set upper border of range of eventID selection.
-     */
-    WPropInt m_maxCap;
+    boost::shared_ptr < WMCsvConverter > m_converter;
 
     /**
      * Create outputs, so it can be displayed by the fiber display and the point renderer.
@@ -163,7 +161,7 @@ private:
      * \param header WDataSetCSV::Content object containing column names.
      * \param data WDataSetCSV::Content object containing data.
      */
-    void setOutputFromCSV( WDataSetCSV::ContentSPtr header, WDataSetCSV::ContentSPtr data );
+    void setOutputFromCSV( );
 
     /**
      * Update range of selected eventID rows.
@@ -175,9 +173,16 @@ private:
     /**
      * Update your mesh when changing properties.
      */
-    void updateMesh( WPropertyBase::SPtr property );
+    void updateMesh( );
 
-    /**
+     /**
+     * Reload data when properties for selection of primaries and secondaries changed
+     *
+     * \param property contains reference to the property which called updateProperty()
+     */
+    void updateCheckboxProperty( WPropertyBase::SPtr property );
+
+     /**
      * Determines smalles und biggest eventID.
      */
     void determineMinMaxEventID();
@@ -190,52 +195,6 @@ private:
      */
     void normalizeEdeps( std::vector< float > edeps, SPFloatVector colorArray, float maxEdep );
 
-    /**
-     * Decides whether to hide or show primaries.
-     */
-    WPropBool m_showPrimaries;
-
-    /**
-     * Decides whether to hide or show secondaries.
-     */
-    WPropBool m_showSecondaries;
-
-    /**
-     * Reload data when properties for selection of primaries and secondaries changed
-     *
-     * \param property contains reference to the property which called updateProperty()
-     */
-    void updateCheckboxProperty( WPropertyBase::SPtr property );
-
-    /**
-     * Stores information of the input-csv-data
-     */
-    boost::shared_ptr< WDataSetCSV > m_dataset;
-
-    /**
-     * Decides whether to color points based on the deposited energy or not.
-     */
-    WPropBool m_colorFromEdep;
-
-    /**
-     * Decides whether to scale the points sizes according to their deposited energy.
-     */
-    WPropBool m_sizesFromEdep;
-
-    /**
-     * Property group for filtering options
-     */
-    WPropGroup m_filteringGroup;
-
-    /**
-     * Property group for visualization modes
-     */
-    WPropGroup m_visualizationGroup;
-
-    /**
-     * Property that holds the current selected color when not coloring points based on their deposited energy.
-     */
-    WPropColor m_colorSelection;
 };
 
-#endif  // WMCONVERTERCSV_H
+#endif  // WMFilterProtonData_H

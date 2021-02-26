@@ -49,10 +49,7 @@ public:
 
     void updateProperty();
 
-    /**
-     * Collect all particle types from your input data.
-     */
-    void searchPDGTypes();
+    
 
     bool isPDGTypeSelected( int pdgType );
 
@@ -62,6 +59,11 @@ private:
     void propertyNotifier( WPropertyBase::SPtr property );
 
     void updateSelectedPDGTypes( WPropertyBase::SPtr property );
+
+    /**
+     * Collect all particle types from your input data.
+     */
+    void searchPDGTypes();
 
     /**
      * Get column number by name from header
@@ -147,6 +149,8 @@ private:
      * represents the item type for item-selection
      */
     typedef WItemSelectionItemTyped< std::string > ItemType;
+
+    
 };
 
 #endif  // WMCOLUMNPROPERTYHANDLER_H
