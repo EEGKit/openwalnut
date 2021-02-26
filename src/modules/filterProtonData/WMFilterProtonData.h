@@ -164,13 +164,6 @@ private:
     void setOutputFromCSV( );
 
     /**
-     * Update range of selected eventID rows.
-     * \param minBorder Set the lower border of selection.
-     * \param maxBorder Set the upper border of selection.
-     */
-    void updateRangeOfEventIDSelection( int minBorder, int maxBorder );
-
-    /**
      * Update your mesh when changing properties.
      */
     void updateMesh( );

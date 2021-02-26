@@ -146,6 +146,8 @@ void WMFilterProtonData::properties()
     
     m_propertyStatus->setShowPrimaries( m_propertyStatus->getFilteringGroup()->addProperty( "Show primaries", "Show/hide primaries", true, notifierCheckBox ) );
     m_propertyStatus->setShowSecondaries( m_propertyStatus->getFilteringGroup()->addProperty( "Show secondaries", "Show/hide secondaries", true, notifierCheckBox ) );
+    
+    
     m_propertyStatus->setSizesFromEdep( m_propertyStatus->getVisualizationGroup()->addProperty( "Scale point size", "Scale point size with energy deposition", true, notifierCheckBox ) );
     m_propertyStatus->setColorFromEdep( m_propertyStatus->getVisualizationGroup()->addProperty( "Color by edep", "Color points based on energy deposition", true, notifierCheckBox ) );
     m_propertyStatus->setColorSelection( m_propertyStatus->getVisualizationGroup()->addProperty( "Plain color", "Choose how to color the points when not coloring by edep.", defaultColor::WHITE, notifierCheckBox ) );
@@ -157,17 +159,21 @@ void WMFilterProtonData::properties()
     WModule::properties();
 }
 
-void WMFilterProtonData::setOutputFromCSV( )
-{
-    m_converter = boost::shared_ptr< WMCsvConverter >( new WMCsvConverter() ); 
-    m_converter->setOutputFromCSV(m_protonData, m_propertyStatus);
 
-    m_output_points->updateData( m_converter->getPoints() );
-    m_output_fibers->updateData( m_converter->getFibers() );
+
+void WMFilterProtonData::updateMesh( )
+{
+    WMFilterProtonData::determineMinMaxEventID();
+    WMFilterProtonData::setOutputFromCSV( );
 }
 
-void WMFilterProtonData::updateRangeOfEventIDSelection( int minCap, int maxCap )
+void WMFilterProtonData::determineMinMaxEventID()
 {
+    int eventIDIndex = m_protonData->getColumnIndex( "eventID" );
+    
+    int minCap = std::stoi( m_protonData->getCSVData()->front().at( eventIDIndex ) );
+    int maxCap = std::stoi( m_protonData->getCSVData()->back().at( eventIDIndex ) );
+
     m_propertyStatus->getMinCap()->setMin( minCap );
     m_propertyStatus->getMinCap()->setMax( maxCap );
     m_propertyStatus->getMaxCap()->setMin( minCap );
@@ -182,23 +188,6 @@ void WMFilterProtonData::updateRangeOfEventIDSelection( int minCap, int maxCap )
     if( currentMinCap < 0 )
         m_propertyStatus->getMinCap()->set( 0 );
 }
-
-void WMFilterProtonData::updateMesh( )
-{
-    WMFilterProtonData::determineMinMaxEventID();
-    WMFilterProtonData::setOutputFromCSV( );
-}
-
-void WMFilterProtonData::determineMinMaxEventID()
-{
-    int eventIDIndex = m_protonData->getColumnIndex( "eventID" );
-
-    WMFilterProtonData::updateRangeOfEventIDSelection(
-        std::stoi( m_protonData->getCSVData()->front().at( eventIDIndex ) ),
-        std::stoi( m_protonData->getCSVData()->back().at( eventIDIndex ) ) );
-}
-
-
 
 void WMFilterProtonData::updateCheckboxProperty( WPropertyBase::SPtr property )
 {
@@ -218,4 +207,15 @@ void WMFilterProtonData::updateCheckboxProperty( WPropertyBase::SPtr property )
             m_propertyStatus->getShowSecondaries()->set( true );
         }
     }
+}
+
+
+
+void WMFilterProtonData::setOutputFromCSV( )
+{
+    m_converter = boost::shared_ptr< WMCsvConverter >( new WMCsvConverter() ); 
+    m_converter->setOutputFromCSV(m_protonData, m_propertyStatus);
+
+    m_output_points->updateData( m_converter->getPoints() );
+    m_output_fibers->updateData( m_converter->getFibers() );
 }
