@@ -535,21 +535,21 @@ void WGETexture< TextureType >::setupProperties( double scale, double min )
     m_alpha->setMin( 0.0 );
     m_alpha->setMax( 1.0 );
 
-    m_clipZero = m_properties->addProperty( "Enable Zero Clip", "If enabled, zero values are clipped.", true );
+    m_clipZero = m_properties->addProperty( "Enable zero clip", "If enabled, zero values are clipped.", true );
 
-    m_thresholdEnabled = m_properties->addProperty( "Enable Threshold",
+    m_thresholdEnabled = m_properties->addProperty( "Enable threshold",
                                                     "If enabled, threshold based clipping is used. If not, threshold is ignored.", false );
 
-    m_thresholdLower = m_properties->addProperty( "Lower Threshold", "The threshold used to clip areas below the specified value.", 0.0 );
+    m_thresholdLower = m_properties->addProperty( "Lower threshold", "The threshold used to clip areas below the specified value.", 0.0 );
     m_thresholdLower->setMin( min );
     m_thresholdLower->setMax( min + scale );
 
-    m_thresholdUpper = m_properties->addProperty( "Upper Threshold", "The threshold used to clip areas above the specified value.", 1.0 );
+    m_thresholdUpper = m_properties->addProperty( "Upper threshold", "The threshold used to clip areas above the specified value.", 1.0 );
     m_thresholdUpper->setMin( min );
     m_thresholdUpper->setMax( min + scale );
 
-    m_windowEnabled = m_properties->addProperty( "Enable Windowing", "If enabled, window level settings are applied.", false );
-    m_window = m_properties->addProperty( "Window Level", "Define the interval in the data which is mapped to the colormap.",
+    m_windowEnabled = m_properties->addProperty( "Enable windowing", "If enabled, window level settings are applied.", false );
+    m_window = m_properties->addProperty( "Window level", "Define the interval in the data which is mapped to the colormap.",
                                           make_interval( 0.0, 1.0 ) );
 
     m_interpolation = m_properties->addProperty( "Interpolate", "Interpolation of the volume data.", true, m_propCondition );

@@ -137,7 +137,7 @@ void WMIsosurfaceRaytracer::properties()
 
     m_phongShading  = m_properties->addProperty( "Phong shading", "If enabled, Phong shading gets applied on a per-pixel basis.", true );
 
-    m_phongNoSpec   = m_properties->addProperty( "No Specular Highlights", "Disables specular highlights on the surface. This is especially "
+    m_phongNoSpec   = m_properties->addProperty( "No specular highlights", "Disables specular highlights on the surface. This is especially "
                                                                            "useful when these highlights tamper with the colormap.", false );
 
     m_stochasticJitter = m_properties->addProperty( "Stochastic jitter", "Improves image quality at low sampling rates but introduces slight "
