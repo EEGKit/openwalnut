@@ -295,6 +295,10 @@ float WMPointConnector::hitVertex( osg::Vec3 rayStart, osg::Vec3 rayDir, osg::Ve
     {
         return -1.0;
     }
+    else if( discriminant == 0.0 )
+    {
+        return 0.0;
+    }
     else
     {
         float numerator = -b - sqrt( discriminant );
