@@ -1,0 +1,4 @@
+/home/top2021/SIVERT/sivert-vis-project/src/modules/transferFunctionColorBar/WMTransferFunctionColorBar.cpp
+/home/top2021/SIVERT/sivert-vis-project/src/modules/transferFunctionColorBar/WMTransferFunctionColorBar.h
+/home/top2021/SIVERT/sivert-vis-project/src/modules/transferFunctionColorBar/shaders/WMTransferFunctionColorBar-fragment.glsl
+/home/top2021/SIVERT/sivert-vis-project/src/modules/transferFunctionColorBar/shaders/WMTransferFunctionColorBar-vertex.glsl

@@ -1,0 +1,4 @@
+/home/top2021/SIVERT/sivert-vis-project/src/modules/surfaceIllustrator/WMSurfaceIllustrator.cpp
+/home/top2021/SIVERT/sivert-vis-project/src/modules/surfaceIllustrator/WMSurfaceIllustrator.h
+/home/top2021/SIVERT/sivert-vis-project/src/modules/surfaceIllustrator/shaders/WMSurfaceIllustrator-fragment.glsl
+/home/top2021/SIVERT/sivert-vis-project/src/modules/surfaceIllustrator/shaders/WMSurfaceIllustrator-vertex.glsl

@@ -1,0 +1,1 @@
+/home/top2021/SIVERT/sivert-vis-project/src/modules/pointRenderer/shaders/WMPointRenderer-fragment.glsl

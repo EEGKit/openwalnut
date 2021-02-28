@@ -1,0 +1,4 @@
+/home/top2021/SIVERT/sivert-vis-project/src/modules/navigationSlices/WMNavigationSlices.cpp
+/home/top2021/SIVERT/sivert-vis-project/src/modules/navigationSlices/WMNavigationSlices.h
+/home/top2021/SIVERT/sivert-vis-project/src/modules/navigationSlices/shaders/WMNavigationSlices-fragment.glsl
+/home/top2021/SIVERT/sivert-vis-project/src/modules/navigationSlices/shaders/WMNavigationSlices-vertex.glsl

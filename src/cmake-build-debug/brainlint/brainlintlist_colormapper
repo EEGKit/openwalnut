@@ -1,0 +1,4 @@
+/home/top2021/SIVERT/sivert-vis-project/src/modules/colormapper/WMColormapper.cpp
+/home/top2021/SIVERT/sivert-vis-project/src/modules/colormapper/WMColormapper.h
+/home/top2021/SIVERT/sivert-vis-project/src/modules/colormapper/shaders/WMColormapper-fragment.glsl
+/home/top2021/SIVERT/sivert-vis-project/src/modules/colormapper/shaders/WMColormapper-vertex.glsl

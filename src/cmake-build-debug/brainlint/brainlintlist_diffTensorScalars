@@ -1,0 +1,16 @@
+/home/top2021/SIVERT/sivert-vis-project/src/modules/diffTensorScalars/WAD.cpp
+/home/top2021/SIVERT/sivert-vis-project/src/modules/diffTensorScalars/WDataSetDTIToScalar_I.cpp
+/home/top2021/SIVERT/sivert-vis-project/src/modules/diffTensorScalars/WFA.cpp
+/home/top2021/SIVERT/sivert-vis-project/src/modules/diffTensorScalars/WMD.cpp
+/home/top2021/SIVERT/sivert-vis-project/src/modules/diffTensorScalars/WMDiffTensorScalars.cpp
+/home/top2021/SIVERT/sivert-vis-project/src/modules/diffTensorScalars/WRA.cpp
+/home/top2021/SIVERT/sivert-vis-project/src/modules/diffTensorScalars/WRD.cpp
+/home/top2021/SIVERT/sivert-vis-project/src/modules/diffTensorScalars/WTensorTrace.cpp
+/home/top2021/SIVERT/sivert-vis-project/src/modules/diffTensorScalars/WAD.h
+/home/top2021/SIVERT/sivert-vis-project/src/modules/diffTensorScalars/WDataSetDTIToScalar_I.h
+/home/top2021/SIVERT/sivert-vis-project/src/modules/diffTensorScalars/WFA.h
+/home/top2021/SIVERT/sivert-vis-project/src/modules/diffTensorScalars/WMD.h
+/home/top2021/SIVERT/sivert-vis-project/src/modules/diffTensorScalars/WMDiffTensorScalars.h
+/home/top2021/SIVERT/sivert-vis-project/src/modules/diffTensorScalars/WRA.h
+/home/top2021/SIVERT/sivert-vis-project/src/modules/diffTensorScalars/WRD.h
+/home/top2021/SIVERT/sivert-vis-project/src/modules/diffTensorScalars/WTensorTrace.h

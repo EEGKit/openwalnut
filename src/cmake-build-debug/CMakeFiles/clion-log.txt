@@ -1,0 +1,69 @@
+/home/top2021/Downloads/clion-2020.3.2/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/top2021/SIVERT/sivert-vis-project/src
+-- The C compiler identification is GNU 9.3.0
+-- The CXX compiler identification is GNU 9.3.0
+-- Check for working C compiler: /usr/bin/cc
+-- Check for working C compiler: /usr/bin/cc - works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ - works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- ----------------------------------------------------------------------
+-- Welcome! This is OpenWalnut Build System.
+-- OW Version: "1.5.0dev+gitd24621947"; OW Lib Version: "1.5.0".
+-- ----------------------------------------------------------------------
+-- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.71.0/BoostConfig.cmake (found suitable version "1.71.0", minimum required is "1.46.0") found components: program_options thread filesystem date_time system regex 
+-- Found OpenGL: /usr/lib/x86_64-linux-gnu/libOpenGL.so   
+-- Found osgWidget: /usr/lib/x86_64-linux-gnu/libosgWidget.so  
+-- Found osgViewer: /usr/lib/x86_64-linux-gnu/libosgViewer.so  
+-- Found osgText: /usr/lib/x86_64-linux-gnu/libosgText.so  
+-- Found osgSim: /usr/lib/x86_64-linux-gnu/libosgSim.so  
+-- Found osgGA: /usr/lib/x86_64-linux-gnu/libosgGA.so  
+-- Found osgDB: /usr/lib/x86_64-linux-gnu/libosgDB.so  
+-- Found osgUtil: /usr/lib/x86_64-linux-gnu/libosgUtil.so  
+-- Found osg: /usr/lib/x86_64-linux-gnu/libosg.so  
+-- Found OpenThreads: /usr/lib/x86_64-linux-gnu/libOpenThreads.so  
+-- Found OpenSceneGraph: /usr/lib/x86_64-linux-gnu/libosgWidget.so;/usr/lib/x86_64-linux-gnu/libosgViewer.so;/usr/lib/x86_64-linux-gnu/libosgText.so;/usr/lib/x86_64-linux-gnu/libosgSim.so;/usr/lib/x86_64-linux-gnu/libosgGA.so;/usr/lib/x86_64-linux-gnu/libosgDB.so;/usr/lib/x86_64-linux-gnu/libosgUtil.so;/usr/lib/x86_64-linux-gnu/libosg.so;/usr/lib/x86_64-linux-gnu/libOpenThreads.so (found suitable version "3.6.4", minimum required is "2.8.0") 
+-- Found Eigen3: /usr/include/eigen3 (Required is at least version "2.91.0") 
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/../resources/core/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/../resources/qtgui/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/../resources/platformDependent/qtgui/linux/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/fiberDisplay/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/imageSpaceLIC/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/navigationSlices/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/projectionsAsContext/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/transferFunction1D/resources/
+-- Found niftilib: /usr/lib/libniftiio.so, /usr/lib/libznz.so, /usr/lib/x86_64-linux-gnu/libz.so and include in /usr/include/nifti
+-- Using system installed nifitlib.
+-- Using system installed biosig.
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/readSimpleTextLineData/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/readVCL/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/readVIM/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/writeAmiraMesh/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/writeTransferFunction/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/calculateHistogram/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/calculateTensors/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/diffTensorScalars/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/fiberFilterIndex/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/fiberFilterROI/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/fibersToPoints/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/hierarchicalClustering/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/imageSpaceTensorLIC/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/mergeComponentsToVector/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/mergePoints/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/meshToPoints/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/pickingDVR/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/pickingDVREvaluation/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/pointRenderer/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/sampleOnFibers/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/vectorNormalize/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/vectorScale/resources/
+-- Found resources in /home/top2021/SIVERT/sivert-vis-project/src/modules/template/resources/
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/top2021/SIVERT/sivert-vis-project/src/cmake-build-debug

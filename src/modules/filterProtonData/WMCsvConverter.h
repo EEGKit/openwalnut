@@ -29,12 +29,15 @@
 #include <vector>
 
 #include <boost/lexical_cast.hpp>
-#include "WMProtonData.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
-#include "WMPropertyStatus.h"
 #include "core/dataHandler/WDataSetPointsAndSizes.h"
 
+#include "WMColumnPropertyHandler.h"
+#include "WMConverterIndexes.h"
+#include "WMConverterVectors.h"
+#include "WMPropertyStatus.h"
+#include "WMProtonData.h"
 
 class WMCsvConverter
 {
@@ -67,13 +70,31 @@ private:
      */
     boost::shared_ptr< WDataSetPoints > m_points;
 
+   WColor m_plainColor;
+
+    WMConverterVectors::SPtr m_vectors;
+
+    WMConverterIndexes::SPtr m_indexes;
+
+    WMPropertyStatus::SPtr m_propertyStatus;
+
     /**
      * Normalize energy deposition values to use as RGB values
      * \param edeps vector containing energy deposition values
      * \param colorArray vector containing colors per vertex
      * \param maxEdep maximum present energy deposition value in edeps vector
      */
-    void normalizeEdeps( std::vector< float > edeps, SPFloatVector colorArray, float maxEdep );
+    void normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray, float maxEdep );
+
+    bool canShow( WDataSetCSV::Content::iterator dataRow );
+
+    void addVertexAndColor( WDataSetCSV::Content::iterator dataRow );
+
+    void addEdepAndSize( WDataSetCSV::Content::iterator dataRow, float* maxEdep );
+
+    void calculateFibers();
+
+    void createPointsAndFibers();
 
     /**
      * Create outputs, so it can be displayed by the fiber display and the point renderer.

@@ -1,0 +1,10 @@
+/home/top2021/SIVERT/sivert-vis-project/src/modules/splineSurface/WBSpline.cpp
+/home/top2021/SIVERT/sivert-vis-project/src/modules/splineSurface/WBSplineSurface.cpp
+/home/top2021/SIVERT/sivert-vis-project/src/modules/splineSurface/WMSplineSurface.cpp
+/home/top2021/SIVERT/sivert-vis-project/src/modules/splineSurface/WSurface.cpp
+/home/top2021/SIVERT/sivert-vis-project/src/modules/splineSurface/WBSpline.h
+/home/top2021/SIVERT/sivert-vis-project/src/modules/splineSurface/WBSplineSurface.h
+/home/top2021/SIVERT/sivert-vis-project/src/modules/splineSurface/WMSplineSurface.h
+/home/top2021/SIVERT/sivert-vis-project/src/modules/splineSurface/WSurface.h
+/home/top2021/SIVERT/sivert-vis-project/src/modules/splineSurface/shaders/WMSplineSurface-fragment.glsl
+/home/top2021/SIVERT/sivert-vis-project/src/modules/splineSurface/shaders/WMSplineSurface-vertex.glsl

@@ -1,0 +1,2 @@
+#!/bin/bash
+ declare BRAINLINTFILES=$(cat /home/top2021/SIVERT/sivert-vis-project/src/cmake-build-debug/brainlint/brainlintlist_paintTexture); for B_FILE in $BRAINLINTFILES; do B_FILE=$(echo $B_FILE | tr -d ''); /home/top2021/SIVERT/sivert-vis-project/src/../tools/style/brainlint/brainlint.py --color $B_FILE;done 2>&1| grep -iv 'Total errors found: 0$'|grep -qi 'Total';! $(exit $?)
