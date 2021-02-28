@@ -33,22 +33,68 @@
 class WMProtonData
 {
 public:
+    /**
+     * shared_ptr that points to itself 
+     */
     typedef boost::shared_ptr< WMProtonData > SPtr;
 
+    /**
+     * constructor
+     *
+     * \param csvHeader pointer to a column-header of the CSV-file
+     * \param csvData pointer to a content of the CSV file 
+     */
     explicit WMProtonData( WDataSetCSV::ContentSPtr csvHeader, WDataSetCSV::ContentSPtr csvData );
 
+    /**
+     * getter
+     *
+     * \return pointer to a column-header of the CSV-file
+     */
     WDataSetCSV::ContentSPtr getCSVHeader();
 
+    /**
+     * getter
+     *
+     * \return pointer to a content of the CSV file 
+     */
     WDataSetCSV::ContentSPtr getCSVData();
 
+    /**
+     * setter
+     *
+     * \param csvHeader set m_csvHeader
+     */
     void setCSVHeader( WDataSetCSV::ContentSPtr csvHeader );
 
+    /**
+     * setter
+     *
+     * \param csvData set m_csvData
+     */
     void setCSVData( WDataSetCSV::ContentSPtr csvData );
 
+    /**
+     * setter
+     *
+     * \param columnName Name of column-header of the CSV-file
+     * \param index position of column-header of the CSV-file
+     */
     void setColumnIndex( std::string columnName, int index );
 
+    /**
+     * getter
+     *
+     * \param columnName Name of column-header of the CSV-file
+     * \return return the position of column-header of the CSV-file as int
+     */
     int getColumnIndex( std::string columnName );
 
+    /**
+     * checks whether the columns have been initialized 
+     *
+     * \return true when initialized. false if they are not initialized 
+     */
     bool columnsInitialized();
 
 private:
@@ -62,6 +108,9 @@ private:
      */
     WDataSetCSV::ContentSPtr m_csvData;
 
+    /**
+     * Stores data as map
+     */
     std::map< std::string, int > m_columnMap;
 };
 

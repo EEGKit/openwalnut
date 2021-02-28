@@ -120,6 +120,9 @@ protected:
     virtual void properties();
 
 private:
+    /**
+     * Pointer that points to the Proton data from the CSV file  
+     */
     WMProtonData::SPtr m_protonData;
 
     /**
@@ -143,12 +146,12 @@ private:
     boost::shared_ptr< WDataSetCSV > m_dataset;
 
     /**
-     * 
+     * Contains all property-groups and the subproperties 
      */
     boost::shared_ptr < WMPropertyStatus > m_propertyStatus;
 
     /**
-     * 
+     * Contains the algorithm that converts the raw CSV file into compatible WDataSets (Points, Fibers, PointsAndSizes, PointConnector etc.)
      */
     boost::shared_ptr < WMCsvConverter > m_converter;
 

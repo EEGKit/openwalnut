@@ -27,6 +27,7 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include <boost/lexical_cast.hpp>
 #include "core/dataHandler/WDataSetFibers.h"
@@ -53,8 +54,18 @@ public:
      */
     typedef boost::shared_ptr< std::vector< size_t > > SPSizeVector;
 
+    /**
+     * Getter
+     *
+     * \return shared_ptr of generated fibers from the CSV file 
+     */
     boost::shared_ptr< WDataSetFibers > getFibers();
 
+    /**
+     * Getter
+     *
+     * \return shared_ptr of generated Points from the CSV file 
+     */
     boost::shared_ptr< WDataSetPoints > getPoints();
 
 private:
@@ -69,12 +80,21 @@ private:
      */
     boost::shared_ptr< WDataSetPoints > m_points;
 
-   WColor m_plainColor;
+    WColor m_plainColor;
 
+    /**
+     * Stores points for point and fiber renderer
+     */
     WMConverterVectors::SPtr m_vectors;
 
+    /**
+     * Stores indexes for fiber renderer
+     */
     WMConverterIndexes::SPtr m_indexes;
 
+    /**
+     * includes all property groups 
+     */
     WMPropertyStatus::SPtr m_propertyStatus;
 
     /**
@@ -85,14 +105,34 @@ private:
      */
     void normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray, float maxEdep );
 
+
+    /**
+     * checks whether the requirements are fulfilled
+     */
     bool canShow( WDataSetCSV::Content::iterator dataRow );
 
+    /**
+     * Create vertex and color for point renderer (vertex for fiber renderer)
+     *
+     * \param dataRow each row of the csv file (content of row)
+     */
     void addVertexAndColor( WDataSetCSV::Content::iterator dataRow );
 
+    /**
+     * Create edep and sizes for point/fiber renderer
+     *
+     * \param dataRow each row of the csv file (content of row)
+     */
     void addEdepAndSize( WDataSetCSV::Content::iterator dataRow, float* maxEdep );
 
+    /**
+     * calculate the property of WDataSetFiber (index, length, verticesReverse)
+     */
     void calculateFibers();
 
+    /**
+     * Create the fibers and points for fiber/points renderer
+     */
     void createPointsAndFibers();
 
     /**
