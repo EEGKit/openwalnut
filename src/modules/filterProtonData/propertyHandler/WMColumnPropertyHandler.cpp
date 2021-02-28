@@ -38,37 +38,12 @@ WMColumnPropertyHandler::WMColumnPropertyHandler( WMProtonData::SPtr protonData,
 
 void WMColumnPropertyHandler::createProperties()
 {
-    searchPDGTypes();
-
     WPropertyBase::PropertyChangeNotifierType notifier = boost::bind( &WMColumnPropertyHandler::propertyNotifier,
                                                                 this, boost::placeholders::_1 );
 
-    WPropertyBase::PropertyChangeNotifierType pdgEncodingnotifier = boost::bind( &WMColumnPropertyHandler::updateSelectedPDGTypes,
-                                                                this, boost::placeholders::_1 );
+    InitializeSelectionItem();
 
     m_columnSelectionGroup = m_properties->addPropertyGroup( "Select columns", "Select the columns which should be used" );
-
-    m_possibleSelectionsUsingTypes = WItemSelection::SPtr( new WItemSelection() );
-    m_possibleSelection = WItemSelection::SPtr( new WItemSelection() );
-
-    std::vector< std::string > header = m_protonData->getCSVHeader()->at( 0 );
-
-    for( std::vector<std::string>::iterator colName = header.begin(); colName != header.end(); colName++ )
-    {
-        m_possibleSelectionsUsingTypes->addItem( ItemType::create( *colName, *colName, "",  NULL ) );
-    }
-
-    for( auto pdgType : m_pdgTypes )
-    {
-        m_possibleSelection->addItem( std::to_string( pdgType ) );
-    }
-
-    m_selectedPDGTypes.push_back( std::to_string( m_pdgTypes[0] ) );
-
-    m_multiSelection = m_columnSelectionGroup->addProperty( "PDGEncoding", "Choose particle type(s) you want show",
-                                                            m_possibleSelection->getSelectorFirst(), pdgEncodingnotifier );
-    WPropertyHelper::PC_NOTEMPTY::addTo( m_multiSelection );
-
 
     m_singleSelectionForPosX = addHeaderProperty( "posX", notifier );
     m_singleSelectionForPosY = addHeaderProperty( "posY", notifier );
@@ -79,9 +54,15 @@ void WMColumnPropertyHandler::createProperties()
     m_singleSelectionForParentID = addHeaderProperty( "parentID", notifier );
 }
 
-void WMColumnPropertyHandler::updateProperty()
+void WMColumnPropertyHandler::InitializeSelectionItem()
 {
-    // TODO(robin.eschbach) Dynamic update of properties (when data is changed)
+    m_possibleSelectionsUsingTypes = WItemSelection::SPtr( new WItemSelection() );
+
+    std::vector< std::string > header = m_protonData->getCSVHeader()->at( 0 );
+    for( std::vector<std::string>::iterator colName = header.begin(); colName != header.end(); colName++ )
+    {
+        m_possibleSelectionsUsingTypes->addItem( ItemType::create( *colName, *colName, "",  NULL ) );
+    }
 }
 
 WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string headerName, WPropertyBase::PropertyChangeNotifierType notifier )
@@ -100,6 +81,16 @@ WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string headerNam
     return selection;
 }
 
+int WMColumnPropertyHandler::getColumnNumberByName( std::string columnNameToMatch, std::vector< std::string > headerToSearchIn )
+{
+    int pos = 0;
+    for( std::vector< std::string >::iterator it = headerToSearchIn.begin(); it != headerToSearchIn.end(); it++ )
+    {
+        if( *it == columnNameToMatch ) return pos;
+        pos++;
+    }
+    return -1;
+}
 
 void WMColumnPropertyHandler::propertyNotifier( WPropertyBase::SPtr property )
 {
@@ -145,67 +136,13 @@ void WMColumnPropertyHandler::propertyNotifier( WPropertyBase::SPtr property )
     if( selector != NULL )
     {
         std::string selectedValue = selector->at( 0 )->getAs< ItemType >()->getValue();
+
+        
         m_protonData->setColumnIndex( columnName, getColumnNumberByName( selectedValue, m_protonData->getCSVHeader()->at( 0 ) ) );
 
-        m_dataUpdate( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
+        m_dataUpdate( );
     }
 }
 
-int WMColumnPropertyHandler::getColumnNumberByName( std::string columnNameToMatch, std::vector< std::string > headerToSearchIn )
-{
-    int pos = 0;
-    for( std::vector< std::string >::iterator it = headerToSearchIn.begin(); it != headerToSearchIn.end(); it++ )
-    {
-        if( *it == columnNameToMatch ) return pos;
-        pos++;
-    }
-    return -1;
-}
 
-void WMColumnPropertyHandler::searchPDGTypes()
-{
-    int pdgColumnIndex = m_protonData->getColumnIndex( "PDGEncoding" );
-
-    //for( WDataSetCSV::Content::iterator dataRow = m_protonData->getCSVData().begin(); dataRow < m_protonData->getCSVData().end(); dataRow++ )
-    for( auto idx = 0; idx < m_protonData->getCSVData()->size(); idx++)
-    {
-        std::vector< std::string > row = m_protonData->getCSVData()->at( idx );
-        int currentParticleID = std::stoi( row.at( pdgColumnIndex ) );
-
-        if( std::find( m_pdgTypes.begin(), m_pdgTypes.end(), currentParticleID ) == m_pdgTypes.end() )
-        {
-            m_pdgTypes.push_back( currentParticleID );
-        }
-    }
-}
-
-void WMColumnPropertyHandler::updateSelectedPDGTypes( WPropertyBase::SPtr property )
-{
-    m_selectedPDGTypes.clear();
-
-    if( m_multiSelection->changed() )
-    {
-        WItemSelector selectedItems = m_multiSelection->get( true );
-        //PDGEncodingIndex = getColumnNumberByName( "PDGEncoding", m_csvHeader.at( 0 ) );
-
-        for( int i = 0; i < selectedItems.size(); ++i )
-        {
-           m_selectedPDGTypes.push_back( selectedItems.at( i )->getName() );
-        }
-    }
-
-    m_dataUpdate( m_protonData->getCSVHeader(), m_protonData->getCSVData() );
-}
-
-bool WMColumnPropertyHandler::isPDGTypeSelected( int pdgType )
-{
-    for( auto idx = 0; idx < m_selectedPDGTypes.size(); idx++ )
-    {
-        if(pdgType == std::stoi( m_selectedPDGTypes[idx] ) )
-        {
-            return true;
-        }
-    }
-    return false;
-}
 

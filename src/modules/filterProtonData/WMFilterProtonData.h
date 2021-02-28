@@ -44,7 +44,6 @@
 #include "core/kernel/WModule.h"
 
 #include "WMProtonData.h"
-#include "WMColumnPropertyHandler.h"
 
 #include "WMPropertyStatus.h"
 #include "WMCsvConverter.h"
@@ -123,8 +122,6 @@ protected:
 private:
     WMProtonData::SPtr m_protonData;
 
-    WMColumnPropertyHandler::SPtr m_columnPropertyHandler;
-
     /**
      * Input connector (required for this module).
      */
@@ -163,30 +160,8 @@ private:
      */
     void setOutputFromCSV( );
 
-    /**
-     * Update your mesh when changing properties.
-     */
-    void updateMesh( );
-
-     /**
-     * Reload data when properties for selection of primaries and secondaries changed
-     *
-     * \param property contains reference to the property which called updateProperty()
-     */
-    void updateCheckboxProperty( WPropertyBase::SPtr property );
-
-     /**
-     * Determines smalles und biggest eventID.
-     */
-    void determineMinMaxEventID();
-
-    /**
-     * Normalize energy deposition values to use as RGB values
-     * \param edeps vector containing energy deposition values
-     * \param colorArray vector containing colors per vertex
-     * \param maxEdep maximum present energy deposition value in edeps vector
-     */
-    void normalizeEdeps( std::vector< float > edeps, SPFloatVector colorArray, float maxEdep );
+    boost::shared_ptr< WModuleOutputData < WDataSet > > createOutputData(std::string headerName, std::string description);
+    
 
 };
 

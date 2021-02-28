@@ -51,6 +51,21 @@ void WMProtonData::setCSVHeader( WDataSetCSV::ContentSPtr csvHeader )
     }
 }
 
+void WMProtonData::setCSVData( WDataSetCSV::ContentSPtr csvData )
+{
+    m_csvData = csvData;
+}
+
+WDataSetCSV::ContentSPtr WMProtonData::getCSVData()
+{
+    return m_csvData;
+}
+
+WDataSetCSV::ContentSPtr WMProtonData::getCSVHeader()
+{
+    return m_csvHeader;
+}
+
 void WMProtonData::setColumnIndex( std::string columnName, int index )
 {
     m_columnMap[columnName] = index;

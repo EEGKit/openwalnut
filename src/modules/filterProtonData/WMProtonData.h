@@ -37,22 +37,13 @@ public:
 
     explicit WMProtonData( WDataSetCSV::ContentSPtr csvHeader, WDataSetCSV::ContentSPtr csvData );
 
-    WDataSetCSV::ContentSPtr getCSVHeader()
-    {
-        return m_csvHeader;
-    }
+    WDataSetCSV::ContentSPtr getCSVHeader();
 
-    WDataSetCSV::ContentSPtr getCSVData()
-    {
-        return m_csvData;
-    }
+    WDataSetCSV::ContentSPtr getCSVData();
 
     void setCSVHeader( WDataSetCSV::ContentSPtr csvHeader );
 
-    void setCSVData( WDataSetCSV::ContentSPtr csvData )
-    {
-        m_csvData = csvData;
-    }
+    void setCSVData( WDataSetCSV::ContentSPtr csvData );
 
     void setColumnIndex( std::string columnName, int index );
 

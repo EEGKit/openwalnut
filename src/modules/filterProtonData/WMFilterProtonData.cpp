@@ -67,9 +67,6 @@ void WMFilterProtonData::moduleMain()
 
     m_propertyStatus = boost::shared_ptr< WMPropertyStatus >( new WMPropertyStatus() );
 
-    m_propertyStatus->setFilteringGroup( m_properties->addPropertyGroup( "Filtering", "Filter primaries and secondaries" ) );
-    m_propertyStatus->setVisualizationGroup( m_properties->addPropertyGroup( "Visualization", "Visualization options" ) );
-    
     while( !m_shutdownFlag() )
     {
         m_moduleState.wait();
@@ -87,7 +84,17 @@ void WMFilterProtonData::moduleMain()
         if( m_protonData == NULL )
         {
             m_protonData = WMProtonData::SPtr( new WMProtonData( csvHeader, csvData ) );
+
             m_propertyStatus->setColumnPropertyHandler(WMColumnPropertyHandler::SPtr( new WMColumnPropertyHandler( m_protonData, m_properties,
+                boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
+
+            m_propertyStatus->setFilterPropertyHandler(WMFilterPropertyHandler::SPtr( new WMFilterPropertyHandler( m_protonData, m_properties,
+                boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
+
+            m_propertyStatus->setVisualizationPropertyHandler(WMVisualizationPropertyHandler::SPtr( new WMVisualizationPropertyHandler( m_protonData, m_properties,
+                boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
+
+            m_propertyStatus->setEventIDLimitationPropertyHandler(WMEventIDLimitationPropertyHandler::SPtr( new WMEventIDLimitationPropertyHandler( m_protonData, m_properties,
                 boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
         }
         else
@@ -96,9 +103,11 @@ void WMFilterProtonData::moduleMain()
             m_protonData->setCSVData( csvData );
         }
 
-        properties();
-
         m_propertyStatus->getColumnPropertyHandler()->createProperties();
+        m_propertyStatus->getFilterPropertyHandler()->createProperties();
+        m_propertyStatus->getVisualizationPropertyHandler()->createProperties();
+        m_propertyStatus->getEventIDLimitationPropertyHandler()->createProperties();
+
         setOutputFromCSV( );
     }
 }
@@ -107,19 +116,8 @@ void WMFilterProtonData::connectors()
 {
     m_input = WModuleInputData< WDataSetCSV >::createAndAdd( shared_from_this(), "in", "CSV_input" );
 
-    m_output_points = boost::shared_ptr< WModuleOutputData< WDataSet > >(
-            new WModuleOutputData< WDataSet >(
-                    shared_from_this(),
-                    "output points",
-                    "Output CSV data as Point data" )
-    );
-
-    m_output_fibers = boost::shared_ptr< WModuleOutputData< WDataSet > >(
-            new WModuleOutputData< WDataSet >(
-                    shared_from_this(),
-                    "output fibers",
-                    "Output CSV data as Fiber data" )
-    );
+    m_output_points = createOutputData("output points", "Output CSV data as Point data");
+    m_output_fibers = createOutputData("output fibers",  "Output CSV data as Fiber data");
 
     addConnector( m_output_points );
     addConnector( m_output_fibers );
@@ -129,93 +127,22 @@ void WMFilterProtonData::connectors()
 
 void WMFilterProtonData::properties()
 {
-    
-
-    if( m_dataset == NULL )
-    {
-        return;
-    }
-
-    WPropertyBase::PropertyChangeNotifierType notifierCheckBox = boost::bind( &WMFilterProtonData::updateCheckboxProperty,
-                                                                this, boost::placeholders::_1 );
-
-    WPropertyBase::PropertyChangeNotifierType eventIDNotifier = boost::bind( &WMFilterProtonData::updateMesh,
-                                                                this);
-    
-    WPropGroup eventIDGroup = m_properties->addPropertyGroup( "Event ID Limitation", "Adjust the range of eventIDs to show.", 0 );
-    
-    m_propertyStatus->setShowPrimaries( m_propertyStatus->getFilteringGroup()->addProperty( "Show primaries", "Show/hide primaries", true, notifierCheckBox ) );
-    m_propertyStatus->setShowSecondaries( m_propertyStatus->getFilteringGroup()->addProperty( "Show secondaries", "Show/hide secondaries", true, notifierCheckBox ) );
-    
-    
-    m_propertyStatus->setSizesFromEdep( m_propertyStatus->getVisualizationGroup()->addProperty( "Scale point size", "Scale point size with energy deposition", true, notifierCheckBox ) );
-    m_propertyStatus->setColorFromEdep( m_propertyStatus->getVisualizationGroup()->addProperty( "Color by edep", "Color points based on energy deposition", true, notifierCheckBox ) );
-    m_propertyStatus->setColorSelection( m_propertyStatus->getVisualizationGroup()->addProperty( "Plain color", "Choose how to color the points when not coloring by edep.", defaultColor::WHITE, notifierCheckBox ) );
-    m_propertyStatus->setMinCap( eventIDGroup->addProperty( "Min Cap", "Set your minium border of your range.", 1, eventIDNotifier ) );
-    m_propertyStatus->setMaxCap( eventIDGroup->addProperty( "Max Cap", "Set your maximum border of your range.", 2000, eventIDNotifier ) );
-
-    WMFilterProtonData::determineMinMaxEventID();
-
     WModule::properties();
 }
 
-
-
-void WMFilterProtonData::updateMesh( )
-{
-    WMFilterProtonData::determineMinMaxEventID();
-    WMFilterProtonData::setOutputFromCSV( );
-}
-
-void WMFilterProtonData::determineMinMaxEventID()
-{
-    int eventIDIndex = m_protonData->getColumnIndex( "eventID" );
-    
-    int minCap = std::stoi( m_protonData->getCSVData()->front().at( eventIDIndex ) );
-    int maxCap = std::stoi( m_protonData->getCSVData()->back().at( eventIDIndex ) );
-
-    m_propertyStatus->getMinCap()->setMin( minCap );
-    m_propertyStatus->getMinCap()->setMax( maxCap );
-    m_propertyStatus->getMaxCap()->setMin( minCap );
-    m_propertyStatus->getMaxCap()->setMax( maxCap );
-
-    int currentMinCap = m_propertyStatus->getMinCap()->get();
-    int currentMaxCap = m_propertyStatus->getMaxCap()->get();
-
-    if( currentMaxCap < currentMinCap )
-        m_propertyStatus->getMaxCap()->set( currentMinCap );
-
-    if( currentMinCap < 0 )
-        m_propertyStatus->getMinCap()->set( 0 );
-}
-
-void WMFilterProtonData::updateCheckboxProperty( WPropertyBase::SPtr property )
-{
-    if( m_propertyStatus->getShowPrimaries()->get() || m_propertyStatus->getShowSecondaries()->get() )
-    {
-        setOutputFromCSV( );
-    }
-    else
-    {
-        if( property == m_propertyStatus->getShowPrimaries() )
-        {
-            m_propertyStatus->getShowPrimaries()->set( true );
-        }
-
-        if( property == m_propertyStatus->getShowSecondaries() )
-        {
-            m_propertyStatus->getShowSecondaries()->set( true );
-        }
-    }
-}
-
-
-
 void WMFilterProtonData::setOutputFromCSV( )
 {
-    m_converter = boost::shared_ptr< WMCsvConverter >( new WMCsvConverter() ); 
-    m_converter->setOutputFromCSV(m_protonData, m_propertyStatus);
-
+    m_converter = boost::shared_ptr< WMCsvConverter >( new WMCsvConverter(m_protonData, m_propertyStatus) ); 
     m_output_points->updateData( m_converter->getPoints() );
     m_output_fibers->updateData( m_converter->getFibers() );
+}
+
+boost::shared_ptr< WModuleOutputData< WDataSet > > WMFilterProtonData::createOutputData(std::string headerName, std::string description)
+{
+    return boost::shared_ptr< WModuleOutputData< WDataSet > >(
+            new WModuleOutputData< WDataSet >(
+                    shared_from_this(),
+                    headerName,
+                    description )
+    );
 }

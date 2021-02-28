@@ -32,12 +32,12 @@
 
 #include "core/common/WItemSelectionItemTyped.h"
 
-#include "WMProtonData.h"
+#include "../WMProtonData.h"
 
 class WMColumnPropertyHandler
 {
 public:
-    typedef boost::function< void( WDataSetCSV::ContentSPtr, WDataSetCSV::ContentSPtr ) > CallbackPtr;
+    typedef boost::function< void( ) > CallbackPtr;
 
     typedef boost::shared_ptr< WMColumnPropertyHandler > SPtr;
 
@@ -47,32 +47,10 @@ public:
 
     void createProperties();
 
-    void updateProperty();
-
-    
-
-    bool isPDGTypeSelected( int pdgType );
-
 private:
     WPropSelection addHeaderProperty( std::string headerName, WPropertyBase::PropertyChangeNotifierType notifier );
 
     void propertyNotifier( WPropertyBase::SPtr property );
-
-    void updateSelectedPDGTypes( WPropertyBase::SPtr property );
-
-    /**
-     * Collect all particle types from your input data.
-     */
-    void searchPDGTypes();
-
-    /**
-     * Get column number by name from header
-     *
-     * \param columnNameToMatch Search for the specified column name.
-     * \param headerToSearchIn Search in specified header.
-     * \return Column number, where columnToMatch is in headerToSearchIn
-     */
-    int getColumnNumberByName( std::string columnNameToMatch, std::vector<std::string> headerToSearchIn );
 
     WMProtonData::SPtr m_protonData;
 
@@ -126,31 +104,20 @@ private:
     WPropSelection m_singleSelectionForParentID;
 
     /**
-     * Stores every unique particle id.
-     */
-    std::vector < int > m_pdgTypes;
-
-    /**
-     * Stores selectable items.
-     */
-    boost::shared_ptr< WItemSelection > m_possibleSelection;
-
-    /**
-     * Stores users selected items.
-     */
-    WPropSelection m_multiSelection;
-
-    /**
-     * 
-     */
-    std::vector < std::string > m_selectedPDGTypes;
-
-     /**
      * represents the item type for item-selection
      */
     typedef WItemSelectionItemTyped< std::string > ItemType;
 
-    
+    /**
+     * Get column number by name from header
+     *
+     * \param columnNameToMatch Search for the specified column name.
+     * \param headerToSearchIn Search in specified header.
+     * \return Column number, where columnToMatch is in headerToSearchIn
+     */
+    int getColumnNumberByName( std::string columnNameToMatch, std::vector<std::string> headerToSearchIn );
+
+    void InitializeSelectionItem();
 };
 
 #endif  // WMCOLUMNPROPERTYHANDLER_H

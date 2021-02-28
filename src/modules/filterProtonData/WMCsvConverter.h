@@ -32,7 +32,6 @@
 #include "WMProtonData.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
-#include "WMColumnPropertyHandler.h"
 #include "WMPropertyStatus.h"
 #include "core/dataHandler/WDataSetPointsAndSizes.h"
 
@@ -40,7 +39,7 @@
 class WMCsvConverter
 {
 public:
-    WMCsvConverter();
+    WMCsvConverter(WMProtonData::SPtr protonData, boost::shared_ptr< WMPropertyStatus > propertystatus);
 
     /**
      * represents a boost::shared_ptr to a vector containing a vector of floats.
@@ -51,14 +50,6 @@ public:
      * represents a boost::shared_ptr to a vector containing a vector of size_t.
      */
     typedef boost::shared_ptr< std::vector< size_t > > SPSizeVector;
-
-
-    /**
-     * Create outputs, so it can be displayed by the fiber display and the point renderer.
-     *
-     * \param protonData WDataSetCSV::Content object containing data.
-     */
-    void setOutputFromCSV( WMProtonData::SPtr protonData, boost::shared_ptr< WMPropertyStatus > propertystatus);
 
     boost::shared_ptr< WDataSetFibers > getFibers();
 
@@ -83,6 +74,13 @@ private:
      * \param maxEdep maximum present energy deposition value in edeps vector
      */
     void normalizeEdeps( std::vector< float > edeps, SPFloatVector colorArray, float maxEdep );
+
+    /**
+     * Create outputs, so it can be displayed by the fiber display and the point renderer.
+     *
+     * \param protonData WDataSetCSV::Content object containing data.
+     */
+    void setOutputFromCSV( WMProtonData::SPtr protonData, boost::shared_ptr< WMPropertyStatus > propertystatus);
     
 };
 

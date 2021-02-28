@@ -25,95 +25,44 @@
 #ifndef WMPROPERTYSTATUS_H
 #define WMPROPERTYSTATUS_H
 
+#include <boost/shared_ptr.hpp>
 
 #include "core/kernel/WModule.h"
-#include "WMColumnPropertyHandler.h"
+
+#include "propertyHandler/WMColumnPropertyHandler.h"
+#include "propertyHandler/WMFilterPropertyHandler.h"
+#include "propertyHandler/WMVisualizationPropertyHandler.h"
+#include "propertyHandler/WMEventIDLimitationPropertyHandler.h"
 
 class WMPropertyStatus
 {
-
 public:
+    typedef boost::shared_ptr< WMPropertyStatus > SPtr;
+
     WMPropertyStatus();
-
-    WPropBool getShowPrimaries();
-    void setShowPrimaries( WPropBool showPrimaries );
-
-    WPropBool getShowSecondaries();
-    void setShowSecondaries( WPropBool showSecondaries );
-
-    WPropInt getMinCap();
-    void setMinCap( WPropInt minCap );
-
-    WPropInt getMaxCap();
-    void setMaxCap( WPropInt maxCap );
-
-    WPropBool getColorFromEdep();
-    void setColorFromEdep( WPropBool colorFromEdep);
-
-    WPropBool getSizesFromEdep();
-    void setSizesFromEdep( WPropBool sizesFromEdep);
-
-    WPropGroup getFilteringGroup();
-    void setFilteringGroup( WPropGroup filteringGroup);
-
-    WPropGroup getVisualizationGroup();
-    void setVisualizationGroup( WPropGroup visualizationGroup);
-
-    WPropColor getColorSelection();
-    void setColorSelection( WPropColor colorSelection);
 
     WMColumnPropertyHandler::SPtr getColumnPropertyHandler();
     void setColumnPropertyHandler( WMColumnPropertyHandler::SPtr columnPropertyHandler);
 
+    WMFilterPropertyHandler::SPtr getFilterPropertyHandler();
+    void setFilterPropertyHandler( WMFilterPropertyHandler::SPtr filterPropertyHandler);
+
+    WMVisualizationPropertyHandler::SPtr getVisualizationPropertyHandler();
+    void setVisualizationPropertyHandler( WMVisualizationPropertyHandler::SPtr visualizationPropertyHandler);
+
+    WMEventIDLimitationPropertyHandler::SPtr getEventIDLimitationPropertyHandler();
+    void setEventIDLimitationPropertyHandler( WMEventIDLimitationPropertyHandler::SPtr eventIDLimitationPropertyHandler);
+
 private:
-    /**
-     * Decides whether to hide or show primaries.
-     */
-    WPropBool m_showPrimaries;
-
-    /**
-     * Decides whether to hide or show secondaries.
-     */
-    WPropBool m_showSecondaries;
-
-    /**
-     * Set lower border of range of eventID selection.
-     */
-    WPropInt m_minCap;
-
-    /**
-     * Set upper border of range of eventID selection.
-     */
-    WPropInt m_maxCap;
-
-     /**
-     * Decides whether to color points based on the deposited energy or not.
-     */
-    WPropBool m_colorFromEdep;
-
-    /**
-     * Decides whether to scale the points sizes according to their deposited energy.
-     */
-    WPropBool m_sizesFromEdep;
-
-    /**
-     * Property group for filtering options
-     */
-    WPropGroup m_filteringGroup;
-
-    /**
-     * Property group for visualization modes
-     */
-    WPropGroup m_visualizationGroup;
-
-    /**
-     * Property that holds the current selected color when not coloring points based on their deposited energy.
-     */
-    WPropColor m_colorSelection;
-
 
     WMColumnPropertyHandler::SPtr m_columnPropertyHandler;
 
+    WMFilterPropertyHandler::SPtr m_filterPropertyHandler;
+
+    WMVisualizationPropertyHandler::SPtr m_visualizationPropertyHandler;
+
+    WMEventIDLimitationPropertyHandler::SPtr m_eventIDLimitationPropertyHandler;
+    
 };
 
 

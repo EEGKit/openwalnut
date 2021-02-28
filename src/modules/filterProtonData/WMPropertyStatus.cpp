@@ -26,106 +26,6 @@
 
 WMPropertyStatus::WMPropertyStatus()
 {
-    m_showPrimaries = NULL;
-    m_showSecondaries = NULL;
-    m_minCap = NULL;
-    m_maxCap = NULL;
-    m_colorFromEdep = NULL;
-    m_sizesFromEdep = NULL;
-    m_filteringGroup = NULL;
-    m_visualizationGroup = NULL;
-    m_colorSelection = NULL;
-    m_columnPropertyHandler = NULL;
-}
-
-WPropBool WMPropertyStatus::getShowPrimaries()
-{
-    return m_showPrimaries;
-}
-
-void WMPropertyStatus::setShowPrimaries( WPropBool showPrimaries )
-{
-    m_showPrimaries = showPrimaries;
-}
-
-WPropBool WMPropertyStatus::getShowSecondaries()
-{
-    return m_showSecondaries;
-}
-
-void WMPropertyStatus::setShowSecondaries( WPropBool showSecondaries )
-{
-    m_showSecondaries = showSecondaries;
-}
-
-WPropInt WMPropertyStatus::getMinCap()
-{
-    return m_minCap;
-}
-
-void WMPropertyStatus::setMinCap( WPropInt minCap )
-{
-    m_minCap = minCap;
-}
-
-WPropInt WMPropertyStatus::getMaxCap()
-{
-    return m_maxCap;
-}
-
-void WMPropertyStatus::setMaxCap( WPropInt maxCap )
-{
-    m_maxCap = maxCap;
-}
-
-WPropBool WMPropertyStatus::getColorFromEdep()
-{
-    return m_colorFromEdep;
-}
-
-void WMPropertyStatus::setColorFromEdep( WPropBool colorFromEdep)
-{
-    m_colorFromEdep = colorFromEdep;
-}
-
-WPropBool WMPropertyStatus::getSizesFromEdep()
-{
-    return m_sizesFromEdep;
-}
-
-void WMPropertyStatus::setSizesFromEdep( WPropBool sizesFromEdep)
-{
-    m_sizesFromEdep = sizesFromEdep;
-}
-
-WPropGroup WMPropertyStatus::getFilteringGroup()
-{
-    return m_filteringGroup;
-}
-
-void WMPropertyStatus::setFilteringGroup( WPropGroup filteringGroup)
-{
-    m_filteringGroup = filteringGroup;
-}
-
-WPropGroup WMPropertyStatus::getVisualizationGroup()
-{
-    return m_visualizationGroup;
-}
-
-void WMPropertyStatus::setVisualizationGroup( WPropGroup visualizationGroup)
-{
-    m_visualizationGroup = visualizationGroup;
-}
-
-WPropColor WMPropertyStatus::getColorSelection()
-{
-    return m_colorSelection;
-}
-
-void WMPropertyStatus::setColorSelection( WPropColor colorSelection)
-{
-    m_colorSelection = colorSelection;
 }
 
 WMColumnPropertyHandler::SPtr WMPropertyStatus::getColumnPropertyHandler()
@@ -136,6 +36,36 @@ WMColumnPropertyHandler::SPtr WMPropertyStatus::getColumnPropertyHandler()
 void WMPropertyStatus::setColumnPropertyHandler( WMColumnPropertyHandler::SPtr columnPropertyHandler)
 {
     m_columnPropertyHandler = columnPropertyHandler;
+}
+
+WMFilterPropertyHandler::SPtr WMPropertyStatus::getFilterPropertyHandler()
+{
+    return m_filterPropertyHandler;
+}
+
+void WMPropertyStatus::setFilterPropertyHandler( WMFilterPropertyHandler::SPtr filterPropertyHandler)
+{
+    m_filterPropertyHandler = filterPropertyHandler;
+}
+
+WMVisualizationPropertyHandler::SPtr WMPropertyStatus::getVisualizationPropertyHandler()
+{
+    return m_visualizationPropertyHandler;
+}
+    
+void WMPropertyStatus::setVisualizationPropertyHandler( WMVisualizationPropertyHandler::SPtr visualizationPropertyHandler)
+{
+    m_visualizationPropertyHandler = visualizationPropertyHandler;
+}
+
+WMEventIDLimitationPropertyHandler::SPtr WMPropertyStatus::getEventIDLimitationPropertyHandler()
+{
+    return m_eventIDLimitationPropertyHandler;
+}
+
+void WMPropertyStatus::setEventIDLimitationPropertyHandler( WMEventIDLimitationPropertyHandler::SPtr eventIDLimitationPropertyHandler)
+{
+    m_eventIDLimitationPropertyHandler = eventIDLimitationPropertyHandler;
 }
 
 #include "WMPropertyStatus.h"
