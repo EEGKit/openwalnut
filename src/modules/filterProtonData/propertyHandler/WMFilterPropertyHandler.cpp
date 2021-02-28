@@ -38,10 +38,19 @@ void WMFilterPropertyHandler::createProperties()
 {
     m_filteringGroup = m_properties->addPropertyGroup( "Filtering", "Filter primaries and secondaries" );
 
+    createCheckBoxForPrimaryAndSecondary();
+    createMultiSelectionForPDG();
+}
+
+void WMFilterPropertyHandler::createCheckBoxForPrimaryAndSecondary()
+{
     WPropertyBase::PropertyChangeNotifierType notifierCheckBox = boost::bind( &WMFilterPropertyHandler::updateCheckboxProperty, this, boost::placeholders::_1 );
     m_showPrimaries = m_filteringGroup->addProperty( "Show primaries", "Show/hide primaries", true, notifierCheckBox );
     m_showSecondaries = m_filteringGroup->addProperty( "Show secondaries", "Show/hide secondaries", true, notifierCheckBox );
+}
 
+void WMFilterPropertyHandler::createMultiSelectionForPDG()
+{
     WPropertyBase::PropertyChangeNotifierType pdgEncodingnotifier = boost::bind( &WMFilterPropertyHandler::updateSelectedPDGTypes,this, boost::placeholders::_1 );
 
     m_possibleSelection = WItemSelection::SPtr( new WItemSelection() );
@@ -56,7 +65,6 @@ void WMFilterPropertyHandler::createProperties()
     m_multiSelection = m_filteringGroup->addProperty( "PDGEncoding", "Choose particle type(s) you want show",
                                                             m_possibleSelection->getSelectorFirst(), pdgEncodingnotifier );
     WPropertyHelper::PC_NOTEMPTY::addTo( m_multiSelection );
-
 }
 
 WPropBool WMFilterPropertyHandler::getShowPrimaries()

@@ -55,6 +55,10 @@ private:
 
     void updateSelectedPDGTypes( WPropertyBase::SPtr property );
 
+    void createCheckBoxForPrimaryAndSecondary();
+
+    void createMultiSelectionForPDG();
+
     /**
      * Collect all particle types from your input data.
      */
