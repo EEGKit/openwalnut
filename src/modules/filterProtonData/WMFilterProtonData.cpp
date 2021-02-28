@@ -133,6 +133,7 @@ void WMFilterProtonData::properties()
 void WMFilterProtonData::setOutputFromCSV( )
 {
     m_converter = boost::shared_ptr< WMCsvConverter >( new WMCsvConverter(m_protonData, m_propertyStatus) ); 
+
     m_output_points->updateData( m_converter->getPoints() );
     m_output_fibers->updateData( m_converter->getFibers() );
 }

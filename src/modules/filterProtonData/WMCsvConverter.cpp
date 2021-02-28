@@ -25,9 +25,14 @@
 #include "WMCsvConverter.h"
 
 
-WMCsvConverter::WMCsvConverter(WMProtonData::SPtr protonData,  boost::shared_ptr< WMPropertyStatus > propertystatus)
+WMCsvConverter::WMCsvConverter(WMProtonData::SPtr protonData,  boost::shared_ptr< WMPropertyStatus > propertyStatus)
 {
-    setOutputFromCSV(protonData, propertystatus);
+    m_propertyStatus = propertyStatus;
+    m_vectors = WMConverterVectors::SPtr( new WMConverterVectors() );
+    m_indexes = WMConverterIndexes::SPtr( new WMConverterIndexes() );
+
+
+    setOutputFromCSV(protonData);
 }
 
 boost::shared_ptr< WDataSetFibers > WMCsvConverter::getFibers()
@@ -59,23 +64,24 @@ bool WMCsvConverter::canShow( WDataSetCSV::Content::iterator dataRow )
         return false;
     }
 
-    if( !m_propertyStatus->getShowPrimaries()->get() && std::stoi( dataRow->at( m_indexes->getParentID() ) ) == 0 )
+    if( !m_propertyStatus->getFilterPropertyHandler()->getShowPrimaries()->get() && std::stoi( dataRow->at( m_indexes->getParentID() ) ) == 0 )
     {
         return false;
     }
 
-    if( !m_propertyStatus->getShowSecondaries()->get() && std::stoi( dataRow->at( m_indexes->getParentID() ) ) != 0 )
+    if( !m_propertyStatus->getFilterPropertyHandler()->getShowSecondaries()->get() && std::stoi( dataRow->at( m_indexes->getParentID() ) ) != 0 )
     {
         return false;
     }
 
-    if( !m_propertyStatus->getColumnPropertyHandler()->isPDGTypeSelected( std::stoi( dataRow->at( m_indexes->getPDGEncoding() ) ) ) )
+    if( !m_propertyStatus->getFilterPropertyHandler()->isPDGTypeSelected( std::stoi( dataRow->at( m_indexes->getPDGEncoding() ) ) ) )
     {
         return false;
     }
 
     int eventID = std::stoi( dataRow->at( m_indexes->getEventID() ) );
-    if( eventID < m_propertyStatus->getMinCap()->get() || eventID > m_propertyStatus->getMaxCap()->get() )
+    if( eventID < m_propertyStatus->getEventIDLimitationPropertyHandler()->getMinCap()->get() || 
+        eventID > m_propertyStatus->getEventIDLimitationPropertyHandler()->getMaxCap()->get() )
     {
         return false;
     }
@@ -89,7 +95,7 @@ void WMCsvConverter::addVertexAndColor( WDataSetCSV::Content::iterator dataRow )
     m_vectors->getVertices()->push_back( boost::lexical_cast< float >( dataRow->at( m_indexes->getPosY() ) ) );
     m_vectors->getVertices()->push_back( boost::lexical_cast< float >( dataRow->at( m_indexes->getPosZ() ) ) );
 
-    if( !m_propertyStatus->getColorFromEdep()->get() )
+    if( !m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
     {
         m_vectors->getColors()->push_back( m_plainColor[0] );
         m_vectors->getColors()->push_back( m_plainColor[1] );
@@ -139,7 +145,7 @@ void WMCsvConverter::calculateFibers()
 
 void WMCsvConverter::createPointsAndFibers()
 {
-    if( m_propertyStatus->getSizesFromEdep()->get() )
+    if( m_propertyStatus->getVisualizationPropertyHandler()->getSizesFromEdep()->get() )
     {
         m_points = boost::shared_ptr< WDataSetPointsAndSizes >(
                 new WDataSetPointsAndSizes(
@@ -171,18 +177,18 @@ void WMCsvConverter::createPointsAndFibers()
     m_fibers->addColorScheme( m_vectors->getColors(), "Energy deposition", "Color fibers based on their energy." );
 }
 
-void WMCsvConverter::setOutputFromCSV( )
+void WMCsvConverter::setOutputFromCSV( WMProtonData::SPtr protonData )
 {
-    if( !m_protonData->columnsInitialized() )
+    if( !protonData->columnsInitialized() )
     {
         return;
     }
+    WDataSetCSV::ContentSPtr data = protonData->getCSVData();
 
-    WDataSetCSV::ContentSPtr data = m_protonData->getCSVData();
-    m_plainColor = m_propertyStatus->getColorSelection()->get( true );
+    m_plainColor = m_propertyStatus->getVisualizationPropertyHandler()->getColorSelection()->get( true );
 
     m_vectors->clear();
-    m_indexes->update( m_protonData );
+    m_indexes->update( protonData );
 
     float maxEdep = 0.0;
 
@@ -199,7 +205,7 @@ void WMCsvConverter::setOutputFromCSV( )
         m_vectors->getEventIDs()->push_back( std::stoi( dataRow->at( m_indexes->getEventID() ) ) );
     }
 
-    if( m_propertyStatus->getColorFromEdep()->get() )
+    if( m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
     {
         normalizeEdeps( m_vectors->getEdeps(), m_vectors->getColors(), maxEdep );
     }

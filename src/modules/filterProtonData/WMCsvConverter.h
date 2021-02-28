@@ -27,13 +27,13 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include <boost/lexical_cast.hpp>
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
 #include "core/dataHandler/WDataSetPointsAndSizes.h"
 
-#include "WMColumnPropertyHandler.h"
 #include "WMConverterIndexes.h"
 #include "WMConverterVectors.h"
 #include "WMPropertyStatus.h"
@@ -42,7 +42,7 @@
 class WMCsvConverter
 {
 public:
-    WMCsvConverter(WMProtonData::SPtr protonData, boost::shared_ptr< WMPropertyStatus > propertystatus);
+    WMCsvConverter(WMProtonData::SPtr protonData, boost::shared_ptr< WMPropertyStatus > propertyStatus);
 
     /**
      * represents a boost::shared_ptr to a vector containing a vector of floats.
@@ -101,7 +101,7 @@ private:
      *
      * \param protonData WDataSetCSV::Content object containing data.
      */
-    void setOutputFromCSV( WMProtonData::SPtr protonData, boost::shared_ptr< WMPropertyStatus > propertystatus);
+    void setOutputFromCSV( WMProtonData::SPtr protonData);
     
 };
 
