@@ -27,6 +27,9 @@
 
 #include "../WMProtonData.h"
 
+/**
+ * Creates, updates and handles the EventID properties.
+ */
 class WMEventIDLimitationPropertyHandler
 {
 public:

@@ -39,9 +39,18 @@
 #include "WMPropertyStatus.h"
 #include "WMProtonData.h"
 
+/**
+ * Converts the csv data to points and fibers.
+ */
 class WMCsvConverter
 {
 public:
+    /**
+    * Initializes the vectors and indexes.
+    * Calls setOutputFromCSV.
+    * \param protonData The protondata to use.
+    * \param propertyStatus The status of the properties.
+    */
     WMCsvConverter( WMProtonData::SPtr protonData, boost::shared_ptr< WMPropertyStatus > propertyStatus );
 
     /**
@@ -79,6 +88,9 @@ private:
      */
     boost::shared_ptr< WDataSetPoints > m_points;
 
+    /**
+     * The fallback color to use.
+     */
     WColor m_plainColor;
 
     /**
@@ -107,6 +119,7 @@ private:
 
     /**
      * checks whether the requirements are fulfilled
+     * \param dataRow the row to check.
      */
     bool canShow( WDataSetCSV::Content::iterator dataRow );
 
@@ -121,6 +134,7 @@ private:
      * Create edep and sizes for point/fiber renderer
      *
      * \param dataRow each row of the csv file (content of row)
+     * \param maxEdep a pointer to the current maximum of the edep
      */
     void addEdepAndSize( WDataSetCSV::Content::iterator dataRow, float* maxEdep );
 

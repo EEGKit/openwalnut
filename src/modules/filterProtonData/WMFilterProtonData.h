@@ -133,12 +133,12 @@ private:
     /**
      * WDataSetPoints output connector (required for this module).
      */
-    boost::shared_ptr< WModuleOutputData< WDataSet > > m_output_points;
+    boost::shared_ptr< WModuleOutputData< WDataSetPoints > > m_output_points;
 
     /**
      * WDataSetFibers output connector (required for this module).
      */
-    boost::shared_ptr< WModuleOutputData< WDataSet  > > m_output_fibers;
+    boost::shared_ptr< WModuleOutputData< WDataSetFibers > > m_output_fibers;
 
     /**
      * Stores information of the input-csv-data
@@ -157,13 +157,8 @@ private:
 
     /**
      * Create outputs, so it can be displayed by the fiber display and the point renderer.
-     *
-     * \param header WDataSetCSV::Content object containing column names.
-     * \param data WDataSetCSV::Content object containing data.
      */
     void setOutputFromCSV( );
-
-    boost::shared_ptr< WModuleOutputData < WDataSet > > createOutputData( std::string headerName, std::string description );
 };
 
 #endif  // WMFILTERPROTONDATA_H

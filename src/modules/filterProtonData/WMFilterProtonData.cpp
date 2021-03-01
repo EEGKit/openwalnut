@@ -116,11 +116,8 @@ void WMFilterProtonData::connectors()
 {
     m_input = WModuleInputData< WDataSetCSV >::createAndAdd( shared_from_this(), "in", "CSV_input" );
 
-    m_output_points = createOutputData( "output points", "Output CSV data as Point data" );
-    m_output_fibers = createOutputData( "output fibers",  "Output CSV data as Fiber data" );
-
-    addConnector( m_output_points );
-    addConnector( m_output_fibers );
+    m_output_points = WModuleOutputData< WDataSetPoints >::createAndAdd( shared_from_this(), "output points", "Output CSV data as Point data" );
+    m_output_fibers = WModuleOutputData< WDataSetFibers >::createAndAdd( shared_from_this(), "output fibers",  "Output CSV data as Fiber data" );
 
     WModule::connectors();
 }
@@ -136,14 +133,4 @@ void WMFilterProtonData::setOutputFromCSV( )
 
     m_output_points->updateData( m_converter->getPoints() );
     m_output_fibers->updateData( m_converter->getFibers() );
-}
-
-boost::shared_ptr< WModuleOutputData< WDataSet > > WMFilterProtonData::createOutputData( std::string headerName, std::string description )
-{
-    return boost::shared_ptr< WModuleOutputData< WDataSet > >(
-            new WModuleOutputData< WDataSet >(
-                    shared_from_this(),
-                    headerName,
-                    description )
-    );
 }

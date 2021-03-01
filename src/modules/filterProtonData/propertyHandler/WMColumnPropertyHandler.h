@@ -34,6 +34,9 @@
 
 #include "../WMProtonData.h"
 
+/**
+ * Creates, updates and handles the column properties.
+ */
 class WMColumnPropertyHandler
 {
 public:

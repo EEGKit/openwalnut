@@ -30,6 +30,9 @@
 
 #include "../WMProtonData.h"
 
+/**
+ * Creates, updates and handles the filter properties.
+ */
 class WMFilterPropertyHandler
 {
 public:

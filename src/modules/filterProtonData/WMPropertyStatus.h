@@ -34,11 +34,20 @@
 #include "propertyHandler/WMVisualizationPropertyHandler.h"
 #include "propertyHandler/WMEventIDLimitationPropertyHandler.h"
 
+/**
+ * Holds references to all the property handlers.
+ */
 class WMPropertyStatus
 {
 public:
+    /**
+     * A shared_ptr to this class.
+     */
     typedef boost::shared_ptr< WMPropertyStatus > SPtr;
 
+    /**
+     * An empty constructor for class creation.
+     */
     WMPropertyStatus();
 
     /**
@@ -101,7 +110,7 @@ private:
     WMFilterPropertyHandler::SPtr m_filterPropertyHandler;
 
     /**
-     * pointer to group property and the subproperty for ************
+     * pointer to group property and the subproperty for scaling and color handling
      */
     WMVisualizationPropertyHandler::SPtr m_visualizationPropertyHandler;
 

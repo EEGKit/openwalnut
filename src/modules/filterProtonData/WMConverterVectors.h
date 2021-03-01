@@ -39,47 +39,91 @@ typedef boost::shared_ptr< std::vector< float > > SPFloatVector;
  */
 typedef boost::shared_ptr< std::vector< size_t > > SPSizeVector;
 
+/**
+ * Holds the vectors that store the data for the points and fibers.
+ */
 class WMConverterVectors
 {
 public:
+    /**
+     * A shared_ptr to this class.
+     */
     typedef boost::shared_ptr< WMConverterVectors > SPtr;
 
+    /**
+     * Initializes the vectors as empty vectors.
+     */
     WMConverterVectors();
 
+    /**
+     * Clears all vectors.
+     */
     void clear();
 
+    /**
+     * Gets the vertices as shared_ptr to a float vector.
+     * \return SPFloatVector The vertices.
+     */
     SPFloatVector getVertices();
 
+    /**
+     * Gets the sizes as shared_ptr to a float vector.
+     * \return SPFloatVector The sizes.
+     */
     SPFloatVector getSizes();
 
+    /**
+     * Gets the colors as shared_ptr to a float vector.
+     * \return SPFloatVector The colors.
+     */
     SPFloatVector getColors();
 
+    /**
+     * Gets the edeps as shared_ptr to a float vector.
+     * \return SPFloatVector The edeps.
+     */
     SPFloatVector getEdeps();
 
+    /**
+     * Gets the fiber start indexes as shared_ptr to a size_t vector.
+     * \return SPFloatVector The fiber start indexes.
+     */
     SPSizeVector getFiberStartIndexes();
 
+    /**
+     * Gets the fiber lengths as shared_ptr to a size_t vector.
+     * \return SPFloatVector The fiber lengths.
+     */
     SPSizeVector getFiberLengths();
 
+    /**
+     * Gets the reverse vertices as shared_ptr to a size_t vector.
+     * \return SPFloatVector The reverse vertices.
+     */
     SPSizeVector getVerticesReverse();
 
+    /**
+     * Gets the event IDs as shared_ptr to a size_t vector.
+     * \return SPFloatVector The event IDs.
+     */
     SPSizeVector getEventIDs();
 
 private:
-    SPFloatVector m_vertices;
+    SPFloatVector m_vertices;   //<! The vertices.
 
-    SPFloatVector m_sizes;
+    SPFloatVector m_sizes;  //<! The sizes.
 
-    SPFloatVector m_colors;
+    SPFloatVector m_colors; //<! The colors.
 
-    SPFloatVector m_edeps;
+    SPFloatVector m_edeps;  //<! The edeps.
 
-    SPSizeVector m_fiberStartIndexes;
+    SPSizeVector m_fiberStartIndexes;   //<! The fiber start indexes.
 
-    SPSizeVector m_fiberLengths;
+    SPSizeVector m_fiberLengths;    //<! The fiber lengths.
 
-    SPSizeVector m_verticesReverse;
+    SPSizeVector m_verticesReverse; //<! The reverse vertices.
 
-    SPSizeVector m_eventIDs;
+    SPSizeVector m_eventIDs;    //<! the event IDs.
 };
 
 #endif  // WMCONVERTERVECTORS_H

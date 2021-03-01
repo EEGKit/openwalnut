@@ -29,43 +29,85 @@
 
 #include "WMProtonData.h"
 
+/**
+ * Holds the indexes of the columns and is able to update them.
+ */
 class WMConverterIndexes
 {
 public:
+    /**
+     * A shared_ptr to this class.
+     */
     typedef boost::shared_ptr< WMConverterIndexes > SPtr;
 
+    /**
+     * Empty constructor for class creation.
+     */
     WMConverterIndexes();
 
+    /**
+     * Updates the indexes based on the data given.
+     * \param protonData The data which contains the columns.
+     */
     void update( WMProtonData::SPtr protonData );
 
+    /**
+     * Gets the parentID index as integer.
+     * \return int The parentID index.
+     */
     int getParentID();
 
+    /**
+     * Gets the posX index as integer.
+     * \return int The posX index.
+     */
     int getPosX();
 
+
+    /**
+     * Gets the posY index as integer.
+     * \return int The posY index.
+     */
     int getPosY();
 
+    /**
+     * Gets the posZ index as integer.
+     * \return int The posZ index.
+     */
     int getPosZ();
 
+    /**
+     * Gets the edep index as integer.
+     * \return int The edep index.
+     */
     int getEdep();
 
+    /**
+     * Gets the PDGEncoding index as integer.
+     * \return int The PDGEncoding index.
+     */
     int getPDGEncoding();
 
+    /**
+     * Gets the eventID index as integer.
+     * \return int The eventID index.
+     */
     int getEventID();
 
 private:
-    int m_parentID = -1;
+    int m_parentID = -1;    //<! The parentID index.
 
-    int m_posX = -1;
+    int m_posX = -1;    //<! The posX index.
 
-    int m_posY = -1;
+    int m_posY = -1;    //<! The posY index.
 
-    int m_posZ = -1;
+    int m_posZ = -1;    //<! The posZ index.
 
-    int m_edep = -1;
+    int m_edep = -1;    //<! The edep index.
 
-    int m_PDGEncoding = -1;
+    int m_PDGEncoding = -1; //<! The PDGEncoding index.
 
-    int m_eventID = -1;
+    int m_eventID = -1; //<! The eventID index.
 };
 
 #endif  // WMCONVERTERINDEXES_H
