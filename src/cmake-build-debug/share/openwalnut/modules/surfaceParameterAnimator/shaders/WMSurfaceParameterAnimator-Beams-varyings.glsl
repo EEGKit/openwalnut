@@ -1,1 +1,0 @@
-/home/top2021/SIVERT/sivert-vis-project/src/modules/surfaceParameterAnimator/shaders/WMSurfaceParameterAnimator-Beams-varyings.glsl

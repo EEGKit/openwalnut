@@ -44,27 +44,11 @@ void WMVisualizationPropertyHandler::createProperties()
     m_sizesFromEdep = m_visualizationGroup->addProperty( "Scale point size", "Scale point size with energy deposition", true, notifierCheckBox );
     m_colorFromEdep = m_visualizationGroup->addProperty( "Color by edep", "Color points based on energy deposition", true, notifierCheckBox );
     m_colorSelection = m_visualizationGroup->addProperty( "Plain color", "Choose how to color the points when not coloring by edep.", defaultColor::WHITE, notifierCheckBox );
-    
 }
 
 void WMVisualizationPropertyHandler::updateCheckboxProperty( WPropertyBase::SPtr property )
 {
-    /*if( m_showPrimaries->get() || m_showSecondaries->get() )
-    {
-        m_dataUpdate( );
-    }
-    else
-    {
-        if( property == m_showPrimaries )
-        {
-            m_showPrimaries->set( true );
-        }
-
-        if( property == m_showSecondaries )
-        {
-            m_showSecondaries->set( true );
-        }
-    }*/
+    m_dataUpdate();
 }
 
 WPropBool WMVisualizationPropertyHandler::getColorFromEdep()

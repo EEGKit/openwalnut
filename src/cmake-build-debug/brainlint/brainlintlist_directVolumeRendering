@@ -1,5 +1,0 @@
-/home/top2021/SIVERT/sivert-vis-project/src/modules/directVolumeRendering/WMDirectVolumeRendering.cpp
-/home/top2021/SIVERT/sivert-vis-project/src/modules/directVolumeRendering/WMDirectVolumeRendering.h
-/home/top2021/SIVERT/sivert-vis-project/src/modules/directVolumeRendering/shaders/WMDirectVolumeRendering-fragment.glsl
-/home/top2021/SIVERT/sivert-vis-project/src/modules/directVolumeRendering/shaders/WMDirectVolumeRendering-varyings.glsl
-/home/top2021/SIVERT/sivert-vis-project/src/modules/directVolumeRendering/shaders/WMDirectVolumeRendering-vertex.glsl

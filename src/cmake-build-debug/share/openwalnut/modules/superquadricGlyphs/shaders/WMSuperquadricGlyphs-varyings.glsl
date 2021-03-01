@@ -1,1 +1,0 @@
-/home/top2021/SIVERT/sivert-vis-project/src/modules/superquadricGlyphs/shaders/WMSuperquadricGlyphs-varyings.glsl
