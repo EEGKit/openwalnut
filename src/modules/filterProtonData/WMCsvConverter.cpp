@@ -209,10 +209,8 @@ void WMCsvConverter::setOutputFromCSV( WMProtonData::SPtr protonData )
 
     if( m_vectors->getVertices()->empty() )
     {
-        m_points = ( m_propertyStatus->getVisualizationPropertyHandler()->getSizesFromEdep()->get() ) ?
-                   boost::shared_ptr< WDataSetPointsAndSizes >( new WDataSetPointsAndSizes( ) ) :
-                   boost::shared_ptr < WDataSetPoints >( new WDataSetPoints( ) );
-        m_fibers = boost::shared_ptr< WDataSetFibers >( new WDataSetFibers() );
+        m_points = NULL;
+        m_fibers = NULL;
         return;
     }
 
