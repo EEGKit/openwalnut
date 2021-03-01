@@ -24,7 +24,7 @@
 
 #include "WDataSetCSV.h"
 
-WDataSetCSV::WDataSetCSV( WDataSetCSV::Content header, WDataSetCSV::Content data )
+WDataSetCSV::WDataSetCSV( WDataSetCSV::ContentSPtr header, WDataSetCSV::ContentSPtr data )
     : m_header( header ), m_data( data )
 {
 }
@@ -37,12 +37,12 @@ WDataSetCSV::~WDataSetCSV()
 {
 }
 
-WDataSetCSV::Content WDataSetCSV::getHeader()
+WDataSetCSV::ContentSPtr WDataSetCSV::getHeader()
 {
     return m_header;
 }
 
-WDataSetCSV::Content WDataSetCSV::getData()
+WDataSetCSV::ContentSPtr WDataSetCSV::getData()
 {
     return m_data;
 }

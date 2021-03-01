@@ -28,7 +28,7 @@
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
-#include <cxxtest/Testsuite.h>
+#include <cxxtest/TestSuite.h>
 #include "../WDataSetPointsAndSizes.h"
 
 

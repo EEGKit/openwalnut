@@ -43,15 +43,15 @@ boost::shared_ptr< WDataSetCSV > WReaderCSV::read()
     std::string cell;
 
     std::vector< std::string >  row;
-    WDataSetCSV::Content header;
-    WDataSetCSV::Content data;
+    WDataSetCSV::ContentSPtr header = WDataSetCSV::ContentSPtr( new WDataSetCSV::Content() );
+    WDataSetCSV::ContentSPtr data = WDataSetCSV::ContentSPtr( new WDataSetCSV::Content() );
 
     std::fstream file;
     file.open( m_fname );
 
     if( !file.is_open() )
     {
-        //throw()
+        throw WException( "File could not be opened!" );
     }
 
     while( std::getline( file, col ) )
@@ -63,13 +63,13 @@ boost::shared_ptr< WDataSetCSV > WReaderCSV::read()
         {
             row.push_back( cell );
         }
-        data.push_back( row );
+        data->push_back( row );
     }
 
     file.close();
 
-    header.push_back( data.at( 0 ) );
-    data.erase( data.begin() );
+    header->push_back( data->at( 0 ) );
+    data->erase( data->begin() );
 
     return boost::shared_ptr< WDataSetCSV >( new WDataSetCSV( header, data ) );
 }

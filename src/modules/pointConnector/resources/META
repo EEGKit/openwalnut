@@ -2,7 +2,7 @@
 //
 // Project: OpenWalnut ( http://www.openwalnut.org )
 //
-// Copyright 2009 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
+// Copyright 2013 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
 // For more information see http://www.openwalnut.org/copying
 //
 // This file is part of OpenWalnut.
@@ -22,43 +22,14 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WREADERCSV_H
-#define WREADERCSV_H
+// Provide additional material and descriptions for your module. You can
+// provide this for multiple modules if you like.
 
-#include <string>
-#include <vector>
+// NOTE: everything but the module name is optional, even if this makes no
+//       sense at all.
 
-#include <boost/shared_ptr.hpp>
-#include <core/dataHandler/WDataSetPoints.h>
-#include <core/dataHandler/WDataSetCSV.h>
-#include "core/dataHandler/io/WReader.h"
-
-/**
- * Read content from a CSV file.
- * \ingroup dataHandler
- */
-class WReaderCSV : WReader
+"Point Connector"
 {
-public:
-    /**
-     * Constructs a CSV reader object.
-     *
-     * \param fname path of the file to load.
-     */
-    explicit WReaderCSV( std::string fname );
-
-    /**
-     * Destroys this instance.
-     */
-    virtual ~WReaderCSV() throw();
-
-    /**
-     * Read the file and create a dataset as a vector.
-     *
-     * \return pointer to a WDataSetCSV.
-     * \throws WException If the file could not be opened.
-     */
-    virtual boost::shared_ptr< WDataSetCSV > read();
+  icon="icon.png";
 };
 
-#endif  // WREADERCSV_H

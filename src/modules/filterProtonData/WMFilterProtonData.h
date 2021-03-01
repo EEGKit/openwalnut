@@ -22,8 +22,10 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WMCONVERTERCSV_H
-#define WMCONVERTERCSV_H
+#ifndef WMFILTERPROTONDATA_H
+#define WMFILTERPROTONDATA_H
+
+#include <algorithm>
 
 #include <string>
 #include <vector>
@@ -36,7 +38,15 @@
 #include "core/dataHandler/WDataSetPoints.h"
 #include "core/dataHandler/WDataSetPointsAndSizes.h"
 
+#include "core/common/WItemSelectionItem.h"
+#include "core/common/WItemSelector.h"
+
 #include "core/kernel/WModule.h"
+
+#include "WMProtonData.h"
+
+#include "WMPropertyStatus.h"
+#include "WMCsvConverter.h"
 
 /**
  * This module simply registers a given csv dataset to the csv handling mechanism.
@@ -44,7 +54,7 @@
  *
  * \ingroup modules
  */
-class WMConverterCSV : public WModule
+class WMFilterProtonData : public WModule
 {
 public:
     /**
@@ -60,12 +70,12 @@ public:
     /**
      * Standard constructor.
      */
-    WMConverterCSV();
+    WMFilterProtonData();
 
     /**
      * Standard destructor.
      */
-    virtual ~WMConverterCSV();
+    virtual ~WMFilterProtonData();
 
     /**
      * Returns the name of this module.
@@ -111,6 +121,11 @@ protected:
 
 private:
     /**
+     * Pointer that points to the Proton data from the CSV file  
+     */
+    WMProtonData::SPtr m_protonData;
+
+    /**
      * Input connector (required for this module).
      */
     boost::shared_ptr< WModuleInputData< WDataSetCSV > > m_input;
@@ -118,47 +133,32 @@ private:
     /**
      * WDataSetPoints output connector (required for this module).
      */
-    boost::shared_ptr< WModuleOutputData< WDataSet > > m_output_points;
+    boost::shared_ptr< WModuleOutputData< WDataSetPoints > > m_output_points;
 
     /**
      * WDataSetFibers output connector (required for this module).
      */
-    boost::shared_ptr< WModuleOutputData< WDataSet  > > m_output_fibers;
+    boost::shared_ptr< WModuleOutputData< WDataSetFibers > > m_output_fibers;
 
     /**
-     * Stores information for the fiber display
+     * Stores information of the input-csv-data
      */
-    boost::shared_ptr< WDataSetFibers > m_fibers;
+    boost::shared_ptr< WDataSetCSV > m_dataset;
 
     /**
-     * Stores information for the point renderer
+     * Contains all property-groups and the subproperties 
      */
-    boost::shared_ptr< WDataSetPoints > m_points;
+    boost::shared_ptr < WMPropertyStatus > m_propertyStatus;
 
     /**
-     * Get column number by name from header
-     *
-     * \param columnNameToMatch Search for the specified column name.
-     * \param headerToSearchIn Search in specified header.
-     * \return Column number, where columnToMatch is in headerToSearchIn
+     * Contains the algorithm that converts the raw CSV file into compatible WDataSets (Points, Fibers, PointsAndSizes, PointConnector etc.)
      */
-    int getColumnNumberByName( std::string columnNameToMatch, std::vector<std::string> headerToSearchIn );
+    boost::shared_ptr < WMCsvConverter > m_converter;
 
     /**
-     * Create output, so it can be displayed by the fiber display.
-     *
-     * \param header WDataSetCSV::Content object containing column names.
-     * \param data WDataSetCSV::Content object containing data.
+     * Create outputs, so it can be displayed by the fiber display and the point renderer.
      */
-    void setFibersOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data );
-
-    /**
-     * Create output, so it can be displayed by the point renderer.
-     *
-     * \param header WDataSetCSV::Content object containing column names
-     * \param data WDataSetCSV::Content object containing data
-     */
-    void setPointsOutOfCSVData( WDataSetCSV::Content header, WDataSetCSV::Content data );
+    void setOutputFromCSV( );
 };
 
-#endif  // WMCONVERTERCSV_H
+#endif  // WMFILTERPROTONDATA_H
