@@ -22,6 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
+#include <string>
+#include <vector>
 
 #include "WMFilterPropertyHandler.h"
 
@@ -44,14 +46,17 @@ void WMFilterPropertyHandler::createProperties()
 
 void WMFilterPropertyHandler::createCheckBoxForPrimaryAndSecondary()
 {
-    WPropertyBase::PropertyChangeNotifierType notifierCheckBox = boost::bind( &WMFilterPropertyHandler::updateCheckboxProperty, this, boost::placeholders::_1 );
+    WPropertyBase::PropertyChangeNotifierType notifierCheckBox = boost::bind(
+        &WMFilterPropertyHandler::updateCheckboxProperty, this, boost::placeholders::_1 );
+
     m_showPrimaries = m_filteringGroup->addProperty( "Show primaries", "Show/hide primaries", true, notifierCheckBox );
     m_showSecondaries = m_filteringGroup->addProperty( "Show secondaries", "Show/hide secondaries", true, notifierCheckBox );
 }
 
 void WMFilterPropertyHandler::createMultiSelectionForPDG()
 {
-    WPropertyBase::PropertyChangeNotifierType pdgEncodingnotifier = boost::bind( &WMFilterPropertyHandler::updateSelectedPDGTypes,this, boost::placeholders::_1 );
+    WPropertyBase::PropertyChangeNotifierType pdgEncodingnotifier = boost::bind(
+        &WMFilterPropertyHandler::updateSelectedPDGTypes, this, boost::placeholders::_1 );
 
     m_possibleSelection = WItemSelection::SPtr( new WItemSelection() );
     searchPDGTypes();

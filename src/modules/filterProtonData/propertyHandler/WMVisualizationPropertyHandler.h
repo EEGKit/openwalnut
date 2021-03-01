@@ -121,6 +121,4 @@ private:
     void updateCheckboxProperty( WPropertyBase::SPtr property );
 };
 
-
-
 #endif  // WMVISUALIZATIONPROPERTYHANDLER_H

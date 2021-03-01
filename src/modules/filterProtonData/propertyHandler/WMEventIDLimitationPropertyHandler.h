@@ -69,7 +69,7 @@ public:
      * \return WPropInt of the MaxCap
      */
     WPropInt getMaxCap();
-    
+
 private:
     /**
      * Pointer to the content and header of the CSV 
@@ -95,7 +95,7 @@ private:
      * Set upper border of range of eventID selection.
      */
     WPropInt m_maxCap;
-    
+
     /**
      * Update your mesh when changing properties.
      */

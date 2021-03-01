@@ -42,7 +42,7 @@
 class WMCsvConverter
 {
 public:
-    WMCsvConverter(WMProtonData::SPtr protonData, boost::shared_ptr< WMPropertyStatus > propertyStatus);
+    WMCsvConverter( WMProtonData::SPtr protonData, boost::shared_ptr< WMPropertyStatus > propertyStatus );
 
     /**
      * represents a boost::shared_ptr to a vector containing a vector of floats.
@@ -69,7 +69,6 @@ public:
     boost::shared_ptr< WDataSetPoints > getPoints();
 
 private:
-
     /**
      * Stores information for the fiber display
      */
@@ -140,10 +139,7 @@ private:
      *
      * \param protonData WDataSetCSV::Content object containing data.
      */
-    void setOutputFromCSV( WMProtonData::SPtr protonData);
-    
+    void setOutputFromCSV( WMProtonData::SPtr protonData );
 };
 
 #endif  // WMCSVCONVERTER_H
-
-

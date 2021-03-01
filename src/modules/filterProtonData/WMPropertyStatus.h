@@ -46,12 +46,12 @@ public:
      * \return return m_columnPropertyHandler
      */
     WMColumnPropertyHandler::SPtr getColumnPropertyHandler();
-    
+
     /**
      * setter for m_columnPropertyHandler
      * \param columnPropertyHandler setter variable for m_columnPropertyHandler
      */
-    void setColumnPropertyHandler( WMColumnPropertyHandler::SPtr columnPropertyHandler);
+    void setColumnPropertyHandler( WMColumnPropertyHandler::SPtr columnPropertyHandler );
 
     /**
      * getter for m_filterPropertyHandler
@@ -63,7 +63,7 @@ public:
      * setter for m_filterPropertyHandler
      * \param filterPropertyHandler setter variable for m_filterPropertyHandler
      */
-    void setFilterPropertyHandler( WMFilterPropertyHandler::SPtr filterPropertyHandler);
+    void setFilterPropertyHandler( WMFilterPropertyHandler::SPtr filterPropertyHandler );
 
     /**
      * getter for m_visualizationPropertyHandler
@@ -75,7 +75,7 @@ public:
      * setter for m_visualizationPropertyHandler
      * \param visualizationPropertyHandler setter variable for m_visualizationPropertyHandler
      */
-    void setVisualizationPropertyHandler( WMVisualizationPropertyHandler::SPtr visualizationPropertyHandler);
+    void setVisualizationPropertyHandler( WMVisualizationPropertyHandler::SPtr visualizationPropertyHandler );
 
     /**
      * getter for m_eventIDLimitationPropertyHandler
@@ -87,10 +87,9 @@ public:
      * setter for m_eventIDLimitationPropertyHandler
      * \param eventIDLimitationPropertyHandler setter variable for m_eventIDLimitationPropertyHandler
      */
-    void setEventIDLimitationPropertyHandler( WMEventIDLimitationPropertyHandler::SPtr eventIDLimitationPropertyHandler);
+    void setEventIDLimitationPropertyHandler( WMEventIDLimitationPropertyHandler::SPtr eventIDLimitationPropertyHandler );
 
 private:
-
     /**
      * pointer to group property and the subproperty for columnselection   
      */
@@ -110,6 +109,5 @@ private:
      * pointer to group property and the subproperty for Limitation of eventID
      */
     WMEventIDLimitationPropertyHandler::SPtr m_eventIDLimitationPropertyHandler;
-    
 };
 #endif  // WMPROPERTYSTATUS_H

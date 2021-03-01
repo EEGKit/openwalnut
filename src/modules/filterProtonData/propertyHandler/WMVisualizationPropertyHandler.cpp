@@ -22,7 +22,6 @@
 //
 //---------------------------------------------------------------------------
 
-
 #include "WMVisualizationPropertyHandler.h"
 
 
@@ -39,11 +38,13 @@ void WMVisualizationPropertyHandler::createProperties()
 {
     m_visualizationGroup = m_properties->addPropertyGroup( "Visualization", "Visualization options" );
 
-    WPropertyBase::PropertyChangeNotifierType notifierCheckBox = boost::bind( &WMVisualizationPropertyHandler::updateCheckboxProperty, this, boost::placeholders::_1 );
+    WPropertyBase::PropertyChangeNotifierType notifierCheckBox = boost::bind(
+        &WMVisualizationPropertyHandler::updateCheckboxProperty, this, boost::placeholders::_1 );
 
     m_sizesFromEdep = m_visualizationGroup->addProperty( "Scale point size", "Scale point size with energy deposition", true, notifierCheckBox );
     m_colorFromEdep = m_visualizationGroup->addProperty( "Color by edep", "Color points based on energy deposition", true, notifierCheckBox );
-    m_colorSelection = m_visualizationGroup->addProperty( "Plain color", "Choose how to color the points when not coloring by edep.", defaultColor::WHITE, notifierCheckBox );
+    m_colorSelection = m_visualizationGroup->addProperty( "Plain color", "Choose how to color the points when not coloring by edep.",
+        defaultColor::WHITE, notifierCheckBox );
 }
 
 void WMVisualizationPropertyHandler::updateCheckboxProperty( WPropertyBase::SPtr property )

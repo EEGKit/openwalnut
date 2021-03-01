@@ -25,6 +25,9 @@
 #ifndef WMFILTERPROPERTYHANDLER_H
 #define WMFILTERPROPERTYHANDLER_H
 
+#include <string>
+#include <vector>
+
 #include "../WMProtonData.h"
 
 class WMFilterPropertyHandler
@@ -55,7 +58,7 @@ public:
      * creates the group property and the subproperty    
      */
     void createProperties();
-    
+
     /**
      * Getter
      *
@@ -155,9 +158,6 @@ private:
      * vector of the options of PDG
      */
     std::vector < std::string > m_selectedPDGTypes;
-
 };
-
-
 
 #endif  // WMFILTERPROPERTYHANDLER_H

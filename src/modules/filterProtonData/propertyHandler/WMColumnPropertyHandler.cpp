@@ -137,12 +137,8 @@ void WMColumnPropertyHandler::propertyNotifier( WPropertyBase::SPtr property )
     {
         std::string selectedValue = selector->at( 0 )->getAs< ItemType >()->getValue();
 
-        
         m_protonData->setColumnIndex( columnName, getColumnNumberByName( selectedValue, m_protonData->getCSVHeader()->at( 0 ) ) );
 
         m_dataUpdate( );
     }
 }
-
-
-

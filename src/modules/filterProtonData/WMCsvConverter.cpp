@@ -22,17 +22,19 @@
 //
 //---------------------------------------------------------------------------
 
+#include <vector>
+
 #include "WMCsvConverter.h"
 
 
-WMCsvConverter::WMCsvConverter(WMProtonData::SPtr protonData,  boost::shared_ptr< WMPropertyStatus > propertyStatus)
+WMCsvConverter::WMCsvConverter( WMProtonData::SPtr protonData,  boost::shared_ptr< WMPropertyStatus > propertyStatus )
 {
     m_propertyStatus = propertyStatus;
     m_vectors = WMConverterVectors::SPtr( new WMConverterVectors() );
     m_indexes = WMConverterIndexes::SPtr( new WMConverterIndexes() );
 
 
-    setOutputFromCSV(protonData);
+    setOutputFromCSV( protonData );
 }
 
 boost::shared_ptr< WDataSetFibers > WMCsvConverter::getFibers()
@@ -80,7 +82,7 @@ bool WMCsvConverter::canShow( WDataSetCSV::Content::iterator dataRow )
     }
 
     int eventID = std::stoi( dataRow->at( m_indexes->getEventID() ) );
-    if( eventID < m_propertyStatus->getEventIDLimitationPropertyHandler()->getMinCap()->get() || 
+    if( eventID < m_propertyStatus->getEventIDLimitationPropertyHandler()->getMinCap()->get() ||
         eventID > m_propertyStatus->getEventIDLimitationPropertyHandler()->getMaxCap()->get() )
     {
         return false;

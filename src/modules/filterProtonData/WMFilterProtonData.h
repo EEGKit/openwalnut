@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WMFilterProtonData_H
-#define WMFilterProtonData_H
+#ifndef WMFILTERPROTONDATA_H
+#define WMFILTERPROTONDATA_H
 
 #include <algorithm>
 
@@ -163,9 +163,7 @@ private:
      */
     void setOutputFromCSV( );
 
-    boost::shared_ptr< WModuleOutputData < WDataSet > > createOutputData(std::string headerName, std::string description);
-    
-
+    boost::shared_ptr< WModuleOutputData < WDataSet > > createOutputData( std::string headerName, std::string description );
 };
 
-#endif  // WMFilterProtonData_H
+#endif  // WMFILTERPROTONDATA_H

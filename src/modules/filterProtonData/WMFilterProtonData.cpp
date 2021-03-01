@@ -85,17 +85,17 @@ void WMFilterProtonData::moduleMain()
         {
             m_protonData = WMProtonData::SPtr( new WMProtonData( csvHeader, csvData ) );
 
-            m_propertyStatus->setColumnPropertyHandler(WMColumnPropertyHandler::SPtr( new WMColumnPropertyHandler( m_protonData, m_properties,
+            m_propertyStatus->setColumnPropertyHandler( WMColumnPropertyHandler::SPtr( new WMColumnPropertyHandler( m_protonData, m_properties,
                 boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
 
-            m_propertyStatus->setFilterPropertyHandler(WMFilterPropertyHandler::SPtr( new WMFilterPropertyHandler( m_protonData, m_properties,
+            m_propertyStatus->setFilterPropertyHandler( WMFilterPropertyHandler::SPtr( new WMFilterPropertyHandler( m_protonData, m_properties,
                 boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
 
-            m_propertyStatus->setVisualizationPropertyHandler(WMVisualizationPropertyHandler::SPtr( new WMVisualizationPropertyHandler( m_protonData, m_properties,
-                boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
+            m_propertyStatus->setVisualizationPropertyHandler( WMVisualizationPropertyHandler::SPtr(
+                new WMVisualizationPropertyHandler( m_protonData, m_properties, boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
 
-            m_propertyStatus->setEventIDLimitationPropertyHandler(WMEventIDLimitationPropertyHandler::SPtr( new WMEventIDLimitationPropertyHandler( m_protonData, m_properties,
-                boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
+            m_propertyStatus->setEventIDLimitationPropertyHandler( WMEventIDLimitationPropertyHandler::SPtr(
+                new WMEventIDLimitationPropertyHandler( m_protonData, m_properties, boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
         }
         else
         {
@@ -116,8 +116,8 @@ void WMFilterProtonData::connectors()
 {
     m_input = WModuleInputData< WDataSetCSV >::createAndAdd( shared_from_this(), "in", "CSV_input" );
 
-    m_output_points = createOutputData("output points", "Output CSV data as Point data");
-    m_output_fibers = createOutputData("output fibers",  "Output CSV data as Fiber data");
+    m_output_points = createOutputData( "output points", "Output CSV data as Point data" );
+    m_output_fibers = createOutputData( "output fibers",  "Output CSV data as Fiber data" );
 
     addConnector( m_output_points );
     addConnector( m_output_fibers );
@@ -132,13 +132,13 @@ void WMFilterProtonData::properties()
 
 void WMFilterProtonData::setOutputFromCSV( )
 {
-    m_converter = boost::shared_ptr< WMCsvConverter >( new WMCsvConverter(m_protonData, m_propertyStatus) ); 
+    m_converter = boost::shared_ptr< WMCsvConverter >( new WMCsvConverter( m_protonData, m_propertyStatus ) );
 
     m_output_points->updateData( m_converter->getPoints() );
     m_output_fibers->updateData( m_converter->getFibers() );
 }
 
-boost::shared_ptr< WModuleOutputData< WDataSet > > WMFilterProtonData::createOutputData(std::string headerName, std::string description)
+boost::shared_ptr< WModuleOutputData< WDataSet > > WMFilterProtonData::createOutputData( std::string headerName, std::string description )
 {
     return boost::shared_ptr< WModuleOutputData< WDataSet > >(
             new WModuleOutputData< WDataSet >(

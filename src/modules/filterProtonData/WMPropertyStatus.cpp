@@ -32,8 +32,8 @@ WMColumnPropertyHandler::SPtr WMPropertyStatus::getColumnPropertyHandler()
 {
     return m_columnPropertyHandler;
 }
-    
-void WMPropertyStatus::setColumnPropertyHandler( WMColumnPropertyHandler::SPtr columnPropertyHandler)
+
+void WMPropertyStatus::setColumnPropertyHandler( WMColumnPropertyHandler::SPtr columnPropertyHandler )
 {
     m_columnPropertyHandler = columnPropertyHandler;
 }
@@ -43,7 +43,7 @@ WMFilterPropertyHandler::SPtr WMPropertyStatus::getFilterPropertyHandler()
     return m_filterPropertyHandler;
 }
 
-void WMPropertyStatus::setFilterPropertyHandler( WMFilterPropertyHandler::SPtr filterPropertyHandler)
+void WMPropertyStatus::setFilterPropertyHandler( WMFilterPropertyHandler::SPtr filterPropertyHandler )
 {
     m_filterPropertyHandler = filterPropertyHandler;
 }
@@ -52,8 +52,8 @@ WMVisualizationPropertyHandler::SPtr WMPropertyStatus::getVisualizationPropertyH
 {
     return m_visualizationPropertyHandler;
 }
-    
-void WMPropertyStatus::setVisualizationPropertyHandler( WMVisualizationPropertyHandler::SPtr visualizationPropertyHandler)
+
+void WMPropertyStatus::setVisualizationPropertyHandler( WMVisualizationPropertyHandler::SPtr visualizationPropertyHandler )
 {
     m_visualizationPropertyHandler = visualizationPropertyHandler;
 }
@@ -63,9 +63,7 @@ WMEventIDLimitationPropertyHandler::SPtr WMPropertyStatus::getEventIDLimitationP
     return m_eventIDLimitationPropertyHandler;
 }
 
-void WMPropertyStatus::setEventIDLimitationPropertyHandler( WMEventIDLimitationPropertyHandler::SPtr eventIDLimitationPropertyHandler)
+void WMPropertyStatus::setEventIDLimitationPropertyHandler( WMEventIDLimitationPropertyHandler::SPtr eventIDLimitationPropertyHandler )
 {
     m_eventIDLimitationPropertyHandler = eventIDLimitationPropertyHandler;
 }
-
-#include "WMPropertyStatus.h"
