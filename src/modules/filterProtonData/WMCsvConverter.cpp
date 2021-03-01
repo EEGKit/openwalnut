@@ -207,6 +207,15 @@ void WMCsvConverter::setOutputFromCSV( WMProtonData::SPtr protonData )
         m_vectors->getEventIDs()->push_back( std::stoi( dataRow->at( m_indexes->getEventID() ) ) );
     }
 
+    if( m_vectors->getVertices()->empty() )
+    {
+        m_points = ( m_propertyStatus->getVisualizationPropertyHandler()->getSizesFromEdep()->get() ) ?
+                   boost::shared_ptr< WDataSetPointsAndSizes >( new WDataSetPointsAndSizes( ) ) :
+                   boost::shared_ptr < WDataSetPoints >( new WDataSetPoints( ) );
+        m_fibers = boost::shared_ptr< WDataSetFibers >( new WDataSetFibers() );
+        return;
+    }
+
     if( m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
     {
         normalizeEdeps( m_vectors->getEdeps(), m_vectors->getColors(), maxEdep );
