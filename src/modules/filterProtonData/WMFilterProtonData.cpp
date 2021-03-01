@@ -62,29 +62,18 @@ void WMFilterProtonData::moduleMain()
 {
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_input->getDataChangedCondition() );
-
+    
     ready();
-
     m_propertyStatus = boost::shared_ptr< WMPropertyStatus >( new WMPropertyStatus() );
 
     while( !m_shutdownFlag() )
     {
-        m_moduleState.wait();
-
-        if( m_shutdownFlag() )
-        {
-            break;
-        }
-
-        m_dataset = m_input->getData();
-
-        WDataSetCSV::ContentSPtr csvHeader = m_dataset->getHeader();
-        WDataSetCSV::ContentSPtr csvData = m_dataset->getData();
+          m_moduleState.wait();
 
         if( m_protonData == NULL )
         {
-            m_protonData = WMProtonData::SPtr( new WMProtonData( csvHeader, csvData ) );
-
+            m_protonData = WMProtonData::SPtr( new WMProtonData(  m_input->getData()->getHeader(),  m_input->getData()->getData() ) );
+            
             m_propertyStatus->setColumnPropertyHandler( WMColumnPropertyHandler::SPtr( new WMColumnPropertyHandler( m_protonData, m_properties,
                 boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
 
@@ -96,18 +85,20 @@ void WMFilterProtonData::moduleMain()
 
             m_propertyStatus->setEventIDLimitationPropertyHandler( WMEventIDLimitationPropertyHandler::SPtr(
                 new WMEventIDLimitationPropertyHandler( m_protonData, m_properties, boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
+            
         }
-        else
+        // execute a shared_pointer exeption and crashes the module while removing
+        /*else
         {
-            m_protonData->setCSVHeader( csvHeader );
-            m_protonData->setCSVData( csvData );
-        }
-
+            debugLog() << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@in else";
+            m_protonData->setCSVHeader(  m_input->getData()->getHeader() );
+            m_protonData->setCSVData(  m_input->getData()->getData() );
+        }*/
+        
         m_propertyStatus->getColumnPropertyHandler()->createProperties();
         m_propertyStatus->getFilterPropertyHandler()->createProperties();
         m_propertyStatus->getVisualizationPropertyHandler()->createProperties();
         m_propertyStatus->getEventIDLimitationPropertyHandler()->createProperties();
-
         setOutputFromCSV( );
     }
 }
@@ -118,7 +109,6 @@ void WMFilterProtonData::connectors()
 
     m_output_points = WModuleOutputData< WDataSetPoints >::createAndAdd( shared_from_this(), "output points", "Output CSV data as Point data" );
     m_output_fibers = WModuleOutputData< WDataSetFibers >::createAndAdd( shared_from_this(), "output fibers",  "Output CSV data as Fiber data" );
-
     WModule::connectors();
 }
 
