@@ -236,7 +236,7 @@ void WMPointConnector::redraw()
     m_postNode->insert( geode, m_shader );
 }
 
-void WMPointConnector::handleClick( osg::Vec3 cameraPosition, osg::Vec3 direction )
+void WMPointConnector::handleClick( osg::Vec3 cameraPosition, osg::Vec3 direction, bool isLeftClick )
 {
     float distance = 0;
     osg::MixinVector<osg::Vec3f>::size_type hitIdx = 0;
@@ -266,17 +266,54 @@ void WMPointConnector::handleClick( osg::Vec3 cameraPosition, osg::Vec3 directio
 
     if( hasHit )
     {
-        if( m_hasSelected )
+        if( isLeftClick )
         {
-            m_colors->operator[]( m_selectedIndex ) = m_selectedOldColor;
+            if( m_hasSelected )
+            {
+                m_colors->operator[]( m_selectedIndex ) = m_selectedOldColor;
+            }
+
+            m_selectedOldColor = m_colors->operator[]( hitIdx );
+            m_selectedIndex = hitIdx;
+            m_colors->operator[]( hitIdx ) = osg::Vec4( 0.0, 1.0, 0.0, 1.0 );
+            m_hasSelected = true;
+
+            m_fibers->at( m_selectedFiber ).push_back( m_vertices->at( hitIdx ) );
         }
+        else
+        {
+            auto fiber = m_fibers->begin() + m_selectedFiber;
+            osg::Vec3 vertex = m_vertices->at( hitIdx );
+            for( auto it = fiber->begin(); it != fiber->end(); )
+            {
+                if( *it == vertex )
+                {
+                    fiber->erase( it );
+                }
+                else
+                {
+                    it++;
+                }
+            }
 
-        m_selectedOldColor = m_colors->operator[]( hitIdx );
-        m_selectedIndex = hitIdx;
-        m_colors->operator[]( hitIdx ) = osg::Vec4( 0.0, 1.0, 0.0, 1.0 );
-        m_hasSelected = true;
+            if( m_hasSelected )
+            {
+                m_colors->operator[]( m_selectedIndex ) = m_selectedOldColor;
+                m_hasSelected = false;
+            }
 
-        m_fibers->at( m_selectedFiber ).push_back( m_vertices->at( hitIdx ) );
+            if( !fiber->empty() )
+            {
+                std::vector< osg::Vec3 >::iterator vertexIterator = std::find( m_vertices->begin(), m_vertices->end(), fiber->at( fiber->size() - 1 ) );
+                size_t vIdx = std::distance( m_vertices->begin(), vertexIterator );
+
+                m_selectedOldColor = m_colors->operator[]( vIdx );
+                m_selectedIndex = vIdx;
+                m_colors->operator[]( vIdx ) = osg::Vec4( 0.0, 1.0, 0.0, 1.0 );
+                m_hasSelected = true;
+            }
+
+        }
 
         redraw();
         updateOutput();

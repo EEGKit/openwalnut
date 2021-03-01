@@ -33,7 +33,7 @@ bool WMClickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionA
 {
     osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>( &aa );
 
-    if( ea.getEventType() == osgGA::GUIEventAdapter::RELEASE )
+    if( ea.getEventType() == osgGA::GUIEventAdapter::RELEASE && ea.getButton() != osgGA::GUIEventAdapter::MIDDLE_MOUSE_BUTTON )
     {
         osg::Camera* camera = viewer->getCamera();
         osg::Viewport* viewport = camera->getViewport();
@@ -55,7 +55,9 @@ bool WMClickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionA
         osg::Vec3 direction = farP - nearP;
         direction.normalize();
 
-        m_connector->handleClick( nearP, direction );
+        bool left = ea.getButton() == osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON;
+
+        m_connector->handleClick( nearP, direction, left );
     }
     return false;
 }

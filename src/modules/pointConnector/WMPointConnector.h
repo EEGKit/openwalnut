@@ -103,8 +103,9 @@ public:
      * It checks all vertices and whether they are clicked.
      * \param cameraPosition The position of the camera.
      * \param direction The direction of the click.
+     * \param isLeftClick Whether this click is a left or a right click.
      */
-    void handleClick( osg::Vec3 cameraPosition, osg::Vec3 direction );
+    void handleClick( osg::Vec3 cameraPosition, osg::Vec3 direction, bool isLeftClick );
 
 protected:
     /**
