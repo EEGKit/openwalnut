@@ -100,11 +100,6 @@ public:
     virtual const char** getXPMIcon() const;
 
     /**
-     * Redraws the current vertices with their colors.
-     */
-    void redraw();
-
-    /**
      * Handles a click on the drawing area.
      * It checks all vertices and whether they are clicked.
      * \param cameraPosition The position of the camera.
@@ -148,7 +143,6 @@ private:
      */
     typedef boost::shared_ptr< PCFiberList >    PCFiberListSPtr;
 
-
     /**
      * Checks if a vertex with a certain radius is hit by a ray.
      * \param rayStart The starting point of the ray.
@@ -166,9 +160,30 @@ private:
     void updateProperty( WPropertyBase::SPtr property );
 
     /**
+     * Redraws the current vertices with their colors.
+     */
+    void updatePoints();
+
+    /**
      * Updates the fiber output
      */
     void updateOutput();
+
+    void createPointRenderer();
+
+    void createClickHandler();
+
+    void handleInput();
+
+    void deselectPoint();
+
+    void selectPoint( size_t hitIdx );
+
+    void selectLastPointOf( size_t fiberIdx );
+
+    void removeVertexFromFiber( size_t fiberIdx, size_t vertexIdx );
+
+    bool findClickedPoint( osg::Vec3 cameraPosition, osg::Vec3 direction, size_t* hitIdx );
 
     WModule::SPtr m_pointRenderer;
 
@@ -217,7 +232,7 @@ private:
     /**
      * Represents the index of the current active fiber.
      */
-    int m_selectedFiber = 0;
+    size_t m_selectedFiber = 0;
 
     /**
      * The list of possible fibers, which can be selected.
