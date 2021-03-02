@@ -154,6 +154,11 @@ private:
      * \param protonData WDataSetCSV::Content object containing data.
      */
     void setOutputFromCSV( WMProtonData::SPtr protonData );
+
+    /**
+     * Sets output variables to null, if vertices do not exist
+     */
+    void setOutputToNull();
 };
 
 #endif  // WMCSVCONVERTER_H

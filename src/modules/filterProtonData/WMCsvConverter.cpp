@@ -209,8 +209,7 @@ void WMCsvConverter::setOutputFromCSV( WMProtonData::SPtr protonData )
 
     if( m_vectors->getVertices()->empty() )
     {
-        m_points = NULL;
-        m_fibers = NULL;
+        setOutputToNull();
         return;
     }
 
@@ -221,4 +220,10 @@ void WMCsvConverter::setOutputFromCSV( WMProtonData::SPtr protonData )
 
     calculateFibers();
     createPointsAndFibers();
+}
+
+void WMCsvConverter::setOutputToNull()
+{
+    m_points = NULL;
+    m_fibers = NULL;
 }
