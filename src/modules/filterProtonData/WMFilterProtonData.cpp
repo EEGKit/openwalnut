@@ -62,8 +62,9 @@ void WMFilterProtonData::moduleMain()
 {
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_input->getDataChangedCondition() );
-    
+
     ready();
+
     m_propertyStatus = boost::shared_ptr< WMPropertyStatus >( new WMPropertyStatus() );
 
     while( !m_shutdownFlag() )
@@ -74,11 +75,11 @@ void WMFilterProtonData::moduleMain()
         {
             continue;
         }
-        
+
         if( m_protonData == NULL )
         {
             m_protonData = WMProtonData::SPtr( new WMProtonData(  m_input->getData()->getHeader(),  m_input->getData()->getData() ) );
-            
+
             m_propertyStatus->setColumnPropertyHandler( WMColumnPropertyHandler::SPtr( new WMColumnPropertyHandler( m_protonData, m_properties,
                 boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
 
@@ -90,7 +91,6 @@ void WMFilterProtonData::moduleMain()
 
             m_propertyStatus->setEventIDLimitationPropertyHandler( WMEventIDLimitationPropertyHandler::SPtr(
                 new WMEventIDLimitationPropertyHandler( m_protonData, m_properties, boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
-            
         }
         else
         {
@@ -98,7 +98,6 @@ void WMFilterProtonData::moduleMain()
             m_protonData->setCSVHeader(  m_input->getData()->getHeader() );
             m_protonData->setCSVData(  m_input->getData()->getData() );
         }
-        
         m_propertyStatus->getColumnPropertyHandler()->createProperties();
         m_propertyStatus->getFilterPropertyHandler()->createProperties();
         m_propertyStatus->getVisualizationPropertyHandler()->createProperties();
