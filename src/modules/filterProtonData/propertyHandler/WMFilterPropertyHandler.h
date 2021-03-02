@@ -29,6 +29,7 @@
 #include <vector>
 
 #include "../WMProtonData.h"
+#include "WMColumnPropertyHandler.h"
 
 /**
  * Creates, updates and handles the filter properties.
@@ -55,6 +56,7 @@ public:
      */
     explicit WMFilterPropertyHandler( WMProtonData::SPtr protonData,
                                     WPropertyGroup::SPtr properties,
+                                    WMColumnPropertyHandler::SPtr columnPropertyHandler,
                                     WMFilterPropertyHandler::CallbackPtr dataUpdate );
 
     /**
@@ -84,7 +86,18 @@ public:
      */
     bool isPDGTypeSelected( int pdgType );
 
+    /**
+     * 
+     * \return current column that is selected as particle data group
+     */
+    int getCurrentColumnIndex();
+
 private:
+    /**
+     * Reference of m_columnPropertyHandler
+     */
+    WMColumnPropertyHandler::SPtr m_columnPropertyHandler;
+
     /**
      * Pointer to the content and header of the CSV 
      */
@@ -118,7 +131,17 @@ private:
     /**
      * Collect all particle types from your input data.
      */
-    void searchPDGTypes();
+    void setPDGTypes( int columnIndex );
+
+    /**
+     * 
+     */
+    int selectColumn( std::string columnName, WItemSelector& itemSelector );
+
+    /**
+     * 
+     */
+    void onSingleSelectionChanged( WPropertyBase::SPtr property );
 
      /**
      * Reload data when properties for selection of primaries and secondaries changed
@@ -126,6 +149,11 @@ private:
      * \param property contains reference to the property which called updateProperty()
      */
     void updateCheckboxProperty( WPropertyBase::SPtr property );
+
+    /**
+     * The current column that is selected as particle data group
+     */
+    int m_currentColumnIndex = 0;
 
      /**
      * Stores every unique particle id.
@@ -148,14 +176,24 @@ private:
     WPropBool m_showSecondaries;
 
     /**
+     * Stores users selected item.
+     */
+    WPropSelection m_singleSelection;
+
+    /**
      * Stores users selected items.
      */
     WPropSelection m_multiSelection;
 
     /**
+     * 
+     */
+    boost::shared_ptr< WItemSelection > m_columnItemSelectionList;
+
+    /**
      * Stores selectable items.
      */
-    boost::shared_ptr< WItemSelection > m_possibleSelection;
+    boost::shared_ptr< WItemSelection > m_particleItemSelectionList;
 
     /**
      * vector of the options of PDG
