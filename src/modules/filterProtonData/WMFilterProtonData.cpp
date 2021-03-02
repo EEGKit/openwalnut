@@ -94,7 +94,6 @@ void WMFilterProtonData::moduleMain()
         }
         else
         {
-            debugLog() << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@in else";
             m_protonData->setCSVHeader(  m_input->getData()->getHeader() );
             m_protonData->setCSVData(  m_input->getData()->getData() );
         }
