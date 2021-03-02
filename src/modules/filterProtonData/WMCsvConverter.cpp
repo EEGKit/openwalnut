@@ -207,9 +207,8 @@ void WMCsvConverter::setOutputFromCSV( WMProtonData::SPtr protonData )
         m_vectors->getEventIDs()->push_back( std::stoi( dataRow->at( m_indexes->getEventID() ) ) );
     }
 
-    if( m_vectors->getVertices()->empty() )
+    if( checkIfOutputIsNull() )
     {
-        setOutputToNull();
         return;
     }
 
@@ -222,8 +221,13 @@ void WMCsvConverter::setOutputFromCSV( WMProtonData::SPtr protonData )
     createPointsAndFibers();
 }
 
-void WMCsvConverter::setOutputToNull()
+bool WMCsvConverter::checkIfOutputIsNull()
 {
-    m_points = NULL;
-    m_fibers = NULL;
+    if( m_vectors->getVertices()->empty() )
+    {
+        m_points = NULL;
+        m_fibers = NULL;
+        return true;
+    }
+    return false;
 }

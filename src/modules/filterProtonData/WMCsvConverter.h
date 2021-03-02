@@ -156,9 +156,10 @@ private:
     void setOutputFromCSV( WMProtonData::SPtr protonData );
 
     /**
-     * Sets output variables to null, if vertices do not exist
+     * Checks if output variables have to be null, if true, sets them to null
+     * \return true, if there are no vertices to output; false otherwise
      */
-    void setOutputToNull();
+    bool checkIfOutputIsNull();
 };
 
 #endif  // WMCSVCONVERTER_H
