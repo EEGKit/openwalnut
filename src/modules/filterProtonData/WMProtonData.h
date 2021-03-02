@@ -98,8 +98,22 @@ public:
      *
      * \return true when initialized. false if they are not initialized 
      */
-    bool columnsInitialized();
+    bool IsRequiredDataAvailable();
 
+    /**
+     * checks whether columns are missing 
+     *
+     * \return true if column is missing . false if column is not missing
+     */
+    bool IsNonrequiredDataAvailable();
+
+    /**
+     * checks whether columns are available 
+     *
+     * \return true if column is available . false if column is not available
+     */
+    bool IsColumnAvailable(std::string columnName);
+    
 private:
     /**
      * Stores column index of data.
@@ -115,6 +129,16 @@ private:
      * Stores data as map
      */
     std::map< std::string, int > m_columnMap;
+
+    /**
+     * Stores die Availability of the columns daten
+     */
+    std::map< std::string, bool > m_availabilityColumnMap;
+
+    /**
+     * Update the Availability of Columns
+     */
+    void updateAvailabilityOfColumns();
 };
 
 #endif  // WMPROTONDATA_H

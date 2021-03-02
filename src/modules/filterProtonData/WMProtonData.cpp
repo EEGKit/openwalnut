@@ -31,6 +31,8 @@ WMProtonData::WMProtonData( WDataSetCSV::ContentSPtr csvHeader, WDataSetCSV::Con
 {
     setCSVHeader( csvHeader );
     setCSVData( csvData );
+
+    updateAvailabilityOfColumns();
 }
 
 void WMProtonData::setCSVHeader( WDataSetCSV::ContentSPtr csvHeader )
@@ -69,6 +71,15 @@ WDataSetCSV::ContentSPtr WMProtonData::getCSVHeader()
 void WMProtonData::setColumnIndex( std::string columnName, int index )
 {
     m_columnMap[columnName] = index;
+
+    if( index < 0 )
+    {
+        m_availabilityColumnMap[columnName] = false;
+    }
+    else
+    {
+        m_availabilityColumnMap[columnName] = true;
+    }
 }
 
 int WMProtonData::getColumnIndex( std::string columnName )
@@ -81,10 +92,10 @@ int WMProtonData::getColumnIndex( std::string columnName )
     return m_columnMap[columnName];
 }
 
-bool WMProtonData::columnsInitialized()
+bool WMProtonData::IsRequiredDataAvailable()
 {
     static const std::string necessaryColumns[] = {
-        "PDGEncoding", "posX", "posY", "posZ", "edep", "eventID", "trackID", "parentID"
+        "posX", "posY", "posZ"
     };
 
     for( int i = 0; i < sizeof( necessaryColumns ) / sizeof( std::string ); i++ )
@@ -97,4 +108,49 @@ bool WMProtonData::columnsInitialized()
     }
 
     return true;
+}
+
+bool WMProtonData::IsNonrequiredDataAvailable()
+{
+    static const std::string unNecessaryColumns[] = {
+        "PDGEncoding", "edep", "trackID", "parentID", "eventID"
+    };
+
+    for( int i = 0; i < sizeof( unNecessaryColumns ) / sizeof( std::string ); i++ )
+    {
+        std::string column = unNecessaryColumns[i];
+        if( getColumnIndex( column ) < 0 )
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool WMProtonData::IsColumnAvailable(std::string columnName)
+{
+    return m_columnMap[columnName];
+}
+
+void WMProtonData::updateAvailabilityOfColumns()
+{
+    static const std::string necessaryColumns[] = {
+        "posX", "posY", "posZ", "PDGEncoding", "edep", "trackID", "parentID", "eventID"
+    };
+
+    for( int i = 0; i < sizeof( necessaryColumns ) / sizeof( std::string ); i++ )
+    {
+        std::string column = necessaryColumns[i];
+        if( getColumnIndex( column ) < 0 )
+        {
+            m_availabilityColumnMap[column] = false;
+        }
+        else
+        {
+            m_availabilityColumnMap[column] = true;
+        }
+
+        std::cout << "STATE: " << m_availabilityColumnMap[column] << std::endl;
+    }
 }
