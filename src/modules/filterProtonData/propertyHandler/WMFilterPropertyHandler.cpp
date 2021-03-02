@@ -59,16 +59,27 @@ void WMFilterPropertyHandler::createMultiSelectionForPDG()
         &WMFilterPropertyHandler::updateSelectedPDGTypes, this, boost::placeholders::_1 );
 
     m_possibleSelection = WItemSelection::SPtr( new WItemSelection() );
+
     searchPDGTypes();
+
     for( auto pdgType : m_pdgTypes )
     {
         m_possibleSelection->addItem( std::to_string( pdgType ) );
     }
 
-    m_selectedPDGTypes.push_back( std::to_string( m_pdgTypes[0] ) );
+    if(m_pdgTypes.size() > 0)
+    {
+        m_selectedPDGTypes.push_back( std::to_string( m_pdgTypes[0] ) );
 
-    m_multiSelection = m_filteringGroup->addProperty( "PDGEncoding", "Choose particle type(s) you want show",
-                                                            m_possibleSelection->getSelectorFirst(), pdgEncodingnotifier );
+        m_multiSelection = m_filteringGroup->addProperty( "PDGEncoding", "Choose particle type(s) you want show",
+                                                                m_possibleSelection->getSelectorFirst(), pdgEncodingnotifier );
+    }
+    else
+    {
+        m_multiSelection = m_filteringGroup->addProperty( "PDGEncoding", "Choose particle type(s) you want show",
+                                                                        m_possibleSelection->getSelectorNone(), pdgEncodingnotifier );
+    }
+    
     WPropertyHelper::PC_NOTEMPTY::addTo( m_multiSelection );
 }
 
@@ -85,6 +96,11 @@ WPropBool WMFilterPropertyHandler::getShowSecondaries()
 void WMFilterPropertyHandler::searchPDGTypes()
 {
     int pdgColumnIndex = m_protonData->getColumnIndex( "PDGEncoding" );
+
+    if(pdgColumnIndex < 0)
+    {
+        return;
+    }
 
     for( auto idx = 0; idx < m_protonData->getCSVData()->size(); idx++)
     {

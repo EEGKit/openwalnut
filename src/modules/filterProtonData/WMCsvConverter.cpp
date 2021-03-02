@@ -66,19 +66,22 @@ bool WMCsvConverter::canShow( WDataSetCSV::Content::iterator dataRow )
         return false;
     }
 
-    if( !m_propertyStatus->getFilterPropertyHandler()->getShowPrimaries()->get() && std::stoi( dataRow->at( m_indexes->getParentID() ) ) == 0 )
+    if(!m_MissingDataFlag)
     {
-        return false;
-    }
+        if( !m_propertyStatus->getFilterPropertyHandler()->getShowPrimaries()->get() && std::stoi( dataRow->at( m_indexes->getParentID() ) ) == 0 )
+        {
+            return false;
+        }
 
-    if( !m_propertyStatus->getFilterPropertyHandler()->getShowSecondaries()->get() && std::stoi( dataRow->at( m_indexes->getParentID() ) ) != 0 )
-    {
-        return false;
-    }
+        if( !m_propertyStatus->getFilterPropertyHandler()->getShowSecondaries()->get() && std::stoi( dataRow->at( m_indexes->getParentID() ) ) != 0 )
+        {
+            return false;
+        }
 
-    if( !m_propertyStatus->getFilterPropertyHandler()->isPDGTypeSelected( std::stoi( dataRow->at( m_indexes->getPDGEncoding() ) ) ) )
-    {
-        return false;
+        if( !m_propertyStatus->getFilterPropertyHandler()->isPDGTypeSelected( std::stoi( dataRow->at( m_indexes->getPDGEncoding() ) ) ) )
+        {
+            return false;
+        }
     }
 
     int eventID = std::stoi( dataRow->at( m_indexes->getEventID() ) );
@@ -97,12 +100,21 @@ void WMCsvConverter::addVertexAndColor( WDataSetCSV::Content::iterator dataRow )
     m_vectors->getVertices()->push_back( boost::lexical_cast< float >( dataRow->at( m_indexes->getPosY() ) ) );
     m_vectors->getVertices()->push_back( boost::lexical_cast< float >( dataRow->at( m_indexes->getPosZ() ) ) );
 
-    if( !m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
+    if(m_MissingDataFlag)
+    {
+        m_vectors->getColors()->push_back( 1 );
+        m_vectors->getColors()->push_back( 1 );
+        m_vectors->getColors()->push_back( 1 );
+        return;
+    }
+
+    if( !m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get())
     {
         m_vectors->getColors()->push_back( m_plainColor[0] );
         m_vectors->getColors()->push_back( m_plainColor[1] );
         m_vectors->getColors()->push_back( m_plainColor[2] );
     }
+    
 }
 
 void WMCsvConverter::addEdepAndSize( WDataSetCSV::Content::iterator dataRow, float* maxEdep )
@@ -147,15 +159,18 @@ void WMCsvConverter::calculateFibers()
 
 void WMCsvConverter::createPointsAndFibers()
 {
-    if( m_propertyStatus->getVisualizationPropertyHandler()->getSizesFromEdep()->get() )
+    if(!m_MissingDataFlag)
     {
-        m_points = boost::shared_ptr< WDataSetPointsAndSizes >(
-                new WDataSetPointsAndSizes(
-                        m_vectors->getVertices(),
-                        m_vectors->getColors(),
-                        m_vectors->getSizes()
-                )
-        );
+        if( m_propertyStatus->getVisualizationPropertyHandler()->getSizesFromEdep()->get())
+        {
+            m_points = boost::shared_ptr< WDataSetPointsAndSizes >(
+                    new WDataSetPointsAndSizes(
+                            m_vectors->getVertices(),
+                            m_vectors->getColors(),
+                            m_vectors->getSizes()
+                    )
+            );
+        }
     }
     else
     {
@@ -181,14 +196,51 @@ void WMCsvConverter::createPointsAndFibers()
 
 void WMCsvConverter::setOutputFromCSV( WMProtonData::SPtr protonData )
 {
-    if( !protonData->columnsInitialized() )
+    m_MissingDataFlag = false;
+
+    static const std::string necessaryColumns[] = {
+        "posX", "posY", "posZ", "eventID"
+    };
+
+    for( int i = 0; i < sizeof( necessaryColumns ) / sizeof( std::string ); i++ )
     {
-        return;
+        std::string column = necessaryColumns[i];
+        if( protonData->getColumnIndex( column ) < 0 )
+        {
+            return;
+        }
     }
+    
+    if(protonData->getColumnIndex( "PDGEncoding" ) < 0)
+    {
+        m_MissingDataFlag = true;
+    }
+
+    if(protonData->getColumnIndex( "edep" ) < 0)
+    {
+        m_MissingDataFlag = true;
+    }
+
+    if(protonData->getColumnIndex( "trackID" ) < 0)
+    {
+        m_MissingDataFlag = true;
+    }
+
+    if(protonData->getColumnIndex( "parentID" ) < 0)
+    {
+        m_MissingDataFlag = true;
+    }
+
+    
+
     WDataSetCSV::ContentSPtr data = protonData->getCSVData();
 
-    m_plainColor = m_propertyStatus->getVisualizationPropertyHandler()->getColorSelection()->get( true );
-
+    
+    if(m_MissingDataFlag == false)
+    {
+        m_plainColor = m_propertyStatus->getVisualizationPropertyHandler()->getColorSelection()->get( true );
+    }
+   
     m_vectors->clear();
     m_indexes->update( protonData );
 
@@ -202,16 +254,24 @@ void WMCsvConverter::setOutputFromCSV( WMProtonData::SPtr protonData )
         }
 
         addVertexAndColor( dataRow );
-        addEdepAndSize( dataRow, &maxEdep );
+
+        if(!m_MissingDataFlag)
+        {
+            addEdepAndSize( dataRow, &maxEdep );
+        }
+        
 
         m_vectors->getEventIDs()->push_back( std::stoi( dataRow->at( m_indexes->getEventID() ) ) );
     }
 
-    if( m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
+    if(!m_MissingDataFlag)
     {
-        normalizeEdeps( m_vectors->getEdeps(), m_vectors->getColors(), maxEdep );
+        if( m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get())
+        {
+            normalizeEdeps( m_vectors->getEdeps(), m_vectors->getColors(), maxEdep );
+        }
     }
-
+    
     calculateFibers();
     createPointsAndFibers();
 }

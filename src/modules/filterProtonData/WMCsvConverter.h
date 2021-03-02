@@ -78,6 +78,8 @@ public:
     boost::shared_ptr< WDataSetPoints > getPoints();
 
 private:
+    bool m_MissingDataFlag;
+
     /**
      * Stores information for the fiber display
      */
