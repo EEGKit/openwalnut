@@ -68,8 +68,13 @@ void WMFilterProtonData::moduleMain()
 
     while( !m_shutdownFlag() )
     {
-          m_moduleState.wait();
+        m_moduleState.wait();
 
+        if(m_input->getData() == NULL)
+        {
+            continue;
+        }
+        
         if( m_protonData == NULL )
         {
             m_protonData = WMProtonData::SPtr( new WMProtonData(  m_input->getData()->getHeader(),  m_input->getData()->getData() ) );
@@ -87,13 +92,12 @@ void WMFilterProtonData::moduleMain()
                 new WMEventIDLimitationPropertyHandler( m_protonData, m_properties, boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
             
         }
-        // execute a shared_pointer exeption and crashes the module while removing
-        /*else
+        else
         {
             debugLog() << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@in else";
             m_protonData->setCSVHeader(  m_input->getData()->getHeader() );
             m_protonData->setCSVData(  m_input->getData()->getData() );
-        }*/
+        }
         
         m_propertyStatus->getColumnPropertyHandler()->createProperties();
         m_propertyStatus->getFilterPropertyHandler()->createProperties();
