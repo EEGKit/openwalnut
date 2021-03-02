@@ -37,28 +37,23 @@
 #include "core/graphicsEngine/WGEUtils.h"
 #include "core/kernel/WKernel.h"
 
-#include "core/dataHandler/WDataSetPoints.h"
-#include "core/dataHandler/WDataSetFibers.h"
-
 #include "WMPointConnector.h"
 #include "WMClickHandler.h"
 
-// This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMPointConnector )
 
 WMPointConnector::WMPointConnector():
-    WModule()
+    WModuleContainer()
 {
 }
 
 WMPointConnector::~WMPointConnector()
 {
-    // Cleanup!
+    removeConnectors();
 }
 
 boost::shared_ptr< WModule > WMPointConnector::factory() const
 {
-    // See "src/modules/template/" for an extensively documented example.
     return boost::shared_ptr< WModule >( new WMPointConnector() );
 }
 
@@ -69,7 +64,6 @@ const char** WMPointConnector::getXPMIcon() const
 
 const std::string WMPointConnector::getName() const
 {
-    // Specify your module name here. This name must be UNIQUE!
     return "Point Connector";
 }
 
@@ -80,11 +74,11 @@ const std::string WMPointConnector::getDescription() const
 
 void WMPointConnector::connectors()
 {
-    // this input contains the triangle data
-    m_pointInput = WModuleInputData< WDataSetPoints >::createAndAdd( shared_from_this(), "points", "The data to display" );
-    m_fiberOutput = WModuleOutputData< WDataSetFibers >::createAndAdd( shared_from_this(), "fibers", "The created fibers" );
+    m_pointInput = WModuleInputData< WDataSetPoints >::createAndAdd( shared_from_this(), "points in", "The data to display" );
+    m_fiberOutput = WModuleOutputData< WDataSetFibers >::createAndAdd( shared_from_this(), "fibers out", "The created fibers" );
 
-    // call WModule's initialization
+    m_pointOutput = WModuleOutputData< WDataSetPoints >::create( shared_from_this(), "points out", "The data that is passed internally" );
+
     WModule::connectors();
 }
 
@@ -92,65 +86,29 @@ void WMPointConnector::properties()
 {
     WPropertyBase::PropertyChangeNotifierType notifier = boost::bind( &WMPointConnector::updateProperty, this, boost::placeholders::_1 );
 
-    // some properties need to trigger an update
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
-
-    // setup all the properties. See header file for their meaning and purpose.
-    m_size = m_properties->addProperty( "Point Size", "The size of the points.", 0.25 );
-    m_size->setMin( 0.0001 );
-    m_size->setMax( 10.0 );
-
-    m_useCorrectDepth = m_properties->addProperty( "Correct Depth",
-                                                   "If set, the depths of the sprites are calculated correctly. "
-                                                   "You can disable this to get higher framerates at the cost of visual correctness.",
-                                                   true );
-
     m_possibleFiberSelections = WItemSelection::SPtr( new WItemSelection() );
     m_possibleFiberSelections->addItem( ItemType::create( "Line 1", "Line 1", "", NULL ) );
-    m_fiberCount++;
-    m_fiberSelection = m_properties->addProperty( "Selected Line",
-                                                 "The line to which the points are added", m_possibleFiberSelections->getSelectorFirst(), notifier );
+    m_fiberSelection = m_properties->addProperty(
+        "Selected Line", "The line to which the points are added", m_possibleFiberSelections->getSelectorFirst(), notifier );
     WPropertyHelper::PC_SELECTONLYONE::addTo( m_fiberSelection );
     WPropertyHelper::PC_NOTEMPTY::addTo( m_fiberSelection );
 
+    m_fiberCount++;
+
     m_addFiber = m_properties->addProperty( "Add Line", "Add Line", WPVBaseTypes::PV_TRIGGER_READY, notifier );
 
-    // call WModule's initialization
     WModule::properties();
 }
 
 void WMPointConnector::moduleMain()
 {
-    // let the main loop awake if the data changes.
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_pointInput->getDataChangedCondition() );
-    m_moduleState.add( m_propCondition );
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // setup the main graphics-node:
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // create the post-processing node which actually does the nice stuff to the rendered image
-    m_postNode = new WGEPostprocessingNode(
-        WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()
-    );
-    m_postNode->addUpdateCallback( new WGENodeMaskCallback( m_active ) ); // disable the m_postNode with m_active
-    // provide the properties of the post-processor to the user
-    m_properties->addProperty( m_postNode->getProperties() );
-    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_postNode );
-
-    // load the GLSL shader:
-    m_shader = new WGEShader( "WMPointConnector", m_localPath );
-    // set geometry shader options
-    m_shader->setParameter( GL_GEOMETRY_VERTICES_OUT_EXT, 4 );
-    m_shader->setParameter( GL_GEOMETRY_INPUT_TYPE_EXT, GL_POINTS );
-    m_shader->setParameter( GL_GEOMETRY_OUTPUT_TYPE_EXT, GL_TRIANGLE_STRIP );
-
-    // insert some uniforms and defines
-    m_postNode->getOrCreateStateSet()->addUniform( new WGEPropertyUniform< WPropDouble >( "u_pointSize", m_size ) );
-    m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
-        new WGEShaderPropertyDefineOptions< WPropBool >( m_useCorrectDepth, "DEPTHWRITE_DISABLED", "DEPTHWRITE_ENABLED" ) )
-    );
+    m_pointRenderer = createAndAdd( "Point Renderer" );
+    m_pointRenderer->isReady().wait();
+    m_pointOutput->connect( m_pointRenderer->getInputConnector( "points" ) );
+    m_properties->addProperty( m_pointRenderer->getProperties()->getProperty( "Point Size" ) );
 
     osg::ref_ptr<osgViewer::View> viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView();
     osg::ref_ptr<WMClickHandler> handler = new WMClickHandler( this );
@@ -163,33 +121,25 @@ void WMPointConnector::moduleMain()
     m_fibers->push_back( PCFiber() );
     m_selectedFiber = 0;
 
-    // signal ready state. The module is now ready to be used.
     ready();
 
-    // loop until the module container requests the module to quit
     while( !m_shutdownFlag() )
     {
-        // Now, the moduleState variable comes into play. The module can wait for the condition, which gets fired whenever the input receives data
-        // or an property changes. The main loop now waits until something happens.
         debugLog() << "Waiting ...";
         m_moduleState.wait();
 
-        // woke up since the module is requested to finish
         if( m_shutdownFlag() )
         {
             break;
         }
 
-        // Get data and check for invalid data.
         WDataSetPoints::SPtr points = m_pointInput->getData();
         if( !points )
         {
             debugLog() << "Invalid Data. Disabling.";
-            m_postNode->clear();
             continue;
         }
 
-        // convert point arrays to osg vec3 arrays
         m_vertices = osg::ref_ptr< osg::Vec3Array >( new osg::Vec3Array );
         m_colors = osg::ref_ptr< osg::Vec4Array >( new osg::Vec4Array );
 
@@ -207,33 +157,27 @@ void WMPointConnector::moduleMain()
         redraw();
     }
 
-    // it is important to always remove the modules again
-    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_postNode );
+    stop();
 }
 
 void WMPointConnector::redraw()
 {
-    osg::ref_ptr< osg::Geometry > geometry = osg::ref_ptr< osg::Geometry >( new osg::Geometry );
-    osg::ref_ptr< osg::Geode > geode( new osg::Geode() );
+    WDataSetPoints::VertexArray vertices( new std::vector< float > );
+    WDataSetPoints::VertexArray colors( new std::vector< float > );
 
-    osg::StateSet* state = geode->getOrCreateStateSet();
-    state->setMode( GL_BLEND, osg::StateAttribute::ON );
+    for( size_t idx = 0; idx < m_vertices->size(); idx++ )
+    {
+        vertices->push_back( m_vertices->at( idx ).x() );
+        vertices->push_back( m_vertices->at( idx ).y() );
+        vertices->push_back( m_vertices->at( idx ).z() );
 
-    // combine to geometry
-    geometry->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::POINTS, 0, m_vertices->size() ) );
-    geometry->setVertexArray( m_vertices );
-    geometry->setColorArray( m_colors );
-    geometry->setColorBinding( osg::Geometry::BIND_PER_VERTEX );
+        colors->push_back( m_colors->at( idx ).x() );
+        colors->push_back( m_colors->at( idx ).y() );
+        colors->push_back( m_colors->at( idx ).z() );
+        colors->push_back( m_colors->at( idx ).w() );
+    }
 
-    // add geometry to geode
-    geode->addDrawable( geometry );
-
-    // shader and colormapping
-    m_shader->apply( geode );
-
-    // add geode to group
-    m_postNode->clear();
-    m_postNode->insert( geode, m_shader );
+    m_pointOutput->updateData( WDataSetPoints::SPtr( new WDataSetPoints( vertices, colors ) ) );
 }
 
 void WMPointConnector::handleClick( osg::Vec3 cameraPosition, osg::Vec3 direction, bool isLeftClick )
@@ -246,7 +190,7 @@ void WMPointConnector::handleClick( osg::Vec3 cameraPosition, osg::Vec3 directio
     {
         osg::Vec3 vertex = m_vertices->at( idx );
 
-        float hit = hitVertex( cameraPosition, direction, vertex, m_size->get() );
+        float hit = hitVertex( cameraPosition, direction, vertex, 1.0 );
         if( hit > 0.0 )
         {
             float dis = ( vertex - cameraPosition ).length2();

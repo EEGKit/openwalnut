@@ -34,8 +34,14 @@
 #include "core/common/WItemSelector.h"
 #include "core/common/WItemSelectionItemTyped.h"
 #include "core/kernel/WModule.h"
+#include "core/kernel/WModuleContainer.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
+
+#include "core/dataHandler/WDataSetPoints.h"
+#include "core/dataHandler/WDataSetFibers.h"
+
+#include "../pointRenderer/WMPointRenderer.h"
 
 
 class WDataSetPoints;
@@ -49,7 +55,7 @@ class WGEPostprocessingNode;
  *
  * \ingroup modules
  */
-class WMPointConnector: public WModule
+class WMPointConnector: public WModuleContainer
 {
     /**
      * Test is your best ... friend
@@ -164,10 +170,9 @@ private:
      */
     void updateOutput();
 
-    /**
-     * A condition used to notify about changes in several properties.
-     */
-    boost::shared_ptr< WCondition > m_propCondition;
+    WModule::SPtr m_pointRenderer;
+
+    boost::shared_ptr< WModuleOutputData< WDataSetPoints > > m_pointOutput;
 
     /**
      * An input connector used to get points from other modules.
@@ -180,21 +185,6 @@ private:
     boost::shared_ptr< WModuleOutputData< WDataSetFibers > > m_fiberOutput;
 
     /**
-     * The shader for the points
-     */
-    osg::ref_ptr< WGEShader > m_shader;
-
-    /**
-     * The size of a point on screen.
-     */
-    WPropDouble m_size;
-
-    /**
-     * Slower but correct depth calculation.
-     */
-    WPropBool m_useCorrectDepth;
-
-    /**
      * The vertices that are drawn.
      */
     osg::ref_ptr< osg::Vec3Array > m_vertices;
@@ -203,11 +193,6 @@ private:
      * The color of the vertices that are drawn.
      */
     osg::ref_ptr< osg::Vec4Array > m_colors;
-
-    /**
-     * The postprocessing node of the shader.
-     */
-    osg::ref_ptr< WGEPostprocessingNode > m_postNode;
 
     /**
      * The index of the selected vertex.
