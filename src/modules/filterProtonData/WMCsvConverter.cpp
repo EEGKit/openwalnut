@@ -207,6 +207,11 @@ void WMCsvConverter::setOutputFromCSV( WMProtonData::SPtr protonData )
         m_vectors->getEventIDs()->push_back( std::stoi( dataRow->at( m_indexes->getEventID() ) ) );
     }
 
+    if( checkIfOutputIsNull() )
+    {
+        return;
+    }
+
     if( m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
     {
         normalizeEdeps( m_vectors->getEdeps(), m_vectors->getColors(), maxEdep );
@@ -214,4 +219,15 @@ void WMCsvConverter::setOutputFromCSV( WMProtonData::SPtr protonData )
 
     calculateFibers();
     createPointsAndFibers();
+}
+
+bool WMCsvConverter::checkIfOutputIsNull()
+{
+    if( m_vectors->getVertices()->empty() )
+    {
+        m_points = NULL;
+        m_fibers = NULL;
+        return true;
+    }
+    return false;
 }
