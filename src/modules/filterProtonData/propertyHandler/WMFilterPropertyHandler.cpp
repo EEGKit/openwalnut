@@ -62,12 +62,12 @@ void WMFilterPropertyHandler::createMultiSelectionForPDG()
 
     WPropertyBase::PropertyChangeNotifierType pdgEncodingnotifier = boost::bind(
         &WMFilterPropertyHandler::updateSelectedPDGTypes, this, boost::placeholders::_1 );
-        
+    
     m_columnItemSelectionList = m_columnPropertyHandler->getColumnItems();
 
     WItemSelector itemSelector = m_columnItemSelectionList->getSelectorAll();
 
-    m_currentColumnIndex = selectColumn( "PD3GEncoding", itemSelector );
+    m_currentColumnIndex = selectColumn( "PDGEncoding", itemSelector );
 
     m_singleSelection = m_filteringGroup->addProperty( "Particle Data Group", "", itemSelector, pdgColumnNotifier );
     WPropertyHelper::PC_NOTEMPTY::addTo( m_singleSelection );
@@ -83,7 +83,6 @@ void WMFilterPropertyHandler::createMultiSelectionForPDG()
     }
 
     m_selectedPDGTypes.push_back( std::to_string( m_pdgTypes[0] ) );
-
 
     m_multiSelection = m_filteringGroup->addProperty( "Particle Type", "Choose particle type(s) you want show",
                                                             m_particleItemSelectionList->getSelectorFirst(), pdgEncodingnotifier );
@@ -155,8 +154,6 @@ int WMFilterPropertyHandler::selectColumn( std::string columnName, WItemSelector
     
     itemSelector = m_columnItemSelectionList->getSelectorNone();
 
-    // TODO: Consider if -1 is the best possible solution if column doesn't exist
-    //throw std::invalid_argument( "Column type " + columnName + " not found in input data" );
     return 0;
 }
 

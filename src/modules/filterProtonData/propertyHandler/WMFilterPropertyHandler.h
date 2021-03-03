@@ -87,8 +87,9 @@ public:
     bool isPDGTypeSelected( int pdgType );
 
     /**
+     * Get selected columns index
      * 
-     * \return current column that is selected as particle data group
+     * \return current column index that is selected as particle data group
      */
     int getCurrentColumnIndex();
 
@@ -130,16 +131,24 @@ private:
 
     /**
      * Collect all particle types from your input data.
+     * 
+     * \param columnIndex determines column whose elements should be collected
      */
     void setPDGTypes( int columnIndex );
 
     /**
+     * Updates itemSelector depending on the columnName that is selected
      * 
+     * \param ColumnName name of the column that should be selected
+     * \param itemSelector reference of selectable column names list
+     * \return index of column that is selected
      */
     int selectColumn( std::string columnName, WItemSelector& itemSelector );
 
     /**
+     * Updates property ui once a new particle data group column is selected
      * 
+     * \param property contains reference to the property which called updateProperty()
      */
     void onSingleSelectionChanged( WPropertyBase::SPtr property );
 
@@ -186,7 +195,7 @@ private:
     WPropSelection m_multiSelection;
 
     /**
-     * 
+     * Reference of column name list
      */
     boost::shared_ptr< WItemSelection > m_columnItemSelectionList;
 
