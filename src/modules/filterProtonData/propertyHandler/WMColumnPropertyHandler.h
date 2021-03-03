@@ -67,7 +67,7 @@ public:
     void createProperties();
 
     /**
-     * 
+     * Get reference of selectable column types
      */
     boost::shared_ptr< WItemSelection > getColumnItems();
 

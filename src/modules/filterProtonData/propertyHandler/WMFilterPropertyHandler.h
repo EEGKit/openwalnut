@@ -146,7 +146,9 @@ private:
     int selectColumn( std::string columnName, WItemSelector& itemSelector );
 
     /**
+     * Updates possible selectable particle types in multiselection
      * 
+     * \param particleItemSelectionList selectable partyle types as itemSelectionList
      */
     void updatePDGTypesProperty( WItemSelection::SPtr particleItemSelectionList );
 
