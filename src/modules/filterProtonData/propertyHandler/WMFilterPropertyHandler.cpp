@@ -77,10 +77,7 @@ void WMFilterPropertyHandler::createMultiSelectionForPDG()
 
     setPDGTypes( m_currentColumnIndex );
 
-    for( auto pdgType : m_pdgTypes )
-    {
-        m_particleItemSelectionList->addItem( std::to_string( pdgType ) );
-    }
+    updatePDGTypesProperty( m_particleItemSelectionList );
 
     m_selectedPDGTypes.push_back( std::to_string( m_pdgTypes[0] ) );
 
@@ -157,6 +154,19 @@ int WMFilterPropertyHandler::selectColumn( std::string columnName, WItemSelector
     return 0;
 }
 
+void WMFilterPropertyHandler::updatePDGTypesProperty( WItemSelection::SPtr particleItemSelectionList ) 
+{
+    if ( !m_pdgTypes.empty() )
+    {
+        particleItemSelectionList->clear();
+
+        for( auto pdgType : m_pdgTypes )
+        {
+            particleItemSelectionList->addItem( std::to_string( pdgType ) );
+        }
+    }
+}
+
 void WMFilterPropertyHandler::onSingleSelectionChanged( WPropertyBase::SPtr property ) 
 {
     WItemSelector itemSelector = m_columnItemSelectionList->getSelectorAll();
@@ -166,14 +176,10 @@ void WMFilterPropertyHandler::onSingleSelectionChanged( WPropertyBase::SPtr prop
     m_multiSelection->setHidden( !columnIsValid );
 
     m_currentColumnIndex = selectColumn( columnName, itemSelector );
-    
+
     setPDGTypes( m_currentColumnIndex );
 
-    m_particleItemSelectionList->clear();
-
-    for( auto pdgType : m_pdgTypes ) {
-        m_particleItemSelectionList->addItem( std::to_string( pdgType ) );
-    }
+    updatePDGTypesProperty( m_particleItemSelectionList );
 
     m_multiSelection->set( m_particleItemSelectionList->getSelectorFirst() );
 }

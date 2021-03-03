@@ -146,6 +146,11 @@ private:
     int selectColumn( std::string columnName, WItemSelector& itemSelector );
 
     /**
+     * 
+     */
+    void updatePDGTypesProperty( WItemSelection::SPtr particleItemSelectionList );
+
+    /**
      * Updates property ui once a new particle data group column is selected
      * 
      * \param property contains reference to the property which called updateProperty()
