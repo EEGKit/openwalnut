@@ -30,6 +30,7 @@
 #include <iostream>
 
 #include <boost/lexical_cast.hpp>
+#include "core/common/WTransferFunction.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
 #include "core/dataHandler/WDataSetPointsAndSizes.h"
@@ -76,6 +77,12 @@ public:
      * \return shared_ptr of generated Points from the CSV file 
      */
     boost::shared_ptr< WDataSetPoints > getPoints();
+
+    /**
+     * Computes gradient vector from transfer function specified in visualization properties.
+     * \return shared_ptr of mapped gradient from transfer function in RGBA format
+     */
+    boost::shared_ptr< std::vector<unsigned char> > sampleTransferFunction();
 
 private:
     /**

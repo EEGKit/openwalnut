@@ -47,15 +47,34 @@ boost::shared_ptr< WDataSetPoints > WMCsvConverter::getPoints()
     return m_points;
 }
 
+boost::shared_ptr< std::vector<unsigned char> > WMCsvConverter::sampleTransferFunction()
+{
+    boost::shared_ptr< std::vector<unsigned char> > data( new std::vector<unsigned char>( 10 * 4 ) );
+
+    WTransferFunction tf = m_propertyStatus->getVisualizationPropertyHandler()->getTransferFunction()->get();
+
+    tf.sample1DTransferFunction( &( *data )[ 0 ], 10, 0.0, 1.0 );
+
+    return data;
+}
+
 void WMCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray, float maxEdep )
 {
+    boost::shared_ptr< std::vector<unsigned char> > data = sampleTransferFunction();
+
     for( std::vector< float >::iterator currentEdep = edeps->begin(); currentEdep != edeps->end(); currentEdep++ )
     {
-        *currentEdep = *currentEdep / maxEdep;
+        float clusterSize = 9.0 *( ( 2.4 * ( pow( *currentEdep, 0.338 ) ) ) / 4.0 );
 
-        colorArray->push_back( *currentEdep * 10 );
-        colorArray->push_back( *currentEdep * 100 );
-        colorArray->push_back( *currentEdep * 1 );
+        float r = data->at( clusterSize * 4 ) / 255.0;
+        float g = data->at( clusterSize * 4 + 1 ) / 255.0;
+        float b = data->at( clusterSize * 4 + 2 ) / 255.0;
+        float a = data->at( clusterSize * 4 + 3 ) / 255.0;
+
+        colorArray->push_back( r );
+        colorArray->push_back( g );
+        colorArray->push_back( b );
+        colorArray->push_back( a );
     }
 }
 
