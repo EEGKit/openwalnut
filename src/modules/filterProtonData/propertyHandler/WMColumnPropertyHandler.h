@@ -67,6 +67,11 @@ public:
      */
     void createProperties();
 
+    /**
+     * Get reference of selectable column types
+     */
+    boost::shared_ptr< WItemSelection > getColumnItems();
+
 private:
     /**
      * A vector, where all default ColumnPropertyNames are stored in

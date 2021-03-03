@@ -121,3 +121,8 @@ void WMColumnPropertyHandler::propertyNotifier( WPropertyBase::SPtr property )
         m_dataUpdate( );
     }
 }
+
+boost::shared_ptr< WItemSelection > WMColumnPropertyHandler::getColumnItems() 
+{
+    return m_possibleSelectionsUsingTypes;
+}
