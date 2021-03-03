@@ -48,8 +48,8 @@ void WMVisualizationPropertyHandler::createProperties()
     m_colorSelection = m_visualizationGroup->addProperty( "Plain color", "Choose how to color the points when not coloring by edep.",
         defaultColor::WHITE, notifierCheckBox );
 
-    m_gradient = m_visualizationGroup->addProperty( "Transfer Function", "The transfer function editor.", setColorGradient() ,
-                                                    notifierCheckBox, false );
+    m_gradient = m_visualizationGroup->addProperty( "Transfer Function", "Transfer function that maps the energy deposition to a gradient",
+                                                    setColorGradient() , notifierCheckBox, false );
 }
 
 void WMVisualizationPropertyHandler::updateCheckboxProperty( WPropertyBase::SPtr property )
