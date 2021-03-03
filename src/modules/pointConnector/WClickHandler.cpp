@@ -22,35 +22,24 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WMClickHandler.h"
+#include "WClickHandler.h"
 
-WMClickHandler::WMClickHandler( WMPointConnector* connector ):
+WClickHandler::WClickHandler( WMPointConnector* connector ):
     m_connector( connector )
 {
 }
 
-bool WMClickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
+bool WClickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
 {
     osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>( &aa );
 
     if( ea.getEventType() == osgGA::GUIEventAdapter::RELEASE && ea.getButton() != osgGA::GUIEventAdapter::MIDDLE_MOUSE_BUTTON )
     {
         osg::Camera* camera = viewer->getCamera();
-        osg::Viewport* viewport = camera->getViewport();
-        double halfWidth = viewport->width() * 0.5;
-        double halfHeight = viewport->height() * 0.5;
-
-        if( !halfWidth || !halfHeight )
-        {
-            return false;
-        }
-
-        double mouseX = ( ea.getX() - halfWidth ) / halfWidth;
-        double mouseY = ( ea.getY() - halfHeight ) / halfHeight;
-
         osg::Vec3 nearP( 0.0, 0.0, 0.0 );
         osg::Vec3 farP( 0.0, 0.0, 0.0 );
-        mouseToWorldCoordinates( camera, mouseX, mouseY, &nearP, &farP );
+
+        mouseToWorldCoordinates( camera, ea.getXnormalized(), ea.getYnormalized(), &nearP, &farP );
 
         osg::Vec3 direction = farP - nearP;
         direction.normalize();
@@ -62,7 +51,7 @@ bool WMClickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionA
     return false;
 }
 
-void WMClickHandler::mouseToWorldCoordinates( osg::Camera* camera, double mouseX, double mouseY, osg::Vec3* nearP, osg::Vec3* farP )
+void WClickHandler::mouseToWorldCoordinates( osg::Camera* camera, double mouseX, double mouseY, osg::Vec3* nearP, osg::Vec3* farP )
 {
     osg::Matrix VP = camera->getViewMatrix() * camera->getProjectionMatrix();
 
