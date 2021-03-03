@@ -29,9 +29,11 @@
 
 WMFilterPropertyHandler::WMFilterPropertyHandler( WMProtonData::SPtr protonData,
                                             WPropertyGroup::SPtr properties,
+                                            WMColumnPropertyHandler::SPtr columnPropertyHandler,
                                             WMFilterPropertyHandler::CallbackPtr dataUpdate ):
     m_protonData( protonData ),
     m_properties( properties ),
+    m_columnPropertyHandler ( columnPropertyHandler ),
     m_dataUpdate( dataUpdate )
 {
 }
@@ -114,7 +116,7 @@ void WMFilterPropertyHandler::setPDGTypes( int columnIndex )
 {
     m_pdgTypes.clear();
 
-    if(pdgColumnIndex < 0)
+    if(columnIndex < 0)
     {
         return;
     }
