@@ -24,6 +24,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include "WMColumnPropertyHandler.h"
 
@@ -34,6 +35,7 @@ WMColumnPropertyHandler::WMColumnPropertyHandler( WMProtonData::SPtr protonData,
     m_properties( properties ),
     m_dataUpdate( dataUpdate )
 {
+    mapPropSelectionsToString = {};
 }
 
 void WMColumnPropertyHandler::createProperties()
@@ -45,13 +47,12 @@ void WMColumnPropertyHandler::createProperties()
 
     m_columnSelectionGroup = m_properties->addPropertyGroup( "Select columns", "Select the columns which should be used" );
 
-    m_singleSelectionForPosX = addHeaderProperty( "posX", notifier );
-    m_singleSelectionForPosY = addHeaderProperty( "posY", notifier );
-    m_singleSelectionForPosZ = addHeaderProperty( "posZ", notifier );
-    m_singleSelectionForEdep = addHeaderProperty( "edep", notifier );
-    m_singleSelectionForEventID = addHeaderProperty( "eventID", notifier );
-    m_singleSelectionForTrackID = addHeaderProperty( "trackID", notifier );
-    m_singleSelectionForParentID = addHeaderProperty( "parentID", notifier );
+    for( std::string colName : vecDefaultColumnNames )
+    {
+        mapPropSelectionsToString.insert(
+            std::map< WPropSelection, std::string >::value_type( addHeaderProperty( colName, notifier ), colName )
+        );
+    }
 }
 
 void WMColumnPropertyHandler::InitializeSelectionItem()
@@ -65,13 +66,13 @@ void WMColumnPropertyHandler::InitializeSelectionItem()
     }
 }
 
-WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string headerName, WPropertyBase::PropertyChangeNotifierType notifier )
+WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string columnName, WPropertyBase::PropertyChangeNotifierType notifier )
 {
-    int index = m_protonData->getColumnIndex( headerName );
+    int index = m_protonData->getColumnIndex( columnName );
     WItemSelector selector = index < 0 ? m_possibleSelectionsUsingTypes->getSelectorNone() : m_possibleSelectionsUsingTypes->getSelector( index );
     WPropSelection selection = m_columnSelectionGroup->addProperty(
-                                                headerName,
-                                                "Choose the " + headerName + " column from csv",
+                                                columnName,
+                                                "Choose the " + columnName + " column from csv",
                                                 selector,
                                                 notifier );
 
@@ -94,50 +95,28 @@ int WMColumnPropertyHandler::getColumnNumberByName( std::string columnNameToMatc
 
 void WMColumnPropertyHandler::propertyNotifier( WPropertyBase::SPtr property )
 {
-    const WItemSelector* selector;
+    const WItemSelector* selector = NULL;
     std::string columnName;
 
-    if( property == m_singleSelectionForPosX )
+    for( PropMapEntry elem = mapPropSelectionsToString.begin();
+         elem != mapPropSelectionsToString.end();
+         elem++ )
     {
-        selector = &m_singleSelectionForPosX->get( true );
-        columnName = "posX";
-    }
-    else if( property == m_singleSelectionForPosY )
-    {
-        selector = &m_singleSelectionForPosY->get( true );
-        columnName = "posY";
-    }
-    else if( property == m_singleSelectionForPosZ )
-    {
-        selector = &m_singleSelectionForPosZ->get( true );
-        columnName = "posZ";
-    }
-    else if( property == m_singleSelectionForEdep )
-    {
-        selector = &m_singleSelectionForEdep->get( true );
-        columnName = "edep";
-    }
-    else if( property == m_singleSelectionForEventID )
-    {
-        selector = &m_singleSelectionForEventID->get( true );
-        columnName = "eventID";
-    }
-    else if( property == m_singleSelectionForTrackID )
-    {
-        selector = &m_singleSelectionForTrackID->get( true );
-        columnName = "trackID";
-    }
-    else if( property == m_singleSelectionForParentID )
-    {
-        selector = &m_singleSelectionForParentID->get( true );
-        columnName = "parentID";
+        if( property == elem->first )
+        {
+            selector = &elem->first->get( true );
+            columnName = elem->second;
+            break;
+        }
     }
 
-    if( selector != NULL )
+    if( selector != NULL)
     {
         std::string selectedValue = selector->at( 0 )->getAs< ItemType >()->getValue();
 
-        m_protonData->setColumnIndex( columnName, getColumnNumberByName( selectedValue, m_protonData->getCSVHeader()->at( 0 ) ) );
+        m_protonData->setColumnIndex( columnName,
+                                      getColumnNumberByName( selectedValue, m_protonData->getCSVHeader()->at( 0 ) )
+                                     );
 
         m_dataUpdate( );
     }
