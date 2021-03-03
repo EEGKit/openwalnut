@@ -113,6 +113,11 @@ public:
     void updatePoints();
 
     /**
+     * Updates the fiber output
+     */
+    void updateOutput();
+
+    /**
      * \return boost::shared_ptr< WConnectorData > The WConnectorData of this module.
      */
     boost::shared_ptr< WConnectorData > getConnectorData();
@@ -143,11 +148,6 @@ private:
      * \return < 0 if ray does not intersect. == 0 if ray is a tangent. > 0 if ray intersects.
      */
     float hitVertex( osg::Vec3 rayStart, osg::Vec3 rayDir, osg::Vec3 vertex, float radius );
-
-    /**
-     * Updates the fiber output
-     */
-    void updateOutput();
 
     /**
      * Creates the WMPointRenderer and runs it.

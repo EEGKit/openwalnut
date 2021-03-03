@@ -38,6 +38,7 @@
 #include "core/kernel/WModule.h"
 
 #include "WMPointConnector.h"
+#include "action/WActionHandler.h"
 
 /**
  * Handles the fibers of the WMPointsConnector.
@@ -85,14 +86,25 @@ public:
     /**
      * Adds a vertex to the currently selected fiber.
      * \param vertex The vertex to add.
+     * \param silent Whether or not this should add to the undo stack.
      */
-    void addVertexToFiber( osg::Vec3 vertex );
+    void addVertexToFiber( osg::Vec3 vertex, bool silent = false );
+
+    /**
+     * Adds a vertex to the currently selected fiber.
+     * \param vertex The vertex to add.
+     * \param position The position where to add the vertex.
+     * \param silent Whether or not this should add to the undo stack.
+     */
+    void addVertexToFiberAt( osg::Vec3 vertex, size_t position, bool silent );
+
 
     /**
      * Removes a vertex from the currently selected fiber.
      * \param vertex The vertex to remove.
+     * \param silent Whether or not this should add to the undo stack.
      */
-    void removeVertexFromFiber( osg::Vec3 vertex );
+    void removeVertexFromFiber( osg::Vec3 vertex, bool silent = false );
 
     /**
      * Selects the last point of the currently selected fiber.
@@ -103,6 +115,8 @@ public:
      * \return PCFiberListSPtr All the fibers in this handler.
      */
     PCFiberListSPtr getFibers();
+
+    WMPointConnector* getPointConnector();
 
 private:
     /**
@@ -115,6 +129,11 @@ private:
      * A reference to the WMPointConnector this belongs to.
      */
     WMPointConnector* m_pointConnector;
+
+    /**
+     * Handles the undo and redo action.
+     */
+    WActionHandler::SPtr m_actionHandler;
 
     /**
      * Stores the amount of new created fibers.
@@ -140,6 +159,9 @@ private:
      * Property (button) to add a new Fiber.
      */
     WPropTrigger m_addFiber;
+
+    WPropTrigger m_undoTrigger;
+    WPropTrigger m_redoTrigger;
 
     /**
      * A pointer to the list of fibers.

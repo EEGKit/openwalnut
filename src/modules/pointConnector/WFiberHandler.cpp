@@ -26,38 +26,62 @@
 
 #include "WConnectorData.h"
 
+#include "action/WFiberActionAddVertex.h"
+#include "action/WFiberActionRemoveVertex.h"
 #include "WFiberHandler.h"
 
 WFiberHandler::WFiberHandler( WMPointConnector* pointConnector )
 {
     m_pointConnector = pointConnector;
 
+    m_actionHandler = WActionHandler::SPtr( new WActionHandler() );
     m_fibers = PCFiberListSPtr( new PCFiberList() );
+
     m_fibers->push_back( PCFiber() );
 
     m_selectedFiber = 0;
     m_fiberCount = 1;
 }
 
-void WFiberHandler::addVertexToFiber( osg::Vec3 vertex )
+void WFiberHandler::addVertexToFiber( osg::Vec3 vertex, bool silent )
 {
     m_fibers->at( m_selectedFiber ).push_back( vertex );
+
+    if( !silent )
+    {
+        m_actionHandler->pushAction( WFiberActionAddVertex::SPtr( new WFiberActionAddVertex( vertex, this ) ) );
+    }
 }
 
-void WFiberHandler::removeVertexFromFiber( osg::Vec3 vertex )
+void WFiberHandler::addVertexToFiberAt( osg::Vec3 vertex, size_t position, bool silent )
 {
     auto fiber = m_fibers->begin() + m_selectedFiber;
+    fiber->emplace( fiber->begin() + position, vertex );
 
-    for( auto it = fiber->begin(); it != fiber->end(); )
+    if( !silent )
+    {
+        m_actionHandler->pushAction( WFiberActionAddVertex::SPtr( new WFiberActionAddVertex( vertex, this ) ) );
+    }
+}
+
+void WFiberHandler::removeVertexFromFiber( osg::Vec3 vertex, bool silent )
+{
+    auto fiber = m_fibers->begin() + m_selectedFiber;
+    size_t position = 0;
+
+    for( auto it = fiber->begin(); it != fiber->end(); it++)
     {
         if( *it == vertex )
         {
             fiber->erase( it );
+            break;
         }
-        else
-        {
-            it++;
-        }
+        position++;
+    }
+
+    if( !silent )
+    {
+        m_actionHandler->pushAction( WFiberActionRemoveVertex::SPtr( new WFiberActionRemoveVertex( vertex, position, this ) ) );
     }
 }
 
@@ -84,6 +108,9 @@ void WFiberHandler::createProperties( WPropertyGroup::SPtr properties )
     WPropertyHelper::PC_NOTEMPTY::addTo( m_fiberSelection );
 
     m_addFiber = properties->addProperty( "Add Line", "Add Line", WPVBaseTypes::PV_TRIGGER_READY, notifier );
+
+    m_undoTrigger = properties->addProperty( "Undo", "Undo", WPVBaseTypes::PV_TRIGGER_READY, notifier );
+    m_redoTrigger = properties->addProperty( "Redo", "Redo", WPVBaseTypes::PV_TRIGGER_READY, notifier );
 }
 
 void WFiberHandler::updateProperty( WPropertyBase::SPtr property )
@@ -99,7 +126,7 @@ void WFiberHandler::updateProperty( WPropertyBase::SPtr property )
         m_possibleFiberSelections->addItem( ItemType::create( name, name, "", NULL ) );
         m_fiberSelection->set( m_possibleFiberSelections->getSelectorLast() );
     }
-    if( property == m_fiberSelection )
+    else if( property == m_fiberSelection )
     {
         m_selectedFiber = m_fiberSelection->get().getItemIndexOfSelected( 0 );
         m_pointConnector->getConnectorData()->deselectPoint();
@@ -108,9 +135,25 @@ void WFiberHandler::updateProperty( WPropertyBase::SPtr property )
 
         m_pointConnector->updatePoints();
     }
+    else if( property == m_undoTrigger && m_undoTrigger->get(true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
+    {
+        m_undoTrigger->set( WPVBaseTypes::PV_TRIGGER_READY, false );
+        m_actionHandler->undo();
+    }
+    else if( property == m_redoTrigger && m_redoTrigger->get(true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
+    {
+        m_redoTrigger->set( WPVBaseTypes::PV_TRIGGER_READY, false );
+        m_actionHandler->redo();
+    }
 }
 
 WFiberHandler::PCFiberListSPtr WFiberHandler::getFibers()
 {
     return m_fibers;
+}
+
+
+WMPointConnector* WFiberHandler::getPointConnector()
+{
+    return m_pointConnector;
 }
