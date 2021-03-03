@@ -83,8 +83,8 @@ void WMFilterProtonData::moduleMain()
             m_propertyStatus->setColumnPropertyHandler( WMColumnPropertyHandler::SPtr( new WMColumnPropertyHandler( m_protonData, m_properties,
                 boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
 
-            m_propertyStatus->setFilterPropertyHandler( WMFilterPropertyHandler::SPtr( new WMFilterPropertyHandler( m_protonData, m_properties,
-                boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
+            m_propertyStatus->setFilterPropertyHandler( WMFilterPropertyHandler::SPtr( new WMFilterPropertyHandler( m_protonData, m_properties, 
+                m_propertyStatus->getColumnPropertyHandler(), boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
 
             m_propertyStatus->setVisualizationPropertyHandler( WMVisualizationPropertyHandler::SPtr(
                 new WMVisualizationPropertyHandler( m_protonData, m_properties, boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
