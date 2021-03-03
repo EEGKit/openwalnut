@@ -67,7 +67,12 @@ public:
     void createProperties();
 
     /**
-     * update current group property and subproperty    
+     * Get reference of selectable column types
+     */
+    boost::shared_ptr< WItemSelection > getColumnItems();
+
+    /**
+     * update current group property and subproperty
      */
     void updateProperty();
 
