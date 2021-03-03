@@ -27,6 +27,7 @@
 
 #include <string>
 #include <vector>
+#include <boost/bimap.hpp>
 
 #include "../WMProtonData.h"
 
@@ -45,6 +46,16 @@ public:
      * shared_ptr that points to itself 
      */
     typedef boost::function< void( ) > CallbackPtr;
+
+    /**
+     * bimap to save the pdg to a particlename
+     */
+    typedef boost::bimap< std::string, int > BM_PDG;
+
+    /**
+     * represent an Element of a pdg and a particlename for the map
+     */
+    typedef BM_PDG::value_type PdgElement;
 
     /**
      * constructor
@@ -84,7 +95,16 @@ public:
      */
     bool isPDGTypeSelected( int pdgType );
 
+     /**
+     * creates a bimap out of the names and ids of PDG txt 
+     *
+     * \param path fielpath of the pdg particlename file
+     * \throws WException
+     */
+    void createPDGMap(std:: string path);
+
 private:
+
     /**
      * Pointer to the content and header of the CSV 
      */
@@ -127,6 +147,27 @@ private:
      */
     void updateCheckboxProperty( WPropertyBase::SPtr property );
 
+    /**
+     * Seatch the ParticleName in the map with a given pdg
+     *
+     * \param pdg pdg number of a particlename
+     * \return the particle name
+     */
+    std::string getParticleNameFromPdg(int pdg);
+
+    /**
+     * Search the pdg in the map with a given particlename
+     *
+     * \param particleName particlename of a pdg number
+     * \return pdg number
+     */
+    int getPdgFromName(std::string particleName);
+    
+    /**
+     * A Map of the PDG and their names 
+     */
+    BM_PDG m_PdgNamesByID;
+
      /**
      * Stores every unique particle id.
      */
@@ -160,7 +201,7 @@ private:
     /**
      * vector of the options of PDG
      */
-    std::vector < std::string > m_selectedPDGTypes;
+    std::vector < int > m_selectedPDGTypes;
 };
 
 #endif  // WMFILTERPROPERTYHANDLER_H

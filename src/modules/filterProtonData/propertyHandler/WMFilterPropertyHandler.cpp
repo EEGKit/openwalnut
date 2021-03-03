@@ -24,6 +24,8 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
+#include <regex>
 
 #include "WMFilterPropertyHandler.h"
 
@@ -62,10 +64,10 @@ void WMFilterPropertyHandler::createMultiSelectionForPDG()
     searchPDGTypes();
     for( auto pdgType : m_pdgTypes )
     {
-        m_possibleSelection->addItem( std::to_string( pdgType ) );
+        m_possibleSelection->addItem( getParticleNameFromPdg(pdgType) + "( " + std::to_string(pdgType) +" )" );
     }
 
-    m_selectedPDGTypes.push_back( std::to_string( m_pdgTypes[0] ) );
+    m_selectedPDGTypes.push_back( m_pdgTypes[0] );
 
     m_multiSelection = m_filteringGroup->addProperty( "PDGEncoding", "Choose particle type(s) you want show",
                                                             m_possibleSelection->getSelectorFirst(), pdgEncodingnotifier );
@@ -108,7 +110,7 @@ void WMFilterPropertyHandler::updateSelectedPDGTypes( WPropertyBase::SPtr proper
 
         for( int i = 0; i < selectedItems.size(); ++i )
         {
-           m_selectedPDGTypes.push_back( selectedItems.at( i )->getName() );
+            m_selectedPDGTypes.push_back(getPdgFromName(selectedItems.at( i )->getName()));
         }
     }
 
@@ -119,7 +121,7 @@ bool WMFilterPropertyHandler::isPDGTypeSelected( int pdgType )
 {
     for( auto idx = 0; idx < m_selectedPDGTypes.size(); idx++ )
     {
-        if(pdgType == std::stoi( m_selectedPDGTypes[idx] ) )
+        if(pdgType == m_selectedPDGTypes[idx] )
         {
             return true;
         }
@@ -144,5 +146,67 @@ void WMFilterPropertyHandler::updateCheckboxProperty( WPropertyBase::SPtr proper
         {
             m_showSecondaries->set( true );
         }
+    }
+}
+
+void WMFilterPropertyHandler::createPDGMap(std::string path)
+{
+   
+    std::fstream pdgSignFile;
+    std::string dataRow;
+    bool firstLine = true;
+    std::string particleName;
+    int pdg;
+
+    pdgSignFile.open( path );
+
+    if( !pdgSignFile.is_open() )
+    {
+        throw WException( "File could not be opened!" );
+    }
+
+    while( std::getline( pdgSignFile, dataRow ) )
+    {
+        if(firstLine)
+        {
+            firstLine = false;
+            continue;
+        } 
+        std::istringstream iss( dataRow );
+        iss >> particleName >> pdg;
+
+        m_PdgNamesByID.insert( PdgElement( particleName, pdg ) );
+    }
+    pdgSignFile.close();    
+}
+
+std::string WMFilterPropertyHandler::getParticleNameFromPdg(int pdg)
+{
+    BM_PDG::right_const_iterator pdg_iter = m_PdgNamesByID.right.find(pdg);
+
+    if(pdg_iter != m_PdgNamesByID.right.end())
+    {
+        return pdg_iter->second;
+    }
+    else
+    {
+        return "unknown";
+    }
+
+}
+
+int WMFilterPropertyHandler::getPdgFromName(std::string particleName)
+{
+    BM_PDG::left_const_iterator pdg_iter = m_PdgNamesByID.left.find(particleName.substr(0, particleName.find("(")));
+    if(pdg_iter != m_PdgNamesByID.left.end())
+    {
+        return pdg_iter->second;
+    }
+    else
+    {
+        std::regex regexp("[-+0-9]+"); 
+        std::smatch m;  
+        std::regex_search(particleName, m, regexp); 
+        return std::stoi(m[0]);
     }
 }
