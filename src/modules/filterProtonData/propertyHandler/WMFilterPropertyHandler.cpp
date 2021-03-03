@@ -144,7 +144,6 @@ void WMFilterPropertyHandler::updateSelectedPDGTypes( WPropertyBase::SPtr proper
 
         for( int i = 0; i < selectedItems.size(); ++i )
         {
-            m_selectedPDGTypes.push_back( selectedItems.at( i )->getName() );
             m_selectedPDGTypes.push_back(getPdgFromName(selectedItems.at( i )->getName()));
         }
     }
@@ -195,7 +194,9 @@ void WMFilterPropertyHandler::updatePDGTypesProperty( WItemSelection::SPtr parti
 
         for( auto pdgType : m_pdgTypes )
         {
-            particleItemSelectionList->addItem( std::to_string( pdgType ) );
+            particleItemSelectionList->addItem(
+                    getParticleNameFromPdg( pdgType ) + "(" + std::to_string( pdgType) + ")"
+            );
         }
     }
 }

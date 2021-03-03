@@ -99,6 +99,7 @@ void WMFilterProtonData::moduleMain()
             m_protonData->setCSVHeader(  m_input->getData()->getHeader() );
             m_protonData->setCSVData(  m_input->getData()->getData() );
         }
+        m_propertyStatus->getFilterPropertyHandler()->createPDGMap( ( m_localPath / getMetaInformation()->query< std::string >( "common/pdgnames" , "NoFile") ).string() );
         m_propertyStatus->getColumnPropertyHandler()->createProperties();
         m_propertyStatus->getFilterPropertyHandler()->createProperties();
         m_propertyStatus->getVisualizationPropertyHandler()->createProperties();
