@@ -27,6 +27,7 @@
 
 #include <string>
 #include <vector>
+#include <boost/bimap.hpp>
 
 #include "../WMProtonData.h"
 #include "WMColumnPropertyHandler.h"
@@ -48,6 +49,16 @@ public:
     typedef boost::function< void( ) > CallbackPtr;
 
     /**
+     * bimap to save the pdg to a particlename
+     */
+    typedef boost::bimap< std::string, int > BM_PDG;
+
+    /**
+     * represent an Element of a pdg and a particlename for the map
+     */
+    typedef BM_PDG::value_type PdgElement;
+
+    /**
      * constructor
      *
      * \param protonData Pointer to the content and header of the CSV 
@@ -65,7 +76,7 @@ public:
     void createProperties();
 
     /**
-     * update current group property and subproperty    
+     * update current group property and subproperty
      */
     void updateProperty();
 
@@ -91,9 +102,17 @@ public:
      */
     bool isPDGTypeSelected( int pdgType );
 
+     /**
+     * creates a bimap out of the names and ids of PDG txt
+     *
+     * \param path fielpath of the pdg particlename file
+     * \throws WException
+     */
+    void createPDGMap(std:: string path);
+
     /**
      * Get selected columns index
-     * 
+     *
      * \return current column index that is selected as particle data group
      */
     int getCurrentColumnIndex();
@@ -136,14 +155,14 @@ private:
 
     /**
      * Collect all particle types from your input data.
-     * 
+     *
      * \param columnIndex determines column whose elements should be collected
      */
     void setPDGTypes( int columnIndex );
 
     /**
      * Updates itemSelector depending on the columnName that is selected
-     * 
+     *
      * \param ColumnName name of the column that should be selected
      * \param itemSelector reference of selectable column names list
      * \return index of column that is selected
@@ -152,14 +171,14 @@ private:
 
     /**
      * Updates possible selectable particle types in multiselection
-     * 
+     *
      * \param particleItemSelectionList selectable partyle types as itemSelectionList
      */
     void updatePDGTypesProperty( WItemSelection::SPtr particleItemSelectionList );
 
     /**
      * Updates property ui once a new particle data group column is selected
-     * 
+     *
      * \param property contains reference to the property which called updateProperty()
      */
     void onSingleSelectionChanged( WPropertyBase::SPtr property );
@@ -170,6 +189,27 @@ private:
      * \param property contains reference to the property which called updateProperty()
      */
     void updateCheckboxProperty( WPropertyBase::SPtr property );
+
+    /**
+     * Seatch the ParticleName in the map with a given pdg
+     *
+     * \param pdg pdg number of a particlename
+     * \return the particle name
+     */
+    std::string getParticleNameFromPdg(int pdg);
+
+    /**
+     * Search the pdg in the map with a given particlename
+     *
+     * \param particleName particlename of a pdg number
+     * \return pdg number
+     */
+    int getPdgFromName(std::string particleName);
+
+    /**
+     * A Map of the PDG and their names
+     */
+    BM_PDG m_PdgNamesByID;
 
     /**
      * The current column that is selected as particle data group
@@ -219,7 +259,7 @@ private:
     /**
      * vector of the options of PDG
      */
-    std::vector < std::string > m_selectedPDGTypes;
+    std::vector < int > m_selectedPDGTypes;
 };
 
 #endif  // WMFILTERPROPERTYHANDLER_H
