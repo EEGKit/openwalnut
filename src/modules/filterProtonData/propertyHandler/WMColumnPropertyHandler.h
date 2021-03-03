@@ -72,6 +72,17 @@ public:
      */
     boost::shared_ptr< WItemSelection > getColumnItems();
 
+    /**
+     * update current group property and subproperty
+     */
+    void updateProperty();
+
+    /**
+     * setter to use a external function
+     * \param externEventMethod A void function variable that can be use outside
+     */
+    void setSelectionEventMethod( WMColumnPropertyHandler::CallbackPtr externEventMethod );
+
 private:
     /**
      * A vector, where all default ColumnPropertyNames are stored in
@@ -98,6 +109,11 @@ private:
      * A function variable that reinitializes the WDataSets 
      */
     WMColumnPropertyHandler::CallbackPtr m_dataUpdate;
+
+    /**
+     * A void function variable that can be use outside
+     */
+    WMColumnPropertyHandler::CallbackPtr m_externEventMethod;
 
     /**
      * Creates the individual WItemSelection   

@@ -55,6 +55,15 @@ void WMColumnPropertyHandler::createProperties()
     }
 }
 
+void WMColumnPropertyHandler::setSelectionEventMethod( WMColumnPropertyHandler::CallbackPtr externEventMethod )
+{
+    m_externEventMethod = externEventMethod;
+}
+
+void WMColumnPropertyHandler::updateProperty()
+{
+}
+
 void WMColumnPropertyHandler::InitializeSelectionItem()
 {
     m_possibleSelectionsUsingTypes = WItemSelection::SPtr( new WItemSelection() );
@@ -64,6 +73,8 @@ void WMColumnPropertyHandler::InitializeSelectionItem()
     {
         m_possibleSelectionsUsingTypes->addItem( ItemType::create( *colName, *colName, "",  NULL ) );
     }
+
+    m_possibleSelectionsUsingTypes->addItem( ItemType::create( "- no selection -", "- no selection -", "",  NULL ) );
 }
 
 WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string columnName, WPropertyBase::PropertyChangeNotifierType notifier )
@@ -118,7 +129,10 @@ void WMColumnPropertyHandler::propertyNotifier( WPropertyBase::SPtr property )
                                       getColumnNumberByName( selectedValue, m_protonData->getCSVHeader()->at( 0 ) )
                                      );
 
-        m_dataUpdate( );
+        if(m_externEventMethod != NULL)
+        {
+            m_externEventMethod();
+        }
     }
 }
 

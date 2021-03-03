@@ -60,6 +60,11 @@ public:
     void createProperties();
 
     /**
+     * update current group property and subproperty    
+     */
+    void updateProperty();
+
+    /**
      * Getter
      *
      * \return WPropInt of the MinCap

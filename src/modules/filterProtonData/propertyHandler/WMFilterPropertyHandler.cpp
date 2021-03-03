@@ -33,7 +33,7 @@ WMFilterPropertyHandler::WMFilterPropertyHandler( WMProtonData::SPtr protonData,
                                             WMFilterPropertyHandler::CallbackPtr dataUpdate ):
     m_protonData( protonData ),
     m_properties( properties ),
-    m_columnPropertyHandler( columnPropertyHandler ),
+    m_columnPropertyHandler ( columnPropertyHandler ),
     m_dataUpdate( dataUpdate )
 {
 }
@@ -44,6 +44,32 @@ void WMFilterPropertyHandler::createProperties()
 
     createCheckBoxForPrimaryAndSecondary();
     createMultiSelectionForPDG();
+
+    updateProperty();
+}
+
+
+void WMFilterPropertyHandler::updateProperty()
+{
+    if(m_protonData->IsColumnAvailable("parentID") && m_protonData->IsColumnAvailable("trackID"))
+    {
+        m_showPrimaries->setHidden( false );
+        m_showSecondaries->setHidden( false );
+    }
+    else
+    {
+        m_showPrimaries->setHidden( true );
+        m_showSecondaries->setHidden( true );
+    }
+
+    if(m_protonData->IsColumnAvailable("PDGEncoding"))
+    {
+        m_multiSelection->setHidden( false );
+    }
+    else
+    {
+        m_multiSelection->setHidden( true );
+    }
 }
 
 void WMFilterPropertyHandler::createCheckBoxForPrimaryAndSecondary()
@@ -62,7 +88,7 @@ void WMFilterPropertyHandler::createMultiSelectionForPDG()
 
     WPropertyBase::PropertyChangeNotifierType pdgEncodingnotifier = boost::bind(
         &WMFilterPropertyHandler::updateSelectedPDGTypes, this, boost::placeholders::_1 );
-    
+
     m_columnItemSelectionList = m_columnPropertyHandler->getColumnItems();
 
     WItemSelector itemSelector = m_columnItemSelectionList->getSelectorAll();
@@ -90,6 +116,11 @@ void WMFilterPropertyHandler::setPDGTypes( int columnIndex )
 {
     m_pdgTypes.clear();
 
+    if(columnIndex < 0)
+    {
+        return;
+    }
+
     for( auto idx = 0; idx < m_protonData->getCSVData()->size(); idx++)
     {
         std::vector< std::string > row = m_protonData->getCSVData()->at( idx );
@@ -115,7 +146,7 @@ void WMFilterPropertyHandler::updateSelectedPDGTypes( WPropertyBase::SPtr proper
             m_selectedPDGTypes.push_back( selectedItems.at( i )->getName() );
         }
     }
-    
+
     m_dataUpdate( );
 }
 
@@ -131,30 +162,30 @@ bool WMFilterPropertyHandler::isPDGTypeSelected( int pdgType )
     return false;
 }
 
-int WMFilterPropertyHandler::getCurrentColumnIndex() 
+int WMFilterPropertyHandler::getCurrentColumnIndex()
 {
     return m_currentColumnIndex;
 }
 
-int WMFilterPropertyHandler::selectColumn( std::string columnName, WItemSelector& itemSelector ) 
+int WMFilterPropertyHandler::selectColumn( std::string columnName, WItemSelector& itemSelector )
 {
-    for( int i = 0; i < itemSelector.size(); i++ ) 
+    for( int i = 0; i < itemSelector.size(); i++ )
     {
         WItemSelectionItem item = *itemSelector.at( i );
 
-        if( item.getName() == columnName ) 
+        if( item.getName() == columnName )
         {
             itemSelector = m_columnItemSelectionList->getSelector( i );
             return i;
         }
     }
-    
+
     itemSelector = m_columnItemSelectionList->getSelectorNone();
 
     return 0;
 }
 
-void WMFilterPropertyHandler::updatePDGTypesProperty( WItemSelection::SPtr particleItemSelectionList ) 
+void WMFilterPropertyHandler::updatePDGTypesProperty( WItemSelection::SPtr particleItemSelectionList )
 {
     if ( !m_pdgTypes.empty() )
     {
@@ -167,7 +198,7 @@ void WMFilterPropertyHandler::updatePDGTypesProperty( WItemSelection::SPtr parti
     }
 }
 
-void WMFilterPropertyHandler::onSingleSelectionChanged( WPropertyBase::SPtr property ) 
+void WMFilterPropertyHandler::onSingleSelectionChanged( WPropertyBase::SPtr property )
 {
     WItemSelector itemSelector = m_columnItemSelectionList->getSelectorAll();
     std::string columnName = m_singleSelection->get().at( 0 )->getName();
