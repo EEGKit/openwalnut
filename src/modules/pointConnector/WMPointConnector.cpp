@@ -25,34 +25,19 @@
 #include <string>
 #include <vector>
 
-#include <osg/Geode>
-
-#include "core/common/math/WMath.h"
-#include "core/common/WLimits.h"
-#include "core/graphicsEngine/shaders/WGEShader.h"
-#include "core/graphicsEngine/WGEColormapping.h"
-#include "core/graphicsEngine/WGEGeodeUtils.h"
-#include "core/graphicsEngine/WGEManagedGroupNode.h"
-#include "core/graphicsEngine/postprocessing/WGEPostprocessingNode.h"
-#include "core/graphicsEngine/WGEUtils.h"
-#include "core/kernel/WKernel.h"
+#include "WConnectorData.h"
+#include "WClickHandler.h"
+#include "WFiberHandler.h"
 
 #include "WMPointConnector.h"
-#include "WMClickHandler.h"
 
 W_LOADABLE_MODULE( WMPointConnector )
 
 WMPointConnector::WMPointConnector():
     WModuleContainer()
 {
-    m_vertices = osg::ref_ptr< osg::Vec3Array >( new osg::Vec3Array );
-    m_colors = osg::ref_ptr< osg::Vec4Array >( new osg::Vec4Array );
-    
-    m_fibers = PCFiberListSPtr( new PCFiberList() );
-    m_fibers->push_back( PCFiber() );
-
-    m_selectedFiber = 0;
-    m_fiberCount = 1;
+    m_connectorData = WConnectorData::SPtr( new WConnectorData() );
+    m_fiberHandler = WFiberHandler::SPtr( new WFiberHandler( this ) );
 }
 
 WMPointConnector::~WMPointConnector()
@@ -92,19 +77,7 @@ void WMPointConnector::connectors()
 
 void WMPointConnector::properties()
 {
-    WPropertyBase::PropertyChangeNotifierType notifier = boost::bind( &WMPointConnector::updateProperty, this, boost::placeholders::_1 );
-
-    m_possibleFiberSelections = WItemSelection::SPtr( new WItemSelection() );
-    m_possibleFiberSelections->addItem( ItemType::create( "Line 1", "Line 1", "", NULL ) );
-    
-    m_fiberSelection = m_properties->addProperty(
-        "Selected Line", "The line to which the points are added", m_possibleFiberSelections->getSelectorFirst(), notifier );
-    
-    WPropertyHelper::PC_SELECTONLYONE::addTo( m_fiberSelection );
-    WPropertyHelper::PC_NOTEMPTY::addTo( m_fiberSelection );
-
-    m_addFiber = m_properties->addProperty( "Add Line", "Add Line", WPVBaseTypes::PV_TRIGGER_READY, notifier );
-
+    m_fiberHandler->createProperties( m_properties );
     WModule::properties();
 }
 
@@ -145,7 +118,7 @@ void WMPointConnector::createPointRenderer()
 void WMPointConnector::createClickHandler()
 {
     osg::ref_ptr< osgViewer::View > viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView();
-    osg::ref_ptr< WMClickHandler > handler = new WMClickHandler( this );
+    osg::ref_ptr< WClickHandler > handler = new WClickHandler( this );
     viewer->addEventHandler( handler.get() );
 }
 
@@ -158,18 +131,11 @@ void WMPointConnector::handleInput()
         return;
     }
 
-    m_vertices = osg::ref_ptr< osg::Vec3Array >( new osg::Vec3Array );
-    m_colors = osg::ref_ptr< osg::Vec4Array >( new osg::Vec4Array );
+    m_connectorData->clear();
 
-    WDataSetPoints::VertexArray pointVertices = points->getVertices();
-    WDataSetPoints::ColorArray pointColors = points->getColors();
     for( size_t pointIdx = 0; pointIdx < points->size(); ++pointIdx )
     {
-        osg::Vec3 vert = points->operator[]( pointIdx );
-        osg::Vec4 color = points->getColor( pointIdx );
-
-        m_vertices->push_back( vert );
-        m_colors->push_back( color );
+        m_connectorData->addVertex( points->operator[]( pointIdx ), points->getColor( pointIdx ) );
     }
 
     updatePoints();
@@ -180,16 +146,19 @@ void WMPointConnector::updatePoints()
     WDataSetPoints::VertexArray vertices( new std::vector< float > );
     WDataSetPoints::VertexArray colors( new std::vector< float > );
 
-    for( size_t idx = 0; idx < m_vertices->size(); idx++ )
+    for( size_t idx = 0; idx < m_connectorData->getVertices()->size(); idx++ )
     {
-        vertices->push_back( m_vertices->at( idx ).x() );
-        vertices->push_back( m_vertices->at( idx ).y() );
-        vertices->push_back( m_vertices->at( idx ).z() );
+        osg::Vec3 vertex = m_connectorData->getVertices()->at( idx );
+        osg::Vec4 color = m_connectorData->getColors()->at( idx );
 
-        colors->push_back( m_colors->at( idx ).x() );
-        colors->push_back( m_colors->at( idx ).y() );
-        colors->push_back( m_colors->at( idx ).z() );
-        colors->push_back( m_colors->at( idx ).w() );
+        vertices->push_back( vertex.x() );
+        vertices->push_back( vertex.y() );
+        vertices->push_back( vertex.z() );
+
+        colors->push_back( color.x() );
+        colors->push_back( color.y() );
+        colors->push_back( color.z() );
+        colors->push_back( color.w() );
     }
 
     m_pointOutput->updateData( WDataSetPoints::SPtr( new WDataSetPoints( vertices, colors ) ) );
@@ -203,16 +172,15 @@ void WMPointConnector::handleClick( osg::Vec3 cameraPosition, osg::Vec3 directio
     {
         if( isLeftClick )
         {
-            deselectPoint();
-            selectPoint( hitIdx );
-
-            m_fibers->at( m_selectedFiber ).push_back( m_vertices->at( hitIdx ) );
+            m_connectorData->deselectPoint();
+            m_connectorData->selectPoint( hitIdx );
+            m_fiberHandler->addVertexToFiber( m_connectorData->getVertices()->at( hitIdx ) );
         }
         else
         {
-            removeVertexFromFiber( m_selectedFiber, hitIdx );
-            deselectPoint();
-            selectLastPointOf( m_selectedFiber );
+            m_connectorData->deselectPoint();
+            m_fiberHandler->removeVertexFromFiber( m_connectorData->getVertices()->at( hitIdx ) );
+            m_fiberHandler->selectLastPoint();
         }
 
         updatePoints();
@@ -225,11 +193,12 @@ bool WMPointConnector::findClickedPoint( osg::Vec3 cameraPosition, osg::Vec3 dir
 {
     bool hasHit = false;
     float distance = 0;
-    for( size_t idx = 0; idx < m_vertices->size(); idx++ )
+    float size = m_pointRenderer->getProperties()->getProperty( "Point Size" )->toPropDouble()->get();
+    for( size_t idx = 0; idx < m_connectorData->getVertices()->size(); idx++ )
     {
-        osg::Vec3 vertex = m_vertices->at( idx );
+        osg::Vec3 vertex = m_connectorData->getVertices()->at( idx );
 
-        float hit = hitVertex( cameraPosition, direction, vertex, 1.0 );
+        float hit = hitVertex( cameraPosition, direction, vertex, size );
         if( hit > 0.0 )
         {
             float dis = ( vertex - cameraPosition ).length2();
@@ -248,23 +217,6 @@ bool WMPointConnector::findClickedPoint( osg::Vec3 cameraPosition, osg::Vec3 dir
     }
 
     return hasHit;
-}
-
-void WMPointConnector::deselectPoint()
-{
-    if( m_hasSelected )
-    {
-        m_colors->operator[]( m_selectedIndex ) = m_selectedOldColor;
-        m_hasSelected = false;
-    }
-}
-
-void WMPointConnector::selectPoint( size_t hitIdx )
-{
-    m_selectedOldColor = m_colors->operator[]( hitIdx );
-    m_selectedIndex = hitIdx;
-    m_colors->operator[]( hitIdx ) = osg::Vec4( 0.0, 1.0, 0.0, 1.0 );
-    m_hasSelected = true;
 }
 
 float WMPointConnector::hitVertex( osg::Vec3 rayStart, osg::Vec3 rayDir, osg::Vec3 vertex, float radius )
@@ -304,63 +256,6 @@ float WMPointConnector::hitVertex( osg::Vec3 rayStart, osg::Vec3 rayDir, osg::Ve
     }
 }
 
-void WMPointConnector::removeVertexFromFiber( size_t fiberIdx, size_t vertexIdx )
-{
-    auto fiber = m_fibers->begin() + fiberIdx;
-    osg::Vec3 vertex = m_vertices->at( vertexIdx );
-
-    for( auto it = fiber->begin(); it != fiber->end(); )
-    {
-        if( *it == vertex )
-        {
-            fiber->erase( it );
-        }
-        else
-        {
-            it++;
-        }
-    }
-}
-
-void WMPointConnector::selectLastPointOf( size_t fiberIdx )
-{
-    PCFiber fiber = m_fibers->at( fiberIdx );
-    if( !fiber.empty() )
-    {
-        std::vector< osg::Vec3 >::iterator vertexIterator = std::find( m_vertices->begin(), m_vertices->end(), fiber[fiber.size() - 1] );
-        size_t vIdx = std::distance( m_vertices->begin(), vertexIterator );
-
-        selectPoint( vIdx );
-    }
-}
-
-void WMPointConnector::updateProperty( WPropertyBase::SPtr property )
-{
-    if(property == m_addFiber && m_addFiber->get(true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
-    {
-        m_addFiber->set( WPVBaseTypes::PV_TRIGGER_READY, false );
-
-        m_fiberCount++;
-        std::string name = "Line " + boost::lexical_cast< std::string >( m_fiberCount );
-
-        m_fibers->push_back( PCFiber() );
-        m_possibleFiberSelections->addItem( ItemType::create( name, name, "", NULL ) );
-        m_fiberSelection->set( m_possibleFiberSelections->getSelectorLast() );
-    }
-    if(property == m_fiberSelection )
-    {
-        m_selectedFiber = m_fiberSelection->get().getItemIndexOfSelected( 0 );
-        if( m_hasSelected )
-        {
-            m_colors->operator[]( m_selectedIndex ) = m_selectedOldColor;
-            m_hasSelected = false;
-        }
-
-        selectLastPointOf( m_selectedFiber );
-        updatePoints();
-    }
-}
-
 void WMPointConnector::updateOutput()
 {
     boost::shared_ptr< std::vector< float > > vertices = boost::shared_ptr< std::vector< float > >( new std::vector< float >() );
@@ -368,13 +263,13 @@ void WMPointConnector::updateOutput()
     boost::shared_ptr< std::vector< size_t > > lineLength = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
     boost::shared_ptr< std::vector< size_t > > verticesReverse = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
 
-    for( PCFiberList::size_type idx = 0; idx < m_fibers->size(); idx++ )
+    for( size_t idx = 0; idx < m_fiberHandler->getFibers()->size(); idx++ )
     {
-        PCFiber fiber = m_fibers->at( idx );
+        WFiberHandler::PCFiber fiber = m_fiberHandler->getFibers()->at( idx );
         lineStartIndexes->push_back( vertices->size() / 3 );
         lineLength->push_back( fiber.size() );
 
-        for( PCFiber::size_type vIdx = 0; vIdx < fiber.size(); vIdx++ )
+        for( size_t vIdx = 0; vIdx < fiber.size(); vIdx++ )
         {
             osg::Vec3 vertex = fiber[vIdx];
             vertices->push_back( vertex.x() );
@@ -393,4 +288,10 @@ void WMPointConnector::updateOutput()
             verticesReverse
         )
     ) );
+}
+
+
+WConnectorData::SPtr WMPointConnector::getConnectorData()
+{
+    return m_connectorData;
 }

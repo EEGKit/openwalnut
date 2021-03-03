@@ -29,26 +29,20 @@
 #include <string>
 #include <vector>
 
-#include "core/common/math/linearAlgebra/WVectorFixed.h"
-#include "core/common/WItemSelectionItem.h"
-#include "core/common/WItemSelector.h"
-#include "core/common/WItemSelectionItemTyped.h"
+#include <osg/Geode>
+#include "core/dataHandler/WDataSetFibers.h"
+#include "core/dataHandler/WDataSetPoints.h"
+#include "core/kernel/WKernel.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleContainer.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
 
-#include "core/dataHandler/WDataSetPoints.h"
-#include "core/dataHandler/WDataSetFibers.h"
-
 #include "../pointRenderer/WMPointRenderer.h"
 
-
-class WDataSetPoints;
-class WDataSetFibers;
-class WGEShader;
-class WGEManagedGroupNode;
-class WGEPostprocessingNode;
+class WClickHandler;
+class WConnectorData;
+class WFiberHandler;
 
 /**
  * This module connects the points in a point dataset.
@@ -63,6 +57,11 @@ class WMPointConnector: public WModuleContainer
     friend class WMPointConnectorTest;
 
 public:
+    /**
+     * A shared_ptr to this class.
+     */
+    typedef boost::shared_ptr< WMPointConnector > SPtr;
+
     /**
      * Constructor. Creates the module skeleton.
      */
@@ -108,6 +107,16 @@ public:
      */
     void handleClick( osg::Vec3 cameraPosition, osg::Vec3 direction, bool isLeftClick );
 
+    /**
+     * Redraws the current vertices with their colors.
+     */
+    void updatePoints();
+
+    /**
+     * \return boost::shared_ptr< WConnectorData > The WConnectorData of this module.
+     */
+    boost::shared_ptr< WConnectorData > getConnectorData();
+
 protected:
     /**
      * Entry point after loading the module. Runs in separate thread.
@@ -126,24 +135,6 @@ protected:
 
 private:
     /**
-     * Type of selectable items.
-     */
-    typedef WItemSelectionItemTyped< std::string > ItemType;
-
-    /**
-     * Vector of 3D vectors, representing points
-     */
-    typedef std::vector< osg::Vec3 >            PCFiber;
-    /**
-     * Vector, that could contain multiple fibers
-     */
-    typedef std::vector< PCFiber >              PCFiberList;
-    /**
-     * Shared pointer to fibers-vector
-     */
-    typedef boost::shared_ptr< PCFiberList >    PCFiberListSPtr;
-
-    /**
      * Checks if a vertex with a certain radius is hit by a ray.
      * \param rayStart The starting point of the ray.
      * \param rayDir The direction of the ray.
@@ -154,40 +145,50 @@ private:
     float hitVertex( osg::Vec3 rayStart, osg::Vec3 rayDir, osg::Vec3 vertex, float radius );
 
     /**
-     * Update handler for the properties
-     * \param property updated property
-     */
-    void updateProperty( WPropertyBase::SPtr property );
-
-    /**
-     * Redraws the current vertices with their colors.
-     */
-    void updatePoints();
-
-    /**
      * Updates the fiber output
      */
     void updateOutput();
 
+    /**
+     * Creates the WMPointRenderer and runs it.
+     */
     void createPointRenderer();
 
+    /**
+     * Creates the WClickHandler and registers it.
+     */
     void createClickHandler();
 
+    /**
+     * Handles the input of this module.
+     */
     void handleInput();
 
-    void deselectPoint();
-
-    void selectPoint( size_t hitIdx );
-
-    void selectLastPointOf( size_t fiberIdx );
-
-    void removeVertexFromFiber( size_t fiberIdx, size_t vertexIdx );
-
+    /**
+     * Finds the point that was clicked and writes it into hitIdx,
+     * while return whether a point was hit.
+     * \param cameraPosition The position of the camera.
+     * \param direction The direction to check.
+     * \param hitIdx A pointer to a variable where the index of the clicked point is written.
+     * \return true A point was clicked.
+     * \return false A point was not clicked.
+     */
     bool findClickedPoint( osg::Vec3 cameraPosition, osg::Vec3 direction, size_t* hitIdx );
 
+    /**
+     * The WMPointRenderer associated with this module.
+     */
     WModule::SPtr m_pointRenderer;
 
-    boost::shared_ptr< WModuleOutputData< WDataSetPoints > > m_pointOutput;
+    /**
+     * The data of this module.
+     */
+    boost::shared_ptr< WConnectorData > m_connectorData;
+
+    /**
+     * The WFiberHandler of this module.
+     */
+    boost::shared_ptr< WFiberHandler > m_fiberHandler;
 
     /**
      * An input connector used to get points from other modules.
@@ -200,59 +201,9 @@ private:
     boost::shared_ptr< WModuleOutputData< WDataSetFibers > > m_fiberOutput;
 
     /**
-     * The vertices that are drawn.
+     * The internal pointOutput to pass data to the WMPointRenderer
      */
-    osg::ref_ptr< osg::Vec3Array > m_vertices;
-
-    /**
-     * The color of the vertices that are drawn.
-     */
-    osg::ref_ptr< osg::Vec4Array > m_colors;
-
-    /**
-     * The index of the selected vertex.
-     */
-    osg::MixinVector<osg::Vec3f>::size_type m_selectedIndex;
-
-    /**
-     * The color of the vertex before it has been selected.
-     */
-    osg::Vec4 m_selectedOldColor;
-
-    /**
-     * Whether a selection has been done or not.
-     */
-    bool m_hasSelected = false;
-
-    /**
-     * Stores the amount of new created fibers.
-     */
-    int m_fiberCount = 0;
-
-    /**
-     * Represents the index of the current active fiber.
-     */
-    size_t m_selectedFiber = 0;
-
-    /**
-     * The list of possible fibers, which can be selected.
-     */
-    boost::shared_ptr< WItemSelection > m_possibleFiberSelections;
-
-    /**
-     * Represents the current active fiber selection property.
-     */
-    WPropSelection m_fiberSelection;
-
-    /**
-     * Property (button) to add a new Fiber.
-     */
-    WPropTrigger m_addFiber;
-
-    /**
-     * A pointer to the list of fibers.
-     */
-    PCFiberListSPtr m_fibers;
+    boost::shared_ptr< WModuleOutputData< WDataSetPoints > > m_pointOutput;
 };
 
 #endif  // WMPOINTCONNECTOR_H
