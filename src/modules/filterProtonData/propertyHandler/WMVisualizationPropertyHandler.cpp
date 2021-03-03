@@ -45,6 +45,27 @@ void WMVisualizationPropertyHandler::createProperties()
     m_colorFromEdep = m_visualizationGroup->addProperty( "Color by edep", "Color points based on energy deposition", true, notifierCheckBox );
     m_colorSelection = m_visualizationGroup->addProperty( "Plain color", "Choose how to color the points when not coloring by edep.",
         defaultColor::WHITE, notifierCheckBox );
+
+    updateProperty();
+}
+
+void WMVisualizationPropertyHandler::updateProperty()
+{
+    if( m_protonData->IsColumnAvailable( "posX" ) &&
+        m_protonData->IsColumnAvailable( "posY" ) &&
+        m_protonData->IsColumnAvailable( "posZ" ) &&
+        m_protonData->IsColumnAvailable( "edep" ) )
+    {
+        m_sizesFromEdep->setHidden( false );
+        m_colorFromEdep->setHidden( false );
+        m_colorSelection->setHidden( false );
+    }
+    else
+    {
+        m_sizesFromEdep->setHidden( true );
+        m_colorFromEdep->setHidden( true );
+        m_colorSelection->setHidden( true );
+    }
 }
 
 void WMVisualizationPropertyHandler::updateCheckboxProperty( WPropertyBase::SPtr property )

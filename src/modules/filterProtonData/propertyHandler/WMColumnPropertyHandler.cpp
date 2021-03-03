@@ -45,6 +45,7 @@ void WMColumnPropertyHandler::createProperties()
 
     m_columnSelectionGroup = m_properties->addPropertyGroup( "Select columns", "Select the columns which should be used" );
 
+    m_singleSelectionForPDG = addHeaderProperty( "PDGEncoding", notifier );
     m_singleSelectionForPosX = addHeaderProperty( "posX", notifier );
     m_singleSelectionForPosY = addHeaderProperty( "posY", notifier );
     m_singleSelectionForPosZ = addHeaderProperty( "posZ", notifier );
@@ -52,6 +53,15 @@ void WMColumnPropertyHandler::createProperties()
     m_singleSelectionForEventID = addHeaderProperty( "eventID", notifier );
     m_singleSelectionForTrackID = addHeaderProperty( "trackID", notifier );
     m_singleSelectionForParentID = addHeaderProperty( "parentID", notifier );
+}
+
+void WMColumnPropertyHandler::setSelectionEventMethod( WMColumnPropertyHandler::CallbackPtr externEventMethod )
+{
+    m_externEventMethod = externEventMethod;
+}
+
+void WMColumnPropertyHandler::updateProperty()
+{
 }
 
 void WMColumnPropertyHandler::InitializeSelectionItem()
@@ -63,6 +73,8 @@ void WMColumnPropertyHandler::InitializeSelectionItem()
     {
         m_possibleSelectionsUsingTypes->addItem( ItemType::create( *colName, *colName, "",  NULL ) );
     }
+
+    m_possibleSelectionsUsingTypes->addItem( ItemType::create( "- no selection -", "- no selection -", "",  NULL ) );
 }
 
 WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string headerName, WPropertyBase::PropertyChangeNotifierType notifier )
@@ -97,7 +109,12 @@ void WMColumnPropertyHandler::propertyNotifier( WPropertyBase::SPtr property )
     const WItemSelector* selector;
     std::string columnName;
 
-    if( property == m_singleSelectionForPosX )
+    if( property == m_singleSelectionForPDG )
+    {
+        selector = &m_singleSelectionForPDG->get( true );
+        columnName = "PDGEncoding";
+    }
+    else if( property == m_singleSelectionForPosX )
     {
         selector = &m_singleSelectionForPosX->get( true );
         columnName = "posX";
@@ -138,7 +155,11 @@ void WMColumnPropertyHandler::propertyNotifier( WPropertyBase::SPtr property )
         std::string selectedValue = selector->at( 0 )->getAs< ItemType >()->getValue();
 
         m_protonData->setColumnIndex( columnName, getColumnNumberByName( selectedValue, m_protonData->getCSVHeader()->at( 0 ) ) );
+        m_dataUpdate();
 
-        m_dataUpdate( );
+        if(m_externEventMethod != NULL)
+        {
+            m_externEventMethod();
+        }
     }
 }

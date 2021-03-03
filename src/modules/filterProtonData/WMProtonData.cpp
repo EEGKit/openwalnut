@@ -71,7 +71,6 @@ WDataSetCSV::ContentSPtr WMProtonData::getCSVHeader()
 void WMProtonData::setColumnIndex( std::string columnName, int index )
 {
     m_columnMap[columnName] = index;
-
     if( index < 0 )
     {
         m_availabilityColumnMap[columnName] = false;
@@ -128,17 +127,18 @@ bool WMProtonData::IsNonrequiredDataAvailable()
     return false;
 }
 
-bool WMProtonData::IsColumnAvailable(std::string columnName)
+bool WMProtonData::IsColumnAvailable( std::string columnName )
 {
-    return m_columnMap[columnName];
+    return m_availabilityColumnMap[columnName];
 }
 
 void WMProtonData::updateAvailabilityOfColumns()
 {
     static const std::string necessaryColumns[] = {
-        "posX", "posY", "posZ", "PDGEncoding", "edep", "trackID", "parentID", "eventID"
+        "PDGEncoding", "posX", "posY", "posZ", "edep", "eventID" , "trackID", "parentID"
     };
 
+    std::cout << std::endl;
     for( int i = 0; i < sizeof( necessaryColumns ) / sizeof( std::string ); i++ )
     {
         std::string column = necessaryColumns[i];
@@ -150,7 +150,5 @@ void WMProtonData::updateAvailabilityOfColumns()
         {
             m_availabilityColumnMap[column] = true;
         }
-
-        std::cout << "STATE: " << m_availabilityColumnMap[column] << std::endl;
     }
 }

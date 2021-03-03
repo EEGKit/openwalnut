@@ -112,8 +112,8 @@ public:
      *
      * \return true if column is available . false if column is not available
      */
-    bool IsColumnAvailable(std::string columnName);
-    
+    bool IsColumnAvailable( std::string columnName );
+
 private:
     /**
      * Stores column index of data.
@@ -131,7 +131,7 @@ private:
     std::map< std::string, int > m_columnMap;
 
     /**
-     * Stores die Availability of the columns daten
+     * Stores die Availability of the selected Column (ColumnPropertyHandler)
      */
     std::map< std::string, bool > m_availabilityColumnMap;
 

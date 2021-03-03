@@ -63,6 +63,11 @@ public:
     void createProperties();
 
     /**
+     * update current group property and subproperty    
+     */
+    void updateProperty();
+
+    /**
      * Getter
      *
      * \return WPropBool of the ShowPrimaries

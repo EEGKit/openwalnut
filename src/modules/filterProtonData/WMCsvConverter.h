@@ -78,7 +78,10 @@ public:
     boost::shared_ptr< WDataSetPoints > getPoints();
 
 private:
-    bool m_MissingDataFlag;
+    /**
+     * Stores information form csv content. Content object containing data
+     */
+    WMProtonData::SPtr m_protonData;
 
     /**
      * Stores information for the fiber display
@@ -126,11 +129,18 @@ private:
     bool canShow( WDataSetCSV::Content::iterator dataRow );
 
     /**
-     * Create vertex and color for point renderer (vertex for fiber renderer)
+     * Create vertex for point/fiber renderer
      *
      * \param dataRow each row of the csv file (content of row)
      */
-    void addVertexAndColor( WDataSetCSV::Content::iterator dataRow );
+    void addVertex( WDataSetCSV::Content::iterator dataRow );
+
+    /**
+     * Create color for point/Fiber renderer
+     *
+     * \param dataRow each row of the csv file (content of row)
+     */
+    void addColor( WDataSetCSV::Content::iterator dataRow );
 
     /**
      * Create edep and sizes for point/fiber renderer
@@ -141,21 +151,37 @@ private:
     void addEdepAndSize( WDataSetCSV::Content::iterator dataRow, float* maxEdep );
 
     /**
+     * Create eventID for Fiber renderer
+     *
+     * \param dataRow each row of the csv file (content of row)
+     */
+    void addEventID( WDataSetCSV::Content::iterator dataRow );
+
+    /**
      * calculate the property of WDataSetFiber (index, length, verticesReverse)
      */
     void calculateFibers();
 
     /**
-     * Create the fibers and points for fiber/points renderer
+     * Create the fibers for fiber renderer
      */
-    void createPointsAndFibers();
+    void createOutputFibers();
+
+    /**
+     * Create the points for points renderer
+     */
+    void createOutputPoints();
 
     /**
      * Create outputs, so it can be displayed by the fiber display and the point renderer.
-     *
-     * \param protonData WDataSetCSV::Content object containing data.
      */
-    void setOutputFromCSV( WMProtonData::SPtr protonData );
+    void setOutputFromCSV( );
+
+    /**
+     * Checks if output variables have to be null, if true, sets them to null
+     * \return true, if there are no vertices to output; false otherwise
+     */
+    bool checkIfOutputIsNull();
 };
 
 #endif  // WMCSVCONVERTER_H

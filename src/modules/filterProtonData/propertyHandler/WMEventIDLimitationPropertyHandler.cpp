@@ -42,6 +42,22 @@ void WMEventIDLimitationPropertyHandler::createProperties()
     m_maxCap = eventIDGroup->addProperty( "Max Cap", "Set your maximum border of your range.", 2000, eventIDNotifier );
 
     determineMinMaxEventID();
+
+    updateProperty();
+}
+
+void WMEventIDLimitationPropertyHandler::updateProperty()
+{
+    if(m_protonData->IsColumnAvailable("eventID"))
+    {
+        m_minCap->setHidden( false );
+        m_maxCap->setHidden( false );
+    }
+    else
+    {
+        m_minCap->setHidden( true );
+        m_maxCap->setHidden( true );
+    }
 }
 
 void WMEventIDLimitationPropertyHandler::updateMesh( )
@@ -53,6 +69,11 @@ void WMEventIDLimitationPropertyHandler::updateMesh( )
 void WMEventIDLimitationPropertyHandler::determineMinMaxEventID()
 {
     int eventIDIndex = m_protonData->getColumnIndex( "eventID" );
+
+    if(eventIDIndex < 0)
+    {
+        return;
+    }
 
     int minCap = std::stoi( m_protonData->getCSVData()->front().at( eventIDIndex ) );
     int maxCap = std::stoi( m_protonData->getCSVData()->back().at( eventIDIndex ) );

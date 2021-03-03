@@ -66,6 +66,17 @@ public:
      */
     void createProperties();
 
+    /**
+     * update current group property and subproperty    
+     */
+    void updateProperty();
+
+    /**
+     * setter to use a external function
+     * \param externEventMethod A void function variable that can be use outside
+     */
+    void setSelectionEventMethod( WMColumnPropertyHandler::CallbackPtr externEventMethod );
+
 private:
     /**
      * Pointer to the content and header of the CSV 
@@ -81,6 +92,11 @@ private:
      * A function variable that reinitializes the WDataSets 
      */
     WMColumnPropertyHandler::CallbackPtr m_dataUpdate;
+
+    /**
+     * A void function variable that can be use outside
+     */
+    WMColumnPropertyHandler::CallbackPtr m_externEventMethod;
 
     /**
      * Creates the individual WItemSelection   
@@ -101,6 +117,11 @@ private:
      * A list of items that can be selected using m_aSingleSelectionUsingTypes property.
      */
     boost::shared_ptr< WItemSelection > m_possibleSelectionsUsingTypes;
+
+    /**
+     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
+     */
+    WPropSelection m_singleSelectionForPDG;
 
     /**
      * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.

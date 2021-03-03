@@ -42,6 +42,32 @@ void WMFilterPropertyHandler::createProperties()
 
     createCheckBoxForPrimaryAndSecondary();
     createMultiSelectionForPDG();
+
+    updateProperty();
+}
+
+
+void WMFilterPropertyHandler::updateProperty()
+{
+    if(m_protonData->IsColumnAvailable("parentID") && m_protonData->IsColumnAvailable("trackID"))
+    {
+        m_showPrimaries->setHidden( false );
+        m_showSecondaries->setHidden( false );
+    }
+    else
+    {
+        m_showPrimaries->setHidden( true );
+        m_showSecondaries->setHidden( true );
+    }
+
+    if(m_protonData->IsColumnAvailable("PDGEncoding"))
+    {
+        m_multiSelection->setHidden( false );
+    }
+    else
+    {
+        m_multiSelection->setHidden( true );
+    }
 }
 
 void WMFilterPropertyHandler::createCheckBoxForPrimaryAndSecondary()
@@ -79,7 +105,7 @@ void WMFilterPropertyHandler::createMultiSelectionForPDG()
         m_multiSelection = m_filteringGroup->addProperty( "PDGEncoding", "Choose particle type(s) you want show",
                                                                         m_possibleSelection->getSelectorNone(), pdgEncodingnotifier );
     }
-    
+
     WPropertyHelper::PC_NOTEMPTY::addTo( m_multiSelection );
 }
 
