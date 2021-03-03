@@ -51,7 +51,7 @@ boost::shared_ptr< std::vector<unsigned char> > WMCsvConverter::sampleTransferFu
 {
     boost::shared_ptr< std::vector<unsigned char> > data( new std::vector<unsigned char>( 10 * 4 ) );
 
-    WTransferFunction tf = m_propertyStatus->getVisualizationPropertyHandler()->getTransferFunction()->get();
+    WTransferFunction tf = m_propertyStatus->getVisualizationPropertyHandler()->getTransferFunction()->get( true );
 
     tf.sample1DTransferFunction( &( *data )[ 0 ], 10, 0.0, 1.0 );
 
@@ -64,7 +64,7 @@ void WMCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArr
 
     for( std::vector< float >::iterator currentEdep = edeps->begin(); currentEdep != edeps->end(); currentEdep++ )
     {
-        float clusterSize = 9.0 *( ( 2.4 * ( pow( *currentEdep, 0.338 ) ) ) / 4.0 );
+        int clusterSize = 9.0 *( ( 2.4 * ( pow( *currentEdep, 0.338 ) ) ) / 4.0 );
 
         float r = data->at( clusterSize * 4 ) / 255.0;
         float g = data->at( clusterSize * 4 + 1 ) / 255.0;
