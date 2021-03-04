@@ -64,12 +64,14 @@ void WMVisualizationPropertyHandler::updateProperty()
         m_sizesFromEdep->setHidden( false );
         m_colorFromEdep->setHidden( false );
         m_colorSelection->setHidden( false );
+        m_gradient->setHidden( false );
     }
     else
     {
         m_sizesFromEdep->setHidden( true );
         m_colorFromEdep->setHidden( true );
         m_colorSelection->setHidden( true );
+        m_gradient->setHidden( true );
     }
 }
 

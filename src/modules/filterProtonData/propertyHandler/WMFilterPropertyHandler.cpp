@@ -50,9 +50,7 @@ void WMFilterPropertyHandler::createProperties()
 
 void WMFilterPropertyHandler::updateProperty()
 {
-    m_currentColumnIndex = m_protonData->getColumnIndex( "PDGEncoding" );
-    m_filteringGroup->removeProperty( m_multiSelection );
-    createMultiSelectionForPDG();
+    updatePDGProperties();
 
     if( m_protonData->isColumnAvailable( "parentID" ) && m_protonData->isColumnAvailable( "trackID" ) )
     {
@@ -68,11 +66,24 @@ void WMFilterPropertyHandler::updateProperty()
     if( m_protonData->isColumnAvailable( "PDGEncoding" ) )
     {
         m_multiSelection->setHidden( false );
+        m_filteringsubGroup->setHidden( false );
     }
     else
     {
         m_multiSelection->setHidden( true );
+        m_filteringsubGroup->setHidden( true );
     }
+}
+
+void WMFilterPropertyHandler::updatePDGProperties()
+{
+    m_currentColumnIndex = m_protonData->getColumnIndex( "PDGEncoding" );
+
+    m_filteringGroup->removeProperty( m_multiSelection );
+    m_filteringGroup->removeProperty( m_filteringsubGroup );
+
+    createMultiSelectionForPDG();
+    createPropToSetParticleNames();
 }
 
 void WMFilterPropertyHandler::createCheckBoxForPrimaryAndSecondary()
@@ -109,36 +120,26 @@ void WMFilterPropertyHandler::createMultiSelectionForPDG()
 {
     WPropertyBase::PropertyChangeNotifierType pdgEncodingnotifier = boost::bind(
         &WMFilterPropertyHandler::updateSelectedPDGTypes, this );
-
-
-    boost::shared_ptr< WItemSelection > possibleSelection = WItemSelection::SPtr( new WItemSelection() );
+    
+    m_particleItemSelectionList = WItemSelection::SPtr( new WItemSelection() );
 
     m_pdgTypes.clear();
     searchPDGTypes();
 
+    if(m_pdgTypes.size() <= 0)
+    {
+        return;
+    }
+
     for( auto pdgType : m_pdgTypes )
     {
-        possibleSelection->addItem(
+        m_particleItemSelectionList->addItem(
                 getParticleNameFromPdg( pdgType ) + "(" + std::to_string( pdgType ) + ")"
         );
     }
 
-    if(m_pdgTypes.size() > 0)
-    {
-        m_multiSelection = m_filteringGroup->addProperty( "PDGEncoding", "Choose particle type(s) you want to show",
-                                                                possibleSelection->getSelectorAll(), pdgEncodingnotifier );
-    }
-    else
-    {
-        m_multiSelection = m_filteringGroup->addProperty( "PDGEncoding", "Choose particle type(s) you want to show",
-                                                                        possibleSelection->getSelectorNone(), pdgEncodingnotifier );
-    }
-
-    WItemSelector selectedItems = m_multiSelection->get( true );
-    for( size_t i = 0; i < selectedItems.size(); ++i )
-    {
-        m_selectedPDGTypes.push_back( getPdgFromName( selectedItems.at( i )->getName() ) );
-    }
+    m_multiSelection = m_filteringGroup->addProperty( "PDGEncoding", "Choose particle type(s) you want to show",
+                                                            m_particleItemSelectionList->getSelectorAll(), pdgEncodingnotifier );
 
     WPropertyHelper::PC_NOTEMPTY::addTo( m_multiSelection );
 }
@@ -147,6 +148,44 @@ void WMFilterPropertyHandler::updateSelectedPDGTypes()
 {
     m_dataUpdate( );
 }
+
+void WMFilterPropertyHandler::createPropToSetParticleNames()
+{
+    WPropertyBase::PropertyChangeNotifierType notifierSetParticleName = boost::bind(
+        &WMFilterPropertyHandler::saveRenameParticleButtonClick, this, boost::placeholders::_1 );
+        
+
+    m_filteringsubGroup  = m_filteringGroup->addPropertyGroup( "Rename or Delete Particle-Name",
+                                                            "Change, set a new name or delete for a particlename" );
+
+    m_aString = m_filteringsubGroup->addProperty( "New Name (press enter)", "Input a new name for the choosen particle",
+                                                            std::string( "" ), notifierSetParticleName );
+
+    m_PdgForRenameSelection = m_filteringsubGroup->addProperty( "Select Particle",  "Select the Particle PDG to rename",
+                                                            m_particleItemSelectionList->getSelectorFirst(),
+                                                            notifierSetParticleName );
+
+    m_saveButton= m_filteringsubGroup->addProperty( "Set Changes", "Save", WPVBaseTypes::PV_TRIGGER_READY, notifierSetParticleName );
+
+    WPropertyHelper::PC_NOTEMPTY::addTo( m_aString );
+    WPropertyHelper::PC_SELECTONLYONE::addTo( m_PdgForRenameSelection );
+    WPropertyHelper::PC_NOTEMPTY::addTo( m_PdgForRenameSelection );
+}
+
+void WMFilterPropertyHandler::saveRenameParticleButtonClick( WPropertyBase::SPtr property )
+{
+    if(property == m_saveButton && m_saveButton->get(true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
+    {
+        WItemSelector selectedItems = m_PdgForRenameSelection->get( true );  
+        std::string newParticleName =  m_aString->get( true );
+        int pdg  = getPdgFromName( selectedItems.at( 0 )->getName() );
+
+        changePdgBiMap( pdg, newParticleName );
+        updatePDGProperties();
+
+    }
+}
+
 
 bool WMFilterPropertyHandler::isPDGTypeSelected( int pdgType )
 {

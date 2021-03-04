@@ -147,6 +147,11 @@ private:
     void saveRenameParticleButtonClick( WPropertyBase::SPtr property );
 
     /**
+     * update PDG Properties (Multiselector and change-Name-Properties)
+     */
+    void updatePDGProperties();
+
+    /**
      * create the Checkbox for primaries and secondaries
      */
     void createCheckBoxForPrimaryAndSecondary();
@@ -155,6 +160,11 @@ private:
      * create the multiselection for the option of PDG
      */
     void createMultiSelectionForPDG();
+
+    /**
+     * create the Subgroup for change of PDG names
+     */
+    void createPropToSetParticleNames();
 
     /**
      * Updates possible selectable particle types in multiselection
@@ -234,6 +244,16 @@ private:
      * Stores users selected items.
      */
     WPropSelection m_multiSelection;
+
+    /**
+     * Stores subgroup for change the pdg-Name
+     */
+    WPropGroup m_filteringsubGroup;
+
+    /**
+     * Stores selectable items.
+     */
+    boost::shared_ptr< WItemSelection > m_particleItemSelectionList;
 
     /**
      * vector of the options of PDG
