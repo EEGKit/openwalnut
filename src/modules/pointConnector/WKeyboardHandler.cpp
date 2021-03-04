@@ -22,7 +22,14 @@
 //
 //---------------------------------------------------------------------------
 
+#include "WFiberHandler.h"
+
 #include "WKeyboardHandler.h"
+
+static const unsigned int CTRL_DOWN = 65507;
+static const unsigned int CTRL_UP = 16777249;
+static const unsigned int KEY_Z = 90;
+static const unsigned int KEY_Y = 89;
 
 WKeyboardHandler::WKeyboardHandler( WMPointConnector* connector ):
     m_connector( connector )
@@ -33,16 +40,28 @@ bool WKeyboardHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActio
 {
     if( ea.getEventType() == osgGA::GUIEventAdapter::KEYDOWN )
     {
-        std::cout << "DOWN KEY:\t\t\t" << ea.getKey() << std::endl;
-        std::cout << "\tUnmodified Key:\t\t" << ea.getUnmodifiedKey() << std::endl;
-        std::cout << "\tModKeyMask:\t\t"<< ea.getModKeyMask() << std::endl;
+        if( ea.getKey() == CTRL_DOWN )
+        {
+            m_isCtrl = true;
+        }
+        else if( ea.getKey() == KEY_Z && m_isCtrl )
+        {
+            m_connector->getFiberHandler()->getActionHandler()->undo();
+            return true;
+        }
+        else if( ea.getKey() == KEY_Y && m_isCtrl )
+        {
+            m_connector->getFiberHandler()->getActionHandler()->redo();
+            return true;
+        }
     }
 
     if( ea.getEventType() == osgGA::GUIEventAdapter::KEYUP )
     {
-        std::cout << "UP KEY:\t\t\t\t" << ea.getKey() << std::endl;
-        std::cout << "\tUnmodified Key:\t\t" << ea.getUnmodifiedKey() << std::endl;
-        std::cout << "\tModKeyMask:\t\t"<< ea.getModKeyMask() << std::endl;
+        if( ea.getKey() == CTRL_UP )
+        {
+            m_isCtrl = false;
+        }
     }
 
     return false;

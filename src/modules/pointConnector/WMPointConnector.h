@@ -122,6 +122,12 @@ public:
      */
     boost::shared_ptr< WConnectorData > getConnectorData();
 
+    /**
+     * 
+     * \return boost::shared_ptr< WFiberHandler > The WFiberHandler of this module.
+     */
+    boost::shared_ptr< WFiberHandler > getFiberHandler();
+
 protected:
     /**
      * Entry point after loading the module. Runs in separate thread.

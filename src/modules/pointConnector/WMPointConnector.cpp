@@ -299,3 +299,8 @@ WConnectorData::SPtr WMPointConnector::getConnectorData()
 {
     return m_connectorData;
 }
+
+WFiberHandler::SPtr WMPointConnector::getFiberHandler()
+{
+    return m_fiberHandler;
+}

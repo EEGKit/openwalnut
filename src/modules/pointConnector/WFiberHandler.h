@@ -127,6 +127,11 @@ public:
 
     size_t getSelectedFiber();
 
+    /**
+     * \return WActionHandler::SPtr The WActionHandler of this class.
+     */
+    WActionHandler::SPtr getActionHandler();
+
 private:
     /**
      * Update handler for the properties
