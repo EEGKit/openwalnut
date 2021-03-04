@@ -30,9 +30,14 @@
 #include <iostream>
 
 #include <boost/lexical_cast.hpp>
+#include "core/dataHandler/WGrid.h"
+#include "core/dataHandler/WGridRegular3D.h"
+#include "core/common/WTransferFunction.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
 #include "core/dataHandler/WDataSetPointsAndSizes.h"
+#include "core/dataHandler/WValueSet.h"
+#include "core/dataHandler/WValueSetBase.h"
 
 #include "WMConverterIndexes.h"
 #include "WMConverterVectors.h"
@@ -77,6 +82,12 @@ public:
      */
     boost::shared_ptr< WDataSetPoints > getPoints();
 
+    /**
+     * Getter
+     * \return shared_ptr of generated transfer function
+     */
+    boost::shared_ptr< WDataSetSingle > getTransferFunction();
+
 private:
     /**
      * Stores information form csv content. Content object containing data
@@ -92,6 +103,11 @@ private:
      * Stores information for the point renderer
      */
     boost::shared_ptr< WDataSetPoints > m_points;
+
+    /**
+     * Stores the currently mapped transfer function
+     */
+    boost::shared_ptr< WDataSetSingle > m_transferFunction;
 
     /**
      * The fallback color to use.
@@ -112,6 +128,12 @@ private:
      * includes all property groups 
      */
     WMPropertyStatus::SPtr m_propertyStatus;
+
+    /**
+     * Computes gradient vector from transfer function specified in visualization properties.
+     * \return shared_ptr of mapped gradient from transfer function in RGBA format
+     */
+    boost::shared_ptr< std::vector<unsigned char> > sampleTransferFunction();
 
     /**
      * Normalize energy deposition values to use as RGB values
@@ -176,6 +198,12 @@ private:
      * Create outputs, so it can be displayed by the fiber display and the point renderer.
      */
     void setOutputFromCSV( );
+
+    /**
+     * Creates output for transfer function
+     * \param data shared_ptr of mapped gradient from transfer function in RGBA format
+     */
+    void setTransferFunction( boost::shared_ptr< std::vector<unsigned char> > data );
 
     /**
      * Checks if output variables have to be null, if true, sets them to null

@@ -22,6 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
+#include "core/common/WTransferFunction.h"
+
 #include "WMVisualizationPropertyHandler.h"
 
 
@@ -45,6 +47,9 @@ void WMVisualizationPropertyHandler::createProperties()
     m_colorFromEdep = m_visualizationGroup->addProperty( "Color by edep", "Color points based on energy deposition", true, notifierCheckBox );
     m_colorSelection = m_visualizationGroup->addProperty( "Plain color", "Choose how to color the points when not coloring by edep.",
         defaultColor::WHITE, notifierCheckBox );
+
+    m_gradient = m_visualizationGroup->addProperty( "Transfer Function", "Transfer function that maps the energy deposition to a gradient",
+                                                    setColorGradient() , notifierCheckBox, false );
 
     updateProperty();
 }
@@ -86,4 +91,28 @@ WPropBool WMVisualizationPropertyHandler::getSizesFromEdep()
 WPropColor WMVisualizationPropertyHandler::getColorSelection()
 {
     return m_colorSelection;
+}
+
+WPropTransferFunction WMVisualizationPropertyHandler::getTransferFunction()
+{
+    return m_gradient;
+}
+
+WTransferFunction WMVisualizationPropertyHandler::setColorGradient()
+{
+    WTransferFunction tf;
+
+    tf.addColor( 0.0, WColor( 0.0, 0.0, 1.0, 1.0 ) );
+    tf.addColor( 0.25, WColor( 0.5, 0.0, 0.91, 1.0 ) );
+    tf.addColor( 0.5, WColor( 0.75, 0.0, 0.73, 1.0 ) );
+    tf.addColor( 0.75, WColor( 0.97, 0.0, 0.53, 1.0 ) );
+    tf.addColor( 1.0, WColor( 1.0, 0.0, 0.0, 1.0 ) );
+
+    tf.addAlpha( 0.0, 1.0 );
+    tf.addAlpha( 0.25, 1.0 );
+    tf.addAlpha( 0.5, 1.0 );
+    tf.addAlpha( 0.75, 1.0 );
+    tf.addAlpha( 1.0, 1.0 );
+
+    return tf;
 }
