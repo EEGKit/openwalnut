@@ -47,7 +47,7 @@ void WMProtonData::setCSVHeader( WDataSetCSV::ContentSPtr csvHeader )
     // TODO(robin.eschbach) change csvheader type to vector< string > or maybe to map
     std::vector< std::string > header = m_csvHeader->at( 0 );
 
-    for( auto i = 0; i < header.size(); i++ )
+    for( long unsigned int i = 0; i < header.size(); i++ )
     {
         m_columnMap[header[i]] = i;
     }
@@ -97,7 +97,7 @@ bool WMProtonData::isRequiredDataAvailable()
         "posX", "posY", "posZ"
     };
 
-    for( int i = 0; i < sizeof( necessaryColumns ) / sizeof( std::string ); i++ )
+    for( long unsigned int i = 0; i < sizeof( necessaryColumns ) / sizeof( std::string ); i++ )
     {
         std::string column = necessaryColumns[i];
         if( getColumnIndex( column ) < 0 )
@@ -115,7 +115,7 @@ bool WMProtonData::isNonrequiredDataAvailable()
         "PDGEncoding", "edep", "trackID", "parentID", "eventID"
     };
 
-    for( int i = 0; i < sizeof( unNecessaryColumns ) / sizeof( std::string ); i++ )
+    for( long unsigned int i = 0; i < sizeof( unNecessaryColumns ) / sizeof( std::string ); i++ )
     {
         std::string column = unNecessaryColumns[i];
         if( getColumnIndex( column ) < 0 )
@@ -139,7 +139,7 @@ void WMProtonData::updateAvailabilityOfColumns()
     };
 
     std::cout << std::endl;
-    for( int i = 0; i < sizeof( necessaryColumns ) / sizeof( std::string ); i++ )
+    for( long unsigned int i = 0; i < sizeof( necessaryColumns ) / sizeof( std::string ); i++ )
     {
         std::string column = necessaryColumns[i];
         if( getColumnIndex( column ) < 0 )
