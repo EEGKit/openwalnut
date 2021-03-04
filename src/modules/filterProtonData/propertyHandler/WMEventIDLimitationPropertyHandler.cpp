@@ -48,7 +48,7 @@ void WMEventIDLimitationPropertyHandler::createProperties()
 
 void WMEventIDLimitationPropertyHandler::updateProperty()
 {
-    if(m_protonData->IsColumnAvailable("eventID"))
+    if(m_protonData->isColumnAvailable("eventID"))
     {
         m_minCap->setHidden( false );
         m_maxCap->setHidden( false );

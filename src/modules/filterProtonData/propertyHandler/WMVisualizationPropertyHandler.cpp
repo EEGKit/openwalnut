@@ -56,10 +56,10 @@ void WMVisualizationPropertyHandler::createProperties()
 
 void WMVisualizationPropertyHandler::updateProperty()
 {
-    if( m_protonData->IsColumnAvailable( "posX" ) &&
-        m_protonData->IsColumnAvailable( "posY" ) &&
-        m_protonData->IsColumnAvailable( "posZ" ) &&
-        m_protonData->IsColumnAvailable( "edep" ) )
+    if( m_protonData->isColumnAvailable( "posX" ) &&
+        m_protonData->isColumnAvailable( "posY" ) &&
+        m_protonData->isColumnAvailable( "posZ" ) &&
+        m_protonData->isColumnAvailable( "edep" ) )
     {
         m_sizesFromEdep->setHidden( false );
         m_colorFromEdep->setHidden( false );

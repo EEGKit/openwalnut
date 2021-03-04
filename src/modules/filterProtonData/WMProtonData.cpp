@@ -91,7 +91,7 @@ int WMProtonData::getColumnIndex( std::string columnName )
     return m_columnMap[columnName];
 }
 
-bool WMProtonData::IsRequiredDataAvailable()
+bool WMProtonData::isRequiredDataAvailable()
 {
     static const std::string necessaryColumns[] = {
         "posX", "posY", "posZ"
@@ -109,7 +109,7 @@ bool WMProtonData::IsRequiredDataAvailable()
     return true;
 }
 
-bool WMProtonData::IsNonrequiredDataAvailable()
+bool WMProtonData::isNonrequiredDataAvailable()
 {
     static const std::string unNecessaryColumns[] = {
         "PDGEncoding", "edep", "trackID", "parentID", "eventID"
@@ -127,7 +127,7 @@ bool WMProtonData::IsNonrequiredDataAvailable()
     return false;
 }
 
-bool WMProtonData::IsColumnAvailable( std::string columnName )
+bool WMProtonData::isColumnAvailable( std::string columnName )
 {
     return m_availabilityColumnMap[columnName];
 }

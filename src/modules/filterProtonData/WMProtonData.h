@@ -98,21 +98,21 @@ public:
      *
      * \return true when initialized. false if they are not initialized 
      */
-    bool IsRequiredDataAvailable();
+    bool isRequiredDataAvailable();
 
     /**
      * checks whether columns are missing 
      *
      * \return true if column is missing . false if column is not missing
      */
-    bool IsNonrequiredDataAvailable();
+    bool isNonrequiredDataAvailable();
 
     /**
      * checks whether columns are available 
      *
      * \return true if column is available . false if column is not available
      */
-    bool IsColumnAvailable( std::string columnName );
+    bool isColumnAvailable( std::string columnName );
 
 private:
     /**

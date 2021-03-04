@@ -53,7 +53,7 @@ void WMFilterPropertyHandler::updateProperty()
     m_filteringGroup->removeProperty( m_multiSelection );
     createMultiSelectionForPDG();
 
-    if( m_protonData->IsColumnAvailable( "parentID" ) && m_protonData->IsColumnAvailable( "trackID" ) )
+    if( m_protonData->isColumnAvailable( "parentID" ) && m_protonData->isColumnAvailable( "trackID" ) )
     {
         m_showPrimaries->setHidden( false );
         m_showSecondaries->setHidden( false );
@@ -64,7 +64,7 @@ void WMFilterPropertyHandler::updateProperty()
         m_showSecondaries->setHidden( true );
     }
 
-    if( m_protonData->IsColumnAvailable( "PDGEncoding" ) )
+    if( m_protonData->isColumnAvailable( "PDGEncoding" ) )
     {
         m_multiSelection->setHidden( false );
     }

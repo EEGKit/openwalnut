@@ -50,7 +50,7 @@ boost::shared_ptr< WDataSetPoints > WMCsvConverter::getPoints()
 
 void WMCsvConverter::setOutputFromCSV( )
 {
-    if( !m_protonData->IsRequiredDataAvailable() )
+    if( !m_protonData->isRequiredDataAvailable() )
     {
         return;
     }
@@ -284,7 +284,7 @@ void WMCsvConverter::createOutputPoints()
 void WMCsvConverter::createOutputFibers()
 {
     calculateFibers();
-    if(!m_protonData->IsColumnAvailable("eventID"))
+    if(!m_protonData->isColumnAvailable("eventID"))
     {
         m_fibers = boost::shared_ptr< WDataSetFibers >(
             new WDataSetFibers(
@@ -309,7 +309,7 @@ void WMCsvConverter::createOutputFibers()
         );
     }
 
-    if(m_protonData->IsColumnAvailable("edep"))
+    if(m_protonData->isColumnAvailable("edep"))
     {
         m_fibers->addColorScheme( m_vectors->getColors(), "Energy deposition", "Color fibers based on their energy." );
     }
@@ -317,7 +317,7 @@ void WMCsvConverter::createOutputFibers()
 
 void WMCsvConverter::addEventID( WDataSetCSV::Content::iterator dataRow )
 {
-    if(m_protonData->IsColumnAvailable("eventID"))
+    if(m_protonData->isColumnAvailable("eventID"))
         {
             if(dataRow->at( m_indexes->getEventID() ) == "NULL")
             {
