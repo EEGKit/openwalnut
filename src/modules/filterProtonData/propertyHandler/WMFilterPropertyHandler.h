@@ -107,10 +107,9 @@ public:
      * \param path fielpath of the pdg particlename file
      * \throws WException
      */
-    void createPDGMap(std:: string path);
+    void createPDGMap( std:: string path );
 
 private:
-
     /**
      * Pointer to the content and header of the CSV 
      */
@@ -166,7 +165,7 @@ private:
      * \param pdg pdg number of a particlename
      * \return the particle name
      */
-    std::string getParticleNameFromPdg(int pdg);
+    std::string getParticleNameFromPdg( int pdg );
 
     /**
      * Search the pdg in the map with a given particlename
@@ -174,7 +173,7 @@ private:
      * \param particleName particlename of a pdg number
      * \return pdg number
      */
-    int getPdgFromName(std::string particleName);
+    int getPdgFromName( std::string particleName );
 
     /**
      * A Map of the PDG and their names

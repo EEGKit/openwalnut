@@ -129,8 +129,8 @@ bool WMCsvConverter::canShow( WDataSetCSV::Content::iterator dataRow )
 
     if( m_protonData->IsColumnAvailable( "PDGEncoding" ) )
     {
-        if (!m_propertyStatus->getFilterPropertyHandler()->isPDGTypeSelected(
-                std::stoi( dataRow->at( m_protonData->getColumnIndex( "PDGEncoding" ) ) ) ) ) 
+        if( !m_propertyStatus->getFilterPropertyHandler()->isPDGTypeSelected(
+                std::stoi( dataRow->at( m_protonData->getColumnIndex( "PDGEncoding" ) ) ) ) )
         {
             return false;
         }
@@ -234,7 +234,6 @@ void WMCsvConverter::createOutputPoints()
     {
         if( m_propertyStatus->getVisualizationPropertyHandler()->getSizesFromEdep()->get() )
         {
-            std::cout << "MATCH 1" << std::endl << std::endl;
             m_points = boost::shared_ptr< WDataSetPointsAndSizes >(
                     new WDataSetPointsAndSizes(
                             m_vectors->getVertices(),
@@ -245,10 +244,8 @@ void WMCsvConverter::createOutputPoints()
             return;
         }
     }
-    
-    std::cout << "MATCH 3" << std::endl << std::endl;
     m_points = boost::shared_ptr < WDataSetPoints >(
-            new WDataSetPoints(
+                    new WDataSetPoints(
                     m_vectors->getVertices(),
                     m_vectors->getColors()
             )

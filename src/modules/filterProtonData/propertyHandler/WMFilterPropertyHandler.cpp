@@ -49,11 +49,11 @@ void WMFilterPropertyHandler::createProperties()
 
 void WMFilterPropertyHandler::updateProperty()
 {
-    m_currentColumnIndex = m_protonData->getColumnIndex("PDGEncoding");
+    m_currentColumnIndex = m_protonData->getColumnIndex( "PDGEncoding" );
     m_filteringGroup->removeProperty( m_multiSelection );
     createMultiSelectionForPDG();
 
-    if(m_protonData->IsColumnAvailable("parentID") && m_protonData->IsColumnAvailable("trackID"))
+    if( m_protonData->IsColumnAvailable( "parentID" ) && m_protonData->IsColumnAvailable( "trackID" ) )
     {
         m_showPrimaries->setHidden( false );
         m_showSecondaries->setHidden( false );
@@ -64,7 +64,7 @@ void WMFilterPropertyHandler::updateProperty()
         m_showSecondaries->setHidden( true );
     }
 
-    if(m_protonData->IsColumnAvailable("PDGEncoding"))
+    if( m_protonData->IsColumnAvailable( "PDGEncoding" ) )
     {
         m_multiSelection->setHidden( false );
     }
@@ -105,7 +105,7 @@ void WMFilterPropertyHandler::searchPDGTypes()
 }
 
 void WMFilterPropertyHandler::createMultiSelectionForPDG()
-{    
+{
     WPropertyBase::PropertyChangeNotifierType pdgEncodingnotifier = boost::bind(
         &WMFilterPropertyHandler::updateSelectedPDGTypes, this, boost::placeholders::_1 );
 
@@ -117,14 +117,14 @@ void WMFilterPropertyHandler::createMultiSelectionForPDG()
     for( auto pdgType : m_pdgTypes )
     {
         possibleSelection->addItem(
-                getParticleNameFromPdg( pdgType ) + "(" + std::to_string( pdgType) + ")"
+                getParticleNameFromPdg( pdgType ) + "(" + std::to_string( pdgType ) + ")"
         );
     }
 
     if(m_pdgTypes.size() > 0)
     {
         m_multiSelection = m_filteringGroup->addProperty( "PDGEncoding", "Choose particle type(s) you want to show",
-                                                                possibleSelection->getSelectorFirst(), pdgEncodingnotifier );
+                                                                possibleSelection->getSelectorAll(), pdgEncodingnotifier );
     }
     else
     {
@@ -145,7 +145,7 @@ void WMFilterPropertyHandler::updateSelectedPDGTypes( WPropertyBase::SPtr proper
 
         for( int i = 0; i < selectedItems.size(); ++i )
         {
-            m_selectedPDGTypes.push_back(getPdgFromName(selectedItems.at( i )->getName()));
+            m_selectedPDGTypes.push_back( getPdgFromName( selectedItems.at( i )->getName() ) );
         }
     }
 
@@ -185,9 +185,8 @@ void WMFilterPropertyHandler::updateCheckboxProperty( WPropertyBase::SPtr proper
     }
 }
 
-void WMFilterPropertyHandler::createPDGMap(std::string path)
+void WMFilterPropertyHandler::createPDGMap( std::string path )
 {
-
     std::fstream pdgSignFile;
     std::string dataRow;
     bool firstLine = true;
@@ -216,11 +215,11 @@ void WMFilterPropertyHandler::createPDGMap(std::string path)
     pdgSignFile.close();
 }
 
-std::string WMFilterPropertyHandler::getParticleNameFromPdg(int pdg)
+std::string WMFilterPropertyHandler::getParticleNameFromPdg( int pdg )
 {
-    BM_PDG::right_const_iterator pdg_iter = m_PdgNamesByID.right.find(pdg);
+    BM_PDG::right_const_iterator pdg_iter = m_PdgNamesByID.right.find( pdg );
 
-    if(pdg_iter != m_PdgNamesByID.right.end())
+    if( pdg_iter != m_PdgNamesByID.right.end() )
     {
         return pdg_iter->second;
     }
@@ -228,21 +227,20 @@ std::string WMFilterPropertyHandler::getParticleNameFromPdg(int pdg)
     {
         return "unknown";
     }
-
 }
 
-int WMFilterPropertyHandler::getPdgFromName(std::string particleName)
+int WMFilterPropertyHandler::getPdgFromName( std::string particleName )
 {
-    BM_PDG::left_const_iterator pdg_iter = m_PdgNamesByID.left.find(particleName.substr(0, particleName.find("(")));
-    if(pdg_iter != m_PdgNamesByID.left.end())
+    BM_PDG::left_const_iterator pdg_iter = m_PdgNamesByID.left.find( particleName.substr( 0, particleName.find( "(" ) ) );
+    if( pdg_iter != m_PdgNamesByID.left.end() )
     {
         return pdg_iter->second;
     }
     else
     {
-        std::regex regexp("[-+0-9]+");
+        std::regex regexp( "[-+0-9]+" );
         std::smatch m;
-        std::regex_search(particleName, m, regexp);
+        std::regex_search( particleName, m, regexp );
         return std::stoi(m[0]);
     }
 }

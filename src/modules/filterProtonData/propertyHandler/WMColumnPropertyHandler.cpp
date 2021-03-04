@@ -129,6 +129,7 @@ void WMColumnPropertyHandler::propertyNotifier( WPropertyBase::SPtr property )
                                       getColumnNumberByName( selectedValue, m_protonData->getCSVHeader()->at( 0 ) )
                                      );
 
+        m_dataUpdate();
         if(m_externEventMethod != NULL)
         {
             m_externEventMethod();
@@ -136,7 +137,7 @@ void WMColumnPropertyHandler::propertyNotifier( WPropertyBase::SPtr property )
     }
 }
 
-boost::shared_ptr< WItemSelection > WMColumnPropertyHandler::getColumnItems() 
+boost::shared_ptr< WItemSelection > WMColumnPropertyHandler::getColumnItems()
 {
     return m_possibleSelectionsUsingTypes;
 }
