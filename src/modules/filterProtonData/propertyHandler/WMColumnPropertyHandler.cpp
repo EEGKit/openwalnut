@@ -80,7 +80,7 @@ void WMColumnPropertyHandler::InitializeSelectionItem()
 WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string columnName, WPropertyBase::PropertyChangeNotifierType notifier )
 {
     int index = m_protonData->getColumnIndex( columnName );
-    WItemSelector selector = index < 0 ? m_possibleSelectionsUsingTypes->getSelectorNone() : m_possibleSelectionsUsingTypes->getSelector( index );
+    WItemSelector selector = index < 0 ? m_possibleSelectionsUsingTypes->getSelectorLast() : m_possibleSelectionsUsingTypes->getSelector( index );
     WPropSelection selection = m_columnSelectionGroup->addProperty(
                                                 columnName,
                                                 "Choose the " + columnName + " column from csv",

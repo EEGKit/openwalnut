@@ -67,7 +67,6 @@ public:
      */
     explicit WMFilterPropertyHandler( WMProtonData::SPtr protonData,
                                     WPropertyGroup::SPtr properties,
-                                    WMColumnPropertyHandler::SPtr columnPropertyHandler,
                                     WMFilterPropertyHandler::CallbackPtr dataUpdate );
 
     /**
@@ -110,18 +109,7 @@ public:
      */
     void createPDGMap(std:: string path);
 
-    /**
-     * Get selected columns index
-     *
-     * \return current column index that is selected as particle data group
-     */
-    int getCurrentColumnIndex();
-
 private:
-    /**
-     * Reference of m_columnPropertyHandler
-     */
-    WMColumnPropertyHandler::SPtr m_columnPropertyHandler;
 
     /**
      * Pointer to the content and header of the CSV 
@@ -139,6 +127,11 @@ private:
     WMFilterPropertyHandler::CallbackPtr m_dataUpdate;
 
     /**
+     * Collect all particle types from your input data.
+     */
+    void searchPDGTypes();
+
+    /**
      * update the m_selectedPDGTypes
      */
     void updateSelectedPDGTypes( WPropertyBase::SPtr property );
@@ -154,34 +147,11 @@ private:
     void createMultiSelectionForPDG();
 
     /**
-     * Collect all particle types from your input data.
-     *
-     * \param columnIndex determines column whose elements should be collected
-     */
-    void setPDGTypes( int columnIndex );
-
-    /**
-     * Updates itemSelector depending on the columnName that is selected
-     *
-     * \param ColumnName name of the column that should be selected
-     * \param itemSelector reference of selectable column names list
-     * \return index of column that is selected
-     */
-    int selectColumn( std::string columnName, WItemSelector& itemSelector );
-
-    /**
      * Updates possible selectable particle types in multiselection
      *
      * \param particleItemSelectionList selectable partyle types as itemSelectionList
      */
     void updatePDGTypesProperty( WItemSelection::SPtr particleItemSelectionList );
-
-    /**
-     * Updates property ui once a new particle data group column is selected
-     *
-     * \param property contains reference to the property which called updateProperty()
-     */
-    void onSingleSelectionChanged( WPropertyBase::SPtr property );
 
      /**
      * Reload data when properties for selection of primaries and secondaries changed
@@ -237,24 +207,9 @@ private:
     WPropBool m_showSecondaries;
 
     /**
-     * Stores users selected item.
-     */
-    WPropSelection m_singleSelection;
-
-    /**
      * Stores users selected items.
      */
     WPropSelection m_multiSelection;
-
-    /**
-     * Reference of column name list
-     */
-    boost::shared_ptr< WItemSelection > m_columnItemSelectionList;
-
-    /**
-     * Stores selectable items.
-     */
-    boost::shared_ptr< WItemSelection > m_particleItemSelectionList;
 
     /**
      * vector of the options of PDG
