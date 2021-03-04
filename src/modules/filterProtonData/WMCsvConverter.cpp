@@ -158,7 +158,7 @@ bool WMCsvConverter::canShow( WDataSetCSV::Content::iterator dataRow )
 
     if( m_protonData->isColumnAvailable( "PDGEncoding" ) )
     {
-        if( !m_propertyStatus->getFilterPropertyHandler()->isPDGTypeSelected( 
+        if( !m_propertyStatus->getFilterPropertyHandler()->isPDGTypeSelected(
             std::stoi( dataRow->at( m_indexes->getPDGEncoding( ) ) ) ) )
         {
             return false;
