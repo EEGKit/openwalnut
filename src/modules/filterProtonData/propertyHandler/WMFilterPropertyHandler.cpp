@@ -22,9 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
+#include <regex>
 #include <string>
 #include <vector>
-#include <regex>
 
 #include "WMFilterPropertyHandler.h"
 
@@ -92,7 +92,7 @@ void WMFilterPropertyHandler::searchPDGTypes()
         return;
     }
 
-    for( auto idx = 0; idx < m_protonData->getCSVData()->size(); idx++)
+    for( size_t idx = 0; idx < m_protonData->getCSVData()->size(); idx++)
     {
         std::vector< std::string > row = m_protonData->getCSVData()->at( idx );
         int currentParticleID = std::stoi( row.at( pdgColumnIndex ) );
@@ -107,7 +107,7 @@ void WMFilterPropertyHandler::searchPDGTypes()
 void WMFilterPropertyHandler::createMultiSelectionForPDG()
 {
     WPropertyBase::PropertyChangeNotifierType pdgEncodingnotifier = boost::bind(
-        &WMFilterPropertyHandler::updateSelectedPDGTypes, this, boost::placeholders::_1 );
+        &WMFilterPropertyHandler::updateSelectedPDGTypes, this );
 
     boost::shared_ptr< WItemSelection > possibleSelection = WItemSelection::SPtr( new WItemSelection() );
 
@@ -135,7 +135,7 @@ void WMFilterPropertyHandler::createMultiSelectionForPDG()
     WPropertyHelper::PC_NOTEMPTY::addTo( m_multiSelection );
 }
 
-void WMFilterPropertyHandler::updateSelectedPDGTypes( WPropertyBase::SPtr property )
+void WMFilterPropertyHandler::updateSelectedPDGTypes()
 {
     m_selectedPDGTypes.clear();
 
@@ -143,7 +143,7 @@ void WMFilterPropertyHandler::updateSelectedPDGTypes( WPropertyBase::SPtr proper
     {
         WItemSelector selectedItems = m_multiSelection->get( true );
 
-        for( int i = 0; i < selectedItems.size(); ++i )
+        for( size_t i = 0; i < selectedItems.size(); ++i )
         {
             m_selectedPDGTypes.push_back( getPdgFromName( selectedItems.at( i )->getName() ) );
         }
@@ -154,7 +154,7 @@ void WMFilterPropertyHandler::updateSelectedPDGTypes( WPropertyBase::SPtr proper
 
 bool WMFilterPropertyHandler::isPDGTypeSelected( int pdgType )
 {
-    for( auto idx = 0; idx < m_selectedPDGTypes.size(); idx++ )
+    for( size_t idx = 0; idx < m_selectedPDGTypes.size(); idx++ )
     {
         if(pdgType == m_selectedPDGTypes[idx] )
         {

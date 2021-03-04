@@ -133,7 +133,7 @@ private:
     /**
      * update the m_selectedPDGTypes
      */
-    void updateSelectedPDGTypes( WPropertyBase::SPtr property );
+    void updateSelectedPDGTypes();
 
     /**
      * create the Checkbox for primaries and secondaries

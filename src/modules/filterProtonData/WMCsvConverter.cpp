@@ -106,30 +106,29 @@ boost::shared_ptr< std::vector<unsigned char> > WMCsvConverter::sampleTransferFu
 
 void WMCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray, float maxEdep )
 {
-    if(m_protonData->isColumnAvailable("edep"))
+    if( m_protonData->isColumnAvailable( "edep" ) )
     {
-        if (m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get())
+        if( m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
         {
+            boost::shared_ptr< std::vector< unsigned char > > data = sampleTransferFunction();
 
-            boost::shared_ptr<std::vector<unsigned char> > data = sampleTransferFunction();
+            setTransferFunction( data );
 
-            setTransferFunction(data);
-
-            for (std::vector<float>::iterator currentEdep = edeps->begin();
+            for( std::vector< float >::iterator currentEdep = edeps->begin();
                  currentEdep != edeps->end();
-                 currentEdep++)
+                 currentEdep++ )
             {
-                int clusterSize = 9.0 * ((2.4 * (pow(*currentEdep, 0.338))) / 4.0);
+                int clusterSize = 9.0 * ( ( 2.4 * ( pow( *currentEdep, 0.338 ) ) ) / 4.0 );
 
-                float r = data->at(clusterSize * 4) / 255.0;
-                float g = data->at(clusterSize * 4 + 1) / 255.0;
-                float b = data->at(clusterSize * 4 + 2) / 255.0;
-                float a = data->at(clusterSize * 4 + 3) / 255.0;
+                float r = data->at( clusterSize * 4 ) / 255.0;
+                float g = data->at( clusterSize * 4 + 1 ) / 255.0;
+                float b = data->at( clusterSize * 4 + 2 ) / 255.0;
+                float a = data->at( clusterSize * 4 + 3 ) / 255.0;
 
-                colorArray->push_back(r);
-                colorArray->push_back(g);
-                colorArray->push_back(b);
-                colorArray->push_back(a);
+                colorArray->push_back( r );
+                colorArray->push_back( g );
+                colorArray->push_back( b );
+                colorArray->push_back( a );
             }
         }
     }
