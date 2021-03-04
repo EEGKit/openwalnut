@@ -66,6 +66,9 @@ private:
      */
     WMPointConnector* m_connector;
 
+    /**
+     * Whether ctrl is pressed or not.
+     */
     bool m_isCtrl = false;
 };
 
