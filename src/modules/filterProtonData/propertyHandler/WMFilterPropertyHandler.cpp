@@ -109,6 +109,7 @@ void WMFilterPropertyHandler::createMultiSelectionForPDG()
     WPropertyBase::PropertyChangeNotifierType pdgEncodingnotifier = boost::bind(
         &WMFilterPropertyHandler::updateSelectedPDGTypes, this );
 
+
     boost::shared_ptr< WItemSelection > possibleSelection = WItemSelection::SPtr( new WItemSelection() );
 
     m_pdgTypes.clear();
@@ -132,38 +133,33 @@ void WMFilterPropertyHandler::createMultiSelectionForPDG()
                                                                         possibleSelection->getSelectorNone(), pdgEncodingnotifier );
     }
 
+    WItemSelector selectedItems = m_multiSelection->get( true );
+    for( size_t i = 0; i < selectedItems.size(); ++i )
+    {
+        m_selectedPDGTypes.push_back( getPdgFromName( selectedItems.at( i )->getName() ) );
+    }
+
     WPropertyHelper::PC_NOTEMPTY::addTo( m_multiSelection );
 }
 
 void WMFilterPropertyHandler::updateSelectedPDGTypes()
 {
-    m_selectedPDGTypes.clear();
-
-    if( m_multiSelection->changed() )
-    {
-        WItemSelector selectedItems = m_multiSelection->get( true );
-
-        for( size_t i = 0; i < selectedItems.size(); ++i )
-        {
-            m_selectedPDGTypes.push_back( getPdgFromName( selectedItems.at( i )->getName() ) );
-        }
-    }
-
     m_dataUpdate( );
 }
 
 bool WMFilterPropertyHandler::isPDGTypeSelected( int pdgType )
 {
-    for( size_t idx = 0; idx < m_selectedPDGTypes.size(); idx++ )
+    WItemSelector selectedItems = m_multiSelection->get( true );
+    
+    for( size_t i = 0; i < selectedItems.size(); ++i )
     {
-        if(pdgType == m_selectedPDGTypes[idx] )
+        if(getPdgFromName( selectedItems.at( i )->getName()) == pdgType)
         {
             return true;
         }
     }
     return false;
 }
-
 
 void WMFilterPropertyHandler::updateCheckboxProperty( WPropertyBase::SPtr property )
 {
