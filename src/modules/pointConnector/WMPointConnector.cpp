@@ -118,6 +118,7 @@ void WMPointConnector::createPointRenderer()
 
 void WMPointConnector::createHandler()
 {
+    osg::ref_ptr< osgViewer::View > viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView();
     osg::ref_ptr< WClickHandler > clickHandler = new WClickHandler( this );
     viewer->addEventHandler( clickHandler.get() );
 
