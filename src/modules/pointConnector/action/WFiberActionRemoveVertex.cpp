@@ -27,8 +27,9 @@
 #include "../WConnectorData.h"
 
 
-WFiberActionRemoveVertex::WFiberActionRemoveVertex( osg::Vec3 vertex, size_t position, WFiberHandler* fiberHandler ):
+WFiberActionRemoveVertex::WFiberActionRemoveVertex( osg::Vec3 vertex, size_t fiberIdx, size_t position, WFiberHandler* fiberHandler ):
     m_vertex( vertex ),
+    m_fiberIdx( fiberIdx ),
     m_position( position ),
     m_fiberHandler( fiberHandler )
 {
@@ -40,7 +41,7 @@ WFiberActionRemoveVertex::~WFiberActionRemoveVertex()
 
 void WFiberActionRemoveVertex::undo()
 {
-    m_fiberHandler->addVertexToFiberAt( m_vertex, m_position, true );
+    m_fiberHandler->addVertexToFiberAt( m_vertex, m_fiberIdx, m_position, true );
 
     m_fiberHandler->getPointConnector()->getConnectorData()->deselectPoint();
     m_fiberHandler->selectLastPoint();
@@ -51,7 +52,7 @@ void WFiberActionRemoveVertex::undo()
 
 void WFiberActionRemoveVertex::redo()
 {
-    m_fiberHandler->removeVertexFromFiber( m_vertex, true );
+    m_fiberHandler->removeVertexFromFiber( m_vertex, m_fiberIdx, true );
 
     m_fiberHandler->getPointConnector()->getConnectorData()->deselectPoint();
     m_fiberHandler->selectLastPoint();

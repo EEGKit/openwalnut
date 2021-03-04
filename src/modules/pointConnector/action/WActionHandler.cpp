@@ -73,7 +73,6 @@ void WActionHandler::redo()
     {
         return;
     }
-
     WFiberAction::SPtr action = m_redo->back();
 
     action->redo();

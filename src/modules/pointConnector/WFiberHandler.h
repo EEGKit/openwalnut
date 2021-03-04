@@ -88,7 +88,7 @@ public:
      * \param vertex The vertex to add.
      * \param silent Whether or not this should add to the undo stack.
      */
-    void addVertexToFiber( osg::Vec3 vertex, bool silent = false );
+    void addVertexToFiber( osg::Vec3 vertex, size_t fiberIdx, bool silent = false );
 
     /**
      * Adds a vertex to the currently selected fiber.
@@ -96,15 +96,22 @@ public:
      * \param position The position where to add the vertex.
      * \param silent Whether or not this should add to the undo stack.
      */
-    void addVertexToFiberAt( osg::Vec3 vertex, size_t position, bool silent );
-
+    void addVertexToFiberAt( osg::Vec3 vertex, size_t fiberIdx, size_t position, bool silent = false );
 
     /**
      * Removes a vertex from the currently selected fiber.
      * \param vertex The vertex to remove.
      * \param silent Whether or not this should add to the undo stack.
      */
-    void removeVertexFromFiber( osg::Vec3 vertex, bool silent = false );
+    void removeVertexFromFiber( osg::Vec3 vertex, size_t fiberIdx, bool silent = false );
+
+    void addFiber( std::string name, bool silent = false );
+
+    void addFiberAt( std::string name, size_t position, bool silent = false, PCFiber fiber = PCFiber() );
+
+    void removeFiber( size_t idx, bool silent = false );
+
+    void selectFiber( size_t idx );
 
     /**
      * Selects the last point of the currently selected fiber.
@@ -117,6 +124,8 @@ public:
     PCFiberListSPtr getFibers();
 
     WMPointConnector* getPointConnector();
+
+    size_t getSelectedFiber();
 
 private:
     /**
@@ -160,7 +169,10 @@ private:
      */
     WPropTrigger m_addFiber;
 
+    WPropTrigger m_removeFiber;
+
     WPropTrigger m_undoTrigger;
+
     WPropTrigger m_redoTrigger;
 
     /**

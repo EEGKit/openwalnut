@@ -25,6 +25,8 @@
 #ifndef WFIBERACTIONREMOVEVERTEX_H
 #define WFIBERACTIONREMOVEVERTEX_H
 
+#include <string>
+
 #include <boost/shared_ptr.hpp>
 #include <osg/Geode>
 
@@ -36,7 +38,7 @@ class WFiberActionRemoveVertex : public WFiberAction
 public:
     typedef boost::shared_ptr< WFiberActionRemoveVertex > SPtr;
 
-    WFiberActionRemoveVertex( osg::Vec3 vertex, size_t position, WFiberHandler* fiberHandler );
+    WFiberActionRemoveVertex( osg::Vec3 vertex, size_t fiberIdx, size_t position, WFiberHandler* fiberHandler );
 
     ~WFiberActionRemoveVertex();
 
@@ -45,6 +47,8 @@ public:
     virtual void redo();
 private:
     osg::Vec3 m_vertex;
+
+    size_t m_fiberIdx;
 
     size_t m_position;
 

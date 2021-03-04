@@ -22,39 +22,35 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WFiberActionAddVertex.h"
+#ifndef WFIBERACTIONADDFIBER_H
+#define WFIBERACTIONADDFIBER_H
 
-#include "../WConnectorData.h"
+#include <string>
 
-WFiberActionAddVertex::WFiberActionAddVertex( osg::Vec3 vertex, size_t fiberIdx, WFiberHandler* fiberHandler ):
-    m_vertex( vertex ),
-    m_fiberIdx( fiberIdx ),
-    m_fiberHandler( fiberHandler )
+#include <boost/shared_ptr.hpp>
+#include <osg/Geode>
+
+#include "WFiberAction.h"
+#include "../WFiberHandler.h"
+
+class WFiberActionAddFiber : public WFiberAction
 {
-}
+public:
+    typedef boost::shared_ptr< WFiberActionAddFiber > SPtr;
 
-WFiberActionAddVertex::~WFiberActionAddVertex()
-{
-}
+    WFiberActionAddFiber( std::string name, size_t position, WFiberHandler* fiberHandler );
 
-void WFiberActionAddVertex::undo()
-{
-    m_fiberHandler->removeVertexFromFiber( m_vertex, m_fiberIdx, true );
+    ~WFiberActionAddFiber();
 
-    m_fiberHandler->getPointConnector()->getConnectorData()->deselectPoint();
-    m_fiberHandler->selectLastPoint();
+    virtual void undo();
 
-    m_fiberHandler->getPointConnector()->updatePoints();
-    m_fiberHandler->getPointConnector()->updateOutput();
-}
+    virtual void redo();
+private:
+    std::string m_name;
 
-void WFiberActionAddVertex::redo()
-{
-    m_fiberHandler->addVertexToFiber( m_vertex, m_fiberIdx, true );
+    size_t m_position;
 
-    m_fiberHandler->getPointConnector()->getConnectorData()->deselectPoint();
-    m_fiberHandler->selectLastPoint();
+    WFiberHandler* m_fiberHandler;
+};
 
-    m_fiberHandler->getPointConnector()->updatePoints();
-    m_fiberHandler->getPointConnector()->updateOutput();
-}
+#endif  // WFIBERACTIONADDFIBER_H

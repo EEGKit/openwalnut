@@ -174,12 +174,12 @@ void WMPointConnector::handleClick( osg::Vec3 cameraPosition, osg::Vec3 directio
         {
             m_connectorData->deselectPoint();
             m_connectorData->selectPoint( hitIdx );
-            m_fiberHandler->addVertexToFiber( m_connectorData->getVertices()->at( hitIdx ) );
+            m_fiberHandler->addVertexToFiber( m_connectorData->getVertices()->at( hitIdx ), m_fiberHandler->getSelectedFiber() );
         }
         else
         {
             m_connectorData->deselectPoint();
-            m_fiberHandler->removeVertexFromFiber( m_connectorData->getVertices()->at( hitIdx ) );
+            m_fiberHandler->removeVertexFromFiber( m_connectorData->getVertices()->at( hitIdx ), m_fiberHandler->getSelectedFiber() );
             m_fiberHandler->selectLastPoint();
         }
 

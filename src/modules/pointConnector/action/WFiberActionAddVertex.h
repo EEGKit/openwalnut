@@ -36,7 +36,7 @@ class WFiberActionAddVertex : public WFiberAction
 public:
     typedef boost::shared_ptr< WFiberActionAddVertex > SPtr;
 
-    WFiberActionAddVertex( osg::Vec3 vertex, WFiberHandler* fiberHandler );
+    WFiberActionAddVertex( osg::Vec3 vertex, size_t fiberIdx, WFiberHandler* fiberHandler );
 
     ~WFiberActionAddVertex();
 
@@ -45,6 +45,8 @@ public:
     virtual void redo();
 private:
     osg::Vec3 m_vertex;
+
+    size_t m_fiberIdx;
 
     WFiberHandler* m_fiberHandler;
 };

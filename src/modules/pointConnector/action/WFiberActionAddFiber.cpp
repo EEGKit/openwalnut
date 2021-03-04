@@ -22,39 +22,27 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WFiberActionAddVertex.h"
+#include <string>
 
-#include "../WConnectorData.h"
+#include "WFiberActionAddFiber.h"
 
-WFiberActionAddVertex::WFiberActionAddVertex( osg::Vec3 vertex, size_t fiberIdx, WFiberHandler* fiberHandler ):
-    m_vertex( vertex ),
-    m_fiberIdx( fiberIdx ),
+WFiberActionAddFiber::WFiberActionAddFiber( std::string name, size_t position, WFiberHandler* fiberHandler ):
+    m_name( name ),
+    m_position( position ),
     m_fiberHandler( fiberHandler )
 {
 }
 
-WFiberActionAddVertex::~WFiberActionAddVertex()
+WFiberActionAddFiber::~WFiberActionAddFiber()
 {
 }
 
-void WFiberActionAddVertex::undo()
+void WFiberActionAddFiber::undo()
 {
-    m_fiberHandler->removeVertexFromFiber( m_vertex, m_fiberIdx, true );
-
-    m_fiberHandler->getPointConnector()->getConnectorData()->deselectPoint();
-    m_fiberHandler->selectLastPoint();
-
-    m_fiberHandler->getPointConnector()->updatePoints();
-    m_fiberHandler->getPointConnector()->updateOutput();
+    m_fiberHandler->removeFiber( m_position, true );
 }
 
-void WFiberActionAddVertex::redo()
+void WFiberActionAddFiber::redo()
 {
-    m_fiberHandler->addVertexToFiber( m_vertex, m_fiberIdx, true );
-
-    m_fiberHandler->getPointConnector()->getConnectorData()->deselectPoint();
-    m_fiberHandler->selectLastPoint();
-
-    m_fiberHandler->getPointConnector()->updatePoints();
-    m_fiberHandler->getPointConnector()->updateOutput();
+    m_fiberHandler->addFiberAt( m_name, m_position, true );
 }
