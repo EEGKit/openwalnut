@@ -27,6 +27,7 @@
 
 #include "WConnectorData.h"
 #include "WClickHandler.h"
+#include "WKeyboardHandler.h"
 #include "WFiberHandler.h"
 
 #include "WMPointConnector.h"
@@ -87,7 +88,7 @@ void WMPointConnector::moduleMain()
     m_moduleState.add( m_pointInput->getDataChangedCondition() );
 
     createPointRenderer();
-    createClickHandler();
+    createHandler();
 
     ready();
 
@@ -115,11 +116,13 @@ void WMPointConnector::createPointRenderer()
     m_properties->addProperty( m_pointRenderer->getProperties()->getProperty( "Point Size" ) );
 }
 
-void WMPointConnector::createClickHandler()
+void WMPointConnector::createHandler()
 {
-    osg::ref_ptr< osgViewer::View > viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView();
-    osg::ref_ptr< WClickHandler > handler = new WClickHandler( this );
-    viewer->addEventHandler( handler.get() );
+    osg::ref_ptr< WClickHandler > clickHandler = new WClickHandler( this );
+    viewer->addEventHandler( clickHandler.get() );
+
+    osg::ref_ptr< WKeyboardHandler > keyboardHandler = new WKeyboardHandler( this );
+    viewer->addEventHandler( keyboardHandler.get() );
 }
 
 void WMPointConnector::handleInput()

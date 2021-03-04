@@ -155,9 +155,9 @@ private:
     void createPointRenderer();
 
     /**
-     * Creates the WClickHandler and registers it.
+     * Creates the WClickHandler and the WKeyboardHandler and registers them.
      */
-    void createClickHandler();
+    void createHandler();
 
     /**
      * Handles the input of this module.
