@@ -27,15 +27,30 @@
 
 #include <boost/shared_ptr.hpp>
 
+/**
+ * Super class for the actions.
+ */
 class WFiberAction
 {
 public:
+    /**
+     * A shared_ptr to this class.
+     */
     typedef boost::shared_ptr< WFiberAction > SPtr;
 
+    /**
+     * Empty virtual destructor.
+     */
     virtual ~WFiberAction();
 
+    /**
+     * Undos this action.
+     */
     virtual void undo() = 0;
 
+    /**
+     * Redos this action.
+     */
     virtual void redo() = 0;
 };
 

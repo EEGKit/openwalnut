@@ -31,7 +31,7 @@ WClickHandler::WClickHandler( WMPointConnector* connector ):
 
 bool WClickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
 {
-    osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>( &aa );
+    osgViewer::Viewer* viewer = dynamic_cast< osgViewer::Viewer* >( &aa );
 
     if( ea.getEventType() == osgGA::GUIEventAdapter::RELEASE && ea.getButton() != osgGA::GUIEventAdapter::MIDDLE_MOUSE_BUTTON )
     {

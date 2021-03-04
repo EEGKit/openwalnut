@@ -86,6 +86,7 @@ public:
     /**
      * Adds a vertex to the currently selected fiber.
      * \param vertex The vertex to add.
+     * \param fiberIdx The index of the fiber to add the vertex to.
      * \param silent Whether or not this should add to the undo stack.
      */
     void addVertexToFiber( osg::Vec3 vertex, size_t fiberIdx, bool silent = false );
@@ -93,6 +94,7 @@ public:
     /**
      * Adds a vertex to the currently selected fiber.
      * \param vertex The vertex to add.
+     * \param fiberIdx The index of the fiber to add the vertex to.
      * \param position The position where to add the vertex.
      * \param silent Whether or not this should add to the undo stack.
      */
@@ -101,16 +103,38 @@ public:
     /**
      * Removes a vertex from the currently selected fiber.
      * \param vertex The vertex to remove.
+     * \param fiberIdx The index of the fiber to remove the vertex from.
      * \param silent Whether or not this should add to the undo stack.
      */
     void removeVertexFromFiber( osg::Vec3 vertex, size_t fiberIdx, bool silent = false );
 
+    /**
+     * Adds a new fiber.
+     * \param name The name of the fiber.
+     * \param silent Whether or not this should add to the undo stack.
+     */
     void addFiber( std::string name, bool silent = false );
 
+    /**
+     * Adds a new or an old fiber at a specific position.
+     * \param name The name of the fiber.
+     * \param position The position of the fiber.
+     * \param silent Whether or not this should add to the undo stack.
+     * \param fiber The fiber to add.
+     */
     void addFiberAt( std::string name, size_t position, bool silent = false, PCFiber fiber = PCFiber() );
 
+    /**
+     * Removes a fiber at an index in the fibers vector.
+     * \param idx The index of the fiber.
+     * \param silent Whether or not this should add to the undo stack.
+     */
     void removeFiber( size_t idx, bool silent = false );
 
+    /**
+     * Selects a fiber by its index in the fibers vector.
+     * \param idx The index of the fiber.
+     */
     void selectFiber( size_t idx );
 
     /**
@@ -123,8 +147,14 @@ public:
      */
     PCFiberListSPtr getFibers();
 
+    /**
+     * \return WMPointConnector* The WMPointConnector this belongs to
+     */
     WMPointConnector* getPointConnector();
 
+    /**
+     * \return size_t The currently selected fiber.
+     */
     size_t getSelectedFiber();
 
 private:
@@ -169,10 +199,19 @@ private:
      */
     WPropTrigger m_addFiber;
 
+    /**
+     * Property (button) to remove a Fiber.
+     */
     WPropTrigger m_removeFiber;
 
+    /**
+     * Property (button) to undo the last action.
+     */
     WPropTrigger m_undoTrigger;
 
+    /**
+     * Property (button) to redo the last action.
+     */
     WPropTrigger m_redoTrigger;
 
     /**

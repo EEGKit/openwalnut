@@ -29,26 +29,57 @@
 
 #include "WFiberAction.h"
 
+/**
+ * Handles undo and redo action.
+ */
 class WActionHandler
 {
 public:
+    /**
+     * A shared_ptr to this class.
+     */
     typedef boost::shared_ptr< WActionHandler > SPtr;
 
+    /**
+     * Creates the undo and redo vectors.
+     */
     WActionHandler();
 
+    /**
+     * Clears the vectors for destruction.
+     */
     ~WActionHandler();
 
+    /**
+     * Pushes an action to the undo vector and clears the redo vector.
+     * \param action The ation to push.
+     */
     void pushAction( WFiberAction::SPtr action );
 
+    /**
+     * Undos the last action and pushes it to the redo vector.
+     */
     void undo();
 
+    /**
+     * Redos the last action and pushes it to the undo vector.
+     */
     void redo();
 
 private:
+    /**
+     * A shared_ptr to a vector of an action.
+     */
     typedef boost::shared_ptr< std::vector< WFiberAction::SPtr > > ActionStack;
 
+    /**
+     * The undo vector.
+     */
     ActionStack m_undo;
 
+    /**
+     * The redo vector.
+     */
     ActionStack m_redo;
 };
 

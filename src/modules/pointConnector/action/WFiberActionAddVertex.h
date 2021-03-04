@@ -31,23 +31,53 @@
 #include "WFiberAction.h"
 #include "../WFiberHandler.h"
 
+/**
+ * The action when adding a Vertex.
+ */
 class WFiberActionAddVertex : public WFiberAction
 {
 public:
+    /**
+     * A shared_ptr to this class.
+     */
     typedef boost::shared_ptr< WFiberActionAddVertex > SPtr;
 
+    /**
+     * Creates this action.
+     * \param vertex The vertex to add.
+     * \param fiberIdx The index of the fiber this vertex was added to.
+     * \param fiberHandler The WFiberHandler of the action.
+     */
     WFiberActionAddVertex( osg::Vec3 vertex, size_t fiberIdx, WFiberHandler* fiberHandler );
 
+    /**
+     * Empty destructor.
+     */
     ~WFiberActionAddVertex();
 
+    /**
+     * Undos this action.
+     */
     virtual void undo();
 
+    /**
+     * Redos this action.
+     */
     virtual void redo();
 private:
+    /**
+     * The vertex to add.
+     */
     osg::Vec3 m_vertex;
 
+    /**
+     * The index of the fiber this vertex was added to.
+     */
     size_t m_fiberIdx;
 
+    /**
+     * The WFiberHandler of the action.
+     */
     WFiberHandler* m_fiberHandler;
 };
 
