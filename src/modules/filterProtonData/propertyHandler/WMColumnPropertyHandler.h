@@ -66,6 +66,11 @@ public:
      */
     void createProperties();
 
+    /**
+     * Get reference of selectable column types
+     */
+    boost::shared_ptr< WItemSelection > getColumnItems();
+
 private:
     /**
      * Pointer to the content and header of the CSV 

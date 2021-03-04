@@ -71,25 +71,20 @@ void WMFilterProtonData::moduleMain()
     {
         m_moduleState.wait();
 
-        if( m_shutdownFlag() )
+        if(m_input->getData() == NULL)
         {
-            break;
+            continue;
         }
-
-        m_dataset = m_input->getData();
-
-        WDataSetCSV::ContentSPtr csvHeader = m_dataset->getHeader();
-        WDataSetCSV::ContentSPtr csvData = m_dataset->getData();
 
         if( m_protonData == NULL )
         {
-            m_protonData = WMProtonData::SPtr( new WMProtonData( csvHeader, csvData ) );
+            m_protonData = WMProtonData::SPtr( new WMProtonData(  m_input->getData()->getHeader(),  m_input->getData()->getData() ) );
 
             m_propertyStatus->setColumnPropertyHandler( WMColumnPropertyHandler::SPtr( new WMColumnPropertyHandler( m_protonData, m_properties,
                 boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
 
-            m_propertyStatus->setFilterPropertyHandler( WMFilterPropertyHandler::SPtr( new WMFilterPropertyHandler( m_protonData, m_properties,
-                boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
+            m_propertyStatus->setFilterPropertyHandler( WMFilterPropertyHandler::SPtr( new WMFilterPropertyHandler( m_protonData, m_properties, 
+                m_propertyStatus->getColumnPropertyHandler(), boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
 
             m_propertyStatus->setVisualizationPropertyHandler( WMVisualizationPropertyHandler::SPtr(
                 new WMVisualizationPropertyHandler( m_protonData, m_properties, boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
@@ -99,15 +94,13 @@ void WMFilterProtonData::moduleMain()
         }
         else
         {
-            m_protonData->setCSVHeader( csvHeader );
-            m_protonData->setCSVData( csvData );
+            m_protonData->setCSVHeader(  m_input->getData()->getHeader() );
+            m_protonData->setCSVData(  m_input->getData()->getData() );
         }
-
         m_propertyStatus->getColumnPropertyHandler()->createProperties();
         m_propertyStatus->getFilterPropertyHandler()->createProperties();
         m_propertyStatus->getVisualizationPropertyHandler()->createProperties();
         m_propertyStatus->getEventIDLimitationPropertyHandler()->createProperties();
-
         setOutputFromCSV( );
     }
 }

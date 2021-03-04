@@ -182,6 +182,12 @@ private:
      * \param data shared_ptr of mapped gradient from transfer function in RGBA format
      */
     void setTransferFunction( boost::shared_ptr< std::vector<unsigned char> > data );
+
+    /**
+     * Checks if output variables have to be null, if true, sets them to null
+     * \return true, if there are no vertices to output; false otherwise
+     */
+    bool checkIfOutputIsNull();
 };
 
 #endif  // WMCSVCONVERTER_H

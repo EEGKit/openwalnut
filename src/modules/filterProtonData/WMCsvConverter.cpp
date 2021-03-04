@@ -102,7 +102,7 @@ bool WMCsvConverter::canShow( WDataSetCSV::Content::iterator dataRow )
         return false;
     }
 
-    if( !m_propertyStatus->getFilterPropertyHandler()->isPDGTypeSelected( std::stoi( dataRow->at( m_indexes->getPDGEncoding() ) ) ) )
+    if( !m_propertyStatus->getFilterPropertyHandler()->isPDGTypeSelected( std::stoi( dataRow->at( m_propertyStatus->getFilterPropertyHandler()->getCurrentColumnIndex() ) ) ) )
     {
         return false;
     }
@@ -233,6 +233,11 @@ void WMCsvConverter::setOutputFromCSV( WMProtonData::SPtr protonData )
         m_vectors->getEventIDs()->push_back( std::stoi( dataRow->at( m_indexes->getEventID() ) ) );
     }
 
+    if( checkIfOutputIsNull() )
+    {
+        return;
+    }
+
     if( m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
     {
         normalizeEdeps( m_vectors->getEdeps(), m_vectors->getColors(), maxEdep );
@@ -251,4 +256,15 @@ void WMCsvConverter::setTransferFunction( boost::shared_ptr< std::vector<unsigne
     boost::shared_ptr< WDataSetSingle > newData( new WDataSetSingle( newValueSet, newGrid ) );
 
     m_transferFunction = newData;
+}
+
+bool WMCsvConverter::checkIfOutputIsNull()
+{
+    if( m_vectors->getVertices()->empty() )
+    {
+        m_points = NULL;
+        m_fibers = NULL;
+        return true;
+    }
+    return false;
 }
