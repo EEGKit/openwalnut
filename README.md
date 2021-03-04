@@ -52,7 +52,7 @@ and get the URL to our git repository.
 
 ## Required Dependencies:
 
-* Qt (Preferrably Qt5, build support also for Qt4 >= 4.6) 
+* Qt (Preferably Qt5, build support also for Qt4 >= 4.6) 
 * OpenSceneGraph (>= 2.8.0)
 * Boost (>= 1.46.0)
 
