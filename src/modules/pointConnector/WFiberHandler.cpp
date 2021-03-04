@@ -233,3 +233,8 @@ size_t WFiberHandler::getSelectedFiber()
 {
     return m_selectedFiber;
 }
+
+WActionHandler::SPtr WFiberHandler::getActionHandler()
+{
+    return m_actionHandler;
+}
