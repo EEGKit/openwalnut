@@ -64,6 +64,7 @@ public:
      * Redos this action.
      */
     virtual void redo();
+
 private:
     /**
      * The vertex to add.
