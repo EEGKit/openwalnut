@@ -47,15 +47,41 @@ boost::shared_ptr< WDataSetPoints > WMCsvConverter::getPoints()
     return m_points;
 }
 
+boost::shared_ptr< WDataSetSingle > WMCsvConverter::getTransferFunction()
+{
+    return m_transferFunction;
+}
+
+boost::shared_ptr< std::vector<unsigned char> > WMCsvConverter::sampleTransferFunction()
+{
+    boost::shared_ptr< std::vector<unsigned char> > data( new std::vector<unsigned char>( 10 * 4 ) );
+
+    WTransferFunction tf = m_propertyStatus->getVisualizationPropertyHandler()->getTransferFunction()->get( true );
+
+    tf.sample1DTransferFunction( &( *data )[ 0 ], 10, 0.0, 1.0 );
+
+    return data;
+}
+
 void WMCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray, float maxEdep )
 {
+    boost::shared_ptr< std::vector<unsigned char> > data = sampleTransferFunction();
+
+    setTransferFunction( data );
+
     for( std::vector< float >::iterator currentEdep = edeps->begin(); currentEdep != edeps->end(); currentEdep++ )
     {
-        *currentEdep = *currentEdep / maxEdep;
+        int clusterSize = 9.0 *( ( 2.4 * ( pow( *currentEdep, 0.338 ) ) ) / 4.0 );
 
-        colorArray->push_back( *currentEdep * 10 );
-        colorArray->push_back( *currentEdep * 100 );
-        colorArray->push_back( *currentEdep * 1 );
+        float r = data->at( clusterSize * 4 ) / 255.0;
+        float g = data->at( clusterSize * 4 + 1 ) / 255.0;
+        float b = data->at( clusterSize * 4 + 2 ) / 255.0;
+        float a = data->at( clusterSize * 4 + 3 ) / 255.0;
+
+        colorArray->push_back( r );
+        colorArray->push_back( g );
+        colorArray->push_back( b );
+        colorArray->push_back( a );
     }
 }
 
@@ -219,6 +245,17 @@ void WMCsvConverter::setOutputFromCSV( WMProtonData::SPtr protonData )
 
     calculateFibers();
     createPointsAndFibers();
+}
+
+void WMCsvConverter::setTransferFunction( boost::shared_ptr< std::vector<unsigned char> > data )
+{
+    boost::shared_ptr< WValueSetBase > newValueSet( new WValueSet<unsigned char>( 1, 4, data, W_DT_UNSIGNED_CHAR ) );
+
+    WGridTransformOrtho transform;
+    boost::shared_ptr< WGridRegular3D > newGrid( new WGridRegular3D( 10, 1, 1, transform ) );
+    boost::shared_ptr< WDataSetSingle > newData( new WDataSetSingle( newValueSet, newGrid ) );
+
+    m_transferFunction = newData;
 }
 
 bool WMCsvConverter::checkIfOutputIsNull()
