@@ -28,13 +28,14 @@
 
 #include "WMFilterPropertyHandler.h"
 
+
 WMFilterPropertyHandler::WMFilterPropertyHandler( WMProtonData::SPtr protonData,
                                             WPropertyGroup::SPtr properties,
                                             WMColumnPropertyHandler::SPtr columnPropertyHandler,
                                             WMFilterPropertyHandler::CallbackPtr dataUpdate ):
     m_protonData( protonData ),
     m_properties( properties ),
-    m_columnPropertyHandler ( columnPropertyHandler ),
+    m_columnPropertyHandler( columnPropertyHandler ),
     m_dataUpdate( dataUpdate )
 {
 }
@@ -45,6 +46,7 @@ void WMFilterPropertyHandler::createProperties()
 
     createCheckBoxForPrimaryAndSecondary();
     createMultiSelectionForPDG();
+    createPropToSetParticleNames();
 
     updateProperty();
 }
@@ -52,6 +54,9 @@ void WMFilterPropertyHandler::createProperties()
 
 void WMFilterPropertyHandler::updateProperty()
 {
+    //m_filteringGroup->removeProperty( m_multiSelection );
+    //createMultiSelectionForPDG();
+
     if(m_protonData->IsColumnAvailable("parentID") && m_protonData->IsColumnAvailable("trackID"))
     {
         m_showPrimaries->setHidden( false );
@@ -113,6 +118,28 @@ void WMFilterPropertyHandler::createMultiSelectionForPDG()
     WPropertyHelper::PC_NOTEMPTY::addTo( m_multiSelection );
 }
 
+void WMFilterPropertyHandler::createPropToSetParticleNames()
+{
+    WPropertyBase::PropertyChangeNotifierType notifierSetParticleName = boost::bind(
+        &WMFilterPropertyHandler::saveRenameParticleButtonClick, this, boost::placeholders::_1 );
+
+    WPropGroup filteringsubGroup = m_filteringGroup->addPropertyGroup( "Rename or Delete Particle-Name",
+                                                            "Change, set a new name or delete for a particlename" );
+
+    m_aString = filteringsubGroup->addProperty( "New Name (press enter)", "Input a new name for the choosen particle",
+                                                            std::string( "" ), notifierSetParticleName );
+
+    m_PdgForRenameSelection = filteringsubGroup->addProperty( "Select Particle",  "Select the Particle PDG to rename",
+                                                            m_particleItemSelectionList->getSelectorFirst(),
+                                                            notifierSetParticleName );
+
+    m_saveButton= filteringsubGroup->addProperty( "Set Changes", "Save", WPVBaseTypes::PV_TRIGGER_READY, notifierSetParticleName );
+
+    WPropertyHelper::PC_NOTEMPTY::addTo( m_aString );
+    WPropertyHelper::PC_SELECTONLYONE::addTo( m_PdgForRenameSelection );
+    WPropertyHelper::PC_NOTEMPTY::addTo( m_PdgForRenameSelection );
+}
+
 void WMFilterPropertyHandler::setPDGTypes( int columnIndex )
 {
     m_pdgTypes.clear();
@@ -144,10 +171,9 @@ void WMFilterPropertyHandler::updateSelectedPDGTypes( WPropertyBase::SPtr proper
 
         for( int i = 0; i < selectedItems.size(); ++i )
         {
-            m_selectedPDGTypes.push_back(getPdgFromName(selectedItems.at( i )->getName()));
+            m_selectedPDGTypes.push_back( getPdgFromName( selectedItems.at( i )->getName() ));
         }
     }
-
     m_dataUpdate( );
 }
 
@@ -180,22 +206,20 @@ int WMFilterPropertyHandler::selectColumn( std::string columnName, WItemSelector
             return i;
         }
     }
-
     itemSelector = m_columnItemSelectionList->getSelectorNone();
-
     return 0;
 }
 
 void WMFilterPropertyHandler::updatePDGTypesProperty( WItemSelection::SPtr particleItemSelectionList )
 {
-    if ( !m_pdgTypes.empty() )
+    if( !m_pdgTypes.empty() )
     {
         particleItemSelectionList->clear();
 
         for( auto pdgType : m_pdgTypes )
         {
             particleItemSelectionList->addItem(
-                    getParticleNameFromPdg( pdgType ) + "(" + std::to_string( pdgType) + ")"
+                    getParticleNameFromPdg( pdgType ) + "(" + std::to_string( pdgType ) + ")"
             );
         }
     }
@@ -207,7 +231,8 @@ void WMFilterPropertyHandler::onSingleSelectionChanged( WPropertyBase::SPtr prop
     std::string columnName = m_singleSelection->get().at( 0 )->getName();
     bool columnIsValid = m_singleSelection->isValid();
 
-    m_multiSelection->setHidden( !columnIsValid );
+    m_multiSelection->setHidden
+    ( !columnIsValid );
 
     m_currentColumnIndex = selectColumn( columnName, itemSelector );
 
@@ -216,6 +241,18 @@ void WMFilterPropertyHandler::onSingleSelectionChanged( WPropertyBase::SPtr prop
     updatePDGTypesProperty( m_particleItemSelectionList );
 
     m_multiSelection->set( m_particleItemSelectionList->getSelectorFirst() );
+}
+
+void WMFilterPropertyHandler::saveRenameParticleButtonClick( WPropertyBase::SPtr property )
+{
+    if(property == m_saveButton && m_saveButton->get(true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
+    {
+        WItemSelector selectedItems = m_PdgForRenameSelection->get( true );  
+        std::string newParticleName =  m_aString->get( true );
+        int pdg  = getPdgFromName( selectedItems.at( 0 )->getName() );
+
+        changePdgBiMap( pdg, newParticleName );
+    }
 }
 
 void WMFilterPropertyHandler::updateCheckboxProperty( WPropertyBase::SPtr property )
@@ -238,8 +275,19 @@ void WMFilterPropertyHandler::updateCheckboxProperty( WPropertyBase::SPtr proper
     }
 }
 
-void WMFilterPropertyHandler::createPDGMap(std::string path)
+WPropBool WMFilterPropertyHandler::getShowPrimaries()
 {
+    return m_showPrimaries;
+}
+
+WPropBool WMFilterPropertyHandler::getShowSecondaries()
+{
+    return m_showSecondaries;
+}
+
+void WMFilterPropertyHandler::createPDGMap( std::string path )
+{
+    m_PdgParticelNamePath= path;
 
     std::fstream pdgSignFile;
     std::string dataRow;
@@ -253,10 +301,9 @@ void WMFilterPropertyHandler::createPDGMap(std::string path)
     {
         throw WException( "File could not be opened!" );
     }
-
     while( std::getline( pdgSignFile, dataRow ) )
     {
-        if(firstLine)
+        if( firstLine )
         {
             firstLine = false;
             continue;
@@ -269,11 +316,11 @@ void WMFilterPropertyHandler::createPDGMap(std::string path)
     pdgSignFile.close();
 }
 
-std::string WMFilterPropertyHandler::getParticleNameFromPdg(int pdg)
+std::string WMFilterPropertyHandler::getParticleNameFromPdg( int pdg )
 {
-    BM_PDG::right_const_iterator pdg_iter = m_PdgNamesByID.right.find(pdg);
+    BM_PDG::right_const_iterator pdg_iter = m_PdgNamesByID.right.find( pdg );
 
-    if(pdg_iter != m_PdgNamesByID.right.end())
+    if( pdg_iter != m_PdgNamesByID.right.end() )
     {
         return pdg_iter->second;
     }
@@ -281,31 +328,59 @@ std::string WMFilterPropertyHandler::getParticleNameFromPdg(int pdg)
     {
         return "unknown";
     }
-
 }
 
-int WMFilterPropertyHandler::getPdgFromName(std::string particleName)
+int WMFilterPropertyHandler::getPdgFromName( std::string particleName )
 {
-    BM_PDG::left_const_iterator pdg_iter = m_PdgNamesByID.left.find(particleName.substr(0, particleName.find("(")));
-    if(pdg_iter != m_PdgNamesByID.left.end())
+    BM_PDG::left_const_iterator pdg_iter = m_PdgNamesByID.left.find( particleName.substr( 0, particleName.find( "(" ) ) );
+    if( pdg_iter != m_PdgNamesByID.left.end() )
     {
         return pdg_iter->second;
     }
     else
     {
-        std::regex regexp("[-+0-9]+");
+        std::regex regexp( "[-+0-9]+" );
         std::smatch m;
-        std::regex_search(particleName, m, regexp);
-        return std::stoi(m[0]);
+        std::regex_search( particleName, m, regexp );
+        return std::stoi( m[0] );
     }
 }
 
-WPropBool WMFilterPropertyHandler::getShowPrimaries()
+void WMFilterPropertyHandler::changePdgBiMap( int pdg, std::string newParticleName )
 {
-    return m_showPrimaries;
-}
+    BM_PDG::right_iterator pdg_iter = m_PdgNamesByID.right.find( pdg );
 
-WPropBool WMFilterPropertyHandler::getShowSecondaries()
+    if( pdg_iter != m_PdgNamesByID.right.end() )
+    {
+        bool success_replace = m_PdgNamesByID.right.replace_data( pdg_iter, newParticleName );
+        if( !success_replace )
+        {
+             throw WException( "Fail to replace new particle name" );
+        }
+    }
+    else    //unknown particle
+    {
+        m_PdgNamesByID.insert( PdgElement( newParticleName, pdg ) );
+    }
+
+    writePdgMapInParticleNameFile();
+}
+void WMFilterPropertyHandler::writePdgMapInParticleNameFile()
 {
-    return m_showSecondaries;
+    std::ofstream pdgSignFile;
+
+    pdgSignFile.open( m_PdgParticelNamePath, std::ios_base::out | std::ios::trunc );
+
+    if( !pdgSignFile.is_open() )
+    {
+        throw WException( "File could not be opened!" );
+    }
+
+    for( auto pdgNameIterator = m_PdgNamesByID.begin(); pdgNameIterator != m_PdgNamesByID.end(); ++pdgNameIterator )
+    {
+        pdgSignFile << pdgNameIterator->left << " " << pdgNameIterator->right << "\n";
+    }
+
+    m_saveButton->set( WPVBaseTypes::PV_TRIGGER_READY, false );
+    pdgSignFile.close();
 }

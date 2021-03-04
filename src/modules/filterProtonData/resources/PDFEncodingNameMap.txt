@@ -21,7 +21,7 @@ antilambda 3122
 pion- -211
 pion+ 211
 pion0 111
-kaon-, 321
+kaon- 321
 kaon+ 321
 kaon0 311
 kaon0L 130

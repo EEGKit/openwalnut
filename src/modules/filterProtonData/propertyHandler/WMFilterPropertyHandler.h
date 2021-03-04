@@ -108,7 +108,7 @@ public:
      * \param path fielpath of the pdg particlename file
      * \throws WException
      */
-    void createPDGMap(std:: string path);
+    void createPDGMap( std:: string path );
 
     /**
      * Get selected columns index
@@ -140,8 +140,19 @@ private:
 
     /**
      * update the m_selectedPDGTypes
+     * 
+     * \param property contains reference to the property which called updateProperty()
+     * 
      */
     void updateSelectedPDGTypes( WPropertyBase::SPtr property );
+
+    /**
+     * event of the save button in the rename pdg subgroup
+     * 
+     * \param property contains reference to the property which called updateProperty()
+     * 
+     */
+    void saveRenameParticleButtonClick( WPropertyBase::SPtr property );
 
     /**
      * create the Checkbox for primaries and secondaries
@@ -152,6 +163,11 @@ private:
      * create the multiselection for the option of PDG
      */
     void createMultiSelectionForPDG();
+
+    /**
+     * create the subgroup to set a new or rename a particle name
+     */
+    void createPropToSetParticleNames();
 
     /**
      * Collect all particle types from your input data.
@@ -196,7 +212,7 @@ private:
      * \param pdg pdg number of a particlename
      * \return the particle name
      */
-    std::string getParticleNameFromPdg(int pdg);
+    std::string getParticleNameFromPdg( int pdg );
 
     /**
      * Search the pdg in the map with a given particlename
@@ -204,7 +220,21 @@ private:
      * \param particleName particlename of a pdg number
      * \return pdg number
      */
-    int getPdgFromName(std::string particleName);
+    int getPdgFromName( std::string particleName );
+
+    /**
+     * write the BiMap in the Pdg particle name file
+     */
+    void writePdgMapInParticleNameFile();
+
+    /**
+     * set or replace a particlename and pdg in the bimap
+     *
+     * \param pdg pdg number of a selected particle name
+     * \param newParticleName new particlename of a pdg number
+     * \throws WException
+     */
+    void changePdgBiMap( int pdg, std::string newParticleName );
 
     /**
      * A Map of the PDG and their names
@@ -221,7 +251,7 @@ private:
      */
     std::vector < int > m_pdgTypes;
 
-     /**
+    /**
      * Property group for filtering options
      */
     WPropGroup m_filteringGroup;
@@ -260,6 +290,26 @@ private:
      * vector of the options of PDG
      */
     std::vector < int > m_selectedPDGTypes;
+
+    /**
+     * A string for the new particle name
+     */
+    WPropString   m_aString;
+
+    /**
+     * A trigger for the save button to save changes
+     */
+    WPropTrigger  m_saveButton;
+
+    /**
+     * A property to select one pdg to change
+     */
+    WPropSelection m_PdgForRenameSelection;
+
+    /**
+     * a string of the share folder path of particle proton module
+     */
+    std::string m_PdgParticelNamePath;
 };
 
 #endif  // WMFILTERPROPERTYHANDLER_H
