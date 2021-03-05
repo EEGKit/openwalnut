@@ -50,6 +50,29 @@ void WMVisualizationPropertyHandler::createProperties()
 
     m_gradient = m_visualizationGroup->addProperty( "Transfer Function", "Transfer function that maps the energy deposition to a gradient",
                                                     setColorGradient() , notifierCheckBox, false );
+
+    updateProperty();
+}
+
+void WMVisualizationPropertyHandler::updateProperty()
+{
+    if( m_protonData->isColumnAvailable( "posX" ) &&
+        m_protonData->isColumnAvailable( "posY" ) &&
+        m_protonData->isColumnAvailable( "posZ" ) &&
+        m_protonData->isColumnAvailable( "edep" ) )
+    {
+        m_sizesFromEdep->setHidden( false );
+        m_colorFromEdep->setHidden( false );
+        m_colorSelection->setHidden( false );
+        m_gradient->setHidden( false );
+    }
+    else
+    {
+        m_sizesFromEdep->setHidden( true );
+        m_colorFromEdep->setHidden( true );
+        m_colorSelection->setHidden( true );
+        m_gradient->setHidden( true );
+    }
 }
 
 void WMVisualizationPropertyHandler::updateCheckboxProperty( WPropertyBase::SPtr property )

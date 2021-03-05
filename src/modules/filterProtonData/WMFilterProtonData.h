@@ -164,6 +164,12 @@ private:
      * Create outputs, so it can be displayed by the fiber display and the point renderer.
      */
     void setOutputFromCSV( );
+
+
+    /**
+     * update added group property and subproperty    
+     */
+    void updateProperty();
 };
 
 #endif  // WMFILTERPROTONDATA_H

@@ -83,20 +83,24 @@ void WMFilterProtonData::moduleMain()
             m_propertyStatus->setColumnPropertyHandler( WMColumnPropertyHandler::SPtr( new WMColumnPropertyHandler( m_protonData, m_properties,
                 boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
 
-            m_propertyStatus->setFilterPropertyHandler( WMFilterPropertyHandler::SPtr( new WMFilterPropertyHandler( m_protonData, m_properties, 
-                m_propertyStatus->getColumnPropertyHandler(), boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
+            m_propertyStatus->setFilterPropertyHandler( WMFilterPropertyHandler::SPtr( new WMFilterPropertyHandler( m_protonData, m_properties,
+                boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
 
             m_propertyStatus->setVisualizationPropertyHandler( WMVisualizationPropertyHandler::SPtr(
                 new WMVisualizationPropertyHandler( m_protonData, m_properties, boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
 
             m_propertyStatus->setEventIDLimitationPropertyHandler( WMEventIDLimitationPropertyHandler::SPtr(
                 new WMEventIDLimitationPropertyHandler( m_protonData, m_properties, boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
+
+            m_propertyStatus->getColumnPropertyHandler()->setSelectionEventMethod( boost::bind( &WMFilterProtonData::updateProperty, this ) );
         }
         else
         {
             m_protonData->setCSVHeader(  m_input->getData()->getHeader() );
             m_protonData->setCSVData(  m_input->getData()->getData() );
         }
+        m_propertyStatus->getFilterPropertyHandler()->createPDGMap(
+            ( m_localPath / getMetaInformation()->query< std::string >( "common/pdgnames" , "NoFile" ) ).string() );
         m_propertyStatus->getColumnPropertyHandler()->createProperties();
         m_propertyStatus->getFilterPropertyHandler()->createProperties();
         m_propertyStatus->getVisualizationPropertyHandler()->createProperties();
@@ -122,11 +126,19 @@ void WMFilterProtonData::properties()
     WModule::properties();
 }
 
-void WMFilterProtonData::setOutputFromCSV( )
+void WMFilterProtonData::setOutputFromCSV()
 {
     m_converter = boost::shared_ptr< WMCsvConverter >( new WMCsvConverter( m_protonData, m_propertyStatus ) );
 
     m_output_points->updateData( m_converter->getPoints() );
     m_output_fibers->updateData( m_converter->getFibers() );
     m_output_transferFunction->updateData( m_converter->getTransferFunction() );
+}
+
+void WMFilterProtonData::updateProperty()
+{
+    m_propertyStatus->getColumnPropertyHandler()->updateProperty();
+    m_propertyStatus->getFilterPropertyHandler()->updateProperty();
+    m_propertyStatus->getVisualizationPropertyHandler()->updateProperty();
+    m_propertyStatus->getEventIDLimitationPropertyHandler()->updateProperty();
 }
