@@ -138,7 +138,6 @@ void WMProtonData::updateAvailabilityOfColumns()
         "PDGEncoding", "posX", "posY", "posZ", "edep", "eventID" , "trackID", "parentID"
     };
 
-    std::cout << std::endl;
     for( size_t i = 0; i < sizeof( necessaryColumns ) / sizeof( std::string ); i++ )
     {
         std::string column = necessaryColumns[i];

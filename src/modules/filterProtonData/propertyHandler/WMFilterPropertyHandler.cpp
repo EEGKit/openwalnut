@@ -128,6 +128,8 @@ void WMFilterPropertyHandler::createMultiSelectionForPDG()
 
     if(m_pdgTypes.size() <= 0)
     {
+        m_multiSelection = m_filteringGroup->addProperty( "PDGEncoding", "Choose particle type(s) you want to show",
+                                                            m_particleItemSelectionList->getSelectorNone(), pdgEncodingnotifier );
         return;
     }
 
