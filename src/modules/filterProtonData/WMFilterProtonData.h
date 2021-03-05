@@ -141,6 +141,11 @@ private:
     boost::shared_ptr< WModuleOutputData< WDataSetFibers > > m_output_fibers;
 
     /**
+     * WDataSetSingle output connector to output current transfer function
+     */
+    boost::shared_ptr< WModuleOutputData< WDataSetSingle > > m_output_transferFunction;
+
+    /**
      * Stores information of the input-csv-data
      */
     boost::shared_ptr< WDataSetCSV > m_dataset;
@@ -159,6 +164,12 @@ private:
      * Create outputs, so it can be displayed by the fiber display and the point renderer.
      */
     void setOutputFromCSV( );
+
+
+    /**
+     * update added group property and subproperty    
+     */
+    void updateProperty();
 };
 
 #endif  // WMFILTERPROTONDATA_H

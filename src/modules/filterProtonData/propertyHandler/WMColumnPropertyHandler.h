@@ -27,6 +27,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include <boost/function.hpp>
 
@@ -66,7 +67,34 @@ public:
      */
     void createProperties();
 
+    /**
+     * Get reference of selectable column types
+     */
+    boost::shared_ptr< WItemSelection > getColumnItems();
+
+    /**
+     * update current group property and subproperty
+     */
+    void updateProperty();
+
+    /**
+     * setter to use a external function
+     * \param externEventMethod A void function variable that can be use outside
+     */
+    void setSelectionEventMethod( WMColumnPropertyHandler::CallbackPtr externEventMethod );
+
 private:
+    /**
+     * A vector, where all default ColumnPropertyNames are stored in
+     */
+    const std::vector< std::string > vecDefaultColumnNames = { "PDGEncoding", "posX", "posY", "posZ", "edep", "eventID", "trackID",
+                                                              "parentID" };
+
+    /**
+     * A map between WPropSelection items and column names as strings
+     */
+     std::map< WPropSelection, std::string > mapPropSelectionsToString;
+
     /**
      * Pointer to the content and header of the CSV 
      */
@@ -81,6 +109,11 @@ private:
      * A function variable that reinitializes the WDataSets 
      */
     WMColumnPropertyHandler::CallbackPtr m_dataUpdate;
+
+    /**
+     * A void function variable that can be use outside
+     */
+    WMColumnPropertyHandler::CallbackPtr m_externEventMethod;
 
     /**
      * Creates the individual WItemSelection   
@@ -103,44 +136,14 @@ private:
     boost::shared_ptr< WItemSelection > m_possibleSelectionsUsingTypes;
 
     /**
-     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
-     */
-    WPropSelection m_singleSelectionForPosX;
-
-    /**
-     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
-     */
-    WPropSelection m_singleSelectionForPosY;
-
-    /**
-     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
-     */
-    WPropSelection m_singleSelectionForPosZ;
-
-    /**
-     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
-     */
-    WPropSelection m_singleSelectionForEdep;
-
-    /**
-     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
-     */
-    WPropSelection m_singleSelectionForEventID;
-
-    /**
-     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
-     */
-    WPropSelection m_singleSelectionForTrackID;
-
-    /**
-     * A property allowing the user to select ONE item. This additionally demonstrates how to use your own types/classes in selections.
-     */
-    WPropSelection m_singleSelectionForParentID;
-
-    /**
      * represents the item type for item-selection
      */
     typedef WItemSelectionItemTyped< std::string > ItemType;
+
+    /**
+     * Reresents an entry in a < WPropSelection, string > map
+     */
+     typedef std::map< WPropSelection, std::string >::iterator PropMapEntry;
 
     /**
      * Get column number by name from header

@@ -1,0 +1,35 @@
+Particlename PDG
+electron 11
+positron -11
+muon+ -13
+moun- 13
+tauon+ -15
+tauon- 15
+electron_neutrino 12
+electron_(anti)neutrino -12
+muon_neutrino 14
+muon_antineutrino -14
+tau_neutrino 16
+tau_antineutrino -16
+photon 22
+proton 2212
+antiproton -2212
+neutron 2112
+antineutron -2112
+lambda 3122
+antilambda 3122
+pion- -211
+pion+ 211
+pion0 111
+kaon- 321
+kaon+ 321
+kaon0 311
+kaon0L 130
+kaon0S 310
+alpha 1000020040
+antialpha -1000020040
+deuteron 1000010020
+antideuteron -1000010020
+
+
+

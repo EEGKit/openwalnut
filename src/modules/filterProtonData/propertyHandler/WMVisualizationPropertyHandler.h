@@ -60,6 +60,11 @@ public:
     void createProperties();
 
     /**
+     * update current group property and subproperty    
+     */
+    void updateProperty();
+
+    /**
      * Getter
      *
      * \return WPropBool of color from edep
@@ -79,6 +84,18 @@ public:
      * \return WPropBool of color from selection
      */
     WPropColor getColorSelection();
+
+    /**
+     * Getter
+     * \return WPropTransferFunction of the current transfer function
+     */
+    WPropTransferFunction getTransferFunction();
+
+    /**
+     * Sets the transfer function
+     * \return WTransferFunction with specified gradient
+     */
+    WTransferFunction setColorGradient();
 
 private:
     /**
@@ -122,6 +139,11 @@ private:
      * \param property contains reference to the property which called updateProperty()
      */
     void updateCheckboxProperty( WPropertyBase::SPtr property );
+
+    /**
+     * Property that holds the current transfer function for the gradient.
+     */
+    WPropTransferFunction m_gradient;
 };
 
 #endif  // WMVISUALIZATIONPROPERTYHANDLER_H
