@@ -28,23 +28,15 @@
 // Uniforms
 /////////////////////////////////////////////////////////////////////////////
 
-/**
- * The size of the sprite
- */
-uniform float u_pointSize = 1.0;
-
 /////////////////////////////////////////////////////////////////////////////
 // Attributes
 /////////////////////////////////////////////////////////////////////////////
-attribute float a_pointSize;
 
 /////////////////////////////////////////////////////////////////////////////
 // Varyings
 /////////////////////////////////////////////////////////////////////////////
 
 varying float v_clip;
-
-varying float v_pointSize;
 
 /**
  * Vertex in world space.
@@ -68,13 +60,6 @@ void main()
     v_clip = 0.0;
     // TODO(ebaum): implement this using proper clip-plane implementation
     // v_clip = float( ( gl_Vertex.x > 500.0 ) || ( gl_Vertex.y>500.0 ) );
-
-    #ifdef USE_ATTRIBUTE_ENABLED
-    v_pointSize = a_pointSize;
-    #endif
-    #ifdef USE_ATTRIBUTE_DISABLED
-    v_pointSize = u_pointSize;
-    #endif
 
     // forward to geometry shader
     gl_FrontColor = gl_Color;

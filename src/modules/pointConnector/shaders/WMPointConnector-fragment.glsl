@@ -24,32 +24,71 @@
 
 #version 120
 
+#include "WGEShadingTools.glsl"
+#include "WGETextureTools.glsl"
+#include "WGEPostprocessing.glsl"
+
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
 /////////////////////////////////////////////////////////////////////////////
 
-/**
- * The size of the sprite
- */
-uniform float u_pointSize = 1.0;
-
 /////////////////////////////////////////////////////////////////////////////
 // Attributes
 /////////////////////////////////////////////////////////////////////////////
-attribute float a_pointSize;
 
 /////////////////////////////////////////////////////////////////////////////
 // Varyings
 /////////////////////////////////////////////////////////////////////////////
 
-varying float v_clip;
+/**
+ * The normal in world-space
+ */
+varying vec3 v_normalWorld;
 
-varying float v_pointSize;
+/**
+ * The vertex coordinate in world-space
+ */
+varying vec3 v_vertex;
+
+/**
+ * The texture coordinates in [-1,1]
+ */
+varying vec3 v_texCoord;
+
+/**
+ * The scaling component of the modelview matrix.
+ */
+varying float v_worldScale;
+
+/**
+ * The radius of a sphere in world-space
+ */
+varying float v_worldSpaceRadius;
+
+/**
+ * The center point of the sphere
+ */
+varying vec3 v_centerPoint;
 
 /**
  * Vertex in world space.
  */
-varying vec4 v_worldCenterVertex;
+varying vec4 v_worldVertex;
+
+/**
+ * Depth of the center point
+ */
+varying float v_centerVertexDepth;
+
+/**
+ * Deptj of the neareast point on the sphere towards the camera
+ */
+varying float v_nearestVertexDepth;
+
+/**
+ * Difference between nearest depth and center point depth
+ */
+varying float v_vertexDepthDiff;
 
 /////////////////////////////////////////////////////////////////////////////
 // Variables
@@ -60,26 +99,32 @@ varying vec4 v_worldCenterVertex;
 /////////////////////////////////////////////////////////////////////////////
 
 /**
- * Main entry point of the vertex shader.
+ * Main entry point of the fragment shader.
  */
 void main()
 {
-    // use clipping planes to cut away parts
-    v_clip = 0.0;
-    // TODO(ebaum): implement this using proper clip-plane implementation
-    // v_clip = float( ( gl_Vertex.x > 500.0 ) || ( gl_Vertex.y>500.0 ) );
+    // create a sphere
+    float r = 1.0 - ( ( v_texCoord.x * v_texCoord.x ) + ( v_texCoord.y * v_texCoord.y ) );
+    if( r < 0.0 )
+        discard;
 
-    #ifdef USE_ATTRIBUTE_ENABLED
-    v_pointSize = a_pointSize;
-    #endif
-    #ifdef USE_ATTRIBUTE_DISABLED
-    v_pointSize = u_pointSize;
-    #endif
+    vec3 sphereSurf = v_vertex - v_centerPoint;
+    sphereSurf.z += r * v_worldSpaceRadius;
+    sphereSurf = normalize( sphereSurf );
 
-    // forward to geometry shader
-    gl_FrontColor = gl_Color;
-    gl_Position = gl_ModelViewMatrix * gl_Vertex;
+    // lighting
+    // NOTE: this is disabled as usually, we use a headlight, causing a specular highlight in the middle of each splat.
+    // float light = blinnPhongIlluminationIntensity( wge_DefaultLightIntensity, sphereSurf );
 
-    v_worldCenterVertex = gl_Vertex;
+    // finally set the color and depth
+    wgeInitGBuffer();
+    wge_FragColor = vec4( gl_Color.rgb * r, gl_Color.a );
+    wge_FragNormal = textureNormalize( sphereSurf );
+    wge_FragZoom = v_worldScale;
+    wge_FragTangent = textureNormalize( vec3( 0.0, 1.0, 0.0 ) );
+#ifdef DEPTHWRITE_ENABLED
+    // we allow to disable depth write. This allows the GPU to disacard pixels before applying the fragment shader -> speedup
+    gl_FragDepth = ( r * v_vertexDepthDiff ) + v_centerVertexDepth;
+#endif
 }
 

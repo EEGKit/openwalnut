@@ -1,6 +1,13 @@
-Note: This is a mirror of http://www.openwalnut.org (https://bsvgit.informatik.uni-leipzig.de/openwalnut/openwalnut) for use in [TOP projects](https://gitlab.rlp.net/top).
+# OpenWalnut
 
-The original README.md is moved to [README-orig.md](README-orig.md).
+OpenWalnut is an open source tool for multi-modal medical and brain data
+visualization. Its universality allows it to be easily extended and used in a
+large variety of application cases. It is both, a tool for the scientific user
+and a powerful framework for the visualization researcher. OpenWalnut is
+licensed under the terms of the GNU Lesser General Public License. Written
+entirely in Standard C++ and using a number of portable libraries (e.g.
+OpenSceneGraph and  Qt), it runs on all Windows platforms, OSX, and
+GNU/Linux operating systems.
 
 - Please refer to http://www.openwalnut.org for extensive documentation 
   and information.
@@ -45,7 +52,7 @@ and get the URL to our git repository.
 
 ## Required Dependencies:
 
-* Qt (Preferably Qt5, build support also for Qt4 >= 4.6) 
+* Qt (Preferrably Qt5, build support also for Qt4 >= 4.6) 
 * OpenSceneGraph (>= 2.8.0)
 * Boost (>= 1.46.0)
 
