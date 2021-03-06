@@ -137,8 +137,8 @@ private:
      * \param shareDirFile sourcepath of the particle name file in the share directory
      * \param homeDirFile destenypath of the local directory for the particle name file
      */
-    bool copyFileToHomePath(std::string shareDirFile, std::string homeDirFile);
-   
+    bool copyFileToHomePath( std::string shareDirFile, std::string homeDirFile );
+
     /**
      * Collect all particle types from your input data.
      */
@@ -209,12 +209,12 @@ private:
      * \return pdg number
      */
     int getPdgFromName( std::string particleName );
-    
+
     /**
      * get the PDG number of an unknown particle element with 
      * the help of regex
      */
-    int getPdgFromUnkownParticle(std::string particleName);
+    int getPdgFromUnkownParticle( std::string particleName );
 
     /**
      * write the BiMap in the Pdg particle name file
@@ -277,7 +277,7 @@ private:
 
     /**
      * vector of the options of PDG
-     */
+    */
     std::vector < int > m_selectedPDGTypes;
 
     /**

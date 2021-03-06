@@ -273,12 +273,13 @@ int WMFilterPropertyHandler::getPdgFromName( std::string particleName )
 
 int WMFilterPropertyHandler::getPdgFromUnkownParticle( std::string particleName )
 {
-        std::regex regexp( "[-+0-9]+" );
-        std::smatch m;
-        std::regex_search( particleName, m, regexp );
+    std::regex regexp( "[-+0-9]+" );
+    std::smatch m;
+    std::regex_search( particleName, m, regexp );
 
-        return std::stoi( m[0] );   
+    return std::stoi( m[0] );
 }
+
 void WMFilterPropertyHandler::changePdgBiMap( int pdg, std::string newParticleName )
 {
     BM_PDG::right_iterator pdg_iter = m_PdgNamesByID.right.find( pdg );
