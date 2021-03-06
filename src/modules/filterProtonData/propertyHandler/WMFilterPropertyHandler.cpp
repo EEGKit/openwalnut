@@ -136,7 +136,7 @@ void WMFilterPropertyHandler::createMultiSelectionForPDG()
     for( auto pdgType : m_pdgTypes )
     {
         m_particleItemSelectionList->addItem(
-                getParticleNameFromPdg( pdgType ) + "(" + std::to_string( pdgType ) + ")"
+                getParticleNameFromPdg( pdgType ) + " (" + std::to_string( pdgType ) + ")"
         );
     }
 
@@ -268,7 +268,7 @@ std::string WMFilterPropertyHandler::getParticleNameFromPdg( int pdg )
 
 int WMFilterPropertyHandler::getPdgFromName( std::string particleName )
 {
-    BM_PDG::left_const_iterator pdg_iter = m_PdgNamesByID.left.find( particleName.substr( 0, particleName.find( "(" ) ) );
+    BM_PDG::left_const_iterator pdg_iter = m_PdgNamesByID.left.find( particleName.substr( 0, particleName.find( " (" ) ) );
     if( pdg_iter != m_PdgNamesByID.left.end() )
     {
         return pdg_iter->second;
