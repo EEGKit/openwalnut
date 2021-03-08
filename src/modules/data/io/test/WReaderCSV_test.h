@@ -38,7 +38,7 @@ class WReaderCSVTest : public CxxTest::TestSuite
 {
 public:
     /**
-     * if an empty CSV file is loaded, a "CSV file is empty!" exception shell be thrown
+     * if an empty CSV file is loaded, a "CSV file is empty!" exception should be thrown
      */
     void testEmptyCSV()
     {
@@ -49,6 +49,46 @@ public:
                                  const WException &e,
                                  e.what(),
                                  "CSV file is empty!" );
+    }
+
+    /**
+     * if a CSV file only contains a header row, a "CSV file is empty!" exception should be thrown
+     */
+    void testOnlyHeaderCSV()
+    {
+        std::string fileName = W_FIXTURE_PATH + "CSVs/onlyHeader.csv";
+        std::cout << std::endl << "Test loading of " << fileName << "." << std::endl;
+
+        TS_ASSERT_THROWS_EQUALS( WReaderCSV( fileName ).read(),
+                                 const WException &e,
+                                 e.what(),
+                                 "CSV File does not contain data!" );
+    }
+
+    /**
+     * if a CSV file contains rows, whose column count differs from the header,
+     * a "Data row count does not equal header count!" exception should be thrown
+     */
+    void testInvalidColumnNumber()
+    {
+        std::string fileName = W_FIXTURE_PATH + "CSVs/invalidColumnCount.csv";
+        std::cout << std::endl << "Test loading of " << fileName << "." << std::endl;
+
+        TS_ASSERT_THROWS_EQUALS( WReaderCSV( fileName ).read(),
+                                 const WException &e,
+                                 e.what(),
+                                 "Data row count does not equal header count!" );
+    }
+
+    /**
+     * if a valid CSV file is loaded, no exception should be thrown
+     */
+    void testValidCSV()
+    {
+        std::string fileName = W_FIXTURE_PATH + "CSVs/valid.csv";
+        std::cout << std::endl << "Test loading of " << fileName << "." << std::endl;
+
+        TS_ASSERT_THROWS_NOTHING( WReaderCSV( fileName ).read() );
     }
 };
 
