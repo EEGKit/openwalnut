@@ -65,6 +65,11 @@ public:
     void updateProperty();
 
     /**
+     * toggle the visibility of plain color and transfer function
+     */
+    void toggleColorProperties();
+
+    /**
      * Getter
      *
      * \return WPropBool of color from edep
