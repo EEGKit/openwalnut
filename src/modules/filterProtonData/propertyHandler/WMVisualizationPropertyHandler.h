@@ -92,12 +92,6 @@ public:
     WPropTransferFunction getTransferFunction();
 
     /**
-     * Getter
-     * \return WPropTrigger of trigger to apply current transfer function
-     */
-    WPropTrigger getApplyGradientTrigger();
-
-    /**
      * Sets the transfer function
      * \return WTransferFunction with specified gradient
      */

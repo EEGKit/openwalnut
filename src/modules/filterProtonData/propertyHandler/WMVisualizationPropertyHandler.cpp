@@ -102,11 +102,6 @@ WPropColor WMVisualizationPropertyHandler::getColorSelection()
     return m_colorSelection;
 }
 
-WPropTrigger WMVisualizationPropertyHandler::getApplyGradientTrigger()
-{
-    return m_applyGradient;
-}
-
 WPropTransferFunction WMVisualizationPropertyHandler::getTransferFunction()
 {
     return m_gradient;
