@@ -101,20 +101,23 @@ void WFiberHandler::createProperties( WPropertyGroup::SPtr properties )
 {
     WPropertyBase::PropertyChangeNotifierType notifier = boost::bind( &WFiberHandler::updateProperty, this, boost::placeholders::_1 );
 
+    WPropertyGroup::SPtr fiberGroup = properties->addPropertyGroup( "Fibers", "Property group for fiber selection, adding and deleting." );
+    WPropertyGroup::SPtr undoGroup = properties->addPropertyGroup( "Undo | Redo", "Property group for undo and redo." );
+
     m_possibleFiberSelections = WItemSelection::SPtr( new WItemSelection() );
     m_possibleFiberSelections->addItem( ItemType::create( "Fiber 1", "Fiber 1", "", NULL ) );
 
-    m_fiberSelection = properties->addProperty(
+    m_fiberSelection = fiberGroup->addProperty(
         "Selected Line", "The line to which the points are added", m_possibleFiberSelections->getSelectorFirst(), notifier );
 
     WPropertyHelper::PC_SELECTONLYONE::addTo( m_fiberSelection );
     WPropertyHelper::PC_NOTEMPTY::addTo( m_fiberSelection );
 
-    m_addFiber = properties->addProperty( "Add Fiber", "Add Fiber", WPVBaseTypes::PV_TRIGGER_READY, notifier );
-    m_removeFiber = properties->addProperty( "Remove Fiber", "Remove Fiber", WPVBaseTypes::PV_TRIGGER_READY, notifier );
+    m_addFiber = fiberGroup->addProperty( "Add Fiber", "Add Fiber", WPVBaseTypes::PV_TRIGGER_READY, notifier );
+    m_removeFiber = fiberGroup->addProperty( "Remove Fiber", "Remove Fiber", WPVBaseTypes::PV_TRIGGER_READY, notifier );
 
-    m_undoTrigger = properties->addProperty( "Undo", "Undo", WPVBaseTypes::PV_TRIGGER_READY, notifier );
-    m_redoTrigger = properties->addProperty( "Redo", "Redo", WPVBaseTypes::PV_TRIGGER_READY, notifier );
+    m_undoTrigger = undoGroup->addProperty( "Undo", "Undo", WPVBaseTypes::PV_TRIGGER_READY, notifier );
+    m_redoTrigger = undoGroup->addProperty( "Redo", "Redo", WPVBaseTypes::PV_TRIGGER_READY, notifier );
 }
 
 static bool sortComparator( boost::shared_ptr< WItemSelectionItem > a, boost::shared_ptr< WItemSelectionItem > b )

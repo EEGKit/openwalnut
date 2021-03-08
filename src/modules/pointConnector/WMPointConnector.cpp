@@ -88,6 +88,7 @@ void WMPointConnector::moduleMain()
     m_moduleState.add( m_pointInput->getDataChangedCondition() );
 
     createPointRenderer();
+    createFiberDisplay();
     createHandler();
 
     ready();
@@ -114,6 +115,13 @@ void WMPointConnector::createPointRenderer()
     m_pointRenderer->isReady().wait();
     m_pointOutput->connect( m_pointRenderer->getInputConnector( "points" ) );
     m_properties->addProperty( m_pointRenderer->getProperties()->getProperty( "Point Size" ) );
+}
+
+void WMPointConnector::createFiberDisplay()
+{
+    m_fiberDisplay = createAndAdd( "Fiber Display" );
+    m_fiberDisplay->isReady().wait();
+    m_fiberOutput->connect( m_fiberDisplay->getInputConnector( "fibers" ) );
 }
 
 void WMPointConnector::createHandler()

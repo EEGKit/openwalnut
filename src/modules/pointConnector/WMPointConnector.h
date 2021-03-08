@@ -39,6 +39,7 @@
 #include "core/kernel/WModuleOutputData.h"
 
 #include "../pointRenderer/WMPointRenderer.h"
+#include "../fiberDisplay/WMFiberDisplay.h"
 
 class WClickHandler;
 class WConnectorData;
@@ -161,6 +162,11 @@ private:
     void createPointRenderer();
 
     /**
+     * Creates the WMFiberDisplay and runs it.
+     */
+    void createFiberDisplay();
+
+    /**
      * Creates the WClickHandler and the WKeyboardHandler and registers them.
      */
     void createHandler();
@@ -185,6 +191,11 @@ private:
      * The WMPointRenderer associated with this module.
      */
     WModule::SPtr m_pointRenderer;
+
+    /**
+     * The WMFiberDisplay associated with this module.
+     */
+    WModule::SPtr m_fiberDisplay;
 
     /**
      * The data of this module.

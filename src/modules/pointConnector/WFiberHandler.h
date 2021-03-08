@@ -35,6 +35,7 @@
 #include "core/common/WItemSelectionItem.h"
 #include "core/common/WItemSelectionItemTyped.h"
 #include "core/common/WItemSelector.h"
+#include "core/common/WPropertyGroup.h"
 #include "core/kernel/WModule.h"
 
 #include "WMPointConnector.h"
