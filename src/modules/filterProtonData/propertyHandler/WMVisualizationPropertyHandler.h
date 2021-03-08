@@ -92,6 +92,12 @@ public:
     WPropTransferFunction getTransferFunction();
 
     /**
+     * Getter
+     * \return WPropTrigger of trigger to apply current transfer function
+     */
+    WPropTrigger getApplyGradientTrigger();
+
+    /**
      * Sets the transfer function
      * \return WTransferFunction with specified gradient
      */
@@ -144,6 +150,11 @@ private:
      * Property that holds the current transfer function for the gradient.
      */
     WPropTransferFunction m_gradient;
+
+    /**
+     * Property that holds a trigger to apply the current transfer function for the gradient
+     */
+    WPropTrigger m_applyGradient;
 };
 
 #endif  // WMVISUALIZATIONPROPERTYHANDLER_H

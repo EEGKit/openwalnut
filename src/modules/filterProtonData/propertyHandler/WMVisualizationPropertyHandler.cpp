@@ -49,7 +49,9 @@ void WMVisualizationPropertyHandler::createProperties()
         defaultColor::WHITE, notifierCheckBox );
 
     m_gradient = m_visualizationGroup->addProperty( "Transfer Function", "Transfer function that maps the energy deposition to a gradient",
-                                                    setColorGradient() , notifierCheckBox, false );
+                                                    setColorGradient() , false );
+
+    m_applyGradient = m_visualizationGroup->addProperty( "Set gradient", "Apply", WPVBaseTypes::PV_TRIGGER_READY, notifierCheckBox );
 
     updateProperty();
 }
@@ -78,6 +80,11 @@ void WMVisualizationPropertyHandler::updateProperty()
 void WMVisualizationPropertyHandler::updateCheckboxProperty( WPropertyBase::SPtr property )
 {
     m_dataUpdate();
+
+    if( property == m_applyGradient && m_applyGradient->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
+    {
+        m_applyGradient->set( WPVBaseTypes::PV_TRIGGER_READY, false );
+    }
 }
 
 WPropBool WMVisualizationPropertyHandler::getColorFromEdep()
@@ -93,6 +100,11 @@ WPropBool WMVisualizationPropertyHandler::getSizesFromEdep()
 WPropColor WMVisualizationPropertyHandler::getColorSelection()
 {
     return m_colorSelection;
+}
+
+WPropTrigger WMVisualizationPropertyHandler::getApplyGradientTrigger()
+{
+    return m_applyGradient;
 }
 
 WPropTransferFunction WMVisualizationPropertyHandler::getTransferFunction()
