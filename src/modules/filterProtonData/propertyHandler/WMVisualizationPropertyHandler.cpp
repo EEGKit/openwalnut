@@ -40,16 +40,18 @@ void WMVisualizationPropertyHandler::createProperties()
 {
     m_visualizationGroup = m_properties->addPropertyGroup( "Visualization", "Visualization options" );
 
-    WPropertyBase::PropertyChangeNotifierType notifierCheckBox = boost::bind(
-        &WMVisualizationPropertyHandler::updateCheckboxProperty, this, boost::placeholders::_1 );
+    WPropertyBase::PropertyChangeNotifierType notifier = boost::bind(
+        &WMVisualizationPropertyHandler::propertyCallback, this, boost::placeholders::_1 );
 
-    m_sizesFromEdep = m_visualizationGroup->addProperty( "Scale point size", "Scale point size with energy deposition", true, notifierCheckBox );
-    m_colorFromEdep = m_visualizationGroup->addProperty( "Color by edep", "Color points based on energy deposition", true, notifierCheckBox );
+    m_sizesFromEdep = m_visualizationGroup->addProperty( "Scale point size", "Scale point size with energy deposition", true, notifier );
+    m_colorFromEdep = m_visualizationGroup->addProperty( "Color by edep", "Color points based on energy deposition", true, notifier );
     m_colorSelection = m_visualizationGroup->addProperty( "Plain color", "Choose how to color the points when not coloring by edep.",
-        defaultColor::WHITE, notifierCheckBox );
+        defaultColor::WHITE, notifier );
 
     m_gradient = m_visualizationGroup->addProperty( "Transfer Function", "Transfer function that maps the energy deposition to a gradient",
-                                                    setColorGradient() , notifierCheckBox, false );
+                                                    setColorGradient() , false );
+
+    m_applyGradient = m_visualizationGroup->addProperty( "Set gradient", "Apply", WPVBaseTypes::PV_TRIGGER_READY, notifier );
 
     updateProperty();
 }
@@ -75,9 +77,14 @@ void WMVisualizationPropertyHandler::updateProperty()
     }
 }
 
-void WMVisualizationPropertyHandler::updateCheckboxProperty( WPropertyBase::SPtr property )
+void WMVisualizationPropertyHandler::propertyCallback( WPropertyBase::SPtr property )
 {
     m_dataUpdate();
+
+    if( property == m_applyGradient && m_applyGradient->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
+    {
+        m_applyGradient->set( WPVBaseTypes::PV_TRIGGER_READY, false );
+    }
 }
 
 WPropBool WMVisualizationPropertyHandler::getColorFromEdep()
