@@ -134,8 +134,9 @@ private:
      * Normalize energy deposition values to use as RGB values
      * \param edeps vector containing energy deposition values
      * \param colorArray vector containing colors per vertex
+     * \param maxEdep maximum energy deposition
      */
-    void normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray );
+    void normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray,  float maxEdep );
 
 
     /**

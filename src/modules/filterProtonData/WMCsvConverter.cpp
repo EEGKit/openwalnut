@@ -83,7 +83,7 @@ void WMCsvConverter::setOutputFromCSV( )
         return;
     }
 
-    normalizeEdeps( m_vectors->getEdeps(), m_vectors->getColors() );
+    normalizeEdeps( m_vectors->getEdeps(), m_vectors->getColors(),  maxEdep);
 
     createOutputPoints();
     createOutputFibers();
@@ -105,7 +105,7 @@ boost::shared_ptr< std::vector<unsigned char> > WMCsvConverter::sampleTransferFu
     return data;
 }
 
-void WMCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray )
+void WMCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray, float maxEdep )
 {
     if( m_protonData->isColumnAvailable( "edep" ) )
     {
