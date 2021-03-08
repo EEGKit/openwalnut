@@ -83,7 +83,7 @@ void WMCsvConverter::setOutputFromCSV( )
         return;
     }
 
-    normalizeEdeps( m_vectors->getEdeps(), m_vectors->getColors(),  maxEdep);
+    normalizeEdeps( m_vectors->getEdeps(), m_vectors->getColors(),  maxEdep );
 
     createOutputPoints();
     createOutputFibers();
