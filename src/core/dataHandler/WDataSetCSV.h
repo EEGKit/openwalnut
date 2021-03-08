@@ -35,6 +35,10 @@
  */
 class WDataSetCSV : public WDataSet
 {
+    /**
+     * Only test class may be friend
+    */
+    friend class WDataSetCSVTest;
 public:
     /**
      * represents a vector containing a vector of strings.
