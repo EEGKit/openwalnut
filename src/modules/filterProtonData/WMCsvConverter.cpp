@@ -23,6 +23,7 @@
 //---------------------------------------------------------------------------
 
 #include <vector>
+#include <string>
 
 #include "WMCsvConverter.h"
 
@@ -57,7 +58,7 @@ void WMCsvConverter::setOutputFromCSV( )
 
     WDataSetCSV::ContentSPtr data = m_protonData->getCSVData();
 
-    m_plainColor = m_propertyStatus->getVisualizationPropertyHandler()->getColorSelection()->get( true );
+    WColor m_plainColor = m_propertyStatus->getVisualizationPropertyHandler()->getColorSelection()->get( true );
 
     m_vectors->clear();
     m_indexes->update( m_protonData );
@@ -66,14 +67,13 @@ void WMCsvConverter::setOutputFromCSV( )
 
     for( WDataSetCSV::Content::iterator dataRow = data->begin(); dataRow < data->end(); dataRow++ )
     {
-        if( !canShow( dataRow ) )
+        if( !checkConditionToPass( dataRow ) )
         {
             continue;
         }
 
-
         addVertex( dataRow );
-        addColor( dataRow );
+        addColor( m_plainColor );
         addEdepAndSize( dataRow, &maxEdep );
         addEventID( dataRow );
     }
@@ -83,7 +83,7 @@ void WMCsvConverter::setOutputFromCSV( )
         return;
     }
 
-    normalizeEdeps( m_vectors->getEdeps(), m_vectors->getColors(), maxEdep );
+    normalizeEdeps( m_vectors->getEdeps(), m_vectors->getColors() );
 
     createOutputPoints();
     createOutputFibers();
@@ -105,7 +105,7 @@ boost::shared_ptr< std::vector<unsigned char> > WMCsvConverter::sampleTransferFu
     return data;
 }
 
-void WMCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray, float maxEdep )
+void WMCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray )
 {
     if( m_protonData->isColumnAvailable( "edep" ) )
     {
@@ -135,7 +135,7 @@ void WMCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArr
     }
 }
 
-bool WMCsvConverter::canShow( WDataSetCSV::Content::iterator dataRow )
+bool WMCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRow )
 {
     if( dataRow->empty() )
     {
@@ -145,12 +145,14 @@ bool WMCsvConverter::canShow( WDataSetCSV::Content::iterator dataRow )
     if( m_protonData->isColumnAvailable( "parentID" ) &&
         m_protonData->isColumnAvailable( "trackID" ) )
     {
-        if( !m_propertyStatus->getFilterPropertyHandler()->getShowPrimaries()->get() && std::stoi( dataRow->at( m_indexes->getParentID() ) ) == 0 )
+        int PrimaryValue = ( int )stringToFloat( dataRow->at( m_indexes->getParentID() ) );
+
+        if( !m_propertyStatus->getFilterPropertyHandler()->getShowPrimaries()->get() && PrimaryValue == 0 )
         {
             return false;
         }
 
-        if( !m_propertyStatus->getFilterPropertyHandler()->getShowSecondaries()->get() && std::stoi( dataRow->at( m_indexes->getParentID() ) ) != 0 )
+        if( !m_propertyStatus->getFilterPropertyHandler()->getShowSecondaries()->get() && PrimaryValue != 0 )
         {
             return false;
         }
@@ -159,7 +161,7 @@ bool WMCsvConverter::canShow( WDataSetCSV::Content::iterator dataRow )
     if( m_protonData->isColumnAvailable( "PDGEncoding" ) )
     {
         if( !m_propertyStatus->getFilterPropertyHandler()->isPDGTypeSelected(
-            std::stoi( dataRow->at( m_indexes->getPDGEncoding( ) ) ) ) )
+            ( int )stringToFloat( dataRow->at( m_indexes->getPDGEncoding( ) ) ) ) )
         {
             return false;
         }
@@ -172,7 +174,7 @@ bool WMCsvConverter::canShow( WDataSetCSV::Content::iterator dataRow )
             return true;
         }
 
-        int eventID = std::stoi( dataRow->at( m_indexes->getEventID() ) );
+        int eventID = ( int )stringToFloat( dataRow->at( m_indexes->getEventID() ) );
         if( eventID < m_propertyStatus->getEventIDLimitationPropertyHandler()->getMinCap()->get() ||
             eventID > m_propertyStatus->getEventIDLimitationPropertyHandler()->getMaxCap()->get() )
         {
@@ -185,12 +187,12 @@ bool WMCsvConverter::canShow( WDataSetCSV::Content::iterator dataRow )
 
 void WMCsvConverter::addVertex( WDataSetCSV::Content::iterator dataRow )
 {
-    m_vectors->getVertices()->push_back( boost::lexical_cast< float >( dataRow->at( m_indexes->getPosX() ) ) );
-    m_vectors->getVertices()->push_back( boost::lexical_cast< float >( dataRow->at( m_indexes->getPosY() ) ) );
-    m_vectors->getVertices()->push_back( boost::lexical_cast< float >( dataRow->at( m_indexes->getPosZ() ) ) );
+    m_vectors->getVertices()->push_back( stringToFloat( dataRow->at( m_indexes->getPosX() ) ) );
+    m_vectors->getVertices()->push_back( stringToFloat( dataRow->at( m_indexes->getPosY() ) ) );
+    m_vectors->getVertices()->push_back( stringToFloat( dataRow->at( m_indexes->getPosZ() ) ) );
 }
 
-void WMCsvConverter::addColor( WDataSetCSV::Content::iterator dataRow )
+void WMCsvConverter::addColor( WColor plainColor )
 {
     if(!m_protonData->isColumnAvailable("edep"))
     {
@@ -201,9 +203,9 @@ void WMCsvConverter::addColor( WDataSetCSV::Content::iterator dataRow )
 
     if( !m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
     {
-        m_vectors->getColors()->push_back( m_plainColor[0] );
-        m_vectors->getColors()->push_back( m_plainColor[1] );
-        m_vectors->getColors()->push_back( m_plainColor[2] );
+        m_vectors->getColors()->push_back( plainColor[0] );
+        m_vectors->getColors()->push_back( plainColor[1] );
+        m_vectors->getColors()->push_back( plainColor[2] );
     }
 }
 
@@ -214,7 +216,7 @@ void WMCsvConverter::addEdepAndSize( WDataSetCSV::Content::iterator dataRow, flo
         return;
     }
 
-    float edep = boost::lexical_cast< float >( dataRow->at( m_indexes->getEdep() ) );
+    float edep = stringToFloat( dataRow->at( m_indexes->getEdep() ) );
     if( edep > *maxEdep )
     {
         *maxEdep = edep;
@@ -324,7 +326,7 @@ void WMCsvConverter::addEventID( WDataSetCSV::Content::iterator dataRow )
                 return;
             }
 
-            m_vectors->getEventIDs()->push_back( std::stoi( dataRow->at( m_indexes->getEventID() ) ) );
+            m_vectors->getEventIDs()->push_back( ( int )stringToFloat( dataRow->at( m_indexes->getEventID() ) ) );
         }
 }
 
@@ -348,4 +350,16 @@ bool WMCsvConverter::checkIfOutputIsNull()
         return true;
     }
     return false;
+}
+
+float WMCsvConverter::stringToFloat( std::string str )
+{
+    try
+    {
+        return boost::lexical_cast< float >( str );
+    }
+    catch( boost::bad_lexical_cast e )
+    {
+        throw WException( "The selected column has an incorrect format. Numbers are expected. " + std::string( e.what() ) );
+    }
 }
