@@ -109,21 +109,21 @@ public:
     SPSizeVector getEventIDs();
 
 private:
-    SPFloatVector m_vertices;   //<! The vertices.
+    SPFloatVector m_vertices;   //!< The vertices.
 
-    SPFloatVector m_sizes;  //<! The sizes.
+    SPFloatVector m_sizes;  //!< The sizes.
 
-    SPFloatVector m_colors; //<! The colors.
+    SPFloatVector m_colors; //!< The colors.
 
-    SPFloatVector m_edeps;  //<! The edeps.
+    SPFloatVector m_edeps;  //!< The edeps.
 
-    SPSizeVector m_fiberStartIndexes;   //<! The fiber start indexes.
+    SPSizeVector m_fiberStartIndexes;   //!< The fiber start indexes.
 
-    SPSizeVector m_fiberLengths;    //<! The fiber lengths.
+    SPSizeVector m_fiberLengths;    //!< The fiber lengths.
 
-    SPSizeVector m_verticesReverse; //<! The reverse vertices.
+    SPSizeVector m_verticesReverse; //!< The reverse vertices.
 
-    SPSizeVector m_eventIDs;    //<! the event IDs.
+    SPSizeVector m_eventIDs;    //!< the event IDs.
 };
 
 #endif  // WMCONVERTERVECTORS_H
