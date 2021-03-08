@@ -117,7 +117,7 @@ std::string htmlify( WModuleMetaInformation::ConstSPtr meta )
     if( !help.empty() && boost::filesystem::exists( help ) )
     {
         ss << "    <h3>HELP</h3>"
-           << "    <a href='" << help.string() << "'>Module Help</a>";
+           << "    <a href='file:///" << help.string() << "'>Module Help</a>";
     }
     // The authors
     if( !authors.empty() )
