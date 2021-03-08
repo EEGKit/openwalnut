@@ -115,21 +115,27 @@ void WMCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArr
 
             setTransferFunction( data );
 
+            float maxClusterSize = getClusterSize( maxEdep );
+
+            std::cout << "maxEdep" << maxEdep << std::endl;
+            std::cout << "maxclustersize" << maxClusterSize << std::endl;
+
             for( std::vector< float >::iterator currentEdep = edeps->begin();
                  currentEdep != edeps->end();
                  currentEdep++ )
             {
-                int clusterSize = 9.0 * ( ( 2.4 * ( pow( *currentEdep, 0.338 ) ) ) / 4.0 );
+                float clusterSizeNormalized = getClusterSize( *currentEdep ) / maxClusterSize;
 
-                float r = data->at( clusterSize * 4 ) / 255.0;
-                float g = data->at( clusterSize * 4 + 1 ) / 255.0;
-                float b = data->at( clusterSize * 4 + 2 ) / 255.0;
-                float a = data->at( clusterSize * 4 + 3 ) / 255.0;
+                m_vectors->getSizes()->push_back( clusterSizeNormalized );
 
-                colorArray->push_back( r );
-                colorArray->push_back( g );
-                colorArray->push_back( b );
-                colorArray->push_back( a );
+                clusterSizeNormalized = static_cast< int >( 9 * clusterSizeNormalized );
+
+                std::cout << "clustersize: " << clusterSizeNormalized << std::endl;
+
+                for( int i = 0; i < 4; i++ )
+                {
+                    colorArray->push_back( data->at( clusterSizeNormalized * 4 + i ) / 255.0 );
+                }
             }
         }
     }
@@ -219,7 +225,7 @@ void WMCsvConverter::addEdepAndSize( WDataSetCSV::Content::iterator dataRow, flo
     {
         *maxEdep = edep;
     }
-    m_vectors->getSizes()->push_back( edep );
+    
     m_vectors->getEdeps()->push_back( edep );
 }
 
@@ -348,4 +354,9 @@ bool WMCsvConverter::checkIfOutputIsNull()
         return true;
     }
     return false;
+}
+
+float WMCsvConverter::getClusterSize( float edep )
+{
+    return 2.4 * pow( edep, 0.338 );
 }

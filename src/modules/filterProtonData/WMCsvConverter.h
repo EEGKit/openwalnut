@@ -210,6 +210,13 @@ private:
      * \return true, if there are no vertices to output; false otherwise
      */
     bool checkIfOutputIsNull();
+
+    /**
+     * Computes the cluster size
+     * \param edep energy deposition
+     * \return float cluster size
+     */
+    float getClusterSize( float edep );
 };
 
 #endif  // WMCSVCONVERTER_H
