@@ -71,19 +71,14 @@ void WMFilterProtonData::moduleMain()
     {
         m_moduleState.wait();
 
-        if( m_shutdownFlag() )
+        if(m_input->getData() == NULL)
         {
-            break;
+            continue;
         }
-
-        m_dataset = m_input->getData();
-
-        WDataSetCSV::ContentSPtr csvHeader = m_dataset->getHeader();
-        WDataSetCSV::ContentSPtr csvData = m_dataset->getData();
 
         if( m_protonData == NULL )
         {
-            m_protonData = WMProtonData::SPtr( new WMProtonData( csvHeader, csvData ) );
+            m_protonData = WMProtonData::SPtr( new WMProtonData(  m_input->getData()->getHeader(),  m_input->getData()->getData() ) );
 
             m_propertyStatus->setColumnPropertyHandler( WMColumnPropertyHandler::SPtr( new WMColumnPropertyHandler( m_protonData, m_properties,
                 boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
@@ -96,18 +91,20 @@ void WMFilterProtonData::moduleMain()
 
             m_propertyStatus->setEventIDLimitationPropertyHandler( WMEventIDLimitationPropertyHandler::SPtr(
                 new WMEventIDLimitationPropertyHandler( m_protonData, m_properties, boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
+
+            m_propertyStatus->getColumnPropertyHandler()->setSelectionEventMethod( boost::bind( &WMFilterProtonData::updateProperty, this ) );
         }
         else
         {
-            m_protonData->setCSVHeader( csvHeader );
-            m_protonData->setCSVData( csvData );
+            m_protonData->setCSVHeader(  m_input->getData()->getHeader() );
+            m_protonData->setCSVData(  m_input->getData()->getData() );
         }
-
+        m_propertyStatus->getFilterPropertyHandler()->createPDGMap(
+            ( m_localPath / getMetaInformation()->query< std::string >( "common/pdgnames" , "NoFile" ) ).string() );
         m_propertyStatus->getColumnPropertyHandler()->createProperties();
         m_propertyStatus->getFilterPropertyHandler()->createProperties();
         m_propertyStatus->getVisualizationPropertyHandler()->createProperties();
         m_propertyStatus->getEventIDLimitationPropertyHandler()->createProperties();
-
         setOutputFromCSV( );
     }
 }
@@ -118,6 +115,8 @@ void WMFilterProtonData::connectors()
 
     m_output_points = WModuleOutputData< WDataSetPoints >::createAndAdd( shared_from_this(), "output points", "Output CSV data as Point data" );
     m_output_fibers = WModuleOutputData< WDataSetFibers >::createAndAdd( shared_from_this(), "output fibers",  "Output CSV data as Fiber data" );
+    m_output_transferFunction = WModuleOutputData< WDataSetSingle >::createAndAdd( shared_from_this(),
+                                                                                   "output transferfunction", "Output transfer function" );
 
     WModule::connectors();
 }
@@ -127,10 +126,19 @@ void WMFilterProtonData::properties()
     WModule::properties();
 }
 
-void WMFilterProtonData::setOutputFromCSV( )
+void WMFilterProtonData::setOutputFromCSV()
 {
     m_converter = boost::shared_ptr< WMCsvConverter >( new WMCsvConverter( m_protonData, m_propertyStatus ) );
 
     m_output_points->updateData( m_converter->getPoints() );
     m_output_fibers->updateData( m_converter->getFibers() );
+    m_output_transferFunction->updateData( m_converter->getTransferFunction() );
+}
+
+void WMFilterProtonData::updateProperty()
+{
+    m_propertyStatus->getColumnPropertyHandler()->updateProperty();
+    m_propertyStatus->getFilterPropertyHandler()->updateProperty();
+    m_propertyStatus->getVisualizationPropertyHandler()->updateProperty();
+    m_propertyStatus->getEventIDLimitationPropertyHandler()->updateProperty();
 }

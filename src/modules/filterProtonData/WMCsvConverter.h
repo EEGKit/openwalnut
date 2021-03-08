@@ -30,9 +30,14 @@
 #include <iostream>
 
 #include <boost/lexical_cast.hpp>
+#include "core/dataHandler/WGrid.h"
+#include "core/dataHandler/WGridRegular3D.h"
+#include "core/common/WTransferFunction.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
 #include "core/dataHandler/WDataSetPointsAndSizes.h"
+#include "core/dataHandler/WValueSet.h"
+#include "core/dataHandler/WValueSetBase.h"
 
 #include "WMConverterIndexes.h"
 #include "WMConverterVectors.h"
@@ -77,7 +82,18 @@ public:
      */
     boost::shared_ptr< WDataSetPoints > getPoints();
 
+    /**
+     * Getter
+     * \return shared_ptr of generated transfer function
+     */
+    boost::shared_ptr< WDataSetSingle > getTransferFunction();
+
 private:
+    /**
+     * Stores information form csv content. Content object containing data
+     */
+    WMProtonData::SPtr m_protonData;
+
     /**
      * Stores information for the fiber display
      */
@@ -87,6 +103,11 @@ private:
      * Stores information for the point renderer
      */
     boost::shared_ptr< WDataSetPoints > m_points;
+
+    /**
+     * Stores the currently mapped transfer function
+     */
+    boost::shared_ptr< WDataSetSingle > m_transferFunction;
 
     /**
      * The fallback color to use.
@@ -109,6 +130,12 @@ private:
     WMPropertyStatus::SPtr m_propertyStatus;
 
     /**
+     * Computes gradient vector from transfer function specified in visualization properties.
+     * \return shared_ptr of mapped gradient from transfer function in RGBA format
+     */
+    boost::shared_ptr< std::vector<unsigned char> > sampleTransferFunction();
+
+    /**
      * Normalize energy deposition values to use as RGB values
      * \param edeps vector containing energy deposition values
      * \param colorArray vector containing colors per vertex
@@ -118,17 +145,26 @@ private:
 
 
     /**
-     * checks whether the requirements are fulfilled
+     * checks whether the requirements are fulfilled.
      * \param dataRow the row to check.
+     * \return true The row can be displayed.
+     * \return false The row can not be displayed.
      */
     bool canShow( WDataSetCSV::Content::iterator dataRow );
 
     /**
-     * Create vertex and color for point renderer (vertex for fiber renderer)
+     * Create vertex for point/fiber renderer
      *
      * \param dataRow each row of the csv file (content of row)
      */
-    void addVertexAndColor( WDataSetCSV::Content::iterator dataRow );
+    void addVertex( WDataSetCSV::Content::iterator dataRow );
+
+    /**
+     * Create color for point/Fiber renderer
+     *
+     * \param dataRow each row of the csv file (content of row)
+     */
+    void addColor( WDataSetCSV::Content::iterator dataRow );
 
     /**
      * Create edep and sizes for point/fiber renderer
@@ -139,21 +175,43 @@ private:
     void addEdepAndSize( WDataSetCSV::Content::iterator dataRow, float* maxEdep );
 
     /**
+     * Create eventID for Fiber renderer
+     *
+     * \param dataRow each row of the csv file (content of row)
+     */
+    void addEventID( WDataSetCSV::Content::iterator dataRow );
+
+    /**
      * calculate the property of WDataSetFiber (index, length, verticesReverse)
      */
     void calculateFibers();
 
     /**
-     * Create the fibers and points for fiber/points renderer
+     * Create the fibers for fiber renderer
      */
-    void createPointsAndFibers();
+    void createOutputFibers();
+
+    /**
+     * Create the points for points renderer
+     */
+    void createOutputPoints();
 
     /**
      * Create outputs, so it can be displayed by the fiber display and the point renderer.
-     *
-     * \param protonData WDataSetCSV::Content object containing data.
      */
-    void setOutputFromCSV( WMProtonData::SPtr protonData );
+    void setOutputFromCSV( );
+
+    /**
+     * Creates output for transfer function
+     * \param data shared_ptr of mapped gradient from transfer function in RGBA format
+     */
+    void setTransferFunction( boost::shared_ptr< std::vector<unsigned char> > data );
+
+    /**
+     * Checks if output variables have to be null, if true, sets them to null
+     * \return true, if there are no vertices to output; false otherwise
+     */
+    bool checkIfOutputIsNull();
 };
 
 #endif  // WMCSVCONVERTER_H

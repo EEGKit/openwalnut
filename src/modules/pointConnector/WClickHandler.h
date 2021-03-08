@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WMCLICKHANDLER_H
-#define WMCLICKHANDLER_H
+#ifndef WCLICKHANDLER_H
+#define WCLICKHANDLER_H
 
 #include <iostream>
 #include <string>
@@ -36,16 +36,21 @@
 #include "WMPointConnector.h"
 
 /**
+ * Forward declartion for the WMPointConnector
+ */
+class WMPointConnector;
+
+/**
  * The click handler for the mouse click events of WMPointConnector
  */
-class WMClickHandler : public osgGA::GUIEventHandler
+class WClickHandler : public osgGA::GUIEventHandler
 {
 public:
     /**
      * Constructs one WMClickHandler.
      * \param connector The WMPointConnector this handler belongs to.
      */
-    explicit WMClickHandler( WMPointConnector* connector );
+    explicit WClickHandler( WMPointConnector* connector );
 
     /**
      * The callback for the event listener.
@@ -72,4 +77,4 @@ private:
     WMPointConnector* m_connector;
 };
 
-#endif  // WMCLICKHANDLER_H
+#endif  // WCLICKHANDLER_H
