@@ -88,6 +88,7 @@ void WMPointConnector::moduleMain()
     m_moduleState.add( m_pointInput->getDataChangedCondition() );
 
     createPointRenderer();
+    createFiberDisplay();
     createHandler();
 
     ready();
@@ -108,12 +109,44 @@ void WMPointConnector::moduleMain()
     stop();
 }
 
+void WMPointConnector::activate()
+{
+    m_pointRenderer->getProperties()->getProperty( "active" )->toPropBool()->set( m_active->get() );
+    m_fiberDisplay->getProperties()->getProperty( "active" )->toPropBool()->set( m_active->get() );
+}
+
 void WMPointConnector::createPointRenderer()
 {
+    WPropertyGroup::SPtr pointGroup = m_properties->addPropertyGroup( "Point Renderer", "Properties passed through from the point renderer" );
+
     m_pointRenderer = createAndAdd( "Point Renderer" );
     m_pointRenderer->isReady().wait();
     m_pointOutput->connect( m_pointRenderer->getInputConnector( "points" ) );
-    m_properties->addProperty( m_pointRenderer->getProperties()->getProperty( "Point Size" ) );
+
+    pointGroup->addProperty( "Activate", "Activates the point renderer", true,
+        boost::bind( &WMPointConnector::toggleActivationOfModule, this, m_pointRenderer ) );
+
+    pointGroup->addProperty( m_pointRenderer->getProperties()->getProperty( "Point Size" ) );
+}
+
+void WMPointConnector::createFiberDisplay()
+{
+    WPropertyGroup::SPtr fiberGroup = m_properties->addPropertyGroup( "Fiber Display", "Properties passed through from the fiber display" );
+
+    m_fiberDisplay = createAndAdd( "Fiber Display" );
+    m_fiberDisplay->isReady().wait();
+    m_fiberOutput->connect( m_fiberDisplay->getInputConnector( "fibers" ) );
+
+    fiberGroup->addProperty( "Activate", "Activates the fiber display", true,
+        boost::bind( &WMPointConnector::toggleActivationOfModule, this, m_fiberDisplay ) );
+
+    fiberGroup->addProperty( m_fiberDisplay->getProperties()->getProperty( "Line Rendering" )->toPropGroup()->getProperty( "Width" ) );
+}
+
+void WMPointConnector::toggleActivationOfModule( WModule::SPtr mod )
+{
+    WPropBool active = mod->getProperties()->getProperty( "active" )->toPropBool();
+    active->set( !active->get() );
 }
 
 void WMPointConnector::createHandler()
