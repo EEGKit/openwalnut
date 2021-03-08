@@ -134,8 +134,9 @@ private:
      * Normalize energy deposition values to use as RGB values
      * \param edeps vector containing energy deposition values
      * \param colorArray vector containing colors per vertex
+     * \param maxEdep maximum energy deposition
      */
-    void normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray );
+    void normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray,  float maxEdep );
 
 
     /**
@@ -206,6 +207,13 @@ private:
      * \return returns the cast value from string to float
      */
     bool checkIfOutputIsNull();
+
+    /**
+     * Computes the cluster size
+     * \param edep energy deposition
+     * \return float cluster size
+     */
+    float getClusterSize( float edep );
 
     /**
      * checks whether the string is a number  
