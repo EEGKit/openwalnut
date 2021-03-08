@@ -68,7 +68,7 @@ public:
     void createProperties();
 
     /**
-     * Get reference of selectable column types
+     * \return boost::shared_ptr< WItemSelection > Reference of selectable column types
      */
     boost::shared_ptr< WItemSelection > getColumnItems();
 
@@ -116,12 +116,16 @@ private:
     WMColumnPropertyHandler::CallbackPtr m_externEventMethod;
 
     /**
-     * Creates the individual WItemSelection   
+     * Creates the individual WItemSelection
+     * \param headerName The name of the selection
+     * \param notifier The notifier for the selection
+     * \return WPropSelection The created selection
      */
     WPropSelection addHeaderProperty( std::string headerName, WPropertyBase::PropertyChangeNotifierType notifier );
 
     /**
-     * Event function when WItemSelection is triggered  
+     * Event function when WItemSelection is triggered
+     * \param property The changed property
      */
     void propertyNotifier( WPropertyBase::SPtr property );
 

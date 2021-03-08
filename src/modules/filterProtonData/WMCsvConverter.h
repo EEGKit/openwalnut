@@ -145,8 +145,10 @@ private:
 
 
     /**
-     * checks whether the requirements are fulfilled
+     * checks whether the requirements are fulfilled.
      * \param dataRow the row to check.
+     * \return true The row can be displayed.
+     * \return false The row can not be displayed.
      */
     bool canShow( WDataSetCSV::Content::iterator dataRow );
 
