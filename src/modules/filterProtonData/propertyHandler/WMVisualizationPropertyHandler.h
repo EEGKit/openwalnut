@@ -99,6 +99,13 @@ public:
 
 private:
     /**
+     * Reload data when properties for selection of primaries and secondaries changed
+     *
+     * \param property contains reference to the property which called updateProperty()
+     */
+    void propertyCallback( WPropertyBase::SPtr property );
+
+    /**
      * Pointer to the content and header of the CSV 
      */
     WMProtonData::SPtr m_protonData;
@@ -132,13 +139,6 @@ private:
      * Property that holds the current selected color when not coloring points based on their deposited energy.
      */
     WPropColor m_colorSelection;
-
-     /**
-     * Reload data when properties for selection of primaries and secondaries changed
-     *
-     * \param property contains reference to the property which called updateProperty()
-     */
-    void updateCheckboxProperty( WPropertyBase::SPtr property );
 
     /**
      * Property that holds the current transfer function for the gradient.
