@@ -136,7 +136,7 @@ void WMFilterPropertyHandler::createMultiSelectionForPDG()
     for( auto pdgType : m_pdgTypes )
     {
         m_particleItemSelectionList->addItem(
-                getParticleNameFromPdg( pdgType ) + "(" + std::to_string( pdgType ) + ")"
+                getParticleNameFromPdg( pdgType ) + " (" + std::to_string( pdgType ) + ")"
         );
     }
 
@@ -159,7 +159,7 @@ void WMFilterPropertyHandler::createPropToSetParticleNames()
     m_filteringsubGroup  = m_filteringGroup->addPropertyGroup( "Rename or Delete Particle-Name",
                                                             "Change, set a new name or delete for a particlename" );
 
-    m_aString = m_filteringsubGroup->addProperty( "New Name (press enter)", "Input a new name for the choosen particle",
+    m_inputNewParticleName = m_filteringsubGroup->addProperty( "New Name (press enter)", "Input a new name for the choosen particle",
                                                             std::string( "" ), notifierSetParticleName );
 
     m_PdgForRenameSelection = m_filteringsubGroup->addProperty( "Select Particle",  "Select the Particle PDG to rename",
@@ -168,7 +168,7 @@ void WMFilterPropertyHandler::createPropToSetParticleNames()
 
     m_saveButton= m_filteringsubGroup->addProperty( "Set Changes", "Save", WPVBaseTypes::PV_TRIGGER_READY, notifierSetParticleName );
 
-    WPropertyHelper::PC_NOTEMPTY::addTo( m_aString );
+    WPropertyHelper::PC_NOTEMPTY::addTo( m_inputNewParticleName );
     WPropertyHelper::PC_SELECTONLYONE::addTo( m_PdgForRenameSelection );
     WPropertyHelper::PC_NOTEMPTY::addTo( m_PdgForRenameSelection );
 }
@@ -177,11 +177,9 @@ void WMFilterPropertyHandler::saveRenameParticleButtonClick( WPropertyBase::SPtr
 {
     if(property == m_saveButton && m_saveButton->get(true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
     {
-        WItemSelector selectedItems = m_PdgForRenameSelection->get( true );
-        std::string newParticleName =  m_aString->get( true );
-        int pdg  = getPdgFromName( selectedItems.at( 0 )->getName() );
+        WItemSelector selectedPdg = m_PdgForRenameSelection->get( true );
 
-        changePdgBiMap( pdg, newParticleName );
+        changePdgBiMap( getPdgFromName( selectedPdg.at( 0 )->getName() ),  m_inputNewParticleName->get( true ) );
         updatePDGProperties();
     }
 }
@@ -220,30 +218,37 @@ void WMFilterPropertyHandler::updateCheckboxProperty( WPropertyBase::SPtr proper
     }
 }
 
+WPropBool WMFilterPropertyHandler::getShowPrimaries()
+{
+    return m_showPrimaries;
+}
+
+WPropBool WMFilterPropertyHandler::getShowSecondaries()
+{
+    return m_showSecondaries;
+}
+
 void WMFilterPropertyHandler::createPDGMap( std::string path )
 {
-    m_PdgParticelNamePath= path;
-
     std::fstream pdgSignFile;
     std::string dataRow;
-    bool firstLine = true;
     std::string particleName;
     int pdg;
 
-    pdgSignFile.open( path );
+    pdgSignFile.open( getParticleNameFilePath() );
 
     if( !pdgSignFile.is_open() )
     {
-        throw WException( "File could not be opened!" );
+        if( !copyFileToHomePath(path, getParticleNameFilePath() ) )
+        {
+            throw WException( "Failed to copy particle name file into homedir" );
+        }
+        pdgSignFile.open( getParticleNameFilePath() );
     }
 
+    std::getline( pdgSignFile, dataRow );
     while( std::getline( pdgSignFile, dataRow ) )
     {
-        if( firstLine )
-        {
-            firstLine = false;
-            continue;
-        }
         std::istringstream iss( dataRow );
         iss >> particleName >> pdg;
 
@@ -256,40 +261,23 @@ std::string WMFilterPropertyHandler::getParticleNameFromPdg( int pdg )
 {
     BM_PDG::right_const_iterator pdg_iter = m_PdgNamesByID.right.find( pdg );
 
-    if( pdg_iter != m_PdgNamesByID.right.end() )
-    {
-        return pdg_iter->second;
-    }
-    else
-    {
-        return "unknown";
-    }
+    return pdg_iter != m_PdgNamesByID.right.end() ?  pdg_iter->second : "unknown";
 }
 
 int WMFilterPropertyHandler::getPdgFromName( std::string particleName )
 {
-    BM_PDG::left_const_iterator pdg_iter = m_PdgNamesByID.left.find( particleName.substr( 0, particleName.find( "(" ) ) );
-    if( pdg_iter != m_PdgNamesByID.left.end() )
-    {
-        return pdg_iter->second;
-    }
-    else
-    {
-        std::regex regexp( "[-+0-9]+" );
-        std::smatch m;
-        std::regex_search( particleName, m, regexp );
-        return std::stoi( m[0] );
-    }
+    BM_PDG::left_const_iterator pdg_iter = m_PdgNamesByID.left.find( particleName.substr( 0, particleName.find( " (" ) ) );
+
+    return pdg_iter != m_PdgNamesByID.left.end() ? pdg_iter->second : getPdgFromUnkownParticle( particleName );
 }
 
-WPropBool WMFilterPropertyHandler::getShowPrimaries()
+int WMFilterPropertyHandler::getPdgFromUnkownParticle( std::string particleName )
 {
-    return m_showPrimaries;
-}
+    std::regex regexp( "[-+0-9]+" );
+    std::smatch m;
+    std::regex_search( particleName, m, regexp );
 
-WPropBool WMFilterPropertyHandler::getShowSecondaries()
-{
-    return m_showSecondaries;
+    return std::stoi( m[0] );
 }
 
 void WMFilterPropertyHandler::changePdgBiMap( int pdg, std::string newParticleName )
@@ -311,11 +299,12 @@ void WMFilterPropertyHandler::changePdgBiMap( int pdg, std::string newParticleNa
 
     writePdgMapInParticleNameFile();
 }
+
 void WMFilterPropertyHandler::writePdgMapInParticleNameFile()
 {
     std::ofstream pdgSignFile;
 
-    pdgSignFile.open( m_PdgParticelNamePath, std::ios_base::out | std::ios::trunc );
+    pdgSignFile.open( getParticleNameFilePath() , std::ios_base::out | std::ios::trunc );
 
     if( !pdgSignFile.is_open() )
     {
@@ -329,4 +318,18 @@ void WMFilterPropertyHandler::writePdgMapInParticleNameFile()
 
     m_saveButton->set( WPVBaseTypes::PV_TRIGGER_READY, false );
     pdgSignFile.close();
+}
+
+std::string WMFilterPropertyHandler::getParticleNameFilePath()
+{
+    return WPathHelper::getHomePath().string() + "\\PDGEncodingNameMap.txt";
+}
+
+bool WMFilterPropertyHandler::copyFileToHomePath( std::string shareDirFile, std::string homeDirFile )
+{
+    std::ifstream src( shareDirFile, std::ios::binary );
+    std::ofstream dest( homeDirFile, std::ios::binary );
+
+    dest << src.rdbuf();
+    return src && dest;
 }
