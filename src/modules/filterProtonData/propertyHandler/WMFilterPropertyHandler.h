@@ -135,7 +135,7 @@ private:
      * Helperfunction to copy the particlename file
      *
      * \param shareDirFile sourcepath of the particle name file in the share directory
-     * \param homeDirFile destenypath of the local directory for the particle name file
+     * \param homeDirFile destinypath of the local directory for the particle name file
      */
     bool copyFileToHomePath( std::string shareDirFile, std::string homeDirFile );
 

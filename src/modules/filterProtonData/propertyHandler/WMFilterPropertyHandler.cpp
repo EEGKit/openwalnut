@@ -322,7 +322,7 @@ void WMFilterPropertyHandler::writePdgMapInParticleNameFile()
 
 std::string WMFilterPropertyHandler::getParticleNameFilePath()
 {
-    return WPathHelper::getHomePath().string() + "\\PDFEncodingNameMap.txt";
+    return WPathHelper::getHomePath().string() + "\\PDGEncodingNameMap.txt";
 }
 
 bool WMFilterPropertyHandler::copyFileToHomePath( std::string shareDirFile, std::string homeDirFile )
