@@ -52,7 +52,7 @@ public:
     }
 
     /**
-     * if a CSV file only contains a header row, a "CSV file is empty!" exception should be thrown
+     * if a CSV file only contains a header row, a "CSV File does not contain data!" exception should be thrown
      */
     void testOnlyHeaderCSV()
     {
