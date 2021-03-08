@@ -91,7 +91,7 @@ void WMPointRenderer::properties()
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
 
     // setup all the properties. See header file for their meaning and purpose.
-    m_size = m_properties->addProperty( "Point Size", "The size of the points.", 0.25 );
+    m_size = m_properties->addProperty( "Point Size", "The size of the points.", 1.0 );
     m_size->setMin( 0.0001 );
     m_size->setMax( 10.0 );
 
