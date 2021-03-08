@@ -35,6 +35,6 @@
 
 "common"
 {
-    pdgnames = "PDFEncodingNameMap.txt";   // in german
+    pdgnames = "PDGEncodingNameMap.txt"; 
 };
 

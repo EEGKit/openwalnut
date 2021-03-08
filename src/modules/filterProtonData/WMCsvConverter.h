@@ -110,11 +110,6 @@ private:
     boost::shared_ptr< WDataSetSingle > m_transferFunction;
 
     /**
-     * The fallback color to use.
-     */
-    WColor m_plainColor;
-
-    /**
      * Stores points for point and fiber renderer
      */
     WMConverterVectors::SPtr m_vectors;
@@ -131,7 +126,7 @@ private:
 
     /**
      * Computes gradient vector from transfer function specified in visualization properties.
-     * \return shared_ptr of mapped gradient from transfer function in RGBA format
+     * \return shared_ptr of mapped gradim_plainColorent from transfer function in RGBA format
      */
     boost::shared_ptr< std::vector<unsigned char> > sampleTransferFunction();
 
@@ -139,16 +134,17 @@ private:
      * Normalize energy deposition values to use as RGB values
      * \param edeps vector containing energy deposition values
      * \param colorArray vector containing colors per vertex
-     * \param maxEdep maximum present energy deposition value in edeps vector
      */
-    void normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray, float maxEdep );
+    void normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray );
 
 
     /**
-     * checks whether the requirements are fulfilled
+     * checks whether the requirements are fulfilled.
      * \param dataRow the row to check.
+     * \return true The row can be displayed.
+     * \return false The row can not be displayed.
      */
-    bool canShow( WDataSetCSV::Content::iterator dataRow );
+    bool checkConditionToPass( WDataSetCSV::Content::iterator dataRow );
 
     /**
      * Create vertex for point/fiber renderer
@@ -162,7 +158,7 @@ private:
      *
      * \param dataRow each row of the csv file (content of row)
      */
-    void addColor( WDataSetCSV::Content::iterator dataRow );
+    void addColor( WColor plainColor );
 
     /**
      * Create edep and sizes for point/fiber renderer
@@ -206,8 +202,8 @@ private:
     void setTransferFunction( boost::shared_ptr< std::vector<unsigned char> > data );
 
     /**
-     * Checks if output variables have to be null, if true, sets them to null
-     * \return true, if there are no vertices to output; false otherwise
+     * the cast value from string to float
+     * \return returns the cast value from string to float
      */
     bool checkIfOutputIsNull();
 
@@ -217,6 +213,12 @@ private:
      * \return float cluster size
      */
     float getClusterSize( float edep );
+
+    /**
+     * checks whether the string is a number  
+     * \return return the casted value
+     */
+    float stringToFloat( std::string str );
 };
 
 #endif  // WMCSVCONVERTER_H
