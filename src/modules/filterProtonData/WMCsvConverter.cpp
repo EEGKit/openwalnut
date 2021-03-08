@@ -109,28 +109,23 @@ void WMCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArr
 {
     if( m_protonData->isColumnAvailable( "edep" ) )
     {
-        if( m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
+        boost::shared_ptr< std::vector< unsigned char > > data = sampleTransferFunction();
+
+        setTransferFunction( data );
+
+        float maxClusterSize = getClusterSize( maxEdep );
+
+        for( std::vector< float >::iterator currentEdep = edeps->begin();
+            currentEdep != edeps->end();
+            currentEdep++ )
         {
-            boost::shared_ptr< std::vector< unsigned char > > data = sampleTransferFunction();
+            float clusterSizeNormalized = getClusterSize( *currentEdep ) / maxClusterSize;
 
-            setTransferFunction( data );
+            m_vectors->getSizes()->push_back( clusterSizeNormalized );
 
-            float maxClusterSize = getClusterSize( maxEdep );
-
-            std::cout << "maxEdep" << maxEdep << std::endl;
-            std::cout << "maxclustersize" << maxClusterSize << std::endl;
-
-            for( std::vector< float >::iterator currentEdep = edeps->begin();
-                 currentEdep != edeps->end();
-                 currentEdep++ )
+            if( m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
             {
-                float clusterSizeNormalized = getClusterSize( *currentEdep ) / maxClusterSize;
-
-                m_vectors->getSizes()->push_back( clusterSizeNormalized );
-
                 clusterSizeNormalized = static_cast< int >( 9 * clusterSizeNormalized );
-
-                std::cout << "clustersize: " << clusterSizeNormalized << std::endl;
 
                 for( int i = 0; i < 4; i++ )
                 {
@@ -225,7 +220,7 @@ void WMCsvConverter::addEdepAndSize( WDataSetCSV::Content::iterator dataRow, flo
     {
         *maxEdep = edep;
     }
-    
+
     m_vectors->getEdeps()->push_back( edep );
 }
 
