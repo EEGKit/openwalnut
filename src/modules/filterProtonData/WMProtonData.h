@@ -109,8 +109,8 @@ public:
 
     /**
      * checks whether columns are available 
-     *
-     * \return true if column is available . false if column is not available
+     * \param columnName THe name of the column.
+     * \return true if column is available, false if column is not available
      */
     bool isColumnAvailable( std::string columnName );
 

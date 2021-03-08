@@ -95,19 +95,19 @@ public:
     int getEventID();
 
 private:
-    int m_parentID = -1;    //<! The parentID index.
+    int m_parentID = -1;    //!< The parentID index.
 
-    int m_posX = -1;    //<! The posX index.
+    int m_posX = -1;    //!< The posX index.
 
-    int m_posY = -1;    //<! The posY index.
+    int m_posY = -1;    //!< The posY index.
 
-    int m_posZ = -1;    //<! The posZ index.
+    int m_posZ = -1;    //!< The posZ index.
 
-    int m_edep = -1;    //<! The edep index.
+    int m_edep = -1;    //!< The edep index.
 
-    int m_PDGEncoding = -1; //<! The PDGEncoding index.
+    int m_PDGEncoding = -1; //!< The PDGEncoding index.
 
-    int m_eventID = -1; //<! The eventID index.
+    int m_eventID = -1; //!< The eventID index.
 };
 
 #endif  // WMCONVERTERINDEXES_H
