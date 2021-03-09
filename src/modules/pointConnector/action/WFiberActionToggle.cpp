@@ -2,7 +2,7 @@
 //
 // Project: OpenWalnut ( http://www.openwalnut.org )
 //
-// Copyright 2013 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
+// Copyright 2009 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
 // For more information see http://www.openwalnut.org/copying
 //
 // This file is part of OpenWalnut.
@@ -22,21 +22,26 @@
 //
 //---------------------------------------------------------------------------
 
-"Point Connector"
+#include <string>
+
+#include "WFiberActionToggle.h"
+
+WFiberActionToggle::WFiberActionToggle( size_t position, WFiberHandler* fiberHandler ):
+    m_position( position ),
+    m_fiberHandler( fiberHandler )
 {
-  icon = "icon.png";
+}
 
-  website = "http://www.openwalnut.org";
+WFiberActionToggle::~WFiberActionToggle()
+{
+}
 
-  description = "Allows user to manually connect points to fibers.";
+void WFiberActionToggle::undo()
+{
+    m_fiberHandler->toggleFiber( m_position, true );
+}
 
-  author = "OpenWalnut Project";
-
-  "OpenWalnut Project"
-  {
-    url="http://www.openwalnut.org";
-    email="contact@openwalnut.org";
-    what="Design, Development and Bug fixing";
-  };
-};
-
+void WFiberActionToggle::redo()
+{
+    m_fiberHandler->toggleFiber( m_position, true );
+}

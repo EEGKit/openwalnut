@@ -40,6 +40,7 @@
 #include "core/kernel/WModuleOutputData.h"
 
 #include "../pointRenderer/WMPointRenderer.h"
+#include "../fiberDisplay/WMFiberDisplay.h"
 
 class WClickHandler;
 class WConnectorData;
@@ -145,6 +146,11 @@ protected:
      */
     virtual void properties();
 
+    /**
+     * Deactivates or activates the inner modules when active changes.
+     */
+    virtual void activate();
+
 private:
     /**
      * Checks if a vertex with a certain radius is hit by a ray.
@@ -160,6 +166,11 @@ private:
      * Creates the WMPointRenderer and runs it.
      */
     void createPointRenderer();
+
+    /**
+     * Creates the WMFiberDisplay and runs it.
+     */
+    void createFiberDisplay();
 
     /**
      * Creates the WClickHandler and the WKeyboardHandler and registers them.
@@ -183,9 +194,20 @@ private:
     bool findClickedPoint( osg::Vec3 cameraPosition, osg::Vec3 direction, size_t* hitIdx );
 
     /**
+     * Toggles the activation of a module.
+     * \param mod THe module to change the activation of.
+     */
+    void toggleActivationOfModule( WModule::SPtr mod );
+
+    /**
      * The WMPointRenderer associated with this module.
      */
     WModule::SPtr m_pointRenderer;
+
+    /**
+     * The WMFiberDisplay associated with this module.
+     */
+    WModule::SPtr m_fiberDisplay;
 
     /**
      * The data of this module.

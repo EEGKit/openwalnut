@@ -134,13 +134,16 @@ private:
      * Normalize energy deposition values to use as RGB values
      * \param edeps vector containing energy deposition values
      * \param colorArray vector containing colors per vertex
+     * \param maxEdep maximum energy deposition
      */
-    void normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray );
+    void normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray,  float maxEdep );
 
 
     /**
-     * checks whether the requirements are fulfilled
+     * checks whether the requirements are fulfilled.
      * \param dataRow the row to check.
+     * \return true The row can be displayed.
+     * \return false The row can not be displayed.
      */
     bool checkConditionToPass( WDataSetCSV::Content::iterator dataRow );
 
@@ -204,6 +207,13 @@ private:
      * \return returns the cast value from string to float
      */
     bool checkIfOutputIsNull();
+
+    /**
+     * Computes the cluster size
+     * \param edep energy deposition
+     * \return float cluster size
+     */
+    float getClusterSize( float edep );
 
     /**
      * checks whether the string is a number  

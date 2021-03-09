@@ -26,10 +26,12 @@
 
 #include "WFiberActionRemoveFiber.h"
 
-WFiberActionRemoveFiber::WFiberActionRemoveFiber( std::string name, size_t position, WFiberHandler::PCFiber fiber, WFiberHandler* fiberHandler ):
+WFiberActionRemoveFiber::WFiberActionRemoveFiber(
+                        std::string name, size_t position, WFiberHandler::PCFiber fiber, bool hidden, WFiberHandler* fiberHandler ):
     m_name( name ),
     m_position( position ),
     m_fiber( fiber ),
+    m_hidden( hidden ),
     m_fiberHandler( fiberHandler )
 {
 }
@@ -40,7 +42,7 @@ WFiberActionRemoveFiber::~WFiberActionRemoveFiber()
 
 void WFiberActionRemoveFiber::undo()
 {
-    m_fiberHandler->addFiberAt( m_name, m_position, true, m_fiber );
+    m_fiberHandler->addFiberAt( m_name, m_position, m_hidden, true, m_fiber );
 }
 
 void WFiberActionRemoveFiber::redo()

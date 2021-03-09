@@ -69,12 +69,12 @@ void main()
     // TODO(ebaum): implement this using proper clip-plane implementation
     // v_clip = float( ( gl_Vertex.x > 500.0 ) || ( gl_Vertex.y>500.0 ) );
 
-    #ifdef USE_ATTRIBUTE_ENABLED
-    v_pointSize = a_pointSize;
-    #endif
-    #ifdef USE_ATTRIBUTE_DISABLED
+#ifdef USE_ATTRIBUTE_ENABLED
+    v_pointSize = a_pointSize * u_pointSize;
+#endif
+#ifdef USE_ATTRIBUTE_DISABLED
     v_pointSize = u_pointSize;
-    #endif
+#endif
 
     // forward to geometry shader
     gl_FrontColor = gl_Color;

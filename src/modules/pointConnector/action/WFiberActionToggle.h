@@ -22,54 +22,60 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WREADERCSV_H
-#define WREADERCSV_H
+#ifndef WFIBERACTIONTOGGLE_H
+#define WFIBERACTIONTOGGLE_H
 
 #include <string>
-#include <vector>
 
 #include <boost/shared_ptr.hpp>
-#include <core/dataHandler/WDataSetPoints.h>
-#include <core/dataHandler/WDataSetCSV.h>
-#include "core/dataHandler/io/WReader.h"
+#include <osg/Geode>
+
+#include "WFiberAction.h"
+#include "../WFiberHandler.h"
 
 /**
- * Read content from a CSV file.
- * \ingroup dataHandler
+ * The action when toggling a fiber.
  */
-class WReaderCSV : WReader
+class WFiberActionToggle : public WFiberAction
 {
-    /**
-     * Only WReaderCSVTest class may be friend
-     */
-     friend class WReaderCSVTest;
 public:
     /**
-     * Constructs a CSV reader object.
-     *
-     * \param fname path of the file to load.
+     * A shared_ptr to this class.
      */
-    explicit WReaderCSV( std::string fname );
+    typedef boost::shared_ptr< WFiberActionToggle > SPtr;
 
     /**
-     * Destroys this instance.
+     * Creates this action.
+     * \param position The position of this fiber in the fibers vector.
+     * \param fiberHandler The WFiberHandler of the action.
      */
-    virtual ~WReaderCSV() throw();
+    WFiberActionToggle( size_t position, WFiberHandler* fiberHandler );
 
     /**
-     * Read the file and create a dataset as a vector.
-     *
-     * \return pointer to a WDataSetCSV.
-     * \throws WException If the file could not be opened.
+     * Empty destructor.
      */
-    virtual boost::shared_ptr< WDataSetCSV > read();
+    ~WFiberActionToggle();
+
+    /**
+     * Undos this action.
+     */
+    virtual void undo();
+
+    /**
+     * Redos this action.
+     */
+    virtual void redo();
+
 private:
     /**
-     * Transforms a given string into a string vector, by a predefined delimiter
-     * \param line The line, which shell be split into a string vector
-     * \return The splitted string as a string vector
+     * The position of this fiber in the fibers vector.
      */
-    std::vector< std::string > transformLineToVector( std::string line );
+    size_t m_position;
+
+    /**
+     * The WFiberHandler of the action.
+     */
+    WFiberHandler* m_fiberHandler;
 };
 
-#endif  // WREADERCSV_H
+#endif  // WFIBERACTIONTOGGLE_H
