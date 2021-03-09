@@ -195,7 +195,14 @@ void WMPointConnector::updatePoints()
         colors->push_back( color.x() );
         colors->push_back( color.y() );
         colors->push_back( color.z() );
-        colors->push_back( color.w() );
+
+        if( m_fiberHandler->isPointHidden( vertex ) )
+        {
+            colors->push_back( 0.0 );
+        }
+        else {
+            colors->push_back( color.w() );
+        }
     }
 
     m_pointOutput->updateData( WDataSetPoints::SPtr( new WDataSetPoints( vertices, colors ) ) );
@@ -296,6 +303,7 @@ float WMPointConnector::hitVertex( osg::Vec3 rayStart, osg::Vec3 rayDir, osg::Ve
 void WMPointConnector::updateOutput()
 {
     boost::shared_ptr< std::vector< float > > vertices = boost::shared_ptr< std::vector< float > >( new std::vector< float >() );
+    boost::shared_ptr< std::vector< float > > colors = boost::shared_ptr< std::vector< float > >( new std::vector< float >() );
     boost::shared_ptr< std::vector< size_t > > lineStartIndexes = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
     boost::shared_ptr< std::vector< size_t > > lineLength = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
     boost::shared_ptr< std::vector< size_t > > verticesReverse = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
@@ -306,6 +314,16 @@ void WMPointConnector::updateOutput()
         lineStartIndexes->push_back( vertices->size() / 3 );
         lineLength->push_back( fiber.size() );
 
+        osg::Vec4 color( 0.0, 0.0, 0.0, 1.0 );
+        if( m_fiberHandler->getSelectedFiber() == idx )
+        {
+            color[1] = 1.0;
+        }
+        if( m_fiberHandler->isHidden( idx ) )
+        {
+            color[3] = 0.0;
+        }
+
         for( size_t vIdx = 0; vIdx < fiber.size(); vIdx++ )
         {
             osg::Vec3 vertex = fiber[vIdx];
@@ -313,18 +331,27 @@ void WMPointConnector::updateOutput()
             vertices->push_back( vertex.y() );
             vertices->push_back( vertex.z() );
 
+            colors->push_back( color.x() );
+            colors->push_back( color.y() );
+            colors->push_back( color.z() );
+            colors->push_back( color.w() );
+
             verticesReverse->push_back( idx );
         }
     }
 
-    m_fiberOutput->updateData( boost::shared_ptr< WDataSetFibers >(
+    WDataSetFibers::SPtr fibers(
         new WDataSetFibers(
             vertices,
             lineStartIndexes,
             lineLength,
             verticesReverse
         )
-    ) );
+    );
+
+    fibers->addColorScheme( colors, "Energy deposition", "Color fibers based on their energy." );
+    fibers->setSelectedColorScheme( 3 );
+    m_fiberOutput->updateData( fibers );
 }
 
 

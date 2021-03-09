@@ -115,6 +115,7 @@ void WFiberHandler::createProperties( WPropertyGroup::SPtr properties )
 
     m_addFiber = fiberGroup->addProperty( "Add Fiber", "Add Fiber", WPVBaseTypes::PV_TRIGGER_READY, notifier );
     m_removeFiber = fiberGroup->addProperty( "Remove Fiber", "Remove Fiber", WPVBaseTypes::PV_TRIGGER_READY, notifier );
+    m_toggleFiber = fiberGroup->addProperty( "Toggle Fiber", "Toggle Fiber", WPVBaseTypes::PV_TRIGGER_READY, notifier );
 
     m_undoTrigger = undoGroup->addProperty( "Undo", "Undo", WPVBaseTypes::PV_TRIGGER_READY, notifier );
     m_redoTrigger = undoGroup->addProperty( "Redo", "Redo", WPVBaseTypes::PV_TRIGGER_READY, notifier );
@@ -180,6 +181,33 @@ void WFiberHandler::removeFiber( size_t idx, bool silent )
     }
 }
 
+void WFiberHandler::toggleFiber( size_t idx, bool silent )
+{
+    WItemSelectionItem::SPtr selection = m_possibleFiberSelections->at( idx );
+    std::string name = selection->getName();
+    if( isHidden( idx ) )
+    {
+        name = name.substr( 0, name.size() - 2 );
+        m_hidden.erase( std::remove( m_hidden.begin(), m_hidden.end(), idx ), m_hidden.end() );
+    }
+    else
+    {
+        name = name + " *";
+        m_hidden.push_back( idx );
+    }
+
+    m_possibleFiberSelections->replace( selection, ItemType::create( name, name, "", NULL ) );
+    m_fiberSelection->set( m_possibleFiberSelections->getSelector( idx ) );
+
+    m_pointConnector->updatePoints();
+    m_pointConnector->updateOutput();
+}
+
+bool WFiberHandler::isHidden( size_t idx )
+{
+    return std::find( m_hidden.begin(), m_hidden.end(), idx ) != m_hidden.end();
+}
+
 void WFiberHandler::selectFiber( size_t idx )
 {
     m_selectedFiber = idx;
@@ -188,6 +216,30 @@ void WFiberHandler::selectFiber( size_t idx )
     selectLastPoint();
 
     m_pointConnector->updatePoints();
+    m_pointConnector->updateOutput();
+}
+
+bool WFiberHandler::getFiberOfPoint( osg::Vec3 vertex, size_t* idx )
+{
+    for( size_t fiberIdx = 0; fiberIdx < m_fibers->size(); fiberIdx++ )
+    {
+        PCFiber fiber = m_fibers->at( fiberIdx );
+        if( std::find( fiber.begin(), fiber.end(), vertex ) != fiber.end() )
+        {
+            if(idx != NULL)
+            {
+                *idx = fiberIdx;
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+bool WFiberHandler::isPointHidden( osg::Vec3 vertex )
+{
+    size_t idx = 0;
+    return getFiberOfPoint( vertex, &idx ) && isHidden( idx );
 }
 
 void WFiberHandler::updateProperty( WPropertyBase::SPtr property )
@@ -204,6 +256,11 @@ void WFiberHandler::updateProperty( WPropertyBase::SPtr property )
     {
         m_removeFiber->set( WPVBaseTypes::PV_TRIGGER_READY, false );
         removeFiber( m_fiberSelection->get().getItemIndexOfSelected( 0 ) );
+    }
+    else if( property == m_toggleFiber && m_toggleFiber->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
+    {
+        m_toggleFiber->set( WPVBaseTypes::PV_TRIGGER_READY, false );
+        toggleFiber( m_fiberSelection->get().getItemIndexOfSelected( 0 ) );
     }
     else if( property == m_undoTrigger && m_undoTrigger->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
     {
