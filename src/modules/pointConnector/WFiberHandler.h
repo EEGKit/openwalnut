@@ -120,10 +120,11 @@ public:
      * Adds a new or an old fiber at a specific position.
      * \param name The name of the fiber.
      * \param position The position of the fiber.
+     * \param hidden Whether the fiber is hidden or not.
      * \param silent Whether or not this should add to the undo stack.
      * \param fiber The fiber to add.
      */
-    void addFiberAt( std::string name, size_t position, bool silent = false, PCFiber fiber = PCFiber() );
+    void addFiberAt( std::string name, size_t position, bool hidden, bool silent = false, PCFiber fiber = PCFiber() );
 
     /**
      * Removes a fiber at an index in the fibers vector.
@@ -263,9 +264,9 @@ private:
     PCFiberListSPtr m_fibers;
 
     /**
-     * Vector of the hidden fiber indecies.
+     * Vector for the visibility of the fibers.
      */
-    std::vector< size_t > m_hidden;
+    boost::shared_ptr< std::vector< bool > > m_hidden;
 };
 
 #endif  // WFIBERHANDLER_H

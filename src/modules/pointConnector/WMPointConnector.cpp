@@ -180,6 +180,17 @@ void WMPointConnector::handleInput()
 
 void WMPointConnector::updatePoints()
 {
+    if( m_pointRenderer == NULL )
+    {
+        return;
+    }
+
+    if( m_connectorData->getVertices()->size() == 0 )
+    {
+        m_pointOutput->updateData( NULL );
+        return;
+    }
+
     WDataSetPoints::VertexArray vertices( new std::vector< float > );
     WDataSetPoints::VertexArray colors( new std::vector< float > );
 
@@ -200,7 +211,8 @@ void WMPointConnector::updatePoints()
         {
             colors->push_back( 0.0 );
         }
-        else {
+        else
+        {
             colors->push_back( color.w() );
         }
     }
@@ -302,6 +314,11 @@ float WMPointConnector::hitVertex( osg::Vec3 rayStart, osg::Vec3 rayDir, osg::Ve
 
 void WMPointConnector::updateOutput()
 {
+    if( m_fiberDisplay == NULL )
+    {
+        return;
+    }
+
     boost::shared_ptr< std::vector< float > > vertices = boost::shared_ptr< std::vector< float > >( new std::vector< float >() );
     boost::shared_ptr< std::vector< float > > colors = boost::shared_ptr< std::vector< float > >( new std::vector< float >() );
     boost::shared_ptr< std::vector< size_t > > lineStartIndexes = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
@@ -319,6 +336,7 @@ void WMPointConnector::updateOutput()
         {
             color[1] = 1.0;
         }
+
         if( m_fiberHandler->isHidden( idx ) )
         {
             color[3] = 0.0;
@@ -349,7 +367,13 @@ void WMPointConnector::updateOutput()
         )
     );
 
-    fibers->addColorScheme( colors, "Energy deposition", "Color fibers based on their energy." );
+    if( vertices->size() == 0 )
+    {
+        m_fiberOutput->updateData( NULL );
+        return;
+    }
+
+    fibers->addColorScheme( colors, "Connection", "Color fibers based on their connection." );
     fibers->setSelectedColorScheme( 3 );
     m_fiberOutput->updateData( fibers );
 }

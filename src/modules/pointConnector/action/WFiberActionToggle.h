@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WFIBERACTIONREMOVEVERTEX_H
-#define WFIBERACTIONREMOVEVERTEX_H
+#ifndef WFIBERACTIONTOGGLE_H
+#define WFIBERACTIONTOGGLE_H
 
 #include <string>
 
@@ -34,29 +34,27 @@
 #include "../WFiberHandler.h"
 
 /**
- * The action when removing a Vertex.
+ * The action when toggling a fiber.
  */
-class WFiberActionRemoveVertex : public WFiberAction
+class WFiberActionToggle : public WFiberAction
 {
 public:
     /**
      * A shared_ptr to this class.
      */
-    typedef boost::shared_ptr< WFiberActionRemoveVertex > SPtr;
+    typedef boost::shared_ptr< WFiberActionToggle > SPtr;
 
     /**
      * Creates this action.
-     * \param vertex The vertex to add.
-     * \param fiberIdx The index of the fiber this vertex was added to.
-     * \param position The position of the vertex in the vertices vector.
+     * \param position The position of this fiber in the fibers vector.
      * \param fiberHandler The WFiberHandler of the action.
      */
-    WFiberActionRemoveVertex( osg::Vec3 vertex, size_t fiberIdx, size_t position, WFiberHandler* fiberHandler );
+    WFiberActionToggle( size_t position, WFiberHandler* fiberHandler );
 
     /**
      * Empty destructor.
      */
-    ~WFiberActionRemoveVertex();
+    ~WFiberActionToggle();
 
     /**
      * Undos this action.
@@ -70,17 +68,7 @@ public:
 
 private:
     /**
-     * The vertex to add.
-     */
-    osg::Vec3 m_vertex;
-
-    /**
-     * The index of the fiber this vertex was added to.
-     */
-    size_t m_fiberIdx;
-
-    /**
-     * The position of the vertex in the vertices vector.
+     * The position of this fiber in the fibers vector.
      */
     size_t m_position;
 
@@ -90,4 +78,4 @@ private:
     WFiberHandler* m_fiberHandler;
 };
 
-#endif  // WFIBERACTIONREMOVEVERTEX_H
+#endif  // WFIBERACTIONTOGGLE_H

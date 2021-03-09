@@ -103,7 +103,7 @@ varying float v_vertexDepthDiff;
  */
 void main()
 {
-    if ( gl_Color.a == 0.0 )
+    if( gl_Color.a == 0.0 )
         discard;
 
     // create a sphere
