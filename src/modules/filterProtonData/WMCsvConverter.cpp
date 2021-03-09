@@ -314,7 +314,14 @@ void WMCsvConverter::createOutputFibers()
 
     if(m_protonData->isColumnAvailable("edep"))
     {
-        m_fibers->addColorScheme( m_vectors->getColors(), "Energy deposition", "Color fibers based on their energy." );
+        if( m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
+        {
+            m_fibers->removeColorScheme( m_fibers->getColorScheme( "Global Color" )->getColor() );
+            m_fibers->removeColorScheme( m_fibers->getColorScheme( "Local Color" )->getColor() );
+            m_fibers->removeColorScheme( m_fibers->getColorScheme( "Custom Color" )->getColor() );
+            m_fibers->addColorScheme( m_vectors->getColors(), "Energy deposition",
+                                      "Color fibers based on their energy." );
+        }
     }
 }
 
