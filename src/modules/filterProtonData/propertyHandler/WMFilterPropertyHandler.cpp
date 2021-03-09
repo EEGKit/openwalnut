@@ -91,8 +91,12 @@ void WMFilterPropertyHandler::createCheckBoxForPrimaryAndSecondary()
     WPropertyBase::PropertyChangeNotifierType notifierCheckBox = boost::bind(
         &WMFilterPropertyHandler::updateCheckboxProperty, this, boost::placeholders::_1 );
 
-    m_showPrimaries = m_filteringGroup->addProperty( "Show primaries", "Show/hide primaries", true, notifierCheckBox );
-    m_showSecondaries = m_filteringGroup->addProperty( "Show secondaries", "Show/hide secondaries", true, notifierCheckBox );
+    m_showPrimaries = m_filteringGroup->addProperty( "Show primaries", 
+                                                    "Show or hide primaries. One can either hide primaries or secondaries, but not both at the same time.",
+                                                    true, notifierCheckBox );
+    m_showSecondaries = m_filteringGroup->addProperty( "Show secondaries", 
+                                                    "Show or hide secondaries. One can either hide primaries or secondaries, but not both at the same time.",
+                                                    true, notifierCheckBox );
 }
 
 void WMFilterPropertyHandler::searchPDGTypes()
@@ -128,7 +132,7 @@ void WMFilterPropertyHandler::createMultiSelectionForPDG()
 
     if(m_pdgTypes.size() <= 0)
     {
-        m_multiSelection = m_filteringGroup->addProperty( "PDGEncoding", "Choose particle type(s) you want to show",
+        m_multiSelection = m_filteringGroup->addProperty( "Show particles", "Choose particle type(s) to be shown.",
                                                             m_particleItemSelectionList->getSelectorNone(), pdgEncodingnotifier );
         return;
     }
@@ -140,7 +144,7 @@ void WMFilterPropertyHandler::createMultiSelectionForPDG()
         );
     }
 
-    m_multiSelection = m_filteringGroup->addProperty( "PDGEncoding", "Choose particle type(s) you want to show",
+    m_multiSelection = m_filteringGroup->addProperty( "Show particles", "Choose particle type(s) to be shown.",
                                                             m_particleItemSelectionList->getSelectorAll(), pdgEncodingnotifier );
 
     WPropertyHelper::PC_NOTEMPTY::addTo( m_multiSelection );
