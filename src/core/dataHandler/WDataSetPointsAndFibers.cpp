@@ -22,37 +22,27 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WDataSetCSV.h"
+#include "WDataSetPointsAndFibers.h"
 
-WDataSetCSV::WDataSetCSV( WDataSetCSV::ContentSPtr header, WDataSetCSV::ContentSPtr data )
-    : m_header( header ), m_data( data )
+WDataSetPointsAndFibers::WDataSetPointsAndFibers( WDataSetPoints::SPtr points, WDataSetFibers::SPtr fibers )
+    : m_points( points ), m_fibers( fibers )
 {
 }
 
-WDataSetCSV::WDataSetCSV()
+WDataSetPointsAndFibers::WDataSetPointsAndFibers()
 {
 }
 
-WDataSetCSV::~WDataSetCSV()
+WDataSetPointsAndFibers::~WDataSetPointsAndFibers()
 {
 }
 
-WDataSetCSV::ContentSPtr WDataSetCSV::getHeader()
+WDataSetPoints::SPtr WDataSetPointsAndFibers::getPoints()
 {
-    return m_header;
+    return m_points;
 }
 
-WDataSetCSV::ContentSPtr WDataSetCSV::getData()
+WDataSetFibers::SPtr WDataSetPointsAndFibers::getFibers()
 {
-    return m_data;
-}
-
-WDataSetCSV::UnseperatedRowSPtr WDataSetCSV::getRawDataSet()
-{
-    return rawDataSet;
-}
-
-void WDataSetCSV::setRawDataSet( WDataSetCSV::UnseperatedRowSPtr rawDataSetIn )
-{
-    rawDataSet = rawDataSetIn;
+    return m_fibers;
 }

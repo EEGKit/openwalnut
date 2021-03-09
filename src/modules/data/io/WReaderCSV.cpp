@@ -43,6 +43,7 @@ boost::shared_ptr< WDataSetCSV > WReaderCSV::read()
     std::string cell;
 
     std::vector< std::string >  row;
+    WDataSetCSV::UnseperatedRowSPtr rawRow = WDataSetCSV::UnseperatedRowSPtr( new std::vector< std::string >() );
     WDataSetCSV::ContentSPtr header = WDataSetCSV::ContentSPtr( new WDataSetCSV::Content() );
     WDataSetCSV::ContentSPtr data = WDataSetCSV::ContentSPtr( new WDataSetCSV::Content() );
 
@@ -56,6 +57,7 @@ boost::shared_ptr< WDataSetCSV > WReaderCSV::read()
 
     while( std::getline( file, col ) )
     {
+        rawRow->push_back( col );
         std::istringstream col_in( col );
         row.clear();
 
@@ -71,5 +73,8 @@ boost::shared_ptr< WDataSetCSV > WReaderCSV::read()
     header->push_back( data->at( 0 ) );
     data->erase( data->begin() );
 
-    return boost::shared_ptr< WDataSetCSV >( new WDataSetCSV( header, data ) );
+    boost::shared_ptr< WDataSetCSV > datasetcsv = boost::shared_ptr< WDataSetCSV >( new WDataSetCSV( header, data ) );
+    datasetcsv->setRawDataSet( rawRow );
+
+    return datasetcsv;
 }

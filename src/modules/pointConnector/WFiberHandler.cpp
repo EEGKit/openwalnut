@@ -31,6 +31,8 @@
 #include "action/WFiberActionRemoveVertex.h"
 #include "action/WFiberActionRemoveFiber.h"
 
+#include "core/common/WPathHelper.h"
+
 #include "WFiberHandler.h"
 
 WFiberHandler::WFiberHandler( WMPointConnector* pointConnector )

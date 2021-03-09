@@ -32,6 +32,7 @@
 #include <osg/Geode>
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
+#include "core/dataHandler/WDataSetPointsAndFibers.h"
 #include "core/kernel/WKernel.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleContainer.h"
@@ -210,6 +211,11 @@ private:
      * The internal pointOutput to pass data to the WMPointRenderer
      */
     boost::shared_ptr< WModuleOutputData< WDataSetPoints > > m_pointOutput;
+
+     /**
+     * The internal pointOutput and connected fibers for WMWriteCSV
+     */
+    boost::shared_ptr< WModuleOutputData< WDataSetPointsAndFibers > > m_pointAndFibersOutput;
 };
 
 #endif  // WMPOINTCONNECTOR_H
