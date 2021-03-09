@@ -266,7 +266,7 @@ private:
     /**
      * Vector for the visibility of the fibers.
      */
-    boost::shared_ptr< std::vector< bool > > m_hidden;
+    boost::shared_ptr< std::vector< char > > m_hidden;
 };
 
 #endif  // WFIBERHANDLER_H
