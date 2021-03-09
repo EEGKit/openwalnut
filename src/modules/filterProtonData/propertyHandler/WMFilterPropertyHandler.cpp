@@ -163,14 +163,14 @@ void WMFilterPropertyHandler::createPropToSetParticleNames()
     m_filteringsubGroup  = m_filteringGroup->addPropertyGroup( "Rename or Delete Particle-Name",
                                                             "Change, set a new name or delete for a particlename" );
 
-    m_inputNewParticleName = m_filteringsubGroup->addProperty( "New Name (press enter)", "Input a new name for the choosen particle",
+    m_inputNewParticleName = m_filteringsubGroup->addProperty( "New name (press enter)", "Type in a new name for the selected particle type.",
                                                             std::string( "" ), notifierSetParticleName );
 
-    m_PdgForRenameSelection = m_filteringsubGroup->addProperty( "Select Particle",  "Select the Particle PDG to rename",
+    m_PdgForRenameSelection = m_filteringsubGroup->addProperty( "Select particle",  "Select the particle type to be renamed.",
                                                             m_particleItemSelectionList->getSelectorFirst(),
                                                             notifierSetParticleName );
 
-    m_saveButton= m_filteringsubGroup->addProperty( "Set Changes", "Save", WPVBaseTypes::PV_TRIGGER_READY, notifierSetParticleName );
+    m_saveButton= m_filteringsubGroup->addProperty( "Apply changes", "Save", WPVBaseTypes::PV_TRIGGER_READY, notifierSetParticleName );
 
     WPropertyHelper::PC_NOTEMPTY::addTo( m_inputNewParticleName );
     WPropertyHelper::PC_SELECTONLYONE::addTo( m_PdgForRenameSelection );
@@ -265,7 +265,7 @@ std::string WMFilterPropertyHandler::getParticleNameFromPdg( int pdg )
 {
     BM_PDG::right_const_iterator pdg_iter = m_PdgNamesByID.right.find( pdg );
 
-    return pdg_iter != m_PdgNamesByID.right.end() ?  pdg_iter->second : "unknown";
+    return pdg_iter != m_PdgNamesByID.right.end() ?  pdg_iter->second : "Unknown";
 }
 
 int WMFilterPropertyHandler::getPdgFromName( std::string particleName )
