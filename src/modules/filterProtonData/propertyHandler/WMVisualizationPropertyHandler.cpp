@@ -65,15 +65,29 @@ void WMVisualizationPropertyHandler::updateProperty()
     {
         m_sizesFromEdep->setHidden( false );
         m_colorFromEdep->setHidden( false );
-        m_colorSelection->setHidden( false );
-        m_gradient->setHidden( false );
+        toggleColorProperties();
     }
     else
     {
         m_sizesFromEdep->setHidden( true );
         m_colorFromEdep->setHidden( true );
-        m_colorSelection->setHidden( true );
         m_gradient->setHidden( true );
+    }
+}
+
+void WMVisualizationPropertyHandler::toggleColorProperties()
+{
+    if( m_colorFromEdep->get() )
+    {
+        m_gradient->setHidden( false );
+        m_applyGradient->setHidden( false );
+        m_colorSelection->setHidden( true );
+    }
+    else
+    {
+        m_gradient->setHidden( true );
+        m_applyGradient->setHidden( true );
+        m_colorSelection->setHidden( false );
     }
 }
 
@@ -85,6 +99,7 @@ void WMVisualizationPropertyHandler::propertyCallback( WPropertyBase::SPtr prope
     {
         m_applyGradient->set( WPVBaseTypes::PV_TRIGGER_READY, false );
     }
+    toggleColorProperties();
 }
 
 WPropBool WMVisualizationPropertyHandler::getColorFromEdep()
