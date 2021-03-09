@@ -35,6 +35,10 @@
  */
 class WMProtonData
 {
+    /**
+     * only test class may be friend
+     */
+     friend class WMProtonDataTest;
 public:
     /**
      * shared_ptr that points to itself 
