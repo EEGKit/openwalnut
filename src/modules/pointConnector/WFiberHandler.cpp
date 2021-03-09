@@ -40,7 +40,7 @@ WFiberHandler::WFiberHandler( WMPointConnector* pointConnector )
     m_pointConnector = pointConnector;
     m_actionHandler = WActionHandler::SPtr( new WActionHandler() );
     m_fibers = PCFiberListSPtr( new PCFiberList() );
-    m_hidden = boost::shared_ptr< std::vector< bool > >( new std::vector< bool >() );
+    m_hidden = boost::shared_ptr< std::vector< char > >( new std::vector< char >() );
 
     m_selectedFiber = 0;
     m_fiberCount = 1;
