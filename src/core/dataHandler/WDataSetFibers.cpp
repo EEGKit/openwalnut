@@ -310,6 +310,11 @@ const boost::shared_ptr< WDataSetFibers::ColorScheme > WDataSetFibers::getColorS
     return boost::static_pointer_cast< ColorScheme >( *i );
 }
 
+void WDataSetFibers::setSelectedColorScheme( size_t idx )
+{
+    m_colorProp->set( m_colors->getSelector( idx ) );
+}
+
 const boost::shared_ptr< WDataSetFibers::ColorScheme > WDataSetFibers::getColorScheme( size_t idx ) const
 {
     WItemSelection::ReadTicket l = m_colors->getReadTicket();
