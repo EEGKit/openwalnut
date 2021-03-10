@@ -225,7 +225,7 @@ private:
      * checks whether the string is a number (int)
      * \return return the casted int value
      */
-    int stringToInt( std::string str )
+    int stringToInt( std::string str );
 };
 
 #endif  // WMCSVCONVERTER_H
