@@ -37,16 +37,19 @@
 
 class WMProtonDataTest : public CxxTest::TestSuite
 {
-    const std::vector< std::string > sampleColumnNames =
+    WDataSetCSV::Content sampleColumnNames =
     {
-        "PDGEncoding", "trackID", "parentID", "trackLocalTime", "time", "edep", "stepLength", "trackLength",
-        "posX", "posY", "posZ", "localPosX", "localPosY", "localPosZ", "momDirX", "momDirY", "momDirZ",
-        "baseID", "level1ID", "level2ID", "level3ID", "level4ID", "layerID", "photonID", "nPhantomCompton",
-        "nCrystalCompton", "nPhantomRayleigh", "nCrystalRayleigh", "primaryID", "sourcePosX", "sourcePosY",
-        "sourcePosZ", "sourceID", "eventID", "runID", "axialPos", "rotationAngle", "volumeID", "processName",
-        "comptVolName", "RayleighVolName"
+        {
+            "PDGEncoding", "trackID", "parentID", "trackLocalTime", "time", "edep", "stepLength", "trackLength",
+            "posX", "posY", "posZ", "localPosX", "localPosY", "localPosZ", "momDirX", "momDirY", "momDirZ",
+            "baseID", "level1ID", "level2ID", "level3ID", "level4ID", "layerID", "photonID", "nPhantomCompton",
+            "nCrystalCompton", "nPhantomRayleigh", "nCrystalRayleigh", "primaryID", "sourcePosX", "sourcePosY",
+            "sourcePosZ", "sourceID", "eventID", "runID", "axialPos", "rotationAngle", "volumeID", "processName",
+            "comptVolName", "RayleighVolName"
+        }
     };
-    const std::vector< std::vector< std::string > > sampleDataRows =
+
+    WDataSetCSV::Content sampleDataRows =
     {
         {
             "2212", "1", "0", "4.20922e-09", "4.20922e-09", "0.0199097", "0.0250083", "725.314", "-1.86984", "4.55793",
@@ -81,20 +84,28 @@ class WMProtonDataTest : public CxxTest::TestSuite
     };
 public:
     /**
+     *
+     */
+     void setUp()
+    {
+    }
+
+    /**
+     *
+     */
+    void tearDown()
+    {
+    }
+
+    /**
      * Test the constructor of WProtonData, so no exception is thrown, when input parameters are correct
      */
     void testConstructor()
     {
-        WDataSetCSV::ContentSPtr sptrHeader( new WDataSetCSV::Content() );
-        WDataSetCSV::ContentSPtr sptrData( new WDataSetCSV::Content() );
-
-        sptrHeader->push_back( sampleColumnNames );
-        for( auto rowData : sampleDataRows )
-        {
-            sptrData->push_back( rowData );
-        }
-
-        TS_ASSERT_THROWS_NOTHING( WMProtonData( sptrHeader, sptrData ) );
+        TS_ASSERT_THROWS_NOTHING(
+            WMProtonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+                          boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+        );
     }
 };
 
