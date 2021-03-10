@@ -101,6 +101,11 @@ private:
     void writeToFile();
 
     /**
+     * Trigger Event for Dialogfile
+     */
+    void propertyCallback();
+
+    /**
      * Helpermethod to create a List of internal vertex with id
      */
     std::list< std::tuple < osg::Vec3, int > > getListOfInternalVertex( WDataSetFibers::SPtr fibers );

@@ -112,11 +112,29 @@ void WMWriteCSV::connectors()
 void WMWriteCSV::properties()
 {
     WPropertyBase::PropertyChangeNotifierType notifier = boost::bind(
-        &writeToFile, this );
+        &propertyCallback, this );
 
     m_filename = m_properties->addProperty( "Filename", "Filename where to write the NIfTI file to.", WPathHelper::getHomePath(), notifier );
 
     WModule::properties();
+}
+
+void WMWriteCSV::propertyCallback()
+{
+    boost::shared_ptr< WDataSetCSV > csvdataSet = m_CSVInput->getData();
+    boost::shared_ptr< WDataSetPointsAndFibers > pointsAndfibersdataSet = m_PointsAndFibersInput->getData();
+
+    if( !csvdataSet )
+    {
+        throw WException( "The Data-Modul-CSV-connection is missing." );
+    }
+
+    if( !pointsAndfibersdataSet )
+    {
+        throw WException( "The Point-Connector-connection is missing." );
+    }
+
+   writeToFile();
 }
 
 std::list< std::tuple < osg::Vec3, int > > WMWriteCSV::getListOfInternalVertex( WDataSetFibers::SPtr fibers )
