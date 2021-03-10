@@ -163,7 +163,8 @@ void WMFilterPropertyHandler::createPropToSetParticleNames()
     m_filteringsubGroup  = m_filteringGroup->addPropertyGroup( "Rename or Delete Particle-Name",
                                                             "Change, set a new name or delete for a particlename" );
 
-    m_inputNewParticleName = m_filteringsubGroup->addProperty( "New name (press enter)", "Type in a new name for the selected particle type.",
+    m_inputNewParticleName = m_filteringsubGroup->addProperty( "New name (press enter)", "Type in a new name for the selected particle type. "
+                                                            "To submit your entry press enter while you are in the textbox.",
                                                             std::string( "" ), notifierSetParticleName );
 
     m_PdgForRenameSelection = m_filteringsubGroup->addProperty( "Select particle",  "Select the particle type to be renamed.",
