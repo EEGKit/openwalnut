@@ -388,7 +388,7 @@ float WMCsvConverter::stringToFloat( std::string str )
     {
         return boost::lexical_cast< float >( str );
     }
-    catch( boost::bad_lexical_cast e )
+    catch( boost::bad_lexical_cast &e )
     {
         throw WException( "The selected column has an incorrect format. Numbers (float) are expected. " + std::string( e.what() ) );
     }
@@ -400,7 +400,7 @@ int WMCsvConverter::stringToInt( std::string str )
     {
         return boost::lexical_cast< int >( str );
     }
-    catch( boost::bad_lexical_cast e )
+    catch( boost::bad_lexical_cast &e )
     {
         throw WException( "The selected column has an incorrect format. Numbers (int) are expected. " + std::string( e.what() ) );
     }
