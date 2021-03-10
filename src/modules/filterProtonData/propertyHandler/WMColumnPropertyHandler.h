@@ -88,7 +88,7 @@ private:
      * A vector, where all default ColumnPropertyNames are stored in
      */
     const std::vector< std::string > vecDefaultColumnNames = { "PDGEncoding", "posX", "posY", "posZ", "edep", "eventID", "trackID",
-                                                              "parentID", "SelectedEventID" };
+                                                              "parentID"};
 
     /**
      * A map between WPropSelection items and column names as strings

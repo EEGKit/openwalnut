@@ -132,7 +132,5 @@ void WMProtonData::updateAvailabilityOfColumns()
         {
             m_availabilityColumnMap[column] = true;
         }
-
-        std::cout << m_availabilityColumnMap[column] << " " << column << std::endl << std::endl;
     }
 }

@@ -38,7 +38,7 @@ void WMEventIDLimitationPropertyHandler::createProperties()
 {
     WPropertyBase::PropertyChangeNotifierType eventIDNotifier = boost::bind( &WMEventIDLimitationPropertyHandler::updateMesh, this );
     WPropGroup eventIDGroup = m_properties->addPropertyGroup( "Event ID Limitation", "Adjust the range of eventIDs to show.", 0 );
-    m_minCap = eventIDGroup->addProperty( "Min Cap", "Set your minium border of your range.", 1 );
+    m_minCap = eventIDGroup->addProperty( "Min Cap", "Set your minium border of your range.", -1 );
     m_maxCap = eventIDGroup->addProperty( "Max Cap", "Set your maximum border of your range.", 2000 );
     m_applySelection = eventIDGroup->addProperty( "Set selection", "Apply", WPVBaseTypes::PV_TRIGGER_READY, eventIDNotifier );
 
