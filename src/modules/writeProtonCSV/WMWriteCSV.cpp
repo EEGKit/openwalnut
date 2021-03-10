@@ -125,7 +125,7 @@ void WMWriteCSV::propertyCallback()
         throw WException( "The Point-Connector-connection is missing." );
     }
 
-   writeToFile();
+    writeToFile();
 }
 
 std::list< std::tuple < osg::Vec3, int > > WMWriteCSV::getListOfInternalVertex( WDataSetFibers::SPtr fibers )
