@@ -25,63 +25,122 @@
 #ifndef WDATASETPOINTSANDEVENTID_H
 #define WDATASETPOINTSANDEVENTID_H
 
-#include "WDataSet.h"
+#include <string>
+#include <vector>
+
+#include <boost/shared_ptr.hpp>
+
 #include "WDataSetPoints.h"
 
 /**
- * Dataset to store a bunch of points and Fibers.
+ * Dataset to store a bunch of points with their sizes but without order or topology.
  */
-class WDataSetPointsAndEventID : public WDataSet 
+class WDataSetPointsAndEventID : public WDataSetPoints
 {
-    /**
-     * represents a boost::shared_ptr to a vector containing a vector of floats.
-     */
-    typedef boost::shared_ptr< std::vector< int > > SPIntVector;
-
 public:
     /**
-     * Construct WDataSetPointsAndEventID object.
-     *
-     * \param points Bunch of points.
-     * \param eventIDs Bunch of eventIDs.
+     * Pointer to dataset.
      */
-    explicit WDataSetPointsAndEventID( WDataSetPoints::SPtr points,  SPIntVector eventIDs );
+    typedef boost::shared_ptr< WDataSetPointsAndEventID > SPtr;
 
     /**
-     * The standard constructor.
+     * Pointer to const dataset.
+     */
+    typedef boost::shared_ptr< const WDataSetPointsAndEventID > ConstSPtr;
+
+    /**
+     * Sizes for each vertix in VertexArray
+     */
+    typedef boost::shared_ptr< std::vector< int > > EventIDArray;
+
+    /**
+     * Constructs a new set of points. If no color is specified, white is used for all points.
+     *
+     * \note the number of floats in vertices must be a multiple of 3
+     * \note the number of floats in colors (if not NULL) must be vertices->size() / 3  times one of 1,3, or 4
+     * \note the number of floats in sizes must be vertices->size() / 3
+     *
+     * \param vertices the vertices of the points, stored in x1,y1,z1,x2,y2,z2, ..., xn,yn,zn scheme
+     * \param colors the colors of each vertex. Can be NULL. Stored as R1,G1,B1,A1, ... Rn,Gn,Bn,An
+     * \param eventIDs the eventID of each vertex.
+     * \param boundingBox The bounding box of the points (first minimum, second maximum).
+     */
+    WDataSetPointsAndEventID( VertexArray vertices, ColorArray colors,
+                            EventIDArray eventIDs, WBoundingBox boundingBox );
+
+    /**
+     * Constructs a new set of points. The bounding box is calculated during construction. If no color is specified, white is used for all
+     * points.
+     *
+     * \note the number of floats in vertices must be a multiple of 3
+     * \note the number of floats in colors (if not NULL) must be vertices->size() / 3  times one of 1,3, or 4
+     * \note the number of floats in sizes must be vertices->size() / 3
+     *
+     * \param vertices the vertices of the points, stored in x1,y1,z1,x2,y2,z2, ..., xn,yn,zn scheme
+     * \param eventIDs the eventID of each vertex.
+     * \param colors the colors of each vertex. Can be NULL. Stored as R1,[G1,B1,[A1,]] ... Rn,[Gn,Bn,[An]]
+     */
+    WDataSetPointsAndEventID( VertexArray vertices, ColorArray colors,
+                            EventIDArray eventIDs );
+
+    /**
+     * Constructs a new set of points. The constructed instance is empty.
      */
     WDataSetPointsAndEventID();
 
     /**
-     * Destructs this dataset.
+     * Destructor.
      */
-    virtual ~WDataSetPointsAndEventID();
+    ~WDataSetPointsAndEventID();
 
     /**
-     * Getter method to receive points.
+     * Gets the name of this prototype.
      *
-     * \return m_points  a dataset with given points.
+     * \return the name.
      */
-    WDataSetPoints::SPtr getPoints();
+    const std::string getName() const;
 
     /**
-     * Getter method to receive fibers.
+     * Gets the description for this prototype.
      *
-     * \return m_eventIDs a dataset with given EventIDs.
+     * \return the description
      */
-    SPIntVector getEventIDs();
+    const std::string getDescription() const;
+
+    /**
+     * Returns a prototype instantiated with the true type of the deriving class.
+     *
+     * \return the prototype.
+     */
+    static boost::shared_ptr< WPrototyped > getPrototype();
+
+    /**
+     * Getter for the point eventIDs
+     * \return The eventIDs
+     */
+    EventIDArray getEventIDs() const;
+
+    /**
+     * The eventID of a given point.
+     *
+     * \throw WOutOfBounds if invalid index is used.
+     * \param pointIdx the point index.
+     *
+     * \return the eventID
+     */
+    int getEventID( const int pointIdx ) const;
+
+protected:
+    /**
+     * The prototype as singleton.
+     */
+    static boost::shared_ptr< WPrototyped > m_prototype;
 
 private:
     /**
-     * Dataset to store a bunch of points.
+     * An array of the eventID per vertex.
      */
-    WDataSetPoints::SPtr m_points;
-
-    /**
-     * Dataset to store a bunch of  Fibers. 
-     */
-    SPIntVector m_eventIDs;
-
+    EventIDArray m_eventIDs;
 };
 
 #endif  // WDATASETPOINTSANDEVENTID_H

@@ -22,11 +22,29 @@
 //
 //---------------------------------------------------------------------------
 
+#include <string>
+
 #include "WDataSetPointsAndEventID.h"
 
-WDataSetPointsAndEventID::WDataSetPointsAndEventID( WDataSetPoints::SPtr points,  SPIntVector eventIDs )
-    : m_points( points ), m_eventIDs( eventIDs )
+boost::shared_ptr< WPrototyped > WDataSetPointsAndEventID::m_prototype = boost::shared_ptr< WPrototyped >();
+
+WDataSetPointsAndEventID::WDataSetPointsAndEventID( WDataSetPointsAndEventID::VertexArray vertices,
+                                                WDataSetPointsAndEventID::ColorArray colors,
+                                                WDataSetPointsAndEventID::EventIDArray eventIDs,
+                                                WBoundingBox boundingBox ):
+    WDataSetPoints( vertices, colors, boundingBox ),
+    m_eventIDs( eventIDs )
 {
+    WAssert( eventIDs->size() == vertices->size() / 3 , "Number of ints in eventID array must be 1 per vertex" );
+}
+
+WDataSetPointsAndEventID::WDataSetPointsAndEventID( WDataSetPointsAndEventID::VertexArray vertices,
+                                                WDataSetPointsAndEventID::ColorArray colors,
+                                                WDataSetPointsAndEventID::EventIDArray eventIDs ):
+    WDataSetPoints( vertices, colors ),
+    m_eventIDs( eventIDs )
+{
+    WAssert( eventIDs->size() == vertices->size() / 3 , "Number of ints in eventID array must be 1 per vertex" );
 }
 
 WDataSetPointsAndEventID::WDataSetPointsAndEventID()
@@ -37,12 +55,37 @@ WDataSetPointsAndEventID::~WDataSetPointsAndEventID()
 {
 }
 
-WDataSetPoints::SPtr WDataSetPointsAndEventID::getPoints()
+const std::string WDataSetPointsAndEventID::getName() const
 {
-    return m_points;
+    return "WDataSetPointsAndEventID";
 }
 
-WDataSetPointsAndEventID::SPIntVector WDataSetPointsAndEventID::getEventIDs()
+const std::string WDataSetPointsAndEventID::getDescription() const
+{
+    return "Dataset which contains points including their eventID.";
+}
+
+boost::shared_ptr< WPrototyped > WDataSetPointsAndEventID::getPrototype()
+{
+    if( !m_prototype )
+    {
+        m_prototype = boost::shared_ptr< WPrototyped >( new WDataSetPointsAndEventID() );
+    }
+
+    return m_prototype;
+}
+
+WDataSetPointsAndEventID::EventIDArray WDataSetPointsAndEventID::getEventIDs() const
 {
     return m_eventIDs;
+}
+
+int WDataSetPointsAndEventID::getEventID( const int pointIdx ) const
+{
+    if( !isValidPointIdx( pointIdx ) )
+    {
+        throw WOutOfBounds( "The specified index is invalid." );
+    }
+
+    return m_eventIDs->operator[]( pointIdx );
 }

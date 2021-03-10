@@ -82,7 +82,6 @@ void WMCsvConverter::setOutputFromCSV( )
         addColor( m_plainColor );
         addEdepAndSize( dataRow, &maxEdep );
         addEventID( dataRow );
-        addSelectedEventID( dataRow );
     }
 
     if( checkIfOutputIsNull() )
@@ -335,10 +334,12 @@ void WMCsvConverter::createOutputFibers()
 
 void WMCsvConverter::createOutputPointsAndEventIDs()
 {
+    std::cout << m_vectors->getEventIDs()->size() << " " << m_vectors->getVertices()->size() << std::endl;
     m_selectedEventIDs = boost::shared_ptr < WDataSetPointsAndEventID >(
-                    new WDataSetPointsAndEventID(
-                    m_points,
-                    m_vectors->getSelectedEventIDs()
+            new WDataSetPointsAndEventID(
+                    m_vectors->getVertices(),
+                    m_vectors->getColors(),
+                    m_vectors->getEventIDs()
             )
     );
 }
@@ -355,19 +356,6 @@ void WMCsvConverter::addEventID( WDataSetCSV::Content::iterator dataRow )
 
             m_vectors->getEventIDs()->push_back( ( int )stringToFloat( dataRow->at( m_indexes->getEventID() ) ) );
         }
-}
-
-
-void WMCsvConverter::addSelectedEventID( WDataSetCSV::Content::iterator dataRow )
-{
-    if(m_protonData->isColumnAvailable("SelectedEventID"))
-    {
-        if(dataRow->at( m_indexes->getSelectedEventID() ) == "NULL")
-        {
-            return;
-        }
-        m_vectors->getSelectedEventIDs()->push_back( std::stoi(dataRow->at( m_indexes->getSelectedEventID() ) ) );
-    }
 }
 
 void WMCsvConverter::setTransferFunction( boost::shared_ptr< std::vector<unsigned char> > data )

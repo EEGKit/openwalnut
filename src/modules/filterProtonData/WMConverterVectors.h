@@ -111,13 +111,7 @@ public:
      * Gets the event IDs as shared_ptr to a size_t vector.
      * \return SPSizeVector The event IDs.
      */
-    SPSizeVector getEventIDs();
-
-    /**
-     * Gets the selected event IDs as shared_ptr to a int vector.
-     * \return SPIntVector The  selected event IDs.
-     */
-    SPIntVector getSelectedEventIDs();
+    SPIntVector getEventIDs();
 
 private:
     SPFloatVector m_vertices;   //!< The vertices.
@@ -134,9 +128,7 @@ private:
 
     SPSizeVector m_verticesReverse; //!< The reverse vertices.
 
-    SPSizeVector m_eventIDs;    //!< the event IDs.
-
-    SPIntVector m_selectedEventIDs; //!< the selected Event IDs.
+    SPIntVector m_eventIDs;    //!< the event IDs.
 };
 
 #endif  // WMCONVERTERVECTORS_H

@@ -169,12 +169,33 @@ void WMPointConnector::handleInput()
         return;
     }
 
+    WDataSetPointsAndEventID::SPtr pointsAndEventIDs = boost::dynamic_pointer_cast< WDataSetPointsAndEventID >( points );
+
     m_connectorData->clear();
 
     for( size_t pointIdx = 0; pointIdx < points->size(); ++pointIdx )
     {
-        m_connectorData->addVertex( points->operator[]( pointIdx ), points->getColor( pointIdx ) );
+        osg::Vec3 vertex = points->operator[]( pointIdx );
+        m_connectorData->addVertex( vertex, points->getColor( pointIdx ) );
+
+        if( pointsAndEventIDs )
+        {
+            int eventID = pointsAndEventIDs->getEventID( pointIdx );
+            if( eventID < 0 )
+            {
+                continue;
+            }
+            
+            while( m_fiberHandler->getFibers()->size() <= eventID )
+            {
+                m_fiberHandler->addFiber( "Fiber " + boost::lexical_cast< std::string >( eventID ) );
+            }
+
+            m_fiberHandler->addVertexToFiber( vertex, eventID );
+        }
     }
+
+    
 
     updatePoints();
 }
