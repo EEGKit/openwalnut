@@ -211,7 +211,7 @@ void WMWriteCSV::writeToFile()
 
     std::string outputFilename = sourceFilename + "-edited.csv";
 
-    WDataSetCSV::UnseperatedRowSPtr csvContent = m_CSVInput->getData()->getRawDataSet();
+    WDataSetCSV::SeperatedRowSPtr csvContent = m_CSVInput->getData()->getRawDataSet();
     WDataSetFibers::SPtr fibers = m_PointsAndFibersInput->getData()->getFibers();
     WDataSetPoints::SPtr points = m_PointsAndFibersInput->getData()->getPoints();
 
