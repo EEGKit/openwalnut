@@ -83,15 +83,6 @@ void WMWriteCSV::moduleMain()
         debugLog() << "Waiting for data ...";
 
         m_moduleState.wait();
-
-        // acquire data from the input connector
-        boost::shared_ptr< WDataSetCSV > csvdataSet = m_CSVInput->getData();
-        boost::shared_ptr< WDataSetPointsAndFibers > pointsAndfibersdataSet = m_PointsAndFibersInput->getData();
-
-        if( !csvdataSet || !pointsAndfibersdataSet)
-        {
-            continue;
-        }
     }
 }
 
