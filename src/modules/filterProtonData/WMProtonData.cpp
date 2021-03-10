@@ -37,6 +37,11 @@ WMProtonData::WMProtonData( WDataSetCSV::ContentSPtr csvHeader, WDataSetCSV::Con
 
 void WMProtonData::setCSVHeader( WDataSetCSV::ContentSPtr csvHeader )
 {
+    if( csvHeader == nullptr )
+    {
+        throw WException( "Can not set header! No header specified!" );
+    }
+
     if( csvHeader->empty() )
     {
         throw WException( "No empty header allowed!" );

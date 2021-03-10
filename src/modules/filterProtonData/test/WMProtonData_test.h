@@ -28,6 +28,7 @@
 #include <vector>
 #include <string>
 #include <cxxtest/TestSuite.h>
+#include <core/common/test/WException_test.h>
 
 #include "../WMProtonData.h"
 
@@ -105,6 +106,41 @@ public:
         TS_ASSERT_THROWS_NOTHING(
             WMProtonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
                           boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+        );
+    }
+
+
+    /**
+     * Tests, if setCSVHeader throws an exception, when the new header is empty
+     */
+    void testSetCSVHeaderEmpty()
+    {
+        WMProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+                                 boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+
+        WDataSetCSV::ContentSPtr tmpEmptyHeader = WDataSetCSV::ContentSPtr( new WDataSetCSV::Content() );
+        TS_ASSERT_THROWS_EQUALS(
+            protonData.setCSVHeader( tmpEmptyHeader ),
+            WException &e,
+            e.what(),
+            "No empty header allowed!"
+        );
+    }
+
+    /**
+     * Tests, if setCSVHeader throws an exception, when parameter is a null pointer
+     */
+    void testSetCSVHeaderNull()
+    {
+        WMProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+                                 boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+
+        WDataSetCSV::ContentSPtr tmpHeaderNullptr = nullptr;
+        TS_ASSERT_THROWS_EQUALS(
+            protonData.setCSVHeader( tmpHeaderNullptr ),
+            WException &e,
+            e.what(),
+            "Can not set header! No header specified!"
         );
     }
 
