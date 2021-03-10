@@ -146,7 +146,7 @@ bool WMCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRo
     if( m_protonData->isColumnAvailable( "parentID" ) &&
         m_protonData->isColumnAvailable( "trackID" ) )
     {
-        int PrimaryValue = ( int )stringToFloat( dataRow->at( m_indexes->getParentID() ) );
+        int PrimaryValue = stringToInt( dataRow->at( m_indexes->getParentID() ) );
 
         if( !m_propertyStatus->getFilterPropertyHandler()->getShowPrimaries()->get() && PrimaryValue == 0 )
         {
@@ -162,7 +162,7 @@ bool WMCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRo
     if( m_protonData->isColumnAvailable( "PDGEncoding" ) )
     {
         if( !m_propertyStatus->getFilterPropertyHandler()->isPDGTypeSelected(
-            ( int )stringToFloat( dataRow->at( m_indexes->getPDGEncoding( ) ) ) ) )
+           stringToInt( dataRow->at( m_indexes->getPDGEncoding( ) ) ) ) )
         {
             return false;
         }
@@ -175,7 +175,7 @@ bool WMCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRo
             return true;
         }
 
-        int eventID = ( int )stringToFloat( dataRow->at( m_indexes->getEventID() ) );
+        int eventID = stringToInt( dataRow->at( m_indexes->getEventID() ) );
         if( eventID < m_propertyStatus->getEventIDLimitationPropertyHandler()->getMinCap()->get() ||
             eventID > m_propertyStatus->getEventIDLimitationPropertyHandler()->getMaxCap()->get() )
         {
@@ -314,7 +314,14 @@ void WMCsvConverter::createOutputFibers()
 
     if(m_protonData->isColumnAvailable("edep"))
     {
-        m_fibers->addColorScheme( m_vectors->getColors(), "Energy deposition", "Color fibers based on their energy." );
+        if( m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
+        {
+            m_fibers->removeColorScheme( m_fibers->getColorScheme( "Global Color" )->getColor() );
+            m_fibers->removeColorScheme( m_fibers->getColorScheme( "Local Color" )->getColor() );
+            m_fibers->removeColorScheme( m_fibers->getColorScheme( "Custom Color" )->getColor() );
+            m_fibers->addColorScheme( m_vectors->getColors(), "Energy deposition",
+                                      "Color fibers based on their energy." );
+        }
     }
 }
 
@@ -327,7 +334,7 @@ void WMCsvConverter::addEventID( WDataSetCSV::Content::iterator dataRow )
                 return;
             }
 
-            m_vectors->getEventIDs()->push_back( ( int )stringToFloat( dataRow->at( m_indexes->getEventID() ) ) );
+            m_vectors->getEventIDs()->push_back( stringToInt( dataRow->at( m_indexes->getEventID() ) ) );
         }
 }
 
@@ -366,6 +373,18 @@ float WMCsvConverter::stringToFloat( std::string str )
     }
     catch( boost::bad_lexical_cast e )
     {
-        throw WException( "The selected column has an incorrect format. Numbers are expected. " + std::string( e.what() ) );
+        throw WException( "The selected column has an incorrect format. Numbers (float) are expected. " + std::string( e.what() ) );
+    }
+}
+
+int WMCsvConverter::stringToInt( std::string str )
+{
+    try
+    {
+        return boost::lexical_cast< int >( str );
+    }
+    catch( boost::bad_lexical_cast e )
+    {
+        throw WException( "The selected column has an incorrect format. Numbers (int) are expected. " + std::string( e.what() ) );
     }
 }

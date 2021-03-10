@@ -49,9 +49,10 @@ public:
      * \param name The name of the fiber.
      * \param position The position of this fiber in the fibers vector.
      * \param fiber The fiber that was removed.
+     * \param hidden If the fiber was hidden.
      * \param fiberHandler The WFiberHandler of the action.
      */
-    WFiberActionRemoveFiber( std::string name, size_t position, WFiberHandler::PCFiber fiber, WFiberHandler* fiberHandler );
+    WFiberActionRemoveFiber( std::string name, size_t position, WFiberHandler::PCFiber fiber, bool hidden, WFiberHandler* fiberHandler );
 
     /**
      * Empty destructor.
@@ -83,6 +84,11 @@ private:
      * The fiber that was removed.
      */
     WFiberHandler::PCFiber m_fiber;
+
+    /**
+     * Whether the fiber is hidden.
+     */
+    bool m_hidden;
 
     /**
      * The WFiberHandler of the action.
