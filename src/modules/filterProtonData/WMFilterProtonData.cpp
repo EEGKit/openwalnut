@@ -40,7 +40,7 @@ WMFilterProtonData::~WMFilterProtonData()
 
 const std::string WMFilterProtonData::getName() const
 {
-    return "FilterProtonData";
+    return "Filter Proton Data";
 }
 
 const std::string WMFilterProtonData::getDescription() const
