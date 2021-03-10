@@ -33,6 +33,8 @@
 #include "action/WFiberActionRemoveFiber.h"
 #include "action/WFiberActionToggle.h"
 
+#include "core/common/WPathHelper.h"
+
 #include "WFiberHandler.h"
 
 WFiberHandler::WFiberHandler( WMPointConnector* pointConnector )
