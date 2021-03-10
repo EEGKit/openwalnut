@@ -101,23 +101,31 @@ private:
     void writeToFile();
 
     /**
+     * Trigger Event for Dialogfile
+     */
+    void propertyCallback();
+
+    /**
      * Helpermethod to create a List of internal vertex with id
+     * \param fibers selected points as fibers from Point-Connector
+     * \return list of internal vertex with id 
      */
     std::list< std::tuple < osg::Vec3, int > > getListOfInternalVertex( WDataSetFibers::SPtr fibers );
 
     /**
      * Helpermethod to create a List of internal Position with id
+     * \param listOfInternalVertex selected points as fibers from Point-Connector
+     * \param points selected points as fibers from Point-Connector
+     * \return list of internal position of row and the selectedEventID
      */
     std::list< std::tuple < int, int > > getListOfPositionAndID(
                             std::list< std::tuple < osg::Vec3, int > > listOfInternalVertex,
                             WDataSetPoints::SPtr points );
 
     /**
-     * The filename property -> where to write the nifty file
+     * The filename property -> where to write the csv file
      */
     WPropFilename m_filename;
-
-    WPropTrigger  m_saveTriggerProp; //!< This property triggers the actual writing,
 
     boost::shared_ptr< WModuleInputData< WDataSetCSV > > m_CSVInput;  //!< Input connector required by this module.
     boost::shared_ptr< WModuleInputData< WDataSetPointsAndFibers > > m_PointsAndFibersInput;  //!< Input connector required by this module.

@@ -75,7 +75,6 @@ void WMWriteCSV::moduleMain()
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_CSVInput->getDataChangedCondition() );
     m_moduleState.add( m_PointsAndFibersInput->getDataChangedCondition() );
-    m_moduleState.add( m_saveTriggerProp->getCondition() );
 
     ready();
 
@@ -84,20 +83,6 @@ void WMWriteCSV::moduleMain()
         debugLog() << "Waiting for data ...";
 
         m_moduleState.wait();
-
-        // acquire data from the input connector
-        boost::shared_ptr< WDataSetCSV > csvdataSet = m_CSVInput->getData();
-        boost::shared_ptr< WDataSetPointsAndFibers > pointsAndfibersdataSet = m_PointsAndFibersInput->getData();
-
-        if( !csvdataSet || !pointsAndfibersdataSet)
-        {
-            continue;
-        }
-        if( m_saveTriggerProp->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
-        {
-            writeToFile();
-            m_saveTriggerProp->set( WPVBaseTypes::PV_TRIGGER_READY, false ); // reset button to save again
-        }
     }
 }
 
@@ -117,10 +102,30 @@ void WMWriteCSV::connectors()
 
 void WMWriteCSV::properties()
 {
-    m_filename = m_properties->addProperty( "Filename", "Filename where to write the NIfTI file to.", WPathHelper::getHomePath() );
-    m_saveTriggerProp = m_properties->addProperty( "Do save",  "Press!", WPVBaseTypes::PV_TRIGGER_READY );
+    WPropertyBase::PropertyChangeNotifierType notifier = boost::bind(
+        &WMWriteCSV::propertyCallback, this );
+
+    m_filename = m_properties->addProperty( "Filename", "Filename where to write the NIfTI file to.", WPathHelper::getHomePath(), notifier );
 
     WModule::properties();
+}
+
+void WMWriteCSV::propertyCallback()
+{
+    boost::shared_ptr< WDataSetCSV > csvdataSet = m_CSVInput->getData();
+    boost::shared_ptr< WDataSetPointsAndFibers > pointsAndfibersdataSet = m_PointsAndFibersInput->getData();
+
+    if( !csvdataSet )
+    {
+        throw WException( "The Data-Modul-CSV-connection is missing." );
+    }
+
+    if( !pointsAndfibersdataSet )
+    {
+        throw WException( "The Point-Connector-connection is missing." );
+    }
+
+    writeToFile();
 }
 
 std::list< std::tuple < osg::Vec3, int > > WMWriteCSV::getListOfInternalVertex( WDataSetFibers::SPtr fibers )
@@ -206,7 +211,7 @@ void WMWriteCSV::writeToFile()
 
     std::string outputFilename = sourceFilename + "-edited.csv";
 
-    WDataSetCSV::UnseperatedRowSPtr csvContent = m_CSVInput->getData()->getRawDataSet();
+    WDataSetCSV::SeperatedRowSPtr csvContent = m_CSVInput->getData()->getRawDataSet();
     WDataSetFibers::SPtr fibers = m_PointsAndFibersInput->getData()->getFibers();
     WDataSetPoints::SPtr points = m_PointsAndFibersInput->getData()->getPoints();
 

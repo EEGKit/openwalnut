@@ -50,7 +50,7 @@ public:
      */
     typedef boost::shared_ptr< std::vector< std::vector< std::string > > > ContentSPtr;
 
-    typedef boost::shared_ptr< std::vector< std:: string > > UnseperatedRowSPtr;
+    typedef boost::shared_ptr< std::vector< std:: string > > SeperatedRowSPtr;
 
     /**
      * Construct WDataSetCSV object
@@ -89,14 +89,14 @@ public:
      *
      * \return m_data as WDataSetCSV::Content object
      */
-    void setRawDataSet( WDataSetCSV::UnseperatedRowSPtr rawDataSetIn );
+    void setRawDataSet( WDataSetCSV::SeperatedRowSPtr rawDataSetIn );
 
     /**
      * Getter method to receive csv data
      *
      * \return rawDataSet as std::vector< std:: string > object
      */
-    UnseperatedRowSPtr getRawDataSet();
+    SeperatedRowSPtr getRawDataSet();
 
 private:
     /**
@@ -112,7 +112,7 @@ private:
     /**
      * Stores the rawdata of a loaded CSV file.
      */
-    UnseperatedRowSPtr rawDataSet;
+    SeperatedRowSPtr rawDataSet;
 };
 
 #endif  // WDATASETCSV_H

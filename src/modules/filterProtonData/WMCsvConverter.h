@@ -233,10 +233,16 @@ private:
     float getClusterSize( float edep );
 
     /**
-     * checks whether the string is a number  
-     * \return return the casted value
+     * checks whether the string is a number (float)  
+     * \return return the casted float value
      */
     float stringToFloat( std::string str );
+
+    /**
+     * checks whether the string is a number (int)
+     * \return return the casted int value
+     */
+    int stringToInt( std::string str );
 };
 
 #endif  // WMCSVCONVERTER_H
