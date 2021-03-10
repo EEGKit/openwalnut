@@ -69,10 +69,10 @@ const std::string WMPointConnector::getDescription() const
 void WMPointConnector::connectors()
 {
     m_pointInput = WModuleInputData< WDataSetPoints >::createAndAdd( shared_from_this(), "points in", "The data to display" );
-    m_fiberOutput = WModuleOutputData< WDataSetFibers >::createAndAdd( shared_from_this(), "fibers out", "The created fibers" );
     m_pointAndFibersOutput = WModuleOutputData< WDataSetPointsAndFibers >::createAndAdd( shared_from_this(), "points and fibers out", "Contains the internal points and the connected fibers " );
 
     m_pointOutput = WModuleOutputData< WDataSetPoints >::create( shared_from_this(), "points out", "The data that is passed internally" );
+    m_fiberOutput = WModuleOutputData< WDataSetFibers >::create( shared_from_this(), "fibers out", "The created fibers" );
 
     WModule::connectors();
 }
@@ -173,6 +173,10 @@ void WMPointConnector::handleInput()
 
     m_connectorData->clear();
 
+    m_fiberHandler->clear();
+
+    WFiberHandler::PCFiberListSPtr fibers = m_fiberHandler->getFibers();
+
     for( size_t pointIdx = 0; pointIdx < points->size(); ++pointIdx )
     {
         osg::Vec3 vertex = points->operator[]( pointIdx );
@@ -186,18 +190,19 @@ void WMPointConnector::handleInput()
                 continue;
             }
             
-            while( m_fiberHandler->getFibers()->size() <= eventID )
+            while( fibers->size() <= eventID )
             {
-                m_fiberHandler->addFiber( "Fiber " + boost::lexical_cast< std::string >( eventID ) );
+                m_fiberHandler->addFiber( "Fiber " + boost::lexical_cast< std::string >( eventID ), true, false );
             }
 
-            m_fiberHandler->addVertexToFiber( vertex, eventID );
+            ( fibers->begin() + eventID )->push_back( vertex );
         }
     }
 
-    
+    m_fiberHandler->selectorUpdate();
 
     updatePoints();
+    updateOutput();
 }
 
 void WMPointConnector::updatePoints()
