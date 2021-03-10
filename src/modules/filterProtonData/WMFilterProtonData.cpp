@@ -30,7 +30,7 @@
 W_LOADABLE_MODULE( WMFilterProtonData )
 
 WMFilterProtonData::WMFilterProtonData():
-        WModule()
+        WModuleContainer()
 {
 }
 
@@ -105,6 +105,7 @@ void WMFilterProtonData::moduleMain()
         m_propertyStatus->getFilterPropertyHandler()->createProperties();
         m_propertyStatus->getVisualizationPropertyHandler()->createProperties();
         m_propertyStatus->getEventIDLimitationPropertyHandler()->createProperties();
+        createColorBar();
         setOutputFromCSV( );
     }
 }
@@ -128,7 +129,7 @@ void WMFilterProtonData::properties()
 
 void WMFilterProtonData::setOutputFromCSV()
 {
-    m_converter = boost::shared_ptr< WMCsvConverter >( new WMCsvConverter( m_protonData, m_propertyStatus ) );
+    m_converter = boost::shared_ptr< WMCsvConverter >( new WMCsvConverter( m_protonData, m_propertyStatus, m_colorBar ) );
 
     m_output_points->updateData( m_converter->getPoints() );
     m_output_fibers->updateData( m_converter->getFibers() );
@@ -141,4 +142,11 @@ void WMFilterProtonData::updateProperty()
     m_propertyStatus->getFilterPropertyHandler()->updateProperty();
     m_propertyStatus->getVisualizationPropertyHandler()->updateProperty();
     m_propertyStatus->getEventIDLimitationPropertyHandler()->updateProperty();
+}
+
+void WMFilterProtonData::createColorBar()
+{
+    m_colorBar = createAndAdd( "Transfer Function Color Bar" );
+    m_colorBar->isReady().wait();
+    m_output_transferFunction->connect( m_colorBar->getInputConnector( "transfer function" ) );
 }
