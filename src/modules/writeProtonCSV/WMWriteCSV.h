@@ -118,7 +118,7 @@ private:
                             WDataSetPoints::SPtr points );
 
     /**
-     * The filename property -> where to write the nifty file
+     * The filename property -> where to write the csv file
      */
     WPropFilename m_filename;
 
