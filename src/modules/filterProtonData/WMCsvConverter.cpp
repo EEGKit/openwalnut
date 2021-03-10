@@ -162,7 +162,7 @@ bool WMCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRo
     if( m_protonData->isColumnAvailable( "PDGEncoding" ) )
     {
         if( !m_propertyStatus->getFilterPropertyHandler()->isPDGTypeSelected(
-           stringToInt( dataRow->at( m_indexes->getPDGEncoding( ) ) ) ) )
+           ( int )stringToFloat( dataRow->at( m_indexes->getPDGEncoding( ) ) ) ) )
         {
             return false;
         }
