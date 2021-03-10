@@ -160,8 +160,8 @@ void WMFilterPropertyHandler::createPropToSetParticleNames()
     WPropertyBase::PropertyChangeNotifierType notifierSetParticleName = boost::bind(
         &WMFilterPropertyHandler::saveRenameParticleButtonClick, this, boost::placeholders::_1 );
 
-    m_filteringsubGroup  = m_filteringGroup->addPropertyGroup( "Rename or Delete Particle-Name",
-                                                            "Change, set a new name or delete for a particlename" );
+    m_filteringsubGroup  = m_filteringGroup->addPropertyGroup( "Rename Particle Types",
+                                                            "" );
 
     m_inputNewParticleName = m_filteringsubGroup->addProperty( "New name (press enter)", "Type in a new name for the selected particle type. "
                                                             "To submit your entry press enter while you are in the textbox.",
