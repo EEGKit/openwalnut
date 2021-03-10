@@ -75,7 +75,6 @@ void WMWriteCSV::moduleMain()
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_CSVInput->getDataChangedCondition() );
     m_moduleState.add( m_PointsAndFibersInput->getDataChangedCondition() );
-    m_moduleState.add( m_saveTriggerProp->getCondition() );
 
     ready();
 
@@ -92,11 +91,6 @@ void WMWriteCSV::moduleMain()
         if( !csvdataSet || !pointsAndfibersdataSet)
         {
             continue;
-        }
-        if( m_saveTriggerProp->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
-        {
-            writeToFile();
-            m_saveTriggerProp->set( WPVBaseTypes::PV_TRIGGER_READY, false ); // reset button to save again
         }
     }
 }
@@ -117,10 +111,17 @@ void WMWriteCSV::connectors()
 
 void WMWriteCSV::properties()
 {
-    m_filename = m_properties->addProperty( "Filename", "Filename where to write the NIfTI file to.", WPathHelper::getHomePath() );
-    m_saveTriggerProp = m_properties->addProperty( "Do save",  "Press!", WPVBaseTypes::PV_TRIGGER_READY );
+    WPropertyBase::PropertyChangeNotifierType notifier = boost::bind(
+        &propertyCallback, this );
+
+    m_filename = m_properties->addProperty( "Filename", "Filename where to write the NIfTI file to.", WPathHelper::getHomePath(), notifier );
 
     WModule::properties();
+}
+
+void WMWriteCSV::propertyCallback()
+{
+   writeToFile();
 }
 
 std::list< std::tuple < osg::Vec3, int > > WMWriteCSV::getListOfInternalVertex( WDataSetFibers::SPtr fibers )

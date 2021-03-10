@@ -101,6 +101,11 @@ private:
     void writeToFile();
 
     /**
+     * Trigger Event for Dialogfile
+     */
+    void propertyCallback();
+
+    /**
      * Helpermethod to create a List of internal vertex with id
      */
     std::list< std::tuple < osg::Vec3, int > > getListOfInternalVertex( WDataSetFibers::SPtr fibers );
@@ -116,8 +121,6 @@ private:
      * The filename property -> where to write the nifty file
      */
     WPropFilename m_filename;
-
-    WPropTrigger  m_saveTriggerProp; //!< This property triggers the actual writing,
 
     boost::shared_ptr< WModuleInputData< WDataSetCSV > > m_CSVInput;  //!< Input connector required by this module.
     boost::shared_ptr< WModuleInputData< WDataSetPointsAndFibers > > m_PointsAndFibersInput;  //!< Input connector required by this module.
