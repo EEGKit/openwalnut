@@ -107,6 +107,68 @@ public:
                           boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
         );
     }
+
+    /**
+     * Tests, if all entries of m_availabilityColumnMap are set to true
+     */
+     void testUpdateAvailabilityOfColumnsAllTrue()
+    {
+        WMProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+                                 boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+        for( auto keyValuePair : protonData.m_availabilityColumnMap )
+        {
+            TS_ASSERT_EQUALS( keyValuePair.second, true );
+        }
+    }
+
+    /**
+     * Tests, if all entries of m_availabilityColumnMap are set to false
+     */
+    void testUpdateAvailabilityOfColumnsAllFalse()
+    {
+        WDataSetCSV::Content tmpColumnNames =
+        {
+            {
+                "PDGEncoding_", "edep_", "trackID_", "parentID_", "eventID_", "someMoreValues"
+            }
+        };
+
+        WMProtonData protonData( boost::make_shared< WDataSetCSV::Content >( tmpColumnNames ),
+                                 boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+
+        for( auto keyValuePair : protonData.m_availabilityColumnMap )
+        {
+            TS_ASSERT_EQUALS( keyValuePair.second, false );
+        }
+    }
+
+    /**
+     * Tests, if one entries of m_availabilityColumnMap is set to false
+     */
+    void testUpdateAvailabilityOfColumnsOneTrue()
+    {
+        WDataSetCSV::Content tmpColumnNames =
+        {
+            {
+                "_PDGEncoding", "_edep", "_trackID", "parentID", "_eventID", "someMoreValues"
+            }
+        };
+
+        WMProtonData protonData( boost::make_shared< WDataSetCSV::Content >( tmpColumnNames ),
+                                 boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+
+        for( auto keyValuePair : protonData.m_availabilityColumnMap )
+        {
+            if( keyValuePair.first == "parentID" )
+            {
+                TS_ASSERT_EQUALS( keyValuePair.second, true );
+            }
+            else
+            {
+                TS_ASSERT_EQUALS( keyValuePair.second, false );
+            }
+        }
+    }
 };
 
 #endif  // WMPROTONDATA_TEST_H
