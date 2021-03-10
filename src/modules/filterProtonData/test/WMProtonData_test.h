@@ -85,20 +85,6 @@ class WMProtonDataTest : public CxxTest::TestSuite
     };
 public:
     /**
-     *
-     */
-     void setUp()
-    {
-    }
-
-    /**
-     *
-     */
-    void tearDown()
-    {
-    }
-
-    /**
      * Test the constructor of WProtonData, so no exception is thrown, when input parameters are correct
      */
     void testConstructor()
@@ -108,7 +94,6 @@ public:
                           boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
         );
     }
-
 
     /**
      * Tests, if setCSVHeader throws an exception, when the new header is empty
@@ -141,6 +126,23 @@ public:
             WException &e,
             e.what(),
             "Can not set header! No header specified!"
+        );
+    }
+
+    /**
+     * Tests, if setCSVHeader throws an exception, when parameter is a null pointer
+     */
+    void testSetCSVDataNull()
+    {
+        WMProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+                                 boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+
+        WDataSetCSV::ContentSPtr tmpDataNullptr = nullptr;
+        TS_ASSERT_THROWS_EQUALS(
+                protonData.setCSVData( tmpDataNullptr ),
+                WException &e,
+                e.what(),
+                "Can not set data! No data specified!"
         );
     }
 

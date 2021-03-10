@@ -60,6 +60,11 @@ void WMProtonData::setCSVHeader( WDataSetCSV::ContentSPtr csvHeader )
 
 void WMProtonData::setCSVData( WDataSetCSV::ContentSPtr csvData )
 {
+    if( csvData == nullptr )
+    {
+        throw WException( "Can not set data! No data specified!" );
+    }
+
     m_csvData = csvData;
 }
 
