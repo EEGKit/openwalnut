@@ -59,6 +59,15 @@ public:
     WMCsvConverter( WMProtonData::SPtr protonData, boost::shared_ptr< WMPropertyStatus > propertyStatus );
 
     /**
+     * Initializes the vectors, indices and transfer function color bar
+     * Calls setOutputFromCSV.
+     * \param protonData The proton data to use.
+     * \param propertyStatus The status of the properties.
+     * \param colorBar Reference to the transfer function color bar module
+     */
+    WMCsvConverter( WMProtonData::SPtr protonData, boost::shared_ptr< WMPropertyStatus > propertyStatus, WModule::SPtr colorBar );
+
+    /**
      * represents a boost::shared_ptr to a vector containing a vector of floats.
      */
     typedef boost::shared_ptr< std::vector< float > > SPFloatVector;
@@ -93,6 +102,11 @@ private:
      * Stores information form csv content. Content object containing data
      */
     WMProtonData::SPtr m_protonData;
+
+    /**
+     * Stores reference to the given transfer function color bar module
+     */
+    WModule::SPtr m_colorBar;
 
     /**
      * Stores information for the fiber display

@@ -39,6 +39,19 @@ WMCsvConverter::WMCsvConverter( WMProtonData::SPtr protonData,  boost::shared_pt
     setOutputFromCSV( );
 }
 
+WMCsvConverter::WMCsvConverter( WMProtonData::SPtr protonData,  boost::shared_ptr< WMPropertyStatus > propertyStatus,
+                                WModule::SPtr colorBar )
+{
+    m_protonData = protonData;
+    m_propertyStatus = propertyStatus;
+    m_vectors = WMConverterVectors::SPtr( new WMConverterVectors() );
+    m_indexes = WMConverterIndexes::SPtr( new WMConverterIndexes() );
+    m_colorBar = colorBar;
+
+
+    setOutputFromCSV( );
+}
+
 boost::shared_ptr< WDataSetFibers > WMCsvConverter::getFibers()
 {
     return m_fibers;
@@ -133,6 +146,10 @@ void WMCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArr
                 }
             }
         }
+
+        bool activated = m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get();
+
+        m_colorBar->getProperties()->getProperty( "active" )->toPropBool()->set( activated );
     }
 }
 
