@@ -103,7 +103,7 @@ void WMWriteCSV::connectors()
 void WMWriteCSV::properties()
 {
     WPropertyBase::PropertyChangeNotifierType notifier = boost::bind(
-        &propertyCallback, this );
+        &WMWriteCSV::propertyCallback, this );
 
     m_filename = m_properties->addProperty( "Filename", "Filename where to write the NIfTI file to.", WPathHelper::getHomePath(), notifier );
 
