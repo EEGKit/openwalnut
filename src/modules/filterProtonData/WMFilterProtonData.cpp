@@ -23,6 +23,7 @@
 //---------------------------------------------------------------------------
 
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "WMFilterProtonData.h"
@@ -101,11 +102,16 @@ void WMFilterProtonData::moduleMain()
         }
         m_propertyStatus->getFilterPropertyHandler()->createPDGMap(
             ( m_localPath / getMetaInformation()->query< std::string >( "common/pdgnames" , "NoFile" ) ).string() );
+
+        clearProperties();
         m_propertyStatus->getColumnPropertyHandler()->createProperties();
         m_propertyStatus->getFilterPropertyHandler()->createProperties();
         m_propertyStatus->getVisualizationPropertyHandler()->createProperties();
         m_propertyStatus->getEventIDLimitationPropertyHandler()->createProperties();
+
         createColorBar();
+        setToLoadedProperties();
+
         setOutputFromCSV( );
     }
 }
@@ -122,9 +128,84 @@ void WMFilterProtonData::connectors()
     WModule::connectors();
 }
 
+void WMFilterProtonData::clearProperties()
+{
+    m_properties->removeProperty( m_properties->getProperty( "Select columns" ) );
+    m_properties->removeProperty( m_properties->getProperty( "Filtering" ) );
+    m_properties->removeProperty( m_properties->getProperty( "Visualization" ) );
+    m_properties->removeProperty( m_properties->getProperty( "Event ID Limitation" ) );
+}
+
 void WMFilterProtonData::properties()
 {
+    // Creating dummy properties for loading of projects
+    // TODO(robin.eschbach) This is only a hotfix until property buffer is implemented
+    // When changing property names they also have to be changed here, so the loading works.
+    WPropertyGroup::SPtr groupColumn  = m_properties->addPropertyGroup( "Select columns", "Select columns", false );
+    WPropertyGroup::SPtr groupFilter  = m_properties->addPropertyGroup( "Filtering", "Filtering", false );
+    WPropertyGroup::SPtr groupVisual  = m_properties->addPropertyGroup( "Visualization", "Visualization", false );
+    WPropertyGroup::SPtr groupEventID = m_properties->addPropertyGroup( "Event ID Limitation", "Event ID Limitation", false );
+    WPropertyGroup::SPtr groupRename  = groupFilter->addPropertyGroup( "Rename or Delete Particle-Name",
+                                                    "Filtering/Rename or Delete Particle-Name", false );
+
+    WPropertyBase::PropertyChangeNotifierType columnNotifier = boost::bind( &WMFilterProtonData::loadNotifier,
+                                                                this, groupColumn, boost::placeholders::_1 );
+    WPropertyBase::PropertyChangeNotifierType filterNotifier = boost::bind( &WMFilterProtonData::loadNotifier,
+                                                                this, groupFilter, boost::placeholders::_1 );
+    WPropertyBase::PropertyChangeNotifierType visualNotifier = boost::bind( &WMFilterProtonData::loadNotifier,
+                                                                this, groupVisual, boost::placeholders::_1 );
+    WPropertyBase::PropertyChangeNotifierType eventIDNotifier = boost::bind( &WMFilterProtonData::loadNotifier,
+                                                                this, groupEventID, boost::placeholders::_1 );
+    WPropertyBase::PropertyChangeNotifierType renameNotifier = boost::bind( &WMFilterProtonData::loadNotifier,
+                                                                this, groupRename, boost::placeholders::_1 );
+
+    groupColumn->addProperty( "PDGEncoding", "PDGEncoding", std::string( "" ), columnNotifier, false );
+    groupColumn->addProperty( "posX", "posX", std::string( "" ), columnNotifier, false );
+    groupColumn->addProperty( "posY", "posY", std::string( "" ), columnNotifier, false );
+    groupColumn->addProperty( "posZ", "posZ", std::string( "" ), columnNotifier, false );
+    groupColumn->addProperty( "edep", "edep", std::string( "" ), columnNotifier, false );
+    groupColumn->addProperty( "eventID", "eventID", std::string( "" ), columnNotifier, false );
+    groupColumn->addProperty( "trackID", "trackID", std::string( "" ), columnNotifier, false );
+    groupColumn->addProperty( "parentID", "parentID", std::string( "" ), columnNotifier, false );
+
+    groupFilter->addProperty( "Show primaries", "Show primaries", std::string( "" ), filterNotifier, false );
+    groupFilter->addProperty( "Show secondaries", "Show secondaries", std::string( "" ), filterNotifier, false );
+    groupFilter->addProperty( "PDGEncoding", "PDGEncoding", std::string( "" ), filterNotifier, false );
+
+    groupRename->addProperty( "New Name (press enter)", "New Name (press enter)", std::string( "" ), renameNotifier, false );
+    groupRename->addProperty( "Select Particle", "Select Particle", std::string( "" ), renameNotifier, false );
+    groupRename->addProperty( "Set Changes", "Set Changes", std::string( "" ), renameNotifier, false );
+
+    groupVisual->addProperty( "Scale point size", "Scale point size", std::string( "" ), visualNotifier, false );
+    groupVisual->addProperty( "Color by edep", "Color by edep", std::string( "" ), visualNotifier, false );
+    groupVisual->addProperty( "Plain color", "Plain color", std::string( "" ), visualNotifier, false );
+    groupVisual->addProperty( "Transfer Function", "Transfer Function", std::string( "" ), visualNotifier, false );
+    groupVisual->addProperty( "Set gradient", "Set gradient", std::string( "" ), visualNotifier, false );
+
+    groupEventID->addProperty( "Min Cap", "Min Cap", std::string( "" ), eventIDNotifier, false );
+    groupEventID->addProperty( "Max Cap", "Max Cap", std::string( "" ), eventIDNotifier, false );
+    groupEventID->addProperty( "Set selection", "Set selection", std::string( "" ), eventIDNotifier, false );
+
     WModule::properties();
+}
+
+void WMFilterProtonData::loadNotifier( WPropertyGroup::SPtr group, WPropertyBase::SPtr property )
+{
+    std::string name = group->getDescription() + "/" + property->getName();
+    std::string value = property->getAsString();
+    m_loadedProperties.push_back( std::pair< std::string, std::string >( name, value ) );
+}
+
+void WMFilterProtonData::setToLoadedProperties()
+{
+    for( auto iter = m_loadedProperties.begin(); iter != m_loadedProperties.end(); iter++ )
+    {
+        WPropertyBase::SPtr prop = m_properties->findProperty( ( *iter ).first );
+        if( prop )
+        {
+            prop->setAsString( ( *iter ).second );
+        }
+    }
 }
 
 void WMFilterProtonData::setOutputFromCSV()

@@ -39,9 +39,10 @@ WReaderCSV::~WReaderCSV() throw()
 
 boost::shared_ptr< WDataSetCSV > WReaderCSV::read()
 {
-    int columnCount = 0;
+    size_t columnCount = 0;
     std::string line;
     std::vector< std::string >  row;
+    WDataSetCSV::SeperatedRowSPtr rawRow = WDataSetCSV::SeperatedRowSPtr( new std::vector< std::string >() );
 
     WDataSetCSV::ContentSPtr header = WDataSetCSV::ContentSPtr( new WDataSetCSV::Content() );
     WDataSetCSV::ContentSPtr data = WDataSetCSV::ContentSPtr( new WDataSetCSV::Content() );
@@ -61,12 +62,14 @@ boost::shared_ptr< WDataSetCSV > WReaderCSV::read()
         throw WException( "CSV file is empty!" );
     }
 
+    rawRow->push_back( line );
     header->push_back( transformLineToVector( line ) );
     columnCount = header->at( 0 ).size();
 
     // treat remaining lines as data
     while( std::getline( file, line ) )
     {
+        rawRow->push_back( line );
         row = transformLineToVector( line );
         if( row.size() != columnCount )
         {
@@ -85,7 +88,13 @@ boost::shared_ptr< WDataSetCSV > WReaderCSV::read()
 
     file.close();
 
-    return boost::shared_ptr< WDataSetCSV >( new WDataSetCSV( header, data ) );
+    header->push_back( data->at( 0 ) );
+    data->erase( data->begin() );
+
+    boost::shared_ptr< WDataSetCSV > datasetcsv = boost::shared_ptr< WDataSetCSV >( new WDataSetCSV( header, data ) );
+    datasetcsv->setRawDataSet( rawRow );
+
+    return datasetcsv;
 }
 
 std::vector< std::string > WReaderCSV::transformLineToVector( std::string line )

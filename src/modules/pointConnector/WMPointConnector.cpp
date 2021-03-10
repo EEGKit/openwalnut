@@ -70,6 +70,7 @@ void WMPointConnector::connectors()
 {
     m_pointInput = WModuleInputData< WDataSetPoints >::createAndAdd( shared_from_this(), "points in", "The data to display" );
     m_fiberOutput = WModuleOutputData< WDataSetFibers >::createAndAdd( shared_from_this(), "fibers out", "The created fibers" );
+    m_pointAndFibersOutput = WModuleOutputData< WDataSetPointsAndFibers >::createAndAdd( shared_from_this(), "points and fibers out", "Contains the internal points and the connected fibers " );
 
     m_pointOutput = WModuleOutputData< WDataSetPoints >::create( shared_from_this(), "points out", "The data that is passed internally" );
 
@@ -376,8 +377,14 @@ void WMPointConnector::updateOutput()
     fibers->addColorScheme( colors, "Connection", "Color fibers based on their connection." );
     fibers->setSelectedColorScheme( 3 );
     m_fiberOutput->updateData( fibers );
-}
 
+    m_pointAndFibersOutput->updateData( boost::shared_ptr< WDataSetPointsAndFibers >(
+        new WDataSetPointsAndFibers(
+            m_pointOutput->getData(),
+            m_fiberOutput->getData()
+        )
+    ) );
+}
 
 WConnectorData::SPtr WMPointConnector::getConnectorData()
 {

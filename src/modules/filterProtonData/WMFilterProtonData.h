@@ -28,6 +28,7 @@
 #include <algorithm>
 
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <boost/lexical_cast.hpp>
@@ -173,15 +174,36 @@ private:
     void createColorBar();
 
     /**
+     * Contains the loaded properties.
+     */
+    std::vector< std::pair< std::string, std::string > > m_loadedProperties;
+
+    /**
      * Create outputs, so it can be displayed by the fiber display and the point renderer.
      */
     void setOutputFromCSV( );
-
 
     /**
      * update added group property and subproperty    
      */
     void updateProperty();
+
+    /**
+     * Notifier for the dummy properties.
+     * \param group The WPropertyGroup this property belongs to.
+     * \param property The property that was updated.
+     */
+    void loadNotifier( WPropertyGroup::SPtr group, WPropertyBase::SPtr property );
+
+    /**
+     * Sets the current properties to the state of the loaded properties.
+     */
+    void setToLoadedProperties();
+
+    /**
+     * Removes the property groups.
+     */
+    void clearProperties();
 };
 
 #endif  // WMFILTERPROTONDATA_H
