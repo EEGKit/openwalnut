@@ -53,6 +53,11 @@ public:
     typedef boost::shared_ptr< std::vector< std:: string > > SeperatedRowSPtr;
 
     /**
+     * represents an element within WDataSetCSV object.
+     */
+    typedef std::vector< std::string > ContentElem;
+
+    /**
      * Construct WDataSetCSV object
      *
      * \param header Column names of the CSV file.
