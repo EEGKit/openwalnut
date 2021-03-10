@@ -25,6 +25,9 @@
 #ifndef WMWRITECSV_H
 #define WMWRITECSV_H
 
+#include <string>
+#include <list>
+
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 
@@ -105,15 +108,15 @@ private:
     /**
      * Helpermethod to create a List of internal Position with id
      */
-    std::list< std::tuple < int, int > > getListOfPositionAndID( 
-                            std::list< std::tuple < osg::Vec3, int > > listOfInternalVertex, 
-                            WDataSetPoints::SPtr points);
+    std::list< std::tuple < int, int > > getListOfPositionAndID(
+                            std::list< std::tuple < osg::Vec3, int > > listOfInternalVertex,
+                            WDataSetPoints::SPtr points );
 
     /**
      * The filename property -> where to write the nifty file
      */
     WPropFilename m_filename;
-    
+
     WPropTrigger  m_saveTriggerProp; //!< This property triggers the actual writing,
 
     boost::shared_ptr< WModuleInputData< WDataSetCSV > > m_CSVInput;  //!< Input connector required by this module.

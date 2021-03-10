@@ -22,6 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
+#include <string>
+#include <list>
+
 #include "WMWriteCSV.h"
 
 #include "core/common/WPathHelper.h"
@@ -100,9 +103,15 @@ void WMWriteCSV::moduleMain()
 
 void WMWriteCSV::connectors()
 {
-    m_PointsAndFibersInput = WModuleInputData< WDataSetPointsAndFibers >::createAndAdd( shared_from_this(), "Fibers_Points_in", "The dataset of the connected points" );
-    m_CSVInput = WModuleInputData< WDataSetCSV >::createAndAdd( shared_from_this(), "CSV_in", "The dataset to write in" );
-    
+    m_PointsAndFibersInput = WModuleInputData< WDataSetPointsAndFibers >::createAndAdd(
+                                                                            shared_from_this(),
+                                                                            "Fibers_Points_in",
+                                                                            "The dataset of the connected points" );
+    m_CSVInput = WModuleInputData< WDataSetCSV >::createAndAdd(
+                                                    shared_from_this(),
+                                                    "CSV_in",
+                                                    "The dataset to write in" );
+
     WModule::connectors();
 }
 
@@ -130,21 +139,21 @@ std::list< std::tuple < osg::Vec3, int > > WMWriteCSV::getListOfInternalVertex( 
 
     for( size_t idx = 0; idx <= vertices->size(); idx++ )
     {
-        switch (vertexCounter)
+        switch( vertexCounter )
         {
-            case 0: vertexX = vertices->at(idx); break;
-            case 1: vertexY = vertices->at(idx); break;
-            case 2: vertexZ = vertices->at(idx); break;
-            case 3: 
+            case 0: vertexX = vertices->at( idx ); break;
+            case 1: vertexY = vertices->at( idx ); break;
+            case 2: vertexZ = vertices->at( idx ); break;
+            case 3:
             {
-                osg::Vec3 vecVertex(vertexX, vertexY, vertexZ);
+                osg::Vec3 vecVertex( vertexX, vertexY, vertexZ );
                 listOfInternalVertex.push_back( std::make_tuple( vecVertex, verticesReverse->at( reverseCounter++ ) ) );
-                
+
                 if(idx < vertices->size())
                 {
-                    vertexX = vertices->at(idx);
+                    vertexX = vertices->at( idx );
                 }
-                
+
                 vertexCounter = 0;
                 break;
             }
@@ -155,25 +164,25 @@ std::list< std::tuple < osg::Vec3, int > > WMWriteCSV::getListOfInternalVertex( 
     return listOfInternalVertex;
 }
 
-std::list< std::tuple < int, int > > WMWriteCSV::getListOfPositionAndID( 
-    std::list< std::tuple < osg::Vec3, int > > listOfInternalVertex, 
-    WDataSetPoints::SPtr points)
+std::list< std::tuple < int, int > > WMWriteCSV::getListOfPositionAndID(
+    std::list< std::tuple < osg::Vec3, int > > listOfInternalVertex,
+    WDataSetPoints::SPtr points )
 {
     std::list< std::tuple < int, int > > listOfPositionAndID;
 
-    for(size_t pos = 0; pos < points->size(); pos++)
+    for( size_t pos = 0; pos < points->size(); pos++ )
     {
         osg::Vec3 vertexPoints = points->operator[]( pos );
         for( auto element = listOfInternalVertex.begin(); element != listOfInternalVertex.end(); element++  )
         {
-            osg::Vec3 selectedVertex = std::get<0>(*element);
-            int selectedVertexIndex = std::get<1>(*element);
+            osg::Vec3 selectedVertex = std::get< 0 >( *element );
+            int selectedVertexIndex = std::get< 1 >( *element );
 
             if( vertexPoints.x() == selectedVertex.x() &&
                 vertexPoints.y() == selectedVertex.y() &&
                 vertexPoints.z() == selectedVertex.z() )
             {
-                listOfInternalVertex.erase(element);  
+                listOfInternalVertex.erase( element );
                 listOfPositionAndID.push_back( std::make_tuple( pos, selectedVertexIndex ) );
                 break;
             }
@@ -192,10 +201,9 @@ std::list< std::tuple < int, int > > WMWriteCSV::getListOfPositionAndID(
 
 void WMWriteCSV::writeToFile()
 {
-   
     std::string sourceFilename = m_filename->get().string();
     sourceFilename = sourceFilename.substr( 0, sourceFilename.find( ".csv" ) );
-    
+
     std::string outputFilename = sourceFilename + "-edited.csv";
 
     WDataSetCSV::UnseperatedRowSPtr csvContent = m_CSVInput->getData()->getRawDataSet();
@@ -203,46 +211,46 @@ void WMWriteCSV::writeToFile()
     WDataSetPoints::SPtr points = m_PointsAndFibersInput->getData()->getPoints();
 
     std::list< std::tuple < int, int > > listOfPositionAndID = getListOfPositionAndID(
-                                                                    getListOfInternalVertex(fibers), 
-                                                                    points);
+                                                                    getListOfInternalVertex( fibers ),
+                                                                    points );
 
     std::ofstream newCSVFile( outputFilename );
 
-     if( !newCSVFile.is_open() )
+    if( !newCSVFile.is_open() )
     {
         throw WException( "Could not create new CSV in the selected source folder" );
     }
 
     bool isMatch = false;
 
-    newCSVFile << csvContent->at(0) << "," << "SelectedEventID" << std::endl;
-    csvContent->erase(csvContent->begin());
+    newCSVFile << csvContent->at( 0 ) << "," << "SelectedEventID" << std::endl;
+    csvContent->erase( csvContent->begin() );
 
     for( size_t row = 0; row < csvContent->size(); row++ )
     {
         for( auto element = listOfPositionAndID.begin(); element != listOfPositionAndID.end(); element++  )
         {
-            size_t selectedPosition = std::get<0>(*element);
-            int selectedVertexIndex = std::get<1>(*element);
+            size_t selectedPosition = std::get< 0 >( *element );
+            int selectedVertexIndex = std::get< 1 >( *element );
 
             if( row == selectedPosition )
             {
-                newCSVFile << csvContent->at(row) << "," << selectedVertexIndex << std::endl;
+                newCSVFile << csvContent->at( row ) << "," << selectedVertexIndex << std::endl;
 
-                listOfPositionAndID.erase(element);
+                listOfPositionAndID.erase( element );
                 isMatch = true;
                 break;
             }
         }
 
-        if(isMatch)
+        if( isMatch )
         {
             isMatch = false;
         }
         else
         {
-            newCSVFile << csvContent->at(row) << ",-1"  << std::endl;
-        } 
+            newCSVFile << csvContent->at( row ) << ",-1"  << std::endl;
+        }
     }
 
     newCSVFile.close();
