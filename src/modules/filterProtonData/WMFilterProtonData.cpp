@@ -72,7 +72,7 @@ void WMFilterProtonData::moduleMain()
     {
         m_moduleState.wait();
 
-        if(m_input->getData() == NULL)
+        if( m_input->getData() == NULL )
         {
             continue;
         }
@@ -97,8 +97,8 @@ void WMFilterProtonData::moduleMain()
         }
         else
         {
-            m_protonData->setCSVHeader(  m_input->getData()->getHeader() );
-            m_protonData->setCSVData(  m_input->getData()->getData() );
+            m_protonData->setCSVHeader( m_input->getData()->getHeader() );
+            m_protonData->setCSVData( m_input->getData()->getData() );
         }
         m_propertyStatus->getFilterPropertyHandler()->createPDGMap(
             ( m_localPath / getMetaInformation()->query< std::string >( "common/pdgnames" , "NoFile" ) ).string() );
@@ -132,7 +132,7 @@ void WMFilterProtonData::clearProperties()
     m_properties->removeProperty( m_properties->getProperty( "Select columns" ) );
     m_properties->removeProperty( m_properties->getProperty( "Filtering" ) );
     m_properties->removeProperty( m_properties->getProperty( "Visualization" ) );
-    m_properties->removeProperty( m_properties->getProperty( "Event ID Limitation" ) );
+    m_properties->removeProperty( m_properties->getProperty( "Event Id Limitation" ) );
 }
 
 void WMFilterProtonData::properties()
@@ -140,11 +140,11 @@ void WMFilterProtonData::properties()
     // Creating dummy properties for loading of projects
     // TODO(robin.eschbach) This is only a hotfix until property buffer is implemented
     // When changing property names they also have to be changed here, so the loading works.
-    WPropertyGroup::SPtr groupColumn  = m_properties->addPropertyGroup( "Select columns", "Select columns", false );
-    WPropertyGroup::SPtr groupFilter  = m_properties->addPropertyGroup( "Filtering", "Filtering", false );
-    WPropertyGroup::SPtr groupVisual  = m_properties->addPropertyGroup( "Visualization", "Visualization", false );
-    WPropertyGroup::SPtr groupEventID = m_properties->addPropertyGroup( "Event ID Limitation", "Event ID Limitation", false );
-    WPropertyGroup::SPtr groupRename  = groupFilter->addPropertyGroup( "Rename or Delete Particle-Name",
+    WPropertyGroup::SPtr groupColumn  = m_properties->addPropertyGroup( "Select columns", "Select the columns which should be used", false );
+    WPropertyGroup::SPtr groupFilter  = m_properties->addPropertyGroup( "Filtering", "Filter primaries, secondaries and particle types", false );
+    WPropertyGroup::SPtr groupVisual  = m_properties->addPropertyGroup( "Visualization", "Visualization options", false );
+    WPropertyGroup::SPtr groupEventID = m_properties->addPropertyGroup( "Event Id Limitation", "Adjust the range of eventIDs to be shown.", false );
+    WPropertyGroup::SPtr groupRename  = groupFilter->addPropertyGroup( "Rename Particle Types",
                                                     "Filtering/Rename or Delete Particle-Name", false );
 
     WPropertyBase::PropertyChangeNotifierType columnNotifier = boost::bind( &WMFilterProtonData::loadNotifier,
@@ -158,32 +158,43 @@ void WMFilterProtonData::properties()
     WPropertyBase::PropertyChangeNotifierType renameNotifier = boost::bind( &WMFilterProtonData::loadNotifier,
                                                                 this, groupRename, boost::placeholders::_1 );
 
-    groupColumn->addProperty( "PDGEncoding", "PDGEncoding", std::string( "" ), columnNotifier, false );
-    groupColumn->addProperty( "posX", "posX", std::string( "" ), columnNotifier, false );
-    groupColumn->addProperty( "posY", "posY", std::string( "" ), columnNotifier, false );
-    groupColumn->addProperty( "posZ", "posZ", std::string( "" ), columnNotifier, false );
-    groupColumn->addProperty( "edep", "edep", std::string( "" ), columnNotifier, false );
-    groupColumn->addProperty( "eventID", "eventID", std::string( "" ), columnNotifier, false );
-    groupColumn->addProperty( "trackID", "trackID", std::string( "" ), columnNotifier, false );
-    groupColumn->addProperty( "parentID", "parentID", std::string( "" ), columnNotifier, false );
+    groupColumn->addProperty( "Particle Data Group", 
+                            "Choose the column which should be used to determine the particle data group.", std::string( "" ), columnNotifier, false );
+    groupColumn->addProperty( "X", "Choose the column which should be used to determine the x coordinate.", std::string( "" ), columnNotifier, false );
+    groupColumn->addProperty( "Y", "Choose the column which should be used to determine the y coordinate.", std::string( "" ), columnNotifier, false );
+    groupColumn->addProperty( "Z", "Choose the column which should be used to determine the z coordinate.", std::string( "" ), columnNotifier, false );
+    groupColumn->addProperty( "Energy deposition", 
+                            "Choose the column which should be used to determine the energy deposition.", std::string( "" ), columnNotifier, false );
+    groupColumn->addProperty( "Event id", 
+                            "Choose the column which should be used to determine the event id. Tracks will be drawn based on the the event id, all "
+                            "particles with the same event id will be connected.", std::string( "" ), columnNotifier, false );
+    groupColumn->addProperty( "Track id", "Choose the column which should be used to determine the track id.", std::string( "" ), columnNotifier, false );
+    groupColumn->addProperty( "Parent id", 
+                            "Choose the column which should be used to determine the parent id. Primaries and secondaries filtering is based on that id,"
+                            " if a particle has the parent id 0 it is a primary otherwise it is a secondary.", std::string( "" ), columnNotifier, false );
 
-    groupFilter->addProperty( "Show primaries", "Show primaries", std::string( "" ), filterNotifier, false );
-    groupFilter->addProperty( "Show secondaries", "Show secondaries", std::string( "" ), filterNotifier, false );
-    groupFilter->addProperty( "PDGEncoding", "PDGEncoding", std::string( "" ), filterNotifier, false );
+    groupFilter->addProperty( "Show primaries", "Show or hide primaries. One can either hide primaries or secondaries, but not both at the same time.",
+                             std::string( "" ), filterNotifier, false );
+    groupFilter->addProperty( "Show secondaries", "Show or hide secondaries. One can either hide primaries or secondaries, but not both at the same time.",
+                             std::string( "" ), filterNotifier, false );
+    groupFilter->addProperty( "Show particles", "Choose particle type(s) to be shown.", std::string( "" ), filterNotifier, false );
 
-    groupRename->addProperty( "New Name (press enter)", "New Name (press enter)", std::string( "" ), renameNotifier, false );
-    groupRename->addProperty( "Select Particle", "Select Particle", std::string( "" ), renameNotifier, false );
-    groupRename->addProperty( "Set Changes", "Set Changes", std::string( "" ), renameNotifier, false );
+    groupRename->addProperty( "New Name (press enter)", "Type in a new name for the selected particle type. To submit your entry press enter while you are"
+                            " in the textbox.", std::string( "" ), renameNotifier, false );
+    groupRename->addProperty( "Select particle", "Select the particle type to be renamed.", std::string( "" ), renameNotifier, false );
+    groupRename->addProperty( "Apply Changes", "Save", std::string( "" ), renameNotifier, false );
 
-    groupVisual->addProperty( "Scale point size", "Scale point size", std::string( "" ), visualNotifier, false );
-    groupVisual->addProperty( "Color by edep", "Color by edep", std::string( "" ), visualNotifier, false );
-    groupVisual->addProperty( "Plain color", "Plain color", std::string( "" ), visualNotifier, false );
-    groupVisual->addProperty( "Transfer Function", "Transfer Function", std::string( "" ), visualNotifier, false );
-    groupVisual->addProperty( "Set gradient", "Set gradient", std::string( "" ), visualNotifier, false );
+    groupVisual->addProperty( "Size by energy deposition", "Scale track and point sizes based on energy deposition.", std::string( "" ), visualNotifier, false );
+    groupVisual->addProperty( "Color by energy deposition", "Colorize tracks and points based on energy deposition.", std::string( "" ), visualNotifier, false );
+    groupVisual->addProperty( "Point color", "Points colorized in the chosen color when \"Color by energy deposition\" is disabled.",
+                             std::string( "" ), visualNotifier, false );
+    groupVisual->addProperty( "Gradient color", "Colorize tracks and points based on energy deposition with the configured gradient.",
+                             std::string( "" ), visualNotifier, false );
+    groupVisual->addProperty( "Set gradient", "Apply", std::string( "" ), visualNotifier, false );
 
-    groupEventID->addProperty( "Min Cap", "Min Cap", std::string( "" ), eventIDNotifier, false );
-    groupEventID->addProperty( "Max Cap", "Max Cap", std::string( "" ), eventIDNotifier, false );
-    groupEventID->addProperty( "Set selection", "Set selection", std::string( "" ), eventIDNotifier, false );
+    groupEventID->addProperty( "Minimum event id", "Filters out every event id which is lower than the set value.", std::string( "" ), eventIDNotifier, false );
+    groupEventID->addProperty( "Maximum event id", "Filters out every event id which is higher than the set value.", std::string( "" ), eventIDNotifier, false );
+    groupEventID->addProperty( "Set selection", "Apply", std::string( "" ), eventIDNotifier, false );
 
     WModule::properties();
 }

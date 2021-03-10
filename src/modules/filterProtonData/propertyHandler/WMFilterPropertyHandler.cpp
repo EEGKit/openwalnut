@@ -39,7 +39,7 @@ WMFilterPropertyHandler::WMFilterPropertyHandler( WMProtonData::SPtr protonData,
 
 void WMFilterPropertyHandler::createProperties()
 {
-    m_filteringGroup = m_properties->addPropertyGroup( "Filtering", "Filter primaries and secondaries" );
+    m_filteringGroup = m_properties->addPropertyGroup( "Filtering", "Filter primaries, secondaries and particle types" );
 
     createCheckBoxForPrimaryAndSecondary();
     createMultiSelectionForPDG();
@@ -161,7 +161,7 @@ void WMFilterPropertyHandler::createPropToSetParticleNames()
         &WMFilterPropertyHandler::saveRenameParticleButtonClick, this, boost::placeholders::_1 );
 
     m_filteringsubGroup  = m_filteringGroup->addPropertyGroup( "Rename Particle Types",
-                                                            "" );
+                                                            "Filtering/Rename or Delete Particle-Name" );
 
     m_inputNewParticleName = m_filteringsubGroup->addProperty( "New name (press enter)", "Type in a new name for the selected particle type. "
                                                             "To submit your entry press enter while you are in the textbox.",
