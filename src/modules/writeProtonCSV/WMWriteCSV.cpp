@@ -112,16 +112,11 @@ void WMWriteCSV::connectors()
 void WMWriteCSV::properties()
 {
     WPropertyBase::PropertyChangeNotifierType notifier = boost::bind(
-        &propertyCallback, this );
+        &writeToFile, this );
 
     m_filename = m_properties->addProperty( "Filename", "Filename where to write the NIfTI file to.", WPathHelper::getHomePath(), notifier );
 
     WModule::properties();
-}
-
-void WMWriteCSV::propertyCallback()
-{
-   writeToFile();
 }
 
 std::list< std::tuple < osg::Vec3, int > > WMWriteCSV::getListOfInternalVertex( WDataSetFibers::SPtr fibers )
