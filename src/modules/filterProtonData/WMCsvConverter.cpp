@@ -345,6 +345,7 @@ void WMCsvConverter::createOutputPointsAndEventIDs()
 
 void WMCsvConverter::addEventID( WDataSetCSV::Content::iterator dataRow )
 {
+    
     if(m_protonData->isColumnAvailable("eventID"))
         {
             if(dataRow->at( m_indexes->getEventID() ) == "NULL")
@@ -365,7 +366,7 @@ void WMCsvConverter::addSelectedEventID( WDataSetCSV::Content::iterator dataRow 
         {
             return;
         }
-        m_vectors->getSelectedEventIDs()->push_back( std::stoi(dataRow->at( m_indexes->getSelectedEventID()) ) );
+        m_vectors->getSelectedEventIDs()->push_back( std::stoi(dataRow->at( m_indexes->getSelectedEventID() ) ) );
     }
 }
 
