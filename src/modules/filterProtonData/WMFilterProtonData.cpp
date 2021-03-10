@@ -23,6 +23,7 @@
 //---------------------------------------------------------------------------
 
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "WMFilterProtonData.h"
@@ -107,7 +108,7 @@ void WMFilterProtonData::moduleMain()
         m_propertyStatus->getFilterPropertyHandler()->createProperties();
         m_propertyStatus->getVisualizationPropertyHandler()->createProperties();
         m_propertyStatus->getEventIDLimitationPropertyHandler()->createProperties();
-        
+
         setToLoadedProperties();
 
         setOutputFromCSV( );
@@ -143,7 +144,8 @@ void WMFilterProtonData::properties()
     WPropertyGroup::SPtr groupFilter  = m_properties->addPropertyGroup( "Filtering", "Filtering", false );
     WPropertyGroup::SPtr groupVisual  = m_properties->addPropertyGroup( "Visualization", "Visualization", false );
     WPropertyGroup::SPtr groupEventID = m_properties->addPropertyGroup( "Event ID Limitation", "Event ID Limitation", false );
-    WPropertyGroup::SPtr groupRename  = groupFilter->addPropertyGroup( "Rename or Delete Particle-Name", "Filtering/Rename or Delete Particle-Name", false );
+    WPropertyGroup::SPtr groupRename  = groupFilter->addPropertyGroup( "Rename or Delete Particle-Name",
+                                                    "Filtering/Rename or Delete Particle-Name", false );
 
     WPropertyBase::PropertyChangeNotifierType columnNotifier = boost::bind( &WMFilterProtonData::loadNotifier,
                                                                 this, groupColumn, boost::placeholders::_1 );

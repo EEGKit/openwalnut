@@ -28,6 +28,7 @@
 #include <algorithm>
 
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <boost/lexical_cast.hpp>
