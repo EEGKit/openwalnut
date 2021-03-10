@@ -36,6 +36,7 @@
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
 #include "core/dataHandler/WDataSetPointsAndSizes.h"
+#include "core/dataHandler/WDataSetPointsAndEventID.h"
 #include "core/dataHandler/WValueSet.h"
 #include "core/dataHandler/WValueSetBase.h"
 
@@ -88,6 +89,12 @@ public:
      */
     boost::shared_ptr< WDataSetSingle > getTransferFunction();
 
+    /**
+     * Getter
+     * \return shared_ptr of generated selected event ID
+     */
+    boost::shared_ptr< WDataSetPointsAndEventID > getPointsAndIDs();
+
 private:
     /**
      * Stores information form csv content. Content object containing data
@@ -103,6 +110,11 @@ private:
      * Stores information for the point renderer
      */
     boost::shared_ptr< WDataSetPoints > m_points;
+
+    /**
+     * Stores information for the point Conncetor
+     */
+    boost::shared_ptr< WDataSetPointsAndEventID > m_selectedEventIDs;
 
     /**
      * Stores the currently mapped transfer function
@@ -155,6 +167,12 @@ private:
     void addVertex( WDataSetCSV::Content::iterator dataRow );
 
     /**
+     * Create selected event ids for the point connector
+     *
+     * \param dataRow each row of the csv file (content of row)
+     */
+    void addSelectedEventID( WDataSetCSV::Content::iterator dataRow );
+    /**
      * Create color for point/Fiber renderer
      *
      * \param dataRow each row of the csv file (content of row)
@@ -190,6 +208,11 @@ private:
      * Create the points for points renderer
      */
     void createOutputPoints();
+
+    /**
+     * Create the points and selected event IDs for Point Connector
+     */
+    void createOutputPointsAndEventIDs();
 
     /**
      * Create outputs, so it can be displayed by the fiber display and the point renderer.

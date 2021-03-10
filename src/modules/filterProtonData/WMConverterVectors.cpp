@@ -36,6 +36,7 @@ WMConverterVectors::WMConverterVectors()
     m_fiberLengths = SPSizeVector( new std::vector< size_t >() );
     m_verticesReverse = SPSizeVector( new std::vector< size_t >() );
     m_eventIDs = SPSizeVector( new std::vector< size_t >() );
+    m_selectedEventIDs = SPIntVector( new std::vector< int >() );
 }
 
 void WMConverterVectors::clear()
@@ -89,3 +90,9 @@ SPSizeVector WMConverterVectors::getEventIDs()
 {
     return m_eventIDs;
 }
+
+SPIntVector WMConverterVectors::getSelectedEventIDs()
+{
+    return m_selectedEventIDs;
+}
+

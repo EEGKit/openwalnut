@@ -49,6 +49,12 @@ boost::shared_ptr< WDataSetPoints > WMCsvConverter::getPoints()
     return m_points;
 }
 
+
+boost::shared_ptr< WDataSetPointsAndEventID > WMCsvConverter::getPointsAndIDs()
+{
+    return m_selectedEventIDs;
+}
+
 void WMCsvConverter::setOutputFromCSV( )
 {
     if( !m_protonData->isRequiredDataAvailable() )
@@ -76,6 +82,7 @@ void WMCsvConverter::setOutputFromCSV( )
         addColor( m_plainColor );
         addEdepAndSize( dataRow, &maxEdep );
         addEventID( dataRow );
+        addSelectedEventID( dataRow );
     }
 
     if( checkIfOutputIsNull() )
@@ -87,6 +94,8 @@ void WMCsvConverter::setOutputFromCSV( )
 
     createOutputPoints();
     createOutputFibers();
+    createOutputPointsAndEventIDs();
+    
 }
 
 boost::shared_ptr< WDataSetSingle > WMCsvConverter::getTransferFunction()
@@ -182,7 +191,6 @@ bool WMCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRo
             return false;
         }
     }
-
     return true;
 }
 
@@ -325,6 +333,16 @@ void WMCsvConverter::createOutputFibers()
     }
 }
 
+void WMCsvConverter::createOutputPointsAndEventIDs()
+{
+    m_selectedEventIDs = boost::shared_ptr < WDataSetPointsAndEventID >(
+                    new WDataSetPointsAndEventID(
+                    m_points,
+                    m_vectors->getSelectedEventIDs()
+            )
+    );
+}
+
 void WMCsvConverter::addEventID( WDataSetCSV::Content::iterator dataRow )
 {
     if(m_protonData->isColumnAvailable("eventID"))
@@ -336,6 +354,19 @@ void WMCsvConverter::addEventID( WDataSetCSV::Content::iterator dataRow )
 
             m_vectors->getEventIDs()->push_back( ( int )stringToFloat( dataRow->at( m_indexes->getEventID() ) ) );
         }
+}
+
+
+void WMCsvConverter::addSelectedEventID( WDataSetCSV::Content::iterator dataRow )
+{
+    if(m_protonData->isColumnAvailable("SelectedEventID"))
+    {
+        if(dataRow->at( m_indexes->getSelectedEventID() ) == "NULL")
+        {
+            return;
+        }
+        m_vectors->getSelectedEventIDs()->push_back( std::stoi(dataRow->at( m_indexes->getSelectedEventID()) ) );
+    }
 }
 
 void WMCsvConverter::setTransferFunction( boost::shared_ptr< std::vector<unsigned char> > data )
@@ -355,6 +386,7 @@ bool WMCsvConverter::checkIfOutputIsNull()
     {
         m_points = NULL;
         m_fibers = NULL;
+        m_selectedEventIDs = NULL;
         return true;
     }
     return false;

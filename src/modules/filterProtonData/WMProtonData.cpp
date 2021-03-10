@@ -112,7 +112,7 @@ bool WMProtonData::isRequiredDataAvailable()
 bool WMProtonData::isNonrequiredDataAvailable()
 {
     static const std::string unNecessaryColumns[] = {
-        "PDGEncoding", "edep", "trackID", "parentID", "eventID"
+        "PDGEncoding", "edep", "trackID", "parentID", "eventID", "SelectedEventID"
     };
 
     for( size_t i = 0; i < sizeof( unNecessaryColumns ) / sizeof( std::string ); i++ )
@@ -135,7 +135,7 @@ bool WMProtonData::isColumnAvailable( std::string columnName )
 void WMProtonData::updateAvailabilityOfColumns()
 {
     static const std::string necessaryColumns[] = {
-        "PDGEncoding", "posX", "posY", "posZ", "edep", "eventID" , "trackID", "parentID"
+        "PDGEncoding", "posX", "posY", "posZ", "edep", "eventID" , "trackID", "parentID","SelectedEventID"
     };
 
     for( size_t i = 0; i < sizeof( necessaryColumns ) / sizeof( std::string ); i++ )

@@ -40,6 +40,11 @@ typedef boost::shared_ptr< std::vector< float > > SPFloatVector;
 typedef boost::shared_ptr< std::vector< size_t > > SPSizeVector;
 
 /**
+ * represents a boost::shared_ptr to a vector containing a vector of size_t.
+ */
+typedef boost::shared_ptr< std::vector< int > > SPIntVector;
+
+/**
  * Holds the vectors that store the data for the points and fibers.
  */
 class WMConverterVectors
@@ -86,27 +91,33 @@ public:
 
     /**
      * Gets the fiber start indexes as shared_ptr to a size_t vector.
-     * \return SPFloatVector The fiber start indexes.
+     * \return SPSizeVector The fiber start indexes.
      */
     SPSizeVector getFiberStartIndexes();
 
     /**
      * Gets the fiber lengths as shared_ptr to a size_t vector.
-     * \return SPFloatVector The fiber lengths.
+     * \return SPSizeVector The fiber lengths.
      */
     SPSizeVector getFiberLengths();
 
     /**
      * Gets the reverse vertices as shared_ptr to a size_t vector.
-     * \return SPFloatVector The reverse vertices.
+     * \return SPSizeVector The reverse vertices.
      */
     SPSizeVector getVerticesReverse();
 
     /**
      * Gets the event IDs as shared_ptr to a size_t vector.
-     * \return SPFloatVector The event IDs.
+     * \return SPSizeVector The event IDs.
      */
     SPSizeVector getEventIDs();
+
+    /**
+     * Gets the selected event IDs as shared_ptr to a int vector.
+     * \return SPIntVector The  selected event IDs.
+     */
+    SPIntVector getSelectedEventIDs();
 
 private:
     SPFloatVector m_vertices;   //!< The vertices.
@@ -124,6 +135,8 @@ private:
     SPSizeVector m_verticesReverse; //!< The reverse vertices.
 
     SPSizeVector m_eventIDs;    //!< the event IDs.
+
+    SPIntVector m_selectedEventIDs; //!< the selected Event IDs.
 };
 
 #endif  // WMCONVERTERVECTORS_H

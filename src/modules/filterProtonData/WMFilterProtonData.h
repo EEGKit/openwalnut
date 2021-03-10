@@ -37,6 +37,7 @@
 #include "core/kernel/WModuleOutputData.h"
 #include "core/dataHandler/WDataSetPoints.h"
 #include "core/dataHandler/WDataSetPointsAndSizes.h"
+#include "core/dataHandler/WDataSetPointsAndEventID.h"
 
 #include "core/common/WItemSelectionItem.h"
 #include "core/common/WItemSelector.h"
@@ -144,6 +145,11 @@ private:
      * WDataSetSingle output connector to output current transfer function
      */
     boost::shared_ptr< WModuleOutputData< WDataSetSingle > > m_output_transferFunction;
+
+    /**
+     * WDataSetPointsAndEventIDs output connector to output points and eventIDs for PointConn.
+     */
+    boost::shared_ptr< WModuleOutputData< WDataSetPointsAndEventID > > m_output_points_eventIds;
 
     /**
      * Stores information of the input-csv-data

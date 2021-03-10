@@ -62,8 +62,4 @@ ENDIF( Teem_FOUND )
 # demonstration modules
 ADD_MODULE( template )    # template has its own CMakeLists for demonstration purpose
 
-ADD_MODULE( filterProtonData )
 
-ADD_MODULE( pointConnector )
-
-ADD_MODULE( writeProtonCSV )

@@ -22,50 +22,54 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WDATASETPOINTSANDFIBERS_H
-#define WDATASETPOINTSANDFIBERS_H
+#ifndef WDATASETPOINTSANDEVENTID_H
+#define WDATASETPOINTSANDEVENTID_H
 
 #include "WDataSet.h"
 #include "WDataSetPoints.h"
-#include "WDataSetFibers.h"
 
 /**
  * Dataset to store a bunch of points and Fibers.
  */
-class WDataSetPointsAndFibers : public WDataSet 
+class WDataSetPointsAndEventID : public WDataSet 
 {
+    /**
+     * represents a boost::shared_ptr to a vector containing a vector of floats.
+     */
+    typedef boost::shared_ptr< std::vector< int > > SPIntVector;
+
 public:
     /**
-     * Construct WDataSetPointsAndFibers object
+     * Construct WDataSetPointsAndEventID object.
      *
      * \param points Bunch of points.
-     * \param fibers Bunch of fibers.
+     * \param eventIDs Bunch of eventIDs.
      */
-    explicit WDataSetPointsAndFibers( WDataSetPoints::SPtr points, WDataSetFibers::SPtr fibers );
+    explicit WDataSetPointsAndEventID( WDataSetPoints::SPtr points,  SPIntVector eventIDs );
 
     /**
      * The standard constructor.
      */
-    WDataSetPointsAndFibers();
+    WDataSetPointsAndEventID();
 
     /**
      * Destructs this dataset.
      */
-    virtual ~WDataSetPointsAndFibers();
+    virtual ~WDataSetPointsAndEventID();
 
     /**
-     * Getter method to receive points
+     * Getter method to receive points.
      *
-     * \return m_points (Dataset to store a bunch of points.) 
+     * \return m_points  a dataset with given points.
      */
     WDataSetPoints::SPtr getPoints();
 
     /**
-     * Getter method to receive fibers
+     * Getter method to receive fibers.
      *
-     * \return m_fibers (dataset to store a bunch of fibers.)
+     * \return m_eventIDs a dataset with given EventIDs.
      */
-    WDataSetFibers::SPtr getFibers();
+    SPIntVector getEventIDs();
 
 private:
     /**
@@ -76,8 +80,8 @@ private:
     /**
      * Dataset to store a bunch of  Fibers. 
      */
-    WDataSetFibers::SPtr m_fibers;
+    SPIntVector m_eventIDs;
 
 };
 
-#endif  // WDATASETPOINTSANDFIBERS_H
+#endif  // WDATASETPOINTSANDEVENTID_H
