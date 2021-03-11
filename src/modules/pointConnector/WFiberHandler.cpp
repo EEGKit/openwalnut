@@ -98,7 +98,7 @@ void WFiberHandler::clear()
 
     m_fiberCount = 1;
     m_selectedFiber = 0;
-    addFiber( "Fiber 1", true );
+    addFiber( "Track 0", true );
 }
 
 void WFiberHandler::selectLastPoint()
@@ -117,11 +117,11 @@ void WFiberHandler::createProperties( WPropertyGroup::SPtr properties )
     WPropertyGroup::SPtr fiberGroup = properties->addPropertyGroup( "Fibers", "Property group for fiber selection, adding and deleting." );
     WPropertyGroup::SPtr undoGroup = properties->addPropertyGroup( "Undo | Redo", "Property group for undo and redo." );
 
-    m_possibleFiberSelections = WItemSelection::SPtr( new WItemSelection() );
-    m_possibleFiberSelections->addItem( ItemType::create( "Track 1", "Track 1", "", NULL ) );
- 
+    m_possibleFiberSelections = WItemSelection::SPtr( new WItemSelection() ); 
     m_fiberSelection = fiberGroup->addProperty(
-        "Selected track", "The track to which the points are added", m_possibleFiberSelections->getSelectorFirst(), notifier );
+        "Selected track", "The track to which the points are added", m_possibleFiberSelections->getSelectorNone(), notifier );
+
+    addFiber( "Track 0", true );
 
     WPropertyHelper::PC_SELECTONLYONE::addTo( m_fiberSelection );
     WPropertyHelper::PC_NOTEMPTY::addTo( m_fiberSelection );
@@ -279,8 +279,8 @@ void WFiberHandler::updateProperty( WPropertyBase::SPtr property )
     {
         m_addFiber->set( WPVBaseTypes::PV_TRIGGER_READY, false );
 
+        std::string name = "Track " + boost::lexical_cast< std::string >( m_fiberCount );
         m_fiberCount++;
-        std::string name = "Fiber " + boost::lexical_cast< std::string >( m_fiberCount );
         addFiber( name );
     }
     else if( property == m_removeFiber && m_removeFiber->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
@@ -328,4 +328,9 @@ size_t WFiberHandler::getSelectedFiber()
 WActionHandler::SPtr WFiberHandler::getActionHandler()
 {
     return m_actionHandler;
+}
+
+void WFiberHandler::setFiberCount( size_t fiberCount )
+{
+    this->m_fiberCount = fiberCount;
 }

@@ -192,13 +192,14 @@ void WMPointConnector::handleInput()
             
             while( fibers->size() <= eventID )
             {
-                m_fiberHandler->addFiber( "Fiber " + boost::lexical_cast< std::string >( eventID ), true, false );
+                m_fiberHandler->addFiber( "Track " + boost::lexical_cast< std::string >( fibers->size() ), true, false );
             }
 
             ( fibers->begin() + eventID )->push_back( vertex );
         }
     }
 
+    m_fiberHandler->setFiberCount( fibers->size() );
     m_fiberHandler->selectorUpdate();
 
     updatePoints();
@@ -276,7 +277,7 @@ bool WMPointConnector::findClickedPoint( osg::Vec3 cameraPosition, osg::Vec3 dir
 {
     bool hasHit = false;
     float distance = 0;
-    float size = m_pointRenderer->getProperties()->getProperty( "Point Size" )->toPropDouble()->get();
+    float size = m_pointRenderer->getProperties()->getProperty( "Point size" )->toPropDouble()->get();
     for( size_t idx = 0; idx < m_connectorData->getVertices()->size(); idx++ )
     {
         osg::Vec3 vertex = m_connectorData->getVertices()->at( idx );
