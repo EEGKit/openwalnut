@@ -53,11 +53,13 @@ void WMEventIDLimitationPropertyHandler::updateProperty()
     {
         m_minCap->setHidden( false );
         m_maxCap->setHidden( false );
+        m_applySelection->setHidden( false );
     }
     else
     {
         m_minCap->setHidden( true );
         m_maxCap->setHidden( true );
+        m_applySelection->setHidden( true );
     }
 }
 

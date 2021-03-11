@@ -72,6 +72,7 @@ void WMVisualizationPropertyHandler::updateProperty()
         m_sizesFromEdep->setHidden( true );
         m_colorFromEdep->setHidden( true );
         m_gradient->setHidden( true );
+        m_applyGradient->setHidden( true );
     }
 }
 
