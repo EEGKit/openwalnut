@@ -80,7 +80,8 @@ void WMColumnPropertyHandler::InitializeSelectionItem()
     m_possibleSelectionsUsingTypes->addItem( ItemType::create( "- no selection -", "- no selection -", "",  NULL ) );
 }
 
-WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string columnName, std::string description, WPropertyBase::PropertyChangeNotifierType notifier )
+WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string columnName, std::string description,
+                                                        WPropertyBase::PropertyChangeNotifierType notifier )
 {
     int index = m_protonData->getColumnIndex( columnName );
     WItemSelector selector = index < 0 ? m_possibleSelectionsUsingTypes->getSelectorLast() : m_possibleSelectionsUsingTypes->getSelector( index );

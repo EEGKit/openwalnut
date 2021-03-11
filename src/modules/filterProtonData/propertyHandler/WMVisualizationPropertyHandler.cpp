@@ -43,13 +43,16 @@ void WMVisualizationPropertyHandler::createProperties()
     WPropertyBase::PropertyChangeNotifierType notifier = boost::bind(
         &WMVisualizationPropertyHandler::propertyCallback, this, boost::placeholders::_1 );
 
-    m_sizesFromEdep = m_visualizationGroup->addProperty( "Size by energy deposition", "Scale track and point sizes based on energy deposition.", true, notifier );
-    m_colorFromEdep = m_visualizationGroup->addProperty( "Color by energy deposition", "Colorize tracks and points based on energy deposition.", true, notifier );
-    m_colorSelection = m_visualizationGroup->addProperty( "Point color", "Points colorized in the chosen color when \"Color by energy deposition\" is disabled.",
+    m_sizesFromEdep = m_visualizationGroup->addProperty( "Size by energy deposition", "Scale track and point sizes based on energy deposition.",
+                                                    true, notifier );
+    m_colorFromEdep = m_visualizationGroup->addProperty( "Color by energy deposition", "Colorize tracks and points based on energy deposition.",
+                                                    true, notifier );
+    m_colorSelection = m_visualizationGroup->addProperty( "Point color", "Points colorized in the chosen color when "
+                                                    "\"Color by energy deposition\" is disabled.",
         defaultColor::WHITE, notifier );
 
-    m_gradient = m_visualizationGroup->addProperty( "Gradient color", "Colorize tracks and points based on energy deposition with the configured gradient.",
-                                                    setColorGradient() , false );
+    m_gradient = m_visualizationGroup->addProperty( "Gradient color", "Colorize tracks and points based on energy deposition "
+                                                    "with the configured gradient.", setColorGradient() , false );
 
     m_applyGradient = m_visualizationGroup->addProperty( "Set gradient", "Apply", WPVBaseTypes::PV_TRIGGER_READY, notifier );
 

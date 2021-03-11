@@ -91,12 +91,12 @@ void WMFilterPropertyHandler::createCheckBoxForPrimaryAndSecondary()
     WPropertyBase::PropertyChangeNotifierType notifierCheckBox = boost::bind(
         &WMFilterPropertyHandler::updateCheckboxProperty, this, boost::placeholders::_1 );
 
-    m_showPrimaries = m_filteringGroup->addProperty( "Show primaries", 
-                                                    "Show or hide primaries. One can either hide primaries or secondaries, but not both at the same time.",
-                                                    true, notifierCheckBox );
-    m_showSecondaries = m_filteringGroup->addProperty( "Show secondaries", 
-                                                    "Show or hide secondaries. One can either hide primaries or secondaries, but not both at the same time.",
-                                                    true, notifierCheckBox );
+    m_showPrimaries = m_filteringGroup->addProperty( "Show primaries",
+                                            "Show or hide primaries. One can either hide primaries or secondaries, but not both at the same time.",
+                                            true, notifierCheckBox );
+    m_showSecondaries = m_filteringGroup->addProperty( "Show secondaries",
+                                            "Show or hide secondaries. One can either hide primaries or secondaries, but not both at the same time.",
+                                            true, notifierCheckBox );
 }
 
 void WMFilterPropertyHandler::searchPDGTypes()

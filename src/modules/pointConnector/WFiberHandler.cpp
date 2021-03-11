@@ -117,7 +117,7 @@ void WFiberHandler::createProperties( WPropertyGroup::SPtr properties )
     WPropertyGroup::SPtr fiberGroup = properties->addPropertyGroup( "Fibers", "Property group for fiber selection, adding and deleting." );
     WPropertyGroup::SPtr undoGroup = properties->addPropertyGroup( "Undo | Redo", "Property group for undo and redo." );
 
-    m_possibleFiberSelections = WItemSelection::SPtr( new WItemSelection() ); 
+    m_possibleFiberSelections = WItemSelection::SPtr( new WItemSelection() );
     m_fiberSelection = fiberGroup->addProperty(
         "Selected track", "The track to which the points are added", m_possibleFiberSelections->getSelectorNone(), notifier );
 
