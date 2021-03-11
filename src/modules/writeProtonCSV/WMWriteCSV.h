@@ -39,7 +39,7 @@
 #include "../filterProtonData/WMProtonData.h"
 
 /**
- * @@@@@@@@@@@@@@@@@@@@
+ * Class for safe the point-connector data
  */
 class WMWriteCSV : public WModule
 {
