@@ -169,6 +169,17 @@ private:
          */
         std::chrono::_V2::system_clock::time_point m_lastFrame;
 
+        
+        /**
+         * timestamp of the last 60 frames
+         */
+        double m_lastFrames [60];
+
+        /**
+         * timestamp of the last 60 frames
+         */
+        unsigned short m_frameCounter = 0;
+
         /**
          * Denotes whether the update callback is called the first time. It is especially useful
          * to set some initial value even if the property has not yet changed.

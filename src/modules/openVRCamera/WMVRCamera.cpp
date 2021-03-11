@@ -106,7 +106,7 @@ void WMVRCamera::properties()
 
     m_vrOn = m_properties->addProperty( "Submit Frames", "Toggle submitting frames to OpenVR",
                                                     false );
-    m_debugTrigger1 = m_properties->addProperty( "Screenshot Eyes", "Speichern.",
+    m_debugTrigger1 = m_properties->addProperty( "Log Fps", "Now",
                                                     WPVBaseTypes::PV_TRIGGER_READY );
     m_debugTrigger2 = m_properties->addProperty( "Screenshot Main", "Speichern.",
                                                     WPVBaseTypes::PV_TRIGGER_READY );
@@ -198,8 +198,8 @@ void WMVRCamera::moduleMain()
     m_rightEyeNode = osg::ref_ptr< WGEGroupNode > ( new WGEGroupNode() );
 
     // insert the created nodes
-    m_rootnode->insert( m_leftEyeNode );
-    m_rootnode->insert( m_rightEyeNode );
+    //m_rootnode->insert( m_leftEyeNode );
+    //m_rootnode->insert( m_rightEyeNode );
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_rootnode );
 
     // get side-views
@@ -207,6 +207,9 @@ void WMVRCamera::moduleMain()
     boost::shared_ptr< WGEViewer > rightEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" );
     leftEyeView->reset();
     rightEyeView->reset();
+
+    leftEyeView->getScene()->insert(m_leftEyeNode);
+    rightEyeView->getScene()->insert(m_rightEyeNode);
 
     // Now, we can mark the module ready.
     ready();
@@ -336,6 +339,17 @@ void WMVRCamera::moduleMain()
     finalPassLeft->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
     finalPassRight->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
 
+    osg::ref_ptr< osg::Node > plane = wge::genFinitePlane( 
+                                osg::Vec3( 0.0, 0.0, 0.0 ),   // base
+                                osg::Vec3( 100.0, 0.0, 0.0 ), // spanning vector a
+                                osg::Vec3( 0.0, 100.0, 0.0 ), // spanning vector b
+                                WColor( 0.5, 0.5, 0.5, 1.0 )  // a color.
+           );
+
+    m_rightEyeNode->addChild(plane);
+
+    //offscreenRenderLeft->addChild(dynamic_cast<osg::Node*>(WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone(osg::CopyOp::SHALLOW_COPY)));
+    //offscreenRenderRight->addChild(dynamic_cast<osg::Node*>(WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone(osg::CopyOp::SHALLOW_COPY)));
     m_rootnode->insert( offscreenRenderLeft );
     m_rootnode->insert( offscreenRenderRight );
 
@@ -449,13 +463,29 @@ void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent )
 
 void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisitor* nv )
 {
-    std::string leftFilename = "./OpenWalnut - leftEye.png";
-    std::string rightFilename = "./OpenWalnut - rightEye.png";
-    osg::ref_ptr< osg::Image > leftImage;
-    osg::ref_ptr< osg::Image > rightImage;
+
+
+    std::chrono::_V2::system_clock::time_point now = std::chrono::system_clock::now();
+    double elapsedSeconds = ( now - m_lastFrame ).count()/1000000000.0;
+    m_lastFrame = now;
+    m_lastFrames [m_frameCounter++] = elapsedSeconds;
+    if(m_frameCounter>=60)m_frameCounter=0;
+    double elapsedSecondsSum = 0;
+    for(int i=0;i<=59;i++){
+        elapsedSecondsSum += m_lastFrames [i];
+    }
+    double averageElapsedSeconds = elapsedSecondsSum/60.0;
+
 
     if( m_module->m_debugTrigger1->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
     {
+        m_module->debugLog() << elapsedSeconds << " sec since last Frame | " << 1/elapsedSeconds << " fps";
+        m_module->debugLog() << averageElapsedSeconds << " sec average Frametiming | " << 1/averageElapsedSeconds << " fps";
+        /*
+        std::string leftFilename = "./OpenWalnut - leftEye.png";
+        std::string rightFilename = "./OpenWalnut - rightEye.png";
+        osg::ref_ptr< osg::Image > leftImage;
+        osg::ref_ptr< osg::Image > rightImage;
         m_module->debugLog() << " Links Breite:" << m_module->m_textureColorLeft->getImage()->s() <<
                             " Höhe:" << m_module->m_textureColorLeft->getImage()->t() <<
                             " Tiefe:" << m_module->m_textureColorLeft->getImage()->r();
@@ -497,7 +527,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
 
         osgDB::writeImageFile( *leftImage, leftFilename );
         osgDB::writeImageFile( *rightImage, rightFilename );
-
+        */
         m_module->m_debugTrigger1->set( WPVBaseTypes::PV_TRIGGER_READY, false );
     }
 
@@ -562,10 +592,6 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
             }
         }
 
-        std::chrono::_V2::system_clock::time_point now = std::chrono::system_clock::now();
-        double elapsedSeconds = ( now - m_lastFrame ).count();
-        m_lastFrame = now;
-
         //get all OpenVR tracking information
         for(uint32_t i = 0; i < vr::k_unMaxTrackedDeviceCount; ++i) m_module->m_poses[i].bPoseIsValid = false;
         vr::VRCompositor()->WaitGetPoses( m_module->m_poses, vr::k_unMaxTrackedDeviceCount, NULL, 0 );
@@ -575,7 +601,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
         while( m_module->m_vrSystem->PollNextEvent( &vrEvent, sizeof( vr::VREvent_t ) ) ) m_module->handleVREvent( vrEvent );
 
         //adjust Scene according to inputs
-        /*
+
         if( m_module->m_grabber != vr::k_unTrackedDeviceIndexInvalid )
         {
             vr::TrackedDevicePose_t controllerPose = m_module->m_poses[ m_module->m_grabber ];
@@ -584,22 +610,28 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
                 );
             if( cm )
             {
-                osg::Quat rot = cm->getRotation();
-                m_module->debugLog() << "Camera Rotation Quat " << rot.x() << " " << rot.y() << " " << rot.z() << " " << rot.w();
+                osg::Quat rotFrom = cm->getRotation();
+                osg::Quat rotBy = cm->getRotation();
                 m_module->debugLog() << "Angular Velocity " <<
                     controllerPose.vAngularVelocity.v[0] << " " <<
                     controllerPose.vAngularVelocity.v[1] << " " <<
                     controllerPose.vAngularVelocity.v[2];
-                rot.makeRotate(
-                    osg::PI_2,
-                    controllerPose.vAngularVelocity.v[0] / elapsedSeconds,
-                    controllerPose.vAngularVelocity.v[1] / elapsedSeconds,
-                    controllerPose.vAngularVelocity.v[2] / elapsedSeconds
+                double angle = sqrt(
+                    controllerPose.vAngularVelocity.v[0]*controllerPose.vAngularVelocity.v[0]+
+                    controllerPose.vAngularVelocity.v[1]*controllerPose.vAngularVelocity.v[1]+
+                    controllerPose.vAngularVelocity.v[2]*controllerPose.vAngularVelocity.v[2]
+                    )* elapsedSeconds;
+                m_module->debugLog() << "Angle " << angle;
+                rotBy.makeRotate(
+                    angle,
+                    -controllerPose.vAngularVelocity.v[0],
+                    -controllerPose.vAngularVelocity.v[1],
+                    -controllerPose.vAngularVelocity.v[2]
                     );
-                cm->setRotation( rot );
+                osg::Quat rotTo = rotFrom*rotBy;
+                cm->setRotation( rotTo );
             }
         }
-        */
 
         m_initialUpdate = false;
     }
