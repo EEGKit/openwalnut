@@ -25,6 +25,8 @@
 #ifndef WMWRITECSV_TEST_H
 #define WMWRITECSV_TEST_H
 
+#include <iostream>
+
 #include <boost/shared_ptr.hpp>
 
 #include <cxxtest/TestSuite.h>
@@ -37,43 +39,78 @@
 class WMWriteCSVTest : public CxxTest::TestSuite
 {
 public:
+    typedef boost::shared_ptr< std::vector< float > > SPFloatVector;
+    typedef boost::shared_ptr< std::vector< size_t > > SPSizeVector;
+    typedef boost::shared_ptr< std::vector< int > > SPIntVector;
+
     /**
-     * 
+     * test for converting a fiber to a tuple of vectors and ids
      */
     void testgetListOfInternalVertex()
     {
-        WMWriteCSV writer();
+        WMWriteCSV writerCSV;
+        std::tuple < WDataSetFibers::SPtr, std::vector< std::tuple < osg::Vec3, int > > > samples = createSampleFibers();
+        WDataSetFibers::SPtr fibers = std::get< 0 >( samples );
+        std::vector< std::tuple < osg::Vec3, int > > referenceList = std::get< 1 >( samples );
+        std::list< std::tuple < osg::Vec3, int > > testList = writerCSV.getListOfInternalVertex( fibers );
 
-        typedef boost::shared_ptr< std::vector< float > > SPFloatVector;
-        typedef boost::shared_ptr< std::vector< size_t > > SPSizeVector;
-        typedef boost::shared_ptr< std::vector< int > > SPIntVector;
+        TS_ASSERT_EQUALS( referenceList.size(), testList.size() );
 
-        std::vector< std::tuple < osg::Vec3, int > > referenceList
+        size_t referenceListCounter = 0;
+        for( auto element = testList.begin(); element != testList.end(); element++  )
+        {
+            std::tuple < osg::Vec3, int > refTuple = referenceList.at( referenceListCounter++ );
 
-        SPFloatVector vertices; 
-        SPSizeVector fiberStartIndexes;   
-        SPSizeVector fiberLengths;   
-        SPSizeVector verticesReverse; 
-        SPIntVector eventIDs;
+            osg::Vec3 refVector = std::get< 0 >( refTuple );
+            int refIndex = std::get< 1 >( refTuple );
+
+            osg::Vec3 testVector = std::get< 0 >( *element );
+            int testIndex = std::get< 1 >( *element );
+
+            TS_ASSERT_EQUALS( refVector.x(), testVector.x() );
+            TS_ASSERT_EQUALS( refVector.y(), testVector.y() );
+            TS_ASSERT_EQUALS( refVector.z(), testVector.z() );
+            TS_ASSERT_EQUALS( refIndex, testIndex );
+        }
+    }
+private:
+    /**
+     * helpermethod that generates a fiber example
+     */
+    std::tuple < WDataSetFibers::SPtr, std::vector< std::tuple < osg::Vec3, int > > > createSampleFibers()
+    {
+        std::vector< std::tuple < osg::Vec3, int > > referenceList;
+
+        SPFloatVector vertices = SPFloatVector( new std::vector< float >() );
+        SPSizeVector fiberStartIndexes = SPSizeVector( new std::vector< size_t >() );
+        SPSizeVector fiberLengths = SPSizeVector( new std::vector< size_t >() );
+        SPSizeVector verticesReverse = SPSizeVector( new std::vector< size_t >() );
+        SPIntVector eventIDs = SPIntVector( new std::vector< int >() );
 
         size_t eventIDCounter = 0;
+        size_t counter = 0;
 
         //create vertices
-        for(sizt_t vertexCounter = 0; vertexCounter < 10; vertexCounter++)
+        for( size_t vertexCounter = 0; vertexCounter < 10; vertexCounter++ )
         {
-            osg::Vec3 vectorTemp(vertexCounter, vertexCounter, vertexCounter);
+            osg::Vec3 vectorTemp( vertexCounter, vertexCounter, vertexCounter );
 
             vertices->push_back( vertexCounter );
             vertices->push_back( vertexCounter );
             vertices->push_back( vertexCounter );
 
-            if (eventIDCounter % 3 == 0 )
+            if ( counter == 2 )
             {
+                counter = 0;
                 eventIDCounter++;
             }
 
             eventIDs->push_back( eventIDCounter );
-            referenceList->push_back(vectorTemp, eventIDCounter);
+
+            std::tuple < osg::Vec3, int > tupleTemp( vectorTemp, eventIDCounter );
+
+            referenceList.push_back( tupleTemp );
+            counter++;
         }
 
         int fiberLength = 0;
@@ -83,8 +120,8 @@ public:
 
         fiberStartIndexes->push_back( fiberStartIndex );
 
-        //calculate fibers 
-        for( size_t eID : eventIDs )
+        //calculate fibers
+        for( int eID : *eventIDs )
         {
             if( currentEventID != eID )
             {
@@ -100,37 +137,17 @@ public:
             fiberStartIndex++;
             verticesReverse->push_back( reversePos );
         }
-        fiberStartIndex->push_back( fiberLength );
+        fiberStartIndexes->push_back( fiberLength );
 
+        WDataSetFibers::SPtr fibers = boost::shared_ptr< WDataSetFibers >( new WDataSetFibers(
+                vertices,
+                fiberStartIndexes,
+                fiberLengths,
+                verticesReverse
+        ) );
 
-
-        WDataSetFibers::SPtr fibers = new WDataSetFibers(
-                    vertices,
-                    fiberStartIndexes,
-                    fiberLengths,
-                    verticesReverse
-            );
-
-        std::list< std::tuple < osg::Vec3, int > > testList = writer.getListOfInternalVertex( fibers );
-
-        TS_ASSERT_EQUALS( referenceList.size, testList.size );
-
-        size_t referenceListCounter = 0
-        for( auto element = testList.begin(); element != testList.end(); element++  )
-        {
-            std::tuple < osg::Vec3, int > refTuple = referenceList.at( referenceListCounter++ );
-
-            osg::Vec3 refVector = std::get< 0 >( *refTuple );
-            int refIndex = std::get< 1 >( *refTuple );
-
-            osg::Vec3 testVector = std::get< 0 >( *element );
-            int testIndex = std::get< 1 >( *element );
-
-            TS_ASSERT_EQUALS( refVector.x(), testVector.x() );
-            TS_ASSERT_EQUALS( refVector.y(), testVector.y() );
-            TS_ASSERT_EQUALS( refVector.z(), testVector.z() );
-            TS_ASSERT_EQUALS( refIndex, testIndex );
-        }
+        std::tuple < WDataSetFibers::SPtr, std::vector< std::tuple < osg::Vec3, int > > > returnTuple( fibers, referenceList );
+        return returnTuple;
     }
 };
 
