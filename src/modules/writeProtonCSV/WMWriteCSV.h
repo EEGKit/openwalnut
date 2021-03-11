@@ -43,7 +43,6 @@
  */
 class WMWriteCSV : public WModule
 {
-
 /**
  * only test class may be friend
  */

@@ -26,6 +26,8 @@
 #define WMWRITECSV_TEST_H
 
 #include <iostream>
+#include <list>
+#include <vector>
 
 #include <boost/shared_ptr.hpp>
 
@@ -99,7 +101,7 @@ private:
             vertices->push_back( vertexCounter );
             vertices->push_back( vertexCounter );
 
-            if ( counter == 2 )
+            if( counter == 2 )
             {
                 counter = 0;
                 eventIDCounter++;
