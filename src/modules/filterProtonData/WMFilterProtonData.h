@@ -108,6 +108,11 @@ public:
 
 protected:
     /**
+     * Toggles activation for inner module based on activation of this module
+     */
+    virtual void activate();
+
+    /**
      * Entry point after loading the module. Runs in separate thread.
      */
     virtual void moduleMain();

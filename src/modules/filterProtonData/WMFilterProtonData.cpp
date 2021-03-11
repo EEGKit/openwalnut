@@ -231,3 +231,8 @@ void WMFilterProtonData::createColorBar()
     m_colorBar->isReady().wait();
     m_output_transferFunction->connect( m_colorBar->getInputConnector( "transfer function" ) );
 }
+
+void WMFilterProtonData::activate()
+{
+    m_colorBar->getProperties()->getProperty( "active" )->toPropBool()->set( m_active->get() );
+}
