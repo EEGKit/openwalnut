@@ -39,6 +39,19 @@ WMCsvConverter::WMCsvConverter( WMProtonData::SPtr protonData,  boost::shared_pt
     setOutputFromCSV( );
 }
 
+WMCsvConverter::WMCsvConverter( WMProtonData::SPtr protonData,  boost::shared_ptr< WMPropertyStatus > propertyStatus,
+                                WModule::SPtr colorBar )
+{
+    m_protonData = protonData;
+    m_propertyStatus = propertyStatus;
+    m_vectors = WMConverterVectors::SPtr( new WMConverterVectors() );
+    m_indexes = WMConverterIndexes::SPtr( new WMConverterIndexes() );
+    m_colorBar = colorBar;
+
+
+    setOutputFromCSV( );
+}
+
 boost::shared_ptr< WDataSetFibers > WMCsvConverter::getFibers()
 {
     return m_fibers;
@@ -47,6 +60,12 @@ boost::shared_ptr< WDataSetFibers > WMCsvConverter::getFibers()
 boost::shared_ptr< WDataSetPoints > WMCsvConverter::getPoints()
 {
     return m_points;
+}
+
+
+boost::shared_ptr< WDataSetPointsAndEventID > WMCsvConverter::getPointsAndIDs()
+{
+    return m_selectedEventIDs;
 }
 
 void WMCsvConverter::setOutputFromCSV( )
@@ -87,6 +106,8 @@ void WMCsvConverter::setOutputFromCSV( )
 
     createOutputPoints();
     createOutputFibers();
+    createOutputPointsAndEventIDs();
+    
 }
 
 boost::shared_ptr< WDataSetSingle > WMCsvConverter::getTransferFunction()
@@ -133,6 +154,10 @@ void WMCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArr
                 }
             }
         }
+
+        bool activated = m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get();
+
+        m_colorBar->getProperties()->getProperty( "active" )->toPropBool()->set( activated );
     }
 }
 
@@ -162,7 +187,7 @@ bool WMCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRo
     if( m_protonData->isColumnAvailable( "PDGEncoding" ) )
     {
         if( !m_propertyStatus->getFilterPropertyHandler()->isPDGTypeSelected(
-           stringToInt( dataRow->at( m_indexes->getPDGEncoding( ) ) ) ) )
+           ( int )stringToFloat( dataRow->at( m_indexes->getPDGEncoding( ) ) ) ) )
         {
             return false;
         }
@@ -182,7 +207,6 @@ bool WMCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRo
             return false;
         }
     }
-
     return true;
 }
 
@@ -325,8 +349,21 @@ void WMCsvConverter::createOutputFibers()
     }
 }
 
+void WMCsvConverter::createOutputPointsAndEventIDs()
+{
+    std::cout << m_vectors->getEventIDs()->size() << " " << m_vectors->getVertices()->size() << std::endl;
+    m_selectedEventIDs = boost::shared_ptr < WDataSetPointsAndEventID >(
+            new WDataSetPointsAndEventID(
+                    m_vectors->getVertices(),
+                    m_vectors->getColors(),
+                    m_vectors->getEventIDs()
+            )
+    );
+}
+
 void WMCsvConverter::addEventID( WDataSetCSV::Content::iterator dataRow )
 {
+    
     if(m_protonData->isColumnAvailable("eventID"))
         {
             if(dataRow->at( m_indexes->getEventID() ) == "NULL")
@@ -355,6 +392,7 @@ bool WMCsvConverter::checkIfOutputIsNull()
     {
         m_points = NULL;
         m_fibers = NULL;
+        m_selectedEventIDs = NULL;
         return true;
     }
     return false;
@@ -371,7 +409,7 @@ float WMCsvConverter::stringToFloat( std::string str )
     {
         return boost::lexical_cast< float >( str );
     }
-    catch( boost::bad_lexical_cast e )
+    catch( boost::bad_lexical_cast &e )
     {
         throw WException( "The selected column has an incorrect format. Numbers (float) are expected. " + std::string( e.what() ) );
     }
@@ -383,7 +421,7 @@ int WMCsvConverter::stringToInt( std::string str )
     {
         return boost::lexical_cast< int >( str );
     }
-    catch( boost::bad_lexical_cast e )
+    catch( boost::bad_lexical_cast &e )
     {
         throw WException( "The selected column has an incorrect format. Numbers (int) are expected. " + std::string( e.what() ) );
     }

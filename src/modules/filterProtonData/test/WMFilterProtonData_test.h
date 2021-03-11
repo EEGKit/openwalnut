@@ -22,37 +22,31 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WDataSetCSV.h"
+#ifndef WMFILTERPROTONDATA_TEST_H
+#define WMFILTERPROTONDATA_TEST_H
 
-WDataSetCSV::WDataSetCSV( WDataSetCSV::ContentSPtr header, WDataSetCSV::ContentSPtr data )
-    : m_header( header ), m_data( data )
-{
-}
+#include <boost/shared_ptr.hpp>
 
-WDataSetCSV::WDataSetCSV()
-{
-}
+#include <cxxtest/TestSuite.h>
 
-WDataSetCSV::~WDataSetCSV()
-{
-}
+#include "modules/data/io/WReaderCSV.h"
+#include "../WMFilterProtonData.h"
 
-WDataSetCSV::ContentSPtr WDataSetCSV::getHeader()
+/**
+ * test class of the protonData class
+ */
+class WMFilterProtonDataTest : public CxxTest::TestSuite
 {
-    return m_header;
-}
+public:
+    /**
+     * Test instantiation with non existing file
+     */
+    void testInstantiationWithValidCsv()
+    {
+        //boost::shared_ptr< WDataSetCSV > csvDataSet = boost::shared_ptr< new WDataSetCSV() >
+        //WReaderCSV csvDataSet( "");
+    }
 
-WDataSetCSV::ContentSPtr WDataSetCSV::getData()
-{
-    return m_data;
-}
+};
 
-WDataSetCSV::SeperatedRowSPtr WDataSetCSV::getRawDataSet()
-{
-    return rawDataSet;
-}
-
-void WDataSetCSV::setRawDataSet( WDataSetCSV::SeperatedRowSPtr rawDataSetIn )
-{
-    rawDataSet = rawDataSetIn;
-}
+#endif  // WMFILTERPROTONDATA_TEST_H

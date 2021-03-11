@@ -35,6 +35,10 @@
  */
 class WMProtonData
 {
+    /**
+     * only test class may be friend
+     */
+     friend class WMProtonDataTest;
 public:
     /**
      * shared_ptr that points to itself 
@@ -99,13 +103,6 @@ public:
      * \return true when initialized. false if they are not initialized 
      */
     bool isRequiredDataAvailable();
-
-    /**
-     * checks whether columns are missing 
-     *
-     * \return true if column is missing . false if column is not missing
-     */
-    bool isNonrequiredDataAvailable();
 
     /**
      * checks whether columns are available 

@@ -37,6 +37,7 @@ void WMConverterIndexes::update( WMProtonData::SPtr protonData )
     m_edep = protonData->getColumnIndex( "edep" );
     m_PDGEncoding = protonData->getColumnIndex( "PDGEncoding" );
     m_eventID = protonData->getColumnIndex( "eventID" );
+    m_selectedEventID = protonData->getColumnIndex( "SelectedEventID" );
 }
 
 int WMConverterIndexes::getParentID()
@@ -72,4 +73,9 @@ int WMConverterIndexes::getPDGEncoding()
 int WMConverterIndexes::getEventID()
 {
     return m_eventID;
+}
+
+int WMConverterIndexes::getSelectedEventID()
+{
+    return m_selectedEventID;
 }

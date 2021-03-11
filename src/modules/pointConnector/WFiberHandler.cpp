@@ -33,6 +33,8 @@
 #include "action/WFiberActionRemoveFiber.h"
 #include "action/WFiberActionToggle.h"
 
+#include "core/common/WPathHelper.h"
+
 #include "WFiberHandler.h"
 
 WFiberHandler::WFiberHandler( WMPointConnector* pointConnector )
@@ -88,6 +90,17 @@ void WFiberHandler::removeVertexFromFiber( osg::Vec3 vertex, size_t fiberIdx, bo
     }
 }
 
+void WFiberHandler::clear()
+{
+    m_fibers->clear();
+    m_hidden->clear();
+    m_possibleFiberSelections->clear();
+
+    m_fiberCount = 1;
+    m_selectedFiber = 0;
+    addFiber( "Fiber 1", true );
+}
+
 void WFiberHandler::selectLastPoint()
 {
     PCFiber fiber = m_fibers->at( m_selectedFiber );
@@ -125,18 +138,27 @@ static bool sortComparator( boost::shared_ptr< WItemSelectionItem > a, boost::sh
     return a->getName().compare( b->getName() ) < 0;
 }
 
-void WFiberHandler::addFiber( std::string name, bool silent )
+void WFiberHandler::addFiber( std::string name, bool silent, bool updateSelector )
 {
     m_fibers->push_back( PCFiber() );
     m_hidden->push_back( false );
 
     m_possibleFiberSelections->addItem( ItemType::create( name, name, "", NULL ) );
-    m_fiberSelection->set( m_possibleFiberSelections->getSelectorLast() );
+
+    if( updateSelector )
+    {
+        selectorUpdate();
+    }
 
     if( !silent )
     {
         m_actionHandler->pushAction( WFiberActionAddFiber::SPtr( new WFiberActionAddFiber( name, m_fibers->size() - 1, this ) ) );
     }
+}
+
+void WFiberHandler::selectorUpdate()
+{
+    m_fiberSelection->set( m_possibleFiberSelections->getSelectorLast() );
 }
 
 void WFiberHandler::addFiberAt( std::string name, size_t position, bool hidden, bool silent, PCFiber fiber )

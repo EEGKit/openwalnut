@@ -35,14 +35,17 @@
 
 #include "core/dataHandler/WDataSetCSV.h"
 #include "core/dataHandler/WDataSetFibers.h"
+#include "core/kernel/WKernel.h"
+#include "core/kernel/WModule.h"
+#include "core/kernel/WModuleContainer.h"
+#include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
 #include "core/dataHandler/WDataSetPoints.h"
 #include "core/dataHandler/WDataSetPointsAndSizes.h"
+#include "core/dataHandler/WDataSetPointsAndEventID.h"
 
 #include "core/common/WItemSelectionItem.h"
 #include "core/common/WItemSelector.h"
-
-#include "core/kernel/WModule.h"
 
 #include "WMProtonData.h"
 
@@ -55,7 +58,7 @@
  *
  * \ingroup modules
  */
-class WMFilterProtonData : public WModule
+class WMFilterProtonData : public WModuleContainer
 {
 public:
     /**
@@ -127,6 +130,11 @@ private:
     WMProtonData::SPtr m_protonData;
 
     /**
+     * Reference to the transfer function color bar module within this module container
+     */
+    WModule::SPtr m_colorBar;
+
+    /**
      * Input connector (required for this module).
      */
     boost::shared_ptr< WModuleInputData< WDataSetCSV > > m_input;
@@ -147,6 +155,11 @@ private:
     boost::shared_ptr< WModuleOutputData< WDataSetSingle > > m_output_transferFunction;
 
     /**
+     * WDataSetPointsAndEventIDs output connector to output points and eventIDs for PointConn.
+     */
+    boost::shared_ptr< WModuleOutputData< WDataSetPointsAndEventID > > m_output_points_eventIds;
+
+    /**
      * Stores information of the input-csv-data
      */
     boost::shared_ptr< WDataSetCSV > m_dataset;
@@ -160,6 +173,11 @@ private:
      * Contains the algorithm that converts the raw CSV file into compatible WDataSets (Points, Fibers, PointsAndSizes, PointConnector etc.)
      */
     boost::shared_ptr < WMCsvConverter > m_converter;
+
+    /**
+     * Creates the transfer function color bar module within this module container
+     */
+    void createColorBar();
 
     /**
      * Contains the loaded properties.

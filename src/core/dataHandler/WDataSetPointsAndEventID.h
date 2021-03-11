@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WDATASETPOINTSANDSIZES_H
-#define WDATASETPOINTSANDSIZES_H
+#ifndef WDATASETPOINTSANDEVENTID_H
+#define WDATASETPOINTSANDEVENTID_H
 
 #include <string>
 #include <vector>
@@ -35,23 +35,23 @@
 /**
  * Dataset to store a bunch of points with their sizes but without order or topology.
  */
-class WDataSetPointsAndSizes : public WDataSetPoints
+class WDataSetPointsAndEventID : public WDataSetPoints
 {
 public:
     /**
      * Pointer to dataset.
      */
-    typedef boost::shared_ptr< WDataSetPointsAndSizes > SPtr;
+    typedef boost::shared_ptr< WDataSetPointsAndEventID > SPtr;
 
     /**
      * Pointer to const dataset.
      */
-    typedef boost::shared_ptr< const WDataSetPointsAndSizes > ConstSPtr;
+    typedef boost::shared_ptr< const WDataSetPointsAndEventID > ConstSPtr;
 
     /**
      * Sizes for each vertix in VertexArray
      */
-    typedef boost::shared_ptr< std::vector< float > > SizeArray;
+    typedef boost::shared_ptr< std::vector< int > > EventIDArray;
 
     /**
      * Constructs a new set of points. If no color is specified, white is used for all points.
@@ -62,11 +62,11 @@ public:
      *
      * \param vertices the vertices of the points, stored in x1,y1,z1,x2,y2,z2, ..., xn,yn,zn scheme
      * \param colors the colors of each vertex. Can be NULL. Stored as R1,G1,B1,A1, ... Rn,Gn,Bn,An
-     * \param sizes the sizes of each vertex.
+     * \param eventIDs the eventID of each vertex.
      * \param boundingBox The bounding box of the points (first minimum, second maximum).
      */
-    WDataSetPointsAndSizes( VertexArray vertices, ColorArray colors,
-                            SizeArray sizes, WBoundingBox boundingBox );
+    WDataSetPointsAndEventID( VertexArray vertices, ColorArray colors,
+                            EventIDArray eventIDs, WBoundingBox boundingBox );
 
     /**
      * Constructs a new set of points. The bounding box is calculated during construction. If no color is specified, white is used for all
@@ -77,21 +77,21 @@ public:
      * \note the number of floats in sizes must be vertices->size() / 3
      *
      * \param vertices the vertices of the points, stored in x1,y1,z1,x2,y2,z2, ..., xn,yn,zn scheme
-     * \param sizes the sizes of each vertex.
+     * \param eventIDs the eventID of each vertex.
      * \param colors the colors of each vertex. Can be NULL. Stored as R1,[G1,B1,[A1,]] ... Rn,[Gn,Bn,[An]]
      */
-    WDataSetPointsAndSizes( VertexArray vertices, ColorArray colors,
-                            SizeArray sizes );
+    WDataSetPointsAndEventID( VertexArray vertices, ColorArray colors,
+                            EventIDArray eventIDs );
 
     /**
      * Constructs a new set of points. The constructed instance is empty.
      */
-    WDataSetPointsAndSizes();
+    WDataSetPointsAndEventID();
 
     /**
      * Destructor.
      */
-    ~WDataSetPointsAndSizes();
+    ~WDataSetPointsAndEventID();
 
     /**
      * Gets the name of this prototype.
@@ -115,20 +115,20 @@ public:
     static boost::shared_ptr< WPrototyped > getPrototype();
 
     /**
-     * Getter for the point sizes
-     * \return The sizes
+     * Getter for the point eventIDs
+     * \return The eventIDs
      */
-    SizeArray getSizes() const;
+    EventIDArray getEventIDs() const;
 
     /**
-     * The size of a given point.
+     * The eventID of a given point.
      *
      * \throw WOutOfBounds if invalid index is used.
      * \param pointIdx the point index.
      *
-     * \return the size
+     * \return the eventID
      */
-    float getSize( const size_t pointIdx ) const;
+    int getEventID( const int pointIdx ) const;
 
 protected:
     /**
@@ -138,9 +138,9 @@ protected:
 
 private:
     /**
-     * An array of the sizes per vertex.
+     * An array of the eventID per vertex.
      */
-    SizeArray m_sizes;
+    EventIDArray m_eventIDs;
 };
 
-#endif  // WDATASETPOINTSANDSIZES_H
+#endif  // WDATASETPOINTSANDEVENTID_H

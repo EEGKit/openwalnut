@@ -31,7 +31,7 @@
 W_LOADABLE_MODULE( WMFilterProtonData )
 
 WMFilterProtonData::WMFilterProtonData():
-        WModule()
+        WModuleContainer()
 {
 }
 
@@ -109,6 +109,7 @@ void WMFilterProtonData::moduleMain()
         m_propertyStatus->getVisualizationPropertyHandler()->createProperties();
         m_propertyStatus->getEventIDLimitationPropertyHandler()->createProperties();
 
+        createColorBar();
         setToLoadedProperties();
 
         setOutputFromCSV( );
@@ -123,6 +124,8 @@ void WMFilterProtonData::connectors()
     m_output_fibers = WModuleOutputData< WDataSetFibers >::createAndAdd( shared_from_this(), "output fibers",  "Output CSV data as Fiber data" );
     m_output_transferFunction = WModuleOutputData< WDataSetSingle >::createAndAdd( shared_from_this(),
                                                                                    "output transferfunction", "Output transfer function" );
+    m_output_points_eventIds = WModuleOutputData< WDataSetPointsAndEventID >::createAndAdd( shared_from_this(), 
+                                                    "output points and eventIDs",  "Output CSV data as points and EventIDs for PointConnector" );
 
     WModule::connectors();
 }
@@ -220,10 +223,11 @@ void WMFilterProtonData::setToLoadedProperties()
 
 void WMFilterProtonData::setOutputFromCSV()
 {
-    m_converter = boost::shared_ptr< WMCsvConverter >( new WMCsvConverter( m_protonData, m_propertyStatus ) );
+    m_converter = boost::shared_ptr< WMCsvConverter >( new WMCsvConverter( m_protonData, m_propertyStatus, m_colorBar ) );
 
     m_output_points->updateData( m_converter->getPoints() );
     m_output_fibers->updateData( m_converter->getFibers() );
+    m_output_points_eventIds->updateData(m_converter->getPointsAndIDs() );
     m_output_transferFunction->updateData( m_converter->getTransferFunction() );
 }
 
@@ -233,4 +237,11 @@ void WMFilterProtonData::updateProperty()
     m_propertyStatus->getFilterPropertyHandler()->updateProperty();
     m_propertyStatus->getVisualizationPropertyHandler()->updateProperty();
     m_propertyStatus->getEventIDLimitationPropertyHandler()->updateProperty();
+}
+
+void WMFilterProtonData::createColorBar()
+{
+    m_colorBar = createAndAdd( "Transfer Function Color Bar" );
+    m_colorBar->isReady().wait();
+    m_output_transferFunction->connect( m_colorBar->getInputConnector( "transfer function" ) );
 }

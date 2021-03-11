@@ -36,6 +36,7 @@
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
 #include "core/dataHandler/WDataSetPointsAndSizes.h"
+#include "core/dataHandler/WDataSetPointsAndEventID.h"
 #include "core/dataHandler/WValueSet.h"
 #include "core/dataHandler/WValueSetBase.h"
 
@@ -57,6 +58,15 @@ public:
     * \param propertyStatus The status of the properties.
     */
     WMCsvConverter( WMProtonData::SPtr protonData, boost::shared_ptr< WMPropertyStatus > propertyStatus );
+
+    /**
+     * Initializes the vectors, indices and transfer function color bar
+     * Calls setOutputFromCSV.
+     * \param protonData The proton data to use.
+     * \param propertyStatus The status of the properties.
+     * \param colorBar Reference to the transfer function color bar module
+     */
+    WMCsvConverter( WMProtonData::SPtr protonData, boost::shared_ptr< WMPropertyStatus > propertyStatus, WModule::SPtr colorBar );
 
     /**
      * represents a boost::shared_ptr to a vector containing a vector of floats.
@@ -88,11 +98,22 @@ public:
      */
     boost::shared_ptr< WDataSetSingle > getTransferFunction();
 
+    /**
+     * Getter
+     * \return shared_ptr of generated selected event ID
+     */
+    boost::shared_ptr< WDataSetPointsAndEventID > getPointsAndIDs();
+
 private:
     /**
      * Stores information form csv content. Content object containing data
      */
     WMProtonData::SPtr m_protonData;
+
+    /**
+     * Stores reference to the given transfer function color bar module
+     */
+    WModule::SPtr m_colorBar;
 
     /**
      * Stores information for the fiber display
@@ -103,6 +124,11 @@ private:
      * Stores information for the point renderer
      */
     boost::shared_ptr< WDataSetPoints > m_points;
+
+    /**
+     * Stores information for the point Conncetor
+     */
+    boost::shared_ptr< WDataSetPointsAndEventID > m_selectedEventIDs;
 
     /**
      * Stores the currently mapped transfer function
@@ -153,7 +179,7 @@ private:
      * \param dataRow each row of the csv file (content of row)
      */
     void addVertex( WDataSetCSV::Content::iterator dataRow );
-
+    
     /**
      * Create color for point/Fiber renderer
      *
@@ -190,6 +216,11 @@ private:
      * Create the points for points renderer
      */
     void createOutputPoints();
+
+    /**
+     * Create the points and selected event IDs for Point Connector
+     */
+    void createOutputPointsAndEventIDs();
 
     /**
      * Create outputs, so it can be displayed by the fiber display and the point renderer.
