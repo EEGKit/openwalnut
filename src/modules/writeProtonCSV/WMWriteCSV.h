@@ -38,8 +38,17 @@
 
 #include "../filterProtonData/WMProtonData.h"
 
+/**
+ * @@@@@@@@@@@@@@@@@@@@
+ */
 class WMWriteCSV : public WModule
 {
+
+/**
+ * only test class may be friend
+ */
+friend class WMWriteCSVTest;
+
 public:
     /**
      * Standard constructor.
