@@ -127,7 +127,7 @@ void WMPointConnector::createPointRenderer()
     pointGroup->addProperty( "Activate", "Activates the point renderer", true,
         boost::bind( &WMPointConnector::toggleActivationOfModule, this, m_pointRenderer ) );
 
-    pointGroup->addProperty( m_pointRenderer->getProperties()->getProperty( "Point Size" ) );
+    pointGroup->addProperty( m_pointRenderer->getProperties()->getProperty( "Point size" ) );
 }
 
 void WMPointConnector::createFiberDisplay()
@@ -141,7 +141,7 @@ void WMPointConnector::createFiberDisplay()
     fiberGroup->addProperty( "Activate", "Activates the fiber display", true,
         boost::bind( &WMPointConnector::toggleActivationOfModule, this, m_fiberDisplay ) );
 
-    fiberGroup->addProperty( m_fiberDisplay->getProperties()->getProperty( "Line Rendering" )->toPropGroup()->getProperty( "Width" ) );
+    fiberGroup->addProperty( m_fiberDisplay->getProperties()->getProperty( "Line Rendering" )->toPropGroup()->getProperty( "Line width" ) );
 }
 
 void WMPointConnector::toggleActivationOfModule( WModule::SPtr mod )

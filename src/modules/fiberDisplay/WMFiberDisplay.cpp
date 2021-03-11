@@ -123,7 +123,7 @@ void WMFiberDisplay::properties()
     m_clipPlaneDistance->setMax( 1000.0 );
 
     m_lineGroup = m_properties->addPropertyGroup( "Line Rendering", "Line rendering specific options." );
-    m_lineWidth = m_lineGroup->addProperty( "Width", "The line width.", 1.0 );
+    m_lineWidth = m_lineGroup->addProperty( "Line width", "The line width.", 1.0 );
     m_lineWidth->setMin( 1.0 );
     m_lineWidth->setMax( 10.0 );
     m_lineSmooth = m_lineGroup->addProperty( "Anti-Alias", "Anti-aliased line rendering. This can be slow!", false );

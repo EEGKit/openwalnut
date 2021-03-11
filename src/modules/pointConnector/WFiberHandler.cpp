@@ -118,21 +118,19 @@ void WFiberHandler::createProperties( WPropertyGroup::SPtr properties )
     WPropertyGroup::SPtr undoGroup = properties->addPropertyGroup( "Undo | Redo", "Property group for undo and redo." );
 
     m_possibleFiberSelections = WItemSelection::SPtr( new WItemSelection() );
-
+    m_possibleFiberSelections->addItem( ItemType::create( "Track 1", "Track 1", "", NULL ) );
+ 
     m_fiberSelection = fiberGroup->addProperty(
-        "Selected Line", "The line to which the points are added", m_possibleFiberSelections->getSelectorNone(), notifier );
-
-    addFiber( "Fiber 1", true );
+        "Selected track", "The track to which the points are added", m_possibleFiberSelections->getSelectorFirst(), notifier );
 
     WPropertyHelper::PC_SELECTONLYONE::addTo( m_fiberSelection );
     WPropertyHelper::PC_NOTEMPTY::addTo( m_fiberSelection );
 
-    m_addFiber = fiberGroup->addProperty( "Add Fiber", "Add Fiber", WPVBaseTypes::PV_TRIGGER_READY, notifier );
-    m_removeFiber = fiberGroup->addProperty( "Remove Fiber", "Remove Fiber", WPVBaseTypes::PV_TRIGGER_READY, notifier );
-    m_toggleFiber = fiberGroup->addProperty( "Toggle Fiber", "Toggle Fiber", WPVBaseTypes::PV_TRIGGER_READY, notifier );
+    m_addFiber = fiberGroup->addProperty( "Add track", "Add Track", WPVBaseTypes::PV_TRIGGER_READY, notifier );
+    m_removeFiber = fiberGroup->addProperty( "Remove track", "Remove Track", WPVBaseTypes::PV_TRIGGER_READY, notifier );
 
-    m_undoTrigger = undoGroup->addProperty( "Undo", "Undo", WPVBaseTypes::PV_TRIGGER_READY, notifier );
-    m_redoTrigger = undoGroup->addProperty( "Redo", "Redo", WPVBaseTypes::PV_TRIGGER_READY, notifier );
+    m_undoTrigger = undoGroup->addProperty( "Undo", "Undo Changes", WPVBaseTypes::PV_TRIGGER_READY, notifier );
+    m_redoTrigger = undoGroup->addProperty( "Redo", "Redo Changes", WPVBaseTypes::PV_TRIGGER_READY, notifier );
 }
 
 static bool sortComparator( boost::shared_ptr< WItemSelectionItem > a, boost::shared_ptr< WItemSelectionItem > b )

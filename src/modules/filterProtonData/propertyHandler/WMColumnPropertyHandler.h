@@ -87,8 +87,24 @@ private:
     /**
      * A vector, where all default ColumnPropertyNames are stored in
      */
-    const std::vector< std::string > vecDefaultColumnNames = { "PDGEncoding", "posX", "posY", "posZ", "edep", "eventID", "trackID",
-                                                              "parentID"};
+    const std::vector< std::string > vecDefaultColumnNames = { "Particle Data Group", "X", "Y", "Z", "Energy deposition", "Event id", "Track id",
+                                                              "Parent id" };
+
+    /**
+     * A vector where all default column desciptions are stored in
+     */
+    const std::vector< std::string > vecDefaultDescription = { 
+                                                            "Choose the column which should be used to determine the particle data group.",
+                                                            "Choose the column which should be used to determine the x coordinate.",
+                                                            "Choose the column which should be used to determine the y coordinate.",
+                                                            "Choose the column which should be used to determine the z coordinate.",
+                                                            "Choose the column which should be used to determine the energy deposition.",
+                                                            "Choose the column which should be used to determine the event id."
+                                                            "Tracks will be drawn based on the the event id, all particles with the same event id will be connected.",
+                                                            "Choose the column which should be used to determine the track id.",
+                                                            "Choose the column which should be used to determine the parent id." 
+                                                            "Primaries and secondaries filtering is based on that id, if a "
+                                                            "particle has the parent id 0 it is a primary otherwise it is a secondary."};
 
     /**
      * A map between WPropSelection items and column names as strings
@@ -118,10 +134,11 @@ private:
     /**
      * Creates the individual WItemSelection
      * \param headerName The name of the selection
+     * \param description The description of the selection
      * \param notifier The notifier for the selection
      * \return WPropSelection The created selection
      */
-    WPropSelection addHeaderProperty( std::string headerName, WPropertyBase::PropertyChangeNotifierType notifier );
+    WPropSelection addHeaderProperty( std::string headerName, std::string description, WPropertyBase::PropertyChangeNotifierType notifier );
 
     /**
      * Event function when WItemSelection is triggered
