@@ -468,7 +468,6 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
         m_module->debugLog() << "Pointer:" << m_module->m_textureColorRight->getImage()->getDataPointer();
         m_module->debugLog() << "DatenMenge:" << m_module->m_textureColorRight->getImage()->getTotalDataSize();
 
-        /*
         osg::State *leftState=WKernel::getRunningKernel()->getGraphicsEngine()
                                             ->getViewerByName( "Left Eye View" )->getCamera()
                                             ->getGraphicsContext()->getState();
@@ -489,7 +488,6 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
                                             m_module->m_vrRenderWidth,
                                             m_module->m_vrRenderHeight
                                             );
-        */
 
         //std::string leftFilename = ( QDir::homePath() + QDir::separator() + "OpenWalnut - leftEye.png" ).toStdString();
         //std::string rightFilename = ( QDir::homePath() + QDir::separator() + "OpenWalnut - rightEye.png" ).toStdString();
@@ -577,6 +575,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
         while( m_module->m_vrSystem->PollNextEvent( &vrEvent, sizeof( vr::VREvent_t ) ) ) m_module->handleVREvent( vrEvent );
 
         //adjust Scene according to inputs
+        /*
         if( m_module->m_grabber != vr::k_unTrackedDeviceIndexInvalid )
         {
             vr::TrackedDevicePose_t controllerPose = m_module->m_poses[ m_module->m_grabber ];
@@ -600,6 +599,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
                 cm->setRotation( rot );
             }
         }
+        */
 
         m_initialUpdate = false;
     }
