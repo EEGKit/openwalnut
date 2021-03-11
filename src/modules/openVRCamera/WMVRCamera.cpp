@@ -198,8 +198,8 @@ void WMVRCamera::moduleMain()
     m_rightEyeNode = osg::ref_ptr< WGEGroupNode > ( new WGEGroupNode() );
 
     // insert the created nodes
-    //m_rootnode->insert( m_leftEyeNode );
-    //m_rootnode->insert( m_rightEyeNode );
+    m_rootnode->insert( m_leftEyeNode );
+    m_rootnode->insert( m_rightEyeNode );
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_rootnode );
 
     // get side-views
@@ -208,8 +208,6 @@ void WMVRCamera::moduleMain()
     leftEyeView->reset();
     rightEyeView->reset();
 
-    leftEyeView->getScene()->insert(m_leftEyeNode);
-    rightEyeView->getScene()->insert(m_rightEyeNode);
 
     // Now, we can mark the module ready.
     ready();
@@ -339,17 +337,25 @@ void WMVRCamera::moduleMain()
     finalPassLeft->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
     finalPassRight->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
 
-    osg::ref_ptr< osg::Node > plane = wge::genFinitePlane( 
+    osg::ref_ptr< osg::Node > plane_left = wge::genFinitePlane( 
                                 osg::Vec3( 0.0, 0.0, 0.0 ),   // base
-                                osg::Vec3( 100.0, 0.0, 0.0 ), // spanning vector a
-                                osg::Vec3( 0.0, 100.0, 0.0 ), // spanning vector b
-                                WColor( 0.5, 0.5, 0.5, 1.0 )  // a color.
+                                osg::Vec3( 0.0, 100.0, 0.0 ), // spanning vector a
+                                osg::Vec3( 0.0, 0.0, 100.0 ), // spanning vector b
+                                WColor( 0.5, 1.0, 0.5, 1.0 )  // a color.
+           );
+    osg::ref_ptr< osg::Node > plane_right = wge::genFinitePlane( 
+                                osg::Vec3( 0.0, 0.0, 0.0 ),   // base
+                                osg::Vec3( 0.0, 100.0, 0.0 ), // spanning vector a
+                                osg::Vec3( 100.0, 0.0, 0.0 ), // spanning vector b
+                                WColor( 0.5, 0.5, 1.0, 1.0 )  // a color.
            );
 
-    m_rightEyeNode->addChild(plane);
+    m_leftEyeNode->addChild(plane_left);
+    m_rightEyeNode->addChild(plane_right);
 
     //offscreenRenderLeft->addChild(dynamic_cast<osg::Node*>(WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone(osg::CopyOp::SHALLOW_COPY)));
     //offscreenRenderRight->addChild(dynamic_cast<osg::Node*>(WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone(osg::CopyOp::SHALLOW_COPY)));
+    
     m_rootnode->insert( offscreenRenderLeft );
     m_rootnode->insert( offscreenRenderRight );
 
@@ -625,8 +631,8 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
                 rotBy.makeRotate(
                     angle,
                     -controllerPose.vAngularVelocity.v[0],
-                    -controllerPose.vAngularVelocity.v[1],
-                    -controllerPose.vAngularVelocity.v[2]
+                    controllerPose.vAngularVelocity.v[2],
+                    -controllerPose.vAngularVelocity.v[1]
                     );
                 osg::Quat rotTo = rotFrom*rotBy;
                 cm->setRotation( rotTo );

@@ -36,6 +36,9 @@ void main()
     // finally set the color and depth
     // NOTE: you should remember that, when outputting to more than one texture (if you attached multiple color outputs), you need to use
     // gl_FragData instead of gl_FragColor!
-    gl_FragData[0] = vec4( light, 0.8, 0.8, 0.8 );
+    // gl_FragData[0] = vec4( light, 0.8, 0.8, 0.8 );
+    // gl_FragData[0].rgb = light * vec3( 0.5, 1.0, 0.5 );
+    // gl_FragData[0].a = 0.8;
+    gl_FragData[0] = vec4( 0.5+0.5*light, 0.8, 0.8, 0.8 );
 }
 
