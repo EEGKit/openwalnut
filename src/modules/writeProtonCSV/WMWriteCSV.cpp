@@ -188,7 +188,7 @@ std::list< std::tuple < int, int > > WMWriteCSV::getListOfPositionAndID(
                 vertexPoints.z() == selectedVertex.z() )
             {
                 listOfInternalVertex.erase( element );
-                listOfPositionAndID.push_back( std::make_tuple( pos, selectedVertexIndex ) );
+                listOfPositionAndID.push_back( std::make_tuple( pos + 1, selectedVertexIndex ) );
                 break;
             }
         }

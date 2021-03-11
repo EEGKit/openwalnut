@@ -56,14 +56,14 @@ public:
     /**
      * Getter method to receive points
      *
-     * \return m_header as WDataSetPointsAndFibers::Content object
+     * \return m_points (Dataset to store a bunch of points.) 
      */
     WDataSetPoints::SPtr getPoints();
 
     /**
      * Getter method to receive fibers
      *
-     * \return m_data as WDataSetPointsAndFibers::Content object
+     * \return m_fibers (dataset to store a bunch of fibers.)
      */
     WDataSetFibers::SPtr getFibers();
 

@@ -105,13 +105,6 @@ public:
     bool isRequiredDataAvailable();
 
     /**
-     * checks whether columns are missing 
-     *
-     * \return true if column is missing . false if column is not missing
-     */
-    bool isNonrequiredDataAvailable();
-
-    /**
      * checks whether columns are available 
      * \param columnName THe name of the column.
      * \return true if column is available, false if column is not available

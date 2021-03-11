@@ -113,8 +113,9 @@ public:
      * Adds a new fiber.
      * \param name The name of the fiber.
      * \param silent Whether or not this should add to the undo stack.
+     * \param updateSelector Whether the UI selector should be updated
      */
-    void addFiber( std::string name, bool silent = false );
+    void addFiber( std::string name, bool silent = false, bool updateSelector = true );
 
     /**
      * Adds a new or an old fiber at a specific position.
@@ -139,6 +140,16 @@ public:
      * \param silent Whether or not this should add to the undo stack.
      */
     void toggleFiber( size_t idx, bool silent = false );
+
+    /**
+     * Updates the UI selector.
+     */
+    void selectorUpdate();
+
+    /**
+     * Clears the data in this handler.
+     */
+    void clear();
 
     /**
      * Selects a fiber by its index in the fibers vector.
