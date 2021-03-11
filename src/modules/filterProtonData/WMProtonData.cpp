@@ -128,7 +128,7 @@ bool WMProtonData::isColumnAvailable( std::string columnName )
 void WMProtonData::updateAvailabilityOfColumns()
 {
     static const std::string necessaryColumns[] = {
-        "PDGEncoding", "posX", "posY", "posZ", "edep", "eventID" , "trackID", "parentID", "SelectedEventID"
+        "PDGEncoding", "posX", "posY", "posZ", "edep", "eventID" , "trackID", "parentID"
     };
 
     for( size_t i = 0; i < sizeof( necessaryColumns ) / sizeof( std::string ); i++ )
