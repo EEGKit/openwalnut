@@ -107,7 +107,6 @@ void WMCsvConverter::setOutputFromCSV( )
     createOutputPoints();
     createOutputFibers();
     createOutputPointsAndEventIDs();
-    
 }
 
 boost::shared_ptr< WDataSetSingle > WMCsvConverter::getTransferFunction()
@@ -363,7 +362,6 @@ void WMCsvConverter::createOutputPointsAndEventIDs()
 
 void WMCsvConverter::addEventID( WDataSetCSV::Content::iterator dataRow )
 {
-    
     if(m_protonData->isColumnAvailable("eventID"))
         {
             if(dataRow->at( m_indexes->getEventID() ) == "NULL")
@@ -409,7 +407,7 @@ float WMCsvConverter::stringToFloat( std::string str )
     {
         return boost::lexical_cast< float >( str );
     }
-    catch( boost::bad_lexical_cast &e )
+    catch( const boost::bad_lexical_cast &e )
     {
         throw WException( "The selected column has an incorrect format. Numbers (float) are expected. " + std::string( e.what() ) );
     }
@@ -421,7 +419,7 @@ int WMCsvConverter::stringToInt( std::string str )
     {
         return boost::lexical_cast< int >( str );
     }
-    catch( boost::bad_lexical_cast &e )
+    catch( const boost::bad_lexical_cast &e )
     {
         throw WException( "The selected column has an incorrect format. Numbers (int) are expected. " + std::string( e.what() ) );
     }

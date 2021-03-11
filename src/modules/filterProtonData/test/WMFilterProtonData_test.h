@@ -46,7 +46,6 @@ public:
         //boost::shared_ptr< WDataSetCSV > csvDataSet = boost::shared_ptr< new WDataSetCSV() >
         //WReaderCSV csvDataSet( "");
     }
-
 };
 
 #endif  // WMFILTERPROTONDATA_TEST_H

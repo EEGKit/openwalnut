@@ -45,7 +45,7 @@ void WMColumnPropertyHandler::createProperties()
 
     InitializeSelectionItem();
 
-    m_columnSelectionGroup = m_properties->addPropertyGroup( "Select Columns", "Select the columns which should be used" );
+    m_columnSelectionGroup = m_properties->addPropertyGroup( "Select columns", "Select the columns which should be used" );
 
     for( int i = 0; i < vecDefaultColumnNames.size(); i++ )
     {
@@ -80,7 +80,8 @@ void WMColumnPropertyHandler::InitializeSelectionItem()
     m_possibleSelectionsUsingTypes->addItem( ItemType::create( "- no selection -", "- no selection -", "",  NULL ) );
 }
 
-WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string columnName, std::string description, WPropertyBase::PropertyChangeNotifierType notifier )
+WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string columnName, std::string description,
+                                                        WPropertyBase::PropertyChangeNotifierType notifier )
 {
     int index = m_protonData->getColumnIndex( columnName );
     WItemSelector selector = index < 0 ? m_possibleSelectionsUsingTypes->getSelectorLast() : m_possibleSelectionsUsingTypes->getSelector( index );

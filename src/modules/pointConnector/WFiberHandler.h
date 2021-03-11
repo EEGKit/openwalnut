@@ -207,6 +207,12 @@ public:
      */
     WActionHandler::SPtr getActionHandler();
 
+    /**
+     * Sets the fiber count.
+     * \param fiberCount The new fiber count.
+     */
+    void setFiberCount( size_t fiberCount );
+
 private:
     /**
      * Update handler for the properties

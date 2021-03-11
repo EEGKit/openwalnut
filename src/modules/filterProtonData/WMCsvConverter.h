@@ -179,7 +179,7 @@ private:
      * \param dataRow each row of the csv file (content of row)
      */
     void addVertex( WDataSetCSV::Content::iterator dataRow );
-    
+
     /**
      * Create color for point/Fiber renderer
      *
