@@ -128,6 +128,7 @@ void WFiberHandler::createProperties( WPropertyGroup::SPtr properties )
 
     m_addFiber = fiberGroup->addProperty( "Add track", "Add Track", WPVBaseTypes::PV_TRIGGER_READY, notifier );
     m_removeFiber = fiberGroup->addProperty( "Remove track", "Remove Track", WPVBaseTypes::PV_TRIGGER_READY, notifier );
+    m_toggleFiber = fiberGroup->addProperty( "Toggle track", "Toggle Track", WPVBaseTypes::PV_TRIGGER_READY, notifier );
 
     m_undoTrigger = undoGroup->addProperty( "Undo", "Undo Changes", WPVBaseTypes::PV_TRIGGER_READY, notifier );
     m_redoTrigger = undoGroup->addProperty( "Redo", "Redo Changes", WPVBaseTypes::PV_TRIGGER_READY, notifier );
