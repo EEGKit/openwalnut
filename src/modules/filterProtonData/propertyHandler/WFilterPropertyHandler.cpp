@@ -52,7 +52,7 @@ void WFilterPropertyHandler::updateProperty()
 {
     updatePDGProperties();
 
-    if( m_protonData->isColumnAvailable( "parentID" ) && m_protonData->isColumnAvailable( "trackID" ) )
+    if( m_protonData->isColumnAvailable( "Parent id" ) && m_protonData->isColumnAvailable( "Track id" ) )
     {
         m_showPrimaries->setHidden( false );
         m_showSecondaries->setHidden( false );
@@ -63,7 +63,7 @@ void WFilterPropertyHandler::updateProperty()
         m_showSecondaries->setHidden( true );
     }
 
-    if( m_protonData->isColumnAvailable( "PDGEncoding" ) )
+    if( m_protonData->isColumnAvailable( "Particle Data Group" ) )
     {
         m_multiSelection->setHidden( false );
         m_filteringsubGroup->setHidden( false );
@@ -77,7 +77,7 @@ void WFilterPropertyHandler::updateProperty()
 
 void WFilterPropertyHandler::updatePDGProperties()
 {
-    m_currentColumnIndex = m_protonData->getColumnIndex( "PDGEncoding" );
+    m_currentColumnIndex = m_protonData->getColumnIndexBySelection( "Particle Data Group" );
 
     m_filteringGroup->removeProperty( m_multiSelection );
     m_filteringGroup->removeProperty( m_filteringsubGroup );
@@ -101,7 +101,7 @@ void WFilterPropertyHandler::createCheckBoxForPrimaryAndSecondary()
 
 void WFilterPropertyHandler::searchPDGTypes()
 {
-    int pdgColumnIndex = m_protonData->getColumnIndex( "PDGEncoding" );
+    int pdgColumnIndex = m_protonData->getColumnIndexBySelection( "Particle Data Group" );
 
     if(pdgColumnIndex < 0)
     {

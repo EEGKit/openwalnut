@@ -31,8 +31,6 @@ WProtonData::WProtonData( WDataSetCSV::ContentSPtr csvHeader, WDataSetCSV::Conte
 {
     setCSVHeader( csvHeader );
     setCSVData( csvData );
-
-    updateAvailabilityOfColumns();
 }
 
 void WProtonData::setCSVHeader( WDataSetCSV::ContentSPtr csvHeader )
@@ -52,6 +50,7 @@ void WProtonData::setCSVHeader( WDataSetCSV::ContentSPtr csvHeader )
     // TODO(robin.eschbach) change csvheader type to vector< string > or maybe to map
     std::vector< std::string > header = m_csvHeader->at( 0 );
 
+    //Set Name with Index of csv to map
     for( size_t i = 0; i < header.size(); i++ )
     {
         m_columnMap[header[i]] = i;
@@ -78,18 +77,19 @@ WDataSetCSV::ContentSPtr WProtonData::getCSVHeader()
     return m_csvHeader;
 }
 
-void WProtonData::setColumnIndex( std::string columnName, int index )
+void WProtonData::setStateIndex( std::string columnName, int index )
 {
-    m_columnMap[columnName] = index;
+    m_ColumnMapSelectedIndex[ columnName ] = index;
+}
 
-    if( index < 0 )
-    {
-        m_availabilityColumnMap[columnName] = false;
-    }
-    else
-    {
-        m_availabilityColumnMap[columnName] = true;
-    }
+bool WMProtonData::isColumnAvailable( std::string columnName )
+{
+    return m_ColumnMapSelectedIndex[ columnName ] >= 0;
+}
+
+int WProtonData::getColumnIndexBySelection( std::string selectedName )
+{
+    return m_ColumnMapSelectedIndex[ selectedName ];
 }
 
 int WProtonData::getColumnIndex( std::string columnName )
@@ -99,48 +99,5 @@ int WProtonData::getColumnIndex( std::string columnName )
         return -1;
     }
 
-    return m_columnMap[columnName];
-}
-
-bool WProtonData::isRequiredDataAvailable()
-{
-    static const std::string necessaryColumns[] = {
-        "posX", "posY", "posZ"
-    };
-
-    for( size_t i = 0; i < sizeof( necessaryColumns ) / sizeof( std::string ); i++ )
-    {
-        std::string column = necessaryColumns[i];
-        if( getColumnIndex( column ) < 0 )
-        {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool WProtonData::isColumnAvailable( std::string columnName )
-{
-    return m_availabilityColumnMap[columnName];
-}
-
-void WProtonData::updateAvailabilityOfColumns()
-{
-    static const std::string necessaryColumns[] = {
-        "PDGEncoding", "posX", "posY", "posZ", "edep", "eventID" , "trackID", "parentID"
-    };
-
-    for( size_t i = 0; i < sizeof( necessaryColumns ) / sizeof( std::string ); i++ )
-    {
-        std::string column = necessaryColumns[i];
-        if( getColumnIndex( column ) < 0 )
-        {
-            m_availabilityColumnMap[column] = false;
-        }
-        else
-        {
-            m_availabilityColumnMap[column] = true;
-        }
-    }
+    return m_columnMap[ columnName ];
 }

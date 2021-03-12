@@ -87,23 +87,23 @@ private:
     /**
      * A vector, where all default ColumnPropertyNames are stored in
      */
-    const std::vector< std::string > vecDefaultColumnNames = { "Particle Data Group", "X", "Y", "Z", "Energy deposition", "Event id", "Track id",
+    const std::vector< std::string > vecDefaultColumnNames = { "X", "Y", "Z", "Particle Data Group", "Energy deposition", "Event id", "Track id",
                                                               "Parent id" };
-    
+
     /**
      * A vector, where all the default names are stored in
      */
-    const std::vector< std::string > vecDefaultNames = { "PDGEncoding", "posX", "posY", "posZ", "edep", "eventID", "trackID",
+    const std::vector< std::string > vecDefaultNames = { "posX", "posY", "posZ", "PDGEncoding", "edep", "eventID", "trackID",
                                                         "parentID" };
 
     /**
      * A vector where all default column desciptions are stored in
      */
     const std::vector< std::string > vecDefaultDescription = {
-                                            "Choose the column which should be used to determine the particle data group.",
                                             "Choose the column which should be used to determine the x coordinate.",
                                             "Choose the column which should be used to determine the y coordinate.",
                                             "Choose the column which should be used to determine the z coordinate.",
+                                            "Choose the column which should be used to determine the particle data group.",
                                             "Choose the column which should be used to determine the energy deposition.",
                                             "Choose the column which should be used to determine the event id."
                                             "Tracks will be drawn based on the the event id, all particles with the same event id will be connected.",
@@ -178,10 +178,9 @@ private:
      * Get column number by name from header
      *
      * \param columnNameToMatch Search for the specified column name.
-     * \param headerToSearchIn Search in specified header.
      * \return Column number, where columnToMatch is in headerToSearchIn
      */
-    int getColumnNumberByName( std::string columnNameToMatch, std::vector<std::string> headerToSearchIn );
+    int getColumnNumberByName( std::string columnNameToMatch );
 
     /**
      * creates the content (options) of the WItemSelection 

@@ -49,7 +49,7 @@ void WEventIDLimitationPropertyHandler::createProperties()
 
 void WEventIDLimitationPropertyHandler::updateProperty()
 {
-    if(m_protonData->isColumnAvailable("eventID"))
+    if( m_protonData->isColumnAvailable( "Event id" ) )
     {
         m_minCap->setHidden( false );
         m_maxCap->setHidden( false );
@@ -76,7 +76,7 @@ void WEventIDLimitationPropertyHandler::updateMesh()
 
 void WEventIDLimitationPropertyHandler::determineMinMaxEventID()
 {
-    int eventIDIndex = m_protonData->getColumnIndex( "eventID" );
+    int eventIDIndex = m_protonData->getColumnIndexBySelection( "Event id" );
 
     if(eventIDIndex < 0)
     {

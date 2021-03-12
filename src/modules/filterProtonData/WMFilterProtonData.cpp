@@ -161,13 +161,13 @@ void WMFilterProtonData::properties()
     WPropertyBase::PropertyChangeNotifierType renameNotifier = boost::bind( &WMFilterProtonData::loadNotifier,
                                                                 this, groupRename, boost::placeholders::_1 );
 
-    groupColumn->addProperty( "Particle Data Group", "Choose the column which should be used to determine the particle data group.",
-                            std::string( "" ), columnNotifier, false );
     groupColumn->addProperty( "X", "Choose the column which should be used to determine the x coordinate.",
                             std::string( "" ), columnNotifier, false );
     groupColumn->addProperty( "Y", "Choose the column which should be used to determine the y coordinate.",
                             std::string( "" ), columnNotifier, false );
     groupColumn->addProperty( "Z", "Choose the column which should be used to determine the z coordinate.",
+                            std::string( "" ), columnNotifier, false );
+    groupColumn->addProperty( "Particle Data Group", "Choose the column which should be used to determine the particle data group.",
                             std::string( "" ), columnNotifier, false );
     groupColumn->addProperty( "Energy deposition", "Choose the column which should be used to determine the energy deposition.",
                             std::string( "" ), columnNotifier, false );
@@ -180,7 +180,6 @@ void WMFilterProtonData::properties()
                             "Primaries and secondaries filtering is based on that id,"
                             " if a particle has the parent id 0 it is a primary otherwise it is a secondary.",
                             std::string( "" ), columnNotifier, false );
-
     groupFilter->addProperty( "Show primaries", "Show or hide primaries. One can either hide primaries or secondaries,"
                             "but not both at the same time.", std::string( "" ), filterNotifier, false );
     groupFilter->addProperty( "Show secondaries", "Show or hide secondaries. One can either hide primaries or secondaries,"
