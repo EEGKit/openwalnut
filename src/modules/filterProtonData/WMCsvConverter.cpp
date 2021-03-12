@@ -167,8 +167,7 @@ bool WMCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRo
         return false;
     }
 
-    if( m_protonData->isColumnAvailable( "parentID" ) &&
-        m_protonData->isColumnAvailable( "trackID" ) )
+    if( m_protonData->isColumnAvailable( "parentID" ) )
     {
         int PrimaryValue = stringToInt( dataRow->at( m_indexes->getParentID() ) );
 

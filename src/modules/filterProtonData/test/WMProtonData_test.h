@@ -172,7 +172,7 @@ public:
         WDataSetCSV::Content tmpColumnNames =
         {
             {
-                "PDGEncoding_", "edep_", "trackID_", "parentID_", "eventID_", "someMoreValues"
+                "PDGEncoding_", "edep_", "parentID_", "eventID_", "someMoreValues"
             }
         };
 
@@ -193,7 +193,7 @@ public:
         WDataSetCSV::Content tmpColumnNames =
         {
             {
-                "_PDGEncoding", "_edep", "_trackID", "parentID", "_eventID", "someMoreValues"
+                "_PDGEncoding", "_edep", "parentID", "_eventID", "someMoreValues"
             }
         };
 

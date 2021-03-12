@@ -87,13 +87,13 @@ private:
     /**
      * A vector, where all default ColumnPropertyNames are stored in
      */
-    const std::vector< std::string > vecDefaultColumnNames = { "Particle Data Group", "X", "Y", "Z", "Energy deposition", "Event id", "Track id",
+    const std::vector< std::string > vecDefaultColumnNames = { "Particle Data Group", "X", "Y", "Z", "Energy deposition", "Event id",
                                                               "Parent id" };
     
     /**
      * A vector, where all the default names are stored in
      */
-    const std::vector< std::string > vecDefaultNames = { "PDGEncoding", "posX", "posY", "posZ", "edep", "eventID", "trackID",
+    const std::vector< std::string > vecDefaultNames = { "PDGEncoding", "posX", "posY", "posZ", "edep", "eventID",
                                                         "parentID" };
 
     /**
@@ -105,9 +105,8 @@ private:
                                             "Choose the column which should be used to determine the y coordinate.",
                                             "Choose the column which should be used to determine the z coordinate.",
                                             "Choose the column which should be used to determine the energy deposition.",
-                                            "Choose the column which should be used to determine the event id."
+                                            "Choose the column which should be used to determine the event id. "
                                             "Tracks will be drawn based on the the event id, all particles with the same event id will be connected.",
-                                            "Choose the column which should be used to determine the track id.",
                                             "Choose the column which should be used to determine the parent id."
                                             "Primaries and secondaries filtering is based on that id, if a "
                                             "particle has the parent id 0 it is a primary otherwise it is a secondary."};
