@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WMCSVCONVERTER_H
-#define WMCSVCONVERTER_H
+#ifndef WCSVCONVERTER_H
+#define WCSVCONVERTER_H
 
 #include <string>
 #include <vector>
@@ -40,15 +40,15 @@
 #include "core/dataHandler/WValueSet.h"
 #include "core/dataHandler/WValueSetBase.h"
 
-#include "WMConverterIndexes.h"
-#include "WMConverterVectors.h"
-#include "WMPropertyStatus.h"
-#include "WMProtonData.h"
+#include "WConverterIndexes.h"
+#include "WConverterVectors.h"
+#include "WPropertyStatus.h"
+#include "WProtonData.h"
 
 /**
  * Converts the csv data to points and fibers.
  */
-class WMCsvConverter
+class WCsvConverter
 {
 public:
     /**
@@ -57,7 +57,7 @@ public:
     * \param protonData The protondata to use.
     * \param propertyStatus The status of the properties.
     */
-    WMCsvConverter( WMProtonData::SPtr protonData, boost::shared_ptr< WMPropertyStatus > propertyStatus );
+    WCsvConverter( WProtonData::SPtr protonData, boost::shared_ptr< WPropertyStatus > propertyStatus );
 
     /**
      * Initializes the vectors, indices and transfer function color bar
@@ -66,7 +66,7 @@ public:
      * \param propertyStatus The status of the properties.
      * \param colorBar Reference to the transfer function color bar module
      */
-    WMCsvConverter( WMProtonData::SPtr protonData, boost::shared_ptr< WMPropertyStatus > propertyStatus, WModule::SPtr colorBar );
+    WCsvConverter( WProtonData::SPtr protonData, boost::shared_ptr< WPropertyStatus > propertyStatus, WModule::SPtr colorBar );
 
     /**
      * represents a boost::shared_ptr to a vector containing a vector of floats.
@@ -108,7 +108,7 @@ private:
     /**
      * Stores information form csv content. Content object containing data
      */
-    WMProtonData::SPtr m_protonData;
+    WProtonData::SPtr m_protonData;
 
     /**
      * Stores reference to the given transfer function color bar module
@@ -138,17 +138,17 @@ private:
     /**
      * Stores points for point and fiber renderer
      */
-    WMConverterVectors::SPtr m_vectors;
+    WConverterVectors::SPtr m_vectors;
 
     /**
      * Stores indexes for fiber renderer
      */
-    WMConverterIndexes::SPtr m_indexes;
+    WConverterIndexes::SPtr m_indexes;
 
     /**
      * includes all property groups 
      */
-    WMPropertyStatus::SPtr m_propertyStatus;
+    WPropertyStatus::SPtr m_propertyStatus;
 
     /**
      * Computes gradient vector from transfer function specified in visualization properties.
@@ -261,4 +261,4 @@ private:
     int stringToInt( std::string str );
 };
 
-#endif  // WMCSVCONVERTER_H
+#endif  // WCSVCONVERTER_H

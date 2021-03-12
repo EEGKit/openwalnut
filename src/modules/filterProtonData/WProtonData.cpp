@@ -25,15 +25,15 @@
 #include <string>
 #include <vector>
 
-#include "WMProtonData.h"
+#include "WProtonData.h"
 
-WMProtonData::WMProtonData( WDataSetCSV::ContentSPtr csvHeader, WDataSetCSV::ContentSPtr csvData )
+WProtonData::WProtonData( WDataSetCSV::ContentSPtr csvHeader, WDataSetCSV::ContentSPtr csvData )
 {
     setCSVHeader( csvHeader );
     setCSVData( csvData );
 }
 
-void WMProtonData::setCSVHeader( WDataSetCSV::ContentSPtr csvHeader )
+void WProtonData::setCSVHeader( WDataSetCSV::ContentSPtr csvHeader )
 {
     if( csvHeader == nullptr )
     {
@@ -57,7 +57,7 @@ void WMProtonData::setCSVHeader( WDataSetCSV::ContentSPtr csvHeader )
     }
 }
 
-void WMProtonData::setCSVData( WDataSetCSV::ContentSPtr csvData )
+void WProtonData::setCSVData( WDataSetCSV::ContentSPtr csvData )
 {
     if( csvData == nullptr )
     {
@@ -67,17 +67,17 @@ void WMProtonData::setCSVData( WDataSetCSV::ContentSPtr csvData )
     m_csvData = csvData;
 }
 
-WDataSetCSV::ContentSPtr WMProtonData::getCSVData()
+WDataSetCSV::ContentSPtr WProtonData::getCSVData()
 {
     return m_csvData;
 }
 
-WDataSetCSV::ContentSPtr WMProtonData::getCSVHeader()
+WDataSetCSV::ContentSPtr WProtonData::getCSVHeader()
 {
     return m_csvHeader;
 }
 
-void WMProtonData::setStateIndex( std::string columnName, int index )
+void WProtonData::setStateIndex( std::string columnName, int index )
 {
     m_ColumnMapSelectedIndex[ columnName ] = index;
 }
@@ -87,12 +87,12 @@ bool WMProtonData::isColumnAvailable( std::string columnName )
     return m_ColumnMapSelectedIndex[ columnName ] >= 0;
 }
 
-int WMProtonData::getColumnIndexBySelection( std::string selectedName )
+int WProtonData::getColumnIndexBySelection( std::string selectedName )
 {
     return m_ColumnMapSelectedIndex[ selectedName ];
 }
 
-int WMProtonData::getColumnIndex( std::string columnName )
+int WProtonData::getColumnIndex( std::string columnName )
 {
     if( m_columnMap.find( columnName ) == m_columnMap.end() )
     {

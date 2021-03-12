@@ -36,7 +36,7 @@
 #include "core/dataHandler/WDataSetPoints.h"
 #include "core/dataHandler/WDataSetFibers.h"
 
-#include "../filterProtonData/WMProtonData.h"
+#include "../filterProtonData/WProtonData.h"
 
 /**
  * Class for safe the point-connector data

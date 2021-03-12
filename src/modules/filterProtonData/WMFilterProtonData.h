@@ -47,10 +47,10 @@
 #include "core/common/WItemSelectionItem.h"
 #include "core/common/WItemSelector.h"
 
-#include "WMProtonData.h"
+#include "WProtonData.h"
 
-#include "WMPropertyStatus.h"
-#include "WMCsvConverter.h"
+#include "WPropertyStatus.h"
+#include "WCsvConverter.h"
 
 /**
  * This module simply registers a given csv dataset to the csv handling mechanism.
@@ -132,7 +132,7 @@ private:
     /**
      * Pointer that points to the Proton data from the CSV file  
      */
-    WMProtonData::SPtr m_protonData;
+    WProtonData::SPtr m_protonData;
 
     /**
      * Reference to the transfer function color bar module within this module container
@@ -172,12 +172,12 @@ private:
     /**
      * Contains all property-groups and the subproperties 
      */
-    boost::shared_ptr < WMPropertyStatus > m_propertyStatus;
+    boost::shared_ptr < WPropertyStatus > m_propertyStatus;
 
     /**
      * Contains the algorithm that converts the raw CSV file into compatible WDataSets (Points, Fibers, PointsAndSizes, PointConnector etc.)
      */
-    boost::shared_ptr < WMCsvConverter > m_converter;
+    boost::shared_ptr < WCsvConverter > m_converter;
 
     /**
      * Creates the transfer function color bar module within this module container

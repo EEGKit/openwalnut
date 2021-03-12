@@ -22,13 +22,13 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WMConverterIndexes.h"
+#include "WConverterIndexes.h"
 
-WMConverterIndexes::WMConverterIndexes()
+WConverterIndexes::WConverterIndexes()
 {
 }
 
-void WMConverterIndexes::update( WMProtonData::SPtr protonData )
+void WConverterIndexes::update( WProtonData::SPtr protonData )
 {
     m_parentID = protonData->getColumnIndexBySelection( "Parent id" );
     m_posX = protonData->getColumnIndexBySelection( "X" );
@@ -39,37 +39,37 @@ void WMConverterIndexes::update( WMProtonData::SPtr protonData )
     m_eventID = protonData->getColumnIndexBySelection( "Event id" );
 }
 
-int WMConverterIndexes::getParentID()
+int WConverterIndexes::getParentID()
 {
     return m_parentID;
 }
 
-int WMConverterIndexes::getPosX()
+int WConverterIndexes::getPosX()
 {
     return m_posX;
 }
 
-int WMConverterIndexes::getPosY()
+int WConverterIndexes::getPosY()
 {
     return m_posY;
 }
 
-int WMConverterIndexes::getPosZ()
+int WConverterIndexes::getPosZ()
 {
     return m_posZ;
 }
 
-int WMConverterIndexes::getEdep()
+int WConverterIndexes::getEdep()
 {
     return m_edep;
 }
 
-int WMConverterIndexes::getPDGEncoding()
+int WConverterIndexes::getPDGEncoding()
 {
     return m_PDGEncoding;
 }
 
-int WMConverterIndexes::getEventID()
+int WConverterIndexes::getEventID()
 {
     return m_eventID;
 }
