@@ -22,14 +22,21 @@
 //
 //---------------------------------------------------------------------------
 
-// Provide additional material and descriptions for your module. You can
-// provide this for multiple modules if you like.
-
-// NOTE: everything but the module name is optional, even if this makes no
-//       sense at all.
-
 "Point Connector"
 {
-  icon="icon.png";
+  icon = "icon.png";
+
+  website = "http://www.openwalnut.org";
+
+  description = "Allows user to manually connect points to fibers.";
+
+  author = "OpenWalnut Project";
+
+  "OpenWalnut Project"
+  {
+    url="http://www.openwalnut.org";
+    email="contact@openwalnut.org";
+    what="Design, Development and Bug fixing";
+  };
 };
 

@@ -46,7 +46,7 @@ public:
     /**
      * Pointer to const dataset.
      */
-    typedef boost::shared_ptr< const WDataSetPoints > ConstSPtr;
+    typedef boost::shared_ptr< const WDataSetPointsAndSizes > ConstSPtr;
 
     /**
      * Sizes for each vertix in VertexArray

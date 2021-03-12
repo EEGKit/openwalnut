@@ -28,20 +28,24 @@
 #include <algorithm>
 
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <boost/lexical_cast.hpp>
 
 #include "core/dataHandler/WDataSetCSV.h"
 #include "core/dataHandler/WDataSetFibers.h"
+#include "core/kernel/WKernel.h"
+#include "core/kernel/WModule.h"
+#include "core/kernel/WModuleContainer.h"
+#include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
 #include "core/dataHandler/WDataSetPoints.h"
 #include "core/dataHandler/WDataSetPointsAndSizes.h"
+#include "core/dataHandler/WDataSetPointsAndEventID.h"
 
 #include "core/common/WItemSelectionItem.h"
 #include "core/common/WItemSelector.h"
-
-#include "core/kernel/WModule.h"
 
 #include "WMProtonData.h"
 
@@ -54,7 +58,7 @@
  *
  * \ingroup modules
  */
-class WMFilterProtonData : public WModule
+class WMFilterProtonData : public WModuleContainer
 {
 public:
     /**
@@ -105,6 +109,11 @@ public:
 
 protected:
     /**
+     * Toggles activation for inner module based on activation of this module
+     */
+    virtual void activate();
+
+    /**
      * Entry point after loading the module. Runs in separate thread.
      */
     virtual void moduleMain();
@@ -124,6 +133,11 @@ private:
      * Pointer that points to the Proton data from the CSV file  
      */
     WMProtonData::SPtr m_protonData;
+
+    /**
+     * Reference to the transfer function color bar module within this module container
+     */
+    WModule::SPtr m_colorBar;
 
     /**
      * Input connector (required for this module).
@@ -146,6 +160,11 @@ private:
     boost::shared_ptr< WModuleOutputData< WDataSetSingle > > m_output_transferFunction;
 
     /**
+     * WDataSetPointsAndEventIDs output connector to output points and eventIDs for PointConn.
+     */
+    boost::shared_ptr< WModuleOutputData< WDataSetPointsAndEventID > > m_output_points_eventIds;
+
+    /**
      * Stores information of the input-csv-data
      */
     boost::shared_ptr< WDataSetCSV > m_dataset;
@@ -161,15 +180,41 @@ private:
     boost::shared_ptr < WMCsvConverter > m_converter;
 
     /**
+     * Creates the transfer function color bar module within this module container
+     */
+    void createColorBar();
+
+    /**
+     * Contains the loaded properties.
+     */
+    std::vector< std::pair< std::string, std::string > > m_loadedProperties;
+
+    /**
      * Create outputs, so it can be displayed by the fiber display and the point renderer.
      */
     void setOutputFromCSV( );
-
 
     /**
      * update added group property and subproperty    
      */
     void updateProperty();
+
+    /**
+     * Notifier for the dummy properties.
+     * \param group The WPropertyGroup this property belongs to.
+     * \param property The property that was updated.
+     */
+    void loadNotifier( WPropertyGroup::SPtr group, WPropertyBase::SPtr property );
+
+    /**
+     * Sets the current properties to the state of the loaded properties.
+     */
+    void setToLoadedProperties();
+
+    /**
+     * Removes the property groups.
+     */
+    void clearProperties();
 };
 
 #endif  // WMFILTERPROTONDATA_H

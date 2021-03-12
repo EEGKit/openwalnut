@@ -28,13 +28,13 @@
 // NOTE: everything but the module name is optional, even if this makes no
 //       sense at all.
 
-"FilterProtonData"
+"Filter Proton Data"
 {
   icon="proton_module_icon2.png";
 };
 
 "common"
 {
-    pdgnames = "PDFEncodingNameMap.txt";   // in german
+    pdgnames = "PDGEncodingNameMap.txt"; 
 };
 

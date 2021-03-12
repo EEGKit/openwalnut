@@ -105,6 +105,11 @@ private:
     WPropInt m_maxCap;
 
     /**
+     * Apply the current event ID selection
+     */
+    WPropTrigger m_applySelection;
+
+    /**
      * Update your mesh when changing properties.
      */
     void updateMesh( );

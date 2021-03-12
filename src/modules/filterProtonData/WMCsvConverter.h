@@ -36,6 +36,7 @@
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
 #include "core/dataHandler/WDataSetPointsAndSizes.h"
+#include "core/dataHandler/WDataSetPointsAndEventID.h"
 #include "core/dataHandler/WValueSet.h"
 #include "core/dataHandler/WValueSetBase.h"
 
@@ -57,6 +58,15 @@ public:
     * \param propertyStatus The status of the properties.
     */
     WMCsvConverter( WMProtonData::SPtr protonData, boost::shared_ptr< WMPropertyStatus > propertyStatus );
+
+    /**
+     * Initializes the vectors, indices and transfer function color bar
+     * Calls setOutputFromCSV.
+     * \param protonData The proton data to use.
+     * \param propertyStatus The status of the properties.
+     * \param colorBar Reference to the transfer function color bar module
+     */
+    WMCsvConverter( WMProtonData::SPtr protonData, boost::shared_ptr< WMPropertyStatus > propertyStatus, WModule::SPtr colorBar );
 
     /**
      * represents a boost::shared_ptr to a vector containing a vector of floats.
@@ -88,11 +98,22 @@ public:
      */
     boost::shared_ptr< WDataSetSingle > getTransferFunction();
 
+    /**
+     * Getter
+     * \return shared_ptr of generated selected event ID
+     */
+    boost::shared_ptr< WDataSetPointsAndEventID > getPointsAndIDs();
+
 private:
     /**
      * Stores information form csv content. Content object containing data
      */
     WMProtonData::SPtr m_protonData;
+
+    /**
+     * Stores reference to the given transfer function color bar module
+     */
+    WModule::SPtr m_colorBar;
 
     /**
      * Stores information for the fiber display
@@ -105,14 +126,14 @@ private:
     boost::shared_ptr< WDataSetPoints > m_points;
 
     /**
+     * Stores information for the point Conncetor
+     */
+    boost::shared_ptr< WDataSetPointsAndEventID > m_selectedEventIDs;
+
+    /**
      * Stores the currently mapped transfer function
      */
     boost::shared_ptr< WDataSetSingle > m_transferFunction;
-
-    /**
-     * The fallback color to use.
-     */
-    WColor m_plainColor;
 
     /**
      * Stores points for point and fiber renderer
@@ -131,7 +152,7 @@ private:
 
     /**
      * Computes gradient vector from transfer function specified in visualization properties.
-     * \return shared_ptr of mapped gradient from transfer function in RGBA format
+     * \return shared_ptr of mapped gradim_plainColorent from transfer function in RGBA format
      */
     boost::shared_ptr< std::vector<unsigned char> > sampleTransferFunction();
 
@@ -139,9 +160,9 @@ private:
      * Normalize energy deposition values to use as RGB values
      * \param edeps vector containing energy deposition values
      * \param colorArray vector containing colors per vertex
-     * \param maxEdep maximum present energy deposition value in edeps vector
+     * \param maxEdep maximum energy deposition
      */
-    void normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray, float maxEdep );
+    void normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray,  float maxEdep );
 
 
     /**
@@ -150,7 +171,7 @@ private:
      * \return true The row can be displayed.
      * \return false The row can not be displayed.
      */
-    bool canShow( WDataSetCSV::Content::iterator dataRow );
+    bool checkConditionToPass( WDataSetCSV::Content::iterator dataRow );
 
     /**
      * Create vertex for point/fiber renderer
@@ -162,9 +183,9 @@ private:
     /**
      * Create color for point/Fiber renderer
      *
-     * \param dataRow each row of the csv file (content of row)
+     * \param plainColor The color to create
      */
-    void addColor( WDataSetCSV::Content::iterator dataRow );
+    void addColor( WColor plainColor );
 
     /**
      * Create edep and sizes for point/fiber renderer
@@ -197,6 +218,11 @@ private:
     void createOutputPoints();
 
     /**
+     * Create the points and selected event IDs for Point Connector
+     */
+    void createOutputPointsAndEventIDs();
+
+    /**
      * Create outputs, so it can be displayed by the fiber display and the point renderer.
      */
     void setOutputFromCSV( );
@@ -208,10 +234,31 @@ private:
     void setTransferFunction( boost::shared_ptr< std::vector<unsigned char> > data );
 
     /**
-     * Checks if output variables have to be null, if true, sets them to null
-     * \return true, if there are no vertices to output; false otherwise
+     * the cast value from string to float
+     * \return returns the cast value from string to float
      */
     bool checkIfOutputIsNull();
+
+    /**
+     * Computes the cluster size
+     * \param edep energy deposition
+     * \return float cluster size
+     */
+    float getClusterSize( float edep );
+
+    /**
+     * checks whether the string is a number (float)  
+     * \param str The string to cast
+     * \return return the casted float value
+     */
+    float stringToFloat( std::string str );
+
+    /**
+     * checks whether the string is a number (int)
+     * \param str The string to cast
+     * \return return the casted int value
+     */
+    int stringToInt( std::string str );
 };
 
 #endif  // WMCSVCONVERTER_H

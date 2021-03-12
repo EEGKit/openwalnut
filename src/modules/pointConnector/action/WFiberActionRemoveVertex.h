@@ -34,7 +34,7 @@
 #include "../WFiberHandler.h"
 
 /**
- * The action when adding a Vertex.
+ * The action when removing a Vertex.
  */
 class WFiberActionRemoveVertex : public WFiberAction
 {

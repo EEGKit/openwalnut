@@ -37,6 +37,11 @@ WMProtonData::WMProtonData( WDataSetCSV::ContentSPtr csvHeader, WDataSetCSV::Con
 
 void WMProtonData::setCSVHeader( WDataSetCSV::ContentSPtr csvHeader )
 {
+    if( csvHeader == nullptr )
+    {
+        throw WException( "Can not set header! No header specified!" );
+    }
+
     if( csvHeader->empty() )
     {
         throw WException( "No empty header allowed!" );
@@ -55,6 +60,11 @@ void WMProtonData::setCSVHeader( WDataSetCSV::ContentSPtr csvHeader )
 
 void WMProtonData::setCSVData( WDataSetCSV::ContentSPtr csvData )
 {
+    if( csvData == nullptr )
+    {
+        throw WException( "Can not set data! No data specified!" );
+    }
+
     m_csvData = csvData;
 }
 
@@ -71,6 +81,7 @@ WDataSetCSV::ContentSPtr WMProtonData::getCSVHeader()
 void WMProtonData::setColumnIndex( std::string columnName, int index )
 {
     m_columnMap[columnName] = index;
+
     if( index < 0 )
     {
         m_availabilityColumnMap[columnName] = false;
@@ -107,24 +118,6 @@ bool WMProtonData::isRequiredDataAvailable()
     }
 
     return true;
-}
-
-bool WMProtonData::isNonrequiredDataAvailable()
-{
-    static const std::string unNecessaryColumns[] = {
-        "PDGEncoding", "edep", "trackID", "parentID", "eventID"
-    };
-
-    for( size_t i = 0; i < sizeof( unNecessaryColumns ) / sizeof( std::string ); i++ )
-    {
-        std::string column = unNecessaryColumns[i];
-        if( getColumnIndex( column ) < 0 )
-        {
-            return true;
-        }
-    }
-
-    return false;
 }
 
 bool WMProtonData::isColumnAvailable( std::string columnName )

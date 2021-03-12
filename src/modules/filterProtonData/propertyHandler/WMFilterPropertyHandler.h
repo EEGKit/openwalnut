@@ -31,6 +31,7 @@
 
 #include "../WMProtonData.h"
 #include "WMColumnPropertyHandler.h"
+#include "core/common/WPathHelper.h"
 
 /**
  * Creates, updates and handles the filter properties.
@@ -126,6 +127,21 @@ private:
     WMFilterPropertyHandler::CallbackPtr m_dataUpdate;
 
     /**
+     * \return the path of the particle names file
+     */
+    std::string getParticleNameFilePath();
+
+    /**
+     * Helperfunction to copy the particlename file
+     *
+     * \param shareDirFile sourcepath of the particle name file in the share directory
+     * \param homeDirFile destinypath of the local directory for the particle name file
+     * \return true copy was succesful
+     * \return false copy was unsuccesful
+     */
+    bool copyFileToHomePath( std::string shareDirFile, std::string homeDirFile );
+
+    /**
      * Collect all particle types from your input data.
      */
     void searchPDGTypes();
@@ -197,6 +213,14 @@ private:
     int getPdgFromName( std::string particleName );
 
     /**
+     * get the PDG number of an unknown particle element with 
+     * the help of regex
+     * \param particleName particle name of an unknown number
+     * \return pdg number
+     */
+    int getPdgFromUnkownParticle( std::string particleName );
+
+    /**
      * write the BiMap in the Pdg particle name file
      */
     void writePdgMapInParticleNameFile();
@@ -257,13 +281,13 @@ private:
 
     /**
      * vector of the options of PDG
-     */
+    */
     std::vector < int > m_selectedPDGTypes;
 
     /**
      * A string for the new particle name
      */
-    WPropString   m_aString;
+    WPropString   m_inputNewParticleName;
 
     /**
      * A trigger for the save button to save changes
@@ -274,11 +298,6 @@ private:
      * A property to select one pdg to change
      */
     WPropSelection m_PdgForRenameSelection;
-
-    /**
-     * a string of the share folder path of particle proton module
-     */
-    std::string m_PdgParticelNamePath;
 };
 
 #endif  // WMFILTERPROPERTYHANDLER_H

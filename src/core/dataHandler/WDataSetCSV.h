@@ -35,6 +35,10 @@
  */
 class WDataSetCSV : public WDataSet
 {
+    /**
+     * Only test class may be friend
+    */
+    friend class WDataSetCSVTest;
 public:
     /**
      * represents a vector containing a vector of strings.
@@ -45,6 +49,16 @@ public:
      * represents a pointer to the Content
      */
     typedef boost::shared_ptr< std::vector< std::vector< std::string > > > ContentSPtr;
+
+    /**
+     * represents a pointer to a vector of csv-raw-row as string
+     */
+    typedef boost::shared_ptr< std::vector< std:: string > > SeperatedRowSPtr;
+
+    /**
+     * represents an element within WDataSetCSV object.
+     */
+    typedef std::vector< std::string > ContentElem;
 
     /**
      * Construct WDataSetCSV object
@@ -78,6 +92,20 @@ public:
      */
     WDataSetCSV::ContentSPtr getData();
 
+    /**
+     * Getter method to receive csv rawdata
+     *
+     * \param rawDataSetIn as WDataSetCSV::SeperatedRowSPtr object
+     */
+    void setRawDataSet( WDataSetCSV::SeperatedRowSPtr rawDataSetIn );
+
+    /**
+     * Getter method to receive csv data
+     *
+     * \return rawDataSet as std::vector< std:: string > object
+     */
+    SeperatedRowSPtr getRawDataSet();
+
 private:
     /**
      * Stores the column titles of a loaded CSV file.
@@ -88,6 +116,11 @@ private:
      * Stores the data of a loaded CSV file.
      */
     WDataSetCSV::ContentSPtr m_data;
+
+    /**
+     * Stores the rawdata of a loaded CSV file.
+     */
+    SeperatedRowSPtr rawDataSet;
 };
 
 #endif  // WDATASETCSV_H

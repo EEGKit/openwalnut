@@ -65,6 +65,11 @@ public:
     void updateProperty();
 
     /**
+     * toggle the visibility of plain color and transfer function
+     */
+    void toggleColorProperties();
+
+    /**
      * Getter
      *
      * \return WPropBool of color from edep
@@ -98,6 +103,13 @@ public:
     WTransferFunction setColorGradient();
 
 private:
+    /**
+     * Reload data when properties for selection of primaries and secondaries changed
+     *
+     * \param property contains reference to the property which called updateProperty()
+     */
+    void propertyCallback( WPropertyBase::SPtr property );
+
     /**
      * Pointer to the content and header of the CSV 
      */
@@ -133,17 +145,15 @@ private:
      */
     WPropColor m_colorSelection;
 
-     /**
-     * Reload data when properties for selection of primaries and secondaries changed
-     *
-     * \param property contains reference to the property which called updateProperty()
-     */
-    void updateCheckboxProperty( WPropertyBase::SPtr property );
-
     /**
      * Property that holds the current transfer function for the gradient.
      */
     WPropTransferFunction m_gradient;
+
+    /**
+     * Property that holds a trigger to apply the current transfer function for the gradient
+     */
+    WPropTrigger m_applyGradient;
 };
 
 #endif  // WMVISUALIZATIONPROPERTYHANDLER_H

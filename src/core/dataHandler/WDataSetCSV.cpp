@@ -46,3 +46,13 @@ WDataSetCSV::ContentSPtr WDataSetCSV::getData()
 {
     return m_data;
 }
+
+WDataSetCSV::SeperatedRowSPtr WDataSetCSV::getRawDataSet()
+{
+    return rawDataSet;
+}
+
+void WDataSetCSV::setRawDataSet( WDataSetCSV::SeperatedRowSPtr rawDataSetIn )
+{
+    rawDataSet = rawDataSetIn;
+}

@@ -18,6 +18,7 @@ option( OW_MODULE_TOOLBOX_BASE            "All the basic functionality modules. 
 option( OW_MODULE_TOOLBOX_EEG             "EEG data processing and visualization." ON )
 option( OW_MODULE_TOOLBOX_IMAGEPROCESSING "Image processing tools like filters." ON )
 option( OW_MODULE_TOOLBOX_IO              "Reader and Writer for several kinds of data." ON )
+option( OW_MODULE_TOOLBOX_SIVERT          "Visualize and manually track pCT data." ON )
 # this option is a simple list of all modules not in the above lists.
 option( OW_MODULE_TOOLBOX_OTHERS          "Advanced processing and visualization tools currently in development which have not been categorized to one of the other toolboxes." ON )
 
@@ -41,6 +42,10 @@ endif( OW_MODULE_TOOLBOX_IO OR OW_MODULE_TOOLBOX_ALL )
 if( OW_MODULE_TOOLBOX_OTHERS OR OW_MODULE_TOOLBOX_ALL )
   include( modules-others.toolbox )
 endif( OW_MODULE_TOOLBOX_OTHERS OR OW_MODULE_TOOLBOX_ALL )
+
+if( OW_MODULE_TOOLBOX_SIVERT OR OW_MODULE_TOOLBOX_ALL )
+  include( modules-sivert.toolbox )
+endif( OW_MODULE_TOOLBOX_SIVERT OR OW_MODULE_TOOLBOX_ALL )
 
 # optional user toolbox which is not unter version control allowing all to only compile their modules needed.
 include( modules-user.toolbox OPTIONAL )

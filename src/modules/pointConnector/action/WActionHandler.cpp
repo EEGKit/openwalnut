@@ -26,8 +26,6 @@
 
 #include "WActionHandler.h"
 
-static const size_t MAX_STACK_SIZE = 30;
-
 WActionHandler::WActionHandler()
 {
     m_undo = ActionStack( new std::vector< WFiberAction::SPtr >() );
@@ -43,12 +41,6 @@ WActionHandler::~WActionHandler()
 void WActionHandler::pushAction( WFiberAction::SPtr action )
 {
     m_undo->push_back( action );
-
-    while( m_undo->size() > MAX_STACK_SIZE )
-    {
-        m_undo->erase( m_undo->begin() );
-    }
-
     m_redo->clear();
 }
 

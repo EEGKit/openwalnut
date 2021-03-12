@@ -47,10 +47,14 @@ void WMColumnPropertyHandler::createProperties()
 
     m_columnSelectionGroup = m_properties->addPropertyGroup( "Select columns", "Select the columns which should be used" );
 
-    for( std::string colName : vecDefaultColumnNames )
+    for( int i = 0; i < vecDefaultColumnNames.size(); i++ )
     {
+        std::string columnName = vecDefaultColumnNames.at( i );
+        std::string desciption = vecDefaultDescription.at( i );
+        std::string defName = vecDefaultNames.at( i );
+
         mapPropSelectionsToString.insert(
-            std::map< WPropSelection, std::string >::value_type( addHeaderProperty( colName, notifier ), colName )
+            std::map< WPropSelection, std::string >::value_type( addHeaderProperty( columnName, desciption, defName, notifier ), columnName )
         );
     }
 }
@@ -77,13 +81,14 @@ void WMColumnPropertyHandler::InitializeSelectionItem()
     m_possibleSelectionsUsingTypes->addItem( ItemType::create( "- no selection -", "- no selection -", "",  NULL ) );
 }
 
-WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string columnName, WPropertyBase::PropertyChangeNotifierType notifier )
+WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string columnName, std::string description, std::string defName,
+                                                        WPropertyBase::PropertyChangeNotifierType notifier )
 {
-    int index = m_protonData->getColumnIndex( columnName );
+    int index = m_protonData->getColumnIndex( defName );
     WItemSelector selector = index < 0 ? m_possibleSelectionsUsingTypes->getSelectorLast() : m_possibleSelectionsUsingTypes->getSelector( index );
     WPropSelection selection = m_columnSelectionGroup->addProperty(
                                                 columnName,
-                                                "Choose the " + columnName + " column from csv",
+                                                description,
                                                 selector,
                                                 notifier );
 

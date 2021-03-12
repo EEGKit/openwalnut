@@ -40,16 +40,21 @@ void WMVisualizationPropertyHandler::createProperties()
 {
     m_visualizationGroup = m_properties->addPropertyGroup( "Visualization", "Visualization options" );
 
-    WPropertyBase::PropertyChangeNotifierType notifierCheckBox = boost::bind(
-        &WMVisualizationPropertyHandler::updateCheckboxProperty, this, boost::placeholders::_1 );
+    WPropertyBase::PropertyChangeNotifierType notifier = boost::bind(
+        &WMVisualizationPropertyHandler::propertyCallback, this, boost::placeholders::_1 );
 
-    m_sizesFromEdep = m_visualizationGroup->addProperty( "Scale point size", "Scale point size with energy deposition", true, notifierCheckBox );
-    m_colorFromEdep = m_visualizationGroup->addProperty( "Color by edep", "Color points based on energy deposition", true, notifierCheckBox );
-    m_colorSelection = m_visualizationGroup->addProperty( "Plain color", "Choose how to color the points when not coloring by edep.",
-        defaultColor::WHITE, notifierCheckBox );
+    m_sizesFromEdep = m_visualizationGroup->addProperty( "Size by energy deposition", "Scale track and point sizes based on energy deposition.",
+                                                    true, notifier );
+    m_colorFromEdep = m_visualizationGroup->addProperty( "Color by energy deposition", "Colorize tracks and points based on energy deposition.",
+                                                    true, notifier );
+    m_colorSelection = m_visualizationGroup->addProperty( "Point color", "Points colorized in the chosen color when "
+                                                    "\"Color by energy deposition\" is disabled.",
+        defaultColor::WHITE, notifier );
 
-    m_gradient = m_visualizationGroup->addProperty( "Transfer Function", "Transfer function that maps the energy deposition to a gradient",
-                                                    setColorGradient() , notifierCheckBox, false );
+    m_gradient = m_visualizationGroup->addProperty( "Gradient color", "Colorize tracks and points based on energy deposition "
+                                                    "with the configured gradient.", setColorGradient() , false );
+
+    m_applyGradient = m_visualizationGroup->addProperty( "Set gradient", "Apply", WPVBaseTypes::PV_TRIGGER_READY, notifier );
 
     updateProperty();
 }
@@ -63,21 +68,42 @@ void WMVisualizationPropertyHandler::updateProperty()
     {
         m_sizesFromEdep->setHidden( false );
         m_colorFromEdep->setHidden( false );
-        m_colorSelection->setHidden( false );
-        m_gradient->setHidden( false );
+        toggleColorProperties();
     }
     else
     {
         m_sizesFromEdep->setHidden( true );
         m_colorFromEdep->setHidden( true );
-        m_colorSelection->setHidden( true );
         m_gradient->setHidden( true );
+        m_applyGradient->setHidden( true );
     }
 }
 
-void WMVisualizationPropertyHandler::updateCheckboxProperty( WPropertyBase::SPtr property )
+void WMVisualizationPropertyHandler::toggleColorProperties()
+{
+    if( m_colorFromEdep->get() )
+    {
+        m_gradient->setHidden( false );
+        m_applyGradient->setHidden( false );
+        m_colorSelection->setHidden( true );
+    }
+    else
+    {
+        m_gradient->setHidden( true );
+        m_applyGradient->setHidden( true );
+        m_colorSelection->setHidden( false );
+    }
+}
+
+void WMVisualizationPropertyHandler::propertyCallback( WPropertyBase::SPtr property )
 {
     m_dataUpdate();
+
+    if( property == m_applyGradient && m_applyGradient->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
+    {
+        m_applyGradient->set( WPVBaseTypes::PV_TRIGGER_READY, false );
+    }
+    toggleColorProperties();
 }
 
 WPropBool WMVisualizationPropertyHandler::getColorFromEdep()

@@ -69,9 +69,11 @@ const std::string WMPointConnector::getDescription() const
 void WMPointConnector::connectors()
 {
     m_pointInput = WModuleInputData< WDataSetPoints >::createAndAdd( shared_from_this(), "points in", "The data to display" );
-    m_fiberOutput = WModuleOutputData< WDataSetFibers >::createAndAdd( shared_from_this(), "fibers out", "The created fibers" );
+    m_pointAndFibersOutput = WModuleOutputData< WDataSetPointsAndFibers >::createAndAdd( shared_from_this(),
+                                            "points and fibers out", "Contains the internal points and the connected fibers " );
 
     m_pointOutput = WModuleOutputData< WDataSetPoints >::create( shared_from_this(), "points out", "The data that is passed internally" );
+    m_fiberOutput = WModuleOutputData< WDataSetFibers >::create( shared_from_this(), "fibers out", "The created fibers" );
 
     WModule::connectors();
 }
@@ -88,6 +90,7 @@ void WMPointConnector::moduleMain()
     m_moduleState.add( m_pointInput->getDataChangedCondition() );
 
     createPointRenderer();
+    createFiberDisplay();
     createHandler();
 
     ready();
@@ -108,12 +111,44 @@ void WMPointConnector::moduleMain()
     stop();
 }
 
+void WMPointConnector::activate()
+{
+    m_pointRenderer->getProperties()->getProperty( "active" )->toPropBool()->set( m_active->get() );
+    m_fiberDisplay->getProperties()->getProperty( "active" )->toPropBool()->set( m_active->get() );
+}
+
 void WMPointConnector::createPointRenderer()
 {
+    WPropertyGroup::SPtr pointGroup = m_properties->addPropertyGroup( "Point Renderer", "Properties passed through from the point renderer" );
+
     m_pointRenderer = createAndAdd( "Point Renderer" );
     m_pointRenderer->isReady().wait();
     m_pointOutput->connect( m_pointRenderer->getInputConnector( "points" ) );
-    m_properties->addProperty( m_pointRenderer->getProperties()->getProperty( "Point Size" ) );
+
+    pointGroup->addProperty( "Activate", "Activates the point renderer", true,
+        boost::bind( &WMPointConnector::toggleActivationOfModule, this, m_pointRenderer ) );
+
+    pointGroup->addProperty( m_pointRenderer->getProperties()->getProperty( "Point size" ) );
+}
+
+void WMPointConnector::createFiberDisplay()
+{
+    WPropertyGroup::SPtr fiberGroup = m_properties->addPropertyGroup( "Fiber Display", "Properties passed through from the fiber display" );
+
+    m_fiberDisplay = createAndAdd( "Fiber Display" );
+    m_fiberDisplay->isReady().wait();
+    m_fiberOutput->connect( m_fiberDisplay->getInputConnector( "fibers" ) );
+
+    fiberGroup->addProperty( "Activate", "Activates the fiber display", true,
+        boost::bind( &WMPointConnector::toggleActivationOfModule, this, m_fiberDisplay ) );
+
+    fiberGroup->addProperty( m_fiberDisplay->getProperties()->getProperty( "Line Rendering" )->toPropGroup()->getProperty( "Line width" ) );
+}
+
+void WMPointConnector::toggleActivationOfModule( WModule::SPtr mod )
+{
+    WPropBool active = mod->getProperties()->getProperty( "active" )->toPropBool();
+    active->set( !active->get() );
 }
 
 void WMPointConnector::createHandler()
@@ -135,18 +170,56 @@ void WMPointConnector::handleInput()
         return;
     }
 
+    WDataSetPointsAndEventID::SPtr pointsAndEventIDs = boost::dynamic_pointer_cast< WDataSetPointsAndEventID >( points );
+
     m_connectorData->clear();
+
+    m_fiberHandler->clear();
+
+    WFiberHandler::PCFiberListSPtr fibers = m_fiberHandler->getFibers();
 
     for( size_t pointIdx = 0; pointIdx < points->size(); ++pointIdx )
     {
-        m_connectorData->addVertex( points->operator[]( pointIdx ), points->getColor( pointIdx ) );
+        osg::Vec3 vertex = points->operator[]( pointIdx );
+        m_connectorData->addVertex( vertex, points->getColor( pointIdx ) );
+
+        if( pointsAndEventIDs )
+        {
+            int eventID = pointsAndEventIDs->getEventID( pointIdx );
+            if( eventID < 0 )
+            {
+                continue;
+            }
+
+            while( fibers->size() <= eventID )
+            {
+                m_fiberHandler->addFiber( "Track " + boost::lexical_cast< std::string >( fibers->size() ), true, false );
+            }
+
+            ( fibers->begin() + eventID )->push_back( vertex );
+        }
     }
 
+    m_fiberHandler->setFiberCount( fibers->size() );
+    m_fiberHandler->selectorUpdate();
+
     updatePoints();
+    updateOutput();
 }
 
 void WMPointConnector::updatePoints()
 {
+    if( m_pointRenderer == NULL )
+    {
+        return;
+    }
+
+    if( m_connectorData->getVertices()->size() == 0 )
+    {
+        m_pointOutput->updateData( NULL );
+        return;
+    }
+
     WDataSetPoints::VertexArray vertices( new std::vector< float > );
     WDataSetPoints::VertexArray colors( new std::vector< float > );
 
@@ -162,7 +235,15 @@ void WMPointConnector::updatePoints()
         colors->push_back( color.x() );
         colors->push_back( color.y() );
         colors->push_back( color.z() );
-        colors->push_back( color.w() );
+
+        if( m_fiberHandler->isPointHidden( vertex ) )
+        {
+            colors->push_back( 0.0 );
+        }
+        else
+        {
+            colors->push_back( color.w() );
+        }
     }
 
     m_pointOutput->updateData( WDataSetPoints::SPtr( new WDataSetPoints( vertices, colors ) ) );
@@ -197,7 +278,7 @@ bool WMPointConnector::findClickedPoint( osg::Vec3 cameraPosition, osg::Vec3 dir
 {
     bool hasHit = false;
     float distance = 0;
-    float size = m_pointRenderer->getProperties()->getProperty( "Point Size" )->toPropDouble()->get();
+    float size = m_pointRenderer->getProperties()->getProperty( "Point size" )->toPropDouble()->get();
     for( size_t idx = 0; idx < m_connectorData->getVertices()->size(); idx++ )
     {
         osg::Vec3 vertex = m_connectorData->getVertices()->at( idx );
@@ -262,7 +343,13 @@ float WMPointConnector::hitVertex( osg::Vec3 rayStart, osg::Vec3 rayDir, osg::Ve
 
 void WMPointConnector::updateOutput()
 {
+    if( m_fiberDisplay == NULL )
+    {
+        return;
+    }
+
     boost::shared_ptr< std::vector< float > > vertices = boost::shared_ptr< std::vector< float > >( new std::vector< float >() );
+    boost::shared_ptr< std::vector< float > > colors = boost::shared_ptr< std::vector< float > >( new std::vector< float >() );
     boost::shared_ptr< std::vector< size_t > > lineStartIndexes = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
     boost::shared_ptr< std::vector< size_t > > lineLength = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
     boost::shared_ptr< std::vector< size_t > > verticesReverse = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
@@ -273,6 +360,17 @@ void WMPointConnector::updateOutput()
         lineStartIndexes->push_back( vertices->size() / 3 );
         lineLength->push_back( fiber.size() );
 
+        osg::Vec4 color( 0.0, 0.0, 0.0, 1.0 );
+        if( m_fiberHandler->getSelectedFiber() == idx )
+        {
+            color[1] = 1.0;
+        }
+
+        if( m_fiberHandler->isHidden( idx ) )
+        {
+            color[3] = 0.0;
+        }
+
         for( size_t vIdx = 0; vIdx < fiber.size(); vIdx++ )
         {
             osg::Vec3 vertex = fiber[vIdx];
@@ -280,20 +378,41 @@ void WMPointConnector::updateOutput()
             vertices->push_back( vertex.y() );
             vertices->push_back( vertex.z() );
 
+            colors->push_back( color.x() );
+            colors->push_back( color.y() );
+            colors->push_back( color.z() );
+            colors->push_back( color.w() );
+
             verticesReverse->push_back( idx );
         }
     }
 
-    m_fiberOutput->updateData( boost::shared_ptr< WDataSetFibers >(
+    WDataSetFibers::SPtr fibers(
         new WDataSetFibers(
             vertices,
             lineStartIndexes,
             lineLength,
             verticesReverse
         )
+    );
+
+    if( vertices->size() == 0 )
+    {
+        m_fiberOutput->updateData( NULL );
+        return;
+    }
+
+    fibers->addColorScheme( colors, "Connection", "Color fibers based on their connection." );
+    fibers->setSelectedColorScheme( 3 );
+    m_fiberOutput->updateData( fibers );
+
+    m_pointAndFibersOutput->updateData( boost::shared_ptr< WDataSetPointsAndFibers >(
+        new WDataSetPointsAndFibers(
+            m_pointOutput->getData(),
+            m_fiberOutput->getData()
+        )
     ) );
 }
-
 
 WConnectorData::SPtr WMPointConnector::getConnectorData()
 {
