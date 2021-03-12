@@ -94,12 +94,6 @@ public:
      */
     int getEventID();
 
-    /**
-     * Gets the selectedEventID index as integer.
-     * \return int The selectedEventID index.
-     */
-    int getSelectedEventID();
-
 private:
     int m_parentID = -1;    //!< The parentID index.
 
@@ -114,8 +108,6 @@ private:
     int m_PDGEncoding = -1; //!< The PDGEncoding index.
 
     int m_eventID = -1; //!< The eventID index.
-
-    int m_selectedEventID = -1; //!< The selectedEventID index.
 };
 
 #endif  // WMCONVERTERINDEXES_H

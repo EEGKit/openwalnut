@@ -178,10 +178,9 @@ private:
      * Get column number by name from header
      *
      * \param columnNameToMatch Search for the specified column name.
-     * \param headerToSearchIn Search in specified header.
      * \return Column number, where columnToMatch is in headerToSearchIn
      */
-    int getColumnNumberByName( std::string columnNameToMatch, std::vector<std::string> headerToSearchIn );
+    int getColumnNumberByName( std::string columnNameToMatch );
 
     /**
      * creates the content (options) of the WItemSelection 
