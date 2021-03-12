@@ -51,9 +51,10 @@ void WMColumnPropertyHandler::createProperties()
     {
         std::string columnName = vecDefaultColumnNames.at( i );
         std::string desciption = vecDefaultDescription.at( i );
+        std::string defName = vecDefaultNames.at( i );
 
         mapPropSelectionsToString.insert(
-            std::map< WPropSelection, std::string >::value_type( addHeaderProperty( columnName, desciption, notifier ), columnName )
+            std::map< WPropSelection, std::string >::value_type( addHeaderProperty( columnName, desciption, defName, notifier ), columnName )
         );
     }
 }
@@ -80,10 +81,10 @@ void WMColumnPropertyHandler::InitializeSelectionItem()
     m_possibleSelectionsUsingTypes->addItem( ItemType::create( "- no selection -", "- no selection -", "",  NULL ) );
 }
 
-WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string columnName, std::string description,
+WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string columnName, std::string description, std::string defName,
                                                         WPropertyBase::PropertyChangeNotifierType notifier )
 {
-    int index = m_protonData->getColumnIndex( columnName );
+    int index = m_protonData->getColumnIndex( defName );
     WItemSelector selector = index < 0 ? m_possibleSelectionsUsingTypes->getSelectorLast() : m_possibleSelectionsUsingTypes->getSelector( index );
     WPropSelection selection = m_columnSelectionGroup->addProperty(
                                                 columnName,

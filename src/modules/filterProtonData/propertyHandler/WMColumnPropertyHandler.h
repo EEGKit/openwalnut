@@ -89,6 +89,12 @@ private:
      */
     const std::vector< std::string > vecDefaultColumnNames = { "Particle Data Group", "X", "Y", "Z", "Energy deposition", "Event id", "Track id",
                                                               "Parent id" };
+    
+    /**
+     * A vector, where all the default names are stored in
+     */
+    const std::vector< std::string > vecDefaultNames = { "PDGEncoding", "posX", "posY", "posZ", "edep", "eventID", "trackID",
+                                                        "parentID" };
 
     /**
      * A vector where all default column desciptions are stored in
@@ -138,7 +144,8 @@ private:
      * \param notifier The notifier for the selection
      * \return WPropSelection The created selection
      */
-    WPropSelection addHeaderProperty( std::string headerName, std::string description, WPropertyBase::PropertyChangeNotifierType notifier );
+    WPropSelection addHeaderProperty( std::string headerName, std::string description, std::string defName,
+                                    WPropertyBase::PropertyChangeNotifierType notifier );
 
     /**
      * Event function when WItemSelection is triggered
