@@ -142,6 +142,7 @@ private:
      * \param headerName The name of the selection
      * \param description The description of the selection
      * \param notifier The notifier for the selection
+     * \param defName The default name of the selection
      * \return WPropSelection The created selection
      */
     WPropSelection addHeaderProperty( std::string headerName, std::string description, std::string defName,

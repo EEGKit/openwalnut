@@ -41,8 +41,19 @@
 class WMWriteCSVTest : public CxxTest::TestSuite
 {
 public:
+    /**
+     * A shared_ptr for a float vector
+     */
     typedef boost::shared_ptr< std::vector< float > > SPFloatVector;
+
+    /**
+     * A shared_ptr for a size_t vector
+     */
     typedef boost::shared_ptr< std::vector< size_t > > SPSizeVector;
+
+    /**
+     * A shared_ptr for an int vector
+     */
     typedef boost::shared_ptr< std::vector< int > > SPIntVector;
 
     /**
@@ -78,6 +89,7 @@ public:
 private:
     /**
      * helpermethod that generates a fiber example
+     * \return std::tuple < WDataSetFibers::SPtr, std::vector< std::tuple < osg::Vec3, int > > > The fibers
      */
     std::tuple < WDataSetFibers::SPtr, std::vector< std::tuple < osg::Vec3, int > > > createSampleFibers()
     {

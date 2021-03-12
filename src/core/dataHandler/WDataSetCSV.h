@@ -95,7 +95,7 @@ public:
     /**
      * Getter method to receive csv rawdata
      *
-     * \return m_data as WDataSetCSV::Content object
+     * \param rawDataSetIn as WDataSetCSV::SeperatedRowSPtr object
      */
     void setRawDataSet( WDataSetCSV::SeperatedRowSPtr rawDataSetIn );
 

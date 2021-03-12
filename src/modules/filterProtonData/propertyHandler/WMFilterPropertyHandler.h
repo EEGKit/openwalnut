@@ -127,15 +127,17 @@ private:
     WMFilterPropertyHandler::CallbackPtr m_dataUpdate;
 
     /**
-     * returns the path of the particle names file
+     * \return the path of the particle names file
      */
     std::string getParticleNameFilePath();
 
-     /**
+    /**
      * Helperfunction to copy the particlename file
      *
      * \param shareDirFile sourcepath of the particle name file in the share directory
      * \param homeDirFile destinypath of the local directory for the particle name file
+     * \return true copy was succesful
+     * \return false copy was unsuccesful
      */
     bool copyFileToHomePath( std::string shareDirFile, std::string homeDirFile );
 
@@ -213,6 +215,8 @@ private:
     /**
      * get the PDG number of an unknown particle element with 
      * the help of regex
+     * \param particleName particle name of an unknown number
+     * \return pdg number
      */
     int getPdgFromUnkownParticle( std::string particleName );
 

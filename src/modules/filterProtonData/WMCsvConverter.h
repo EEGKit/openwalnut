@@ -183,7 +183,7 @@ private:
     /**
      * Create color for point/Fiber renderer
      *
-     * \param dataRow each row of the csv file (content of row)
+     * \param plainColor The color to create
      */
     void addColor( WColor plainColor );
 
@@ -248,12 +248,14 @@ private:
 
     /**
      * checks whether the string is a number (float)  
+     * \param str The string to cast
      * \return return the casted float value
      */
     float stringToFloat( std::string str );
 
     /**
      * checks whether the string is a number (int)
+     * \param str The string to cast
      * \return return the casted int value
      */
     int stringToInt( std::string str );

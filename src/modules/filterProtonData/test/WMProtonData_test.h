@@ -35,9 +35,11 @@
 /**
  * Test class of WMProtonData class
  */
-
 class WMProtonDataTest : public CxxTest::TestSuite
 {
+    /**
+     * A sample of column names
+     */
     WDataSetCSV::Content sampleColumnNames =
     {
         {
@@ -50,6 +52,9 @@ class WMProtonDataTest : public CxxTest::TestSuite
         }
     };
 
+    /**
+     * A sample of data rows
+     */
     WDataSetCSV::Content sampleDataRows =
     {
         {
