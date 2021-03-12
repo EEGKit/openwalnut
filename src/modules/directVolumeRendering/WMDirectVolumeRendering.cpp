@@ -139,7 +139,7 @@ void WMDirectVolumeRendering::properties()
     m_maximumIntensityProjectionEnabled = m_improvementGroup->addProperty( "MIP", "If enabled, MIP is used.", false,
             m_propCondition );
 
-    m_depthProjectionEnabled = m_improvementGroup->addProperty( "Depth Projection", "If enabled, depth projection mode is used", false,
+    m_depthProjectionEnabled = m_improvementGroup->addProperty( "Depth projection", "If enabled, depth projection mode is used", false,
             m_propCondition );
 
     WModule::properties();

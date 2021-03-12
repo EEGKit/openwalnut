@@ -45,20 +45,20 @@ WGEPostprocessingNode::WGEPostprocessingNode( osg::ref_ptr< WGECamera > referenc
     boost::shared_ptr< WItemSelection > m_possibleSelections( new WItemSelection() );
     m_possibleSelections->addItem( "None", "No postprocessing." );
 
-    m_showHud = m_properties->addProperty( "Texture Debug", "If set, all intermediate texture are shown on screen for debugging.", false );
+    m_showHud = m_properties->addProperty( "Texture debug", "If set, all intermediate texture are shown on screen for debugging.", false );
 
     m_depthGroup = WPropGroup( new WPropertyGroup( "Additional Depth Shading", "Allows to emphasize depth by shading." ) );
     m_shadeByDepth = m_depthGroup->addProperty( "Enable", "Enable depth-based shading.", false );
-    m_depthThresholdL = m_depthGroup->addProperty( "Lower Depth Threshold", "All depths in front of this are assumed to be foreground.", 0.25 );
-    m_depthThresholdU = m_depthGroup->addProperty( "Upper Depth Threshold",
+    m_depthThresholdL = m_depthGroup->addProperty( "Lower depth threshold", "All depths in front of this are assumed to be foreground.", 0.25 );
+    m_depthThresholdU = m_depthGroup->addProperty( "Upper depth threshold",
                                                    "All depths behind this are assumed to be background.", 0.75 );
     m_depthThresholdU->setMin( 0.0 );
     m_depthThresholdU->setMax( 1.0 );
     m_depthThresholdL->setMin( 0.0 );
     m_depthThresholdL->setMax( 1.0 );
 
-    m_depthShadeL = m_depthGroup->addProperty( "Lower Shading Intensity", "How much to shade the background.", 0.75 );
-    m_depthShadeU = m_depthGroup->addProperty( "Upper Shading Intensity",
+    m_depthShadeL = m_depthGroup->addProperty( "Lower shading intensity", "How much to shade the background.", 0.75 );
+    m_depthShadeU = m_depthGroup->addProperty( "Upper shading intensity",
                                                "How much to shade the foreground. Use values higher than one to brighten the foreground.", 1.0 );
     m_depthShadeL->setMin( 0.0 );
     m_depthShadeL->setMax( 1.0 );
