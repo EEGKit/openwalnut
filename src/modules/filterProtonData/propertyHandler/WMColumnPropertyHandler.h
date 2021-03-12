@@ -87,7 +87,7 @@ private:
     /**
      * A vector, where all default ColumnPropertyNames are stored in
      */
-    const std::vector< std::string > vecDefaultColumnNames = { "X", "Y", "Z","Particle Data Group" ,"Energy deposition", "Event id", "Track id",
+    const std::vector< std::string > vecDefaultColumnNames = { "X", "Y", "Z", "Particle Data Group", "Energy deposition", "Event id", "Track id",
                                                               "Parent id" };
     
     /**
