@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WConverterIndexes_H
-#define WConverterIndexes_H
+#ifndef WMCONVERTERINDEXES_H
+#define WMCONVERTERINDEXES_H
 
 #include <boost/shared_ptr.hpp>
 
@@ -118,4 +118,4 @@ private:
     int m_selectedEventID = -1; //!< The selectedEventID index.
 };
 
-#endif  // WConverterIndexes_H
+#endif  // WMCONVERTERINDEXES_H

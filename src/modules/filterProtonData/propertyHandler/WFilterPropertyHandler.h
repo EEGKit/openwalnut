@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WFilterPropertyHandler_H
-#define WFilterPropertyHandler_H
+#ifndef WFILTERPROPERTYHANDLER_H
+#define WFILTERPROPERTYHANDLER_H
 
 #include <string>
 #include <vector>
@@ -300,4 +300,4 @@ private:
     WPropSelection m_PdgForRenameSelection;
 };
 
-#endif  // WFilterPropertyHandler_H
+#endif  // WFILTERPROPERTYHANDLER_H

@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WConverterVectors_H
-#define WConverterVectors_H
+#ifndef WCONVERTERVECTORS_H
+#define WCONVERTERVECTORS_H
 
 #include <vector>
 
@@ -131,4 +131,4 @@ private:
     SPIntVector m_eventIDs;    //!< the event IDs.
 };
 
-#endif  // WConverterVectors_H
+#endif  // WCONVERTERVECTORS_H

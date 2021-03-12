@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WColumnPropertyHandler_H
-#define WColumnPropertyHandler_H
+#ifndef WCOLUMNPROPERTYHANDLER_H
+#define WCOLUMNPROPERTYHANDLER_H
 
 #include <string>
 #include <vector>
@@ -189,4 +189,4 @@ private:
     void InitializeSelectionItem();
 };
 
-#endif  // WColumnPropertyHandler_H
+#endif  // WCOLUMNPROPERTYHANDLER_H

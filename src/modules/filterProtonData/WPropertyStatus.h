@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WPropertyStatus_H
-#define WPropertyStatus_H
+#ifndef WPROPERTYSTATUS_H
+#define WPROPERTYSTATUS_H
 
 #include <boost/shared_ptr.hpp>
 
@@ -119,4 +119,4 @@ private:
      */
     WEventIDLimitationPropertyHandler::SPtr m_eventIDLimitationPropertyHandler;
 };
-#endif  // WPropertyStatus_H
+#endif  // WPROPERTYSTATUS_H

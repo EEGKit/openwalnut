@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WCsvConverter_H
-#define WCsvConverter_H
+#ifndef WCSVCONVERTER_H
+#define WCSVCONVERTER_H
 
 #include <string>
 #include <vector>
@@ -261,4 +261,4 @@ private:
     int stringToInt( std::string str );
 };
 
-#endif  // WCsvConverter_H
+#endif  // WCSVCONVERTER_H

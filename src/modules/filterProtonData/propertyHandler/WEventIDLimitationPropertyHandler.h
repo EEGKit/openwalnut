@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WEventIDLimitationPropertyHandler_H
-#define WEventIDLimitationPropertyHandler_H
+#ifndef WEVENTIDLIMITATIONPROPERTYHANDLER_H
+#define WEVENTIDLIMITATIONPROPERTYHANDLER_H
 
 #include "../WProtonData.h"
 
@@ -119,4 +119,4 @@ private:
      */
     void determineMinMaxEventID();
 };
-#endif  // WEventIDLimitationPropertyHandler_H
+#endif  // WEVENTIDLIMITATIONPROPERTYHANDLER_H

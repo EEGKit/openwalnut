@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WVisualizationPropertyHandler_H
-#define WVisualizationPropertyHandler_H
+#ifndef WVISUALIZATIONPROPERTYHANDLER_H
+#define WVISUALIZATIONPROPERTYHANDLER_H
 
 #include "../WProtonData.h"
 
@@ -156,4 +156,4 @@ private:
     WPropTrigger m_applyGradient;
 };
 
-#endif  // WVisualizationPropertyHandler_H
+#endif  // WVISUALIZATIONPROPERTYHANDLER_H

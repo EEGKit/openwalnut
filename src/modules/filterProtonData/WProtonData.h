@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WProtonData_H
-#define WProtonData_H
+#ifndef WPROTONDATA_H
+#define WPROTONDATA_H
 
 #include <map>
 #include <string>
@@ -138,4 +138,4 @@ private:
     void updateAvailabilityOfColumns();
 };
 
-#endif  // WProtonData_H
+#endif  // WPROTONDATA_H
