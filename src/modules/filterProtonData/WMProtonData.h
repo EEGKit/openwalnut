@@ -129,7 +129,7 @@ private:
     std::map< std::string, int > m_columnMap;
 
     /**
-     * Stores die Availability of the selected Column (ColumnPropertyHandler)
+     * Stores index of the selected single-selector (ColumnPropertyHandler)
      */
     std::map< std::string, int > m_ColumnMapSelectedIndex;
 };
