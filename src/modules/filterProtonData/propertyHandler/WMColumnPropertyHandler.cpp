@@ -85,6 +85,9 @@ WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string columnNam
                                                         WPropertyBase::PropertyChangeNotifierType notifier )
 {
     int index = m_protonData->getColumnIndex( defName );
+
+    m_protonData->setStateIndex( columnName, index );
+
     WItemSelector selector = index < 0 ? m_possibleSelectionsUsingTypes->getSelectorLast() : m_possibleSelectionsUsingTypes->getSelector( index );
     WPropSelection selection = m_columnSelectionGroup->addProperty(
                                                 columnName,
@@ -98,8 +101,10 @@ WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string columnNam
     return selection;
 }
 
-int WMColumnPropertyHandler::getColumnNumberByName( std::string columnNameToMatch, std::vector< std::string > headerToSearchIn )
+int WMColumnPropertyHandler::getColumnNumberByName( std::string columnNameToMatch )
 {
+    std::vector< std::string > headerToSearchIn = m_protonData->getCSVHeader()->at( 0 );
+
     int pos = 0;
     for( std::vector< std::string >::iterator it = headerToSearchIn.begin(); it != headerToSearchIn.end(); it++ )
     {
@@ -130,8 +135,8 @@ void WMColumnPropertyHandler::propertyNotifier( WPropertyBase::SPtr property )
     {
         std::string selectedValue = selector->at( 0 )->getAs< ItemType >()->getValue();
 
-        m_protonData->setColumnIndex( columnName,
-                                      getColumnNumberByName( selectedValue, m_protonData->getCSVHeader()->at( 0 ) )
+        m_protonData->setStateIndex( columnName,
+                                      getColumnNumberByName( selectedValue )
                                      );
 
         m_dataUpdate();

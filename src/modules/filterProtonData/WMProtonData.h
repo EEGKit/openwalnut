@@ -87,7 +87,15 @@ public:
      * \param columnName Name of column-header of the CSV-file
      * \param index position of column-header of the CSV-file
      */
-    void setColumnIndex( std::string columnName, int index );
+    void setStateIndex( std::string columnName, int index );
+
+    /**
+     * getter
+     *
+     * \param columnName Name of selected name of single-selection
+     * \return return the position current selected item
+     */
+    int getColumnIndexBySelection( std::string selectedName );
 
     /**
      * getter
@@ -96,13 +104,6 @@ public:
      * \return return the position of column-header of the CSV-file as int
      */
     int getColumnIndex( std::string columnName );
-
-    /**
-     * checks whether the columns have been initialized 
-     *
-     * \return true when initialized. false if they are not initialized 
-     */
-    bool isRequiredDataAvailable();
 
     /**
      * checks whether columns are available 
@@ -128,14 +129,9 @@ private:
     std::map< std::string, int > m_columnMap;
 
     /**
-     * Stores die Availability of the selected Column (ColumnPropertyHandler)
+     * Stores index of the selected single-selector (ColumnPropertyHandler)
      */
-    std::map< std::string, bool > m_availabilityColumnMap;
-
-    /**
-     * Update the Availability of Columns
-     */
-    void updateAvailabilityOfColumns();
+    std::map< std::string, int > m_ColumnMapSelectedIndex;
 };
 
 #endif  // WMPROTONDATA_H
