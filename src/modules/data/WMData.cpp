@@ -25,7 +25,6 @@
 #include <string>
 #include <vector>
 
-#include "modules/data/io/WReaderCSV.h"
 #include "core/common/WAssert.h"
 #include "core/common/WIOTools.h"
 #include "core/common/WPropertyHelper.h"
@@ -47,6 +46,7 @@
 #ifdef WBIOSIG_ENABLED
     #include "io/WReaderBiosig.h"
 #endif
+#include "io/WReaderCSV.h"
 #include "io/WReaderEEGASCII.h"
 #include "io/WReaderNIfTI.h"
 #include "io/WReaderELC.h"

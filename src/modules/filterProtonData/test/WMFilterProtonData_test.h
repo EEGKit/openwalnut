@@ -29,8 +29,8 @@
 
 #include <cxxtest/TestSuite.h>
 
-#include "modules/data/io/WReaderCSV.h"
 #include "../WMFilterProtonData.h"
+#include "io/WReaderCSV.h"
 
 /**
  * test class of the protonData class
