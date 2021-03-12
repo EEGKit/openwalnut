@@ -38,8 +38,16 @@
 
 #include "../filterProtonData/WMProtonData.h"
 
+/**
+ * Class for safe the point-connector data
+ */
 class WMWriteCSV : public WModule
 {
+/**
+ * only test class may be friend
+ */
+friend class WMWriteCSVTest;
+
 public:
     /**
      * Standard constructor.

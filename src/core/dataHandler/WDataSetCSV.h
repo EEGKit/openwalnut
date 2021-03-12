@@ -50,6 +50,9 @@ public:
      */
     typedef boost::shared_ptr< std::vector< std::vector< std::string > > > ContentSPtr;
 
+    /**
+     * represents a pointer to a vector of csv-raw-row as string
+     */
     typedef boost::shared_ptr< std::vector< std:: string > > SeperatedRowSPtr;
 
     /**
