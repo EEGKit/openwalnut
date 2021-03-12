@@ -85,7 +85,7 @@ WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string columnNam
                                                         WPropertyBase::PropertyChangeNotifierType notifier )
 {
     int index = m_protonData->getColumnIndex( defName );
-    
+
     m_protonData->setStateIndex( columnName, index );
 
     WItemSelector selector = index < 0 ? m_possibleSelectionsUsingTypes->getSelectorLast() : m_possibleSelectionsUsingTypes->getSelector( index );

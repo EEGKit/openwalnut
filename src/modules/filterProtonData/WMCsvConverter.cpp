@@ -164,7 +164,6 @@ void WMCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArr
 
 bool WMCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRow )
 {
-
     if( dataRow->empty() )
     {
         return false;
@@ -364,7 +363,7 @@ void WMCsvConverter::createOutputPointsAndEventIDs()
                         m_vectors->getEventIDs()
                 )
         );
-    } 
+    }
 }
 
 void WMCsvConverter::addEventID( WDataSetCSV::Content::iterator dataRow )
