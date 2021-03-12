@@ -24,9 +24,9 @@
 
 #include <vector>
 
-#include "WMConverterVectors.h"
+#include "WConverterVectors.h"
 
-WMConverterVectors::WMConverterVectors()
+WConverterVectors::WConverterVectors()
 {
     m_vertices = SPFloatVector( new std::vector< float >() );
     m_sizes = SPFloatVector( new std::vector< float >() );
@@ -38,7 +38,7 @@ WMConverterVectors::WMConverterVectors()
     m_eventIDs = SPIntVector( new std::vector< int >() );
 }
 
-void WMConverterVectors::clear()
+void WConverterVectors::clear()
 {
     m_vertices->clear();
     m_sizes->clear();
@@ -50,42 +50,42 @@ void WMConverterVectors::clear()
     m_eventIDs->clear();
 }
 
-SPFloatVector WMConverterVectors::getVertices()
+SPFloatVector WConverterVectors::getVertices()
 {
     return m_vertices;
 }
 
-SPFloatVector WMConverterVectors::getSizes()
+SPFloatVector WConverterVectors::getSizes()
 {
     return m_sizes;
 }
 
-SPFloatVector WMConverterVectors::getColors()
+SPFloatVector WConverterVectors::getColors()
 {
     return m_colors;
 }
 
-SPFloatVector WMConverterVectors::getEdeps()
+SPFloatVector WConverterVectors::getEdeps()
 {
     return m_edeps;
 }
 
-SPSizeVector WMConverterVectors::getFiberStartIndexes()
+SPSizeVector WConverterVectors::getFiberStartIndexes()
 {
     return m_fiberStartIndexes;
 }
 
-SPSizeVector WMConverterVectors::getFiberLengths()
+SPSizeVector WConverterVectors::getFiberLengths()
 {
     return m_fiberLengths;
 }
 
-SPSizeVector WMConverterVectors::getVerticesReverse()
+SPSizeVector WConverterVectors::getVerticesReverse()
 {
     return m_verticesReverse;
 }
 
-SPIntVector WMConverterVectors::getEventIDs()
+SPIntVector WConverterVectors::getEventIDs()
 {
     return m_eventIDs;
 }

@@ -23,20 +23,20 @@
 //---------------------------------------------------------------------------
 
 
-#include "WMEventIDLimitationPropertyHandler.h"
+#include "WEventIDLimitationPropertyHandler.h"
 
-WMEventIDLimitationPropertyHandler::WMEventIDLimitationPropertyHandler( WMProtonData::SPtr protonData,
+WEventIDLimitationPropertyHandler::WEventIDLimitationPropertyHandler( WProtonData::SPtr protonData,
                                             WPropertyGroup::SPtr properties,
-                                            WMEventIDLimitationPropertyHandler::CallbackPtr dataUpdate ):
+                                            WEventIDLimitationPropertyHandler::CallbackPtr dataUpdate ):
     m_protonData( protonData ),
     m_properties( properties ),
     m_dataUpdate( dataUpdate )
 {
 }
 
-void WMEventIDLimitationPropertyHandler::createProperties()
+void WEventIDLimitationPropertyHandler::createProperties()
 {
-    WPropertyBase::PropertyChangeNotifierType eventIDNotifier = boost::bind( &WMEventIDLimitationPropertyHandler::updateMesh, this );
+    WPropertyBase::PropertyChangeNotifierType eventIDNotifier = boost::bind( &WEventIDLimitationPropertyHandler::updateMesh, this );
     WPropGroup eventIDGroup = m_properties->addPropertyGroup( "Event Id Limitation", "Adjust the range of eventIDs to be shown.", 0 );
     m_minCap = eventIDGroup->addProperty( "Minimum event id", "Filters out every event id which is lower than the set value.", 1 );
     m_maxCap = eventIDGroup->addProperty( "Maximum event id", "Filters out every event id which is higher than the set value.", 2000 );
@@ -47,7 +47,7 @@ void WMEventIDLimitationPropertyHandler::createProperties()
     updateProperty();
 }
 
-void WMEventIDLimitationPropertyHandler::updateProperty()
+void WEventIDLimitationPropertyHandler::updateProperty()
 {
     if(m_protonData->isColumnAvailable("eventID"))
     {
@@ -63,7 +63,7 @@ void WMEventIDLimitationPropertyHandler::updateProperty()
     }
 }
 
-void WMEventIDLimitationPropertyHandler::updateMesh()
+void WEventIDLimitationPropertyHandler::updateMesh()
 {
     determineMinMaxEventID();
     m_dataUpdate( );
@@ -74,7 +74,7 @@ void WMEventIDLimitationPropertyHandler::updateMesh()
     }
 }
 
-void WMEventIDLimitationPropertyHandler::determineMinMaxEventID()
+void WEventIDLimitationPropertyHandler::determineMinMaxEventID()
 {
     int eventIDIndex = m_protonData->getColumnIndex( "eventID" );
 
@@ -101,12 +101,12 @@ void WMEventIDLimitationPropertyHandler::determineMinMaxEventID()
         m_minCap->set( 0 );
 }
 
-WPropInt WMEventIDLimitationPropertyHandler::getMinCap()
+WPropInt WEventIDLimitationPropertyHandler::getMinCap()
 {
     return m_minCap;
 }
 
-WPropInt WMEventIDLimitationPropertyHandler::getMaxCap()
+WPropInt WEventIDLimitationPropertyHandler::getMaxCap()
 {
     return m_maxCap;
 }

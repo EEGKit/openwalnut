@@ -26,11 +26,11 @@
 #include <vector>
 #include <map>
 
-#include "WMColumnPropertyHandler.h"
+#include "WColumnPropertyHandler.h"
 
-WMColumnPropertyHandler::WMColumnPropertyHandler( WMProtonData::SPtr protonData,
+WColumnPropertyHandler::WColumnPropertyHandler( WProtonData::SPtr protonData,
                                             WPropertyGroup::SPtr properties,
-                                            WMColumnPropertyHandler::CallbackPtr dataUpdate ):
+                                            WColumnPropertyHandler::CallbackPtr dataUpdate ):
     m_protonData( protonData ),
     m_properties( properties ),
     m_dataUpdate( dataUpdate )
@@ -38,9 +38,9 @@ WMColumnPropertyHandler::WMColumnPropertyHandler( WMProtonData::SPtr protonData,
     mapPropSelectionsToString = {};
 }
 
-void WMColumnPropertyHandler::createProperties()
+void WColumnPropertyHandler::createProperties()
 {
-    WPropertyBase::PropertyChangeNotifierType notifier = boost::bind( &WMColumnPropertyHandler::propertyNotifier,
+    WPropertyBase::PropertyChangeNotifierType notifier = boost::bind( &WColumnPropertyHandler::propertyNotifier,
                                                                 this, boost::placeholders::_1 );
 
     InitializeSelectionItem();
@@ -59,16 +59,16 @@ void WMColumnPropertyHandler::createProperties()
     }
 }
 
-void WMColumnPropertyHandler::setSelectionEventMethod( WMColumnPropertyHandler::CallbackPtr externEventMethod )
+void WColumnPropertyHandler::setSelectionEventMethod( WColumnPropertyHandler::CallbackPtr externEventMethod )
 {
     m_externEventMethod = externEventMethod;
 }
 
-void WMColumnPropertyHandler::updateProperty()
+void WColumnPropertyHandler::updateProperty()
 {
 }
 
-void WMColumnPropertyHandler::InitializeSelectionItem()
+void WColumnPropertyHandler::InitializeSelectionItem()
 {
     m_possibleSelectionsUsingTypes = WItemSelection::SPtr( new WItemSelection() );
 
@@ -81,7 +81,7 @@ void WMColumnPropertyHandler::InitializeSelectionItem()
     m_possibleSelectionsUsingTypes->addItem( ItemType::create( "- no selection -", "- no selection -", "",  NULL ) );
 }
 
-WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string columnName, std::string description, std::string defName,
+WPropSelection WColumnPropertyHandler::addHeaderProperty( std::string columnName, std::string description, std::string defName,
                                                         WPropertyBase::PropertyChangeNotifierType notifier )
 {
     int index = m_protonData->getColumnIndex( defName );
@@ -98,7 +98,7 @@ WPropSelection WMColumnPropertyHandler::addHeaderProperty( std::string columnNam
     return selection;
 }
 
-int WMColumnPropertyHandler::getColumnNumberByName( std::string columnNameToMatch, std::vector< std::string > headerToSearchIn )
+int WColumnPropertyHandler::getColumnNumberByName( std::string columnNameToMatch, std::vector< std::string > headerToSearchIn )
 {
     int pos = 0;
     for( std::vector< std::string >::iterator it = headerToSearchIn.begin(); it != headerToSearchIn.end(); it++ )
@@ -109,7 +109,7 @@ int WMColumnPropertyHandler::getColumnNumberByName( std::string columnNameToMatc
     return -1;
 }
 
-void WMColumnPropertyHandler::propertyNotifier( WPropertyBase::SPtr property )
+void WColumnPropertyHandler::propertyNotifier( WPropertyBase::SPtr property )
 {
     const WItemSelector* selector = NULL;
     std::string columnName;
@@ -142,7 +142,7 @@ void WMColumnPropertyHandler::propertyNotifier( WPropertyBase::SPtr property )
     }
 }
 
-boost::shared_ptr< WItemSelection > WMColumnPropertyHandler::getColumnItems()
+boost::shared_ptr< WItemSelection > WColumnPropertyHandler::getColumnItems()
 {
     return m_possibleSelectionsUsingTypes;
 }

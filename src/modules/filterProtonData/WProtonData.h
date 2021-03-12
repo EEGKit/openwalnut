@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WMPROTONDATA_H
-#define WMPROTONDATA_H
+#ifndef WProtonData_H
+#define WProtonData_H
 
 #include <map>
 #include <string>
@@ -33,17 +33,17 @@
 /**
  * Holds the csv data.
  */
-class WMProtonData
+class WProtonData
 {
     /**
      * only test class may be friend
      */
-     friend class WMProtonDataTest;
+     friend class WProtonDataTest;
 public:
     /**
      * shared_ptr that points to itself 
      */
-    typedef boost::shared_ptr< WMProtonData > SPtr;
+    typedef boost::shared_ptr< WProtonData > SPtr;
 
     /**
      * constructor
@@ -51,7 +51,7 @@ public:
      * \param csvHeader pointer to a column-header of the CSV-file
      * \param csvData pointer to a content of the CSV file 
      */
-    explicit WMProtonData( WDataSetCSV::ContentSPtr csvHeader, WDataSetCSV::ContentSPtr csvData );
+    explicit WProtonData( WDataSetCSV::ContentSPtr csvHeader, WDataSetCSV::ContentSPtr csvData );
 
     /**
      * getter
@@ -138,4 +138,4 @@ private:
     void updateAvailabilityOfColumns();
 };
 
-#endif  // WMPROTONDATA_H
+#endif  // WProtonData_H
