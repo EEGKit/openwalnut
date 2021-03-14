@@ -196,15 +196,26 @@ void WMVRCamera::moduleMain()
     // create the roots for the Eyes
     m_leftEyeNode = osg::ref_ptr< WGEGroupNode > ( new WGEGroupNode() );
     m_rightEyeNode = osg::ref_ptr< WGEGroupNode > ( new WGEGroupNode() );
+    m_leftEyeGeometryNode = osg::ref_ptr< WGEGroupNode > ( new WGEGroupNode() );
+    m_rightEyeGeometryNode = osg::ref_ptr< WGEGroupNode > ( new WGEGroupNode() );
 
     // insert the created nodes
+    m_leftEyeNode->insert( m_leftEyeGeometryNode );
+    m_rightEyeNode->insert( m_rightEyeGeometryNode );
     m_rootnode->insert( m_leftEyeNode );
     m_rootnode->insert( m_rightEyeNode );
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_rootnode );
 
+    osg::Node::NodeMask mainCullMask = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->getCullMask();
+
+    m_leftEyeGeometryNode->setNodeMask(~mainCullMask);
+    m_rightEyeGeometryNode->setNodeMask(~mainCullMask);
+
     // get side-views
     boost::shared_ptr< WGEViewer > leftEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" );
     boost::shared_ptr< WGEViewer > rightEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" );
+    leftEyeView->setScene(m_leftEyeNode);
+    rightEyeView->setScene(m_rightEyeNode);    
     leftEyeView->reset();
     rightEyeView->reset();
 
@@ -237,13 +248,18 @@ void WMVRCamera::moduleMain()
     leftEyeView->getCamera()->setRenderTargetImplementation( osg::Camera::FRAME_BUFFER_OBJECT );
     leftEyeView->getCamera()->setRenderOrder( osg::Camera::PRE_RENDER, vr::Eye_Left );
     leftEyeView->getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
+    //leftEyeView->getCamera()->setNearFarRatio( 0.000001 ); Not exactly sure what this does
     leftEyeView->getCamera()->setViewport( 0, 0, m_vrRenderWidth, m_vrRenderHeight );
+    //leftEyeView->getCamera()->setCullMask(~mainCullMask);
 
     rightEyeView->getCamera()->setClearMask( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     rightEyeView->getCamera()->setRenderTargetImplementation( osg::Camera::FRAME_BUFFER_OBJECT );
     rightEyeView->getCamera()->setRenderOrder( osg::Camera::PRE_RENDER, vr::Eye_Right );
     rightEyeView->getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
+    //rightEyeView->getCamera()->setNearFarRatio( 0.000001 ); Not exactly sure what this does
     rightEyeView->getCamera()->setViewport( 0, 0, m_vrRenderWidth, m_vrRenderHeight );
+    //rightEyeView->getCamera()->setCullMask(~mainCullMask);
+
 
     m_leftTexture = new osg::Texture2D;
     m_leftTexture->setTextureSize( m_vrRenderWidth, m_vrRenderHeight );
@@ -279,14 +295,14 @@ void WMVRCamera::moduleMain()
     );
 
     //Add Geometry to render pipeline
-    osg::ref_ptr< WGEOffscreenRenderPass > geometryPassLeft = offscreenRenderLeft->addGeometryRenderPass( m_leftEyeNode, "GeometryPassLeft" );
-    osg::ref_ptr< WGEOffscreenRenderPass> geometryPassRight = offscreenRenderRight->addGeometryRenderPass( m_rightEyeNode, "GeometryPassRight" );
+    osg::ref_ptr< WGEOffscreenRenderPass > geometryPassLeft = offscreenRenderLeft->addGeometryRenderPass( m_leftEyeGeometryNode, "GeometryPassLeft" );
+    osg::ref_ptr< WGEOffscreenRenderPass> geometryPassRight = offscreenRenderRight->addGeometryRenderPass( m_rightEyeGeometryNode, "GeometryPassRight" );
 
     //Add a texture processing step to render pipeline
     osg::ref_ptr< WGEOffscreenTexturePass > texturePassLeft = offscreenRenderLeft->addTextureProcessingPass(
          new WGEShader( "WMVRCameraTestShader", m_localPath ), "TexturePassLeft" );
     osg::ref_ptr< WGEOffscreenTexturePass> texturePassRight = offscreenRenderRight->addTextureProcessingPass(
-         new WGEShader( "WMVRCameraTestShader", m_localPath ), "TexturePassRight" );
+         new WGEShader( "WMVRCameraTestShader2", m_localPath ), "TexturePassRight" );
 
     //And a final pass
     osg::ref_ptr< WGEOffscreenFinalPass > finalPassLeft = offscreenRenderLeft->addFinalOnScreenPass( "FinalPassLeft" );
@@ -339,25 +355,35 @@ void WMVRCamera::moduleMain()
 
     osg::ref_ptr< osg::Node > plane_left = wge::genFinitePlane( 
                                 osg::Vec3( 0.0, 0.0, 0.0 ),   // base
-                                osg::Vec3( 0.0, 100.0, 0.0 ), // spanning vector a
+                                osg::Vec3( 100.0, 0.0, 0.0 ), // spanning vector a
                                 osg::Vec3( 0.0, 0.0, 100.0 ), // spanning vector b
-                                WColor( 0.5, 1.0, 0.5, 1.0 )  // a color.
+                                WColor( 0.0, 1.0, 0.0, 1.0 )  // a color.
            );
     osg::ref_ptr< osg::Node > plane_right = wge::genFinitePlane( 
                                 osg::Vec3( 0.0, 0.0, 0.0 ),   // base
-                                osg::Vec3( 0.0, 100.0, 0.0 ), // spanning vector a
-                                osg::Vec3( 100.0, 0.0, 0.0 ), // spanning vector b
-                                WColor( 0.5, 0.5, 1.0, 1.0 )  // a color.
+                                osg::Vec3( 100.0, 0.0, 0.0 ), // spanning vector a
+                                osg::Vec3( 0.0, 0.0, 100.0 ), // spanning vector b
+                                WColor( 0.0, 0.0, 1.0, 1.0 )  // a color.
+           );
+    osg::ref_ptr< osg::Node > plane_main = wge::genFinitePlane( 
+                                osg::Vec3( 0.0, 0.0, 0.0 ),   // base
+                                osg::Vec3( 100.0, 0.0, 0.0 ), // spanning vector a
+                                osg::Vec3( 0.0, 0.0, 100.0 ), // spanning vector b
+                                WColor( 1.0, 0.0, 0.0, 1.0 )  // a color.
            );
 
-    m_leftEyeNode->addChild(plane_left);
-    m_rightEyeNode->addChild(plane_right);
+    m_leftEyeGeometryNode->addChild(plane_left);
+    m_rightEyeGeometryNode->addChild(plane_right);
+    m_rootnode->addChild(plane_main);
 
     //offscreenRenderLeft->addChild(dynamic_cast<osg::Node*>(WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone(osg::CopyOp::SHALLOW_COPY)));
     //offscreenRenderRight->addChild(dynamic_cast<osg::Node*>(WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone(osg::CopyOp::SHALLOW_COPY)));
     
-    m_rootnode->insert( offscreenRenderLeft );
-    m_rootnode->insert( offscreenRenderRight );
+    leftEyeView->getScene()->insert(offscreenRenderLeft);
+    rightEyeView->getScene()->insert(offscreenRenderRight);
+
+    //m_rootnode->insert( offscreenRenderLeft );
+    //m_rootnode->insert( offscreenRenderRight );
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Main loop
@@ -475,12 +501,12 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
     double elapsedSeconds = ( now - m_lastFrame ).count()/1000000000.0;
     m_lastFrame = now;
     m_lastFrames [m_frameCounter++] = elapsedSeconds;
-    if(m_frameCounter>=60)m_frameCounter=0;
+    if(m_frameCounter>=120)m_frameCounter=0;
     double elapsedSecondsSum = 0;
-    for(int i=0;i<=59;i++){
+    for(int i=0;i<=119;i++){
         elapsedSecondsSum += m_lastFrames [i];
     }
-    double averageElapsedSeconds = elapsedSecondsSum/60.0;
+    double averageElapsedSeconds = elapsedSecondsSum/120.0;
 
 
     if( m_module->m_debugTrigger1->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )

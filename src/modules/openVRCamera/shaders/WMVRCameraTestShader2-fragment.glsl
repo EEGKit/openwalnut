@@ -39,6 +39,6 @@ void main()
     // gl_FragData[0] = vec4( light, 0.8, 0.8, 0.8 );
     // gl_FragData[0].rgb = light * vec3( 0.5, 1.0, 0.5 );
     // gl_FragData[0].a = 0.8;
-    gl_FragData[0] = vec4( 0.3, 0.3, 1.0, 0.8 );
+    gl_FragData[0] = vec4( 0.3, 1.0, 0.3, 0.8 );
 }
 

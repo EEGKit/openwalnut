@@ -171,12 +171,12 @@ private:
 
         
         /**
-         * timestamp of the last 60 frames
+         * timestamps of the last 60 frames
          */
-        double m_lastFrames [60];
+        double m_lastFrames [120];
 
         /**
-         * timestamp of the last 60 frames
+         * current position in m_lastFrames for saving the next timestamp
          */
         unsigned short m_frameCounter = 0;
 
@@ -219,6 +219,16 @@ private:
      * A node for applying right Eye tracking
      */
     osg::ref_ptr<WGEGroupNode> m_rightEyeNode;
+
+    /**
+     * A node for holding left Eye geometry
+     */
+    osg::ref_ptr<WGEGroupNode> m_leftEyeGeometryNode;
+
+    /**
+     * A node for holding right Eye geometry
+     */
+    osg::ref_ptr<WGEGroupNode> m_rightEyeGeometryNode;
 
     /**
      * The OpenVR SDK Interface
