@@ -30,12 +30,12 @@
 #include <cxxtest/TestSuite.h>
 #include <core/common/test/WException_test.h>
 
-#include "../WMProtonData.h"
+#include "../WProtonData.h"
 
 /**
  * Test class of WMProtonData class
  */
-class WMProtonDataTest : public CxxTest::TestSuite
+class WProtonDataTest : public CxxTest::TestSuite
 {
     /**
      * A sample of column names
@@ -95,7 +95,7 @@ public:
     void testConstructor()
     {
         TS_ASSERT_THROWS_NOTHING(
-            WMProtonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+            WProtonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
                           boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
         );
     }
@@ -105,7 +105,7 @@ public:
      */
     void testSetCSVHeaderEmpty()
     {
-        WMProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+        WProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
                                  boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
 
         WDataSetCSV::ContentSPtr tmpEmptyHeader = WDataSetCSV::ContentSPtr( new WDataSetCSV::Content() );
@@ -122,7 +122,7 @@ public:
      */
     void testSetCSVHeaderNull()
     {
-        WMProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+        WProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
                                  boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
 
         WDataSetCSV::ContentSPtr tmpHeaderNullptr = nullptr;
@@ -139,7 +139,7 @@ public:
      */
     void testSetCSVDataNull()
     {
-        WMProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+        WProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
                                  boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
 
         WDataSetCSV::ContentSPtr tmpDataNullptr = nullptr;
@@ -149,68 +149,6 @@ public:
                 e.what(),
                 "Can not set data! No data specified!"
         );
-    }
-
-    /**
-     * Tests, if all entries of m_availabilityColumnMap are set to true
-     */
-     void testUpdateAvailabilityOfColumnsAllTrue()
-    {
-        WMProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
-                                 boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
-        for( auto keyValuePair : protonData.m_availabilityColumnMap )
-        {
-            TS_ASSERT_EQUALS( keyValuePair.second, true );
-        }
-    }
-
-    /**
-     * Tests, if all entries of m_availabilityColumnMap are set to false
-     */
-    void testUpdateAvailabilityOfColumnsAllFalse()
-    {
-        WDataSetCSV::Content tmpColumnNames =
-        {
-            {
-                "PDGEncoding_", "edep_", "parentID_", "eventID_", "someMoreValues"
-            }
-        };
-
-        WMProtonData protonData( boost::make_shared< WDataSetCSV::Content >( tmpColumnNames ),
-                                 boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
-
-        for( auto keyValuePair : protonData.m_availabilityColumnMap )
-        {
-            TS_ASSERT_EQUALS( keyValuePair.second, false );
-        }
-    }
-
-    /**
-     * Tests, if one entries of m_availabilityColumnMap is set to false
-     */
-    void testUpdateAvailabilityOfColumnsOneTrue()
-    {
-        WDataSetCSV::Content tmpColumnNames =
-        {
-            {
-                "_PDGEncoding", "_edep", "parentID", "_eventID", "someMoreValues"
-            }
-        };
-
-        WMProtonData protonData( boost::make_shared< WDataSetCSV::Content >( tmpColumnNames ),
-                                 boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
-
-        for( auto keyValuePair : protonData.m_availabilityColumnMap )
-        {
-            if( keyValuePair.first == "parentID" )
-            {
-                TS_ASSERT_EQUALS( keyValuePair.second, true );
-            }
-            else
-            {
-                TS_ASSERT_EQUALS( keyValuePair.second, false );
-            }
-        }
     }
 };
 
