@@ -41,7 +41,7 @@
 class WMPointConnector;
 
 /**
- * The click handler for the mouse keyboard events of WMPointConnector
+ * The keyboard handler for the keyboard events of WMPointConnector
  */
 class WKeyboardHandler : public osgGA::GUIEventHandler
 {
