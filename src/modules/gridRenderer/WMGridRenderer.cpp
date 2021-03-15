@@ -179,12 +179,15 @@ void WMGridRenderer::moduleMain()
             m_gridNode = NULL;
         }
 
-        m_gridNode->setBBoxColor( *m_bboxColor );
-        m_gridNode->setGridColor( *m_gridColor );
-        m_gridNode->setGridLineWidth( m_gridLineWidth->get() );
-        m_gridNode->setBoxLineWidth( m_boxLineWidth->get() );
-        updateNode( m_mode );
-        m_gridNode->setGrid( regGrid );
+        if( m_gridNode )
+        {
+            m_gridNode->setBBoxColor( *m_bboxColor );
+            m_gridNode->setGridColor( *m_gridColor );
+            m_gridNode->setGridLineWidth( m_gridLineWidth->get() );
+            m_gridNode->setBoxLineWidth( m_boxLineWidth->get() );
+            updateNode( m_mode );
+            m_gridNode->setGrid( regGrid );
+        }
     }
 
     WGraphicsEngine::getGraphicsEngine()->getScene()->remove( m_gridNode );
