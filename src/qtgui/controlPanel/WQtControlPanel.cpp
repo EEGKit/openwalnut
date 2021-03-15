@@ -492,7 +492,6 @@ bool WQtControlPanel::event( QEvent* event )
             wlog::error( "ControlPanel" ) << "Removed module has strange usage count: " << module.use_count() << ". Should be 1 here. " <<
                                               "Module reference is held by someone else.";
         }
-
         return true;
     }
 
@@ -529,9 +528,28 @@ bool WQtControlPanel::event( QEvent* event )
     // a connector was updated
     if( event->type() == WQT_MODULE_CONNECTOR_EVENT )
     {
-        return true;
-    }
+        WModuleConnectorEvent* e = dynamic_cast< WModuleConnectorEvent* >( event );
+        if( !e )
+        {
+            // this should never happen, since the type is set to WQT_MODULE_CONNECTOR_EVENT.
+            WLogger::getLogger()->addLogMessage( "Event is not an WModuleConnectorEvent although its type claims it. Ignoring event.",
+                                                 "ControlPanel", LL_WARNING );
+            return true;
+        }
 
+        WModule::SPtr m = e->getModule();
+        if( !m )
+        {
+            WLogger::getLogger()->addLogMessage( "Event has no valid module set. Ignoring event.",
+                                                 "ControlPanel", LL_WARNING );
+            return true;
+        }
+
+        if( m == getSelectedModule() )
+        {
+            createCompatibleButtons( m );
+        }
+    }
     return WQtDockWidget::event( event );
 }
 
