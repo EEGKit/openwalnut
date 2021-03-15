@@ -25,12 +25,15 @@
 #ifndef WMPROTONDATA_TEST_H
 #define WMPROTONDATA_TEST_H
 
-#include <vector>
 #include <string>
+#include <vector>
+
 #include <cxxtest/TestSuite.h>
+
 #include <core/common/test/WException_test.h>
 
 #include "../WProtonData.h"
+
 
 /**
  * Test class of WMProtonData class

@@ -29,9 +29,11 @@
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
-#include <core/dataHandler/WDataSetPoints.h>
-#include <core/dataHandler/WDataSetCSV.h>
+
 #include "core/dataHandler/io/WReader.h"
+#include <core/dataHandler/WDataSetCSV.h>
+#include <core/dataHandler/WDataSetPoints.h>
+
 
 /**
  * Read content from a CSV file.

@@ -38,8 +38,9 @@
 #include "core/common/WPropertyGroup.h"
 #include "core/kernel/WModule.h"
 
-#include "WMPointConnector.h"
 #include "action/WActionHandler.h"
+#include "WMPointConnector.h"
+
 
 /**
  * Handles the fibers of the WMPointsConnector.

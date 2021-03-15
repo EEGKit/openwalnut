@@ -29,6 +29,7 @@
 
 #include <boost/shared_ptr.hpp>
 
+
 /**
  * represents a boost::shared_ptr to a vector containing a vector of floats.
  */

@@ -25,10 +25,10 @@
 #ifndef WDATASETCSV_H
 #define WDATASETCSV_H
 
-
-#include "WDataSet.h"
 #include "string"
 #include "vector"
+
+#include "WDataSet.h"
 
 /**
  * Represents a CSV dataset.

@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "WCsvConverter.h"
 
@@ -176,7 +176,7 @@ bool WCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRow
         return false;
     }
 
-    if( m_protonData->isColumnAvailable( "parentID" ) )
+    if( m_protonData->isColumnAvailable( "Parent id" ) )
     {
         int PrimaryValue = stringToInt( dataRow->at( m_indexes->getParentID() ) );
 
@@ -354,7 +354,6 @@ void WCsvConverter::createOutputPointsAndEventIDs()
 {
     if( m_protonData->isColumnAvailable( "Event id" ) )
     {
-       std::cout << m_vectors->getEventIDs()->size() << " " << m_vectors->getVertices()->size() << std::endl;
         m_selectedEventIDs = boost::shared_ptr < WDataSetPointsAndEventID >(
                 new WDataSetPointsAndEventID(
                         m_vectors->getVertices(),

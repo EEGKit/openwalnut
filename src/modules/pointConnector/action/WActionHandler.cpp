@@ -26,6 +26,7 @@
 
 #include "WActionHandler.h"
 
+
 WActionHandler::WActionHandler()
 {
     m_undo = ActionStack( new std::vector< WFiberAction::SPtr >() );

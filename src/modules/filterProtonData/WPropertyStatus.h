@@ -30,9 +30,10 @@
 #include "core/kernel/WModule.h"
 
 #include "propertyHandler/WColumnPropertyHandler.h"
+#include "propertyHandler/WEventIDLimitationPropertyHandler.h"
 #include "propertyHandler/WFilterPropertyHandler.h"
 #include "propertyHandler/WVisualizationPropertyHandler.h"
-#include "propertyHandler/WEventIDLimitationPropertyHandler.h"
+
 
 /**
  * Holds references to all the property handlers.

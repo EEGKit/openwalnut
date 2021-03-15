@@ -26,7 +26,9 @@
 #define WREADERCSV_TEST_H
 
 #include <string>
+
 #include <cxxtest/TestSuite.h>
+
 #include "../WReaderCSV.h"
 
 
