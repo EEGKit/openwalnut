@@ -22,6 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
+#include <list>
 #include <string>
 #include <vector>
 #include <map>
@@ -47,11 +48,12 @@ void WColumnPropertyHandler::createProperties()
 
     m_columnSelectionGroup = m_properties->addPropertyGroup( "Select columns", "Select the columns which should be used" );
 
-    for( int i = 0; i < vecDefaultColumnNames.size(); i++ )
+    std::list< std::tuple< std::string, std::string, std::string > > names = WSingleSelectorName::getListOfSelectorContent();
+    for( std::tuple< std::string, std::string, std::string > selectorElement : names )
     {
-        std::string columnName = vecDefaultColumnNames.at( i );
-        std::string desciption = vecDefaultDescription.at( i );
-        std::string defName = vecDefaultNames.at( i );
+        std::string columnName = std::get< 0 >( selectorElement );
+        std::string desciption = std::get< 1 >( selectorElement );
+        std::string defName = std::get< 2 >( selectorElement );
 
         mapPropSelectionsToString.insert(
             std::map< WPropSelection, std::string >::value_type( addHeaderProperty( columnName, desciption, defName, notifier ), columnName )

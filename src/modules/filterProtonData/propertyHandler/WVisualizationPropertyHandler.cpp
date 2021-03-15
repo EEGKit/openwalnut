@@ -61,10 +61,10 @@ void WVisualizationPropertyHandler::createProperties()
 
 void WVisualizationPropertyHandler::updateProperty()
 {
-    if( m_protonData->isColumnAvailable( "X" ) &&
-        m_protonData->isColumnAvailable( "Y" ) &&
-        m_protonData->isColumnAvailable( "Z" ) &&
-        m_protonData->isColumnAvailable( "Energy deposition" ) )
+    if( m_protonData->isColumnAvailable( WSingleSelectorName::getX() ) &&
+        m_protonData->isColumnAvailable( WSingleSelectorName::getY() ) &&
+        m_protonData->isColumnAvailable( WSingleSelectorName::getZ() ) &&
+        m_protonData->isColumnAvailable( WSingleSelectorName::getEDEP() ) )
     {
         m_sizesFromEdep->setHidden( false );
         m_colorFromEdep->setHidden( false );

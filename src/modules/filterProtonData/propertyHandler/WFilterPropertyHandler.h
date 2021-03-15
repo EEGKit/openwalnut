@@ -32,6 +32,7 @@
 #include "../WProtonData.h"
 #include "WColumnPropertyHandler.h"
 #include "core/common/WPathHelper.h"
+#include "../WSingleSelectorName.h"
 
 /**
  * Creates, updates and handles the filter properties.

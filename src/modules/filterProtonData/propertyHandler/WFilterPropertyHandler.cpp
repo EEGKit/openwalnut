@@ -52,7 +52,7 @@ void WFilterPropertyHandler::updateProperty()
 {
     updatePDGProperties();
 
-    if( m_protonData->isColumnAvailable( "parentID" ) )
+    if( m_protonData->isColumnAvailable( WSingleSelectorName::getPARENTID() ) )
     {
         m_showPrimaries->setHidden( false );
         m_showSecondaries->setHidden( false );
@@ -63,7 +63,7 @@ void WFilterPropertyHandler::updateProperty()
         m_showSecondaries->setHidden( true );
     }
 
-    if( m_protonData->isColumnAvailable( "Particle Data Group" ) )
+    if( m_protonData->isColumnAvailable( WSingleSelectorName::getPDG() ) )
     {
         m_multiSelection->setHidden( false );
         m_filteringsubGroup->setHidden( false );
@@ -77,7 +77,7 @@ void WFilterPropertyHandler::updateProperty()
 
 void WFilterPropertyHandler::updatePDGProperties()
 {
-    m_currentColumnIndex = m_protonData->getColumnIndexBySelection( "Particle Data Group" );
+    m_currentColumnIndex = m_protonData->getColumnIndexBySelection( WSingleSelectorName::getPDG() );
 
     m_filteringGroup->removeProperty( m_multiSelection );
     m_filteringGroup->removeProperty( m_filteringsubGroup );
