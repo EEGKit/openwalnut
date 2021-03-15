@@ -76,6 +76,7 @@ void WVisualizationPropertyHandler::updateProperty()
         m_colorFromEdep->setHidden( true );
         m_gradient->setHidden( true );
         m_applyGradient->setHidden( true );
+        m_colorSelection->setHidden( false );
     }
 }
 
@@ -103,7 +104,8 @@ void WVisualizationPropertyHandler::propertyCallback( WPropertyBase::SPtr proper
     {
         m_applyGradient->set( WPVBaseTypes::PV_TRIGGER_READY, false );
     }
-    toggleColorProperties();
+
+    updateProperty();
 }
 
 WPropBool WVisualizationPropertyHandler::getColorFromEdep()

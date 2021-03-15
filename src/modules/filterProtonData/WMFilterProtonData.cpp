@@ -122,8 +122,8 @@ void WMFilterProtonData::connectors()
 
     m_output_points = WModuleOutputData< WDataSetPoints >::createAndAdd( shared_from_this(), "output points", "Output CSV data as Point data" );
     m_output_fibers = WModuleOutputData< WDataSetFibers >::createAndAdd( shared_from_this(), "output fibers",  "Output CSV data as Fiber data" );
-    m_output_transferFunction = WModuleOutputData< WDataSetSingle >::createAndAdd( shared_from_this(),
-                                                                                   "output transferfunction", "Output transfer function" );
+    m_output_transferFunction = WModuleOutputData< WDataSetSingle >::create( shared_from_this(),
+                                                                             "output transferfunction", "Output transfer function" );
     m_output_points_eventIds = WModuleOutputData< WDataSetPointsAndEventID >::createAndAdd( shared_from_this(),
                                                     "output points and eventIDs",  "Output CSV data as points and EventIDs for PointConnector" );
 
