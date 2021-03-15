@@ -84,6 +84,14 @@ public:
      */
     void deselectPoint();
 
+    /**
+     * 
+     * \param idx Where to write the index of the selected point
+     * \return true A point is selected
+     * \return false A point is not selected
+     */
+    bool getSelectedPoint( size_t* idx );
+
 private:
     /**
      * The vertices that are drawn.
@@ -99,11 +107,6 @@ private:
      * The index of the selected vertex.
      */
     size_t m_selectedIndex;
-
-    /**
-     * The color of the vertex before it has been selected.
-     */
-    osg::Vec4 m_selectedOldColor;
 
     /**
      * Whether a selection has been done or not.
