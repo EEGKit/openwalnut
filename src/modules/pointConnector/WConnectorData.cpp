@@ -57,18 +57,12 @@ void WConnectorData::addVertex( osg::Vec3 vertex, osg::Vec4 color )
 
 void WConnectorData::deselectPoint()
 {
-    if( m_hasSelected )
-    {
-        m_colors->operator[]( m_selectedIndex ) = m_selectedOldColor;
-        m_hasSelected = false;
-    }
+    m_hasSelected = false;
 }
 
 void WConnectorData::selectPoint( size_t idx )
 {
-    m_selectedOldColor = m_colors->operator[]( idx );
     m_selectedIndex = idx;
-    m_colors->operator[]( idx ) = osg::Vec4( 0.0, 1.0, 0.0, 1.0 );
     m_hasSelected = true;
 }
 
@@ -78,4 +72,10 @@ void WConnectorData::selectPoint( osg::Vec3 vertex )
     size_t vIdx = std::distance( m_vertices->begin(), vertexIterator );
 
     selectPoint( vIdx );
+}
+
+bool WConnectorData::getSelectedPoint( size_t* idx )
+{
+    *idx = m_selectedIndex;
+    return m_hasSelected;
 }

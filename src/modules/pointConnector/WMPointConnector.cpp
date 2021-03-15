@@ -226,24 +226,31 @@ void WMPointConnector::updatePoints()
     for( size_t idx = 0; idx < m_connectorData->getVertices()->size(); idx++ )
     {
         osg::Vec3 vertex = m_connectorData->getVertices()->at( idx );
-        osg::Vec4 color = m_connectorData->getColors()->at( idx );
+        osg::Vec4 color( 1.0, 1.0, 1.0, 1.0 );
 
         vertices->push_back( vertex.x() );
         vertices->push_back( vertex.y() );
         vertices->push_back( vertex.z() );
 
+        size_t tmpIdx;
+        if( m_connectorData->getSelectedPoint( &tmpIdx ) && tmpIdx == idx )
+        {
+            color[0] = 0.0;
+            color[2] = 0.0;
+        }
+        else if( m_fiberHandler->getFiberOfPoint( vertex, &tmpIdx ) && m_fiberHandler->getSelectedFiber() == tmpIdx )
+        {
+            color[0] = 0.0;
+        }
+        if( m_fiberHandler->isPointHidden( vertex ) )
+        {
+            color[3] = 0.1;
+        }
+
         colors->push_back( color.x() );
         colors->push_back( color.y() );
         colors->push_back( color.z() );
-
-        if( m_fiberHandler->isPointHidden( vertex ) )
-        {
-            colors->push_back( 0.0 );
-        }
-        else
-        {
-            colors->push_back( color.w() );
-        }
+        colors->push_back( color.w() );
     }
 
     m_pointOutput->updateData( WDataSetPoints::SPtr( new WDataSetPoints( vertices, colors ) ) );
@@ -257,9 +264,22 @@ void WMPointConnector::handleClick( osg::Vec3 cameraPosition, osg::Vec3 directio
     {
         if( isLeftClick )
         {
-            m_connectorData->deselectPoint();
-            m_connectorData->selectPoint( hitIdx );
-            m_fiberHandler->addVertexToFiber( m_connectorData->getVertices()->at( hitIdx ), m_fiberHandler->getSelectedFiber() );
+            size_t fiberIdx = 0;
+            if( m_fiberHandler->getFiberOfPoint( m_connectorData->getVertices()->at( hitIdx ), &fiberIdx ) )
+            {
+                if( m_fiberHandler->getSelectedFiber() == fiberIdx )
+                {
+                    return;
+                }
+                m_fiberHandler->selectFiber( fiberIdx );
+                m_fiberHandler->selectorUpdate();
+            }
+            else
+            {
+                m_connectorData->deselectPoint();
+                m_connectorData->selectPoint( hitIdx );
+                m_fiberHandler->addVertexToFiber( m_connectorData->getVertices()->at( hitIdx ), m_fiberHandler->getSelectedFiber() );
+            }
         }
         else
         {

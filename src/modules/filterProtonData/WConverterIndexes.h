@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WMCONVERTERINDEXES_H
-#define WMCONVERTERINDEXES_H
+#ifndef WCONVERTERINDEXES_H
+#define WCONVERTERINDEXES_H
 
 #include <boost/shared_ptr.hpp>
 
@@ -111,4 +111,4 @@ private:
     int m_eventID = -1; //!< The eventID index.
 };
 
-#endif  // WMCONVERTERINDEXES_H
+#endif  // WCONVERTERINDEXES_H

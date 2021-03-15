@@ -29,6 +29,7 @@
 #include <vector>
 
 #include <boost/bimap.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "core/common/WPathHelper.h"
 
