@@ -221,14 +221,7 @@ void WCsvConverter::addVertex( WDataSetCSV::Content::iterator dataRow )
 
 void WCsvConverter::addColor( WColor plainColor )
 {
-    if( !m_protonData->isColumnAvailable( "Energy deposition" ) )
-    {
-        m_vectors->getColors()->push_back( 0 );
-        m_vectors->getColors()->push_back( 0 );
-        m_vectors->getColors()->push_back( 0 );
-    }
-
-    if( !m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
+    if( !m_protonData->isColumnAvailable( "Energy deposition" ) || !m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
     {
         m_vectors->getColors()->push_back( plainColor[0] );
         m_vectors->getColors()->push_back( plainColor[1] );
