@@ -159,7 +159,7 @@ void WFilterPropertyHandler::updateSelectedPDGTypes()
 void WFilterPropertyHandler::createPropToSetParticleNames()
 {
      m_notifierSetParticleName = boost::bind(
-        &WFilterPropertyHandler::saveSelectPDGandSaveEvent, this, boost::placeholders::_1 );
+        &WFilterPropertyHandler::selectPdgAndSaveEvent, this, boost::placeholders::_1 );
 
 
     m_filteringsubGroup  = m_filteringGroup->addPropertyGroup( "Rename Particle Types",
