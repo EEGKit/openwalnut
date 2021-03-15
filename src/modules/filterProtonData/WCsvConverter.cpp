@@ -415,7 +415,8 @@ float WCsvConverter::stringToFloat( std::string str )
     }
     catch( const boost::bad_lexical_cast &e )
     {
-        throw WException( "The selected column has an incorrect format. Numbers (float) are expected. " + std::string( e.what() ) );
+
+        throw WException( "The selected column has an incorrect format (" + str + "). Numbers (float) are expected. " + std::string( e.what() ) );
     }
 }
 
@@ -423,10 +424,11 @@ int WCsvConverter::stringToInt( std::string str )
 {
     try
     {
-        return boost::lexical_cast< int >( str );
+        float temp = stringToFloat( str );
+        return boost::lexical_cast< int >( temp );
     }
     catch( const boost::bad_lexical_cast &e )
     {
-        throw WException( "The selected column has an incorrect format. Numbers (int) are expected. " + std::string( e.what() ) );
+        throw WException( "The selected column has an incorrect format (" + str + "). Numbers (int) are expected. " + std::string( e.what() ) );
     }
 }

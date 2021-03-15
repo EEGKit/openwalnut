@@ -82,7 +82,7 @@ void WProtonData::setStateIndex( std::string columnName, int index )
     m_ColumnMapSelectedIndex[ columnName ] = index;
 }
 
-bool WMProtonData::isColumnAvailable( std::string columnName )
+bool WProtonData::isColumnAvailable( std::string columnName )
 {
     return m_ColumnMapSelectedIndex[ columnName ] >= 0;
 }
