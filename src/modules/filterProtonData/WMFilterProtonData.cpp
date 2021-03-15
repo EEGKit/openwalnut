@@ -66,7 +66,7 @@ void WMFilterProtonData::moduleMain()
 
     ready();
 
-    m_propertyStatus = boost::shared_ptr< WMPropertyStatus >( new WMPropertyStatus() );
+    m_propertyStatus = boost::shared_ptr< WPropertyStatus >( new WPropertyStatus() );
 
     while( !m_shutdownFlag() )
     {
@@ -79,19 +79,19 @@ void WMFilterProtonData::moduleMain()
 
         if( m_protonData == NULL )
         {
-            m_protonData = WMProtonData::SPtr( new WMProtonData(  m_input->getData()->getHeader(),  m_input->getData()->getData() ) );
+            m_protonData = WProtonData::SPtr( new WProtonData(  m_input->getData()->getHeader(),  m_input->getData()->getData() ) );
 
-            m_propertyStatus->setColumnPropertyHandler( WMColumnPropertyHandler::SPtr( new WMColumnPropertyHandler( m_protonData, m_properties,
+            m_propertyStatus->setColumnPropertyHandler( WColumnPropertyHandler::SPtr( new WColumnPropertyHandler( m_protonData, m_properties,
                 boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
 
-            m_propertyStatus->setFilterPropertyHandler( WMFilterPropertyHandler::SPtr( new WMFilterPropertyHandler( m_protonData, m_properties,
+            m_propertyStatus->setFilterPropertyHandler( WFilterPropertyHandler::SPtr( new WFilterPropertyHandler( m_protonData, m_properties,
                 boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
 
-            m_propertyStatus->setVisualizationPropertyHandler( WMVisualizationPropertyHandler::SPtr(
-                new WMVisualizationPropertyHandler( m_protonData, m_properties, boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
+            m_propertyStatus->setVisualizationPropertyHandler( WVisualizationPropertyHandler::SPtr(
+                new WVisualizationPropertyHandler( m_protonData, m_properties, boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
 
-            m_propertyStatus->setEventIDLimitationPropertyHandler( WMEventIDLimitationPropertyHandler::SPtr(
-                new WMEventIDLimitationPropertyHandler( m_protonData, m_properties, boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
+            m_propertyStatus->setEventIDLimitationPropertyHandler( WEventIDLimitationPropertyHandler::SPtr(
+                new WEventIDLimitationPropertyHandler( m_protonData, m_properties, boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
 
             m_propertyStatus->getColumnPropertyHandler()->setSelectionEventMethod( boost::bind( &WMFilterProtonData::updateProperty, this ) );
         }
@@ -161,13 +161,13 @@ void WMFilterProtonData::properties()
     WPropertyBase::PropertyChangeNotifierType renameNotifier = boost::bind( &WMFilterProtonData::loadNotifier,
                                                                 this, groupRename, boost::placeholders::_1 );
 
-    groupColumn->addProperty( "Particle Data Group", "Choose the column which should be used to determine the particle data group.",
-                            std::string( "" ), columnNotifier, false );
     groupColumn->addProperty( "X", "Choose the column which should be used to determine the x coordinate.",
                             std::string( "" ), columnNotifier, false );
     groupColumn->addProperty( "Y", "Choose the column which should be used to determine the y coordinate.",
                             std::string( "" ), columnNotifier, false );
     groupColumn->addProperty( "Z", "Choose the column which should be used to determine the z coordinate.",
+                            std::string( "" ), columnNotifier, false );
+    groupColumn->addProperty( "Particle Data Group", "Choose the column which should be used to determine the particle data group.",
                             std::string( "" ), columnNotifier, false );
     groupColumn->addProperty( "Energy deposition", "Choose the column which should be used to determine the energy deposition.",
                             std::string( "" ), columnNotifier, false );
@@ -180,7 +180,6 @@ void WMFilterProtonData::properties()
                             "Primaries and secondaries filtering is based on that id,"
                             " if a particle has the parent id 0 it is a primary otherwise it is a secondary.",
                             std::string( "" ), columnNotifier, false );
-
     groupFilter->addProperty( "Show primaries", "Show or hide primaries. One can either hide primaries or secondaries,"
                             "but not both at the same time.", std::string( "" ), filterNotifier, false );
     groupFilter->addProperty( "Show secondaries", "Show or hide secondaries. One can either hide primaries or secondaries,"
@@ -232,7 +231,7 @@ void WMFilterProtonData::setToLoadedProperties()
 
 void WMFilterProtonData::setOutputFromCSV()
 {
-    m_converter = boost::shared_ptr< WMCsvConverter >( new WMCsvConverter( m_protonData, m_propertyStatus, m_colorBar ) );
+    m_converter = boost::shared_ptr< WCsvConverter >( new WCsvConverter( m_protonData, m_propertyStatus, m_colorBar ) );
 
     m_output_points->updateData( m_converter->getPoints() );
     m_output_fibers->updateData( m_converter->getFibers() );

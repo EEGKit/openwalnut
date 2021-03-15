@@ -22,48 +22,48 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WMPropertyStatus.h"
+#include "WPropertyStatus.h"
 
-WMPropertyStatus::WMPropertyStatus()
+WPropertyStatus::WPropertyStatus()
 {
 }
 
-WMColumnPropertyHandler::SPtr WMPropertyStatus::getColumnPropertyHandler()
+WColumnPropertyHandler::SPtr WPropertyStatus::getColumnPropertyHandler()
 {
     return m_columnPropertyHandler;
 }
 
-void WMPropertyStatus::setColumnPropertyHandler( WMColumnPropertyHandler::SPtr columnPropertyHandler )
+void WPropertyStatus::setColumnPropertyHandler( WColumnPropertyHandler::SPtr columnPropertyHandler )
 {
     m_columnPropertyHandler = columnPropertyHandler;
 }
 
-WMFilterPropertyHandler::SPtr WMPropertyStatus::getFilterPropertyHandler()
+WFilterPropertyHandler::SPtr WPropertyStatus::getFilterPropertyHandler()
 {
     return m_filterPropertyHandler;
 }
 
-void WMPropertyStatus::setFilterPropertyHandler( WMFilterPropertyHandler::SPtr filterPropertyHandler )
+void WPropertyStatus::setFilterPropertyHandler( WFilterPropertyHandler::SPtr filterPropertyHandler )
 {
     m_filterPropertyHandler = filterPropertyHandler;
 }
 
-WMVisualizationPropertyHandler::SPtr WMPropertyStatus::getVisualizationPropertyHandler()
+WVisualizationPropertyHandler::SPtr WPropertyStatus::getVisualizationPropertyHandler()
 {
     return m_visualizationPropertyHandler;
 }
 
-void WMPropertyStatus::setVisualizationPropertyHandler( WMVisualizationPropertyHandler::SPtr visualizationPropertyHandler )
+void WPropertyStatus::setVisualizationPropertyHandler( WVisualizationPropertyHandler::SPtr visualizationPropertyHandler )
 {
     m_visualizationPropertyHandler = visualizationPropertyHandler;
 }
 
-WMEventIDLimitationPropertyHandler::SPtr WMPropertyStatus::getEventIDLimitationPropertyHandler()
+WEventIDLimitationPropertyHandler::SPtr WPropertyStatus::getEventIDLimitationPropertyHandler()
 {
     return m_eventIDLimitationPropertyHandler;
 }
 
-void WMPropertyStatus::setEventIDLimitationPropertyHandler( WMEventIDLimitationPropertyHandler::SPtr eventIDLimitationPropertyHandler )
+void WPropertyStatus::setEventIDLimitationPropertyHandler( WEventIDLimitationPropertyHandler::SPtr eventIDLimitationPropertyHandler )
 {
     m_eventIDLimitationPropertyHandler = eventIDLimitationPropertyHandler;
 }

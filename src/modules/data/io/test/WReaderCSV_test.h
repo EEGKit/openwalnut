@@ -29,7 +29,7 @@
 
 #include <cxxtest/TestSuite.h>
 
-#include "io/WReaderCSV.h"
+#include "../WReaderCSV.h"
 
 
 /**

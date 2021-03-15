@@ -25,59 +25,61 @@
 #include <vector>
 #include <string>
 
-#include "WMCsvConverter.h"
+#include "WCsvConverter.h"
 
 
-WMCsvConverter::WMCsvConverter( WMProtonData::SPtr protonData,  boost::shared_ptr< WMPropertyStatus > propertyStatus )
+WCsvConverter::WCsvConverter( WProtonData::SPtr protonData,  boost::shared_ptr< WPropertyStatus > propertyStatus )
 {
     m_protonData = protonData;
     m_propertyStatus = propertyStatus;
-    m_vectors = WMConverterVectors::SPtr( new WMConverterVectors() );
-    m_indexes = WMConverterIndexes::SPtr( new WMConverterIndexes() );
+    m_vectors = WConverterVectors::SPtr( new WConverterVectors() );
+    m_indexes = WConverterIndexes::SPtr( new WConverterIndexes() );
 
 
     setOutputFromCSV( );
 }
 
-WMCsvConverter::WMCsvConverter( WMProtonData::SPtr protonData,  boost::shared_ptr< WMPropertyStatus > propertyStatus,
+WCsvConverter::WCsvConverter( WProtonData::SPtr protonData,  boost::shared_ptr< WPropertyStatus > propertyStatus,
                                 WModule::SPtr colorBar )
 {
     m_protonData = protonData;
     m_propertyStatus = propertyStatus;
-    m_vectors = WMConverterVectors::SPtr( new WMConverterVectors() );
-    m_indexes = WMConverterIndexes::SPtr( new WMConverterIndexes() );
+    m_vectors = WConverterVectors::SPtr( new WConverterVectors() );
+    m_indexes = WConverterIndexes::SPtr( new WConverterIndexes() );
     m_colorBar = colorBar;
 
 
     setOutputFromCSV( );
 }
 
-boost::shared_ptr< WDataSetFibers > WMCsvConverter::getFibers()
+boost::shared_ptr< WDataSetFibers > WCsvConverter::getFibers()
 {
     return m_fibers;
 }
 
-boost::shared_ptr< WDataSetPoints > WMCsvConverter::getPoints()
+boost::shared_ptr< WDataSetPoints > WCsvConverter::getPoints()
 {
     return m_points;
 }
 
 
-boost::shared_ptr< WDataSetPointsAndEventID > WMCsvConverter::getPointsAndIDs()
+boost::shared_ptr< WDataSetPointsAndEventID > WCsvConverter::getPointsAndIDs()
 {
     return m_selectedEventIDs;
 }
 
-void WMCsvConverter::setOutputFromCSV( )
+void WCsvConverter::setOutputFromCSV( )
 {
-    if( !m_protonData->isRequiredDataAvailable() )
+    if( !m_protonData->isColumnAvailable( "X" ) ||
+        !m_protonData->isColumnAvailable( "Y" ) ||
+        !m_protonData->isColumnAvailable( "Z" ) )
     {
         return;
     }
 
     WDataSetCSV::ContentSPtr data = m_protonData->getCSVData();
 
-    WColor m_plainColor = m_propertyStatus->getVisualizationPropertyHandler()->getColorSelection()->get( true );
+    WColor plainColor = m_propertyStatus->getVisualizationPropertyHandler()->getColorSelection()->get( true );
 
     m_vectors->clear();
     m_indexes->update( m_protonData );
@@ -92,7 +94,7 @@ void WMCsvConverter::setOutputFromCSV( )
         }
 
         addVertex( dataRow );
-        addColor( m_plainColor );
+        addColor( plainColor );
         addEdepAndSize( dataRow, &maxEdep );
         addEventID( dataRow );
     }
@@ -109,12 +111,12 @@ void WMCsvConverter::setOutputFromCSV( )
     createOutputPointsAndEventIDs();
 }
 
-boost::shared_ptr< WDataSetSingle > WMCsvConverter::getTransferFunction()
+boost::shared_ptr< WDataSetSingle > WCsvConverter::getTransferFunction()
 {
     return m_transferFunction;
 }
 
-boost::shared_ptr< std::vector<unsigned char> > WMCsvConverter::sampleTransferFunction()
+boost::shared_ptr< std::vector<unsigned char> > WCsvConverter::sampleTransferFunction()
 {
     boost::shared_ptr< std::vector<unsigned char> > data( new std::vector<unsigned char>( 10 * 4 ) );
 
@@ -125,9 +127,9 @@ boost::shared_ptr< std::vector<unsigned char> > WMCsvConverter::sampleTransferFu
     return data;
 }
 
-void WMCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray, float maxEdep )
+void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray, float maxEdep )
 {
-    if( m_protonData->isColumnAvailable( "edep" ) )
+    if( m_protonData->isColumnAvailable( "Energy deposition" ) )
     {
         boost::shared_ptr< std::vector< unsigned char > > data = sampleTransferFunction();
 
@@ -160,15 +162,15 @@ void WMCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArr
     }
 }
 
-bool WMCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRow )
+bool WCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRow )
 {
     if( dataRow->empty() )
     {
         return false;
     }
 
-    if( m_protonData->isColumnAvailable( "parentID" ) &&
-        m_protonData->isColumnAvailable( "trackID" ) )
+    if( m_protonData->isColumnAvailable( "Parent id" ) &&
+        m_protonData->isColumnAvailable( "Track id" ) )
     {
         int PrimaryValue = stringToInt( dataRow->at( m_indexes->getParentID() ) );
 
@@ -183,7 +185,7 @@ bool WMCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRo
         }
     }
 
-    if( m_protonData->isColumnAvailable( "PDGEncoding" ) )
+    if( m_protonData->isColumnAvailable( "Particle Data Group" ) )
     {
         if( !m_propertyStatus->getFilterPropertyHandler()->isPDGTypeSelected(
            ( int )stringToFloat( dataRow->at( m_indexes->getPDGEncoding( ) ) ) ) )
@@ -192,7 +194,7 @@ bool WMCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRo
         }
     }
 
-    if( m_protonData->isColumnAvailable("eventID"))
+    if( m_protonData->isColumnAvailable("Event id"))
     {
         if(dataRow->at( m_indexes->getEventID() ) == "NULL")
         {
@@ -206,19 +208,20 @@ bool WMCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRo
             return false;
         }
     }
+
     return true;
 }
 
-void WMCsvConverter::addVertex( WDataSetCSV::Content::iterator dataRow )
+void WCsvConverter::addVertex( WDataSetCSV::Content::iterator dataRow )
 {
     m_vectors->getVertices()->push_back( stringToFloat( dataRow->at( m_indexes->getPosX() ) ) );
     m_vectors->getVertices()->push_back( stringToFloat( dataRow->at( m_indexes->getPosY() ) ) );
     m_vectors->getVertices()->push_back( stringToFloat( dataRow->at( m_indexes->getPosZ() ) ) );
 }
 
-void WMCsvConverter::addColor( WColor plainColor )
+void WCsvConverter::addColor( WColor plainColor )
 {
-    if(!m_protonData->isColumnAvailable("edep"))
+    if( !m_protonData->isColumnAvailable( "Energy deposition" ) )
     {
         m_vectors->getColors()->push_back( 0 );
         m_vectors->getColors()->push_back( 0 );
@@ -233,9 +236,9 @@ void WMCsvConverter::addColor( WColor plainColor )
     }
 }
 
-void WMCsvConverter::addEdepAndSize( WDataSetCSV::Content::iterator dataRow, float* maxEdep )
+void WCsvConverter::addEdepAndSize( WDataSetCSV::Content::iterator dataRow, float* maxEdep )
 {
-    if( !m_protonData->isColumnAvailable( "edep" ) )
+    if( !m_protonData->isColumnAvailable( "Energy deposition" ) )
     {
         return;
     }
@@ -249,9 +252,9 @@ void WMCsvConverter::addEdepAndSize( WDataSetCSV::Content::iterator dataRow, flo
     m_vectors->getEdeps()->push_back( edep );
 }
 
-void WMCsvConverter::calculateFibers()
+void WCsvConverter::calculateFibers()
 {
-    if(!m_protonData->isColumnAvailable("eventID"))
+    if(!m_protonData->isColumnAvailable("Event id"))
     {
         return;
     }
@@ -283,9 +286,9 @@ void WMCsvConverter::calculateFibers()
     m_vectors->getFiberLengths()->push_back( fiberLength );
 }
 
-void WMCsvConverter::createOutputPoints()
+void WCsvConverter::createOutputPoints()
 {
-    if( m_protonData->isColumnAvailable( "edep" ) )
+    if( m_protonData->isColumnAvailable( "Energy deposition" ) )
     {
         if( m_propertyStatus->getVisualizationPropertyHandler()->getSizesFromEdep()->get() )
         {
@@ -307,10 +310,10 @@ void WMCsvConverter::createOutputPoints()
     );
 }
 
-void WMCsvConverter::createOutputFibers()
+void WCsvConverter::createOutputFibers()
 {
     calculateFibers();
-    if(!m_protonData->isColumnAvailable("eventID"))
+    if(!m_protonData->isColumnAvailable("Event id"))
     {
         m_fibers = boost::shared_ptr< WDataSetFibers >(
             new WDataSetFibers(
@@ -335,7 +338,7 @@ void WMCsvConverter::createOutputFibers()
         );
     }
 
-    if(m_protonData->isColumnAvailable("edep"))
+    if( m_protonData->isColumnAvailable( "Energy deposition" ) )
     {
         if( m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
         {
@@ -348,32 +351,35 @@ void WMCsvConverter::createOutputFibers()
     }
 }
 
-void WMCsvConverter::createOutputPointsAndEventIDs()
+void WCsvConverter::createOutputPointsAndEventIDs()
 {
-    std::cout << m_vectors->getEventIDs()->size() << " " << m_vectors->getVertices()->size() << std::endl;
-    m_selectedEventIDs = boost::shared_ptr < WDataSetPointsAndEventID >(
-            new WDataSetPointsAndEventID(
-                    m_vectors->getVertices(),
-                    m_vectors->getColors(),
-                    m_vectors->getEventIDs()
-            )
-    );
+    if( m_protonData->isColumnAvailable( "Event id" ) )
+    {
+       std::cout << m_vectors->getEventIDs()->size() << " " << m_vectors->getVertices()->size() << std::endl;
+        m_selectedEventIDs = boost::shared_ptr < WDataSetPointsAndEventID >(
+                new WDataSetPointsAndEventID(
+                        m_vectors->getVertices(),
+                        m_vectors->getColors(),
+                        m_vectors->getEventIDs()
+                )
+        );
+    }
 }
 
-void WMCsvConverter::addEventID( WDataSetCSV::Content::iterator dataRow )
+void WCsvConverter::addEventID( WDataSetCSV::Content::iterator dataRow )
 {
-    if(m_protonData->isColumnAvailable("eventID"))
+    if(m_protonData->isColumnAvailable("Event id"))
+    {
+        if(dataRow->at( m_indexes->getEventID() ) == "NULL")
         {
-            if(dataRow->at( m_indexes->getEventID() ) == "NULL")
-            {
-                return;
-            }
-
-            m_vectors->getEventIDs()->push_back( stringToInt( dataRow->at( m_indexes->getEventID() ) ) );
+            return;
         }
+
+        m_vectors->getEventIDs()->push_back( stringToInt( dataRow->at( m_indexes->getEventID() ) ) );
+    }
 }
 
-void WMCsvConverter::setTransferFunction( boost::shared_ptr< std::vector<unsigned char> > data )
+void WCsvConverter::setTransferFunction( boost::shared_ptr< std::vector<unsigned char> > data )
 {
     boost::shared_ptr< WValueSetBase > newValueSet( new WValueSet<unsigned char>( 1, 4, data, W_DT_UNSIGNED_CHAR ) );
 
@@ -384,7 +390,7 @@ void WMCsvConverter::setTransferFunction( boost::shared_ptr< std::vector<unsigne
     m_transferFunction = newData;
 }
 
-bool WMCsvConverter::checkIfOutputIsNull()
+bool WCsvConverter::checkIfOutputIsNull()
 {
     if( m_vectors->getVertices()->empty() )
     {
@@ -396,12 +402,12 @@ bool WMCsvConverter::checkIfOutputIsNull()
     return false;
 }
 
-float WMCsvConverter::getClusterSize( float edep )
+float WCsvConverter::getClusterSize( float edep )
 {
     return 2.4 * pow( edep, 0.338 );
 }
 
-float WMCsvConverter::stringToFloat( std::string str )
+float WCsvConverter::stringToFloat( std::string str )
 {
     try
     {
@@ -409,18 +415,20 @@ float WMCsvConverter::stringToFloat( std::string str )
     }
     catch( const boost::bad_lexical_cast &e )
     {
-        throw WException( "The selected column has an incorrect format. Numbers (float) are expected. " + std::string( e.what() ) );
+
+        throw WException( "The selected column has an incorrect format (" + str + "). Numbers (float) are expected. " + std::string( e.what() ) );
     }
 }
 
-int WMCsvConverter::stringToInt( std::string str )
+int WCsvConverter::stringToInt( std::string str )
 {
     try
     {
-        return boost::lexical_cast< int >( str );
+        float temp = stringToFloat( str );
+        return boost::lexical_cast< int >( temp );
     }
     catch( const boost::bad_lexical_cast &e )
     {
-        throw WException( "The selected column has an incorrect format. Numbers (int) are expected. " + std::string( e.what() ) );
+        throw WException( "The selected column has an incorrect format (" + str + "). Numbers (int) are expected. " + std::string( e.what() ) );
     }
 }
