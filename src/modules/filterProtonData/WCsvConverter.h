@@ -247,11 +247,11 @@ private:
     float getClusterSize( float edep );
 
     /**
-     * checks whether the string is a number (float)  
+     * checks whether the string is a number (double)  
      * \param str The string to cast
-     * \return return the casted float value
+     * \return return the casted double value
      */
-    float stringToFloat( std::string str );
+    float stringToDouble( std::string str );
 
     /**
      * checks whether the string is a number (int)

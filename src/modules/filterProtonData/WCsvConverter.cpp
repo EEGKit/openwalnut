@@ -62,7 +62,6 @@ boost::shared_ptr< WDataSetPoints > WCsvConverter::getPoints()
     return m_points;
 }
 
-
 boost::shared_ptr< WDataSetPointsAndEventID > WCsvConverter::getPointsAndIDs()
 {
     return m_selectedEventIDs;
@@ -188,7 +187,7 @@ bool WCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRow
     if( m_protonData->isColumnAvailable( "Particle Data Group" ) )
     {
         if( !m_propertyStatus->getFilterPropertyHandler()->isPDGTypeSelected(
-           ( int )stringToFloat( dataRow->at( m_indexes->getPDGEncoding( ) ) ) ) )
+           ( int )stringToDouble( dataRow->at( m_indexes->getPDGEncoding( ) ) ) ) )
         {
             return false;
         }
@@ -214,9 +213,9 @@ bool WCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRow
 
 void WCsvConverter::addVertex( WDataSetCSV::Content::iterator dataRow )
 {
-    m_vectors->getVertices()->push_back( stringToFloat( dataRow->at( m_indexes->getPosX() ) ) );
-    m_vectors->getVertices()->push_back( stringToFloat( dataRow->at( m_indexes->getPosY() ) ) );
-    m_vectors->getVertices()->push_back( stringToFloat( dataRow->at( m_indexes->getPosZ() ) ) );
+    m_vectors->getVertices()->push_back( stringToDouble( dataRow->at( m_indexes->getPosX() ) ) );
+    m_vectors->getVertices()->push_back( stringToDouble( dataRow->at( m_indexes->getPosY() ) ) );
+    m_vectors->getVertices()->push_back( stringToDouble( dataRow->at( m_indexes->getPosZ() ) ) );
 }
 
 void WCsvConverter::addColor( WColor plainColor )
@@ -243,7 +242,7 @@ void WCsvConverter::addEdepAndSize( WDataSetCSV::Content::iterator dataRow, floa
         return;
     }
 
-    float edep = stringToFloat( dataRow->at( m_indexes->getEdep() ) );
+    float edep = stringToDouble( dataRow->at( m_indexes->getEdep() ) );
     if( edep > *maxEdep )
     {
         *maxEdep = edep;
@@ -407,28 +406,25 @@ float WCsvConverter::getClusterSize( float edep )
     return 2.4 * pow( edep, 0.338 );
 }
 
-float WCsvConverter::stringToFloat( std::string str )
+float WCsvConverter::stringToDouble( std::string str )
 {
     try
     {
-        return boost::lexical_cast< float >( str );
+        return boost::lexical_cast< double >( str );
     }
     catch( const boost::bad_lexical_cast &e )
     {
+        std::string errorMessage = "The selected column has an incorrect format. Received: " + str + ". " +
+                                        "Required: Numbers are expected. " +
+                                        std::string( e.what() );
 
-        throw WException( "The selected column has an incorrect format (" + str + "). Numbers (float) are expected. " + std::string( e.what() ) );
+        throw WException( errorMessage );
     }
 }
 
 int WCsvConverter::stringToInt( std::string str )
 {
-    try
-    {
-        float temp = stringToFloat( str );
-        return boost::lexical_cast< int >( temp );
-    }
-    catch( const boost::bad_lexical_cast &e )
-    {
-        throw WException( "The selected column has an incorrect format (" + str + "). Numbers (int) are expected. " + std::string( e.what() ) );
-    }
+    //lexical_cast <int> cannot cast numbers as exponential notation, so we take this way.
+    float numAsDouble = stringToDouble( str );
+    return ( int )numAsDouble;
 }

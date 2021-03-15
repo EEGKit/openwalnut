@@ -111,7 +111,22 @@ void WFilterPropertyHandler::searchPDGTypes()
     for( size_t idx = 0; idx < m_protonData->getCSVData()->size(); idx++)
     {
         std::vector< std::string > row = m_protonData->getCSVData()->at( idx );
-        int currentParticleID = std::stoi( row.at( pdgColumnIndex ) );
+        std::string rowContent = row.at( pdgColumnIndex );
+
+        int currentParticleID = -1;
+
+        try
+        {
+            currentParticleID = ( int ) boost::lexical_cast< double >( rowContent );
+        }
+        catch( const boost::bad_lexical_cast &e )
+        {
+            std::string errorMessage = "The selected column has an incorrect format. Received: " +
+                                        rowContent + ". Required: Numbers are expected. " +
+                                        std::string( e.what() );
+
+            throw WException( errorMessage );
+        }
 
         if( std::find( m_pdgTypes.begin(), m_pdgTypes.end(), currentParticleID ) == m_pdgTypes.end() )
         {
