@@ -46,6 +46,7 @@
 #ifdef WBIOSIG_ENABLED
     #include "io/WReaderBiosig.h"
 #endif
+#include "io/WReaderClustering.h"
 #include "io/WReaderCSV.h"
 #include "io/WReaderEEGASCII.h"
 #include "io/WReaderELC.h"
@@ -56,7 +57,6 @@
 #endif
 #include "io/WReaderNIfTI.h"
 #include "io/WReaderVTK.h"
-#include "io/WReaderClustering.h"
 
 #include "WMData.h"
 #include "WMData.xpm"
