@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WMPROTONDATA_H
-#define WMPROTONDATA_H
+#ifndef WPROTONDATA_H
+#define WPROTONDATA_H
 
 #include <map>
 #include <string>
@@ -33,17 +33,17 @@
 /**
  * Holds the csv data.
  */
-class WMProtonData
+class WProtonData
 {
     /**
      * only test class may be friend
      */
-     friend class WMProtonDataTest;
+     friend class WProtonDataTest;
 public:
     /**
      * shared_ptr that points to itself 
      */
-    typedef boost::shared_ptr< WMProtonData > SPtr;
+    typedef boost::shared_ptr< WProtonData > SPtr;
 
     /**
      * constructor
@@ -51,7 +51,7 @@ public:
      * \param csvHeader pointer to a column-header of the CSV-file
      * \param csvData pointer to a content of the CSV file 
      */
-    explicit WMProtonData( WDataSetCSV::ContentSPtr csvHeader, WDataSetCSV::ContentSPtr csvData );
+    explicit WProtonData( WDataSetCSV::ContentSPtr csvHeader, WDataSetCSV::ContentSPtr csvData );
 
     /**
      * getter
@@ -87,7 +87,15 @@ public:
      * \param columnName Name of column-header of the CSV-file
      * \param index position of column-header of the CSV-file
      */
-    void setColumnIndex( std::string columnName, int index );
+    void setStateIndex( std::string columnName, int index );
+
+    /**
+     * getter
+     *
+     * \param columnName Name of selected name of single-selection
+     * \return return the position current selected item
+     */
+    int getColumnIndexBySelection( std::string selectedName );
 
     /**
      * getter
@@ -96,13 +104,6 @@ public:
      * \return return the position of column-header of the CSV-file as int
      */
     int getColumnIndex( std::string columnName );
-
-    /**
-     * checks whether the columns have been initialized 
-     *
-     * \return true when initialized. false if they are not initialized 
-     */
-    bool isRequiredDataAvailable();
 
     /**
      * checks whether columns are available 
@@ -128,14 +129,9 @@ private:
     std::map< std::string, int > m_columnMap;
 
     /**
-     * Stores die Availability of the selected Column (ColumnPropertyHandler)
+     * Stores index of the selected single-selector (ColumnPropertyHandler)
      */
-    std::map< std::string, bool > m_availabilityColumnMap;
-
-    /**
-     * Update the Availability of Columns
-     */
-    void updateAvailabilityOfColumns();
+    std::map< std::string, int > m_ColumnMapSelectedIndex;
 };
 
-#endif  // WMPROTONDATA_H
+#endif  // WPROTONDATA_H

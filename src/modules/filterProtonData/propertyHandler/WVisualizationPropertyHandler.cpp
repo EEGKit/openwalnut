@@ -24,24 +24,24 @@
 
 #include "core/common/WTransferFunction.h"
 
-#include "WMVisualizationPropertyHandler.h"
+#include "WVisualizationPropertyHandler.h"
 
 
-WMVisualizationPropertyHandler::WMVisualizationPropertyHandler( WMProtonData::SPtr protonData,
+WVisualizationPropertyHandler::WVisualizationPropertyHandler( WProtonData::SPtr protonData,
                                             WPropertyGroup::SPtr properties,
-                                            WMVisualizationPropertyHandler::CallbackPtr dataUpdate ):
+                                            WVisualizationPropertyHandler::CallbackPtr dataUpdate ):
     m_protonData( protonData ),
     m_properties( properties ),
     m_dataUpdate( dataUpdate )
 {
 }
 
-void WMVisualizationPropertyHandler::createProperties()
+void WVisualizationPropertyHandler::createProperties()
 {
     m_visualizationGroup = m_properties->addPropertyGroup( "Visualization", "Visualization options" );
 
     WPropertyBase::PropertyChangeNotifierType notifier = boost::bind(
-        &WMVisualizationPropertyHandler::propertyCallback, this, boost::placeholders::_1 );
+        &WVisualizationPropertyHandler::propertyCallback, this, boost::placeholders::_1 );
 
     m_sizesFromEdep = m_visualizationGroup->addProperty( "Size by energy deposition", "Scale track and point sizes based on energy deposition.",
                                                     true, notifier );
@@ -59,12 +59,12 @@ void WMVisualizationPropertyHandler::createProperties()
     updateProperty();
 }
 
-void WMVisualizationPropertyHandler::updateProperty()
+void WVisualizationPropertyHandler::updateProperty()
 {
-    if( m_protonData->isColumnAvailable( "posX" ) &&
-        m_protonData->isColumnAvailable( "posY" ) &&
-        m_protonData->isColumnAvailable( "posZ" ) &&
-        m_protonData->isColumnAvailable( "edep" ) )
+    if( m_protonData->isColumnAvailable( "X" ) &&
+        m_protonData->isColumnAvailable( "Y" ) &&
+        m_protonData->isColumnAvailable( "Z" ) &&
+        m_protonData->isColumnAvailable( "Energy deposition" ) )
     {
         m_sizesFromEdep->setHidden( false );
         m_colorFromEdep->setHidden( false );
@@ -79,7 +79,7 @@ void WMVisualizationPropertyHandler::updateProperty()
     }
 }
 
-void WMVisualizationPropertyHandler::toggleColorProperties()
+void WVisualizationPropertyHandler::toggleColorProperties()
 {
     if( m_colorFromEdep->get() )
     {
@@ -95,7 +95,7 @@ void WMVisualizationPropertyHandler::toggleColorProperties()
     }
 }
 
-void WMVisualizationPropertyHandler::propertyCallback( WPropertyBase::SPtr property )
+void WVisualizationPropertyHandler::propertyCallback( WPropertyBase::SPtr property )
 {
     m_dataUpdate();
 
@@ -106,27 +106,27 @@ void WMVisualizationPropertyHandler::propertyCallback( WPropertyBase::SPtr prope
     toggleColorProperties();
 }
 
-WPropBool WMVisualizationPropertyHandler::getColorFromEdep()
+WPropBool WVisualizationPropertyHandler::getColorFromEdep()
 {
     return m_colorFromEdep;
 }
 
-WPropBool WMVisualizationPropertyHandler::getSizesFromEdep()
+WPropBool WVisualizationPropertyHandler::getSizesFromEdep()
 {
     return m_sizesFromEdep;
 }
 
-WPropColor WMVisualizationPropertyHandler::getColorSelection()
+WPropColor WVisualizationPropertyHandler::getColorSelection()
 {
     return m_colorSelection;
 }
 
-WPropTransferFunction WMVisualizationPropertyHandler::getTransferFunction()
+WPropTransferFunction WVisualizationPropertyHandler::getTransferFunction()
 {
     return m_gradient;
 }
 
-WTransferFunction WMVisualizationPropertyHandler::setColorGradient()
+WTransferFunction WVisualizationPropertyHandler::setColorGradient()
 {
     WTransferFunction tf;
 

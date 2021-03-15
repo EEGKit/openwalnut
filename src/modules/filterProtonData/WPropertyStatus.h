@@ -22,101 +22,101 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WMPROPERTYSTATUS_H
-#define WMPROPERTYSTATUS_H
+#ifndef WPROPERTYSTATUS_H
+#define WPROPERTYSTATUS_H
 
 #include <boost/shared_ptr.hpp>
 
 #include "core/kernel/WModule.h"
 
-#include "propertyHandler/WMColumnPropertyHandler.h"
-#include "propertyHandler/WMFilterPropertyHandler.h"
-#include "propertyHandler/WMVisualizationPropertyHandler.h"
-#include "propertyHandler/WMEventIDLimitationPropertyHandler.h"
+#include "propertyHandler/WColumnPropertyHandler.h"
+#include "propertyHandler/WFilterPropertyHandler.h"
+#include "propertyHandler/WVisualizationPropertyHandler.h"
+#include "propertyHandler/WEventIDLimitationPropertyHandler.h"
 
 /**
  * Holds references to all the property handlers.
  */
-class WMPropertyStatus
+class WPropertyStatus
 {
 public:
     /**
      * A shared_ptr to this class.
      */
-    typedef boost::shared_ptr< WMPropertyStatus > SPtr;
+    typedef boost::shared_ptr< WPropertyStatus > SPtr;
 
     /**
      * An empty constructor for class creation.
      */
-    WMPropertyStatus();
+    WPropertyStatus();
 
     /**
      * getter for m_columnPropertyHandler
      * \return return m_columnPropertyHandler
      */
-    WMColumnPropertyHandler::SPtr getColumnPropertyHandler();
+    WColumnPropertyHandler::SPtr getColumnPropertyHandler();
 
     /**
      * setter for m_columnPropertyHandler
      * \param columnPropertyHandler setter variable for m_columnPropertyHandler
      */
-    void setColumnPropertyHandler( WMColumnPropertyHandler::SPtr columnPropertyHandler );
+    void setColumnPropertyHandler( WColumnPropertyHandler::SPtr columnPropertyHandler );
 
     /**
      * getter for m_filterPropertyHandler
      * \return return m_filterPropertyHandler
      */
-    WMFilterPropertyHandler::SPtr getFilterPropertyHandler();
+    WFilterPropertyHandler::SPtr getFilterPropertyHandler();
 
     /**
      * setter for m_filterPropertyHandler
      * \param filterPropertyHandler setter variable for m_filterPropertyHandler
      */
-    void setFilterPropertyHandler( WMFilterPropertyHandler::SPtr filterPropertyHandler );
+    void setFilterPropertyHandler( WFilterPropertyHandler::SPtr filterPropertyHandler );
 
     /**
      * getter for m_visualizationPropertyHandler
      * \return return m_visualizationPropertyHandler
      */
-    WMVisualizationPropertyHandler::SPtr getVisualizationPropertyHandler();
+    WVisualizationPropertyHandler::SPtr getVisualizationPropertyHandler();
 
     /**
      * setter for m_visualizationPropertyHandler
      * \param visualizationPropertyHandler setter variable for m_visualizationPropertyHandler
      */
-    void setVisualizationPropertyHandler( WMVisualizationPropertyHandler::SPtr visualizationPropertyHandler );
+    void setVisualizationPropertyHandler( WVisualizationPropertyHandler::SPtr visualizationPropertyHandler );
 
     /**
      * getter for m_eventIDLimitationPropertyHandler
      * \return return m_eventIDLimitationPropertyHandler
      */
-    WMEventIDLimitationPropertyHandler::SPtr getEventIDLimitationPropertyHandler();
+    WEventIDLimitationPropertyHandler::SPtr getEventIDLimitationPropertyHandler();
 
     /**
      * setter for m_eventIDLimitationPropertyHandler
      * \param eventIDLimitationPropertyHandler setter variable for m_eventIDLimitationPropertyHandler
      */
-    void setEventIDLimitationPropertyHandler( WMEventIDLimitationPropertyHandler::SPtr eventIDLimitationPropertyHandler );
+    void setEventIDLimitationPropertyHandler( WEventIDLimitationPropertyHandler::SPtr eventIDLimitationPropertyHandler );
 
 private:
     /**
      * pointer to group property and the subproperty for columnselection   
      */
-    WMColumnPropertyHandler::SPtr m_columnPropertyHandler;
+    WColumnPropertyHandler::SPtr m_columnPropertyHandler;
 
     /**
      * pointer to group property and the subproperty for filter the CSV-Data   
      */
-    WMFilterPropertyHandler::SPtr m_filterPropertyHandler;
+    WFilterPropertyHandler::SPtr m_filterPropertyHandler;
 
     /**
      * pointer to group property and the subproperty for scaling and color handling
      */
-    WMVisualizationPropertyHandler::SPtr m_visualizationPropertyHandler;
+    WVisualizationPropertyHandler::SPtr m_visualizationPropertyHandler;
 
     /**
      * pointer to group property and the subproperty for Limitation of eventID
      */
-    WMEventIDLimitationPropertyHandler::SPtr m_eventIDLimitationPropertyHandler;
+    WEventIDLimitationPropertyHandler::SPtr m_eventIDLimitationPropertyHandler;
 };
-#endif  // WMPROPERTYSTATUS_H
+#endif  // WPROPERTYSTATUS_H

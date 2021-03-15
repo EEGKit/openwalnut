@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WMCONVERTERVECTORS_H
-#define WMCONVERTERVECTORS_H
+#ifndef WCONVERTERVECTORS_H
+#define WCONVERTERVECTORS_H
 
 #include <vector>
 
@@ -47,18 +47,18 @@ typedef boost::shared_ptr< std::vector< int > > SPIntVector;
 /**
  * Holds the vectors that store the data for the points and fibers.
  */
-class WMConverterVectors
+class WConverterVectors
 {
 public:
     /**
      * A shared_ptr to this class.
      */
-    typedef boost::shared_ptr< WMConverterVectors > SPtr;
+    typedef boost::shared_ptr< WConverterVectors > SPtr;
 
     /**
      * Initializes the vectors as empty vectors.
      */
-    WMConverterVectors();
+    WConverterVectors();
 
     /**
      * Clears all vectors.
@@ -131,4 +131,4 @@ private:
     SPIntVector m_eventIDs;    //!< the event IDs.
 };
 
-#endif  // WMCONVERTERVECTORS_H
+#endif  // WCONVERTERVECTORS_H
