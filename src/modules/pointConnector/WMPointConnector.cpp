@@ -257,9 +257,22 @@ void WMPointConnector::handleClick( osg::Vec3 cameraPosition, osg::Vec3 directio
     {
         if( isLeftClick )
         {
-            m_connectorData->deselectPoint();
-            m_connectorData->selectPoint( hitIdx );
-            m_fiberHandler->addVertexToFiber( m_connectorData->getVertices()->at( hitIdx ), m_fiberHandler->getSelectedFiber() );
+            size_t fiberIdx = 0;
+            if( m_fiberHandler->getFiberOfPoint( m_connectorData->getVertices()->at( hitIdx ), &fiberIdx ) )
+            {
+                if( m_fiberHandler->getSelectedFiber() == fiberIdx )
+                {
+                    return;
+                }
+                m_fiberHandler->selectFiber( fiberIdx );
+                m_fiberHandler->selectorUpdate();
+            }
+            else
+            {
+                m_connectorData->deselectPoint();
+                m_connectorData->selectPoint( hitIdx );
+                m_fiberHandler->addVertexToFiber( m_connectorData->getVertices()->at( hitIdx ), m_fiberHandler->getSelectedFiber() );
+            }
         }
         else
         {
