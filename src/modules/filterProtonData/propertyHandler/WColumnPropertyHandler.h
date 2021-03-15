@@ -32,6 +32,7 @@
 #include <boost/function.hpp>
 
 #include "core/common/WItemSelectionItemTyped.h"
+
 #include "../WProtonData.h"
 
 

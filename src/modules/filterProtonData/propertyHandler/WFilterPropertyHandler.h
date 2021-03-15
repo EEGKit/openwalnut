@@ -31,6 +31,7 @@
 #include <boost/bimap.hpp>
 
 #include "core/common/WPathHelper.h"
+
 #include "WColumnPropertyHandler.h"
 #include "../WProtonData.h"
 

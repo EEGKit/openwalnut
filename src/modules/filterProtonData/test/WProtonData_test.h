@@ -28,8 +28,9 @@
 #include <string>
 #include <vector>
 
-#include <core/common/test/WException_test.h>
 #include <cxxtest/TestSuite.h>
+
+#include <core/common/test/WException_test.h>
 
 #include "../WProtonData.h"
 

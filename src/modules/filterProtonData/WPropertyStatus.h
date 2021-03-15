@@ -28,6 +28,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "core/kernel/WModule.h"
+
 #include "propertyHandler/WColumnPropertyHandler.h"
 #include "propertyHandler/WEventIDLimitationPropertyHandler.h"
 #include "propertyHandler/WFilterPropertyHandler.h"

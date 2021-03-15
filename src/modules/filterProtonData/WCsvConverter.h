@@ -40,6 +40,7 @@
 #include "core/dataHandler/WGridRegular3D.h"
 #include "core/dataHandler/WValueSet.h"
 #include "core/dataHandler/WValueSetBase.h"
+
 #include "WConverterIndexes.h"
 #include "WConverterVectors.h"
 #include "WPropertyStatus.h"
