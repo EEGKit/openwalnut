@@ -26,7 +26,7 @@
 #include <string>
 #include <vector>
 
-#include "../../../core/kernel/WKernel.h"
+#include "core/kernel/WKernel.h"
 #include "WFilterPropertyHandler.h"
 
 WFilterPropertyHandler::WFilterPropertyHandler( WProtonData::SPtr protonData,
@@ -184,7 +184,7 @@ std::string WFilterPropertyHandler::setDefaultForRenameField()
     return particleName.substr( 0, particleName.find( " (" ) );
 }
 
-void WFilterPropertyHandler::saveSelectPDGandSaveEvent( WPropertyBase::SPtr property )
+void WFilterPropertyHandler::selectPdgAndSaveEvent( WPropertyBase::SPtr property )
 {
     if( property == m_PdgForRenameSelection )
     {

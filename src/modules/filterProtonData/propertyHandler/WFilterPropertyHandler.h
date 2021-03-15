@@ -110,9 +110,7 @@ public:
      */
     void createPDGMap( std:: string path );
 
-
 private:
-
     /**
      * Pointer to the content and header of the CSV 
      */
@@ -162,7 +160,7 @@ private:
      * \param property contains reference to the property which called updateProperty()
      *
      */
-    void saveSelectPDGandSaveEvent( WPropertyBase::SPtr property );
+    void selectPdgAndSaveEvent( WPropertyBase::SPtr property );
 
     /**
      * update PDG Properties (Multiselector and change-Name-Properties)
