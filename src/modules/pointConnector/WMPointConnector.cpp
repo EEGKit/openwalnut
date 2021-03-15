@@ -25,12 +25,12 @@
 #include <string>
 #include <vector>
 
-#include "WConnectorData.h"
 #include "WClickHandler.h"
-#include "WKeyboardHandler.h"
+#include "WConnectorData.h"
 #include "WFiberHandler.h"
-
 #include "WMPointConnector.h"
+#include "WKeyboardHandler.h"
+
 
 W_LOADABLE_MODULE( WMPointConnector )
 

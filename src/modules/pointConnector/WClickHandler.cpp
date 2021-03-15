@@ -24,6 +24,7 @@
 
 #include "WClickHandler.h"
 
+
 WClickHandler::WClickHandler( WMPointConnector* connector ):
     m_connector( connector )
 {

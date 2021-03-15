@@ -26,6 +26,7 @@
 
 #include "WConnectorData.h"
 
+
 WConnectorData::WConnectorData()
 {
     m_vertices = osg::ref_ptr< osg::Vec3Array >( new osg::Vec3Array );

@@ -27,6 +27,7 @@
 
 #include <boost/shared_ptr.hpp>
 
+
 /**
  * Super class for the actions.
  */
