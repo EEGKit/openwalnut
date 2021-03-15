@@ -26,6 +26,7 @@
 
 #include "WDataSetPointsAndSizes.h"
 
+
 boost::shared_ptr< WPrototyped > WDataSetPointsAndSizes::m_prototype = boost::shared_ptr< WPrototyped >();
 
 WDataSetPointsAndSizes::WDataSetPointsAndSizes( WDataSetPointsAndSizes::VertexArray vertices,
