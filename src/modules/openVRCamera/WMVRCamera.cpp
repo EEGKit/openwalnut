@@ -206,10 +206,10 @@ void WMVRCamera::moduleMain()
     m_rootnode->insert( m_rightEyeNode );
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_rootnode );
 
-    osg::Node::NodeMask mainCullMask = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->getCullMask();
-
-    m_leftEyeGeometryNode->setNodeMask(~mainCullMask);
-    m_rightEyeGeometryNode->setNodeMask(~mainCullMask);
+    //Set Nodemask so this modules Node are culled in the Mainview
+    osg::Node::NodeMask vrNodeMask = 0x10000000;
+    WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->setCullMask(~vrNodeMask);
+    m_rootnode->setNodeMask(vrNodeMask);
 
     // get side-views
     boost::shared_ptr< WGEViewer > leftEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" );
@@ -250,7 +250,7 @@ void WMVRCamera::moduleMain()
     leftEyeView->getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
     //leftEyeView->getCamera()->setNearFarRatio( 0.000001 ); Not exactly sure what this does
     leftEyeView->getCamera()->setViewport( 0, 0, m_vrRenderWidth, m_vrRenderHeight );
-    //leftEyeView->getCamera()->setCullMask(~mainCullMask);
+    leftEyeView->getCamera()->setCullMask(vrNodeMask);
 
     rightEyeView->getCamera()->setClearMask( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     rightEyeView->getCamera()->setRenderTargetImplementation( osg::Camera::FRAME_BUFFER_OBJECT );
@@ -258,7 +258,7 @@ void WMVRCamera::moduleMain()
     rightEyeView->getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
     //rightEyeView->getCamera()->setNearFarRatio( 0.000001 ); Not exactly sure what this does
     rightEyeView->getCamera()->setViewport( 0, 0, m_vrRenderWidth, m_vrRenderHeight );
-    //rightEyeView->getCamera()->setCullMask(~mainCullMask);
+    rightEyeView->getCamera()->setCullMask(vrNodeMask);
 
 
     m_leftTexture = new osg::Texture2D;
@@ -376,14 +376,11 @@ void WMVRCamera::moduleMain()
     m_rightEyeGeometryNode->addChild(plane_right);
     m_rootnode->addChild(plane_main);
 
-    //offscreenRenderLeft->addChild(dynamic_cast<osg::Node*>(WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone(osg::CopyOp::SHALLOW_COPY)));
-    //offscreenRenderRight->addChild(dynamic_cast<osg::Node*>(WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone(osg::CopyOp::SHALLOW_COPY)));
+    //m_leftEyeGeometryNode->addChild(dynamic_cast<osg::Node*>(WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone(osg::CopyOp::SHALLOW_COPY)));
+    //m_rightEyeGeometryNode->addChild(dynamic_cast<osg::Node*>(WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone(osg::CopyOp::SHALLOW_COPY)));
     
     leftEyeView->getScene()->insert(offscreenRenderLeft);
     rightEyeView->getScene()->insert(offscreenRenderRight);
-
-    //m_rootnode->insert( offscreenRenderLeft );
-    //m_rootnode->insert( offscreenRenderRight );
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Main loop
@@ -411,6 +408,9 @@ void WMVRCamera::moduleMain()
 
     // Never miss to clean up. Especially remove your OSG nodes. Everything else you add to these nodes will be removed automatically.
     debugLog() << "Shutting down openVRCamera";
+
+    //Reset CullMask
+    WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->setCullMask(0xFFFFFFFF);
 
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_rootnode );
 }
