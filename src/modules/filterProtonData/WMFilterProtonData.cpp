@@ -28,6 +28,7 @@
 
 #include "WMFilterProtonData.h"
 
+
 W_LOADABLE_MODULE( WMFilterProtonData )
 
 WMFilterProtonData::WMFilterProtonData():

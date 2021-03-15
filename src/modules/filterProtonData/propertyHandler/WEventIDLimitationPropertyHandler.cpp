@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-
 #include "WEventIDLimitationPropertyHandler.h"
+
 
 WEventIDLimitationPropertyHandler::WEventIDLimitationPropertyHandler( WProtonData::SPtr protonData,
                                             WPropertyGroup::SPtr properties,

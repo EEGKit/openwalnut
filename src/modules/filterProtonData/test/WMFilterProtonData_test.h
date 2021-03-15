@@ -25,12 +25,11 @@
 #ifndef WMFILTERPROTONDATA_TEST_H
 #define WMFILTERPROTONDATA_TEST_H
 
+#include <cxxtest/TestSuite.h>
 #include <boost/shared_ptr.hpp>
 
-#include <cxxtest/TestSuite.h>
-
 #include "../WMFilterProtonData.h"
-#include "io/WReaderCSV.h"
+#include "../WReaderCSV.h"
 
 
 /**
