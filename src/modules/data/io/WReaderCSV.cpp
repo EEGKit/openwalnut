@@ -27,6 +27,7 @@
 
 #include "WReaderCSV.h"
 
+
 WReaderCSV::WReaderCSV( std::string fname )
         : WReader( fname )
 {

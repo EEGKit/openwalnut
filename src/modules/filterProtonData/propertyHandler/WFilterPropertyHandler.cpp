@@ -26,7 +26,9 @@
 #include <string>
 #include <vector>
 
+#include "core/kernel/WKernel.h"
 #include "WFilterPropertyHandler.h"
+
 
 WFilterPropertyHandler::WFilterPropertyHandler( WProtonData::SPtr protonData,
                                             WPropertyGroup::SPtr properties,
@@ -172,35 +174,46 @@ void WFilterPropertyHandler::updateSelectedPDGTypes()
 
 void WFilterPropertyHandler::createPropToSetParticleNames()
 {
-    WPropertyBase::PropertyChangeNotifierType notifierSetParticleName = boost::bind(
-        &WFilterPropertyHandler::saveRenameParticleButtonClick, this, boost::placeholders::_1 );
+     m_notifierSetParticleName = boost::bind(
+        &WFilterPropertyHandler::selectPdgAndSaveEvent, this, boost::placeholders::_1 );
+
 
     m_filteringsubGroup  = m_filteringGroup->addPropertyGroup( "Rename Particle Types",
                                                             "Filtering/Rename or Delete Particle-Name" );
 
+    m_PdgForRenameSelection = m_filteringsubGroup->addProperty( "Select particle",  "Select the particle type to be renamed.",
+                                                            m_particleItemSelectionList->getSelectorFirst(), m_notifierSetParticleName );
+
     m_inputNewParticleName = m_filteringsubGroup->addProperty( "New name (press enter)", "Type in a new name for the selected particle type. "
                                                             "To submit your entry press enter while you are in the textbox.",
-                                                            std::string( "" ), notifierSetParticleName );
-
-    m_PdgForRenameSelection = m_filteringsubGroup->addProperty( "Select particle",  "Select the particle type to be renamed.",
-                                                            m_particleItemSelectionList->getSelectorFirst(),
-                                                            notifierSetParticleName );
-
-    m_saveButton= m_filteringsubGroup->addProperty( "Apply changes", "Save", WPVBaseTypes::PV_TRIGGER_READY, notifierSetParticleName );
+                                                            setDefaultForRenameField(), m_notifierSetParticleName );
 
     WPropertyHelper::PC_NOTEMPTY::addTo( m_inputNewParticleName );
     WPropertyHelper::PC_SELECTONLYONE::addTo( m_PdgForRenameSelection );
     WPropertyHelper::PC_NOTEMPTY::addTo( m_PdgForRenameSelection );
 }
 
-void WFilterPropertyHandler::saveRenameParticleButtonClick( WPropertyBase::SPtr property )
+std::string WFilterPropertyHandler::setDefaultForRenameField()
 {
-    if(property == m_saveButton && m_saveButton->get(true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
-    {
-        WItemSelector selectedPdg = m_PdgForRenameSelection->get( true );
+    WItemSelector selectedPdg = m_PdgForRenameSelection->get( true );
+    std::string particleName = selectedPdg.at( 0 )->getName();
+    return particleName.substr( 0, particleName.find( " (" ) );
+}
 
-        changePdgBiMap( getPdgFromName( selectedPdg.at( 0 )->getName() ),  m_inputNewParticleName->get( true ) );
-        updatePDGProperties();
+void WFilterPropertyHandler::selectPdgAndSaveEvent( WPropertyBase::SPtr property )
+{
+    if( property == m_PdgForRenameSelection )
+    {
+        m_filteringsubGroup->removeProperty( m_inputNewParticleName );
+        m_inputNewParticleName = m_filteringsubGroup->addProperty( "New name (press enter)", "Type in a new name for the selected particle type. "
+                                                            "To submit your entry press enter while you are in the textbox.",
+                                                            setDefaultForRenameField(), m_notifierSetParticleName  );
+    }
+    if( property == m_inputNewParticleName )
+    {
+            WItemSelector selectedPdg = m_PdgForRenameSelection->get( true );
+            changePdgBiMap( getPdgFromName( selectedPdg.at( 0 )->getName() ),  m_inputNewParticleName->get( true ) );
+            updatePDGProperties();
     }
 }
 
@@ -323,20 +336,16 @@ void WFilterPropertyHandler::changePdgBiMap( int pdg, std::string newParticleNam
 void WFilterPropertyHandler::writePdgMapInParticleNameFile()
 {
     std::ofstream pdgSignFile;
-
     pdgSignFile.open( getParticleNameFilePath() , std::ios_base::out | std::ios::trunc );
 
     if( !pdgSignFile.is_open() )
     {
         throw WException( "File could not be opened!" );
     }
-
     for( auto pdgNameIterator = m_PdgNamesByID.begin(); pdgNameIterator != m_PdgNamesByID.end(); ++pdgNameIterator )
     {
         pdgSignFile << pdgNameIterator->left << " " << pdgNameIterator->right << "\n";
     }
-
-    m_saveButton->set( WPVBaseTypes::PV_TRIGGER_READY, false );
     pdgSignFile.close();
 }
 

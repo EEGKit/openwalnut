@@ -25,18 +25,19 @@
 #ifndef WCSVCONVERTER_H
 #define WCSVCONVERTER_H
 
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
 
 #include <boost/lexical_cast.hpp>
-#include "core/dataHandler/WGrid.h"
-#include "core/dataHandler/WGridRegular3D.h"
+
 #include "core/common/WTransferFunction.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
-#include "core/dataHandler/WDataSetPointsAndSizes.h"
 #include "core/dataHandler/WDataSetPointsAndEventID.h"
+#include "core/dataHandler/WDataSetPointsAndSizes.h"
+#include "core/dataHandler/WGrid.h"
+#include "core/dataHandler/WGridRegular3D.h"
 #include "core/dataHandler/WValueSet.h"
 #include "core/dataHandler/WValueSetBase.h"
 
@@ -45,6 +46,7 @@
 #include "WPropertyStatus.h"
 #include "WProtonData.h"
 #include "WSingleSelectorName.h"
+
 
 /**
  * Converts the csv data to points and fibers.

@@ -27,9 +27,9 @@
 
 #include <tuple>
 #include <list>
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 #include <boost/function.hpp>
 

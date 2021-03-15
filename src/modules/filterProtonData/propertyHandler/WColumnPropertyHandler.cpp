@@ -23,9 +23,9 @@
 //---------------------------------------------------------------------------
 
 #include <list>
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 #include "WColumnPropertyHandler.h"
 

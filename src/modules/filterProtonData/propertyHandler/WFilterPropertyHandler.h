@@ -27,12 +27,16 @@
 
 #include <string>
 #include <vector>
+
 #include <boost/bimap.hpp>
 #include <boost/lexical_cast.hpp>
-#include "../WProtonData.h"
-#include "WColumnPropertyHandler.h"
+
 #include "core/common/WPathHelper.h"
 #include "../WSingleSelectorName.h"
+
+#include "WColumnPropertyHandler.h"
+#include "../WProtonData.h"
+
 
 /**
  * Creates, updates and handles the filter properties.
@@ -161,7 +165,7 @@ private:
      * \param property contains reference to the property which called updateProperty()
      *
      */
-    void saveRenameParticleButtonClick( WPropertyBase::SPtr property );
+    void selectPdgAndSaveEvent( WPropertyBase::SPtr property );
 
     /**
      * update PDG Properties (Multiselector and change-Name-Properties)
@@ -182,6 +186,13 @@ private:
      * create the Subgroup for change of PDG names
      */
     void createPropToSetParticleNames();
+
+    /**
+     * set the default string for the string property textfield
+     * 
+     * \return the string of the selected item of the itemselector
+     */
+    std::string setDefaultForRenameField();
 
     /**
      * Updates possible selectable particle types in multiselection
@@ -288,7 +299,7 @@ private:
     /**
      * A string for the new particle name
      */
-    WPropString   m_inputNewParticleName;
+    WPropString m_inputNewParticleName;
 
     /**
      * A trigger for the save button to save changes
@@ -299,6 +310,11 @@ private:
      * A property to select one pdg to change
      */
     WPropSelection m_PdgForRenameSelection;
+
+    /**
+     * A notifier for the Changeevents of the Rename PDG property
+     */
+    WPropertyBase::PropertyChangeNotifierType m_notifierSetParticleName;
 };
 
 #endif  // WFILTERPROPERTYHANDLER_H

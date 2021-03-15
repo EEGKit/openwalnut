@@ -26,6 +26,7 @@
 
 #include "WDataSetPointsAndEventID.h"
 
+
 boost::shared_ptr< WPrototyped > WDataSetPointsAndEventID::m_prototype = boost::shared_ptr< WPrototyped >();
 
 WDataSetPointsAndEventID::WDataSetPointsAndEventID( WDataSetPointsAndEventID::VertexArray vertices,

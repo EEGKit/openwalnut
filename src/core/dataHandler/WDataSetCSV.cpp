@@ -24,6 +24,7 @@
 
 #include "WDataSetCSV.h"
 
+
 WDataSetCSV::WDataSetCSV( WDataSetCSV::ContentSPtr header, WDataSetCSV::ContentSPtr data )
     : m_header( header ), m_data( data )
 {

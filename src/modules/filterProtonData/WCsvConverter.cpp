@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "WCsvConverter.h"
 

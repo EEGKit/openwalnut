@@ -35,6 +35,7 @@
 
 #include "WMPointConnector.h"
 
+
 /**
  * Forward declartion for the WMPointConnector
  */
