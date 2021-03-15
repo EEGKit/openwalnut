@@ -28,15 +28,15 @@
 #include <string>
 #include <list>
 
+#include "core/dataHandler/WDataSetCSV.h"
+#include "core/dataHandler/WDataSetFibers.h"
+#include "core/dataHandler/WDataSetPoints.h"
+#include "core/dataHandler/WDataSetPointsAndFibers.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 
-#include "core/dataHandler/WDataSetCSV.h"
-#include "core/dataHandler/WDataSetPointsAndFibers.h"
-#include "core/dataHandler/WDataSetPoints.h"
-#include "core/dataHandler/WDataSetFibers.h"
-
 #include "../filterProtonData/WProtonData.h"
+
 
 /**
  * Class for safe the point-connector data
