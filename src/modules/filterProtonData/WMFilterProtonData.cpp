@@ -175,8 +175,6 @@ void WMFilterProtonData::properties()
     groupColumn->addProperty( "Event id",
                             "Choose the column which should be used to determine the event id. Tracks will be drawn based on the the event id, all "
                             "particles with the same event id will be connected.", std::string( "" ), columnNotifier, false );
-    groupColumn->addProperty( "Track id", "Choose the column which should be used to determine the track id.",
-                            std::string( "" ), columnNotifier, false );
     groupColumn->addProperty( "Parent id", "Choose the column which should be used to determine the parent id."
                             "Primaries and secondaries filtering is based on that id,"
                             " if a particle has the parent id 0 it is a primary otherwise it is a secondary.",

@@ -53,7 +53,7 @@ void WFilterPropertyHandler::updateProperty()
 {
     updatePDGProperties();
 
-    if( m_protonData->isColumnAvailable( "Parent id" ) && m_protonData->isColumnAvailable( "Track id" ) )
+    if( m_protonData->isColumnAvailable( "parentID" ) )
     {
         m_showPrimaries->setHidden( false );
         m_showSecondaries->setHidden( false );
