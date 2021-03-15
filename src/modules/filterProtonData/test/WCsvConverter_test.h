@@ -53,11 +53,7 @@ public:
         WDataSetCSV::ContentSPtr emptyData( new WDataSetCSV::Content() );
         emptyHeader->push_back( *emptyStringVector );
 
-        //WModule::SPtr emptyColorBar = WModuleFactory::getModuleFactory()->create(
-        //    WModuleFactory::getModuleFactory()->getPrototypeByName( "Transfer Function Color Bar" )
-        //);
-        WMTransferFunctionColorBar *colorBar = new WMTransferFunctionColorBar();
-        WModule::SPtr emptyColorBar = WModule::SPtr( colorBar );
+        WModule::SPtr emptyColorBar = WModule::SPtr( new WMTransferFunctionColorBar() );
 
         WProtonData::SPtr tmpProtonData = WProtonData::SPtr( new WProtonData( emptyHeader, emptyData ) );
         boost::shared_ptr< WPropertyStatus > tmpPropertyStatus( new WPropertyStatus() );

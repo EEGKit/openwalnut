@@ -28,26 +28,34 @@
 #include "WCsvConverter.h"
 
 
-WCsvConverter::WCsvConverter( WProtonData::SPtr protonData,  boost::shared_ptr< WPropertyStatus > propertyStatus )
+WCsvConverter::WCsvConverter( WProtonData::SPtr protonData, boost::shared_ptr< WPropertyStatus > propertyStatus )
 {
+    if( protonData == nullptr || propertyStatus == nullptr )
+    {
+        throw WException( "Could not convert CSV data! Proton data or property status are missing!" );
+    }
+
     m_protonData = protonData;
     m_propertyStatus = propertyStatus;
     m_vectors = WConverterVectors::SPtr( new WConverterVectors() );
     m_indexes = WConverterIndexes::SPtr( new WConverterIndexes() );
 
-
     setOutputFromCSV( );
 }
 
-WCsvConverter::WCsvConverter( WProtonData::SPtr protonData,  boost::shared_ptr< WPropertyStatus > propertyStatus,
+WCsvConverter::WCsvConverter( WProtonData::SPtr protonData, boost::shared_ptr< WPropertyStatus > propertyStatus,
                                 WModule::SPtr colorBar )
 {
+    if( protonData == nullptr || propertyStatus == nullptr || colorBar == nullptr )
+    {
+        throw WException( "Could not convert CSV data! Proton data, property status or color bar are missing!" );
+    }
+
     m_protonData = protonData;
     m_propertyStatus = propertyStatus;
     m_vectors = WConverterVectors::SPtr( new WConverterVectors() );
     m_indexes = WConverterIndexes::SPtr( new WConverterIndexes() );
     m_colorBar = colorBar;
-
 
     setOutputFromCSV( );
 }
