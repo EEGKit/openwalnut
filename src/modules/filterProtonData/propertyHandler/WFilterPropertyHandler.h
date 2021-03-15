@@ -27,11 +27,15 @@
 
 #include <string>
 #include <vector>
+
 #include <boost/bimap.hpp>
 #include <boost/lexical_cast.hpp>
-#include "../WProtonData.h"
-#include "WColumnPropertyHandler.h"
+
 #include "core/common/WPathHelper.h"
+
+#include "WColumnPropertyHandler.h"
+#include "../WProtonData.h"
+
 
 /**
  * Creates, updates and handles the filter properties.

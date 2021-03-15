@@ -26,8 +26,9 @@
 #define WDATASETPOINTSANDFIBERS_H
 
 #include "WDataSet.h"
-#include "WDataSetPoints.h"
 #include "WDataSetFibers.h"
+#include "WDataSetPoints.h"
+
 
 /**
  * Dataset to store a bunch of points and Fibers.

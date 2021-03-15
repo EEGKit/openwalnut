@@ -29,6 +29,7 @@
 
 #include <boost/shared_ptr.hpp>
 
+
 /**
  * Holds the data of the WMPointConnector.
  */

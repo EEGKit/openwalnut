@@ -26,6 +26,7 @@
 
 #include "WFiberActionAddFiber.h"
 
+
 WFiberActionAddFiber::WFiberActionAddFiber( std::string name, size_t position, WFiberHandler* fiberHandler ):
     m_name( name ),
     m_position( position ),

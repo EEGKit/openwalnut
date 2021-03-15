@@ -24,6 +24,7 @@
 
 #include "WDataSetPointsAndFibers.h"
 
+
 WDataSetPointsAndFibers::WDataSetPointsAndFibers( WDataSetPoints::SPtr points, WDataSetFibers::SPtr fibers )
     : m_points( points ), m_fibers( fibers )
 {

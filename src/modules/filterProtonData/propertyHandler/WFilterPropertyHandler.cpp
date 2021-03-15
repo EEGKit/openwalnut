@@ -28,6 +28,7 @@
 
 #include "WFilterPropertyHandler.h"
 
+
 WFilterPropertyHandler::WFilterPropertyHandler( WProtonData::SPtr protonData,
                                             WPropertyGroup::SPtr properties,
                                             WFilterPropertyHandler::CallbackPtr dataUpdate ):

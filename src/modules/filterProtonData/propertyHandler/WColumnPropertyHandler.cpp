@@ -22,11 +22,12 @@
 //
 //---------------------------------------------------------------------------
 
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 #include "WColumnPropertyHandler.h"
+
 
 WColumnPropertyHandler::WColumnPropertyHandler( WProtonData::SPtr protonData,
                                             WPropertyGroup::SPtr properties,

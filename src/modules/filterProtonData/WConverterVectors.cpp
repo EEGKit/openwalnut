@@ -26,6 +26,7 @@
 
 #include "WConverterVectors.h"
 
+
 WConverterVectors::WConverterVectors()
 {
     m_vertices = SPFloatVector( new std::vector< float >() );

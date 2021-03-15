@@ -25,10 +25,10 @@
 #include <string>
 #include <vector>
 
-#include "modules/data/io/WReaderCSV.h"
 #include "core/common/WAssert.h"
 #include "core/common/WIOTools.h"
 #include "core/common/WPropertyHelper.h"
+#include "core/dataHandler/exceptions/WDHException.h"
 #include "core/dataHandler/WDataHandler.h"
 #include "core/dataHandler/WDataSet.h"
 #include "core/dataHandler/WDataSetScalar.h"
@@ -38,7 +38,6 @@
 #include "core/dataHandler/WDataTexture3D.h"
 #include "core/dataHandler/WEEG2.h"
 #include "core/dataHandler/WSubject.h"
-#include "core/dataHandler/exceptions/WDHException.h"
 #include "core/graphicsEngine/WGEColormapping.h"
 #include "core/kernel/WDataModuleInputFile.h"
 #include "core/kernel/WDataModuleInputFilterFile.h"
@@ -47,19 +46,21 @@
 #ifdef WBIOSIG_ENABLED
     #include "io/WReaderBiosig.h"
 #endif
+#include "io/WReaderClustering.h"
+#include "io/WReaderCSV.h"
 #include "io/WReaderEEGASCII.h"
-#include "io/WReaderNIfTI.h"
 #include "io/WReaderELC.h"
 #include "io/WReaderFiberVTK.h"
-#include "io/WReaderVTK.h"
 #ifdef WEEP_ENABLED
     #include "io/WReaderLibeep.h"
     #include "io/WPagerEEGLibeep.h"
 #endif
-#include "io/WReaderClustering.h"
+#include "io/WReaderNIfTI.h"
+#include "io/WReaderVTK.h"
 
 #include "WMData.h"
 #include "WMData.xpm"
+
 
 WMData::WMData():
     WDataModule(),

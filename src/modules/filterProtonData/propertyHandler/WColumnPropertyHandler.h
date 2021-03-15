@@ -25,15 +25,16 @@
 #ifndef WCOLUMNPROPERTYHANDLER_H
 #define WCOLUMNPROPERTYHANDLER_H
 
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 #include <boost/function.hpp>
 
 #include "core/common/WItemSelectionItemTyped.h"
 
 #include "../WProtonData.h"
+
 
 /**
  * Creates, updates and handles the column properties.
