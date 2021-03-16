@@ -31,7 +31,9 @@
 
 #include "core/kernel/WModuleFactory.h"
 #include "../WCsvConverter.h"
+#include "../WMFilterProtonData.h"
 #include "../../transferFunctionColorBar/WMTransferFunctionColorBar.h"
+#include "../../data/io/WReaderCSV.h"
 
 /**
  * Test class of WCsvConverter class
@@ -43,56 +45,41 @@ public:
     /**
      * Test the constructors of WCsvConverter, so no exception is thrown, when input parameters are correct
      */
-    static void testConstructorsNoThrow()
+    static void testConstructorThrowNullptr()
     {
-        auto emptyStringVector = new std::vector< std::string >( 1, "" );
+        WReaderCSV csvReader( W_FIXTURE_PATH + "../data/CSVs/valid.csv" );
 
-        WDataSetCSV::ContentSPtr emptyHeader( new WDataSetCSV::Content() );
-        emptyHeader->push_back( *emptyStringVector );
+        boost::shared_ptr< WDataSetCSV > csvDataSet = csvReader.read();
 
-        WDataSetCSV::ContentSPtr emptyData( new WDataSetCSV::Content() );
-        emptyHeader->push_back( *emptyStringVector );
+        WProtonData protonData( csvDataSet->getHeader(), csvDataSet->getData() );
 
-        WModule::SPtr emptyColorBar = WModule::SPtr( new WMTransferFunctionColorBar() );
+        WModule::SPtr tmpColorBar( new WMTransferFunctionColorBar() );
 
-        WProtonData::SPtr tmpProtonData = WProtonData::SPtr( new WProtonData( emptyHeader, emptyData ) );
         boost::shared_ptr< WPropertyStatus > tmpPropertyStatus( new WPropertyStatus() );
+        WColumnPropertyHandler tmpColumnPropertyHandler( NULL, NULL, NULL );
+        tmpPropertyStatus->setColumnPropertyHandler(
+                boost::make_shared< WColumnPropertyHandler>( tmpColumnPropertyHandler )
+        );
 
-        TS_ASSERT_THROWS_NOTHING( WCsvConverter( tmpProtonData, tmpPropertyStatus ) );
-        TS_ASSERT_THROWS_NOTHING( WCsvConverter( tmpProtonData, tmpPropertyStatus,  emptyColorBar ) );
-    }
+        WEventIDLimitationPropertyHandler tmpEventIDLimitationPropertyHandler( NULL, NULL, NULL );
+        tmpPropertyStatus->setEventIDLimitationPropertyHandler(
+                boost::make_shared< WEventIDLimitationPropertyHandler>( tmpEventIDLimitationPropertyHandler )
+        );
 
-    /**
-     * Test the constructor of WCsvConverter, so no exception is thrown, when input parameters are correct
-     */
-    static void testConstructorWithoutColorThrowNullptrParameter()
-    {
-        /*
-        auto emptyStringVector = new std::vector< std::string >( 1, "" );
+        WFilterPropertyHandler tmpFilterPropertyHandler( NULL, NULL, NULL );
+        tmpPropertyStatus->setFilterPropertyHandler(
+                boost::make_shared< WFilterPropertyHandler>( tmpFilterPropertyHandler )
+        );
 
-        WDataSetCSV::ContentSPtr emptyHeader( new WDataSetCSV::Content() );
-        emptyHeader->push_back( *emptyStringVector );
+        WVisualizationPropertyHandler tmpVisualizationPropertyHandler( NULL, NULL, NULL );
+        tmpPropertyStatus->setVisualizationPropertyHandler(
+                boost::make_shared< WVisualizationPropertyHandler>( tmpVisualizationPropertyHandler )
+        );
 
-        WDataSetCSV::ContentSPtr emptyData( new WDataSetCSV::Content() );
-        emptyHeader->push_back( *emptyStringVector );
-
-        WProtonData::SPtr tmpProtonData = WProtonData::SPtr( new WProtonData( emptyHeader, emptyData ) );
-        boost::shared_ptr< WPropertyStatus > tmpPropertyStatus( new WPropertyStatus() );
-
-        TS_ASSERT_THROWS_NOTHING( WCsvConverter( tmpProtonData, tmpPropertyStatus ) );
-        */
-
-        /*
-        WDataSetCSV::ContentSPtr emptyHeader( new WDataSetCSV::Content() );
-        emptyHeader->push_back( *emptyStringVector );
-
-        WDataSetCSV::ContentSPtr emptyData( new WDataSetCSV::Content() );
-        emptyHeader->push_back( *emptyStringVector );
-
-        tmpProtonData = WProtonData::SPtr( new WProtonData( emptyHeader, emptyData ) );
-        tmpPropertyStatus = nullptr;
-        TS_ASSERT_THROWS( WCsvConverter( tmpProtonData, tmpPropertyStatus ), WException &e );
-        */
+        TS_ASSERT_THROWS_ANYTHING( WCsvConverter( boost::make_shared< WProtonData >( protonData ),
+                                                 tmpPropertyStatus,
+                                                 tmpColorBar )
+        );
     }
 };
 
