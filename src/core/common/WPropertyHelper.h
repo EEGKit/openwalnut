@@ -34,6 +34,7 @@
 #include "constraints/WPropertyConstraintIsDirectory.h"
 #include "constraints/WPropertyConstraintSelectOnlyOne.h"
 #include "constraints/WPropertyConstraintIsValid.h"
+#include "constraints/WPropertyConstraintConfirmOverwrite.h"
 
 
 /**
@@ -101,6 +102,19 @@ namespace WPropertyHelper
     {
         /**
          * Add the PC_PATHEXISTS constraint to the property.
+         *
+         * \param prop the property where to add the constraint.
+         */
+        void addTo( WPropFilename prop );
+    }
+
+    /**
+     * Contains functions for easily adding contraints of type PC_CONFIRMOVERWRITE to properties compatible with this constraint.
+     */
+    namespace PC_CONFIRMOVERWRITE
+    {
+        /**
+         * Add the PC_CONFIRMOVERWRITE constraint to the property.
          *
          * \param prop the property where to add the constraint.
          */
