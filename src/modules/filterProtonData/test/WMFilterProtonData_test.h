@@ -29,7 +29,6 @@
 #include <boost/shared_ptr.hpp>
 
 #include "../WMFilterProtonData.h"
-#include "../WReaderCSV.h"
 
 
 /**
