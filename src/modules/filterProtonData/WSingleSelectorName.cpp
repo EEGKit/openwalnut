@@ -47,17 +47,17 @@ std::string WSingleSelectorName::getPDG()
     return "Particle Data Group";
 }
 
-std::string WSingleSelectorName::getEDEP()
+std::string WSingleSelectorName::getEdep()
 {
     return "Energy deposition";
 }
 
-std::string WSingleSelectorName::getEVENTID()
+std::string WSingleSelectorName::getEventId()
 {
     return "Event id";
 }
 
-std::string WSingleSelectorName::getPARENTID()
+std::string WSingleSelectorName::getParentId()
 {
     return "Parent id";
 }
@@ -90,24 +90,24 @@ WSingleSelectorName::NameDescriptionSearch WSingleSelectorName::getPDGwithDescri
                         "PDGEncoding" );
 }
 
-WSingleSelectorName::NameDescriptionSearch WSingleSelectorName::getEDEPwithDescription()
+WSingleSelectorName::NameDescriptionSearch WSingleSelectorName::getEdepWithDescription()
 {
-    return WSingleSelectorName::NameDescriptionSearch( getEDEP(),
+    return WSingleSelectorName::NameDescriptionSearch( getEdep(),
                         "Choose the column which should be used to determine the energy deposition.",
                         "edep" );
 }
 
-WSingleSelectorName::NameDescriptionSearch WSingleSelectorName::getEVENTIDwithDescription()
+WSingleSelectorName::NameDescriptionSearch WSingleSelectorName::getEventIdWithDescription()
 {
-    return WSingleSelectorName::NameDescriptionSearch( getEVENTID(),
+    return WSingleSelectorName::NameDescriptionSearch( getEventId(),
                         "Choose the column which should be used to determine the event id."
                         "Tracks will be drawn based on the the event id, all particles with the same event id will be connected.",
                         "eventID" );
 }
 
-WSingleSelectorName::NameDescriptionSearch WSingleSelectorName::getPARENTIDwithDescription()
+WSingleSelectorName::NameDescriptionSearch WSingleSelectorName::getParentIdWithDescription()
 {
-    return WSingleSelectorName::NameDescriptionSearch( getPARENTID(),
+    return WSingleSelectorName::NameDescriptionSearch( getParentId(),
                         "Choose the column which should be used to determine the parent id."
                         "Primaries and secondaries filtering is based on that id, if a "
                         "particle has the parent id 0 it is a primary otherwise it is a secondary.",
@@ -122,9 +122,9 @@ std::list< WSingleSelectorName::NameDescriptionSearch > WSingleSelectorName::get
     list.push_back( getYwithDescription() );
     list.push_back( getZwithDescription() );
     list.push_back( getPDGwithDescription() );
-    list.push_back( getEDEPwithDescription() );
-    list.push_back( getEVENTIDwithDescription() );
-    list.push_back( getPARENTIDwithDescription() );
+    list.push_back( getEdepWithDescription() );
+    list.push_back( getEventIdWithDescription() );
+    list.push_back( getParentIdWithDescription() );
 
     return list;
 }

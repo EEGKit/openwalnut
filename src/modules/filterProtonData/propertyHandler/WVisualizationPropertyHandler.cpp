@@ -64,7 +64,7 @@ void WVisualizationPropertyHandler::updateProperty()
     if( m_protonData->isColumnAvailable( WSingleSelectorName::getX() ) &&
         m_protonData->isColumnAvailable( WSingleSelectorName::getY() ) &&
         m_protonData->isColumnAvailable( WSingleSelectorName::getZ() ) &&
-        m_protonData->isColumnAvailable( WSingleSelectorName::getEDEP() ) )
+        m_protonData->isColumnAvailable( WSingleSelectorName::getEdep() ) )
     {
         m_sizesFromEdep->setHidden( false );
         m_colorFromEdep->setHidden( false );
