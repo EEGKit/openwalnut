@@ -254,6 +254,15 @@ private:
      * texture to submit to right Eye
      */
     osg::ref_ptr<osg::Texture2D> m_rightTexture;
+    /**
+     * texture to submit to left Eye
+     */
+    osg::ref_ptr<osg::Texture2D> m_geometryColorLeft;
+
+    /**
+     * texture to submit to right Eye
+     */
+    osg::ref_ptr<osg::Texture2D> m_geometryColorRight;
 
     /**
      * texture to submit to left Eye

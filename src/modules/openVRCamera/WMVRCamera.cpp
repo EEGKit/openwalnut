@@ -309,9 +309,9 @@ void WMVRCamera::moduleMain()
     osg::ref_ptr< WGEOffscreenFinalPass > finalPassRight = offscreenRenderRight->addFinalOnScreenPass( "FinalPassRight" );
 
     //attach geometry to color and depth buffer
-    osg::ref_ptr< osg::Texture2D > geometryColorLeft  = geometryPassLeft->attach( WGECamera::COLOR_BUFFER );
+    m_geometryColorLeft  = geometryPassLeft->attach( WGECamera::COLOR_BUFFER );
     osg::ref_ptr< osg::Texture2D > geometryDepthLeft = geometryPassLeft->attach( WGECamera::DEPTH_BUFFER );
-    osg::ref_ptr< osg::Texture2D > geometryColorRight  = geometryPassRight->attach( WGECamera::COLOR_BUFFER );
+    m_geometryColorRight  = geometryPassRight->attach( WGECamera::COLOR_BUFFER );
     osg::ref_ptr< osg::Texture2D > geometryDepthRight = geometryPassRight->attach( WGECamera::DEPTH_BUFFER );
 
     //attach texture pass to color buffer
@@ -319,29 +319,10 @@ void WMVRCamera::moduleMain()
     m_textureColorRight  = texturePassRight->attach( WGECamera::COLOR_BUFFER );
 
     //use geometry pass as input for texture pass
-    texturePassLeft->bind( geometryColorLeft, 0 );
+    texturePassLeft->bind( m_geometryColorLeft, 0 );
     texturePassLeft->bind( geometryDepthLeft, 1 );
-    texturePassRight->bind( geometryColorRight, 0 );
+    texturePassRight->bind( m_geometryColorRight, 0 );
     texturePassRight->bind( geometryDepthRight, 1 );
-
-    //bind images to texture pass output
-    osg::ref_ptr< osg::Image > limage = new osg::Image();
-    limage->allocateImage( m_vrRenderWidth,
-                      m_vrRenderHeight,
-                      1,   // 2D texture is 1 pixel deep
-                      GL_RGBA,
-                      GL_UNSIGNED_BYTE );
-    limage->setInternalTextureFormat( GL_RGBA8 );
-    m_textureColorLeft->setImage( limage );
-
-    osg::ref_ptr< osg::Image > rimage = new osg::Image();
-    rimage->allocateImage( m_vrRenderWidth,
-                      m_vrRenderHeight,
-                      1,   // 2D texture is 1 pixel deep
-                      GL_RGBA,
-                      GL_UNSIGNED_BYTE );
-    rimage->setInternalTextureFormat( GL_RGBA8 );
-    m_textureColorRight->setImage( rimage );
 
     // attach final pass to color output
     finalPassLeft->attach( WGECamera::COLOR_BUFFER, m_leftTexture );
@@ -354,21 +335,21 @@ void WMVRCamera::moduleMain()
     finalPassRight->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
 
     osg::ref_ptr< osg::Node > plane_left = wge::genFinitePlane( 
-                                osg::Vec3( 0.0, 0.0, 0.0 ),   // base
-                                osg::Vec3( 100.0, 0.0, 0.0 ), // spanning vector a
-                                osg::Vec3( 0.0, 0.0, 100.0 ), // spanning vector b
+                                osg::Vec3( -100.0, 0.0, -100.0 ),   // base
+                                osg::Vec3( 200.0, 0.0, 0.0 ), // spanning vector a
+                                osg::Vec3( 0.0, 0.0, 200.0 ), // spanning vector b
                                 WColor( 0.0, 1.0, 0.0, 1.0 )  // a color.
            );
     osg::ref_ptr< osg::Node > plane_right = wge::genFinitePlane( 
-                                osg::Vec3( 0.0, 0.0, 0.0 ),   // base
-                                osg::Vec3( 100.0, 0.0, 0.0 ), // spanning vector a
-                                osg::Vec3( 0.0, 0.0, 100.0 ), // spanning vector b
+                                osg::Vec3( -100.0, 0.0, -100.0 ),   // base
+                                osg::Vec3( 200.0, 0.0, 0.0 ), // spanning vector a
+                                osg::Vec3( 0.0, 0.0, 200.0 ), // spanning vector b
                                 WColor( 0.0, 0.0, 1.0, 1.0 )  // a color.
            );
     osg::ref_ptr< osg::Node > plane_main = wge::genFinitePlane( 
-                                osg::Vec3( 0.0, 0.0, 0.0 ),   // base
-                                osg::Vec3( 100.0, 0.0, 0.0 ), // spanning vector a
-                                osg::Vec3( 0.0, 0.0, 100.0 ), // spanning vector b
+                                osg::Vec3( -100.0, 0.0, -100.0 ),   // base
+                                osg::Vec3( 200.0, 0.0, 0.0 ), // spanning vector a
+                                osg::Vec3( 0.0, 0.0, 200.0 ), // spanning vector b
                                 WColor( 1.0, 0.0, 0.0, 1.0 )  // a color.
            );
 
@@ -376,8 +357,8 @@ void WMVRCamera::moduleMain()
     m_rightEyeGeometryNode->addChild(plane_right);
     m_rootnode->addChild(plane_main);
 
-    //m_leftEyeGeometryNode->addChild(dynamic_cast<osg::Node*>(WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone(osg::CopyOp::SHALLOW_COPY)));
-    //m_rightEyeGeometryNode->addChild(dynamic_cast<osg::Node*>(WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone(osg::CopyOp::SHALLOW_COPY)));
+    m_leftEyeGeometryNode->addChild(dynamic_cast<osg::Node*>(WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone(osg::CopyOp::DEEP_COPY_ALL)));
+    m_rightEyeGeometryNode->addChild(dynamic_cast<osg::Node*>(WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone(osg::CopyOp::DEEP_COPY_ALL)));
     
     leftEyeView->getScene()->insert(offscreenRenderLeft);
     rightEyeView->getScene()->insert(offscreenRenderRight);
@@ -572,7 +553,6 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
         m_module->debugLog() << "Pointer:" << mainImage->getDataPointer();
         m_module->debugLog() << "DatenMenge:" << mainImage->getTotalDataSize();
 
-        //std::string filename = "C:/Users/Jonas/OpenWalnut - framebuffer.png";
         std::string filename = "./OpenWalnut - framebuffer.png";
         //std::string filename = ( QDir::homePath() + QDir::separator() + "OpenWalnut - framebuffer.png" ).toStdString();
 
@@ -604,13 +584,16 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
                                             ->getViewerByName( "Right Eye View" )->getCamera()
                                             ->getGraphicsContext()->getState()->getContextID();
 
+            m_module->debugLog() << "Left ContextID: " << leftContextID;
+            m_module->debugLog() << "Right ContextID: " << rightContextID;
+
             vr::Texture_t leftEyeTexture = {
-                ( void* )( uintptr_t )m_module->m_textureColorLeft->getTextureObject( leftContextID )->id(),
+                ( void* )( uintptr_t )m_module->m_geometryColorLeft->getTextureObject( leftContextID )->id(),
                 vr::TextureType_OpenGL,
                 vr::ColorSpace_Gamma
                 };
             vr::Texture_t rightEyeTexture = {
-                ( void* )( uintptr_t )m_module->m_textureColorRight->getTextureObject( rightContextID )->id(),
+                ( void* )( uintptr_t )m_module->m_geometryColorRight->getTextureObject( rightContextID )->id(),
                 vr::TextureType_OpenGL,
                 vr::ColorSpace_Gamma
                 };
