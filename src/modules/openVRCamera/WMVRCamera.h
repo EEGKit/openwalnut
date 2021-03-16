@@ -171,7 +171,7 @@ private:
 
         
         /**
-         * timestamps of the last 60 frames
+         * timestamps of the last 120 frames
          */
         double m_lastFrames [120];
 

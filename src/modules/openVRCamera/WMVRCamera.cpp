@@ -346,6 +346,20 @@ void WMVRCamera::moduleMain()
                                 osg::Vec3( 0.0, 0.0, 200.0 ), // spanning vector b
                                 WColor( 0.0, 0.0, 1.0, 1.0 )  // a color.
            );
+
+    osg::ref_ptr< osg::Node > plane_left2 = wge::genFinitePlane( 
+                                osg::Vec3( -200.0, 0.0, -200.0 ),   // base
+                                osg::Vec3( 100.0, 0.0, 0.0 ), // spanning vector a
+                                osg::Vec3( 0.0, 0.0, 100.0 ), // spanning vector b
+                                WColor( 0.0, 1.0, 0.0, 1.0 )  // a color.
+           );
+    osg::ref_ptr< osg::Node > plane_right2 = wge::genFinitePlane( 
+                                osg::Vec3( -200.0, 0.0, -200.0 ),   // base
+                                osg::Vec3( 100.0, 0.0, 0.0 ), // spanning vector a
+                                osg::Vec3( 0.0, 0.0, 100.0 ), // spanning vector b
+                                WColor( 0.0, 0.0, 1.0, 1.0 )  // a color.
+           );
+
     osg::ref_ptr< osg::Node > plane_main = wge::genFinitePlane( 
                                 osg::Vec3( -100.0, 0.0, -100.0 ),   // base
                                 osg::Vec3( 200.0, 0.0, 0.0 ), // spanning vector a
@@ -355,6 +369,8 @@ void WMVRCamera::moduleMain()
 
     m_leftEyeGeometryNode->addChild(plane_left);
     m_rightEyeGeometryNode->addChild(plane_right);
+    m_leftEyeGeometryNode->addChild(plane_left2);
+    m_rightEyeGeometryNode->addChild(plane_right2);
     m_rootnode->addChild(plane_main);
 
     m_leftEyeGeometryNode->addChild(dynamic_cast<osg::Node*>(WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone(osg::CopyOp::DEEP_COPY_ALL)));
@@ -494,53 +510,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
     {
         m_module->debugLog() << elapsedSeconds << " sec since last Frame | " << 1/elapsedSeconds << " fps";
         m_module->debugLog() << averageElapsedSeconds << " sec average Frametiming | " << 1/averageElapsedSeconds << " fps";
-        /*
-        std::string leftFilename = "./OpenWalnut - leftEye.png";
-        std::string rightFilename = "./OpenWalnut - rightEye.png";
-        osg::ref_ptr< osg::Image > leftImage;
-        osg::ref_ptr< osg::Image > rightImage;
-        m_module->debugLog() << " Links Breite:" << m_module->m_textureColorLeft->getImage()->s() <<
-                            " Höhe:" << m_module->m_textureColorLeft->getImage()->t() <<
-                            " Tiefe:" << m_module->m_textureColorLeft->getImage()->r();
-        m_module->debugLog() << "Pointer:" << m_module->m_textureColorLeft->getImage()->getDataPointer();
-        m_module->debugLog() << "DatenMenge:" << m_module->m_textureColorLeft->getImage()->getTotalDataSize();
 
-        m_module->debugLog() << "Rechts Breite:" << m_module->m_textureColorRight->getImage()->s() <<
-                            " Höhe:" << m_module->m_textureColorRight->getImage()->t() <<
-                            " Tiefe:" << m_module->m_textureColorRight->getImage()->r();
-        m_module->debugLog() << "Pointer:" << m_module->m_textureColorRight->getImage()->getDataPointer();
-        m_module->debugLog() << "DatenMenge:" << m_module->m_textureColorRight->getImage()->getTotalDataSize();
-
-        osg::State *leftState=WKernel::getRunningKernel()->getGraphicsEngine()
-                                            ->getViewerByName( "Left Eye View" )->getCamera()
-                                            ->getGraphicsContext()->getState();
-        osg::State *rightState=WKernel::getRunningKernel()->getGraphicsEngine()
-                                            ->getViewerByName( "Right Eye View" )->getCamera()
-                                            ->getGraphicsContext()->getState();
-        m_module->m_textureColorLeft->copyTexImage2D(
-                                            *leftState,
-                                            0,
-                                            0,
-                                            m_module->m_vrRenderWidth,
-                                            m_module->m_vrRenderHeight
-                                            );
-        m_module->m_textureColorRight->copyTexImage2D(
-                                            *rightState,
-                                            0,
-                                            0,
-                                            m_module->m_vrRenderWidth,
-                                            m_module->m_vrRenderHeight
-                                            );
-
-        //std::string leftFilename = ( QDir::homePath() + QDir::separator() + "OpenWalnut - leftEye.png" ).toStdString();
-        //std::string rightFilename = ( QDir::homePath() + QDir::separator() + "OpenWalnut - rightEye.png" ).toStdString();
-
-        leftImage = m_module->m_textureColorLeft->getImage();
-        rightImage = m_module->m_textureColorRight->getImage();
-
-        osgDB::writeImageFile( *leftImage, leftFilename );
-        osgDB::writeImageFile( *rightImage, rightFilename );
-        */
         m_module->m_debugTrigger1->set( WPVBaseTypes::PV_TRIGGER_READY, false );
     }
 
@@ -554,7 +524,6 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
         m_module->debugLog() << "DatenMenge:" << mainImage->getTotalDataSize();
 
         std::string filename = "./OpenWalnut - framebuffer.png";
-        //std::string filename = ( QDir::homePath() + QDir::separator() + "OpenWalnut - framebuffer.png" ).toStdString();
 
         osgDB::writeImageFile( *mainImage, filename );
 
@@ -584,16 +553,13 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
                                             ->getViewerByName( "Right Eye View" )->getCamera()
                                             ->getGraphicsContext()->getState()->getContextID();
 
-            m_module->debugLog() << "Left ContextID: " << leftContextID;
-            m_module->debugLog() << "Right ContextID: " << rightContextID;
-
             vr::Texture_t leftEyeTexture = {
-                ( void* )( uintptr_t )m_module->m_geometryColorLeft->getTextureObject( leftContextID )->id(),
+                ( void* )( uintptr_t )m_module->m_textureColorLeft->getTextureObject( leftContextID )->id(),
                 vr::TextureType_OpenGL,
                 vr::ColorSpace_Gamma
                 };
             vr::Texture_t rightEyeTexture = {
-                ( void* )( uintptr_t )m_module->m_geometryColorRight->getTextureObject( rightContextID )->id(),
+                ( void* )( uintptr_t )m_module->m_textureColorRight->getTextureObject( rightContextID )->id(),
                 vr::TextureType_OpenGL,
                 vr::ColorSpace_Gamma
                 };
