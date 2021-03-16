@@ -78,6 +78,9 @@ void WMFilterProtonData::moduleMain()
             continue;
         }
 
+        boost::shared_ptr< WProgress > progressBar( new WProgress( "Preparing..." ) );
+        m_progress->addSubProgress( progressBar );
+
         if( m_protonData == NULL )
         {
             m_protonData = WProtonData::SPtr( new WProtonData(  m_input->getData()->getHeader(),  m_input->getData()->getData() ) );
@@ -114,6 +117,8 @@ void WMFilterProtonData::moduleMain()
         setToLoadedProperties();
 
         setOutputFromCSV( );
+
+        progressBar->finish();
     }
 }
 
