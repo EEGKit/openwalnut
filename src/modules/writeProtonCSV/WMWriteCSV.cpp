@@ -107,6 +107,7 @@ void WMWriteCSV::properties()
         &WMWriteCSV::propertyCallback, this );
 
     m_filename = m_properties->addProperty( "Filename", "Filename where to write the NIfTI file to.", WPathHelper::getHomePath(), notifier );
+    WPropertyHelper::PC_CONFIRMOVERWRITE::addTo( m_filename );
 
     WModule::properties();
 }
@@ -194,7 +195,7 @@ std::list< std::tuple < int, int > > WMWriteCSV::getListOfPositionAndID(
             }
         }
 
-        if(listOfInternalVertex.size() <= 0)
+        if( listOfInternalVertex.size() <= 0 )
         {
             break;
         }
@@ -210,12 +211,7 @@ void WMWriteCSV::writeToFile()
     std::string sourceFilename = m_filename->get().string();
     sourceFilename = sourceFilename.substr( 0, sourceFilename.find( ".csv" ) );
 
-    std::string outputFilename = sourceFilename + "-edited.csv";
-
-    if( isFileExists( outputFilename ) )
-    {
-        throw WException( "Filename already exists." );
-    }
+    std::string outputFilename = sourceFilename + ".csv";
 
     WDataSetCSV::SeperatedRowSPtr csvContent = m_CSVInput->getData()->getRawDataSet();
     WDataSetFibers::SPtr fibers = m_PointsAndFibersInput->getData()->getFibers();
@@ -265,10 +261,4 @@ void WMWriteCSV::writeToFile()
     }
 
     newCSVFile.close();
-}
-
-bool WMWriteCSV::isFileExists( std::string path )
-{
-    std::ifstream file( path );
-    return file.is_open();
 }

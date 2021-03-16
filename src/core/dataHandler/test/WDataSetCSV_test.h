@@ -25,6 +25,9 @@
 #ifndef WDATASETCSV_TEST_H
 #define WDATASETCSV_TEST_H
 
+#include <string>
+#include <vector>
+
 #include <boost/shared_ptr.hpp>
 
 #include <cxxtest/TestSuite.h>
@@ -101,7 +104,6 @@ public:
     {
         TS_ASSERT_EQUALS( csvDataSet.getData(), m_data );
     }
-
 };
 
 #endif  // WDATASETCSV_TEST_H
