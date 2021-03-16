@@ -55,14 +55,6 @@ class WCsvConverter
 {
 public:
     /**
-    * Initializes the vectors and indexes.
-    * Calls setOutputFromCSV.
-    * \param protonData The protondata to use.
-    * \param propertyStatus The status of the properties.
-    */
-    WCsvConverter( WProtonData::SPtr protonData, boost::shared_ptr< WPropertyStatus > propertyStatus );
-
-    /**
      * Initializes the vectors, indices and transfer function color bar
      * Calls setOutputFromCSV.
      * \param protonData The proton data to use.
