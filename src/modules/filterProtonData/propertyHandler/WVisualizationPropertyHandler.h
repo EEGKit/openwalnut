@@ -26,6 +26,7 @@
 #define WVISUALIZATIONPROPERTYHANDLER_H
 
 #include "../WProtonData.h"
+#include "../WSingleSelectorName.h"
 
 
 /**

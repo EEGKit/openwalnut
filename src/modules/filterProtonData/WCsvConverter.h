@@ -45,6 +45,7 @@
 #include "WConverterVectors.h"
 #include "WPropertyStatus.h"
 #include "WProtonData.h"
+#include "WSingleSelectorName.h"
 
 
 /**

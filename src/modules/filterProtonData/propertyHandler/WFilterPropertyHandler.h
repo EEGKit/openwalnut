@@ -32,6 +32,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include "core/common/WPathHelper.h"
+#include "../WSingleSelectorName.h"
 
 #include "WColumnPropertyHandler.h"
 #include "../WProtonData.h"
