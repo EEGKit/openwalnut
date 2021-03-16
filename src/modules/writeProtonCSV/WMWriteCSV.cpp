@@ -212,6 +212,11 @@ void WMWriteCSV::writeToFile()
 
     std::string outputFilename = sourceFilename + "-edited.csv";
 
+    if( isFileExists( outputFilename ) )
+    {
+        throw WException( "Filename already exists." );
+    }
+
     WDataSetCSV::SeperatedRowSPtr csvContent = m_CSVInput->getData()->getRawDataSet();
     WDataSetFibers::SPtr fibers = m_PointsAndFibersInput->getData()->getFibers();
     WDataSetPoints::SPtr points = m_PointsAndFibersInput->getData()->getPoints();
@@ -260,4 +265,10 @@ void WMWriteCSV::writeToFile()
     }
 
     newCSVFile.close();
+}
+
+bool WMWriteCSV::isFileExists( std::string path )
+{
+    std::ifstream file( path );
+    return file.is_open();
 }

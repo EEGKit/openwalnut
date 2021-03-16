@@ -131,6 +131,13 @@ private:
                             WDataSetPoints::SPtr points );
 
     /**
+     * check if the file exists
+     * \param path path of the file
+     * \return true when exists, otherwise false
+     */
+    bool isFileExists( std::string path );
+
+    /**
      * The filename property -> where to write the csv file
      */
     WPropFilename m_filename;

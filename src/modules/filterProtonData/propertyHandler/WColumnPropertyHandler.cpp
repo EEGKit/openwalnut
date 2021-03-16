@@ -137,9 +137,7 @@ void WColumnPropertyHandler::propertyNotifier( WPropertyBase::SPtr property )
     {
         std::string selectedValue = selector->at( 0 )->getAs< ItemType >()->getValue();
 
-        m_protonData->setStateIndex( columnName,
-                                      getColumnNumberByName( selectedValue )
-                                     );
+        m_protonData->setStateIndex( columnName, getColumnNumberByName( selectedValue ) );
 
         m_dataUpdate();
         if(m_externEventMethod != NULL)
