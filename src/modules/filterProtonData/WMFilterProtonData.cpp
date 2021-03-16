@@ -248,7 +248,7 @@ void WMFilterProtonData::updateProperty()
     m_propertyStatus->getColumnPropertyHandler()->updateProperty();
     m_propertyStatus->getFilterPropertyHandler()->updateProperty();
     m_propertyStatus->getVisualizationPropertyHandler()->updateProperty();
-    m_propertyStatus->getEventIDLimitationPropertyHandler()->updateProperty(); 
+    m_propertyStatus->getEventIDLimitationPropertyHandler()->updateProperty();
 }
 
 void WMFilterProtonData::createColorBar()
