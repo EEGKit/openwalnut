@@ -153,6 +153,86 @@ public:
                 "Can not set data! No data specified!"
         );
     }
+
+    /**
+     * Tests the setter and getter for the member variable -m_ColumnnMapSelectedIndex-
+     */
+    void testSetterGetterStateIndex()
+    {
+        WProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+                                boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+
+        std::tuple< std::string, int > refData1( "test 1", 0 );
+        std::tuple< std::string, int > refData2( "test 2", 1 );
+        std::tuple< std::string, int > refData3( "test 3", 2 );
+        std::tuple< std::string, int > refData4( "test 4", 3 );
+
+        protonData.setStateIndex( std::get< 0 >( refData1 ), std::get< 1 >( refData1 ) );
+        protonData.setStateIndex( std::get< 0 >( refData2 ), std::get< 1 >( refData2 ) );
+        protonData.setStateIndex( std::get< 0 >( refData3 ), std::get< 1 >( refData3 ) );
+        protonData.setStateIndex( std::get< 0 >( refData4 ), std::get< 1 >( refData4 ) );
+
+        TS_ASSERT_EQUALS( protonData.getColumnIndexBySelection( std::get< 0 >( refData1 ) ), std::get< 1 >( refData1 ) );
+        TS_ASSERT_EQUALS( protonData.getColumnIndexBySelection( std::get< 0 >( refData2 ) ), std::get< 1 >( refData2 ) );
+        TS_ASSERT_EQUALS( protonData.getColumnIndexBySelection( std::get< 0 >( refData3 ) ), std::get< 1 >( refData3 ) );
+        TS_ASSERT_EQUALS( protonData.getColumnIndexBySelection( std::get< 0 >( refData4 ) ), std::get< 1 >( refData4 ) );
+    }
+
+    /**
+     * Tests the availability of the single selections
+     */
+    void testIsColumnAvailable()
+    {
+        WProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+                                boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+
+        std::tuple< std::string, int > refData1( "test 1", 0 );
+        std::tuple< std::string, int > refData2( "test 2", 1 );
+        std::tuple< std::string, int > refData3( "test 3", 2 );
+        std::tuple< std::string, int > refData4( "test 4", 3 );
+
+        //-1 stands for no selection
+        std::tuple< std::string, int > refData5( "test 5", -1 );
+        std::tuple< std::string, int > refData6( "test 6", -1 );
+
+        protonData.setStateIndex( std::get< 0 >( refData1 ), std::get< 1 >( refData1 ) );
+        protonData.setStateIndex( std::get< 0 >( refData2 ), std::get< 1 >( refData2 ) );
+        protonData.setStateIndex( std::get< 0 >( refData3 ), std::get< 1 >( refData3 ) );
+        protonData.setStateIndex( std::get< 0 >( refData4 ), std::get< 1 >( refData4 ) );
+        protonData.setStateIndex( std::get< 0 >( refData5 ), std::get< 1 >( refData5 ) );
+        protonData.setStateIndex( std::get< 0 >( refData6 ), std::get< 1 >( refData6 ) );
+
+        TS_ASSERT_EQUALS( protonData.isColumnAvailable( std::get< 0 >( refData1 ) ), true );
+        TS_ASSERT_EQUALS( protonData.isColumnAvailable( std::get< 0 >( refData2 ) ), true );
+        TS_ASSERT_EQUALS( protonData.isColumnAvailable( std::get< 0 >( refData3 ) ), true );
+        TS_ASSERT_EQUALS( protonData.isColumnAvailable( std::get< 0 >( refData4 ) ), true );
+        TS_ASSERT_EQUALS( protonData.isColumnAvailable( std::get< 0 >( refData5 ) ), false );
+        TS_ASSERT_EQUALS( protonData.isColumnAvailable( std::get< 0 >( refData6 ) ), false );
+
+        //name which is not in the m_ColumnnMapSelectedIndex
+        TS_ASSERT_EQUALS( protonData.isColumnAvailable( "No Name" ), false );
+        TS_ASSERT_EQUALS( protonData.isColumnAvailable( "unavailable" ), false );
+    }
+
+    /**
+    * Tests the content of -m_columnMap-
+    */
+    void testGetColumnIndex()
+    {
+        WProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+                                boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+
+        std::vector< std::string > header = sampleColumnNames.at( 0 );
+
+        for( size_t headerCounter = 0; headerCounter < header.size(); headerCounter++ )
+        {
+            TS_ASSERT_EQUALS( protonData.getColumnIndex( header.at( headerCounter ) ), headerCounter );
+        }
+
+        //name which is not in the m_columnMap
+        TS_ASSERT_EQUALS( protonData.getColumnIndex( "No Name" ), -1 );
+        TS_ASSERT_EQUALS( protonData.getColumnIndex( "unavailable" ), -1 );
+    }
 };
 
 #endif  // WPROTONDATA_TEST_H
