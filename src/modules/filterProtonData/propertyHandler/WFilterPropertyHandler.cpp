@@ -52,8 +52,6 @@ void WFilterPropertyHandler::createProperties()
 
 void WFilterPropertyHandler::updateProperty()
 {
-    updatePDGProperties();
-
     if( m_protonData->isColumnAvailable( WSingleSelectorName::getParentId() ) )
     {
         m_showPrimaries->setHidden( false );

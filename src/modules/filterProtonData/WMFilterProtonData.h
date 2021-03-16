@@ -58,6 +58,10 @@
  */
 class WMFilterProtonData : public WModuleContainer
 {
+    /**
+     * Only test classes may be friend
+     */
+     friend class WCsvConverterTest;
 public:
     /**
      * represents a boost::shared_ptr to a vector containing a vector of floats.

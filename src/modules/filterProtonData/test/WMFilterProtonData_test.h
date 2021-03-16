@@ -26,10 +26,8 @@
 #define WMFILTERPROTONDATA_TEST_H
 
 #include <cxxtest/TestSuite.h>
-#include <boost/shared_ptr.hpp>
 
 #include "../WMFilterProtonData.h"
-
 
 /**
  * test class of the protonData class
