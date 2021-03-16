@@ -128,7 +128,7 @@ boost::shared_ptr< std::vector<unsigned char> > WCsvConverter::sampleTransferFun
 
 void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray, float maxEdep )
 {
-    if( m_protonData->isColumnAvailable( WSingleSelectorName::getEDEP() ) )
+    if( m_protonData->isColumnAvailable( WSingleSelectorName::getEdep() ) )
     {
         boost::shared_ptr< std::vector< unsigned char > > data = sampleTransferFunction();
 
@@ -168,7 +168,7 @@ bool WCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRow
         return false;
     }
 
-    if( m_protonData->isColumnAvailable( WSingleSelectorName::getPARENTID() ) )
+    if( m_protonData->isColumnAvailable( WSingleSelectorName::getParentId() ) )
     {
         int PrimaryValue = stringToInt( dataRow->at( m_indexes->getParentID() ) );
 
@@ -192,7 +192,7 @@ bool WCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRow
         }
     }
 
-    if( m_protonData->isColumnAvailable( WSingleSelectorName::getEVENTID() ) )
+    if( m_protonData->isColumnAvailable( WSingleSelectorName::getEventId() ) )
     {
         if(dataRow->at( m_indexes->getEventID() ) == "NULL")
         {
@@ -219,7 +219,7 @@ void WCsvConverter::addVertex( WDataSetCSV::Content::iterator dataRow )
 
 void WCsvConverter::addColor( WColor plainColor )
 {
-    if( !m_protonData->isColumnAvailable( WSingleSelectorName::getEDEP() ) ||
+    if( !m_protonData->isColumnAvailable( WSingleSelectorName::getEdep() ) ||
         !m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
     {
         m_vectors->getColors()->push_back( plainColor[0] );
@@ -230,7 +230,7 @@ void WCsvConverter::addColor( WColor plainColor )
 
 void WCsvConverter::addEdepAndSize( WDataSetCSV::Content::iterator dataRow, float* maxEdep )
 {
-    if( !m_protonData->isColumnAvailable( WSingleSelectorName::getEDEP() ) )
+    if( !m_protonData->isColumnAvailable( WSingleSelectorName::getEdep() ) )
     {
         return;
     }
@@ -246,7 +246,7 @@ void WCsvConverter::addEdepAndSize( WDataSetCSV::Content::iterator dataRow, floa
 
 void WCsvConverter::calculateFibers()
 {
-    if( !m_protonData->isColumnAvailable( WSingleSelectorName::getEVENTID() ) )
+    if( !m_protonData->isColumnAvailable( WSingleSelectorName::getEventId() ) )
     {
         return;
     }
@@ -280,7 +280,7 @@ void WCsvConverter::calculateFibers()
 
 void WCsvConverter::createOutputPoints()
 {
-    if( m_protonData->isColumnAvailable( WSingleSelectorName::getEDEP() ) )
+    if( m_protonData->isColumnAvailable( WSingleSelectorName::getEdep() ) )
     {
         if( m_propertyStatus->getVisualizationPropertyHandler()->getSizesFromEdep()->get() )
         {
@@ -305,7 +305,7 @@ void WCsvConverter::createOutputPoints()
 void WCsvConverter::createOutputFibers()
 {
     calculateFibers();
-    if( !m_protonData->isColumnAvailable( WSingleSelectorName::getEVENTID() ) )
+    if( !m_protonData->isColumnAvailable( WSingleSelectorName::getEventId() ) )
     {
         m_fibers = boost::shared_ptr< WDataSetFibers >(
             new WDataSetFibers(
@@ -330,7 +330,7 @@ void WCsvConverter::createOutputFibers()
         );
     }
 
-    if( m_protonData->isColumnAvailable( WSingleSelectorName::getEDEP() ) )
+    if( m_protonData->isColumnAvailable( WSingleSelectorName::getEdep() ) )
     {
         if( m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
         {
@@ -345,7 +345,7 @@ void WCsvConverter::createOutputFibers()
 
 void WCsvConverter::createOutputPointsAndEventIDs()
 {
-    if( m_protonData->isColumnAvailable( WSingleSelectorName::getEVENTID() ) )
+    if( m_protonData->isColumnAvailable( WSingleSelectorName::getEventId() ) )
     {
         m_selectedEventIDs = boost::shared_ptr < WDataSetPointsAndEventID >(
                 new WDataSetPointsAndEventID(
@@ -359,7 +359,7 @@ void WCsvConverter::createOutputPointsAndEventIDs()
 
 void WCsvConverter::addEventID( WDataSetCSV::Content::iterator dataRow )
 {
-    if( m_protonData->isColumnAvailable( WSingleSelectorName::getEVENTID() ) )
+    if( m_protonData->isColumnAvailable( WSingleSelectorName::getEventId() ) )
     {
         if(dataRow->at( m_indexes->getEventID() ) == "NULL")
         {

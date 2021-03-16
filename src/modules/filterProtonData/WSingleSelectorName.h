@@ -72,19 +72,19 @@ public:
      * getter
      * \return the name of the single-selector (edep)
      */
-    static std::string getEDEP();
+    static std::string getEdep();
 
     /**
      * getter
      * \return the name of the single-selector (Event id)
      */
-    static std::string getEVENTID();
+    static std::string getEventId();
 
     /**
      * getter
      * \return the name of the single-selector (Parent id)
      */
-    static std::string getPARENTID();
+    static std::string getParentId();
 
     /**
      * getter
@@ -114,19 +114,19 @@ public:
      * getter
      * \return the name of the single-selector (edep) with Description
      */
-    static WSingleSelectorName::NameDescriptionSearch getEDEPwithDescription();
+    static WSingleSelectorName::NameDescriptionSearch getEdepWithDescription();
 
     /**
      * getter
      * \return the name of the single-selector (Event id) with Description
      */
-    static WSingleSelectorName::NameDescriptionSearch getEVENTIDwithDescription();
+    static WSingleSelectorName::NameDescriptionSearch getEventIdWithDescription();
 
     /**
      * getter
      * \return the name of the single-selector (Parent id) with Description
      */
-    static WSingleSelectorName::NameDescriptionSearch getPARENTIDwithDescription();
+    static WSingleSelectorName::NameDescriptionSearch getParentIdWithDescription();
 
     /**
      * getter
