@@ -67,6 +67,7 @@ void WFilterPropertyHandler::updateProperty()
 
     if( m_protonData->isColumnAvailable( WSingleSelectorName::getPDG() ) )
     {
+        updatePDGProperties();
         m_multiSelection->setHidden( false );
         m_filteringsubGroup->setHidden( false );
     }
@@ -228,6 +229,7 @@ bool WFilterPropertyHandler::isPDGTypeSelected( int pdgType )
             return true;
         }
     }
+
     return false;
 }
 

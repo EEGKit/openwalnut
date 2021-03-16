@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WMPROTONDATA_TEST_H
-#define WMPROTONDATA_TEST_H
+#ifndef WPROTONDATA_TEST_H
+#define WPROTONDATA_TEST_H
 
 #include <string>
 #include <vector>
@@ -155,4 +155,4 @@ public:
     }
 };
 
-#endif  // WMPROTONDATA_TEST_H
+#endif  // WPROTONDATA_TEST_H
