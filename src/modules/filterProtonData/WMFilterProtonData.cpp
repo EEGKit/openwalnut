@@ -154,7 +154,7 @@ void WMFilterProtonData::properties()
     WPropertyGroup::SPtr groupVisual  = m_properties->addPropertyGroup( "Visualization", "Visualization options", false );
     WPropertyGroup::SPtr groupEventID = m_properties->addPropertyGroup( "Event Id Limitation", "Adjust the range of eventIDs to be shown.", false );
     WPropertyGroup::SPtr groupRename  = groupFilter->addPropertyGroup( "Rename Particle Types",
-                                                    "Filtering/Rename or Delete Particle-Name", false );
+                                                    "Filtering/Rename Particle Types", false );
 
     WPropertyBase::PropertyChangeNotifierType columnNotifier = boost::bind( &WMFilterProtonData::loadNotifier,
                                                                 this, groupColumn, boost::placeholders::_1 );
@@ -190,7 +190,7 @@ void WMFilterProtonData::properties()
                             "but not both at the same time.", std::string( "" ), filterNotifier, false );
     groupFilter->addProperty( "Show particles", "Choose particle type(s) to be shown.", std::string( "" ), filterNotifier, false );
 
-    groupRename->addProperty( "New Name (press enter)", "Type in a new name for the selected particle type."
+    groupRename->addProperty( "New name (press enter)", "Type in a new name for the selected particle type."
                             "To submit your entry press enter while you are in the textbox.", std::string( "" ), renameNotifier, false );
     groupRename->addProperty( "Select particle", "Select the particle type to be renamed.", std::string( "" ), renameNotifier, false );
     groupRename->addProperty( "Apply Changes", "Save", std::string( "" ), renameNotifier, false );
