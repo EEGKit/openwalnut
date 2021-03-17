@@ -322,7 +322,7 @@ void WFilterPropertyHandler::changePdgBiMap( int pdg, std::string newParticleNam
         bool success_replace = m_PdgNamesByID.right.replace_data( pdg_iter, newParticleName );
         if( !success_replace )
         {
-            throw WException( "Fail to replace new particle name" );
+            throw WException( "You cannot choose the same particle name twice" );
         }
     }
     else    //unknown particle
