@@ -25,6 +25,7 @@
 #ifndef WPROTONDATA_H
 #define WPROTONDATA_H
 
+#include <regex>
 #include <map>
 #include <string>
 
@@ -113,6 +114,13 @@ public:
      */
     bool isColumnAvailable( std::string columnName );
 
+    /**
+     * Get column types, stored in a string vector.
+     * Positions within this vector are linked to positions in m_csvHeader
+     * \return a shared pointer to m_columnTypes
+     */
+    WDataSetCSV::ContentElemSPtr getColumnTypes();
+
 private:
     /**
      * Stores column index of data.
@@ -133,6 +141,24 @@ private:
      * Stores index of the selected single-selector (ColumnPropertyHandler)
      */
     std::map< std::string, int > m_ColumnMapSelectedIndex;
+
+    /**
+     * Stores the information, which data type is stored in associated column
+     */
+    WDataSetCSV::ContentElemSPtr m_columnTypes;
+
+    /**
+     * Reads csv data and stores column types in m_columnTypes
+     * \param csvData the input csv data
+     */
+    void detectColumnTypesFromCsvData( WDataSetCSV::ContentSPtr csvData );
+
+    /**
+     * Determines column type due to cellValue
+     * \param cellValue the value of a cell on the basis of which the column type is to be determined
+     * \return either "int", "double" or "string"
+     */
+    std::string determineColumnTypeByString( std::string cellValue );
 };
 
 #endif  // WPROTONDATA_H

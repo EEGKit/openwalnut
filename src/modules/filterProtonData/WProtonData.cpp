@@ -22,8 +22,10 @@
 //
 //---------------------------------------------------------------------------
 
+#include <regex>
 #include <string>
 #include <vector>
+#include <boost/lexical_cast.hpp>
 
 #include "WProtonData.h"
 
@@ -65,6 +67,13 @@ void WProtonData::setCSVData( WDataSetCSV::ContentSPtr csvData )
         throw WException( "Can not set data! No data specified!" );
     }
 
+    if( csvData->empty() )
+    {
+        throw WException( "Can not set data! No data content found!" );
+    }
+
+    detectColumnTypesFromCsvData( csvData );
+
     m_csvData = csvData;
 }
 
@@ -103,4 +112,45 @@ int WProtonData::getColumnIndex( std::string columnName )
     }
 
     return m_columnMap[ columnName ];
+}
+
+WDataSetCSV::ContentElemSPtr WProtonData::getColumnTypes()
+{
+    return m_columnTypes;
+}
+
+void WProtonData::detectColumnTypesFromCsvData( WDataSetCSV::ContentSPtr csvData )
+{
+    m_columnTypes = WDataSetCSV::ContentElemSPtr( new std::vector< std::string >() );
+
+    auto currentRow = csvData->begin();
+
+    // determine column types based on first csv data row
+    for( auto cell : *currentRow )
+    {
+        m_columnTypes->push_back( determineColumnTypeByString( cell ) );
+    }
+
+    assert( m_columnTypes != nullptr );
+    assert( !m_columnTypes->empty() );
+    assert( m_columnTypes->size() == m_csvHeader->at( 0 ).size() );
+}
+
+std::string WProtonData::determineColumnTypeByString( std::string cellValue )
+{
+    std::regex regexInt( R"(^-?[[:d:]]+$)" );
+    std::regex regexDouble( R"(^([+-]?(?:[[:d:]]+\.?|[[:d:]]*\.[[:d:]]+))(?:[Ee][+-]?[[:d:]]+)?$)" );
+
+    if( std::regex_search( cellValue, regexInt ) )
+    {
+        return "int";
+    }
+    else if( std::regex_search( cellValue, regexDouble ) )
+    {
+        return "double";
+    }
+    else
+    {
+        return "string";
+    }
 }

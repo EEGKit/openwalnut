@@ -76,7 +76,7 @@ public:
                 boost::make_shared< WVisualizationPropertyHandler>( tmpVisualizationPropertyHandler )
         );
 
-        TS_ASSERT_THROWS_ANYTHING( WCsvConverter( boost::make_shared< WProtonData >( protonData ),
+        TS_ASSERT_THROWS_NOTHING( WCsvConverter( boost::make_shared< WProtonData >( protonData ),
                                                  tmpPropertyStatus,
                                                  tmpColorBar )
         );
