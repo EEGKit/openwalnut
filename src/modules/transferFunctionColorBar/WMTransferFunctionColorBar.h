@@ -148,6 +148,16 @@ private:
     WPropBool m_colorBarBorder;
 
     /**
+     * Maximum scaling factor of the current dataset.
+     */
+    WPropDouble m_maxScaleValue;
+
+    /**
+     * Description of the color bar.
+     */
+    WPropString m_colorBarDescription;
+
+    /**
      * The projection node for the colorbar and labels
      */
     osg::ref_ptr< osg::Projection > m_barProjection;

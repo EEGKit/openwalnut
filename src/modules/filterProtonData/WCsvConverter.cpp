@@ -147,6 +147,10 @@ void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArra
             }
         }
 
+        m_colorBar->getProperties()->getProperty( "Max scale value" )->set( 0.0 );
+        m_colorBar->getProperties()->getProperty( "Max scale value" )->set( maxClusterSize );
+        m_colorBar->getProperties()->getProperty( "Description" )->set( std::string( "Clustersize " ) );
+
         bool activated = m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get();
 
         m_colorBar->getProperties()->getProperty( "active" )->toPropBool()->set( activated );
