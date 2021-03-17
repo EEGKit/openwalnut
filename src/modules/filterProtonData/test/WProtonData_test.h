@@ -233,6 +233,74 @@ public:
         TS_ASSERT_EQUALS( protonData.getColumnIndex( "No Name" ), -1 );
         TS_ASSERT_EQUALS( protonData.getColumnIndex( "unavailable" ), -1 );
     }
+
+    /**
+    * Tests method -determineColumnTypeByString-
+    */
+    void testDetermineColumnTypeByString()
+    {
+        WProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+                                boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+
+        std::vector< std::string > testIntList{
+                "1", "0", "10", "+1", "-1",
+                "1e+1", "+1e+1", "-1e+1",
+                "1e1", "+1e1", "-1e1",
+        };
+
+        std::vector< std::string > testDoubleList{
+                "1000.1", "1.", ".1", "1.1",
+                "+1.", "-1.", "+.1", "-.1",
+                "+1e-1", "0.001e-12",
+                "0.111111111111111"
+        };
+
+        std::vector< std::string > testStringList{
+                ".", "1a", "++1",
+                "+-1", "+", "-.",
+                "-", "--1.", "1.e.1",
+                "1e.1", "0+.e0"
+        };
+
+        for( auto trueCondition : testIntList)
+        {
+            TS_ASSERT_EQUALS( protonData.determineColumnTypeByString( trueCondition ), "int" );
+        }
+
+        for( auto trueCondition : testDoubleList)
+        {
+            TS_ASSERT_EQUALS( protonData.determineColumnTypeByString( trueCondition ), "double" );
+        }
+
+        for( auto falseCondition : testStringList)
+        {
+            TS_ASSERT_EQUALS( protonData.determineColumnTypeByString( falseCondition ), "string" );
+        }
+    }
+
+    /**
+    * Tests internal variable m_columnTypes with the method -getColumnTypes-
+    */
+    void testDetectColumnTypesFromCsvData()
+    {
+        WProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+                                boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+
+        std::vector< std::string > refColumnTypes {
+                "int", "int", "int", "double", "double", "double", "double","double","double", "double",
+                "double", "double", "double", "double", "double" , "double", "double" , "int", "int", "int", "int",
+                "int", "int", "int", "int", "int", "int", "int", "int", "double","double",
+                "int", "int", "int", "int", "double", "int", "string", "string", "string", "string",
+        };
+
+        WDataSetCSV::ContentElemSPtr testColumnTypes =  protonData.getColumnTypes();
+
+        size_t counter = 0;
+        for( auto columnTyp : *testColumnTypes )
+        {
+            TS_ASSERT_EQUALS( columnTyp, refColumnTypes.at( counter++ ) );
+        }
+    }
 };
 
 #endif  // WPROTONDATA_TEST_H
