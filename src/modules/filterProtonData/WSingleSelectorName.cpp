@@ -62,61 +62,75 @@ std::string WSingleSelectorName::getParentId()
     return "Parent id";
 }
 
-WSingleSelectorName::NameDescriptionSearch WSingleSelectorName::getXwithDescription()
+WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getXwithDescription()
 {
-    return WSingleSelectorName::NameDescriptionSearch( getX(),
+    return WSingleSelectorName::NameDescriptionSearchTyp(
+                        getX(),
                         "Choose the column which should be used to determine the x coordinate.",
-                        "posX" );
+                        "posX",
+                        WDatatype::getDouble() );
 }
 
-WSingleSelectorName::NameDescriptionSearch WSingleSelectorName::getYwithDescription()
+WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getYwithDescription()
 {
-    return WSingleSelectorName::NameDescriptionSearch( getY(),
+    return WSingleSelectorName::NameDescriptionSearchTyp(
+                        getY(),
                         "Choose the column which should be used to determine the y coordinate.",
-                        "posY" );
+                        "posY",
+                        WDatatype::getDouble() );
 }
 
-WSingleSelectorName::NameDescriptionSearch WSingleSelectorName::getZwithDescription()
+WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getZwithDescription()
 {
-    return WSingleSelectorName::NameDescriptionSearch( getZ(),
+    return WSingleSelectorName::NameDescriptionSearchTyp(
+                        getZ(),
                         "Choose the column which should be used to determine the z coordinate.",
-                        "posZ" );
+                        "posZ",
+                        WDatatype::getDouble() );
 }
 
-WSingleSelectorName::NameDescriptionSearch WSingleSelectorName::getPDGwithDescription()
+WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getPDGwithDescription()
 {
-    return WSingleSelectorName::NameDescriptionSearch( getPDG(),
+    return WSingleSelectorName::NameDescriptionSearchTyp(
+                        getPDG(),
                         "Choose the column which should be used to determine the particle data group.",
-                        "PDGEncoding" );
+                        "PDGEncoding",
+                        WDatatype::getInt() );
 }
 
-WSingleSelectorName::NameDescriptionSearch WSingleSelectorName::getEdepWithDescription()
+WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getEdepWithDescription()
 {
-    return WSingleSelectorName::NameDescriptionSearch( getEdep(),
+    return WSingleSelectorName::NameDescriptionSearchTyp(
+                        getEdep(),
                         "Choose the column which should be used to determine the energy deposition.",
-                        "edep" );
+                        "edep",
+                        WDatatype::getDouble() );
 }
 
-WSingleSelectorName::NameDescriptionSearch WSingleSelectorName::getEventIdWithDescription()
+WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getEventIdWithDescription()
 {
-    return WSingleSelectorName::NameDescriptionSearch( getEventId(),
+    return WSingleSelectorName::NameDescriptionSearchTyp(
+                        getEventId(),
                         "Choose the column which should be used to determine the event id."
                         "Tracks will be drawn based on the the event id, all particles with the same event id will be connected.",
-                        "eventID" );
+                        "eventID",
+                        WDatatype::getInt() );
 }
 
-WSingleSelectorName::NameDescriptionSearch WSingleSelectorName::getParentIdWithDescription()
+WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getParentIdWithDescription()
 {
-    return WSingleSelectorName::NameDescriptionSearch( getParentId(),
+    return WSingleSelectorName::NameDescriptionSearchTyp(
+                        getParentId(),
                         "Choose the column which should be used to determine the parent id."
                         "Primaries and secondaries filtering is based on that id, if a "
                         "particle has the parent id 0 it is a primary otherwise it is a secondary.",
-                        "parentID" );
+                        "parentID",
+                        WDatatype::getInt() );
 }
 
-std::list< WSingleSelectorName::NameDescriptionSearch > WSingleSelectorName::getListOfSelectorContent()
+std::list< WSingleSelectorName::NameDescriptionSearchTyp > WSingleSelectorName::getListOfSelectorContent()
 {
-    std::list< WSingleSelectorName::NameDescriptionSearch > list;
+    std::list< WSingleSelectorName::NameDescriptionSearchTyp > list;
 
     list.push_back( getXwithDescription() );
     list.push_back( getYwithDescription() );

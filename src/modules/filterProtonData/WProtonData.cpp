@@ -143,14 +143,31 @@ std::string WProtonData::determineColumnTypeByString( std::string cellValue )
 
     if( std::regex_search( cellValue, regexInt ) )
     {
-        return "int";
+        return WDatatype::getInt();
     }
     else if( std::regex_search( cellValue, regexDouble ) )
     {
-        return "double";
+        return WDatatype::getDouble();
     }
     else
     {
-        return "string";
+        return WDatatype::getString();
     }
+}
+
+std::vector< std::string > WProtonData::getHeaderFromType( std::string typeName )
+{
+    std::vector< std::string > header = m_csvHeader->at( 0 );
+    std::vector< std::string > columnTypes = *m_columnTypes;
+    std::vector< std::string > filterHeader;
+
+    for( size_t i = 0; i < columnTypes.size(); i++)
+    {
+        if( columnTypes[i] == typeName )
+        {
+            filterHeader.push_back( header[i] );
+        }
+    }
+
+    return filterHeader;
 }

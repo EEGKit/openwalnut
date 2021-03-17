@@ -242,20 +242,23 @@ public:
         WProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
                                 boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
 
-        std::vector< std::string > testIntList{
+        std::vector< std::string > testIntList
+        {
                 "1", "0", "10", "+1", "-1",
                 "1e+1", "+1e+1", "-1e+1",
                 "1e1", "+1e1", "-1e1",
         };
 
-        std::vector< std::string > testDoubleList{
+        std::vector< std::string > testDoubleList
+        {
                 "1000.1", "1.", ".1", "1.1",
                 "+1.", "-1.", "+.1", "-.1",
                 "+1e-1", "0.001e-12",
                 "0.111111111111111"
         };
 
-        std::vector< std::string > testStringList{
+        std::vector< std::string > testStringList
+        {
                 ".", "1a", "++1",
                 "+-1", "+", "-.",
                 "-", "--1.", "1.e.1",
@@ -286,10 +289,11 @@ public:
         WProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
                                 boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
 
-        std::vector< std::string > refColumnTypes {
-                "int", "int", "int", "double", "double", "double", "double","double","double", "double",
+        std::vector< std::string > refColumnTypes
+        {
+                "int", "int", "int", "double", "double", "double", "double", "double", "double", "double",
                 "double", "double", "double", "double", "double" , "double", "double" , "int", "int", "int", "int",
-                "int", "int", "int", "int", "int", "int", "int", "int", "double","double",
+                "int", "int", "int", "int", "int", "int", "int", "int", "double", "double",
                 "int", "int", "int", "int", "double", "int", "string", "string", "string", "string",
         };
 

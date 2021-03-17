@@ -45,6 +45,14 @@ class WColumnPropertyHandler
 {
 public:
     /**
+     * tuple with 3 string as value
+     * 1. Name of single-selector,
+     * 2. Desciption of single-selector,
+     * 3. Value that is searched for in the csv header
+     */
+    typedef std::tuple< std::string, std::string, std::string, std::string > NameDescriptionSearchTyp;
+
+    /**
      * Function variables for updating the data 
      */
     typedef boost::function< void( ) > CallbackPtr;
@@ -69,11 +77,6 @@ public:
      * creates the group property and the subproperty    
      */
     void createProperties();
-
-    /**
-     * \return boost::shared_ptr< WItemSelection > Reference of selectable column types
-     */
-    boost::shared_ptr< WItemSelection > getColumnItems();
 
     /**
      * update current group property and subproperty
@@ -114,13 +117,10 @@ private:
 
     /**
      * Creates the individual WItemSelection
-     * \param headerName The name of the selection
-     * \param description The description of the selection
-     * \param notifier The notifier for the selection
-     * \param defName The default name of the selection
+     * \param ndst ( n = Name, d = Description, s = Search, t = Typ )
      * \return WPropSelection The created selection
      */
-    WPropSelection addHeaderProperty( std::string headerName, std::string description, std::string defName,
+    WPropSelection addHeaderProperty( WColumnPropertyHandler::NameDescriptionSearchTyp ndst,
                                     WPropertyBase::PropertyChangeNotifierType notifier );
 
     /**
@@ -135,11 +135,6 @@ private:
     WPropGroup m_columnSelectionGroup;
 
     /**
-     * A list of items that can be selected using m_aSingleSelectionUsingTypes property.
-     */
-    boost::shared_ptr< WItemSelection > m_possibleSelectionsUsingTypes;
-
-    /**
      * represents the item type for item-selection
      */
     typedef WItemSelectionItemTyped< std::string > ItemType;
@@ -150,17 +145,19 @@ private:
      typedef std::map< WPropSelection, std::string >::iterator PropMapEntry;
 
     /**
-     * Get column number by name from header
-     *
-     * \param columnNameToMatch Search for the specified column name.
-     * \return Column number, where columnToMatch is in headerToSearchIn
+     * creates the content (options) of the WItemSelection 
+     * \param typeName Type of column.
+     * \return content of WItemSelection
      */
-    int getColumnNumberByName( std::string columnNameToMatch );
+    boost::shared_ptr< WItemSelection > InitializeSelectionItem( std::string typeName );
 
     /**
-     * creates the content (options) of the WItemSelection 
+     * converts the index to the filtered index  
+     * \param index index to search.
+     * \param typeName Type of column.
+     * \return filterd index
      */
-    void InitializeSelectionItem();
+    int getfilterIndex( int index, std::string typeName );
 };
 
 #endif  // WCOLUMNPROPERTYHANDLER_H

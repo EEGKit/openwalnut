@@ -28,8 +28,10 @@
 #include <regex>
 #include <map>
 #include <string>
+#include <vector>
 
 #include "core/dataHandler/WDataSetCSV.h"
+#include "WDatatype.h"
 
 
 /**
@@ -120,6 +122,13 @@ public:
      * \return a shared pointer to m_columnTypes
      */
     WDataSetCSV::ContentElemSPtr getColumnTypes();
+
+    /**
+     * Return a vector of filtered Headers
+     * \param type Type of filter 
+     * \return Return a vector of filtered Headers
+     */
+    std::vector< std::string > getHeaderFromType( std::string typeName );
 
 private:
     /**

@@ -44,19 +44,15 @@ void WColumnPropertyHandler::createProperties()
     WPropertyBase::PropertyChangeNotifierType notifier = boost::bind( &WColumnPropertyHandler::propertyNotifier,
                                                                 this, boost::placeholders::_1 );
 
-    InitializeSelectionItem();
-
     m_columnSelectionGroup = m_properties->addPropertyGroup( "Select columns", "Select the columns which should be used" );
 
-    std::list< std::tuple< std::string, std::string, std::string > > names = WSingleSelectorName::getListOfSelectorContent();
-    for( std::tuple< std::string, std::string, std::string > selectorElement : names )
+    std::list< std::tuple< std::string, std::string, std::string, std::string > > names = WSingleSelectorName::getListOfSelectorContent();
+    for( std::tuple< std::string, std::string, std::string, std::string > selectorElement : names )
     {
         std::string columnName = std::get< 0 >( selectorElement );
-        std::string desciption = std::get< 1 >( selectorElement );
-        std::string defName = std::get< 2 >( selectorElement );
 
         mapPropSelectionsToString.insert(
-            std::map< WPropSelection, std::string >::value_type( addHeaderProperty( columnName, desciption, defName, notifier ), columnName )
+            std::map< WPropSelection, std::string >::value_type( addHeaderProperty( selectorElement, notifier ), columnName )
         );
     }
 }
@@ -70,27 +66,66 @@ void WColumnPropertyHandler::updateProperty()
 {
 }
 
-void WColumnPropertyHandler::InitializeSelectionItem()
+boost::shared_ptr< WItemSelection > WColumnPropertyHandler::InitializeSelectionItem( std::string typeName )
 {
-    m_possibleSelectionsUsingTypes = WItemSelection::SPtr( new WItemSelection() );
+    boost::shared_ptr< WItemSelection > possibleSelectionsUsingTypes = WItemSelection::SPtr( new WItemSelection() );
 
-    std::vector< std::string > header = m_protonData->getCSVHeader()->at( 0 );
+    std::vector< std::string > header = m_protonData->getHeaderFromType( typeName );
+
     for( std::vector<std::string>::iterator colName = header.begin(); colName != header.end(); colName++ )
     {
-        m_possibleSelectionsUsingTypes->addItem( ItemType::create( *colName, *colName, "",  NULL ) );
+        possibleSelectionsUsingTypes->addItem( ItemType::create( *colName, *colName, "",  NULL ) );
     }
 
-    m_possibleSelectionsUsingTypes->addItem( ItemType::create( "- no selection -", "- no selection -", "",  NULL ) );
+    possibleSelectionsUsingTypes->addItem( ItemType::create( "- no selection -", "- no selection -", "",  NULL ) );
+
+    return possibleSelectionsUsingTypes;
 }
 
-WPropSelection WColumnPropertyHandler::addHeaderProperty( std::string columnName, std::string description, std::string defName,
+int WColumnPropertyHandler::getfilterIndex( int index, std::string typeName )
+{
+    std::vector< std::string > headerToSearch = m_protonData->getCSVHeader()->at( 0 );
+
+    std::string refheader = headerToSearch.at( index );
+
+    std::vector< std::string > singleSelectorContent = m_protonData->getHeaderFromType( typeName );
+
+    size_t indexCounter = 0;
+
+    std::cout << "START " << singleSelectorContent.size() << " | " << typeName << std::endl;
+    for( std::vector<std::string>::iterator colName = singleSelectorContent.begin(); colName != singleSelectorContent.end(); colName++ )
+    {
+        std::cout << "DEBUG: " << refheader << " | " << *colName << " | " << indexCounter << std::endl << std::endl;
+        if( *colName == refheader )
+        {
+            return indexCounter;
+        }
+        indexCounter++;
+    }
+
+    std::cout << "ENDE " << std::endl << std::endl;
+    return -1;
+}
+
+WPropSelection WColumnPropertyHandler::addHeaderProperty( WColumnPropertyHandler::NameDescriptionSearchTyp ndst,
                                                         WPropertyBase::PropertyChangeNotifierType notifier )
 {
+    std::string columnName = std::get< 0 >( ndst );
+    std::string description = std::get< 1 >( ndst );
+    std::string defName = std::get< 2 >( ndst );
+    std::string type = std::get< 3 >( ndst );
+
     int index = m_protonData->getColumnIndex( defName );
+
+    int indexSingleSelector = index < 0 ? -1 : getfilterIndex( index, type );
 
     m_protonData->setStateIndex( columnName, index );
 
-    WItemSelector selector = index < 0 ? m_possibleSelectionsUsingTypes->getSelectorLast() : m_possibleSelectionsUsingTypes->getSelector( index );
+    boost::shared_ptr< WItemSelection > possibleSelectionsUsingTypes = InitializeSelectionItem( type );
+
+    WItemSelector selector = index < 0 ? possibleSelectionsUsingTypes->getSelectorLast() : 
+                                         possibleSelectionsUsingTypes->getSelector( indexSingleSelector );
+
     WPropSelection selection = m_columnSelectionGroup->addProperty(
                                                 columnName,
                                                 description,
@@ -101,19 +136,6 @@ WPropSelection WColumnPropertyHandler::addHeaderProperty( std::string columnName
     WPropertyHelper::PC_NOTEMPTY::addTo( selection );
 
     return selection;
-}
-
-int WColumnPropertyHandler::getColumnNumberByName( std::string columnNameToMatch )
-{
-    std::vector< std::string > headerToSearchIn = m_protonData->getCSVHeader()->at( 0 );
-
-    int pos = 0;
-    for( std::vector< std::string >::iterator it = headerToSearchIn.begin(); it != headerToSearchIn.end(); it++ )
-    {
-        if( *it == columnNameToMatch ) return pos;
-        pos++;
-    }
-    return -1;
 }
 
 void WColumnPropertyHandler::propertyNotifier( WPropertyBase::SPtr property )
@@ -137,7 +159,7 @@ void WColumnPropertyHandler::propertyNotifier( WPropertyBase::SPtr property )
     {
         std::string selectedValue = selector->at( 0 )->getAs< ItemType >()->getValue();
 
-        m_protonData->setStateIndex( columnName, getColumnNumberByName( selectedValue ) );
+        m_protonData->setStateIndex( columnName, m_protonData->getColumnIndex( selectedValue ) );
 
         m_dataUpdate();
         if(m_externEventMethod != NULL)
@@ -145,9 +167,4 @@ void WColumnPropertyHandler::propertyNotifier( WPropertyBase::SPtr property )
             m_externEventMethod();
         }
     }
-}
-
-boost::shared_ptr< WItemSelection > WColumnPropertyHandler::getColumnItems()
-{
-    return m_possibleSelectionsUsingTypes;
 }
