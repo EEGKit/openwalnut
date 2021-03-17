@@ -120,6 +120,7 @@ void WMFilterProtonData::moduleMain()
 
         progressBar->finish();
     }
+    stop();
 }
 
 void WMFilterProtonData::connectors()
