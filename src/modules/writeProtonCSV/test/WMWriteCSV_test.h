@@ -30,10 +30,10 @@
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
-
 #include <cxxtest/TestSuite.h>
 
 #include "../WMWriteCSV.h"
+
 
 /**
  * test class of the writeCSV class

@@ -25,17 +25,16 @@
 #include <string>
 #include <vector>
 
-#include "WConnectorData.h"
-
-#include "action/WFiberActionAddVertex.h"
 #include "action/WFiberActionAddFiber.h"
+#include "action/WFiberActionAddVertex.h"
 #include "action/WFiberActionRemoveVertex.h"
 #include "action/WFiberActionRemoveFiber.h"
 #include "action/WFiberActionToggle.h"
-
 #include "core/common/WPathHelper.h"
 
+#include "WConnectorData.h"
 #include "WFiberHandler.h"
+
 
 WFiberHandler::WFiberHandler( WMPointConnector* pointConnector )
 {

@@ -22,9 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WFiberActionRemoveVertex.h"
-
 #include "../WConnectorData.h"
+#include "WFiberActionRemoveVertex.h"
 
 
 WFiberActionRemoveVertex::WFiberActionRemoveVertex( osg::Vec3 vertex, size_t fiberIdx, size_t position, WFiberHandler* fiberHandler ):

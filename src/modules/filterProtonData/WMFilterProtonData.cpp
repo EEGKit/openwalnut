@@ -28,6 +28,7 @@
 
 #include "WMFilterProtonData.h"
 
+
 W_LOADABLE_MODULE( WMFilterProtonData )
 
 WMFilterProtonData::WMFilterProtonData():
@@ -77,6 +78,9 @@ void WMFilterProtonData::moduleMain()
             continue;
         }
 
+        boost::shared_ptr< WProgress > progressBar( new WProgress( "Preparing..." ) );
+        m_progress->addSubProgress( progressBar );
+
         if( m_protonData == NULL )
         {
             m_protonData = WProtonData::SPtr( new WProtonData(  m_input->getData()->getHeader(),  m_input->getData()->getData() ) );
@@ -113,6 +117,8 @@ void WMFilterProtonData::moduleMain()
         setToLoadedProperties();
 
         setOutputFromCSV( );
+
+        progressBar->finish();
     }
 }
 
@@ -148,7 +154,7 @@ void WMFilterProtonData::properties()
     WPropertyGroup::SPtr groupVisual  = m_properties->addPropertyGroup( "Visualization", "Visualization options", false );
     WPropertyGroup::SPtr groupEventID = m_properties->addPropertyGroup( "Event Id Limitation", "Adjust the range of eventIDs to be shown.", false );
     WPropertyGroup::SPtr groupRename  = groupFilter->addPropertyGroup( "Rename Particle Types",
-                                                    "Filtering/Rename or Delete Particle-Name", false );
+                                                    "Filtering/Rename Particle Types", false );
 
     WPropertyBase::PropertyChangeNotifierType columnNotifier = boost::bind( &WMFilterProtonData::loadNotifier,
                                                                 this, groupColumn, boost::placeholders::_1 );
@@ -174,8 +180,6 @@ void WMFilterProtonData::properties()
     groupColumn->addProperty( "Event id",
                             "Choose the column which should be used to determine the event id. Tracks will be drawn based on the the event id, all "
                             "particles with the same event id will be connected.", std::string( "" ), columnNotifier, false );
-    groupColumn->addProperty( "Track id", "Choose the column which should be used to determine the track id.",
-                            std::string( "" ), columnNotifier, false );
     groupColumn->addProperty( "Parent id", "Choose the column which should be used to determine the parent id."
                             "Primaries and secondaries filtering is based on that id,"
                             " if a particle has the parent id 0 it is a primary otherwise it is a secondary.",
@@ -186,7 +190,7 @@ void WMFilterProtonData::properties()
                             "but not both at the same time.", std::string( "" ), filterNotifier, false );
     groupFilter->addProperty( "Show particles", "Choose particle type(s) to be shown.", std::string( "" ), filterNotifier, false );
 
-    groupRename->addProperty( "New Name (press enter)", "Type in a new name for the selected particle type."
+    groupRename->addProperty( "New name (press enter)", "Type in a new name for the selected particle type."
                             "To submit your entry press enter while you are in the textbox.", std::string( "" ), renameNotifier, false );
     groupRename->addProperty( "Select particle", "Select the particle type to be renamed.", std::string( "" ), renameNotifier, false );
     groupRename->addProperty( "Apply Changes", "Save", std::string( "" ), renameNotifier, false );

@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-
 #include "WEventIDLimitationPropertyHandler.h"
+
 
 WEventIDLimitationPropertyHandler::WEventIDLimitationPropertyHandler( WProtonData::SPtr protonData,
                                             WPropertyGroup::SPtr properties,
@@ -49,7 +49,7 @@ void WEventIDLimitationPropertyHandler::createProperties()
 
 void WEventIDLimitationPropertyHandler::updateProperty()
 {
-    if( m_protonData->isColumnAvailable( "Event id" ) )
+    if( m_protonData->isColumnAvailable( WSingleSelectorName::getEventId() ) )
     {
         m_minCap->setHidden( false );
         m_maxCap->setHidden( false );
@@ -76,7 +76,7 @@ void WEventIDLimitationPropertyHandler::updateMesh()
 
 void WEventIDLimitationPropertyHandler::determineMinMaxEventID()
 {
-    int eventIDIndex = m_protonData->getColumnIndexBySelection( "Event id" );
+    int eventIDIndex = m_protonData->getColumnIndexBySelection( WSingleSelectorName::getEventId() );
 
     if(eventIDIndex < 0)
     {

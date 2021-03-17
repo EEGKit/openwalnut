@@ -25,18 +25,19 @@
 #ifndef WCSVCONVERTER_H
 #define WCSVCONVERTER_H
 
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
 
 #include <boost/lexical_cast.hpp>
-#include "core/dataHandler/WGrid.h"
-#include "core/dataHandler/WGridRegular3D.h"
+
 #include "core/common/WTransferFunction.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
-#include "core/dataHandler/WDataSetPointsAndSizes.h"
 #include "core/dataHandler/WDataSetPointsAndEventID.h"
+#include "core/dataHandler/WDataSetPointsAndSizes.h"
+#include "core/dataHandler/WGrid.h"
+#include "core/dataHandler/WGridRegular3D.h"
 #include "core/dataHandler/WValueSet.h"
 #include "core/dataHandler/WValueSetBase.h"
 
@@ -44,6 +45,8 @@
 #include "WConverterVectors.h"
 #include "WPropertyStatus.h"
 #include "WProtonData.h"
+#include "WSingleSelectorName.h"
+
 
 /**
  * Converts the csv data to points and fibers.
@@ -51,14 +54,6 @@
 class WCsvConverter
 {
 public:
-    /**
-    * Initializes the vectors and indexes.
-    * Calls setOutputFromCSV.
-    * \param protonData The protondata to use.
-    * \param propertyStatus The status of the properties.
-    */
-    WCsvConverter( WProtonData::SPtr protonData, boost::shared_ptr< WPropertyStatus > propertyStatus );
-
     /**
      * Initializes the vectors, indices and transfer function color bar
      * Calls setOutputFromCSV.
@@ -247,11 +242,11 @@ private:
     float getClusterSize( float edep );
 
     /**
-     * checks whether the string is a number (float)  
+     * checks whether the string is a number (double)  
      * \param str The string to cast
-     * \return return the casted float value
+     * \return return the casted double value
      */
-    float stringToFloat( std::string str );
+    float stringToDouble( std::string str );
 
     /**
      * checks whether the string is a number (int)

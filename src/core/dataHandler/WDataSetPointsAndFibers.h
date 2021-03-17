@@ -26,13 +26,14 @@
 #define WDATASETPOINTSANDFIBERS_H
 
 #include "WDataSet.h"
-#include "WDataSetPoints.h"
 #include "WDataSetFibers.h"
+#include "WDataSetPoints.h"
+
 
 /**
  * Dataset to store a bunch of points and Fibers.
  */
-class WDataSetPointsAndFibers : public WDataSet 
+class WDataSetPointsAndFibers : public WDataSet
 {
 public:
     /**
@@ -77,7 +78,6 @@ private:
      * Dataset to store a bunch of  Fibers. 
      */
     WDataSetFibers::SPtr m_fibers;
-
 };
 
 #endif  // WDATASETPOINTSANDFIBERS_H

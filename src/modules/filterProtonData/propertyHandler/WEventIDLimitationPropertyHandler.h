@@ -26,6 +26,8 @@
 #define WEVENTIDLIMITATIONPROPERTYHANDLER_H
 
 #include "../WProtonData.h"
+#include "../WSingleSelectorName.h"
+
 
 /**
  * Creates, updates and handles the EventID properties.

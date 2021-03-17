@@ -26,31 +26,29 @@
 #define WMFILTERPROTONDATA_H
 
 #include <algorithm>
-
 #include <string>
 #include <utility>
 #include <vector>
 
 #include <boost/lexical_cast.hpp>
 
+#include "core/common/WItemSelectionItem.h"
+#include "core/common/WItemSelector.h"
 #include "core/dataHandler/WDataSetCSV.h"
 #include "core/dataHandler/WDataSetFibers.h"
-#include "core/kernel/WKernel.h"
+#include "core/dataHandler/WDataSetPoints.h"
+#include "core/dataHandler/WDataSetPointsAndEventID.h"
+#include "core/dataHandler/WDataSetPointsAndSizes.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleContainer.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
-#include "core/dataHandler/WDataSetPoints.h"
-#include "core/dataHandler/WDataSetPointsAndSizes.h"
-#include "core/dataHandler/WDataSetPointsAndEventID.h"
+#include "core/kernel/WKernel.h"
 
-#include "core/common/WItemSelectionItem.h"
-#include "core/common/WItemSelector.h"
-
-#include "WProtonData.h"
-
-#include "WPropertyStatus.h"
 #include "WCsvConverter.h"
+#include "WProtonData.h"
+#include "WPropertyStatus.h"
+
 
 /**
  * This module simply registers a given csv dataset to the csv handling mechanism.
@@ -60,6 +58,10 @@
  */
 class WMFilterProtonData : public WModuleContainer
 {
+    /**
+     * Only test classes may be friend
+     */
+     friend class WCsvConverterTest;
 public:
     /**
      * represents a boost::shared_ptr to a vector containing a vector of floats.

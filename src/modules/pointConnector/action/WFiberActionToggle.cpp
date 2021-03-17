@@ -26,6 +26,7 @@
 
 #include "WFiberActionToggle.h"
 
+
 WFiberActionToggle::WFiberActionToggle( size_t position, WFiberHandler* fiberHandler ):
     m_position( position ),
     m_fiberHandler( fiberHandler )

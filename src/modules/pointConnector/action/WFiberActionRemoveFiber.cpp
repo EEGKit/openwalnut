@@ -26,6 +26,7 @@
 
 #include "WFiberActionRemoveFiber.h"
 
+
 WFiberActionRemoveFiber::WFiberActionRemoveFiber(
                         std::string name, size_t position, WFiberHandler::PCFiber fiber, bool hidden, WFiberHandler* fiberHandler ):
     m_name( name ),

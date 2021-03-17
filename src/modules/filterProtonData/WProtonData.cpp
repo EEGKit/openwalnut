@@ -27,6 +27,7 @@
 
 #include "WProtonData.h"
 
+
 WProtonData::WProtonData( WDataSetCSV::ContentSPtr csvHeader, WDataSetCSV::ContentSPtr csvData )
 {
     setCSVHeader( csvHeader );
@@ -79,17 +80,19 @@ WDataSetCSV::ContentSPtr WProtonData::getCSVHeader()
 
 void WProtonData::setStateIndex( std::string columnName, int index )
 {
-    m_ColumnMapSelectedIndex[ columnName ] = index;
+    //0 is not accepted as an index because it is the default value if no map has been created. (index + 1)
+    m_ColumnMapSelectedIndex[ columnName ] = index + 1;
 }
 
 bool WProtonData::isColumnAvailable( std::string columnName )
 {
-    return m_ColumnMapSelectedIndex[ columnName ] >= 0;
+    return m_ColumnMapSelectedIndex[ columnName ] > 0;
 }
 
 int WProtonData::getColumnIndexBySelection( std::string selectedName )
 {
-    return m_ColumnMapSelectedIndex[ selectedName ];
+    //to get the original index value, have to calculate minus 1
+    return m_ColumnMapSelectedIndex[ selectedName ] - 1;
 }
 
 int WProtonData::getColumnIndex( std::string columnName )

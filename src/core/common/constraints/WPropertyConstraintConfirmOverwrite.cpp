@@ -22,9 +22,6 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WFiberAction.h"
+#include "WPropertyConstraintConfirmOverwrite.h"
+#include "../WPropertyVariable.h"
 
-
-WFiberAction::~WFiberAction()
-{
-}

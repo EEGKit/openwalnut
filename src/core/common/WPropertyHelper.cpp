@@ -80,6 +80,16 @@ namespace WPropertyHelper
         }
     }
 
+    namespace PC_CONFIRMOVERWRITE
+    {
+        void addTo( WPropFilename prop )
+        {
+            prop->addConstraint( boost::shared_ptr< WPropertyConstraintConfirmOverwrite< WPVBaseTypes::PV_PATH > >(
+                    new  WPropertyConstraintConfirmOverwrite< WPVBaseTypes::PV_PATH >()
+            ) );
+        }
+    }
+
     namespace PC_ISVALID
     {
         void addTo( WPropSelection prop )
