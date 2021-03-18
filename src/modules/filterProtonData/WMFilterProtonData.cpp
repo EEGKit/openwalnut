@@ -113,7 +113,10 @@ void WMFilterProtonData::moduleMain()
         m_propertyStatus->getVisualizationPropertyHandler()->createProperties();
         m_propertyStatus->getEventIDLimitationPropertyHandler()->createProperties();
 
-        createColorBar();
+        if( m_colorBar == NULL )
+        {
+            createColorBar();
+        }
         setToLoadedProperties();
 
         setOutputFromCSV( );
