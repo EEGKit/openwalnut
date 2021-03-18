@@ -23,6 +23,7 @@
 //---------------------------------------------------------------------------
 
 #include <regex>
+#include <list>
 #include <string>
 #include <vector>
 #include <boost/lexical_cast.hpp>
@@ -155,14 +156,17 @@ std::string WProtonData::determineColumnTypeByString( std::string cellValue )
 
     if( std::regex_search( cellValue, regexInt ) )
     {
+        std::cout << cellValue << "\t INT" << std::endl;
         return WDataType::getInt();
     }
     else if( std::regex_search( cellValue, regexDouble ) )
     {
+        std::cout << cellValue << "\t DOUBLE" << std::endl;
         return WDataType::getDouble();
     }
     else
     {
+        std::cout << cellValue << "\t STRING" << std::endl;
         return WDataType::getString();
     }
 }
@@ -186,22 +190,25 @@ bool WProtonData::checkIfDoubleColumnCanBeInteger( int columnNumber )
     return true;
 }
 
-std::vector< std::string > WProtonData::getHeaderFromType( std::string typeName )
+std::vector< std::string > WProtonData::getHeaderFromType( std::list< std::string > typeNames )
 {
     std::vector< std::string > header = m_csvHeader->at( 0 );
     std::vector< std::string > columnTypes = *m_columnTypes;
     std::vector< std::string > filterHeader;
 
-    if(typeName == WDataType::getDefault() )
-    {
-        return header;
-    }
-
     for( size_t i = 0; i < columnTypes.size(); i++)
     {
-        if( columnTypes[i] == typeName )
+        for( std::string type : typeNames )
         {
-            filterHeader.push_back( header[i] );
+            if( type == WDataType::getDefault() )
+            {
+                return header;
+            }
+
+            if( columnTypes[ i ] == type )
+            {
+                filterHeader.push_back( header[i] );
+            }
         }
     }
 

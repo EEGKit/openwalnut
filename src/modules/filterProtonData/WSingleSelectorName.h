@@ -44,7 +44,7 @@ public:
      * 2. Desciption of single-selector,
      * 3. Value that is searched for in the csv header
      */
-    typedef std::tuple< std::string, std::string, std::string, std::string > NameDescriptionSearchTyp;
+    typedef std::tuple< std::string, std::string, std::string, std::list < std::string > > NameDescriptionSearchTyp;
 
     /**
      * getter

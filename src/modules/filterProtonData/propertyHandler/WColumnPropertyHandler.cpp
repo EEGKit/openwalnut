@@ -46,8 +46,8 @@ void WColumnPropertyHandler::createProperties()
 
     m_columnSelectionGroup = m_properties->addPropertyGroup( "Select columns", "Select the columns which should be used" );
 
-    std::list< std::tuple< std::string, std::string, std::string, std::string > > names = WSingleSelectorName::getListOfSelectorContent();
-    for( std::tuple< std::string, std::string, std::string, std::string > selectorElement : names )
+    std::list< WColumnPropertyHandler::NameDescriptionSearchTyp > names = WSingleSelectorName::getListOfSelectorContent();
+    for( WColumnPropertyHandler::NameDescriptionSearchTyp selectorElement : names )
     {
         std::string columnName = std::get< 0 >( selectorElement );
 
@@ -66,11 +66,11 @@ void WColumnPropertyHandler::updateProperty()
 {
 }
 
-boost::shared_ptr< WItemSelection > WColumnPropertyHandler::InitializeSelectionItem( std::string typeName )
+boost::shared_ptr< WItemSelection > WColumnPropertyHandler::initializeSelectionItem( std::list< std::string > typeNames )
 {
     boost::shared_ptr< WItemSelection > possibleSelectionsUsingTypes = WItemSelection::SPtr( new WItemSelection() );
 
-    std::vector< std::string > header = m_protonData->getHeaderFromType( typeName );
+    std::vector< std::string > header = m_protonData->getHeaderFromType( typeNames );
 
     for( std::vector<std::string>::iterator colName = header.begin(); colName != header.end(); colName++ )
     {
@@ -82,7 +82,7 @@ boost::shared_ptr< WItemSelection > WColumnPropertyHandler::InitializeSelectionI
     return possibleSelectionsUsingTypes;
 }
 
-int WColumnPropertyHandler::getfilterIndex( int index, std::string typeName )
+int WColumnPropertyHandler::getFilterIndex( int index, std::list< std::string > typeName )
 {
     std::vector< std::string > headerToSearch = m_protonData->getCSVHeader()->at( 0 );
 
@@ -110,23 +110,17 @@ WPropSelection WColumnPropertyHandler::addHeaderProperty( WColumnPropertyHandler
     std::string columnName = std::get< 0 >( ndst );
     std::string description = std::get< 1 >( ndst );
     std::string defName = std::get< 2 >( ndst );
-    std::string type = std::get< 3 >( ndst );
+    std::list< std::string > type = std::get< 3 >( ndst );
 
     int index = m_protonData->getColumnIndex( defName );
 
-    int indexSingleSelector = index < 0 ? -1 : getfilterIndex( index, type );
-
-    if( indexSingleSelector < 0 )
-    {
-        indexSingleSelector = index;
-        type = WDataType::getDefault();
-    }
+    int indexSingleSelector = index < 0 ? -1 : getFilterIndex( index, type );
 
     m_protonData->setStateIndex( columnName, index );
 
-    boost::shared_ptr< WItemSelection > possibleSelectionsUsingTypes = InitializeSelectionItem( type );
+    boost::shared_ptr< WItemSelection > possibleSelectionsUsingTypes = initializeSelectionItem( type );
 
-    WItemSelector selector = index < 0 ? possibleSelectionsUsingTypes->getSelectorLast() : 
+    WItemSelector selector = index < 0 ? possibleSelectionsUsingTypes->getSelectorLast() :
                                          possibleSelectionsUsingTypes->getSelector( indexSingleSelector );
 
     WPropSelection selection = m_columnSelectionGroup->addProperty(

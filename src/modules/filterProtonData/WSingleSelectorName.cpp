@@ -69,7 +69,10 @@ WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getXwithDescr
             getX(),
             "Choose the column which should be used to determine the x coordinate.",
             "posX",
-            WDataType::getDouble() );
+            std::list< std::string >
+                    {
+                        WDataType::getInt(), WDataType::getDouble()
+                    } );
 }
 
 WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getYwithDescription()
@@ -78,7 +81,10 @@ WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getYwithDescr
             getY(),
             "Choose the column which should be used to determine the y coordinate.",
             "posY",
-            WDataType::getDouble() );
+            std::list< std::string >
+                    {
+                        WDataType::getInt(), WDataType::getDouble()
+                    } );
 }
 
 WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getZwithDescription()
@@ -87,7 +93,10 @@ WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getZwithDescr
             getZ(),
             "Choose the column which should be used to determine the z coordinate.",
             "posZ",
-            WDataType::getDefault() );
+            std::list< std::string >
+                    {
+                        WDataType::getInt(), WDataType::getDouble()
+                    } );
 }
 
 WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getPDGwithDescription()
@@ -96,7 +105,10 @@ WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getPDGwithDes
             getPDG(),
             "Choose the column which should be used to determine the particle data group.",
             "PDGEncoding",
-            WDataType::getInt() );
+            std::list< std::string >
+                    {
+                        WDataType::getInt()
+                    } );
 }
 
 WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getEdepWithDescription()
@@ -105,7 +117,10 @@ WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getEdepWithDe
             getEdep(),
             "Choose the column which should be used to determine the energy deposition.",
             "edep",
-            WDataType::getDouble() );
+            std::list< std::string >
+                    {
+                        WDataType::getInt(), WDataType::getDouble()
+                    } );
 }
 
 WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getEventIdWithDescription()
@@ -115,7 +130,10 @@ WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getEventIdWit
                         "Choose the column which should be used to determine the event id."
                         "Tracks will be drawn based on the the event id, all particles with the same event id will be connected.",
             "eventID",
-            WDataType::getInt() );
+            std::list< std::string >
+                    {
+                        WDataType::getInt()
+                    } );
 }
 
 WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getParentIdWithDescription()
@@ -126,7 +144,10 @@ WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getParentIdWi
                         "Primaries and secondaries filtering is based on that id, if a "
                         "particle has the parent id 0 it is a primary otherwise it is a secondary.",
             "parentID",
-            WDataType::getInt() );
+            std::list< std::string >
+                    {
+                        WDataType::getInt()
+                    } );
 }
 
 std::list< WSingleSelectorName::NameDescriptionSearchTyp > WSingleSelectorName::getListOfSelectorContent()

@@ -53,7 +53,7 @@ public:
      * 2. Desciption of single-selector,
      * 3. Value that is searched for in the csv header
      */
-    typedef std::tuple< std::string, std::string, std::string, std::string > NameDescriptionSearchTyp;
+    typedef std::tuple< std::string, std::string, std::string, std::list< std::string > > NameDescriptionSearchTyp;
 
     /**
      * Function variables for updating the data 
@@ -152,15 +152,15 @@ private:
      * \param typeName Type of column.
      * \return content of WItemSelection
      */
-    boost::shared_ptr< WItemSelection > InitializeSelectionItem( std::string typeName );
+    boost::shared_ptr< WItemSelection > initializeSelectionItem( std::list< std::string > typeName );
 
     /**
      * converts the index to the filtered index  
      * \param index index to search.
-     * \param typeName Type of column.
+     * \param typeName List of column types.
      * \return filterd index
      */
-    int getfilterIndex( int index, std::string typeName );
+    int getFilterIndex( int index, std::list< std::string > typeName );
 };
 
 #endif  // WCOLUMNPROPERTYHANDLER_H

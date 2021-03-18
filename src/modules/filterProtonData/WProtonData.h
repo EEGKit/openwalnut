@@ -26,6 +26,7 @@
 #define WPROTONDATA_H
 
 #include <regex>
+#include <list>
 #include <map>
 #include <string>
 #include <vector>
@@ -128,7 +129,7 @@ public:
      * \param type Type of filter 
      * \return Return a vector of filtered Headers
      */
-    std::vector< std::string > getHeaderFromType( std::string typeName );
+    std::vector< std::string > getHeaderFromType( std::list< std::string > typeNames );
 
 private:
     /**
