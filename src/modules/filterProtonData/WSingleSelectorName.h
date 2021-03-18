@@ -29,7 +29,7 @@
 #include <list>
 #include <string>
 
-#include "WDatatype.h"
+#include "WDataType.h"
 
 
 /**

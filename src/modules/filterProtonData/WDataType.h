@@ -30,7 +30,7 @@
 /**
  * Holds the datatypes as string
  */
-class WDatatype
+class WDataType
 {
 public:
     /**

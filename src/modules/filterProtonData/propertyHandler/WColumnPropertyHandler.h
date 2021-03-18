@@ -35,7 +35,7 @@
 
 #include "core/common/WItemSelectionItemTyped.h"
 
-#include "../WDatatype.h"
+#include "../WDataType.h"
 #include "../WProtonData.h"
 #include "../WSingleSelectorName.h"
 

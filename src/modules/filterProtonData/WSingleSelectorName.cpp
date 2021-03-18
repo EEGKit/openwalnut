@@ -25,7 +25,7 @@
 #include <list>
 #include <string>
 
-#include "WDatatype.h"
+#include "WDataType.h"
 #include "WSingleSelectorName.h"
 
 std::string WSingleSelectorName::getX()
@@ -66,67 +66,67 @@ std::string WSingleSelectorName::getParentId()
 WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getXwithDescription()
 {
     return WSingleSelectorName::NameDescriptionSearchTyp(
-                        getX(),
-                        "Choose the column which should be used to determine the x coordinate.",
-                        "posX",
-                        WDatatype::getDouble() );
+            getX(),
+            "Choose the column which should be used to determine the x coordinate.",
+            "posX",
+            WDataType::getDouble() );
 }
 
 WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getYwithDescription()
 {
     return WSingleSelectorName::NameDescriptionSearchTyp(
-                        getY(),
-                        "Choose the column which should be used to determine the y coordinate.",
-                        "posY",
-                        WDatatype::getDouble() );
+            getY(),
+            "Choose the column which should be used to determine the y coordinate.",
+            "posY",
+            WDataType::getDouble() );
 }
 
 WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getZwithDescription()
 {
     return WSingleSelectorName::NameDescriptionSearchTyp(
-                        getZ(),
-                        "Choose the column which should be used to determine the z coordinate.",
-                        "posZ",
-                        WDatatype::getDefault() );
+            getZ(),
+            "Choose the column which should be used to determine the z coordinate.",
+            "posZ",
+            WDataType::getDefault() );
 }
 
 WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getPDGwithDescription()
 {
     return WSingleSelectorName::NameDescriptionSearchTyp(
-                        getPDG(),
-                        "Choose the column which should be used to determine the particle data group.",
-                        "PDGEncoding",
-                        WDatatype::getInt() );
+            getPDG(),
+            "Choose the column which should be used to determine the particle data group.",
+            "PDGEncoding",
+            WDataType::getInt() );
 }
 
 WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getEdepWithDescription()
 {
     return WSingleSelectorName::NameDescriptionSearchTyp(
-                        getEdep(),
-                        "Choose the column which should be used to determine the energy deposition.",
-                        "edep",
-                        WDatatype::getDouble() );
+            getEdep(),
+            "Choose the column which should be used to determine the energy deposition.",
+            "edep",
+            WDataType::getDouble() );
 }
 
 WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getEventIdWithDescription()
 {
     return WSingleSelectorName::NameDescriptionSearchTyp(
-                        getEventId(),
+            getEventId(),
                         "Choose the column which should be used to determine the event id."
                         "Tracks will be drawn based on the the event id, all particles with the same event id will be connected.",
-                        "eventID",
-                        WDatatype::getInt() );
+            "eventID",
+            WDataType::getInt() );
 }
 
 WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getParentIdWithDescription()
 {
     return WSingleSelectorName::NameDescriptionSearchTyp(
-                        getParentId(),
+            getParentId(),
                         "Choose the column which should be used to determine the parent id."
                         "Primaries and secondaries filtering is based on that id, if a "
                         "particle has the parent id 0 it is a primary otherwise it is a secondary.",
-                        "parentID",
-                        WDatatype::getInt() );
+            "parentID",
+            WDataType::getInt() );
 }
 
 std::list< WSingleSelectorName::NameDescriptionSearchTyp > WSingleSelectorName::getListOfSelectorContent()

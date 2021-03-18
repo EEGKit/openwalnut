@@ -31,7 +31,7 @@
 #include <vector>
 
 #include "core/dataHandler/WDataSetCSV.h"
-#include "WDatatype.h"
+#include "WDataType.h"
 
 
 /**

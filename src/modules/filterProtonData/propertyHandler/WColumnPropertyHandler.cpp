@@ -119,7 +119,7 @@ WPropSelection WColumnPropertyHandler::addHeaderProperty( WColumnPropertyHandler
     if( indexSingleSelector < 0 )
     {
         indexSingleSelector = index;
-        type = WDatatype::getDefault();
+        type = WDataType::getDefault();
     }
 
     m_protonData->setStateIndex( columnName, index );

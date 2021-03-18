@@ -24,24 +24,24 @@
 
 #include <string>
 
-#include "WDatatype.h"
+#include "WDataType.h"
 
-std::string WDatatype::getInt()
+std::string WDataType::getInt()
 {
     return "int";
 }
 
-std::string WDatatype::getDouble()
+std::string WDataType::getDouble()
 {
     return "double";
 }
 
-std::string WDatatype::getString()
+std::string WDataType::getString()
 {
     return "string";
 }
 
-std::string WDatatype::getDefault()
+std::string WDataType::getDefault()
 {
     return "default";
 }
