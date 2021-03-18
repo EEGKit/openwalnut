@@ -54,6 +54,7 @@ void WProtonData::setCSVHeader( WDataSetCSV::ContentSPtr csvHeader )
     std::vector< std::string > header = m_csvHeader->at( 0 );
 
     //Set Name with Index of csv to map
+    m_columnMap.clear();
     for( size_t i = 0; i < header.size(); i++ )
     {
         m_columnMap[header[i]] = i;
