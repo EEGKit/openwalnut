@@ -135,7 +135,7 @@ private:
         fiberStartIndexes->push_back( fiberStartIndex );
 
         //calculate fibers
-        for( int eID : *eventIDs )
+        for( size_t eID : *eventIDs )
         {
             if( currentEventID != eID )
             {
