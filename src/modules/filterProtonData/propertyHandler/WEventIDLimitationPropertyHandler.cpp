@@ -42,8 +42,6 @@ void WEventIDLimitationPropertyHandler::createProperties()
     m_maxCap = eventIDGroup->addProperty( "Maximum event id", "Filters out every event id which is higher than the set value.", 2000 );
     m_applySelection = eventIDGroup->addProperty( "Set selection", "Apply", WPVBaseTypes::PV_TRIGGER_READY, eventIDNotifier );
 
-    determineMinMaxEventID();
-
     updateProperty();
 }
 
@@ -54,6 +52,8 @@ void WEventIDLimitationPropertyHandler::updateProperty()
         m_minCap->setHidden( false );
         m_maxCap->setHidden( false );
         m_applySelection->setHidden( false );
+
+        determineMinMaxEventID();
     }
     else
     {
@@ -65,7 +65,6 @@ void WEventIDLimitationPropertyHandler::updateProperty()
 
 void WEventIDLimitationPropertyHandler::updateMesh()
 {
-    determineMinMaxEventID();
     m_dataUpdate( );
 
     if( m_applySelection->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
@@ -84,21 +83,34 @@ void WEventIDLimitationPropertyHandler::determineMinMaxEventID()
     }
 
     int minCap = std::stoi( m_protonData->getCSVData()->front().at( eventIDIndex ) );
-    int maxCap = std::stoi( m_protonData->getCSVData()->back().at( eventIDIndex ) );
+    int maxCap = maxCap;
+    for( auto iter = m_protonData->getCSVData()->begin(); iter != m_protonData->getCSVData()->end(); iter++ )
+    {
+        int calc = std::stoi( ( *iter ).at( eventIDIndex ) );
+        if( calc < minCap )
+        {
+            minCap = calc;
+        }
+        if(calc > maxCap )
+        {
+            maxCap = calc;
+        }
+    }
 
     m_minCap->setMin( minCap );
     m_minCap->setMax( maxCap );
     m_maxCap->setMin( minCap );
     m_maxCap->setMax( maxCap );
 
-    int currentMinCap = m_minCap->get();
-    int currentMaxCap = m_maxCap->get();
+    if( m_maxCap->get() > maxCap )
+    {
+        m_maxCap->set( maxCap );
+    }
 
-    if( currentMaxCap < currentMinCap )
-        m_maxCap->set( currentMinCap );
-
-    if( currentMinCap < 0 )
-        m_minCap->set( 0 );
+    if( m_minCap->get() < minCap )
+    {
+        m_minCap->set( minCap );
+    }
 }
 
 WPropInt WEventIDLimitationPropertyHandler::getMinCap()
