@@ -72,9 +72,9 @@ void WProtonData::setCSVData( WDataSetCSV::ContentSPtr csvData )
         throw WException( "Can not set data! No data content found!" );
     }
 
-    detectColumnTypesFromCsvData( csvData );
-
     m_csvData = csvData;
+
+    detectColumnTypesFromCsvData( csvData );
 }
 
 WDataSetCSV::ContentSPtr WProtonData::getCSVData()
@@ -134,6 +134,17 @@ void WProtonData::detectColumnTypesFromCsvData( WDataSetCSV::ContentSPtr csvData
     assert( m_columnTypes != nullptr );
     assert( !m_columnTypes->empty() );
     assert( m_columnTypes->size() == m_csvHeader->at( 0 ).size() );
+
+    for( size_t idx = 0; idx < m_columnTypes->size(); idx++ )
+    {
+        if( m_columnTypes->at( idx ) == WDatatype::getDouble() )
+        {
+            if( checkIfDoubleColumnCanBeInteger( idx ) )
+            {
+                m_columnTypes->at( idx ) = WDatatype::getInt();
+            }
+        }
+    }
 }
 
 std::string WProtonData::determineColumnTypeByString( std::string cellValue )
@@ -153,6 +164,25 @@ std::string WProtonData::determineColumnTypeByString( std::string cellValue )
     {
         return WDatatype::getString();
     }
+}
+
+bool WProtonData::checkIfDoubleColumnCanBeInteger( int columnNumber )
+{
+    double doubleValue;
+    int intValue;
+
+    for( auto row : *m_csvData )
+    {
+        doubleValue = boost::lexical_cast< double >( row.at( columnNumber ) );
+        intValue = ( int )doubleValue;
+
+        if( doubleValue - intValue != 0 )
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 std::vector< std::string > WProtonData::getHeaderFromType( std::string typeName )

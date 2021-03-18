@@ -168,6 +168,13 @@ private:
      * \return either "int", "double" or "string"
      */
     std::string determineColumnTypeByString( std::string cellValue );
+
+    /**
+     * Checks, if values of a column, containing double values, can be converted to integers
+     * \param columnNumber the column number within m_csvHeader
+     * \return true, if all double values of a column ends with ".0"; false otherwise
+     */
+    bool checkIfDoubleColumnCanBeInteger( int columnNumber );
 };
 
 #endif  // WPROTONDATA_H
