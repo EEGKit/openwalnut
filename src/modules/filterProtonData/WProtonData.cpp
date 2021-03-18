@@ -138,7 +138,7 @@ void WProtonData::detectColumnTypesFromCsvData( WDataSetCSV::ContentSPtr csvData
 
 std::string WProtonData::determineColumnTypeByString( std::string cellValue )
 {
-    std::regex regexInt( R"(^-?[[:d:]]+$)" );
+    std::regex regexInt( R"(^[-\+]?[[:d:]]+([eE]\+?0?[1-9])?$)" );
     std::regex regexDouble( R"(^([+-]?(?:[[:d:]]+\.?|[[:d:]]*\.[[:d:]]+))(?:[Ee][+-]?[[:d:]]+)?$)" );
 
     if( std::regex_search( cellValue, regexInt ) )

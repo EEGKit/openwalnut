@@ -25,6 +25,7 @@
 #include <list>
 #include <string>
 
+#include "WDatatype.h"
 #include "WSingleSelectorName.h"
 
 std::string WSingleSelectorName::getX()
