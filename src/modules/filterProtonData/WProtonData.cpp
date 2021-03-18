@@ -161,6 +161,11 @@ std::vector< std::string > WProtonData::getHeaderFromType( std::string typeName 
     std::vector< std::string > columnTypes = *m_columnTypes;
     std::vector< std::string > filterHeader;
 
+    if( typeName == WDatatype::getDefault() )
+    {
+        return header;
+    }
+
     for( size_t i = 0; i < columnTypes.size(); i++)
     {
         if( columnTypes[i] == typeName )

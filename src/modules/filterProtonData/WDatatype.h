@@ -50,6 +50,12 @@ public:
      * \return datatype string as string
      */
     static std::string getString();
+
+    /**
+     * getter
+     * \return default as string
+     */
+    static std::string getDefault();
 };
 
 #endif  // WDATATYPE_H

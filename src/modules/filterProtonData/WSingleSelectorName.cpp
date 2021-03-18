@@ -86,7 +86,7 @@ WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getZwithDescr
                         getZ(),
                         "Choose the column which should be used to determine the z coordinate.",
                         "posZ",
-                        WDatatype::getDouble() );
+                        WDatatype::getDefault() );
 }
 
 WSingleSelectorName::NameDescriptionSearchTyp WSingleSelectorName::getPDGwithDescription()

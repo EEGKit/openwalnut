@@ -40,3 +40,8 @@ std::string WDatatype::getString()
 {
     return "string";
 }
+
+std::string WDatatype::getDefault()
+{
+    return "default";
+}

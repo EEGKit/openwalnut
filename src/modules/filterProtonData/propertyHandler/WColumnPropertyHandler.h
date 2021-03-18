@@ -35,8 +35,11 @@
 
 #include "core/common/WItemSelectionItemTyped.h"
 
+#include "../WDatatype.h"
 #include "../WProtonData.h"
 #include "../WSingleSelectorName.h"
+
+
 
 /**
  * Creates, updates and handles the column properties.
