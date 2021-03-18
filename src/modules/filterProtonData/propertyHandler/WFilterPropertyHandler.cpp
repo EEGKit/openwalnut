@@ -195,6 +195,12 @@ void WFilterPropertyHandler::createPropToSetParticleNames()
 std::string WFilterPropertyHandler::setDefaultForRenameField()
 {
     WItemSelector selectedPdg = m_PdgForRenameSelection->get( true );
+
+    if( selectedPdg.empty() )
+    {
+        return "";
+    }
+
     std::string particleName = selectedPdg.at( 0 )->getName();
     return particleName.substr( 0, particleName.find( " (" ) );
 }
