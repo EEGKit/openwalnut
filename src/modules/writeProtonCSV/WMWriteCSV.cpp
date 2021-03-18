@@ -24,6 +24,7 @@
 
 #include <list>
 #include <string>
+#include <vector>
 
 #include "core/common/WPathHelper.h"
 #include "core/kernel/WKernel.h"
@@ -214,6 +215,7 @@ void WMWriteCSV::writeToFile()
     std::string outputFilename = sourceFilename + ".csv";
 
     WDataSetCSV::SeperatedRowSPtr csvContent = m_CSVInput->getData()->getRawDataSet();
+    std::vector< std::string > csvHeader = m_CSVInput->getData()->getHeader()->at( 0 );
     WDataSetFibers::SPtr fibers = m_PointsAndFibersInput->getData()->getFibers();
     WDataSetPoints::SPtr points = m_PointsAndFibersInput->getData()->getPoints();
 
@@ -230,7 +232,15 @@ void WMWriteCSV::writeToFile()
 
     bool isMatch = false;
 
-    newCSVFile << csvContent->at( 0 ) << "," << "SelectedEventID" << std::endl;
+    std::string newColumnName = "SelectedEventID";
+    size_t counter = 1;
+    while( std::find( csvHeader.begin(), csvHeader.end(), newColumnName ) != csvHeader.end() )
+    {
+        newColumnName = "SelectedEventID_" + boost::lexical_cast< std::string >( counter );
+        counter++;
+    }
+
+    newCSVFile << csvContent->at( 0 ) << "," << newColumnName << std::endl;
     csvContent->erase( csvContent->begin() );
 
     for( size_t row = 0; row < csvContent->size(); row++ )
