@@ -92,10 +92,8 @@ int WColumnPropertyHandler::getfilterIndex( int index, std::string typeName )
 
     size_t indexCounter = 0;
 
-    std::cout << "START " << singleSelectorContent.size() << " | " << typeName << std::endl;
     for( std::vector<std::string>::iterator colName = singleSelectorContent.begin(); colName != singleSelectorContent.end(); colName++ )
     {
-        std::cout << "DEBUG: " << refheader << " | " << *colName << " | " << indexCounter << std::endl << std::endl;
         if( *colName == refheader )
         {
             return indexCounter;
@@ -103,7 +101,6 @@ int WColumnPropertyHandler::getfilterIndex( int index, std::string typeName )
         indexCounter++;
     }
 
-    std::cout << "ENDE " << std::endl << std::endl;
     return -1;
 }
 
@@ -118,6 +115,12 @@ WPropSelection WColumnPropertyHandler::addHeaderProperty( WColumnPropertyHandler
     int index = m_protonData->getColumnIndex( defName );
 
     int indexSingleSelector = index < 0 ? -1 : getfilterIndex( index, type );
+
+    if( indexSingleSelector < 0 )
+    {
+        indexSingleSelector = index;
+        type = WDatatype::getDefault();
+    }
 
     m_protonData->setStateIndex( columnName, index );
 
