@@ -145,7 +145,7 @@ public:
     /**
      * Updates the UI selector.
      */
-    void selectorUpdate();
+    void selectorUpdate( size_t idx );
 
     /**
      * Clears the data in this handler.

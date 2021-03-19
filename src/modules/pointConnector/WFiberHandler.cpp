@@ -147,7 +147,7 @@ void WFiberHandler::addFiber( std::string name, bool silent, bool updateSelector
 
     if( updateSelector )
     {
-        selectorUpdate();
+        selectorUpdate( m_fibers->size() - 1);
     }
 
     if( !silent )
@@ -156,9 +156,9 @@ void WFiberHandler::addFiber( std::string name, bool silent, bool updateSelector
     }
 }
 
-void WFiberHandler::selectorUpdate()
+void WFiberHandler::selectorUpdate( size_t idx )
 {
-    m_fiberSelection->set( m_possibleFiberSelections->getSelectorLast() );
+    m_fiberSelection->set( m_possibleFiberSelections->getSelector( idx ) );
 }
 
 void WFiberHandler::addFiberAt( std::string name, size_t position, bool hidden, bool silent, PCFiber fiber )
