@@ -156,17 +156,14 @@ std::string WProtonData::determineColumnTypeByString( std::string cellValue )
 
     if( std::regex_search( cellValue, regexInt ) )
     {
-        std::cout << cellValue << "\t INT" << std::endl;
         return WDataType::getInt();
     }
     else if( std::regex_search( cellValue, regexDouble ) )
     {
-        std::cout << cellValue << "\t DOUBLE" << std::endl;
         return WDataType::getDouble();
     }
     else
     {
-        std::cout << cellValue << "\t STRING" << std::endl;
         return WDataType::getString();
     }
 }
