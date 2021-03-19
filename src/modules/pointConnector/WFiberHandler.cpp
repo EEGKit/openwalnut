@@ -147,7 +147,7 @@ void WFiberHandler::addFiber( std::string name, bool silent, bool updateSelector
 
     if( updateSelector )
     {
-        selectorUpdate( m_fibers->size() - 1);
+        selectorUpdate( m_fibers->size() - 1 );
     }
 
     if( !silent )

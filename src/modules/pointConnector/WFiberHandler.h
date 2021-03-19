@@ -144,6 +144,8 @@ public:
 
     /**
      * Updates the UI selector.
+     * 
+     * \param idx index of the selected fiber.
      */
     void selectorUpdate( size_t idx );
 
