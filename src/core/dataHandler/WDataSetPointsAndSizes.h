@@ -32,6 +32,7 @@
 
 #include "WDataSetPoints.h"
 
+
 /**
  * Dataset to store a bunch of points with their sizes but without order or topology.
  */
@@ -46,7 +47,7 @@ public:
     /**
      * Pointer to const dataset.
      */
-    typedef boost::shared_ptr< const WDataSetPoints > ConstSPtr;
+    typedef boost::shared_ptr< const WDataSetPointsAndSizes > ConstSPtr;
 
     /**
      * Sizes for each vertix in VertexArray

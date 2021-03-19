@@ -22,9 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
+#include "../WConnectorData.h"
 #include "WFiberActionAddVertex.h"
 
-#include "../WConnectorData.h"
 
 WFiberActionAddVertex::WFiberActionAddVertex( osg::Vec3 vertex, size_t fiberIdx, WFiberHandler* fiberHandler ):
     m_vertex( vertex ),

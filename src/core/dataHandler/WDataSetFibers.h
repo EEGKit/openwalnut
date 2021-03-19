@@ -400,6 +400,13 @@ public:
     const boost::shared_ptr< ColorScheme > getColorScheme( size_t idx ) const;
 
     /**
+     * Sets the selected color scheme.
+     * 
+     * \param idx the index
+     */
+    void setSelectedColorScheme( size_t idx );
+
+    /**
      * Convenience method returning the currently selected scheme. This is a comfortable alternative to using the color scheme selection
      * property.
      *

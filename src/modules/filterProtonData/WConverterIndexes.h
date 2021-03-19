@@ -22,34 +22,35 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WMCONVERTERINDEXES_H
-#define WMCONVERTERINDEXES_H
+#ifndef WCONVERTERINDEXES_H
+#define WCONVERTERINDEXES_H
 
 #include <boost/shared_ptr.hpp>
 
-#include "WMProtonData.h"
+#include "WProtonData.h"
+
 
 /**
  * Holds the indexes of the columns and is able to update them.
  */
-class WMConverterIndexes
+class WConverterIndexes
 {
 public:
     /**
      * A shared_ptr to this class.
      */
-    typedef boost::shared_ptr< WMConverterIndexes > SPtr;
+    typedef boost::shared_ptr< WConverterIndexes > SPtr;
 
     /**
      * Empty constructor for class creation.
      */
-    WMConverterIndexes();
+    WConverterIndexes();
 
     /**
      * Updates the indexes based on the data given.
      * \param protonData The data which contains the columns.
      */
-    void update( WMProtonData::SPtr protonData );
+    void update( WProtonData::SPtr protonData );
 
     /**
      * Gets the parentID index as integer.
@@ -110,4 +111,4 @@ private:
     int m_eventID = -1; //!< The eventID index.
 };
 
-#endif  // WMCONVERTERINDEXES_H
+#endif  // WCONVERTERINDEXES_H
