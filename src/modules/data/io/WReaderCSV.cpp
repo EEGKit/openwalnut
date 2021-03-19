@@ -89,9 +89,6 @@ boost::shared_ptr< WDataSetCSV > WReaderCSV::read()
 
     file.close();
 
-    header->push_back( data->at( 0 ) );
-    data->erase( data->begin() );
-
     boost::shared_ptr< WDataSetCSV > datasetcsv = boost::shared_ptr< WDataSetCSV >( new WDataSetCSV( header, data ) );
     datasetcsv->setRawDataSet( rawRow );
 

@@ -29,6 +29,8 @@
 #include <list>
 #include <string>
 
+#include "WDataType.h"
+
 
 /**
  * Holds the single selector content.
@@ -42,7 +44,7 @@ public:
      * 2. Desciption of single-selector,
      * 3. Value that is searched for in the csv header
      */
-    typedef std::tuple< std::string, std::string , std::string > NameDescriptionSearch;
+    typedef std::tuple< std::string, std::string, std::string, std::list < std::string > > NameDescriptionSearchTyp;
 
     /**
      * getter
@@ -90,49 +92,49 @@ public:
      * getter
      * \return the name of the single-selector (X) with Description
      */
-    static WSingleSelectorName::NameDescriptionSearch getXwithDescription();
+    static WSingleSelectorName::NameDescriptionSearchTyp getXwithDescription();
 
     /**
      * getter
      * \return the name of the single-selector (Y) with Description
      */
-    static WSingleSelectorName::NameDescriptionSearch getYwithDescription();
+    static WSingleSelectorName::NameDescriptionSearchTyp getYwithDescription();
 
     /**
      * getter
      * \return the name of the single-selector (Z) with Description
      */
-    static WSingleSelectorName::NameDescriptionSearch getZwithDescription();
+    static WSingleSelectorName::NameDescriptionSearchTyp getZwithDescription();
 
     /**
      * getter
      * \return the name of the single-selector (pdg) with Description
      */
-    static WSingleSelectorName::NameDescriptionSearch getPDGwithDescription();
+    static WSingleSelectorName::NameDescriptionSearchTyp getPDGwithDescription();
 
     /**
      * getter
      * \return the name of the single-selector (edep) with Description
      */
-    static WSingleSelectorName::NameDescriptionSearch getEdepWithDescription();
+    static WSingleSelectorName::NameDescriptionSearchTyp getEdepWithDescription();
 
     /**
      * getter
      * \return the name of the single-selector (Event id) with Description
      */
-    static WSingleSelectorName::NameDescriptionSearch getEventIdWithDescription();
+    static WSingleSelectorName::NameDescriptionSearchTyp getEventIdWithDescription();
 
     /**
      * getter
      * \return the name of the single-selector (Parent id) with Description
      */
-    static WSingleSelectorName::NameDescriptionSearch getParentIdWithDescription();
+    static WSingleSelectorName::NameDescriptionSearchTyp getParentIdWithDescription();
 
     /**
      * getter
      * \return Vector of names of the single-selectors with Description and Value that is searched for in the csv header
      */
-    static std::list< WSingleSelectorName::NameDescriptionSearch > getListOfSelectorContent();
+    static std::list< WSingleSelectorName::NameDescriptionSearchTyp > getListOfSelectorContent();
 };
 
 #endif  // WSINGLESELECTORNAME_H

@@ -61,6 +61,11 @@ public:
     typedef std::vector< std::string > ContentElem;
 
     /**
+     * represents a shared pointer to a ContentElem object.
+     */
+    typedef boost::shared_ptr< std::vector< std::string > > ContentElemSPtr;
+
+    /**
      * Construct WDataSetCSV object
      *
      * \param header Column names of the CSV file.
