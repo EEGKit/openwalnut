@@ -93,7 +93,7 @@ public:
     /**
      * getter
      *
-     * \param columnName Name of selected name of single-selection
+     * \param selectedName Name of selected name of single-selection
      * \return return the position current selected item
      */
     int getColumnIndexBySelection( std::string selectedName );
