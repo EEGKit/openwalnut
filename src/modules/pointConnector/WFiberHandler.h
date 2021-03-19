@@ -144,8 +144,10 @@ public:
 
     /**
      * Updates the UI selector.
+     * 
+     * \param idx index of the selected fiber.
      */
-    void selectorUpdate();
+    void selectorUpdate( size_t idx );
 
     /**
      * Clears the data in this handler.
