@@ -275,7 +275,8 @@ void WMPointConnector::handleClick( osg::Vec3 cameraPosition, osg::Vec3 directio
                 {
                     m_connectorData->selectPoint( hitIdx );
                 }
-                else {
+                else
+                {
                     m_fiberHandler->selectFiber( fiberIdx );
                     m_fiberHandler->selectorUpdate( fiberIdx );
                 }
