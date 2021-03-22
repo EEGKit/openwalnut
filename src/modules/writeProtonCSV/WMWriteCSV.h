@@ -118,17 +118,36 @@ private:
      * \param fibers selected points as fibers from Point-Connector
      * \return list of internal vertex with id 
      */
-    std::list< std::tuple < osg::Vec3, int > > getListOfInternalVertex( WDataSetFibers::SPtr fibers );
+    std::list< std::tuple < float, float, float, int > > getListOfInternalVertex( WDataSetFibers::SPtr fibers );
 
     /**
-     * Helpermethod to create a List of internal Position with id
-     * \param listOfInternalVertex selected points as fibers from Point-Connector
-     * \param points selected points as fibers from Point-Connector
-     * \return list of internal position of row and the selectedEventID
+     * Helpermethod: Returns the path from Filedialog 
+     * \return Returns the filename 
      */
-    std::list< std::tuple < int, int > > getListOfPositionAndID(
-                            std::list< std::tuple < osg::Vec3, int > > listOfInternalVertex,
-                            WDataSetPoints::SPtr points );
+    std::string getPathToSave();
+
+    /**
+     * The Helpermethod goes through the header and searches for -SelectedEventID-, 
+     * if one was found, append the number of headers found 
+     * to the header (example: SelectedEventID_4) 
+     * \return return the new Headername
+     */
+    std::string getNewCSVHeader();
+
+    /**
+     * Helpermethod: checks whether the source domain contains the specified float 
+     * \param sourceString source string
+     * \param num search number
+     * \return If found then true otherwise false 
+     */
+    bool contains( std::string sourceString, float num);
+
+    /**
+     * Helpermethod goes through the existing EvenIDs and returns the next one.
+     * \param listOfInternalVertex get selected EventIDs
+     * \return next free EventID 
+     */
+    size_t createStartCounter( std::list< std::tuple < float, float, float, int > > listOfInternalVertex );
 
     /**
      * The filename property -> where to write the csv file
