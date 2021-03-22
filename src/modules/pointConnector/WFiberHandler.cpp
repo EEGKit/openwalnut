@@ -47,9 +47,41 @@ WFiberHandler::WFiberHandler( WMPointConnector* pointConnector )
     m_fiberCount = 1;
 }
 
+void WFiberHandler::sortVertices()
+{
+    if( m_fibers->empty() )
+    {
+        return;
+    }
+
+    for( auto fiber = m_fibers->begin(); fiber != m_fibers->end(); fiber++ )
+    {
+        if( fiber->empty() )
+        {
+            continue;
+        }
+
+        std::sort( fiber->begin(), fiber->end(), []( osg::Vec3 a, osg::Vec3 b )
+        {
+            if( a.z() != b.z() )
+            {
+                return a.z() < b.z();
+            }
+
+            if(a.x() != b.x() )
+            {
+                return a.x() < b.x();
+            }
+
+            return a.y() < b.y();
+        } );
+    }
+}
+
 void WFiberHandler::addVertexToFiber( osg::Vec3 vertex, size_t fiberIdx, bool silent )
 {
     m_fibers->at( fiberIdx ).push_back( vertex );
+    sortVertices();
 
     if( !silent )
     {

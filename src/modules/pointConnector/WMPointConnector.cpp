@@ -206,6 +206,8 @@ void WMPointConnector::handleInput()
     m_fiberHandler->setFiberCount( fibers->size() );
     m_fiberHandler->selectorUpdate( fibers->size() - 1 );
 
+    m_fiberHandler->sortVertices();
+
     updatePoints();
     updateOutput();
 }
@@ -271,10 +273,12 @@ void WMPointConnector::handleClick( osg::Vec3 cameraPosition, osg::Vec3 directio
             {
                 if( m_fiberHandler->getSelectedFiber() == fiberIdx )
                 {
-                    return;
+                    m_connectorData->selectPoint( hitIdx );
                 }
-                m_fiberHandler->selectFiber( fiberIdx );
-                m_fiberHandler->selectorUpdate( fiberIdx );
+                else {
+                    m_fiberHandler->selectFiber( fiberIdx );
+                    m_fiberHandler->selectorUpdate( fiberIdx );
+                }
             }
             else
             {
