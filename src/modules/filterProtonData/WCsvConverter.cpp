@@ -84,6 +84,13 @@ void WCsvConverter::setOutputFromCSV( )
             continue;
         }
 
+        float edep = stringToDouble( dataRow->at( m_indexes->getEdep() ) );
+
+        if( getClusterSize( edep ) < 1.0 || getClusterSize( edep ) > 35.0 )
+        {
+            continue;
+        }
+
         addVertex( dataRow );
         addColor( plainColor );
         addEdepAndSize( dataRow, &maxEdep );
