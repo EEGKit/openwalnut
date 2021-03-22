@@ -166,6 +166,11 @@ public:
     void selectLastPoint();
 
     /**
+     * Sorts the vertices by their z value.
+     */
+    void sortVertices();
+
+    /**
      * Checks if a fiber is hidden.
      * \param idx The index of the fiber to check.
      * \return true The fiber is hidden.
