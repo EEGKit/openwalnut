@@ -109,11 +109,11 @@ boost::shared_ptr< WDataSetSingle > WCsvConverter::getTransferFunction()
 
 boost::shared_ptr< std::vector<unsigned char> > WCsvConverter::sampleTransferFunction()
 {
-    boost::shared_ptr< std::vector<unsigned char> > data( new std::vector<unsigned char>( 10 * 4 ) );
+    boost::shared_ptr< std::vector<unsigned char> > data( new std::vector<unsigned char>( 50 * 4 ) );
 
     WTransferFunction tf = m_propertyStatus->getVisualizationPropertyHandler()->getTransferFunction()->get( true );
 
-    tf.sample1DTransferFunction( &( *data )[ 0 ], 10, 0.0, 1.0 );
+    tf.sample1DTransferFunction( &( *data )[ 0 ], 50, 0.0, 1.0 );
 
     return data;
 }
@@ -138,7 +138,7 @@ void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArra
 
             if( m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
             {
-                clusterSizeNormalized = static_cast< int >( 9 * clusterSizeNormalized );
+                clusterSizeNormalized = static_cast< int >( 49 * clusterSizeNormalized );
 
                 for( int i = 0; i < 4; i++ )
                 {
@@ -371,7 +371,7 @@ void WCsvConverter::setTransferFunction( boost::shared_ptr< std::vector<unsigned
     boost::shared_ptr< WValueSetBase > newValueSet( new WValueSet<unsigned char>( 1, 4, data, W_DT_UNSIGNED_CHAR ) );
 
     WGridTransformOrtho transform;
-    boost::shared_ptr< WGridRegular3D > newGrid( new WGridRegular3D( 10, 1, 1, transform ) );
+    boost::shared_ptr< WGridRegular3D > newGrid( new WGridRegular3D( 50, 1, 1, transform ) );
     boost::shared_ptr< WDataSetSingle > newData( new WDataSetSingle( newValueSet, newGrid ) );
 
     m_transferFunction = newData;
@@ -391,7 +391,7 @@ bool WCsvConverter::checkIfOutputIsNull()
 
 float WCsvConverter::getClusterSize( float edep )
 {
-    return 2.4 * pow( edep, 0.338 );
+    return 7.6626 * pow( edep * 1000 / 25, 0.420307 );
 }
 
 float WCsvConverter::stringToDouble( std::string str )
