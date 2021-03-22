@@ -31,8 +31,6 @@
 
 #include "WMWriteCSV.h"
 
-#define STRING(num) #num
-
 W_LOADABLE_MODULE( WMWriteCSV )
 
 WMWriteCSV::WMWriteCSV() :
@@ -156,9 +154,9 @@ std::list< std::tuple < float, float, float, int > > WMWriteCSV::getListOfIntern
             case 3:
             {
                 osg::Vec3 vecVertex( vertexX, vertexY, vertexZ );
-                listOfInternalVertex.push_back( 
-                    std::make_tuple( 
-                        vertexX, 
+                listOfInternalVertex.push_back(
+                    std::make_tuple(
+                        vertexX,
                         vertexY,
                         vertexZ,
                         verticesReverse->at( reverseCounter++ ) ) );
@@ -169,8 +167,6 @@ std::list< std::tuple < float, float, float, int > > WMWriteCSV::getListOfIntern
                 }
 
                 vertexCounter = 0;
-
-                
                 break;
             }
         }
@@ -221,7 +217,6 @@ size_t WMWriteCSV::createStartCounter( std::list< std::tuple < float, float, flo
             eventIDcounter = selectedVertexIndex;
         }
     }
-    
     return eventIDcounter + 1;
 }
 
@@ -239,7 +234,7 @@ void WMWriteCSV::writeToFile()
 
     bool isMatch = false;
     size_t eventIDcounter = createStartCounter( listOfInternalVertex );
-    
+
     //set new csv-header ( SelectedEventID )
     newCSVFile << csvContent->at( 0 ) << "," << getNewCSVHeader() << std::endl;
 
@@ -254,19 +249,19 @@ void WMWriteCSV::writeToFile()
             if( !contains( rowAsString, posX ) )
             {
                 continue;
-            } 
+            }
 
             float posY = std::get< 1 >( *element );
             if( !contains( rowAsString, posY ) )
             {
                 continue;
-            } 
-            
+            }
+
             float posZ = std::get< 2 >( *element );
             if( !contains( rowAsString, posZ ) )
             {
                 continue;
-            } 
+            }
 
             int selectedVertexIndex = std::get< 3 >( *element );
             newCSVFile << rowAsString << "," << selectedVertexIndex << std::endl;

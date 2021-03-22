@@ -97,8 +97,6 @@ void WEventIDLimitationPropertyHandler::determineMinMaxEventID()
         }
     }
 
-    std::cout << minCap << " | " << maxCap << std::endl << std::endl;
-
     m_minCap->setMin( minCap );
     m_minCap->setMax( maxCap );
     m_maxCap->setMin( minCap );

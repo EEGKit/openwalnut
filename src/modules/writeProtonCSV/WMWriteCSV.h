@@ -140,7 +140,7 @@ private:
      * \param num search number
      * \return If found then true otherwise false 
      */
-    bool contains( std::string sourceString, float num);
+    bool contains( std::string sourceString, float num );
 
     /**
      * Helpermethod goes through the existing EvenIDs and returns the next one.
