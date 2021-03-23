@@ -102,15 +102,8 @@ void WEventIDLimitationPropertyHandler::determineMinMaxEventID()
     m_maxCap->setMin( minCap );
     m_maxCap->setMax( maxCap );
 
-    if( m_maxCap->get() > maxCap )
-    {
-        m_maxCap->set( maxCap );
-    }
-
-    if( m_minCap->get() < minCap )
-    {
-        m_minCap->set( minCap );
-    }
+    m_minCap->set( minCap );
+    m_maxCap->set( maxCap );
 }
 
 WPropInt WEventIDLimitationPropertyHandler::getMinCap()
