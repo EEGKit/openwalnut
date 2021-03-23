@@ -153,6 +153,11 @@ private:
     WPropDouble m_maxScaleValue;
 
     /**
+     * Minimum scaling factor of the current dataset.
+     */
+    WPropDouble m_minScaleValue;
+
+    /**
      * Description of the color bar.
      */
     WPropString m_colorBarDescription;

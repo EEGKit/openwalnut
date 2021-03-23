@@ -76,6 +76,7 @@ void WCsvConverter::setOutputFromCSV( )
     m_indexes->update( m_protonData );
 
     float maxEdep = 0.0;
+    float minEdep = 1.0;
 
     for( WDataSetCSV::Content::iterator dataRow = data->begin(); dataRow < data->end(); dataRow++ )
     {
@@ -84,9 +85,16 @@ void WCsvConverter::setOutputFromCSV( )
             continue;
         }
 
+        float edep = stringToDouble( dataRow->at( m_indexes->getEdep() ) );
+
+        if( getClusterSize( edep ) < 1.0 || getClusterSize( edep ) > 35.0 )
+        {
+            continue;
+        }
+
         addVertex( dataRow );
         addColor( plainColor );
-        addEdepAndSize( dataRow, &maxEdep );
+        addEdepAndSize( dataRow, &maxEdep, &minEdep );
         addEventID( dataRow );
     }
 
@@ -95,7 +103,7 @@ void WCsvConverter::setOutputFromCSV( )
         return;
     }
 
-    normalizeEdeps( m_vectors->getEdeps(), m_vectors->getColors(),  maxEdep );
+    normalizeEdeps( m_vectors->getEdeps(), m_vectors->getColors(),  maxEdep, minEdep );
 
     createOutputPoints();
     createOutputFibers();
@@ -118,7 +126,7 @@ boost::shared_ptr< std::vector<unsigned char> > WCsvConverter::sampleTransferFun
     return data;
 }
 
-void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray, float maxEdep )
+void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray, float maxEdep, float minEdep )
 {
     if( m_protonData->isColumnAvailable( WSingleSelectorName::getEdep() ) )
     {
@@ -127,6 +135,7 @@ void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArra
         setTransferFunction( data );
 
         float maxClusterSize = getClusterSize( maxEdep );
+        float minClusterSize = getClusterSize( minEdep );
 
         for( std::vector< float >::iterator currentEdep = edeps->begin();
             currentEdep != edeps->end();
@@ -149,6 +158,7 @@ void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArra
 
         m_colorBar->getProperties()->getProperty( "Max scale value" )->set( 0.0 );
         m_colorBar->getProperties()->getProperty( "Max scale value" )->set( maxClusterSize );
+        m_colorBar->getProperties()->getProperty( "Min scale value" )->set( minClusterSize );
         m_colorBar->getProperties()->getProperty( "Description" )->set( std::string( "Clustersize " ) );
 
         bool activated = m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get();
@@ -224,7 +234,7 @@ void WCsvConverter::addColor( WColor plainColor )
     }
 }
 
-void WCsvConverter::addEdepAndSize( WDataSetCSV::Content::iterator dataRow, float* maxEdep )
+void WCsvConverter::addEdepAndSize( WDataSetCSV::Content::iterator dataRow, float* maxEdep, float* minEdep )
 {
     if( !m_protonData->isColumnAvailable( WSingleSelectorName::getEdep() ) )
     {
@@ -235,6 +245,11 @@ void WCsvConverter::addEdepAndSize( WDataSetCSV::Content::iterator dataRow, floa
     if( edep > *maxEdep )
     {
         *maxEdep = edep;
+    }
+
+    if( edep < *minEdep )
+    {
+        *minEdep = edep;
     }
 
     m_vectors->getEdeps()->push_back( edep );
