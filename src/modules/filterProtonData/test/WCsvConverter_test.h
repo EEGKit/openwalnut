@@ -45,7 +45,7 @@ public:
     /**
      * Test the constructors of WCsvConverter, so no exception is thrown, when input parameters are correct
      */
-    static void testConstructorThrowNullptr()
+    static void testConstructorThrowNothing()
     {
         WReaderCSV csvReader( W_FIXTURE_PATH + "../data/CSVs/valid.csv" );
 
