@@ -25,6 +25,8 @@
 #ifndef WCSVCONVERTER_TEST_H
 #define WCSVCONVERTER_TEST_H
 
+#include <map>
+#include <utility>
 #include <vector>
 #include <string>
 #include <cxxtest/TestSuite.h>
@@ -110,6 +112,69 @@ public:
 
         TS_ASSERT_IS_NAN( tmpCsvReader.getClusterSize( -0.0001f ) );
         TS_ASSERT_IS_NAN( tmpCsvReader.getClusterSize( -1.0f ) );
+    }
+
+    /**
+     * Tests the method stringToDouble()
+     */
+    void testStringToDouble()
+    {
+        std::map< std::string, double > testDoubleMap;
+        testDoubleMap.insert( std::pair< std::string, double >( "1000.1", 1000.1f ) );
+        testDoubleMap.insert( std::pair< std::string, double >( "1.", 1.0f ) );
+        testDoubleMap.insert( std::pair< std::string, double >( ".1", 0.1f ) );
+        testDoubleMap.insert( std::pair< std::string, double >( "2.1", 2.1f ) );
+        testDoubleMap.insert( std::pair< std::string, double >( "+1", 1.0f ) );
+        testDoubleMap.insert( std::pair< std::string, double >( "-1", -1.0f ) );
+        testDoubleMap.insert( std::pair< std::string, double >( "+.1", 0.1f ) );
+        testDoubleMap.insert( std::pair< std::string, double >( "-.1", -0.1f ) );
+        testDoubleMap.insert( std::pair< std::string, double >( "+1e-1", 0.1f ) );
+        testDoubleMap.insert( std::pair< std::string, double >( "0.001e-6", 0.000000001f ) );
+        testDoubleMap.insert( std::pair< std::string, double >( "0.111111111111111", 0.111111111111111f ) );
+
+        WCsvConverter tmpCsvReader( m_protonData, m_propertyStatus, m_colorBar );
+
+        for( std::pair< std::string, double > stringDoublePair : testDoubleMap )
+        {
+            TS_ASSERT_EQUALS( tmpCsvReader.stringToDouble( stringDoublePair.first ),
+                              stringDoublePair.second );
+        }
+
+        TS_ASSERT_THROWS( tmpCsvReader.stringToDouble( "1.g" ), WException &e );
+        TS_ASSERT_THROWS( tmpCsvReader.stringToDouble( "" ), WException &e );
+        TS_ASSERT_THROWS( tmpCsvReader.stringToDouble( "Test" ), WException &e );
+        TS_ASSERT_THROWS( tmpCsvReader.stringToDouble( "1.1.2" ), WException &e );
+    }
+
+    /**
+     * Tests the method stringToInt()
+     */
+    void testStringToInt()
+    {
+        std::map< std::string, int > testIntMap;
+        testIntMap.insert( std::pair< std::string, int >( "1", 1 ) );
+        testIntMap.insert( std::pair< std::string, int >( "0", 0 ) );
+        testIntMap.insert( std::pair< std::string, int >( "10", 10 ) );
+        testIntMap.insert( std::pair< std::string, int >( "+1", 1 ) );
+        testIntMap.insert( std::pair< std::string, int >( "-1", -1 ) );
+        testIntMap.insert( std::pair< std::string, int >( "1e-1", 0 ) );
+        testIntMap.insert( std::pair< std::string, int >( "1e1", 10 ) );
+        testIntMap.insert( std::pair< std::string, int >( "+1e-1", 0 ) );
+        testIntMap.insert( std::pair< std::string, int >( "0.001e-6", 0 ) );
+        testIntMap.insert( std::pair< std::string, int >( "0.111111111111111", 0 ) );
+
+        WCsvConverter tmpCsvReader( m_protonData, m_propertyStatus, m_colorBar );
+
+        for( std::pair< std::string, int > stringIntPair : testIntMap )
+        {
+            TS_ASSERT_EQUALS( tmpCsvReader.stringToInt( stringIntPair.first ),
+                              stringIntPair.second );
+        }
+
+        TS_ASSERT_THROWS( tmpCsvReader.stringToInt( "1.g" ), WException &e );
+        TS_ASSERT_THROWS( tmpCsvReader.stringToInt( "" ), WException &e );
+        TS_ASSERT_THROWS( tmpCsvReader.stringToInt( "Test" ), WException &e );
+        TS_ASSERT_THROWS( tmpCsvReader.stringToInt( "1.1.2" ), WException &e );
     }
 };
 
