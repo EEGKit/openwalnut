@@ -27,6 +27,7 @@
 
 #include <iostream>
 #include <list>
+#include <string>
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
@@ -41,7 +42,6 @@
 class WMWriteCSVTest : public CxxTest::TestSuite
 {
 public:
-
     /**
      * A shared_ptr for a float vector
      */
@@ -136,7 +136,7 @@ public:
             float num = std::get< 1 >( element );
             bool result = std::get< 2 >( element );
 
-            TS_ASSERT_EQUALS( writerCSV.contains( sourceString, num ), result);
+            TS_ASSERT_EQUALS( writerCSV.contains( sourceString, num ), result );
         }
     }
 
@@ -155,7 +155,7 @@ public:
             listOfInternalVertex.push_back( std::tuple < float, float, float, int >( 0.0, 0.0, 0.0, refCounter ) );
         }
 
-        TS_ASSERT_EQUALS( writerCSV.createStartCounter( listOfInternalVertex ), refCounter);
+        TS_ASSERT_EQUALS( writerCSV.createStartCounter( listOfInternalVertex ), refCounter );
 
         listOfInternalVertex.clear();
 
@@ -168,7 +168,7 @@ public:
         listOfInternalVertex.push_back( std::tuple < float, float, float, int >( 0.0, 0.0, 0.0, 132 ) );
         listOfInternalVertex.push_back( std::tuple < float, float, float, int >( 0.0, 0.0, 0.0, 322 ) );
 
-        TS_ASSERT_EQUALS( writerCSV.createStartCounter( listOfInternalVertex ), 323);
+        TS_ASSERT_EQUALS( writerCSV.createStartCounter( listOfInternalVertex ), 323 );
     }
 
 private:
