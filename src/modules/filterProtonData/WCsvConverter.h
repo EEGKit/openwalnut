@@ -53,6 +53,10 @@
  */
 class WCsvConverter
 {
+    /**
+     * only test classes may be friend
+     */
+     friend class WCsvConverterTest;
 public:
     /**
      * Initializes the vectors, indices and transfer function color bar
