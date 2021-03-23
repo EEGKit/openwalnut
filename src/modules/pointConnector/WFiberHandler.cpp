@@ -215,7 +215,7 @@ void WFiberHandler::addFiberAt( std::string name, size_t position, bool hidden, 
     }
 }
 
-void WFiberHandler::removeFiber( size_t idx, bool silent )
+void WFiberHandler::removeFiber( size_t idx, bool silent, bool updateSelector )
 {
     if( idx == 0 )
     {
@@ -231,7 +231,11 @@ void WFiberHandler::removeFiber( size_t idx, bool silent )
     m_hidden->erase( m_hidden->begin() + idx );
 
     m_possibleFiberSelections->remove( m_possibleFiberSelections->at( idx ) );
-    m_fiberSelection->set( m_possibleFiberSelections->getSelectorLast() );
+
+    if( updateSelector )
+    {
+        selectorUpdate( m_fibers->size() - 1 );
+    }
 
     m_pointConnector->updateOutput();
 

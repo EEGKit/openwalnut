@@ -189,10 +189,6 @@ void WMPointConnector::handleInput()
         if( pointsAndEventIDs )
         {
             int eventID = pointsAndEventIDs->getEventID( pointIdx );
-            if( eventID < 0 )
-            {
-                continue;
-            }
 
             while( fibers->size() <= eventID )
             {
@@ -200,6 +196,14 @@ void WMPointConnector::handleInput()
             }
 
             ( fibers->begin() + eventID )->push_back( vertex );
+        }
+    }
+
+    for( size_t idx = fibers->size() - 1; idx > 0; idx--)
+    {
+        if( fibers->at( idx ).size() <= 1 )
+        {
+            m_fiberHandler->removeFiber( idx, true, false );
         }
     }
 
