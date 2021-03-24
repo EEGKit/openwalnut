@@ -22,6 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
+#include <cmath>
 #include <string>
 #include <vector>
 
@@ -409,7 +410,7 @@ bool WCsvConverter::checkIfOutputIsNull()
 
 float WCsvConverter::getClusterSize( float edep )
 {
-    return 7.6626 * pow( edep * 1000 / 25, 0.420307 );
+    return 7.6626f * powf( edep * 40.0f, 0.420307f );
 }
 
 float WCsvConverter::stringToDouble( std::string str )
