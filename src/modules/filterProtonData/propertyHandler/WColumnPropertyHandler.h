@@ -121,6 +121,7 @@ private:
     /**
      * Creates the individual WItemSelection
      * \param ndst ( n = Name, d = Description, s = Search, t = Typ )
+     * \param notifier The notifier for the property
      * \return WPropSelection The created selection
      */
     WPropSelection addHeaderProperty( WColumnPropertyHandler::NameDescriptionSearchTyp ndst,

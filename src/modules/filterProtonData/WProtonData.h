@@ -126,7 +126,7 @@ public:
 
     /**
      * Return a vector of filtered Headers
-     * \param type Type of filter 
+     * \param typeNames Types of filter 
      * \return Return a vector of filtered Headers
      */
     std::vector< std::string > getHeaderFromType( std::list< std::string > typeNames );

@@ -45,24 +45,22 @@ class WCsvConverterTest : public CxxTest::TestSuite
 {
 public:
     /**
-     *
-    */
+     * The protondata
+     */
     WProtonData::SPtr m_protonData = nullptr;
 
     /**
-     *
+     * The property status
      */
     boost::shared_ptr< WPropertyStatus > m_propertyStatus = nullptr;
 
     /**
-     *
+     * the property group
      */
     boost::shared_ptr< WProperties > m_properties = nullptr;
 
     /**
-     *
-     * @param setUp
-     * @return
+     * The color bar
      */
     WModule::SPtr m_colorBar = nullptr;
 
