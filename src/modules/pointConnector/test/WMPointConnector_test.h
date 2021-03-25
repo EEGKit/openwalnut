@@ -29,6 +29,7 @@
 
 #include "../WMPointConnector.h"
 
+
 /**
  * Test functionality of WMPointConnector class
  */

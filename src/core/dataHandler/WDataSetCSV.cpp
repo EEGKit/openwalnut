@@ -24,6 +24,7 @@
 
 #include "WDataSetCSV.h"
 
+
 WDataSetCSV::WDataSetCSV( WDataSetCSV::ContentSPtr header, WDataSetCSV::ContentSPtr data )
     : m_header( header ), m_data( data )
 {
@@ -45,4 +46,14 @@ WDataSetCSV::ContentSPtr WDataSetCSV::getHeader()
 WDataSetCSV::ContentSPtr WDataSetCSV::getData()
 {
     return m_data;
+}
+
+WDataSetCSV::SeperatedRowSPtr WDataSetCSV::getRawDataSet()
+{
+    return rawDataSet;
+}
+
+void WDataSetCSV::setRawDataSet( WDataSetCSV::SeperatedRowSPtr rawDataSetIn )
+{
+    rawDataSet = rawDataSetIn;
 }

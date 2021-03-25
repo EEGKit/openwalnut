@@ -29,9 +29,11 @@
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
-#include <core/dataHandler/WDataSetPoints.h>
-#include <core/dataHandler/WDataSetCSV.h>
+
 #include "core/dataHandler/io/WReader.h"
+#include <core/dataHandler/WDataSetCSV.h>
+#include <core/dataHandler/WDataSetPoints.h>
+
 
 /**
  * Read content from a CSV file.
@@ -39,6 +41,10 @@
  */
 class WReaderCSV : WReader
 {
+    /**
+     * Only WReaderCSVTest class may be friend
+     */
+     friend class WReaderCSVTest;
 public:
     /**
      * Constructs a CSV reader object.
@@ -59,6 +65,13 @@ public:
      * \throws WException If the file could not be opened.
      */
     virtual boost::shared_ptr< WDataSetCSV > read();
+private:
+    /**
+     * Transforms a given string into a string vector, by a predefined delimiter
+     * \param line The line, which shell be split into a string vector
+     * \return The splitted string as a string vector
+     */
+    std::vector< std::string > transformLineToVector( std::string line );
 };
 
 #endif  // WREADERCSV_H

@@ -35,10 +35,12 @@
 #include "core/common/WItemSelectionItem.h"
 #include "core/common/WItemSelectionItemTyped.h"
 #include "core/common/WItemSelector.h"
+#include "core/common/WPropertyGroup.h"
 #include "core/kernel/WModule.h"
 
-#include "WMPointConnector.h"
 #include "action/WActionHandler.h"
+#include "WMPointConnector.h"
+
 
 /**
  * Handles the fibers of the WMPointsConnector.
@@ -112,24 +114,46 @@ public:
      * Adds a new fiber.
      * \param name The name of the fiber.
      * \param silent Whether or not this should add to the undo stack.
+     * \param updateSelector Whether the UI selector should be updated
      */
-    void addFiber( std::string name, bool silent = false );
+    void addFiber( std::string name, bool silent = false, bool updateSelector = true );
 
     /**
      * Adds a new or an old fiber at a specific position.
      * \param name The name of the fiber.
      * \param position The position of the fiber.
+     * \param hidden Whether the fiber is hidden or not.
      * \param silent Whether or not this should add to the undo stack.
      * \param fiber The fiber to add.
      */
-    void addFiberAt( std::string name, size_t position, bool silent = false, PCFiber fiber = PCFiber() );
+    void addFiberAt( std::string name, size_t position, bool hidden, bool silent = false, PCFiber fiber = PCFiber() );
 
     /**
      * Removes a fiber at an index in the fibers vector.
      * \param idx The index of the fiber.
      * \param silent Whether or not this should add to the undo stack.
+     * \param updateSelector Whether the UI selector should be updated
      */
-    void removeFiber( size_t idx, bool silent = false );
+    void removeFiber( size_t idx, bool silent = false, bool updateSelector = true );
+
+    /**
+     * Toggles the visibility of a fiber.
+     * \param idx The index of the fiber.
+     * \param silent Whether or not this should add to the undo stack.
+     */
+    void toggleFiber( size_t idx, bool silent = false );
+
+    /**
+     * Updates the UI selector.
+     * 
+     * \param idx index of the selected fiber.
+     */
+    void selectorUpdate( size_t idx );
+
+    /**
+     * Clears the data in this handler.
+     */
+    void clear();
 
     /**
      * Selects a fiber by its index in the fibers vector.
@@ -141,6 +165,36 @@ public:
      * Selects the last point of the currently selected fiber.
      */
     void selectLastPoint();
+
+    /**
+     * Sorts the vertices by their z value.
+     */
+    void sortVertices();
+
+    /**
+     * Checks if a fiber is hidden.
+     * \param idx The index of the fiber to check.
+     * \return true The fiber is hidden.
+     * \return false The fiber is not hidden.
+     */
+    bool isHidden( size_t idx );
+
+    /**
+     * Gets the index of the fiber of a point.
+     * \param vertex The point to check.
+     * \param idx The index of the fiber of the point. This is a pointer and the secondary output. If this is NULL it is ignored.
+     * \return true The point is in a fiber.
+     * \return false The point is not in a fiber.
+     */
+    bool getFiberOfPoint( osg::Vec3 vertex, size_t* idx = NULL );
+
+    /**
+     * Checks whether a point is in a hidden fiber.
+     * \param vertex The point to check.
+     * \return true The point is hidden.
+     * \return false The point is not hidden.
+     */
+    bool isPointHidden( osg::Vec3 vertex );
 
     /**
      * \return PCFiberListSPtr All the fibers in this handler.
@@ -161,6 +215,12 @@ public:
      * \return WActionHandler::SPtr The WActionHandler of this class.
      */
     WActionHandler::SPtr getActionHandler();
+
+    /**
+     * Sets the fiber count.
+     * \param fiberCount The new fiber count.
+     */
+    void setFiberCount( size_t fiberCount );
 
 private:
     /**
@@ -200,14 +260,19 @@ private:
     WPropSelection m_fiberSelection;
 
     /**
-     * Property (button) to add a new Fiber.
+     * Property (button) to add a new fiber.
      */
     WPropTrigger m_addFiber;
 
     /**
-     * Property (button) to remove a Fiber.
+     * Property (button) to remove a fiber.
      */
     WPropTrigger m_removeFiber;
+
+    /**
+     * Property (button) to toggle the visibility of a fiber.
+     */
+    WPropTrigger m_toggleFiber;
 
     /**
      * Property (button) to undo the last action.
@@ -223,6 +288,11 @@ private:
      * A pointer to the list of fibers.
      */
     PCFiberListSPtr m_fibers;
+
+    /**
+     * Vector for the visibility of the fibers.
+     */
+    boost::shared_ptr< std::vector< char > > m_hidden;
 };
 
 #endif  // WFIBERHANDLER_H

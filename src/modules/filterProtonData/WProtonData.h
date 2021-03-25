@@ -22,24 +22,33 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WMPROTONDATA_H
-#define WMPROTONDATA_H
+#ifndef WPROTONDATA_H
+#define WPROTONDATA_H
 
+#include <regex>
+#include <list>
 #include <map>
 #include <string>
+#include <vector>
 
 #include "core/dataHandler/WDataSetCSV.h"
+#include "WDataType.h"
+
 
 /**
  * Holds the csv data.
  */
-class WMProtonData
+class WProtonData
 {
+    /**
+     * only test class may be friend
+     */
+     friend class WProtonDataTest;
 public:
     /**
      * shared_ptr that points to itself 
      */
-    typedef boost::shared_ptr< WMProtonData > SPtr;
+    typedef boost::shared_ptr< WProtonData > SPtr;
 
     /**
      * constructor
@@ -47,7 +56,7 @@ public:
      * \param csvHeader pointer to a column-header of the CSV-file
      * \param csvData pointer to a content of the CSV file 
      */
-    explicit WMProtonData( WDataSetCSV::ContentSPtr csvHeader, WDataSetCSV::ContentSPtr csvData );
+    explicit WProtonData( WDataSetCSV::ContentSPtr csvHeader, WDataSetCSV::ContentSPtr csvData );
 
     /**
      * getter
@@ -83,7 +92,15 @@ public:
      * \param columnName Name of column-header of the CSV-file
      * \param index position of column-header of the CSV-file
      */
-    void setColumnIndex( std::string columnName, int index );
+    void setStateIndex( std::string columnName, int index );
+
+    /**
+     * getter
+     *
+     * \param selectedName Name of selected name of single-selection
+     * \return return the position current selected item
+     */
+    int getColumnIndexBySelection( std::string selectedName );
 
     /**
      * getter
@@ -94,25 +111,25 @@ public:
     int getColumnIndex( std::string columnName );
 
     /**
-     * checks whether the columns have been initialized 
-     *
-     * \return true when initialized. false if they are not initialized 
-     */
-    bool isRequiredDataAvailable();
-
-    /**
-     * checks whether columns are missing 
-     *
-     * \return true if column is missing . false if column is not missing
-     */
-    bool isNonrequiredDataAvailable();
-
-    /**
      * checks whether columns are available 
      * \param columnName THe name of the column.
      * \return true if column is available, false if column is not available
      */
     bool isColumnAvailable( std::string columnName );
+
+    /**
+     * Get column types, stored in a string vector.
+     * Positions within this vector are linked to positions in m_csvHeader
+     * \return a shared pointer to m_columnTypes
+     */
+    WDataSetCSV::ContentElemSPtr getColumnTypes();
+
+    /**
+     * Return a vector of filtered Headers
+     * \param typeNames Types of filter 
+     * \return Return a vector of filtered Headers
+     */
+    std::vector< std::string > getHeaderFromType( std::list< std::string > typeNames );
 
 private:
     /**
@@ -131,14 +148,34 @@ private:
     std::map< std::string, int > m_columnMap;
 
     /**
-     * Stores die Availability of the selected Column (ColumnPropertyHandler)
+     * Stores index of the selected single-selector (ColumnPropertyHandler)
      */
-    std::map< std::string, bool > m_availabilityColumnMap;
+    std::map< std::string, int > m_ColumnMapSelectedIndex;
 
     /**
-     * Update the Availability of Columns
+     * Stores the information, which data type is stored in associated column
      */
-    void updateAvailabilityOfColumns();
+    WDataSetCSV::ContentElemSPtr m_columnTypes;
+
+    /**
+     * Reads csv data and stores column types in m_columnTypes
+     * \param csvData the input csv data
+     */
+    void detectColumnTypesFromCsvData( WDataSetCSV::ContentSPtr csvData );
+
+    /**
+     * Determines column type due to cellValue
+     * \param cellValue the value of a cell on the basis of which the column type is to be determined
+     * \return either "int", "double" or "string"
+     */
+    std::string determineColumnTypeByString( std::string cellValue );
+
+    /**
+     * Checks, if values of a column, containing double values, can be converted to integers
+     * \param columnNumber the column number within m_csvHeader
+     * \return true, if all double values of a column ends with ".0"; false otherwise
+     */
+    bool checkIfDoubleColumnCanBeInteger( int columnNumber );
 };
 
-#endif  // WMPROTONDATA_H
+#endif  // WPROTONDATA_H
