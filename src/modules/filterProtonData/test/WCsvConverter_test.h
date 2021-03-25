@@ -38,7 +38,7 @@
 #include "../../data/io/WReaderCSV.h"
 
 // Workaround for isnan scope problem: https://github.com/opencog/atomspace/issues/1215
-using namespace std;
+using namespace std; // NOLINT
 
 /**
  * Test class of WCsvConverter class
