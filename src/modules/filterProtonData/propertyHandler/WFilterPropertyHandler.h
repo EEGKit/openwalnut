@@ -152,15 +152,12 @@ private:
     void searchPDGTypes();
 
     /**
-     * update the m_selectedPDGTypes
-     *
-     * \param property contains reference to the property which called updateProperty()
-     *
+     * Update the m_selectedPDGTypes
      */
     void updateSelectedPDGTypes();
 
     /**
-     * event of the save button in the rename pdg subgroup
+     * Event of the save button in the rename pdg subgroup
      *
      * \param property contains reference to the property which called updateProperty()
      *
@@ -168,27 +165,27 @@ private:
     void selectPdgAndSaveEvent( WPropertyBase::SPtr property );
 
     /**
-     * update PDG Properties (Multiselector and change-Name-Properties)
+     * Update PDG Properties (Multiselector and change-Name-Properties)
      */
     void updatePDGProperties();
 
     /**
-     * create the Checkbox for primaries and secondaries
+     * Create the Checkbox for primaries and secondaries
      */
     void createCheckBoxForPrimaryAndSecondary();
 
     /**
-     * create the multiselection for the option of PDG
+     * Create the multiselection for the option of PDG
      */
     void createMultiSelectionForPDG();
 
     /**
-     * create the Subgroup for change of PDG names
+     * Create the Subgroup for change of PDG names
      */
     void createPropToSetParticleNames();
 
     /**
-     * set the default string for the string property textfield
+     * Set the default string for the string property textfield
      * 
      * \return the string of the selected item of the itemselector
      */
