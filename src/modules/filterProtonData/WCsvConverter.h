@@ -53,6 +53,10 @@
  */
 class WCsvConverter
 {
+    /**
+     * only test classes may be friend
+     */
+     friend class WCsvConverterTest;
 public:
     /**
      * Initializes the vectors, indices and transfer function color bar
@@ -156,8 +160,9 @@ private:
      * \param edeps vector containing energy deposition values
      * \param colorArray vector containing colors per vertex
      * \param maxEdep maximum energy deposition
+     * \param minEdep minimum energy deposition
      */
-    void normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray,  float maxEdep );
+    void normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray,  float maxEdep, float minEdep );
 
 
     /**
@@ -187,8 +192,9 @@ private:
      *
      * \param dataRow each row of the csv file (content of row)
      * \param maxEdep a pointer to the current maximum of the edep
+     * \param minEdep a pointer to the current minimum of the edep
      */
-    void addEdepAndSize( WDataSetCSV::Content::iterator dataRow, float* maxEdep );
+    void addEdepAndSize( WDataSetCSV::Content::iterator dataRow, float* maxEdep, float* minEdep );
 
     /**
      * Create eventID for Fiber renderer

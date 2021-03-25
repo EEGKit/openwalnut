@@ -99,6 +99,7 @@ void WMTransferFunctionColorBar::properties()
     m_colorBarLabels->setMin( 0 );
     m_colorBarLabels->setMax( 55 );
 
+    m_minScaleValue = m_properties->addProperty( "Min scale value", "Minimum scale value in dataset", 0.0, true );
     m_maxScaleValue = m_properties->addProperty( "Max scale value", "Maximum scale value in dataset", 1.0, true );
     m_colorBarDescription = m_properties->addProperty( "Description", "Description of current transfer function",
                                                        std::string( "TransferFunction" ), true ),
@@ -250,7 +251,7 @@ void WMTransferFunctionColorBar::moduleMain()
                 matrix->addChild( labels );
                 m_barProjection->addChild( matrix );
 
-                m_valueMin = 0.0; // dataSet->getTexture()->minimum()->get();
+                m_valueMin = m_minScaleValue->get(); // dataSet->getTexture()->minimum()->get();
                 m_valueScale = m_maxScaleValue->get(); // dataSet->getTexture()->scale()->get();
 
                 // add

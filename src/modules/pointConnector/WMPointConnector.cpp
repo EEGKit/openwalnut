@@ -31,6 +31,9 @@
 #include "WMPointConnector.h"
 #include "WKeyboardHandler.h"
 
+static const osg::Vec4 COLOR_SEL_POINT( 255.0 / 255.0, 190.0 / 255.0,   7.0 / 255.0, 1.0 );
+static const osg::Vec4 COLOR_SEL_FIBER(  30.0 / 255.0, 136.0 / 255.0, 229.0 / 255.0, 1.0 );
+
 
 W_LOADABLE_MODULE( WMPointConnector )
 
@@ -186,10 +189,6 @@ void WMPointConnector::handleInput()
         if( pointsAndEventIDs )
         {
             int eventID = pointsAndEventIDs->getEventID( pointIdx );
-            if( eventID < 0 )
-            {
-                continue;
-            }
 
             while( fibers->size() <= eventID )
             {
@@ -200,8 +199,18 @@ void WMPointConnector::handleInput()
         }
     }
 
+    for( size_t idx = fibers->size() - 1; idx > 0; idx--)
+    {
+        if( fibers->at( idx ).size() <= 1 )
+        {
+            m_fiberHandler->removeFiber( idx, true, false );
+        }
+    }
+
     m_fiberHandler->setFiberCount( fibers->size() );
-    m_fiberHandler->selectorUpdate();
+    m_fiberHandler->selectorUpdate( fibers->size() - 1 );
+
+    m_fiberHandler->sortVertices();
 
     updatePoints();
     updateOutput();
@@ -235,12 +244,11 @@ void WMPointConnector::updatePoints()
         size_t tmpIdx;
         if( m_connectorData->getSelectedPoint( &tmpIdx ) && tmpIdx == idx )
         {
-            color[0] = 0.0;
-            color[2] = 0.0;
+            color = COLOR_SEL_POINT;
         }
         else if( m_fiberHandler->getFiberOfPoint( vertex, &tmpIdx ) && m_fiberHandler->getSelectedFiber() == tmpIdx )
         {
-            color[0] = 0.0;
+            color = COLOR_SEL_FIBER;
         }
         if( m_fiberHandler->isPointHidden( vertex ) )
         {
@@ -269,10 +277,13 @@ void WMPointConnector::handleClick( osg::Vec3 cameraPosition, osg::Vec3 directio
             {
                 if( m_fiberHandler->getSelectedFiber() == fiberIdx )
                 {
-                    return;
+                    m_connectorData->selectPoint( hitIdx );
                 }
-                m_fiberHandler->selectFiber( fiberIdx );
-                m_fiberHandler->selectorUpdate();
+                else
+                {
+                    m_fiberHandler->selectFiber( fiberIdx );
+                    m_fiberHandler->selectorUpdate( fiberIdx );
+                }
             }
             else
             {
@@ -383,12 +394,12 @@ void WMPointConnector::updateOutput()
         osg::Vec4 color( 0.0, 0.0, 0.0, 1.0 );
         if( m_fiberHandler->getSelectedFiber() == idx )
         {
-            color[1] = 1.0;
+            color = COLOR_SEL_FIBER;
         }
 
         if( m_fiberHandler->isHidden( idx ) )
         {
-            color[3] = 0.0;
+            color[3] = 0.1;
         }
 
         for( size_t vIdx = 0; vIdx < fiber.size(); vIdx++ )

@@ -22,6 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
+#include <cmath>
 #include <string>
 #include <vector>
 
@@ -76,6 +77,7 @@ void WCsvConverter::setOutputFromCSV( )
     m_indexes->update( m_protonData );
 
     float maxEdep = 0.0;
+    float minEdep = 1.0;
 
     for( WDataSetCSV::Content::iterator dataRow = data->begin(); dataRow < data->end(); dataRow++ )
     {
@@ -84,9 +86,19 @@ void WCsvConverter::setOutputFromCSV( )
             continue;
         }
 
+        if( m_protonData->isColumnAvailable( WSingleSelectorName::getEdep() ) )
+        {
+            float edep = stringToDouble( dataRow->at( m_indexes->getEdep() ) );
+
+            if( getClusterSize( edep ) < 1.0 || getClusterSize( edep ) > 35.0 )
+            {
+                continue;
+            }
+        }
+
         addVertex( dataRow );
         addColor( plainColor );
-        addEdepAndSize( dataRow, &maxEdep );
+        addEdepAndSize( dataRow, &maxEdep, &minEdep );
         addEventID( dataRow );
     }
 
@@ -95,7 +107,7 @@ void WCsvConverter::setOutputFromCSV( )
         return;
     }
 
-    normalizeEdeps( m_vectors->getEdeps(), m_vectors->getColors(),  maxEdep );
+    normalizeEdeps( m_vectors->getEdeps(), m_vectors->getColors(),  maxEdep, minEdep );
 
     createOutputPoints();
     createOutputFibers();
@@ -109,16 +121,16 @@ boost::shared_ptr< WDataSetSingle > WCsvConverter::getTransferFunction()
 
 boost::shared_ptr< std::vector<unsigned char> > WCsvConverter::sampleTransferFunction()
 {
-    boost::shared_ptr< std::vector<unsigned char> > data( new std::vector<unsigned char>( 10 * 4 ) );
+    boost::shared_ptr< std::vector<unsigned char> > data( new std::vector<unsigned char>( 50 * 4 ) );
 
     WTransferFunction tf = m_propertyStatus->getVisualizationPropertyHandler()->getTransferFunction()->get( true );
 
-    tf.sample1DTransferFunction( &( *data )[ 0 ], 10, 0.0, 1.0 );
+    tf.sample1DTransferFunction( &( *data )[ 0 ], 50, 0.0, 1.0 );
 
     return data;
 }
 
-void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray, float maxEdep )
+void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArray, float maxEdep, float minEdep )
 {
     if( m_protonData->isColumnAvailable( WSingleSelectorName::getEdep() ) )
     {
@@ -127,6 +139,7 @@ void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArra
         setTransferFunction( data );
 
         float maxClusterSize = getClusterSize( maxEdep );
+        float minClusterSize = getClusterSize( minEdep );
 
         for( std::vector< float >::iterator currentEdep = edeps->begin();
             currentEdep != edeps->end();
@@ -138,7 +151,7 @@ void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArra
 
             if( m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
             {
-                clusterSizeNormalized = static_cast< int >( 9 * clusterSizeNormalized );
+                clusterSizeNormalized = static_cast< int >( 49 * clusterSizeNormalized );
 
                 for( int i = 0; i < 4; i++ )
                 {
@@ -149,6 +162,7 @@ void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArra
 
         m_colorBar->getProperties()->getProperty( "Max scale value" )->set( 0.0 );
         m_colorBar->getProperties()->getProperty( "Max scale value" )->set( maxClusterSize );
+        m_colorBar->getProperties()->getProperty( "Min scale value" )->set( minClusterSize );
         m_colorBar->getProperties()->getProperty( "Description" )->set( std::string( "Clustersize " ) );
 
         bool activated = m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get();
@@ -224,7 +238,7 @@ void WCsvConverter::addColor( WColor plainColor )
     }
 }
 
-void WCsvConverter::addEdepAndSize( WDataSetCSV::Content::iterator dataRow, float* maxEdep )
+void WCsvConverter::addEdepAndSize( WDataSetCSV::Content::iterator dataRow, float* maxEdep, float* minEdep )
 {
     if( !m_protonData->isColumnAvailable( WSingleSelectorName::getEdep() ) )
     {
@@ -235,6 +249,11 @@ void WCsvConverter::addEdepAndSize( WDataSetCSV::Content::iterator dataRow, floa
     if( edep > *maxEdep )
     {
         *maxEdep = edep;
+    }
+
+    if( edep < *minEdep )
+    {
+        *minEdep = edep;
     }
 
     m_vectors->getEdeps()->push_back( edep );
@@ -371,7 +390,7 @@ void WCsvConverter::setTransferFunction( boost::shared_ptr< std::vector<unsigned
     boost::shared_ptr< WValueSetBase > newValueSet( new WValueSet<unsigned char>( 1, 4, data, W_DT_UNSIGNED_CHAR ) );
 
     WGridTransformOrtho transform;
-    boost::shared_ptr< WGridRegular3D > newGrid( new WGridRegular3D( 10, 1, 1, transform ) );
+    boost::shared_ptr< WGridRegular3D > newGrid( new WGridRegular3D( 50, 1, 1, transform ) );
     boost::shared_ptr< WDataSetSingle > newData( new WDataSetSingle( newValueSet, newGrid ) );
 
     m_transferFunction = newData;
@@ -391,7 +410,7 @@ bool WCsvConverter::checkIfOutputIsNull()
 
 float WCsvConverter::getClusterSize( float edep )
 {
-    return 2.4 * pow( edep, 0.338 );
+    return 7.6626f * powf( edep * 40.0f, 0.420307f );
 }
 
 float WCsvConverter::stringToDouble( std::string str )

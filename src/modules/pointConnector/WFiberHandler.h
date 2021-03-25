@@ -132,8 +132,9 @@ public:
      * Removes a fiber at an index in the fibers vector.
      * \param idx The index of the fiber.
      * \param silent Whether or not this should add to the undo stack.
+     * \param updateSelector Whether the UI selector should be updated
      */
-    void removeFiber( size_t idx, bool silent = false );
+    void removeFiber( size_t idx, bool silent = false, bool updateSelector = true );
 
     /**
      * Toggles the visibility of a fiber.
@@ -144,8 +145,10 @@ public:
 
     /**
      * Updates the UI selector.
+     * 
+     * \param idx index of the selected fiber.
      */
-    void selectorUpdate();
+    void selectorUpdate( size_t idx );
 
     /**
      * Clears the data in this handler.
@@ -162,6 +165,11 @@ public:
      * Selects the last point of the currently selected fiber.
      */
     void selectLastPoint();
+
+    /**
+     * Sorts the vertices by their z value.
+     */
+    void sortVertices();
 
     /**
      * Checks if a fiber is hidden.

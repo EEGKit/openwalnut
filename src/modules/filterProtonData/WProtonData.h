@@ -25,10 +25,14 @@
 #ifndef WPROTONDATA_H
 #define WPROTONDATA_H
 
+#include <regex>
+#include <list>
 #include <map>
 #include <string>
+#include <vector>
 
 #include "core/dataHandler/WDataSetCSV.h"
+#include "WDataType.h"
 
 
 /**
@@ -113,6 +117,20 @@ public:
      */
     bool isColumnAvailable( std::string columnName );
 
+    /**
+     * Get column types, stored in a string vector.
+     * Positions within this vector are linked to positions in m_csvHeader
+     * \return a shared pointer to m_columnTypes
+     */
+    WDataSetCSV::ContentElemSPtr getColumnTypes();
+
+    /**
+     * Return a vector of filtered Headers
+     * \param typeNames Types of filter 
+     * \return Return a vector of filtered Headers
+     */
+    std::vector< std::string > getHeaderFromType( std::list< std::string > typeNames );
+
 private:
     /**
      * Stores column index of data.
@@ -133,6 +151,31 @@ private:
      * Stores index of the selected single-selector (ColumnPropertyHandler)
      */
     std::map< std::string, int > m_ColumnMapSelectedIndex;
+
+    /**
+     * Stores the information, which data type is stored in associated column
+     */
+    WDataSetCSV::ContentElemSPtr m_columnTypes;
+
+    /**
+     * Reads csv data and stores column types in m_columnTypes
+     * \param csvData the input csv data
+     */
+    void detectColumnTypesFromCsvData( WDataSetCSV::ContentSPtr csvData );
+
+    /**
+     * Determines column type due to cellValue
+     * \param cellValue the value of a cell on the basis of which the column type is to be determined
+     * \return either "int", "double" or "string"
+     */
+    std::string determineColumnTypeByString( std::string cellValue );
+
+    /**
+     * Checks, if values of a column, containing double values, can be converted to integers
+     * \param columnNumber the column number within m_csvHeader
+     * \return true, if all double values of a column ends with ".0"; false otherwise
+     */
+    bool checkIfDoubleColumnCanBeInteger( int columnNumber );
 };
 
 #endif  // WPROTONDATA_H
