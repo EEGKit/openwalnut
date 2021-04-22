@@ -173,7 +173,7 @@ void WMPointConnector::handleInput()
         return;
     }
 
-    WDataSetPointsAndEventID::SPtr pointsAndEventIDs = boost::dynamic_pointer_cast< WDataSetPointsAndEventID >( points );
+    boost::shared_ptr< WValueSet< int > > eventIDs = boost::dynamic_pointer_cast< WValueSet< int > >( points->getValueSet() );
 
     m_connectorData->clear();
 
@@ -186,9 +186,9 @@ void WMPointConnector::handleInput()
         osg::Vec3 vertex = points->operator[]( pointIdx );
         m_connectorData->addVertex( vertex, points->getColor( pointIdx ) );
 
-        if( pointsAndEventIDs )
+        if( eventIDs )
         {
-            int eventID = pointsAndEventIDs->getEventID( pointIdx );
+            int eventID = eventIDs->getScalar( pointIdx );
 
             while( fibers->size() <= eventID )
             {

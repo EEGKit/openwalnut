@@ -55,7 +55,7 @@ boost::shared_ptr< WDataSetPoints > WCsvConverter::getPoints()
     return m_points;
 }
 
-boost::shared_ptr< WDataSetPointsAndEventID > WCsvConverter::getPointsAndIDs()
+boost::shared_ptr< WDataSetPoints > WCsvConverter::getPointsAndIDs()
 {
     return m_selectedEventIDs;
 }
@@ -299,11 +299,11 @@ void WCsvConverter::createOutputPoints()
     {
         if( m_propertyStatus->getVisualizationPropertyHandler()->getSizesFromEdep()->get() )
         {
-            m_points = boost::shared_ptr< WDataSetPointsAndSizes >(
-                    new WDataSetPointsAndSizes(
+            m_points = boost::shared_ptr< WDataSetPoints >(
+                    new WDataSetPoints(
                             m_vectors->getVertices(),
                             m_vectors->getColors(),
-                            m_vectors->getSizes()
+                            boost::shared_ptr< WValueSet< float > >( new WValueSet< float >( 0, 1, m_vectors->getSizes() ) )
                     )
             );
             return;
@@ -362,11 +362,11 @@ void WCsvConverter::createOutputPointsAndEventIDs()
 {
     if( m_protonData->isColumnAvailable( WSingleSelectorName::getEventId() ) )
     {
-        m_selectedEventIDs = boost::shared_ptr < WDataSetPointsAndEventID >(
-                new WDataSetPointsAndEventID(
+        m_selectedEventIDs = boost::shared_ptr < WDataSetPoints >(
+                new WDataSetPoints(
                         m_vectors->getVertices(),
                         m_vectors->getColors(),
-                        m_vectors->getEventIDs()
+                        boost::shared_ptr< WValueSet< int > >( new WValueSet< int >( 0, 1, m_vectors->getEventIDs() ) )
                 )
         );
     }

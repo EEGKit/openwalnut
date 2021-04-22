@@ -34,8 +34,6 @@
 #include "core/common/WTransferFunction.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
-#include "core/dataHandler/WDataSetPointsAndEventID.h"
-#include "core/dataHandler/WDataSetPointsAndSizes.h"
 #include "core/dataHandler/WGrid.h"
 #include "core/dataHandler/WGridRegular3D.h"
 #include "core/dataHandler/WValueSet.h"
@@ -101,7 +99,7 @@ public:
      * Getter
      * \return shared_ptr of generated selected event ID
      */
-    boost::shared_ptr< WDataSetPointsAndEventID > getPointsAndIDs();
+    boost::shared_ptr< WDataSetPoints > getPointsAndIDs();
 
 private:
     /**
@@ -127,7 +125,7 @@ private:
     /**
      * Stores information for the point Conncetor
      */
-    boost::shared_ptr< WDataSetPointsAndEventID > m_selectedEventIDs;
+    boost::shared_ptr< WDataSetPoints > m_selectedEventIDs;
 
     /**
      * Stores the currently mapped transfer function

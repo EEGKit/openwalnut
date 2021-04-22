@@ -37,8 +37,6 @@
 #include "core/dataHandler/WDataSetCSV.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
-#include "core/dataHandler/WDataSetPointsAndEventID.h"
-#include "core/dataHandler/WDataSetPointsAndSizes.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleContainer.h"
 #include "core/kernel/WModuleInputData.h"
@@ -164,7 +162,7 @@ private:
     /**
      * WDataSetPointsAndEventIDs output connector to output points and eventIDs for PointConn.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetPointsAndEventID > > m_output_points_eventIds;
+    boost::shared_ptr< WModuleOutputData< WDataSetPoints > > m_output_points_eventIds;
 
     /**
      * Stores information of the input-csv-data

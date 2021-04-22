@@ -37,7 +37,6 @@
 #include "core/kernel/WKernel.h"
 
 #include "core/dataHandler/WDataSetPoints.h"
-#include "core/dataHandler/WDataSetPointsAndSizes.h"
 
 #include "WMPointRenderer.h"
 
@@ -169,8 +168,9 @@ void WMPointRenderer::moduleMain()
             continue;
         }
 
-        WDataSetPointsAndSizes::SPtr pointsAndSizes = boost::dynamic_pointer_cast< WDataSetPointsAndSizes >( points );
-        m_useAttribute->set( pointsAndSizes ? true : false );
+        boost::shared_ptr< WValueSet< float > > valueSet = boost::dynamic_pointer_cast< WValueSet< float > >( points->getValueSet() );
+
+        m_useAttribute->set( valueSet ? true : false );
 
         // we have valid data. Put this into a geode
         osg::ref_ptr< osg::Geometry > geometry = osg::ref_ptr< osg::Geometry >( new osg::Geometry );
@@ -194,9 +194,9 @@ void WMPointRenderer::moduleMain()
             vertices->push_back( vert );
             colors->push_back( color );
 
-            if( pointsAndSizes )
+            if( valueSet )
             {
-                sizes->push_back( pointsAndSizes->getSize( pointIdx ) );
+                sizes->push_back( valueSet->getScalar( pointIdx ) );
             }
         }
 
@@ -205,7 +205,7 @@ void WMPointRenderer::moduleMain()
         geometry->setVertexArray( vertices );
         geometry->setColorArray( colors );
         geometry->setColorBinding( osg::Geometry::BIND_PER_VERTEX );
-        if( pointsAndSizes )
+        if( valueSet )
         {
             geometry->setVertexAttribArray( 6, sizes, osg::Array::BIND_PER_VERTEX );
         }

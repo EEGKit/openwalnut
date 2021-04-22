@@ -82,9 +82,10 @@ public:
      * \note the number of floats in colors (if not NULL) must be vertices->size() / 3  times one of 1,3, or 4
      *
      * \param vertices the vertices of the points, stored in x1,y1,z1,x2,y2,z2, ..., xn,yn,zn scheme
-     * \param colors the colors of each vertex. Can be NULL. Stored as R1,[G1,B1,[A1,]] ... Rn,[Gn,Bn,[An]]
+     * \param colors optional colors of each vertex. Stored as R1,[G1,B1,[A1,]] ... Rn,[Gn,Bn,[An]]
+     * \param valueSet optional extra data per vertex.
      */
-    WDataSetPoints( VertexArray vertices, ColorArray colors );
+    WDataSetPoints( VertexArray vertices, ColorArray colors = NULL, WValueSetBase::SPtr valueSet = NULL );
 
     /**
      * Constructs a new set of points. The constructed instance is empty.
@@ -142,6 +143,12 @@ public:
      * \return The colors
      */
     ColorArray getColors() const;
+
+    /**
+     * Getter for the value set
+     * \return The value set
+     */
+    WValueSetBase::SPtr getValueSet() const;
 
     /**
      * Get the bounding box.
@@ -220,6 +227,11 @@ private:
      * An array of the colors per vertex.
      */
     ColorArray m_colors;
+
+    /**
+     * An optional WValueSet for data per vertex.
+     */
+    WValueSetBase::SPtr m_valueSet;
 
     /**
      * Which colortype do we use in m_colors.

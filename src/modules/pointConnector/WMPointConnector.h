@@ -33,7 +33,6 @@
 
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
-#include "core/dataHandler/WDataSetPointsAndEventID.h"
 #include "core/dataHandler/WDataSetPointsAndFibers.h"
 #include "core/kernel/WKernel.h"
 #include "core/kernel/WModule.h"
