@@ -115,8 +115,8 @@ public:
         TS_ASSERT_THROWS_EQUALS(
             protonData.setCSVHeader( tmpEmptyHeader ),
             WException &e,
-            e.what(),
-            "No empty header allowed!"
+            strcmp( e.what(), "No empty header allowed!" ),
+            0
         );
     }
 
@@ -132,8 +132,8 @@ public:
         TS_ASSERT_THROWS_EQUALS(
             protonData.setCSVHeader( tmpHeaderNullptr ),
             WException &e,
-            e.what(),
-            "Can not set header! No header specified!"
+            strcmp( e.what(), "Can not set header! No header specified!" ),
+            0
         );
     }
 
@@ -147,10 +147,10 @@ public:
 
         WDataSetCSV::ContentSPtr tmpDataNullptr = nullptr;
         TS_ASSERT_THROWS_EQUALS(
-                protonData.setCSVData( tmpDataNullptr ),
-                WException &e,
-                e.what(),
-                "Can not set data! No data specified!"
+            protonData.setCSVData( tmpDataNullptr ),
+            WException &e,
+            strcmp( e.what(), "Can not set data! No data specified!" ),
+            0
         );
     }
 

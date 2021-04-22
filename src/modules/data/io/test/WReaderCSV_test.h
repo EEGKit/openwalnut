@@ -49,8 +49,8 @@ public:
 
         TS_ASSERT_THROWS_EQUALS( WReaderCSV( fileName ).read(),
                                  const WException &e,
-                                 e.what(),
-                                 "CSV file is empty!" );
+                                 strcmp( e.what(), "CSV file is empty!" ),
+                                 0 );
     }
 
     /**
@@ -63,8 +63,8 @@ public:
 
         TS_ASSERT_THROWS_EQUALS( WReaderCSV( fileName ).read(),
                                  const WException &e,
-                                 e.what(),
-                                 "CSV File does not contain data!" );
+                                 strcmp( e.what(), "CSV File does not contain data!" ),
+                                 0 );
     }
 
     /**
@@ -78,8 +78,8 @@ public:
 
         TS_ASSERT_THROWS_EQUALS( WReaderCSV( fileName ).read(),
                                  const WException &e,
-                                 e.what(),
-                                 "Data row count does not equal header count!" );
+                                 strcmp( e.what(), "Data row count does not equal header count!" ),
+                                 0 );
     }
 
     /**
