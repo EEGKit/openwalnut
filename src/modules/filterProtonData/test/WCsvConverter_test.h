@@ -107,9 +107,9 @@ public:
         TS_ASSERT_DELTA( tmpCsvReader.getClusterSize( 1.0f ), 36.11878927498844f, 1e-5 );
         TS_ASSERT_DELTA( tmpCsvReader.getClusterSize( 1.0001f ), 36.1203073289856f, 1e-5 );
 
-        // Deactivated because it didi not work on CI server (see ticket #432)
-        //TS_ASSERT_IS_NAN( tmpCsvReader.getClusterSize( -0.0001f ) );
-        //TS_ASSERT_IS_NAN( tmpCsvReader.getClusterSize( -1.0f ) );
+        // uses std::isnan instead of TS_ASSERT_IS_NAN as it is not present in the cxxtest version on the build server
+        TS_ASSERT( std::isnan( tmpCsvReader.getClusterSize( -0.0001f ) ) );
+        TS_ASSERT( std::isnan( tmpCsvReader.getClusterSize( -1.0f ) ) );
     }
 
     /**
