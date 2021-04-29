@@ -246,7 +246,7 @@ void WMPartition2Mesh::moduleMain()
 
                 if( m_refs[i] == 0 ) // didn't find a voxel have to keep looking
                 {
-                    if( ( m_propProjectDistance->get( true ) > 0.5) && ( m_propProjectDistance->get( true ) <= 1.5) )
+                    if( ( m_propProjectDistance->get( true ) > 0.5) && ( m_propProjectDistance->get( true ) <= 1.5 ) )
                     {
                         // look in the 26 nbhood (3x3x3 voxels)
 
@@ -283,7 +283,7 @@ void WMPartition2Mesh::moduleMain()
                             m_refs[i]=0;
                         }
                     }
-                    else if( ( m_propProjectDistance->get( true ) > 1.5) && ( m_propProjectDistance->get( true ) <= 2.5) )
+                    else if( ( m_propProjectDistance->get( true ) > 1.5) && ( m_propProjectDistance->get( true ) <= 2.5 ) )
                     {
                         // look in the 124 nbhood (5x5x5 voxels)
 
@@ -320,7 +320,7 @@ void WMPartition2Mesh::moduleMain()
                             m_refs[i]=0;
                         }
                     }
-                    else if( m_propProjectDistance->get( true ) > 2.5)
+                    else if( m_propProjectDistance->get( true ) > 2.5 )
                     {
                         // look in the 342 nbhood (7x7x7 voxels)
 
@@ -534,7 +534,7 @@ void WMPartition2Mesh::writeLabels()
         labelFile << "#!ascii label " << labelFileName << " , out of a " << labels.size() << " labels partition" << std::endl << std::endl;
         labelFile << labels[i].size() << std::endl;
 
-        for(size_t j = 0; j < labels[i].size(); ++j)
+        for( size_t j = 0; j < labels[i].size(); ++j )
         {
             size_t vID( labels[i][j] );
             labelFile << vID << " ";
@@ -617,7 +617,7 @@ void WMPartition2Mesh::writeAnnotation()
     intBuffer[0] = m_outMesh->vertSize();
     switchByteOrderOfArray( intBuffer, 1 );
     char* charintbuffer = reinterpret_cast< char* >( intBuffer );
-    for( size_t i = 0; i < sizeof( intVar) ; ++i )
+    for( size_t i = 0; i < sizeof( intVar ) ; ++i )
     {
         buffer[counter] = charintbuffer[i];
         ++counter;

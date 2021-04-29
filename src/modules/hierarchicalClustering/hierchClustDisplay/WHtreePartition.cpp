@@ -568,7 +568,7 @@ std::pair< float, float > WHtreePartition::evalPartClustSizeDiff( const std::vec
     }
     sizeSum += m_tree.getNode( partition.back() ).getSize();
     double M( partition.size() * ( partition.size() -1 ) / 2.0 );
-    return std::make_pair( sizeSum/partition.size(), diffSqSum/M);
+    return std::make_pair( sizeSum/partition.size(), diffSqSum/M );
 } // end evalPartitClustSizeD() -------------------------------------------------------------------------------------
 
 float WHtreePartition::evalPartIntraDist( const std::vector<size_t> &partition ) const
