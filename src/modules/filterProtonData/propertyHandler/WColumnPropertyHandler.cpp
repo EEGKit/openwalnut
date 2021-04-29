@@ -152,14 +152,14 @@ void WColumnPropertyHandler::propertyNotifier( WPropertyBase::SPtr property )
         }
     }
 
-    if( selector != NULL)
+    if( selector != NULL )
     {
         std::string selectedValue = selector->at( 0 )->getAs< ItemType >()->getValue();
 
         m_protonData->setStateIndex( columnName, m_protonData->getColumnIndex( selectedValue ) );
 
         m_dataUpdate();
-        if(m_externEventMethod != NULL)
+        if( m_externEventMethod != NULL )
         {
             m_externEventMethod();
         }

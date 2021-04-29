@@ -104,12 +104,12 @@ void WFilterPropertyHandler::searchPDGTypes()
 {
     int pdgColumnIndex = m_protonData->getColumnIndexBySelection( "Particle Data Group" );
 
-    if(pdgColumnIndex < 0)
+    if( pdgColumnIndex < 0 )
     {
         return;
     }
 
-    for( size_t idx = 0; idx < m_protonData->getCSVData()->size(); idx++)
+    for( size_t idx = 0; idx < m_protonData->getCSVData()->size(); idx++ )
     {
         std::vector< std::string > row = m_protonData->getCSVData()->at( idx );
         std::string rowContent = row.at( pdgColumnIndex );
@@ -146,7 +146,7 @@ void WFilterPropertyHandler::createMultiSelectionForPDG()
     m_pdgTypes.clear();
     searchPDGTypes();
 
-    if(m_pdgTypes.size() <= 0)
+    if( m_pdgTypes.size() <= 0 )
     {
         m_multiSelection = m_filteringGroup->addProperty( "Show particles", "Choose particle type(s) to be shown.",
                                                             m_particleItemSelectionList->getSelectorNone(), pdgEncodingnotifier );
@@ -228,7 +228,7 @@ bool WFilterPropertyHandler::isPDGTypeSelected( int pdgType )
 
     for( size_t i = 0; i < selectedItems.size(); ++i )
     {
-        if(getPdgFromName( selectedItems.at( i )->getName()) == pdgType)
+        if( getPdgFromName( selectedItems.at( i )->getName() ) == pdgType )
         {
             return true;
         }
@@ -278,7 +278,7 @@ void WFilterPropertyHandler::createPDGMap( std::string path )
 
     if( !pdgSignFile.is_open() )
     {
-        if( !copyFileToHomePath(path, getParticleNameFilePath() ) )
+        if( !copyFileToHomePath( path, getParticleNameFilePath() ) )
         {
             throw WException( "Failed to copy particle name file into homedir" );
         }

@@ -265,17 +265,17 @@ public:
                 "1e.1", "0+.e0"
         };
 
-        for( auto trueCondition : testIntList)
+        for( auto trueCondition : testIntList )
         {
             TS_ASSERT_EQUALS( protonData.determineColumnTypeByString( trueCondition ), "int" );
         }
 
-        for( auto trueCondition : testDoubleList)
+        for( auto trueCondition : testDoubleList )
         {
             TS_ASSERT_EQUALS( protonData.determineColumnTypeByString( trueCondition ), "double" );
         }
 
-        for( auto falseCondition : testStringList)
+        for( auto falseCondition : testStringList )
         {
             TS_ASSERT_EQUALS( protonData.determineColumnTypeByString( falseCondition ), "string" );
         }

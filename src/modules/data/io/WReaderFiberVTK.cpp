@@ -81,14 +81,14 @@ void WReaderFiberVTK::readHeader()
     }
 
     // check if the header may be valid for the .fib format
-    if( m_header.at(0) != "# vtk DataFile Version 3.0" )
+    if( m_header.at( 0 ) != "# vtk DataFile Version 3.0" )
     {
         wlog::error( "WReaderFiberVTK" ) << "Unsupported format version string in VTK fiber file: "
                                          << m_fname
                                          << ", "
                                          << m_header.at( 0 );
     }
-    if( m_header.at(1).size() > 256 )
+    if( m_header.at( 1 ).size() > 256 )
     {
         wlog::warn( "WReaderFiberVTK" ) << "Invalid header size of VTK fiber file: "
                                            << m_fname

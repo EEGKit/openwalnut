@@ -22,7 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
-#if ( defined( __linux__ ) && !defined( __ANDROID__ ) )
+#if( defined( __linux__ ) && !defined( __ANDROID__ ) )
 #include <sys/prctl.h>
 #endif
 
@@ -149,7 +149,7 @@ void WThreadedRunner::msleep( const int32_t t ) const
 
 boost::signals2::connection WThreadedRunner::subscribeSignal( THREAD_SIGNAL signal, t_ThreadErrorSignalHandlerType notifier )
 {
-    switch( signal)
+    switch( signal )
     {
         case WTHREAD_ERROR:
             return signal_thread_error.connect( notifier );
@@ -174,7 +174,7 @@ const std::string& WThreadedRunner::getCrashMessage() const
     return m_crashMessage;
 }
 
-#if ( defined( __linux__ ) && !defined( __ANDROID__ ) )
+#if( defined( __linux__ ) && !defined( __ANDROID__ ) )
 void WThreadedRunner::setThisThreadName( std::string name )
 {
     // set the name of the thread. This name is shown by the "top", for example.

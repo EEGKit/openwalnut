@@ -1403,7 +1403,7 @@ void WQtControlPanel::clearAndDeleteTabs()
 
     m_tabWidget->setDisabled( true );
     QWidget *widget;
-    while( ( widget = m_tabWidget->widget( 0 ) ))
+    while( ( widget = m_tabWidget->widget( 0 ) ) )
     {
         m_tabWidget->removeTab( 0 );
         delete widget;

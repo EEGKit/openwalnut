@@ -33,7 +33,7 @@
 
 bool isPowerOfTwo( size_t x )
 {
-    return ( (x != 0 ) && ( (x & ( ~x + 1 ) ) == x ) );
+    return ( ( x != 0 ) && ( ( x & ( ~x + 1 ) ) == x ) );
 }
 
 bool checkTextureSize( size_t size )

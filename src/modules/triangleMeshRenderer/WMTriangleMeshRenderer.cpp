@@ -98,17 +98,17 @@ void WMTriangleMeshRenderer::updateMinMax( double& minX, double& maxX, // NOLINT
 
 double WMTriangleMeshRenderer::getMedian( double x, double y, double z ) const
 {
-    if( ( y < x && z > x ) || ( z < x && y > x) )
+    if( ( y < x && z > x ) || ( z < x && y > x ) )
     {
         return x;
     }
 
-    if( ( x < y && z > y ) || ( x < y && z > y) )
+    if( ( x < y && z > y ) || ( x < y && z > y ) )
     {
         return y;
     }
 
-    if( ( y < z && x > z ) || ( x < z && y > z) )
+    if( ( y < z && x > z ) || ( x < z && y > z ) )
     {
         return z;
     }
@@ -125,7 +125,7 @@ double WMTriangleMeshRenderer::getMedian( double x, double y, double z ) const
     {
         return z;
     }
-    if( x == y && y == z && x == z)
+    if( x == y && y == z && x == z )
     {
         return x;
     }
@@ -135,7 +135,7 @@ double WMTriangleMeshRenderer::getMedian( double x, double y, double z ) const
 
 double WMTriangleMeshRenderer::getIntervallCenterMiddle( double min, double max ) const
 {
-    return min + ( max - min) / 2;
+    return min + ( max - min ) / 2;
 }
 
 void WMTriangleMeshRenderer::connectors()

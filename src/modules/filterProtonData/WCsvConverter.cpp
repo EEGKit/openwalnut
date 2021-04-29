@@ -204,7 +204,7 @@ bool WCsvConverter::checkConditionToPass( WDataSetCSV::Content::iterator dataRow
 
     if( m_protonData->isColumnAvailable( WSingleSelectorName::getEventId() ) )
     {
-        if(dataRow->at( m_indexes->getEventID() ) == "NULL")
+        if( dataRow->at( m_indexes->getEventID() ) == "NULL" )
         {
             return true;
         }
@@ -376,7 +376,7 @@ void WCsvConverter::addEventID( WDataSetCSV::Content::iterator dataRow )
 {
     if( m_protonData->isColumnAvailable( WSingleSelectorName::getEventId() ) )
     {
-        if(dataRow->at( m_indexes->getEventID() ) == "NULL")
+        if( dataRow->at( m_indexes->getEventID() ) == "NULL" )
         {
             return;
         }

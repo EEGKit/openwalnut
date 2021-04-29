@@ -82,7 +82,7 @@ void main()
     else if( u_renderingType == 3 )
     {
         // Timeribbon
-        if( param.t > u_parameterCenter + widthHalf || param.t < u_parameterCenter - widthHalf) discard;
+        if( param.t > u_parameterCenter + widthHalf || param.t < u_parameterCenter - widthHalf ) discard;
     }
     else if( u_renderingType == 4 )
     {

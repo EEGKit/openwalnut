@@ -111,7 +111,7 @@ WFiberCluster::~WFiberCluster()
 void WFiberCluster::merge( WFiberCluster& other ) // NOLINT
 {
     WFiberCluster::IndexList::const_iterator cit = other.m_memberIndices.begin();
-    for( ; cit != other.m_memberIndices.end(); ++cit)
+    for( ; cit != other.m_memberIndices.end(); ++cit )
     {
         m_memberIndices.push_back( *cit );
     }

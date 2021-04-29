@@ -26,7 +26,7 @@
     #include <unistd.h> // used for getcwd (to get current directory)
 #endif
 
-#if defined(__APPLE__)
+#if defined( __APPLE__ )
     #include <mach-o/dyld.h>
 #endif
 

@@ -75,7 +75,7 @@ WTriangleMesh::SPtr WMeshReaderVTK::operator()( WProgressCombiner::SPtr parentPr
         }
         header.push_back( line );
     }
-    if( header.at(0) != "# vtk DataFile Version 2.0" )
+    if( header.at( 0 ) != "# vtk DataFile Version 2.0" )
     {
         WLogger::getLogger()->addLogMessage( "Unsupported format version string: " + header.at( 0 ), "Read Mesh", LL_WARNING );
     }

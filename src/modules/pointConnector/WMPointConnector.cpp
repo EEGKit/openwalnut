@@ -199,7 +199,7 @@ void WMPointConnector::handleInput()
         }
     }
 
-    for( size_t idx = fibers->size() - 1; idx > 0; idx--)
+    for( size_t idx = fibers->size() - 1; idx > 0; idx-- )
     {
         if( fibers->at( idx ).size() <= 1 )
         {

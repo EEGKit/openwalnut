@@ -225,7 +225,7 @@ void WMData::moduleMain()
 std::string WMData::getDataTypeString( boost::shared_ptr< WDataSetSingle > dss )
 {
     std::string result;
-    switch( (*dss).getValueSet()->getDataType() )
+    switch( ( *dss ).getValueSet()->getDataType() )
     {
         case W_DT_NONE:
             result = "none";
@@ -490,7 +490,7 @@ void WMData::load()
             m_dataType->set( getDataTypeString( dss ) );
             if( dss->isTexture() )
             {
-                switch( (*dss).getValueSet()->getDataType() )
+                switch( ( *dss ).getValueSet()->getDataType() )
                 {
                     case W_DT_UNSIGNED_CHAR:
                     case W_DT_INT16:

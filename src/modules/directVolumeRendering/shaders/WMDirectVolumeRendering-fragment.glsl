@@ -243,7 +243,7 @@ void main()
         // get current value, classify and illuminate
         vec3 rayPoint = rayStart + ( currentDistance * v_ray );
         float alpha = transferFunction( texture3D( u_volumeSampler, rayPoint ).r ).a;
-        if(alpha > maxalpha)
+        if( alpha > maxalpha )
         {
             maxRayPoint = rayPoint;
             maxdist = currentDistance;

@@ -153,15 +153,15 @@ boost::shared_ptr< WDataSetScalar > WMReadRawData::readData( std::string fileNam
     {
         newValueSet =  boost::shared_ptr< WValueSetBase >( new WValueSet< uint8_t >( 0, 1, readDataTyped< uint8_t >( fileName ), W_DT_UINT8 ) );
     }
-    else if( dataTypeName == "UINT16")
+    else if( dataTypeName == "UINT16" )
     {
         newValueSet =  boost::shared_ptr< WValueSetBase >( new WValueSet< uint16_t >( 0, 1, readDataTyped< uint16_t >( fileName ), W_DT_UINT16 ) );
     }
-    else if( dataTypeName == "UINT32")
+    else if( dataTypeName == "UINT32" )
     {
         newValueSet =  boost::shared_ptr< WValueSetBase >( new WValueSet< uint32_t >( 0, 1, readDataTyped< uint32_t >( fileName ), W_DT_UINT32 ) );
     }
-    else if( dataTypeName == "UINT64")
+    else if( dataTypeName == "UINT64" )
     {
         newValueSet =  boost::shared_ptr< WValueSetBase >( new WValueSet< uint64_t >( 0, 1, readDataTyped< uint64_t >( fileName ), W_DT_UINT64 ) );
     }
@@ -169,15 +169,15 @@ boost::shared_ptr< WDataSetScalar > WMReadRawData::readData( std::string fileNam
     {
         newValueSet =  boost::shared_ptr< WValueSetBase >( new WValueSet< int8_t >( 0, 1, readDataTyped< int8_t >( fileName ), W_DT_INT8 ) );
     }
-    else if( dataTypeName == "INT16")
+    else if( dataTypeName == "INT16" )
     {
         newValueSet =  boost::shared_ptr< WValueSetBase >( new WValueSet< int16_t >( 0, 1, readDataTyped< int16_t >( fileName ), W_DT_INT16 ) );
     }
-    else if( dataTypeName == "INT32")
+    else if( dataTypeName == "INT32" )
     {
         newValueSet =  boost::shared_ptr< WValueSetBase >( new WValueSet< int32_t >( 0, 1, readDataTyped< int32_t >( fileName ), W_DT_SIGNED_INT ) );
     }
-    else if( dataTypeName == "INT64")
+    else if( dataTypeName == "INT64" )
     {
         newValueSet =  boost::shared_ptr< WValueSetBase >( new WValueSet< int64_t >( 0, 1, readDataTyped< int64_t >( fileName ), W_DT_INT64 ) );
     }

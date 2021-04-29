@@ -138,7 +138,7 @@ void WProtonData::detectColumnTypesFromCsvData( WDataSetCSV::ContentSPtr csvData
 
     for( size_t idx = 0; idx < m_columnTypes->size(); idx++ )
     {
-        if(m_columnTypes->at( idx ) == WDataType::getDouble() )
+        if( m_columnTypes->at( idx ) == WDataType::getDouble() )
         {
             if( checkIfDoubleColumnCanBeInteger( idx ) )
             {
@@ -192,7 +192,7 @@ std::vector< std::string > WProtonData::getHeaderFromType( std::list< std::strin
     std::vector< std::string > columnTypes = *m_columnTypes;
     std::vector< std::string > filterHeader;
 
-    for( size_t i = 0; i < columnTypes.size(); i++)
+    for( size_t i = 0; i < columnTypes.size(); i++ )
     {
         for( std::string type : typeNames )
         {

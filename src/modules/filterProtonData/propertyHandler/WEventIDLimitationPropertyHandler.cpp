@@ -77,7 +77,7 @@ void WEventIDLimitationPropertyHandler::determineMinMaxEventID()
 {
     int eventIDIndex = m_protonData->getColumnIndexBySelection( WSingleSelectorName::getEventId() );
 
-    if(eventIDIndex < 0)
+    if( eventIDIndex < 0 )
     {
         return;
     }
@@ -91,7 +91,7 @@ void WEventIDLimitationPropertyHandler::determineMinMaxEventID()
         {
             minCap = calc;
         }
-        if(calc > maxCap )
+        if( calc > maxCap )
         {
             maxCap = calc;
         }

@@ -159,7 +159,7 @@ void WMTransferFunctionColorBar::moduleMain()
             boost::shared_ptr< WDataSetSingle > dataSet = m_input->getData();
 
             // add a colorbar
-            if( dataSet/* && dataSet->isTexture()*/ )
+            if( dataSet /* && dataSet->isTexture()*/ )
             {
                 // create camera oriented 2d projection
                 m_barProjection = new osg::Projection();

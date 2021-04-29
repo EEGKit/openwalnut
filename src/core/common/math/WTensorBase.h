@@ -69,7 +69,7 @@ inline void positionIterateOneStep( boost::array< std::size_t, order >& pos ) //
 
     for( std::size_t k = order - 1; k > 0; --k )
     {
-        if( pos[ k ] == dim - 1)
+        if( pos[ k ] == dim - 1 )
         {
             pos[ k ] = 0;
         }

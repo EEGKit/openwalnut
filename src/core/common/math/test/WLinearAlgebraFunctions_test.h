@@ -51,7 +51,7 @@ public:
         WVector3d v( 9, 10, 11 );
         WMatrix< double > m( 3, 3 );
         int i = 0;
-        for( size_t r = 0; r < 3; ++r)
+        for( size_t r = 0; r < 3; ++r )
         {
             for( size_t c = 0; c < 3; ++c, ++i )
             {
@@ -70,7 +70,7 @@ public:
     {
         int i = 0;
         WMatrix< double > m( 3, 3 );
-        for( size_t r = 0; r < 3; ++r)
+        for( size_t r = 0; r < 3; ++r )
         {
             for( size_t c = 0; c < 3; ++c, ++i )
             {
@@ -98,7 +98,7 @@ public:
     {
         int i = 0;
         WMatrix< double > m( 3, 3 );
-        for( size_t r = 0; r < 3; ++r)
+        for( size_t r = 0; r < 3; ++r )
         {
             for( size_t c = 0; c < 3; ++c, ++i )
             {
@@ -117,7 +117,7 @@ public:
     {
         WMatrix<double> m( 4, 4 );
 
-        for( size_t r = 0; r < 4; ++r)
+        for( size_t r = 0; r < 4; ++r )
         {
             for( size_t c = 0; c < 4; ++c )
             {

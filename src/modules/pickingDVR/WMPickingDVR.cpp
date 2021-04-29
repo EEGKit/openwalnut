@@ -273,7 +273,7 @@ void WMPickingDVR::moduleMain()
                 }
             }
         }
-        else if( selectionType == 1)
+        else if( selectionType == 1 )
         {
             bool pickingSuccessful = false;
             const WPosition posPicking = getPickedDVRPosition( pickingMode, &pickingSuccessful );
@@ -568,7 +568,7 @@ std::vector< std::pair< double, WPosition > > WMPickingDVR::sampleIntensityAlong
 
     // Get scalar field
     boost::shared_ptr< WDataSetScalar > scalarData = m_scalarIC->getData();
-    if(!scalarData)
+    if( !scalarData )
     {
         errorLog()<< "[Invalid scalar field]";
         return std::vector< std::pair< double, WPosition > >();
@@ -608,7 +608,7 @@ double WMPickingDVR::getTFAlpha( const double scalar ) const
 
     // Get scalar field
     boost::shared_ptr< WDataSetScalar > scalarData = m_scalarIC->getData();
-    if(!scalarData)
+    if( !scalarData )
     {
         WAssert( false, "Invalid scalar field" );
     }

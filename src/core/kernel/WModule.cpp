@@ -397,7 +397,7 @@ boost::signals2::connection WModule::subscribeSignal( MODULE_SIGNAL signal, t_Mo
 
 boost::signals2::connection WModule::subscribeSignal( MODULE_SIGNAL signal, t_ModuleErrorSignalHandlerType notifier )
 {
-    switch( signal)
+    switch( signal )
     {
         case WM_ERROR:
             return signal_error.connect( notifier );

@@ -69,7 +69,7 @@ void WFiberHandler::sortVertices()
                 return a.z() < b.z();
             }
 
-            if(a.x() != b.x() )
+            if( a.x() != b.x() )
             {
                 return a.x() < b.x();
             }
@@ -106,7 +106,7 @@ void WFiberHandler::removeVertexFromFiber( osg::Vec3 vertex, size_t fiberIdx, bo
     auto fiber = m_fibers->begin() + fiberIdx;
     size_t position = 0;
 
-    for( auto it = fiber->begin(); it != fiber->end(); it++)
+    for( auto it = fiber->begin(); it != fiber->end(); it++ )
     {
         if( *it == vertex )
         {
@@ -294,7 +294,7 @@ bool WFiberHandler::getFiberOfPoint( osg::Vec3 vertex, size_t* idx )
         PCFiber fiber = m_fibers->at( fiberIdx );
         if( std::find( fiber.begin(), fiber.end(), vertex ) != fiber.end() )
         {
-            if(idx != NULL)
+            if( idx != NULL )
             {
                 *idx = fiberIdx;
             }
