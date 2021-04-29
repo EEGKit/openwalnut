@@ -246,7 +246,7 @@ void WMPartition2Mesh::moduleMain()
 
                 if( m_refs[i] == 0 ) // didn't find a voxel have to keep looking
                 {
-                    if( ( m_propProjectDistance->get( true ) > 0.5) && ( m_propProjectDistance->get( true ) <= 1.5 ) )
+                    if( ( m_propProjectDistance->get( true ) > 0.5 ) && ( m_propProjectDistance->get( true ) <= 1.5 ) )
                     {
                         // look in the 26 nbhood (3x3x3 voxels)
 
@@ -283,7 +283,7 @@ void WMPartition2Mesh::moduleMain()
                             m_refs[i]=0;
                         }
                     }
-                    else if( ( m_propProjectDistance->get( true ) > 1.5) && ( m_propProjectDistance->get( true ) <= 2.5 ) )
+                    else if( ( m_propProjectDistance->get( true ) > 1.5 ) && ( m_propProjectDistance->get( true ) <= 2.5 ) )
                     {
                         // look in the 124 nbhood (5x5x5 voxels)
 
