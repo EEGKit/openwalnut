@@ -55,6 +55,8 @@ and get the URL to our git repository.
 * Qt (Preferably Qt5, build support also for Qt4 >= 4.6) 
 * OpenSceneGraph (>= 2.8.0)
 * Boost (>= 1.46.0)
+* NIfTI library
+* Eigen library
 
 ## Compilation on Unix-like systems:
 
