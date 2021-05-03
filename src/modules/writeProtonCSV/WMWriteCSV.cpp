@@ -75,7 +75,7 @@ void WMWriteCSV::moduleMain()
 {
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_CSVInput->getDataChangedCondition() );
-    m_moduleState.add( m_PointsAndFibersInput->getDataChangedCondition() );
+    m_moduleState.add( m_fibersInput->getDataChangedCondition() );
 
     ready();
 
@@ -89,10 +89,10 @@ void WMWriteCSV::moduleMain()
 
 void WMWriteCSV::connectors()
 {
-    m_PointsAndFibersInput = WModuleInputData< WDataSetPointsAndFibers >::createAndAdd(
-                                                                            shared_from_this(),
-                                                                            "Fibers_Points_in",
-                                                                            "The dataset of the connected points" );
+    m_fibersInput = WModuleInputData< WDataSetFibers >::createAndAdd(
+                                                                shared_from_this(),
+                                                                "Fibers_in",
+                                                                "The dataset of the connected points" );
     m_CSVInput = WModuleInputData< WDataSetCSV >::createAndAdd(
                                                     shared_from_this(),
                                                     "CSV_in",
@@ -115,14 +115,14 @@ void WMWriteCSV::properties()
 void WMWriteCSV::propertyCallback()
 {
     boost::shared_ptr< WDataSetCSV > csvdataSet = m_CSVInput->getData();
-    boost::shared_ptr< WDataSetPointsAndFibers > pointsAndfibersdataSet = m_PointsAndFibersInput->getData();
+    boost::shared_ptr< WDataSetFibers > fibersdataSet = m_fibersInput->getData();
 
     if( !csvdataSet )
     {
         throw WException( "The Data-Modul-CSV-connection is missing." );
     }
 
-    if( !pointsAndfibersdataSet )
+    if( !fibersdataSet )
     {
         throw WException( "The Point-Connector-connection is missing." );
     }
@@ -223,8 +223,7 @@ size_t WMWriteCSV::createStartCounter( std::list< std::tuple < float, float, flo
 void WMWriteCSV::writeToFile()
 {
     WDataSetCSV::SeperatedRowSPtr csvContent = m_CSVInput->getData()->getRawDataSet();
-    WDataSetFibers::SPtr fibers = m_PointsAndFibersInput->getData()->getFibers();
-    std::list< std::tuple < float, float, float, int > > listOfInternalVertex = getListOfInternalVertex( fibers );
+    std::list< std::tuple < float, float, float, int > > listOfInternalVertex = getListOfInternalVertex( m_fibersInput->getData() );
     std::ofstream newCSVFile( getPathToSave() );
 
     if( !newCSVFile.is_open() )

@@ -30,8 +30,6 @@
 
 #include "core/dataHandler/WDataSetCSV.h"
 #include "core/dataHandler/WDataSetFibers.h"
-#include "core/dataHandler/WDataSetPoints.h"
-#include "core/dataHandler/WDataSetPointsAndFibers.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 
@@ -155,7 +153,7 @@ private:
     WPropFilename m_filename;
 
     boost::shared_ptr< WModuleInputData< WDataSetCSV > > m_CSVInput;  //!< Input connector required by this module.
-    boost::shared_ptr< WModuleInputData< WDataSetPointsAndFibers > > m_PointsAndFibersInput;  //!< Input connector required by this module.
+    boost::shared_ptr< WModuleInputData< WDataSetFibers > > m_fibersInput;  //!< Input connector required by this module.
 };
 
 
