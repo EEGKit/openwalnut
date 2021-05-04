@@ -66,6 +66,7 @@ Package()
 
     echo "* Download Packager"
     wget -N https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+    wget -N https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
 
     chmod +x linuxdeploy*.AppImage
     
@@ -75,6 +76,7 @@ Package()
                                 --appdir AppDir \
                                 -d openwalnut.desktop \
                                 -i ../../../artwork/Icons/openwalnut_128x128.png \
+                                --plugin qt \
                                 --output appimage
     cd ..
 }
