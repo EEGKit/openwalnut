@@ -43,3 +43,6 @@ src/modules/modules-user.toolbox
 .vscode
 
 openwalnut.log
+
+# AppImage
+tools/AppImage/AppImageBuild
