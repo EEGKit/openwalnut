@@ -36,7 +36,7 @@
 /**
  * Helper class.
  */
-class Callable
+class CallableHelperC
 {
 public:
     /**
@@ -132,12 +132,12 @@ public:
         cs->add( c2 );
 
         // create a thread which fires a condition in the set for us
-        Callable t;
+        CallableHelperC t;
         t.flag = false;
         t.c = c1.get();
 
         // start a thread
-        boost::thread thread = boost::thread( boost::bind( &Callable::threadMain, &t ) );
+        boost::thread thread = boost::thread( boost::bind( &CallableHelperC::threadMain, &t ) );
 
         // wait for condition
         cs->wait();

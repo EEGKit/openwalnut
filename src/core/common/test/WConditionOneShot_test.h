@@ -35,7 +35,7 @@
 /**
  * Helper class.
  */
-class Callable
+class CallableHelper
 {
 public:
     /**
@@ -84,12 +84,12 @@ public:
     void testWaitNotify()
     {
         WConditionOneShot c;
-        Callable t;
+        CallableHelper t;
         t.flag = false;
         t.c = &c;
 
         // start a thread
-        boost::thread thread = boost::thread( boost::bind( &Callable::threadMain, &t ) );
+        boost::thread thread = boost::thread( boost::bind( &CallableHelper::threadMain, &t ) );
 
         // wait for condition
         c.wait();
