@@ -39,7 +39,7 @@ bool testIntersectTriangle( const WPosition& p1, const WPosition& p2, const WPos
     double r3 = dot( normal, p3 - planePoint );
 
     // TODO(math): use signum here!
-    if( std::abs( ( ( r1 > 0 ) - ( r1 < 0 ) ) + ( ( r2 > 0) - ( r2 < 0 ) ) + ( ( r3 > 0 ) - ( r3 < 0 ) ) ) == 3 )
+    if( std::abs( ( ( r1 > 0 ) - ( r1 < 0 ) ) + ( ( r2 > 0 ) - ( r2 < 0 ) ) + ( ( r3 > 0 ) - ( r3 < 0 ) ) ) == 3 )
     {
         return false;
     }

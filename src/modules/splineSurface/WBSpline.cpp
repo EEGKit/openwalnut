@@ -33,14 +33,14 @@ WBSpline::WBSpline( int order, std::vector< WVector3d > deBoorPoints )
     int k = m_order = order;
 
     //define a normalized knotVector
-    for( int i = 0; i < (n + k); i++)
+    for( int i = 0; i < ( n + k ); i++ )
     {
         double tempKnot;
-        if( i < k)
+        if( i < k )
         {
             tempKnot = k - 1;
         }
-        else if( (i >= k) && (i < n))
+        else if( ( i >= k ) && ( i < n ) )
         {
             tempKnot = i;
         }
@@ -91,9 +91,9 @@ WVector3d WBSpline::f( double _t )
 
     r = i - 1;
 
-    if( _t == m_knots[m_knots.size() - 1])
+    if( _t == m_knots[m_knots.size() - 1] )
     {
-        for(i = ( m_knots.size() - 1); i > 0; i-- )
+        for( i = ( m_knots.size() - 1 ); i > 0; i-- )
         {
             if( m_knots[i] < _t )
             {
@@ -163,7 +163,7 @@ WVector3d WBSpline::controlPoint_i_j( int _i, int _j )
 {
     WVector3d result;
 
-    if( _j == 0)
+    if( _j == 0 )
     {
         result[0] = m_deBoorPoints[_i][0];
         result[1] = m_deBoorPoints[_i][1];

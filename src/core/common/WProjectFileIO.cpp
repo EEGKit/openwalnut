@@ -92,7 +92,7 @@ void WProjectFileIO::printProperties( std::ostream& output, boost::shared_ptr< W
     for( WProperties::PropertyConstIterator iter = l->get().begin(); iter != l->get().end(); ++iter )
     {
         // information properties do not get written
-        if( ( *iter )->getPurpose () == PV_PURPOSE_INFORMATION )
+        if( ( *iter )->getPurpose() == PV_PURPOSE_INFORMATION )
         {
             continue;
         }

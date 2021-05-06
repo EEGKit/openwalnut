@@ -121,6 +121,11 @@ private:
      * Slower but correct depth calculation.
      */
     WPropBool m_useCorrectDepth;
+
+    /**
+     * Invisible bool property that decides whether attribute or uniform is used.
+     */
+    WPropBool m_useAttribute;
 };
 
 #endif  // WMPOINTRENDERER_H

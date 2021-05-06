@@ -2430,7 +2430,7 @@ void WMHierchClustDisplay::colorAction()
             }
             std::random_shuffle( shuffledColors.begin(), shuffledColors.end() );
             size_t i( 0 );
-            for( std::map<size_t, WColor>::iterator cIter( m_selectionColorsBackup.begin() ); cIter != m_selectionColorsBackup.end(); ++cIter)
+            for( std::map<size_t, WColor>::iterator cIter( m_selectionColorsBackup.begin() ); cIter != m_selectionColorsBackup.end(); ++cIter )
             {
                 cIter->second = shuffledColors[i++];
             }
@@ -2467,13 +2467,13 @@ void WMHierchClustDisplay::colorAction()
         doUpdateSelection = false;
         break;
     case 5:
-        for( std::map<size_t, WColor>::iterator cIter( m_selectionColorsBackup.begin() ); cIter != m_selectionColorsBackup.end(); ++cIter)
+        for( std::map<size_t, WColor>::iterator cIter( m_selectionColorsBackup.begin() ); cIter != m_selectionColorsBackup.end(); ++cIter )
         {
             m_nodeColorsCustom[ cIter->first ] = cIter->second;
         }
         break;
     case 6:
-        for( std::map<size_t, WColor>::iterator cIter( m_selectionColorsBackup.begin() ); cIter != m_selectionColorsBackup.end(); ++cIter)
+        for( std::map<size_t, WColor>::iterator cIter( m_selectionColorsBackup.begin() ); cIter != m_selectionColorsBackup.end(); ++cIter )
         {
             assignColorHierch( cIter->first, cIter->second );
         }

@@ -101,7 +101,7 @@ osg::ref_ptr< osg::Texture2D > WGEOffscreenRenderPass::attach( BufferComponent b
     }
     else
     {
-#if defined(__APPLE__)
+#if defined( __APPLE__ )
         if( internalFormat != GL_RGBA )
         {
             wlog::warn( "WGEOffscreenRenderPass::attach:" ) <<

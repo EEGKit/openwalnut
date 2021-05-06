@@ -37,3 +37,12 @@ src/modules/modules-user.toolbox
 .cproject
 .settings
 
+# jetbrains CLion / IntelliJ files
+**/.idea
+
+.vscode
+
+openwalnut.log
+
+# AppImage
+tools/AppImage/AppImageBuild

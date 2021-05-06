@@ -154,17 +154,17 @@ void WMDataTypeConversion::moduleMain()
             VisitorVSet< uint8_t > visitor;
             valueSet = m_dataSet->getValueSet()->applyFunction( visitor );
         }
-        else if( dataTypeName == "UINT16")
+        else if( dataTypeName == "UINT16" )
         {
             VisitorVSet< uint16_t > visitor;
             valueSet = m_dataSet->getValueSet()->applyFunction( visitor );
         }
-        else if( dataTypeName == "UINT32")
+        else if( dataTypeName == "UINT32" )
         {
             VisitorVSet< uint32_t > visitor;
             valueSet = m_dataSet->getValueSet()->applyFunction( visitor );
         }
-        else if( dataTypeName == "UINT64")
+        else if( dataTypeName == "UINT64" )
         {
             VisitorVSet< uint64_t > visitor;
             valueSet = m_dataSet->getValueSet()->applyFunction( visitor );
@@ -174,17 +174,17 @@ void WMDataTypeConversion::moduleMain()
             VisitorVSet< int8_t > visitor;
             valueSet = m_dataSet->getValueSet()->applyFunction( visitor );
         }
-        else if( dataTypeName == "INT16")
+        else if( dataTypeName == "INT16" )
         {
             VisitorVSet< int16_t > visitor;
             valueSet = m_dataSet->getValueSet()->applyFunction( visitor );
         }
-        else if( dataTypeName == "INT32")
+        else if( dataTypeName == "INT32" )
         {
             VisitorVSet< int32_t > visitor;
             valueSet = m_dataSet->getValueSet()->applyFunction( visitor );
         }
-        else if( dataTypeName == "INT64")
+        else if( dataTypeName == "INT64" )
         {
             VisitorVSet< int64_t > visitor;
             valueSet = m_dataSet->getValueSet()->applyFunction( visitor );

@@ -131,7 +131,7 @@ WHtree::~WHtree()
 
 std::string WHtree::getReport( bool longMsg ) const
 {
-    if( !m_loadStatus)
+    if( !m_loadStatus )
     {
         return "tree not loaded";
     }
@@ -206,7 +206,7 @@ bool WHtree::check() const
     }
 
     // loop through nodes
-    for( std::vector<WHnode>::const_iterator nodeIter( m_nodes.begin() ); nodeIter != m_nodes.end(); ++nodeIter)
+    for( std::vector<WHnode>::const_iterator nodeIter( m_nodes.begin() ); nodeIter != m_nodes.end(); ++nodeIter )
     {
         std::vector<nodeID_t> kids = nodeIter->getChildren();
         size_t currentHLevel( 0 ), currentSize( 0 );
@@ -234,7 +234,7 @@ bool WHtree::check() const
         }
 
         nodeID_t parentID( nodeIter->getParent() );
-        if( ( !parentID.first) && ( ( nodeIter+1 ) != m_nodes.end() ) )
+        if( ( !parentID.first ) && ( ( nodeIter+1 ) != m_nodes.end() ) )
         {
             wlog::error( "WHtree" ) << "ERROR @ WHtree::check(): node has a leaf as parent";
             return false;
@@ -289,7 +289,7 @@ bool WHtree::check() const
         wlog::error( "WHtree" ) << "ERROR @ WHtree::check(): at least one node has the root node as child";
         return false;
     }
-    for( std::vector<WHnode>::const_iterator nodeIter( m_nodes.begin() ); nodeIter != m_nodes.end(); ++nodeIter)
+    for( std::vector<WHnode>::const_iterator nodeIter( m_nodes.begin() ); nodeIter != m_nodes.end(); ++nodeIter )
     {
         std::vector<nodeID_t> kids = nodeIter->getChildren();
         if( kids.size() != sumNodeKids[nodeIter->getID()] )
@@ -403,7 +403,7 @@ std::vector<size_t> WHtree::getLeaves4node( const size_t nodeID ) const
                 std::vector<nodeID_t> kids( getNode( currentNode ).getChildren() );
                 for( std::vector<nodeID_t>::const_iterator iter( kids.begin() ); iter != kids.end(); ++iter )
                 {
-                    if( iter->first) // is node
+                    if( iter->first ) // is node
                     {
                         worklist.push_back( iter->second );
                     }
@@ -1073,7 +1073,7 @@ bool WHtree::readTree( const std::string &filename )
 
             size_t tempSize( 0 ), tempHLevel( 0 );
             nodeID_t tempID( std::make_pair( 1, nodeCount ) );
-            for( std::vector<nodeID_t>::const_iterator iter( joiningNodes.begin() );  iter != joiningNodes.end(); ++iter)
+            for( std::vector<nodeID_t>::const_iterator iter( joiningNodes.begin() );  iter != joiningNodes.end(); ++iter )
             {
                 WHnode* kid( fetchNode( *iter ) );
                 if( kid == 0 )
@@ -1435,7 +1435,7 @@ bool WHtree::writeTreeOldWalnut( const std::string &filename ) const
     outFile << "#endcoordinates" << std::endl << std::endl;
 
     outFile << "#clusters" << std::endl;
-    for( std::vector<WHnode>::const_iterator nodeIter( m_nodes.begin() ); nodeIter != m_nodes.end(); ++nodeIter)
+    for( std::vector<WHnode>::const_iterator nodeIter( m_nodes.begin() ); nodeIter != m_nodes.end(); ++nodeIter )
     {
         std::vector<nodeID_t> currentKids( nodeIter->getChildren() );
         for( size_t i = 0; i < currentKids.size(); ++i )
@@ -1564,10 +1564,10 @@ std::vector< std::vector< unsigned int > > WHtree::getBranching( const std::vect
     addedIndexTable.reserve( thisPartition.size() );
     addedPartitionSet.reserve( thisPartition.size() );
 
-    for( size_t i = 0; i < thisPartition.size(); ++i)
+    for( size_t i = 0; i < thisPartition.size(); ++i )
     {
         // if its a base node and flag is set not to divide them, skip
-        if( getNode( thisPartition[i] ).getHLevel() == 1 && excludeLeaves)
+        if( getNode( thisPartition[i] ).getHLevel() == 1 && excludeLeaves )
         {
             continue;
         }
@@ -1576,7 +1576,7 @@ std::vector< std::vector< unsigned int > > WHtree::getBranching( const std::vect
         {
             std::vector<nodeID_t> kids( getNode( thisPartition[i] ).getChildren() );
             branch.reserve( kids.size() );
-            for( size_t j = 0; j < kids.size(); ++j)
+            for( size_t j = 0; j < kids.size(); ++j )
             {
                 branch.push_back( kids[j] );
             }
@@ -1604,7 +1604,7 @@ std::vector< std::vector< unsigned int > > WHtree::getBranching( const std::vect
                 throw std::runtime_error( "ERROR @ WHtree::getBranching(): dimension error on obtained vectors" );
             }
 
-            for( size_t j = 0; j < subIndexTable.size(); ++j)
+            for( size_t j = 0; j < subIndexTable.size(); ++j )
             {
                 std::vector < nodeID_t > newPartition( thisPartition );
                 newPartition.erase( newPartition.begin()+i );
@@ -1651,7 +1651,7 @@ std::vector< std::vector< unsigned int > > WHtree::getBranching( const std::vect
         thisSet.reserve( partitionFullIdSet[i].size() );
         for( size_t j = 0; j < partitionFullIdSet[i].size(); ++j )
         {
-            if( partitionFullIdSet[i][j].first)
+            if( partitionFullIdSet[i][j].first )
             {
                 thisSet.push_back( partitionFullIdSet[i][j].second );
             }
@@ -1911,7 +1911,7 @@ std::pair<size_t, size_t> WHtree::cleanup( std::vector<size_t> *outLookup )
 
         std::vector<nodeID_t> emptyKids;
 
-        if( ( newID == INVALID) || ( newParentID == INVALID ) )
+        if( ( newID == INVALID ) || ( newParentID == INVALID ) )
         {
             throw std::runtime_error( "ERROR @ WHtree::cleanup(): error updating node IDs, invalid lookup table value" );
         }

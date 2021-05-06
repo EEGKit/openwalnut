@@ -1,0 +1,239 @@
+//---------------------------------------------------------------------------
+//
+// Project: OpenWalnut ( http://www.openwalnut.org )
+//
+// Copyright 2009 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
+// For more information see http://www.openwalnut.org/copying
+//
+// This file is part of OpenWalnut.
+//
+// OpenWalnut is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// OpenWalnut is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with OpenWalnut. If not, see <http://www.gnu.org/licenses/>.
+//
+//---------------------------------------------------------------------------
+
+#ifndef WMPOINTCONNECTOR_H
+#define WMPOINTCONNECTOR_H
+
+#include <cmath>
+#include <string>
+#include <vector>
+
+#include <osg/Geode>
+
+#include "core/dataHandler/WDataSetFibers.h"
+#include "core/dataHandler/WDataSetPoints.h"
+#include "core/kernel/WKernel.h"
+#include "core/kernel/WModule.h"
+#include "core/kernel/WModuleContainer.h"
+#include "core/kernel/WModuleInputData.h"
+#include "core/kernel/WModuleOutputData.h"
+
+#include "../fiberDisplay/WMFiberDisplay.h"
+#include "../pointRenderer/WMPointRenderer.h"
+
+
+class WClickHandler;
+class WConnectorData;
+class WFiberHandler;
+
+/**
+ * This module connects the points in a point dataset.
+ *
+ * \ingroup modules
+ */
+class WMPointConnector: public WModuleContainer
+{
+    /**
+     * Test is your best ... friend
+     */
+    friend class WMPointConnectorTest;
+
+public:
+    /**
+     * A shared_ptr to this class.
+     */
+    typedef boost::shared_ptr< WMPointConnector > SPtr;
+
+    /**
+     * Constructor. Creates the module skeleton.
+     */
+    WMPointConnector();
+
+    /**
+     * Destructor.
+     */
+    virtual ~WMPointConnector();
+
+    /**
+     * Gives back the name of this module.
+     * \return the module's name.
+     */
+    virtual const std::string getName() const;
+
+    /**
+     * Gives back a description of this module.
+     * \return description to module.
+     */
+    virtual const std::string getDescription() const;
+
+    /**
+     * Due to the prototype design pattern used to build modules, this method returns a new instance of this method. NOTE: it
+     * should never be initialized or modified in some other way. A simple new instance is required.
+     *
+     * \return the prototype used to create every module in OpenWalnut.
+     */
+    virtual boost::shared_ptr< WModule > factory() const;
+
+    /**
+     * Get the icon for this module in XPM format.
+     * \return The icon.
+     */
+    virtual const char** getXPMIcon() const;
+
+    /**
+     * Handles a click on the drawing area.
+     * It checks all vertices and whether they are clicked.
+     * \param cameraPosition The position of the camera.
+     * \param direction The direction of the click.
+     * \param isLeftClick Whether this click is a left or a right click.
+     */
+    void handleClick( osg::Vec3 cameraPosition, osg::Vec3 direction, bool isLeftClick );
+
+    /**
+     * Redraws the current vertices with their colors.
+     */
+    void updatePoints();
+
+    /**
+     * Updates the fiber output
+     */
+    void updateOutput();
+
+    /**
+     * \return boost::shared_ptr< WConnectorData > The WConnectorData of this module.
+     */
+    boost::shared_ptr< WConnectorData > getConnectorData();
+
+    /**
+     * 
+     * \return boost::shared_ptr< WFiberHandler > The WFiberHandler of this module.
+     */
+    boost::shared_ptr< WFiberHandler > getFiberHandler();
+
+protected:
+    /**
+     * Entry point after loading the module. Runs in separate thread.
+     */
+    virtual void moduleMain();
+
+    /**
+     * Initialize the connectors this module is using.
+     */
+    virtual void connectors();
+
+    /**
+     * Initialize the properties for this module.
+     */
+    virtual void properties();
+
+    /**
+     * Deactivates or activates the inner modules when active changes.
+     */
+    virtual void activate();
+
+private:
+    /**
+     * Checks if a vertex with a certain radius is hit by a ray.
+     * \param rayStart The starting point of the ray.
+     * \param rayDir The direction of the ray.
+     * \param vertex The vertex to be checked.
+     * \param radius The radius of the vertex.
+     * \return < 0 if ray does not intersect. == 0 if ray is a tangent. > 0 if ray intersects.
+     */
+    float hitVertex( osg::Vec3 rayStart, osg::Vec3 rayDir, osg::Vec3 vertex, float radius );
+
+    /**
+     * Creates the WMPointRenderer and runs it.
+     */
+    void createPointRenderer();
+
+    /**
+     * Creates the WMFiberDisplay and runs it.
+     */
+    void createFiberDisplay();
+
+    /**
+     * Creates the WClickHandler and the WKeyboardHandler and registers them.
+     */
+    void createHandler();
+
+    /**
+     * Handles the input of this module.
+     */
+    void handleInput();
+
+    /**
+     * Finds the point that was clicked and writes it into hitIdx,
+     * while return whether a point was hit.
+     * \param cameraPosition The position of the camera.
+     * \param direction The direction to check.
+     * \param hitIdx A pointer to a variable where the index of the clicked point is written.
+     * \return true A point was clicked.
+     * \return false A point was not clicked.
+     */
+    bool findClickedPoint( osg::Vec3 cameraPosition, osg::Vec3 direction, size_t* hitIdx );
+
+    /**
+     * Toggles the activation of a module.
+     * \param mod THe module to change the activation of.
+     */
+    void toggleActivationOfModule( WModule::SPtr mod );
+
+    /**
+     * The WMPointRenderer associated with this module.
+     */
+    WModule::SPtr m_pointRenderer;
+
+    /**
+     * The WMFiberDisplay associated with this module.
+     */
+    WModule::SPtr m_fiberDisplay;
+
+    /**
+     * The data of this module.
+     */
+    boost::shared_ptr< WConnectorData > m_connectorData;
+
+    /**
+     * The WFiberHandler of this module.
+     */
+    boost::shared_ptr< WFiberHandler > m_fiberHandler;
+
+    /**
+     * An input connector used to get points from other modules.
+     */
+    boost::shared_ptr< WModuleInputData< WDataSetPoints > > m_pointInput;
+
+    /**
+     * An output connector used to provide fibers to other modules.
+     */
+    boost::shared_ptr< WModuleOutputData< WDataSetFibers > > m_fiberOutput;
+
+    /**
+     * The internal pointOutput to pass data to the WMPointRenderer
+     */
+    boost::shared_ptr< WModuleOutputData< WDataSetPoints > > m_pointOutput;
+};
+
+#endif  // WMPOINTCONNECTOR_H

@@ -155,7 +155,7 @@ void skipEmptyAndCommentLines( std::ifstream* data, std::string* line )
 bool parseParameters( std::ifstream* data, std::string* line )
 {
     bool contenTypeIsHxSpatialGraph = false;
-    while( *line != std::string("}") )
+    while( *line != std::string( "}" ) )
     {
         if( line->find( "ContentType" ) != std::string::npos
             && line->find( "HxSpatialGraph" ) != std::string::npos )

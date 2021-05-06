@@ -183,7 +183,7 @@ public:
      */
     virtual size_t rawSize() const
     {
-        return (*m_data.get()).size();
+        return ( *m_data.get() ).size();
     }
 
     /**
@@ -192,7 +192,7 @@ public:
      */
     virtual T getScalar( size_t i ) const
     {
-        return (*m_data.get())[i];
+        return ( *m_data.get() )[i];
     }
 
     /**
@@ -201,7 +201,7 @@ public:
      */
     virtual double getScalarDouble( size_t i ) const
     {
-        return static_cast< double >( (*m_data.get())[i] );
+        return static_cast< double >( ( *m_data.get() )[i] );
     }
 
     /**
@@ -239,7 +239,7 @@ public:
      */
     const T * rawData() const
     {
-        return &(*m_data.get())[0];
+        return &( *m_data.get() )[0];
     }
 
     /**
@@ -249,7 +249,7 @@ public:
      */
     const std::vector< T >* rawDataVectorPointer() const
     {
-        return &(*m_data.get());
+        return &( *m_data.get() );
     }
 
     /**

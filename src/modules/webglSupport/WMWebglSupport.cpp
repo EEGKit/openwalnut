@@ -221,7 +221,7 @@ void WMWebglSupport::colorTriMeshRGB()
         // get color value for that vertex from texture
         WVector3d value = m_datasetVector->interpolate( pos, &success );
         //double value = m_datasetScalar->getValueAt( pos.x(), pos.y(), pos.z() );
-        if( !success)
+        if( !success )
         {
             debugLog() << "error at getting value from datatset";
         }

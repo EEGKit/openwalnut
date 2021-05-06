@@ -128,7 +128,7 @@ void WFiberSelector::slotRemoveRoi( osg::ref_ptr< WROI > roi )
     {
         ( *iter )->removeRoi( roi );
 
-        if( (*iter )->empty() )
+        if( ( *iter )->empty() )
         {
             ( *iter )->getBranch()->removeChangeNotifier( m_changeRoiSignal );
             m_branches.erase( iter );

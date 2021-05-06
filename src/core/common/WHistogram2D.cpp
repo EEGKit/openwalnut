@@ -179,7 +179,7 @@ WGETexture2D::RPtr WHistogram2D::getSphereTexture()
         areaScale = calcAreaScale( bucket, j );
         for( size_t i = 0; i < imageWidth; ++i )
         {
-            if( areaScale * m_bins( i, j ) > maxCount)
+            if( areaScale * m_bins( i, j ) > maxCount )
             {
                 maxCount = areaScale * static_cast< double >( m_bins( i, j ) );
             }

@@ -289,7 +289,7 @@ void WDataSetFibers::replaceColorScheme( WDataSetFibers::ColorArray oldColors, W
     for( WItemSelection::Iterator i = l->get().begin(); i != l->get().end(); ++i )
     {
         boost::shared_ptr< ColorScheme > ci = boost::static_pointer_cast< ColorScheme >( *i );
-        if(ci->getColor() == oldColors )
+        if( ci->getColor() == oldColors )
         {
             ci->setColor( newColors );
         }
@@ -308,6 +308,11 @@ const boost::shared_ptr< WDataSetFibers::ColorScheme > WDataSetFibers::getColorS
     }
 
     return boost::static_pointer_cast< ColorScheme >( *i );
+}
+
+void WDataSetFibers::setSelectedColorScheme( size_t idx )
+{
+    m_colorProp->set( m_colors->getSelector( idx ) );
 }
 
 const boost::shared_ptr< WDataSetFibers::ColorScheme > WDataSetFibers::getColorScheme( size_t idx ) const

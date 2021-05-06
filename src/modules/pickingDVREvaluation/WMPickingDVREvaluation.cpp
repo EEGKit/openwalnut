@@ -158,7 +158,7 @@ inline bool intersectPlaneWithRay( WPosition* cutpoint,
     double const d = dot( n, planePoint );
 
     static const double MY_EPSILON = 1e-9;
-    if( std::abs( dot( n, rayDir ) ) < MY_EPSILON)         // plane and line are parallel
+    if( std::abs( dot( n, rayDir ) ) < MY_EPSILON )         // plane and line are parallel
     {
         *cutpoint = planePoint;   // otherwise it would be undefined
         return false;

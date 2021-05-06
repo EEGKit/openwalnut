@@ -49,7 +49,7 @@ std::string string_utils::lTrim( const std::string& source, const std::string& t
 std::string string_utils::trim( const std::string& source, const std::string& t )
 {
     std::string str = source;
-    return lTrim( rTrim( str , t) , t );
+    return lTrim( rTrim( str , t ) , t );
 }
 
 std::string string_utils::toUpper( const std::string& source )

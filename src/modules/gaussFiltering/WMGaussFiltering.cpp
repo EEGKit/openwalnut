@@ -123,7 +123,7 @@ std::vector<double> WMGaussFiltering::filterField( boost::shared_ptr< WValueSet<
     size_t nY = grid->getNbCoordsY();
     size_t nZ = grid->getNbCoordsZ();
 
-    if( m_3DMaskMode->get(true) )
+    if( m_3DMaskMode->get( true ) )
     {
         std::vector<double> newVals( vals->elementsPerValue() * nX * nY * nZ, 0. );
 
@@ -306,7 +306,7 @@ void WMGaussFiltering::moduleMain()
         {
             boost::shared_ptr< WValueSet< double > >  newValueSet;
 
-            switch( (*m_dataSet).getValueSet()->getDataType() )
+            switch( ( *m_dataSet ).getValueSet()->getDataType() )
             {
                 case W_DT_UNSIGNED_CHAR:
                 {

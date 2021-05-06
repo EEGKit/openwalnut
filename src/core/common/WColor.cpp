@@ -110,7 +110,7 @@ WColor convertHSVtoRGBA( double h, double s, double v )
         r = ( h - twothird ) / onesixth;
         g = 0.0;
     }
-    else if( h > fivesixth && h <= 1.0) // red/blue
+    else if( h > fivesixth && h <= 1.0 ) // red/blue
     {
         r = 1.0;
         b = ( 1.0 - h ) / onesixth;

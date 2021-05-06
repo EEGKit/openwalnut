@@ -39,7 +39,8 @@ typedef enum
     PC_ISDIRECTORY,      // type ID for WPropertyConstraintIsDirectory
     PC_SELECTONLYONE,    // type ID for WPropertyConstraintSelectOnlyOne
     PC_SELECTATLEASTONE, // type ID for WPropertyConstraintSelectAtLeastOne
-    PC_ISVALID           // type ID for WPropertyConstraintIsValid
+    PC_ISVALID,          // type ID for WPropertyConstraintIsValid
+    PC_CONFIRMOVERWRITE  // type ID for WPropertyConstraintConfirmOverwrite
 }
 PROPERTYCONSTRAINT_TYPE;
 

@@ -270,7 +270,7 @@ WMatrix<double> invertMatrix4x4( WMatrix<double> mat )
     WAssert( det != 0, "Determinat is zero. This matrix can not be inverted." );
 
     double detInv = 1. / det;
-    for( size_t r = 0; r < 4; ++r)
+    for( size_t r = 0; r < 4; ++r )
     {
         for( size_t c = 0; c < 4; ++c )
         {

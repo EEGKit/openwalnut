@@ -90,12 +90,14 @@ void WMPointRenderer::properties()
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
 
     // setup all the properties. See header file for their meaning and purpose.
-    m_size = m_properties->addProperty( "Point Size", "The size of the points.", 0.25 );
+    m_size = m_properties->addProperty( "Point size", "The size of the points.", 1.0 );
     m_size->setMin( 0.0001 );
     m_size->setMax( 10.0 );
 
     m_useCorrectDepth = m_properties->addProperty( "Correct Depth", "If set, the depths of the sprites are calculated correctly. You can disable "
                                                                     "this to get higher framerates at the cost of visual correctness.", true );
+
+    m_useAttribute = m_properties->addProperty( "Use Attribute", "Decides whether attribute or uniform is used", false, true );
 
     // call WModule's initialization
     WModule::properties();
@@ -133,6 +135,12 @@ void WMPointRenderer::moduleMain()
     m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
         new WGEShaderPropertyDefineOptions< WPropBool >( m_useCorrectDepth, "DEPTHWRITE_DISABLED", "DEPTHWRITE_ENABLED" ) )
     );
+    m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
+        new WGEShaderPropertyDefineOptions< WPropBool >( m_useAttribute, "USE_ATTRIBUTE_DISABLED", "USE_ATTRIBUTE_ENABLED" ) )
+    );
+
+    // register attribute
+    m_shader->addBindAttribLocation( "a_pointSize", 6 );
 
     // signal ready state. The module is now ready to be used.
     ready();
@@ -160,6 +168,10 @@ void WMPointRenderer::moduleMain()
             continue;
         }
 
+        boost::shared_ptr< WValueSet< float > > valueSet = boost::dynamic_pointer_cast< WValueSet< float > >( points->getValueSet() );
+
+        m_useAttribute->set( valueSet ? true : false );
+
         // we have valid data. Put this into a geode
         osg::ref_ptr< osg::Geometry > geometry = osg::ref_ptr< osg::Geometry >( new osg::Geometry );
         osg::ref_ptr< osg::Geode >  geode( new osg::Geode() );
@@ -170,6 +182,7 @@ void WMPointRenderer::moduleMain()
         // convert point arrays to osg vec3 arrays
         osg::ref_ptr< osg::Vec3Array > vertices = osg::ref_ptr< osg::Vec3Array >( new osg::Vec3Array );
         osg::ref_ptr< osg::Vec4Array > colors = osg::ref_ptr< osg::Vec4Array >( new osg::Vec4Array );
+        osg::ref_ptr< osg::FloatArray > sizes = osg::ref_ptr< osg::FloatArray >( new osg::FloatArray );
 
         WDataSetPoints::VertexArray pointVertices = points->getVertices();
         WDataSetPoints::ColorArray pointColors = points->getColors();
@@ -180,6 +193,11 @@ void WMPointRenderer::moduleMain()
 
             vertices->push_back( vert );
             colors->push_back( color );
+
+            if( valueSet )
+            {
+                sizes->push_back( valueSet->getScalar( pointIdx ) );
+            }
         }
 
         // combine to geometry
@@ -187,6 +205,10 @@ void WMPointRenderer::moduleMain()
         geometry->setVertexArray( vertices );
         geometry->setColorArray( colors );
         geometry->setColorBinding( osg::Geometry::BIND_PER_VERTEX );
+        if( valueSet )
+        {
+            geometry->setVertexAttribArray( 6, sizes, osg::Array::BIND_PER_VERTEX );
+        }
 
         // add geometry to geode
         geode->addDrawable( geometry );

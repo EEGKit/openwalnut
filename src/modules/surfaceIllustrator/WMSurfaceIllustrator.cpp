@@ -96,17 +96,17 @@ void WMSurfaceIllustrator::updateMinMax( double& minX, double& maxX, // NOLINT
 
 double WMSurfaceIllustrator::getMedian( double x, double y, double z ) const
 {
-    if( ( y < x && z > x ) || ( z < x && y > x) )
+    if( ( y < x && z > x ) || ( z < x && y > x ) )
     {
         return x;
     }
 
-    if( ( x < y && z > y ) || ( x < y && z > y) )
+    if( ( x < y && z > y ) || ( x < y && z > y ) )
     {
         return y;
     }
 
-    if( ( y < z && x > z ) || ( x < z && y > z) )
+    if( ( y < z && x > z ) || ( x < z && y > z ) )
     {
         return z;
     }
@@ -123,7 +123,7 @@ double WMSurfaceIllustrator::getMedian( double x, double y, double z ) const
     {
         return z;
     }
-    if( x == y && y == z && x == z)
+    if( x == y && y == z && x == z )
     {
         return x;
     }

@@ -256,7 +256,7 @@ void main()
     {
         noiseTexCoords = vec2( v.x, v.z );
     }
-    else if( abs( v_normalObject.z ) == max( abs( v_normalObject.x ), max( abs( v_normalObject.y ), abs ( v_normalObject.z ) ) ) )
+    else if( abs( v_normalObject.z ) == max( abs( v_normalObject.x ), max( abs( v_normalObject.y ), abs( v_normalObject.z ) ) ) )
     {
         noiseTexCoords = vec2( v.x, v.y );
     }

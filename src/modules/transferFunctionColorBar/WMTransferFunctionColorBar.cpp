@@ -99,6 +99,11 @@ void WMTransferFunctionColorBar::properties()
     m_colorBarLabels->setMin( 0 );
     m_colorBarLabels->setMax( 55 );
 
+    m_minScaleValue = m_properties->addProperty( "Min scale value", "Minimum scale value in dataset", 0.0, true );
+    m_maxScaleValue = m_properties->addProperty( "Max scale value", "Maximum scale value in dataset", 1.0, true );
+    m_colorBarDescription = m_properties->addProperty( "Description", "Description of current transfer function",
+                                                       std::string( "TransferFunction" ), true ),
+
     WModule::properties();
 }
 
@@ -154,7 +159,7 @@ void WMTransferFunctionColorBar::moduleMain()
             boost::shared_ptr< WDataSetSingle > dataSet = m_input->getData();
 
             // add a colorbar
-            if( dataSet/* && dataSet->isTexture()*/ )
+            if( dataSet /* && dataSet->isTexture()*/ )
             {
                 // create camera oriented 2d projection
                 m_barProjection = new osg::Projection();
@@ -214,7 +219,7 @@ void WMTransferFunctionColorBar::moduleMain()
                 osg::ref_ptr< WGELabel > nameLabel = new WGELabel();
                 nameLabel->setPosition( osg::Vec3( 0.015, 0.9, 0.0 ) );
                 // nameLabel->setText( format( dataSet->getTexture()->name()->get() ) );
-                nameLabel->setText( format( "TransferFunction" ) );
+                nameLabel->setText( format( m_colorBarDescription->get() ) );
                 nameLabel->setCharacterSize( 0.015 );
                 nameLabel->setLayout( osgText::TextBase::VERTICAL );
                 nameLabel->setAlignment( osgText::Text::BASE_LINE );
@@ -246,8 +251,8 @@ void WMTransferFunctionColorBar::moduleMain()
                 matrix->addChild( labels );
                 m_barProjection->addChild( matrix );
 
-                m_valueMin = 0.0; // dataSet->getTexture()->minimum()->get();
-                m_valueScale = 1.0; // dataSet->getTexture()->scale()->get();
+                m_valueMin = m_minScaleValue->get(); // dataSet->getTexture()->minimum()->get();
+                m_valueScale = m_maxScaleValue->get(); // dataSet->getTexture()->scale()->get();
 
                 // add
                 WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_barProjection );
@@ -281,7 +286,7 @@ void WMTransferFunctionColorBar::activate()
 
 void WMTransferFunctionColorBar::updateColorbarScale( osg::Node* scaleLabels )
 {
-    if( m_colorBarLabels->changed( true ) )
+    if( m_colorBarLabels->changed( true ) || m_maxScaleValue->changed( true ) )
     {
         const double labelXPos = 0.060;
         osg::Geode* g = scaleLabels->asGeode();
@@ -289,7 +294,7 @@ void WMTransferFunctionColorBar::updateColorbarScale( osg::Node* scaleLabels )
 
         size_t num = m_colorBarLabels->get( true );
         double coordStep = 0.8 / static_cast< double >( num - 1 );
-        double valueStep = m_valueScale / static_cast< double >( num - 1 );
+        double valueStep = m_maxScaleValue->get() / static_cast< double >( num - 1 );
 
         // less than 2 labels is useless
         if( num < 2 )

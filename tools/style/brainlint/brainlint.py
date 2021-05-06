@@ -1628,7 +1628,9 @@ def CheckSpacingForFunctionCall(filename, line, linenum, error):
   # Note that we assume the contents of [] to be short enough that
   # they'll never need to wrap.
   if (  # Ignore control structures.
-      not Search(r'\b(if|for|while|switch|return|delete)\b', fncall) and
+      # math: Disabled, since we do want the brackets for control structures
+      # to work the same way they work with functions
+      # not Search(r'\b(if|for|while|switch|return|delete)\b', fncall) and
       # Ignore pointers/references to functions.
       not Search(r' \([^)]+\)\([^)]*(\)|,$)', fncall) and
       # Ignore pointers/references to arrays.
@@ -1645,7 +1647,7 @@ def CheckSpacingForFunctionCall(filename, line, linenum, error):
     #      error(filename, linenum, 'whitespace/parens', 2,
     #            'Extra space after (')
     if (Search(r'\w\s+\(', fncall) and
-        not Search(r'#\s*define|typedef', fncall)):
+        not Search(r'#\s*define|typedef|return|delete', fncall)):
       error(filename, linenum, 'whitespace/parens', 4,
             'Extra space before ( in function call')
     # If the ) is followed only by a newline or a { + newline, assume it's

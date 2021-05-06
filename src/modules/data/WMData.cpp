@@ -28,6 +28,7 @@
 #include "core/common/WAssert.h"
 #include "core/common/WIOTools.h"
 #include "core/common/WPropertyHelper.h"
+#include "core/dataHandler/exceptions/WDHException.h"
 #include "core/dataHandler/WDataHandler.h"
 #include "core/dataHandler/WDataSet.h"
 #include "core/dataHandler/WDataSetScalar.h"
@@ -37,7 +38,6 @@
 #include "core/dataHandler/WDataTexture3D.h"
 #include "core/dataHandler/WEEG2.h"
 #include "core/dataHandler/WSubject.h"
-#include "core/dataHandler/exceptions/WDHException.h"
 #include "core/graphicsEngine/WGEColormapping.h"
 #include "core/kernel/WDataModuleInputFile.h"
 #include "core/kernel/WDataModuleInputFilterFile.h"
@@ -46,19 +46,21 @@
 #ifdef WBIOSIG_ENABLED
     #include "io/WReaderBiosig.h"
 #endif
+#include "io/WReaderClustering.h"
+#include "io/WReaderCSV.h"
 #include "io/WReaderEEGASCII.h"
-#include "io/WReaderNIfTI.h"
 #include "io/WReaderELC.h"
 #include "io/WReaderFiberVTK.h"
-#include "io/WReaderVTK.h"
 #ifdef WEEP_ENABLED
     #include "io/WReaderLibeep.h"
     #include "io/WPagerEEGLibeep.h"
 #endif
-#include "io/WReaderClustering.h"
+#include "io/WReaderNIfTI.h"
+#include "io/WReaderVTK.h"
 
 #include "WMData.h"
 #include "WMData.xpm"
+
 
 WMData::WMData():
     WDataModule(),
@@ -102,6 +104,7 @@ std::vector< WDataModuleInputFilter::ConstSPtr > WMData::getInputFilter() const
     // NOTE: plain extension. No wildcards or prefixing "."!
     filters.push_back( WDataModuleInputFilter::ConstSPtr( new WDataModuleInputFilterFile( "nii", "NIfTI files" ) ) );
     filters.push_back( WDataModuleInputFilter::ConstSPtr( new WDataModuleInputFilterFile( "nii.gz", "Compressed NIfTI files" ) ) );
+    filters.push_back( WDataModuleInputFilter::ConstSPtr( new WDataModuleInputFilterFile( "csv", "Comma separated values" ) ) );
 #ifdef WBIOSIG_ENABLED
     filters.push_back( WDataModuleInputFilter::ConstSPtr( new WDataModuleInputFilterFile( "edf", "EEG files (BioSig)" ) ) );
 #endif
@@ -222,7 +225,7 @@ void WMData::moduleMain()
 std::string WMData::getDataTypeString( boost::shared_ptr< WDataSetSingle > dss )
 {
     std::string result;
-    switch( (*dss).getValueSet()->getDataType() )
+    switch( ( *dss ).getValueSet()->getDataType() )
     {
         case W_DT_NONE:
             result = "none";
@@ -487,7 +490,7 @@ void WMData::load()
             m_dataType->set( getDataTypeString( dss ) );
             if( dss->isTexture() )
             {
-                switch( (*dss).getValueSet()->getDataType() )
+                switch( ( *dss ).getValueSet()->getDataType() )
                 {
                     case W_DT_UNSIGNED_CHAR:
                     case W_DT_INT16:
@@ -560,6 +563,11 @@ void WMData::load()
     {
         WReaderVTK vtkReader( fileName );
         m_dataSet = vtkReader.read();
+    }
+    else if( suffix == ".csv" )
+    {
+        WReaderCSV csvReader( fileName );
+        m_dataSet = csvReader.read();
     }
     else
     {
