@@ -230,6 +230,9 @@ void WMTransferFunctionColorBar::moduleMain()
                 matrix->addChild( labels );
                 m_barProjection->addChild( matrix );
 
+                m_valueMin = dataSet->getTexture()->minimum()->get();
+                m_valueScale = dataSet->getTexture()->scale()->get();
+
                 // add
                 WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_barProjection );
             }
@@ -248,7 +251,16 @@ void WMTransferFunctionColorBar::activate()
 
 void WMTransferFunctionColorBar::updateColorbarScale( osg::Node* scaleLabels )
 {
-    if( m_colorBarLabels->changed( true ) || m_maxScaleValue->changed( true ) || m_minScaleValue->changed( true ) )
+    if( m_minScaleValue->changed( false ) )
+    {
+        m_valueMin = m_minScaleValue->get();
+    }
+    if( m_maxScaleValue->changed( false ) )
+    {
+        m_valueScale = m_maxScaleValue->get();
+    }
+
+    if( m_colorBarLabels->changed( true ) || m_minScaleValue->changed( true ) || m_maxScaleValue->changed( true ) )
     {
         const double labelXPos = 0.060;
         osg::Geode* g = scaleLabels->asGeode();
@@ -256,7 +268,7 @@ void WMTransferFunctionColorBar::updateColorbarScale( osg::Node* scaleLabels )
 
         size_t num = m_colorBarLabels->get( true );
         double coordStep = 0.8 / static_cast< double >( num - 1 );
-        double valueStep = m_maxScaleValue->get() / static_cast< double >( num - 1 );
+        double valueStep = m_valueScale / static_cast< double >( num - 1 );
 
         // less than 2 labels is useless
         if( num < 2 )
@@ -269,7 +281,7 @@ void WMTransferFunctionColorBar::updateColorbarScale( osg::Node* scaleLabels )
         // create enough labels.
         for( size_t i = 0; i < num; ++i )
         {
-            double value = m_minScaleValue->get() + ( valueStep * i );
+            double value = m_valueMin + ( valueStep * i );
 
             // create the label
             osg::ref_ptr< WGELabel > label = new WGELabel();
@@ -296,4 +308,3 @@ void WMTransferFunctionColorBar::updateColorbarScale( osg::Node* scaleLabels )
         g->addDrawable( lines );
     }
 }
-

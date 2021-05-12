@@ -111,6 +111,16 @@ private:
     boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;
 
     /**
+     * The min of the current dataset. We store them here to avoid many calls to getTexture()->minimum()->get() and scale()->get().
+     */
+    double m_valueMin;
+
+    /**
+     * The scaling factor of the current dataset. We store them here to avoid many calls to getTexture()->minimum()->get() and scale()->get().
+     */
+    double m_valueScale;
+
+    /**
      * The number of colorbar labels
      */
     WPropInt m_colorBarLabels;
@@ -164,4 +174,3 @@ private:
 };
 
 #endif  // WMTRANSFERFUNCTIONCOLORBAR_H
-
