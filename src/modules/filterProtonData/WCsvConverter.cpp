@@ -23,6 +23,7 @@
 //---------------------------------------------------------------------------
 
 #include <cmath>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -271,7 +272,7 @@ void WCsvConverter::calculateFibers()
     for( size_t i = 0; i < m_vectors->getEventIDs()->size(); i++ )
     {
         size_t eID = m_vectors->getEventIDs()->at( i );
-        WPosition pos( m_vectors->getVertices()->at( i * 3 ), m_vectors->getVertices()->at( i * 3 + 1 ), m_vectors->getVertices()->at( i * 3 + 2 ));
+        WPosition pos( m_vectors->getVertices()->at( i * 3 ), m_vectors->getVertices()->at( i * 3 + 1 ), m_vectors->getVertices()->at( i * 3 + 2 ) );
 
         boost::shared_ptr< WFiber > fib;
         SPFloatVector col;
@@ -296,7 +297,7 @@ void WCsvConverter::calculateFibers()
     }
 
     WDataSetFiberVector::SPtr newDS( new WDataSetFiberVector() );
-    SPFloatVector cols = SPFloatVector( new std::vector< float > ); 
+    SPFloatVector cols = SPFloatVector( new std::vector< float > );
     for( auto it = fibers->begin(); it != fibers->end(); it++ )
     {
         if( it->second->size() > 1 )

@@ -390,7 +390,7 @@ void WMPointConnector::updateOutput()
         {
             continue;
         }
-        
+
         lineStartIndexes->push_back( vertices->size() / 3 );
         lineLength->push_back( fiber.size() );
 
