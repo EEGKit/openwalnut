@@ -26,6 +26,9 @@
 #include <string>
 #include <vector>
 
+#include <core/common/datastructures/WFiber.h>
+#include <core/dataHandler/WDataSetFiberVector.h>
+
 #include "WCsvConverter.h"
 
 WCsvConverter::WCsvConverter( WProtonData::SPtr protonData, boost::shared_ptr< WPropertyStatus > propertyStatus,
@@ -235,6 +238,7 @@ void WCsvConverter::addColor( WColor plainColor )
         m_vectors->getColors()->push_back( plainColor[0] );
         m_vectors->getColors()->push_back( plainColor[1] );
         m_vectors->getColors()->push_back( plainColor[2] );
+        m_vectors->getColors()->push_back( plainColor[3] );
     }
 }
 
@@ -261,36 +265,51 @@ void WCsvConverter::addEdepAndSize( WDataSetCSV::Content::iterator dataRow, floa
 
 void WCsvConverter::calculateFibers()
 {
-    if( !m_protonData->isColumnAvailable( WSingleSelectorName::getEventId() ) )
+    boost::shared_ptr< std::map< size_t, boost::shared_ptr< WFiber > > > fibers( new std::map< size_t, boost::shared_ptr< WFiber > >() );
+    boost::shared_ptr< std::map< size_t, SPFloatVector > > colors( new std::map< size_t, SPFloatVector >() );
+
+    for( size_t i = 0; i < m_vectors->getEventIDs()->size(); i++ )
     {
-        return;
-    }
+        size_t eID = m_vectors->getEventIDs()->at( i );
+        WPosition pos( m_vectors->getVertices()->at( i * 3 ), m_vectors->getVertices()->at( i * 3 + 1 ), m_vectors->getVertices()->at( i * 3 + 2 ));
 
-    int fiberLength = 0;
-    int fiberStartIndex = 0;
-    int reversePos = 0;
-    size_t currentEventID = m_vectors->getEventIDs()->at( 0 );
+        boost::shared_ptr< WFiber > fib;
+        SPFloatVector col;
 
-    m_vectors->getFiberStartIndexes()->push_back( fiberStartIndex );
-
-    for( size_t eID : *( m_vectors->getEventIDs() ) )
-    {
-        if( currentEventID != eID )
+        if( fibers->find( eID ) != fibers->end() )
         {
-            m_vectors->getFiberStartIndexes()->push_back( fiberStartIndex );
-            m_vectors->getFiberLengths()->push_back( fiberLength );
-
-            currentEventID = eID;
-            fiberLength = 0;
-
-            reversePos++;
+            fib = fibers->operator[]( eID );
+            col = colors->operator[]( eID );
         }
-        fiberLength++;
-        fiberStartIndex++;
-        m_vectors->getVerticesReverse()->push_back( reversePos );
+        else
+        {
+            fib = boost::shared_ptr< WFiber >( new WFiber() );
+            col = SPFloatVector( new std::vector< float > );
+            fibers->operator[]( eID ) = fib;
+            colors->operator[]( eID ) = col;
+        }
+        fib->push_back( pos );
+        col->push_back( m_vectors->getColors()->at( i * 4 ) );
+        col->push_back( m_vectors->getColors()->at( i * 4 + 1 ) );
+        col->push_back( m_vectors->getColors()->at( i * 4 + 2 ) );
+        col->push_back( m_vectors->getColors()->at( i * 4 + 3 ) );
     }
 
-    m_vectors->getFiberLengths()->push_back( fiberLength );
+    WDataSetFiberVector::SPtr newDS( new WDataSetFiberVector() );
+    SPFloatVector cols = SPFloatVector( new std::vector< float > ); 
+    for( auto it = fibers->begin(); it != fibers->end(); it++ )
+    {
+        if( it->second->size() > 1 )
+        {
+            newDS->push_back( *( it->second ) );
+            SPFloatVector col = colors->operator[]( it->first );
+            cols->insert( cols->end(), col->begin(), col->end() );
+        }
+    }
+
+    m_fibers = newDS->toWDataSetFibers();
+    m_fibers->addColorScheme( cols, "Energy deposition", "Color fibers based on their energy." );
+    m_fibers->setSelectedColorScheme( 3 );
 }
 
 void WCsvConverter::createOutputPoints()
@@ -319,7 +338,6 @@ void WCsvConverter::createOutputPoints()
 
 void WCsvConverter::createOutputFibers()
 {
-    calculateFibers();
     if( !m_protonData->isColumnAvailable( WSingleSelectorName::getEventId() ) )
     {
         m_fibers = boost::shared_ptr< WDataSetFibers >(
@@ -333,29 +351,8 @@ void WCsvConverter::createOutputFibers()
 
         return;
     }
-    else
-    {
-        m_fibers = boost::shared_ptr< WDataSetFibers >(
-            new WDataSetFibers(
-                    m_vectors->getVertices(),
-                    m_vectors->getFiberStartIndexes(),
-                    m_vectors->getFiberLengths(),
-                    m_vectors->getVerticesReverse()
-            )
-        );
-    }
 
-    if( m_protonData->isColumnAvailable( WSingleSelectorName::getEdep() ) )
-    {
-        if( m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
-        {
-            m_fibers->removeColorScheme( m_fibers->getColorScheme( "Global Color" )->getColor() );
-            m_fibers->removeColorScheme( m_fibers->getColorScheme( "Local Color" )->getColor() );
-            m_fibers->removeColorScheme( m_fibers->getColorScheme( "Custom Color" )->getColor() );
-            m_fibers->addColorScheme( m_vectors->getColors(), "Energy deposition",
-                                      "Color fibers based on their energy." );
-        }
-    }
+    calculateFibers();
 }
 
 void WCsvConverter::createOutputPointsAndEventIDs()
