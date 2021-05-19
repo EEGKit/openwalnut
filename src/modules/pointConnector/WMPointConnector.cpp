@@ -386,6 +386,11 @@ void WMPointConnector::updateOutput()
     for( size_t idx = 0; idx < m_fiberHandler->getFibers()->size(); idx++ )
     {
         WFiberHandler::PCFiber fiber = m_fiberHandler->getFibers()->at( idx );
+        if( fiber.size() < 2 )
+        {
+            continue;
+        }
+
         lineStartIndexes->push_back( vertices->size() / 3 );
         lineLength->push_back( fiber.size() );
 
