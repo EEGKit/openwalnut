@@ -178,11 +178,11 @@ void WROIBox::updateGFX()
             {
                 if( m_pickNormal[0] <= 0 && m_pickNormal[1] <= 0 && m_pickNormal[2] <= 0 )
                 {
-                    m_maxPos->set( m_maxPos->get() + ( m_pickNormal * dot( moveVec, m_pickNormal ) ) );
+                    m_minPos->set( m_minPos->get() + ( m_pickNormal * dot( moveVec, m_pickNormal ) ) );
                 }
                 if( m_pickNormal[0] >= 0 && m_pickNormal[1] >= 0 && m_pickNormal[2] >= 0 )
                 {
-                    m_minPos->set( m_minPos->get() + ( m_pickNormal * dot( moveVec, m_pickNormal ) ) );
+                    m_maxPos->set( m_maxPos->get() + ( m_pickNormal * dot( moveVec, m_pickNormal ) ) );
                 }
                 // NOTE: this sets m_needVertexUpdate
             }
