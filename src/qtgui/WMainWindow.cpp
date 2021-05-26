@@ -287,11 +287,11 @@ void WMainWindow::setupGUI()
     // for maximization, minimization and closing. This is extremely disturbing, hence, we leave them
     // visible as a default. I know this fixes only the symptom, but not the origin, but I've searched
     // some days by now and couldn't find anything. I will describe all I found so far in the ticket 406.
-    /*#ifndef W_OS_OSX
-        m_permanentToolBar->setVisible( false );
-    #else
-        m_permanentToolBar->setVisible( true );
-    #endif*/
+    // #ifndef W_OS_OSX
+    //     m_permanentToolBar->setVisible( false );
+    // #else
+    //     m_permanentToolBar->setVisible( true );
+    // #endif
     m_permanentToolBar->setVisible( true );
 
     m_loadButton = new QAction( m_iconManager.getIcon( "load" ), "Load Dataset or Project", m_permanentToolBar );
@@ -557,11 +557,11 @@ void WMainWindow::setCompatiblesToolbar( WQtCombinerToolbar* toolbar )
     // for maximization, minimization and closing. This is extremely disturbing, hence, we leave them
     // visible as a default. I know this fixes only the symptom, but not the origin, but I've searched
     // some days by now and couldn't find anything. I will describe all I found so far in the ticket 406.
-    /*#ifndef W_OS_OSX
-        toolbar->setVisible( false );
-    #else
-        toolbar->setVisible( true );
-    #endif*/
+    // #ifndef W_OS_OSX
+    //     toolbar->setVisible( false );
+    // #else
+    //     toolbar->setVisible( true );
+    // #endif
     toolbar->setVisible( true );
 
     addToolBar( Qt::TopToolBarArea, m_currentCompatiblesToolbar );
