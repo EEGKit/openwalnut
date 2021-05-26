@@ -42,6 +42,11 @@
 // prototype instance as singleton
 boost::shared_ptr< WPrototyped > WDataSetFibers::m_prototype = boost::shared_ptr< WPrototyped >();
 
+static bool checkBelowTwo( size_t number )
+{
+    return number < 2;
+}
+
 WDataSetFibers::WDataSetFibers()
     : WDataSet()
 {
@@ -61,6 +66,8 @@ WDataSetFibers::WDataSetFibers( WDataSetFibers::VertexArray vertices,
       m_bb( boundingBox )
 {
     WAssert( m_vertices->size() % 3 == 0,  "Invalid vertex array."  );
+    WAssert( std::find_if( m_lineLengths->begin(), m_lineLengths->end(), checkBelowTwo ) == m_lineLengths->end(), "Invalid line lengths." );
+
     init();
 }
 
@@ -75,6 +82,8 @@ WDataSetFibers::WDataSetFibers( WDataSetFibers::VertexArray vertices,
       m_verticesReverse( verticesReverse )
 {
     WAssert( m_vertices->size() % 3 == 0,  "Invalid vertex array."  );
+    WAssert( std::find_if( m_lineLengths->begin(), m_lineLengths->end(), checkBelowTwo ) == m_lineLengths->end(), "Invalid line lengths." );
+
     // determine bounding box
     for( size_t i = 0; i < vertices->size()/3; ++i )
     {
@@ -99,6 +108,8 @@ WDataSetFibers::WDataSetFibers( WDataSetFibers::VertexArray vertices,
       m_vertexParameters( 1, vertexParameters )
 {
     WAssert( m_vertices->size() % 3 == 0,  "Invalid vertex array."  );
+    WAssert( std::find_if( m_lineLengths->begin(), m_lineLengths->end(), checkBelowTwo ) == m_lineLengths->end(), "Invalid line lengths." );
+
     init();
 }
 
@@ -115,6 +126,8 @@ WDataSetFibers::WDataSetFibers( WDataSetFibers::VertexArray vertices,
       m_vertexParameters( 1, vertexParameters )
 {
     WAssert( m_vertices->size() % 3 == 0,  "Invalid vertex array."  );
+    WAssert( std::find_if( m_lineLengths->begin(), m_lineLengths->end(), checkBelowTwo ) == m_lineLengths->end(), "Invalid line lengths." );
+
     // determine bounding box
     for( size_t i = 0; i < vertices->size()/3; ++i )
     {
