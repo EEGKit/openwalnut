@@ -264,11 +264,11 @@ void WPickHandler::pick( osgViewer::View* view, const osgGA::GUIEventAdapter& ea
             {
                 ++hitr;
             }
-            // // now we skip stuff with non-expressive names often used
-            // else if( nodeName == "Geometry" )
-            // {
-            //     ++hitr;
-            // }
+            // now we skip stuff with non-expressive names often used
+            else if( nodeName == "Geometry" )
+            {
+                ++hitr;
+            }
             // if ctrl is pressed we skip the first thing that gets hit by the pick
             else if( ignoreFirst )
             {
@@ -333,9 +333,9 @@ void WPickHandler::pick( osgViewer::View* view, const osgGA::GUIEventAdapter& ea
 
         WVector3d pickNormal;
         // For whatever reason the intersection algorithm gets the wrong normals, so we grab them ourselves
-        /*pickNormal[0] = hitr->getWorldIntersectNormal()[0];
-        pickNormal[1] = hitr->getWorldIntersectNormal()[1];
-        pickNormal[2] = hitr->getWorldIntersectNormal()[2];*/
+        // pickNormal[0] = hitr->getWorldIntersectNormal()[0];
+        // pickNormal[1] = hitr->getWorldIntersectNormal()[1];
+        // pickNormal[2] = hitr->getWorldIntersectNormal()[2];
 
         const osgUtil::LineSegmentIntersector::Intersection::IndexList& vil = hitr->indexList;
         osg::ref_ptr< osg::Geometry > geo = dynamic_cast< osg::Geometry* >( hitr->drawable.get() );
