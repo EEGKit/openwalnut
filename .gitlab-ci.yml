@@ -92,7 +92,7 @@ stylecheck_job:
                 - cd build/release
                 - pwd 
                 - ls
-                - make stylecheck
+                - make stylecheck -j 8
 
 doc_job:
         stage: Stylecheck_doc_stage
