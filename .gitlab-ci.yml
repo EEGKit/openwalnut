@@ -10,6 +10,19 @@ create_directory_and_cmake___release:
                 key: "CacheRelease"
                 paths:
                         - build/release
+        image: ubuntu:focal
+        before_script:
+                - >
+                        apt-get update && apt-get install --no-install-recommends -y
+                        cmake
+                        libboost-all-dev
+                        qtdeclarative5-dev
+                        qtwebengine5-dev
+                        libqt5opengl5-dev
+                        libopenscenegraph-dev
+                        libeigen3-dev
+                        libnifti-dev
+                        build-essential
         script:
                 - ls
                 - mkdir -p build
@@ -26,6 +39,19 @@ create_directory_and_cmake___debug:
                 key: "CacheDebug"
                 paths:
                         - build/debug
+        image: ubuntu:focal
+        before_script:
+                - >
+                        apt-get update && apt-get install --no-install-recommends -y
+                        cmake
+                        libboost-all-dev
+                        qtdeclarative5-dev
+                        qtwebengine5-dev
+                        libqt5opengl5-dev
+                        libopenscenegraph-dev
+                        libeigen3-dev
+                        libnifti-dev
+                        build-essential
         script:
                 - ls
                 - mkdir -p build
@@ -42,6 +68,19 @@ stylecheck_job:
                 key: "CacheRelease"
                 paths:
                         - build/release
+        image: ubuntu:focal
+        before_script:
+                - >
+                        apt-get update && apt-get install --no-install-recommends -y
+                        cmake
+                        libboost-all-dev
+                        qtdeclarative5-dev
+                        qtwebengine5-dev
+                        libqt5opengl5-dev
+                        libopenscenegraph-dev
+                        libeigen3-dev
+                        libnifti-dev
+                        build-essential
         script:
                 - pwd
                 - cd build/release
@@ -55,6 +94,19 @@ doc_job:
                 key: "CacheDebug"
                 paths:
                         - build/debug
+        image: ubuntu:focal
+        before_script:
+                - >
+                        apt-get update && apt-get install --no-install-recommends -y
+                        cmake
+                        libboost-all-dev
+                        qtdeclarative5-dev
+                        qtwebengine5-dev
+                        libqt5opengl5-dev
+                        libopenscenegraph-dev
+                        libeigen3-dev
+                        libnifti-dev
+                        build-essential
         script:
                 - doxygen --version
                 - pwd
@@ -69,6 +121,19 @@ buildAndTest:
                 key: "CacheRelease"
                 paths:
                         - build/release
+        image: ubuntu:focal
+        before_script:
+                - >
+                        apt-get update && apt-get install --no-install-recommends -y
+                        cmake
+                        libboost-all-dev
+                        qtdeclarative5-dev
+                        qtwebengine5-dev
+                        libqt5opengl5-dev
+                        libopenscenegraph-dev
+                        libeigen3-dev
+                        libnifti-dev
+                        build-essential
         script:
                 - pwd
                 - cd build/release
@@ -83,6 +148,19 @@ buildAndTestDebug:
                 key: "CacheDebug"
                 paths:
                         - build/debug
+        image: ubuntu:focal
+        before_script:
+                - >
+                        apt-get update && apt-get install --no-install-recommends -y
+                        cmake
+                        libboost-all-dev
+                        qtdeclarative5-dev
+                        qtwebengine5-dev
+                        libqt5opengl5-dev
+                        libopenscenegraph-dev
+                        libeigen3-dev
+                        libnifti-dev
+                        build-essential
         script:
                 - pwd
                 - cd build/debug
