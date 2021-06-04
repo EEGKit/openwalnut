@@ -289,11 +289,15 @@ void WCsvConverter::calculateFibers()
             fibers->operator[]( eID ) = fib;
             colors->operator[]( eID ) = col;
         }
-        fib->push_back( pos );
-        col->push_back( m_vectors->getColors()->at( i * 4 ) );
-        col->push_back( m_vectors->getColors()->at( i * 4 + 1 ) );
-        col->push_back( m_vectors->getColors()->at( i * 4 + 2 ) );
-        col->push_back( m_vectors->getColors()->at( i * 4 + 3 ) );
+
+        if( std::find( fib->begin(), fib->end(), pos ) == fib->end() )
+        {
+            fib->push_back( pos );
+            col->push_back( m_vectors->getColors()->at( i * 4 ) );
+            col->push_back( m_vectors->getColors()->at( i * 4 + 1 ) );
+            col->push_back( m_vectors->getColors()->at( i * 4 + 2 ) );
+            col->push_back( m_vectors->getColors()->at( i * 4 + 3 ) );
+        }
     }
 
     WDataSetFiberVector::SPtr newDS( new WDataSetFiberVector() );

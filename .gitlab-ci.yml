@@ -10,6 +10,7 @@ create_directory_and_cmake___release:
                 key: "CacheRelease"
                 paths:
                         - build/release
+        image: ladbukkit/openwalnut_build_environment:1.1.1
         script:
                 - ls
                 - mkdir -p build
@@ -26,6 +27,7 @@ create_directory_and_cmake___debug:
                 key: "CacheDebug"
                 paths:
                         - build/debug
+        image: ladbukkit/openwalnut_build_environment:1.1.1
         script:
                 - ls
                 - mkdir -p build
@@ -42,12 +44,13 @@ stylecheck_job:
                 key: "CacheRelease"
                 paths:
                         - build/release
+        image: ladbukkit/openwalnut_build_environment:1.1.1
         script:
                 - pwd
                 - cd build/release
                 - pwd 
                 - ls
-                - make stylecheck
+                - make stylecheck -j 8
 
 doc_job:
         stage: Stylecheck_doc_stage
@@ -55,6 +58,7 @@ doc_job:
                 key: "CacheDebug"
                 paths:
                         - build/debug
+        image: ladbukkit/openwalnut_build_environment:1.1.1
         script:
                 - doxygen --version
                 - pwd
@@ -69,6 +73,7 @@ buildAndTest:
                 key: "CacheRelease"
                 paths:
                         - build/release
+        image: ladbukkit/openwalnut_build_environment:1.1.1
         script:
                 - pwd
                 - cd build/release
@@ -83,6 +88,7 @@ buildAndTestDebug:
                 key: "CacheDebug"
                 paths:
                         - build/debug
+        image: ladbukkit/openwalnut_build_environment:1.1.1
         script:
                 - pwd
                 - cd build/debug
