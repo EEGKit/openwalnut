@@ -298,7 +298,9 @@ void WCsvConverter::calculateFibers()
             col->push_back( m_vectors->getColors()->at( i * 4 + 1 ) );
             col->push_back( m_vectors->getColors()->at( i * 4 + 2 ) );
             col->push_back( m_vectors->getColors()->at( i * 4 + 3 ) );
-        } else {
+        }
+        else
+        {
             skippedPoints++;
         }
     }
@@ -321,7 +323,7 @@ void WCsvConverter::calculateFibers()
 
     if( skippedPoints > 0 )
     {
-        wlog::warn("WCsvConverter") << "Skipped " << skippedPoints << " duplicated points for \"WDataSetFibers\".";
+        wlog::warn( "WCsvConverter" ) << "Skipped " << skippedPoints << " duplicated points for \"WDataSetFibers\".";
     }
 }
 

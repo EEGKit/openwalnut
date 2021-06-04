@@ -119,6 +119,10 @@
   //       one line.
   description = "Demonstrative module which tries to show the code features in OW and their usage.";
 
+  // Provide the path to the module help file
+  // The default path is "help.html" if no other path is specified
+  help = "help/index.html";
+
   // Provide a list of authors. These authors can have further information associated with them. First,
   // define the list of authors
   author = "OpenWalnut Project";
@@ -211,6 +215,7 @@
   website = "http://www.openwalnut.org";
   description = "Demonstrative module which tries to show the custom UI features in OW and its usage.";
   author = "OpenWalnut Project";
+  help = "help/index.html";
   "OpenWalnut Project"
   {
     url="http://www.openwalnut.org";
@@ -232,6 +237,7 @@
   website = "http://www.openwalnut.org";
   description = "Demonstrative module which tries to show how to re-use and re-combine existing modules in containers.";
   author = "OpenWalnut Project";
+  help = "help/index.html";
   "OpenWalnut Project"
   {
     url="http://www.openwalnut.org";
@@ -248,6 +254,7 @@
   website = "http://www.openwalnut.org";
   description = "Demonstration of use and powers of WGEShaders and related interfaces.";
   author = "OpenWalnut Project";
+  help = "help/index.html";
   "OpenWalnut Project"
   {
     url="http://www.openwalnut.org";
@@ -269,6 +276,7 @@
   website = "http://www.openwalnut.org";
   description = "Demonstration of use and powers of WGEColormapping and related interfaces.";
   author = "OpenWalnut Project";
+  help = "help/index.html";
   "OpenWalnut Project"
   {
     url="http://www.openwalnut.org";
@@ -290,6 +298,7 @@
   website = "http://www.openwalnut.org";
   description = "Demonstration of use and powers of WGEOffscreen and related interfaces.";
   author = "OpenWalnut Project";
+  help = "help/index.html";
   "OpenWalnut Project"
   {
     url="http://www.openwalnut.org";
@@ -311,6 +320,7 @@
   website = "http://www.openwalnut.org";
   description = "Demonstration of use and powers of the WDataModule interface to load data from external sources.";
   author = "OpenWalnut Project";
+  help = "help/index.html";
   "OpenWalnut Project"
   {
     url="http://www.openwalnut.org";
