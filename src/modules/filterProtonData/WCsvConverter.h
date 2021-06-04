@@ -31,6 +31,7 @@
 
 #include <boost/lexical_cast.hpp>
 
+#include "core/common/WLogger.h"
 #include "core/common/WTransferFunction.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
