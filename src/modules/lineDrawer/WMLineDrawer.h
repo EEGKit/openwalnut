@@ -39,30 +39,93 @@
 #include "WDrawHandler.h"
 #include "WOverlay.h"
 
+/**
+ * This module allows to draw in the two-dimensional space.
+ * 
+ * \ingroup modules
+ */
 class WMLineDrawer : public WModule
 {
 public:
+    /**
+     * A shared_ptr to this class.
+     */
     typedef boost::shared_ptr< WMLineDrawer > SPtr;
 
+    /**
+     * Constructor. Creates the module skeleton.
+     */
     WMLineDrawer();
+
+    /**
+     * Desctructor.
+     */
     virtual ~WMLineDrawer();
+
+    /**
+     * Gives back the name of this module.
+     * \return const std::string the module's name.
+     */
     virtual const std::string getName() const;
+
+    /**
+     * Gives back the description of this module.
+     * \return const std::string description of the module.
+     */
     virtual const std::string getDescription() const;
+
+    /**
+     * Due to the prototype design pattern used to build modules, this method returns a new instance of this method. NOTE: it
+     * should never be initialized or modified in some other way. A simple new instance is required.
+     *
+     * \return the prototype used to create every module in OpenWalnut.
+     */
     virtual boost::shared_ptr< WModule > factory() const;
+
+    /**
+     * Get the icon for this module in XPM format.
+     * \return The icon.
+     */
     virtual const char** getXPMIcon() const;
 
+    /**
+     * Updates the rendered lines.
+     */
     void updateLines();
+
+    /**
+     * Starts a new line.
+     */
     void startNewLine();
+
+    /**
+     * Adds a point to the current line.
+
+     * \param x The normalized x position of the point.
+     * \param y The normalized y position of the point.
+     */
     void addPoint( float x, float y );
 
 protected:
+    /**
+     * Entry point after loading the module. Runs in separate thread.
+     */
     virtual void moduleMain();
+
+    /**
+     * Initialize the connectors this module is using.
+     */
     virtual void conenctors();
+
+    /**
+     * Initialize the properties for this module.
+     */
     virtual void properties();
 
 private:
-    osg::ref_ptr< WOverlay > m_overlay;
-    boost::shared_ptr< std::vector< WLine > > m_lines;
+    osg::ref_ptr< WOverlay > m_overlay; //!< The overlay where the lines are drawn.
+
+    boost::shared_ptr< std::vector< WLine > > m_lines;  //!< All the lines that are drawn.
 };
 
 #endif  // WMLINEDRAWER_H

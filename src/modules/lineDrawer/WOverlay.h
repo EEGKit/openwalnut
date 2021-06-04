@@ -27,9 +27,16 @@
 
 #include <osg/Projection>
 
+/**
+ * Creates a two-dimensional Projection.
+ */
 class WOverlay : public osg::Projection
 {
 public:
+    /**
+     * Construct a new WOverlay Object.
+     * Adding all the needed information to make it two-dimensional. 
+     */
     WOverlay();
 };
 

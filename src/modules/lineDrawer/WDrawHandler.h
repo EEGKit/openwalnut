@@ -31,19 +31,39 @@
 
 #include "WMLineDrawer.h"
 
+/**
+ * Forward declaration of the LineDrawer.
+ */
 class WMLineDrawer;
 
+/**
+ * Handles the GUIEvents in context of the LineDrawer.
+ */
 class WDrawHandler : public osgGA::GUIEventHandler
 {
 public:
+    /**
+     * Construct a new WDrawHandler object.
+     * 
+     * \param drawer The LineDrawer this belongs to.
+     */
     explicit WDrawHandler( WMLineDrawer* drawer );
 
+    /**
+     * Handles the incoming events.
+     * 
+     * \param ea        The EventAdapter of the event.
+     * \param aa        The ActionAdapter of the event.
+     * \return true     Don't propagate the event.
+     * \return false    Propagate the event.
+     */
     bool handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa );
 
 private:
-    WMLineDrawer* m_drawer;
-    bool m_mousePressed;
-    bool m_shiftPressed;
+    WMLineDrawer* m_drawer; //!< The LineDrawer this belongs to.
+
+    bool m_mousePressed;    //!< Whether the mouse is pressed or not.
+    bool m_shiftPressed;    //!< Whether shift is pressed or not.
 };
 
 #endif  // WDRAWHANDLER_H
