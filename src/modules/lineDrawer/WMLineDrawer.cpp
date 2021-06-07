@@ -60,7 +60,9 @@ const char** WMLineDrawer::getXPMIcon() const
 void WMLineDrawer::moduleMain()
 {
     WSelectionManager manager;
-    manager.setSelectionType( WSelectionManager::WSelectionType::LINELOOP );
+    manager.setSelectionType( WSelectionManager::WSelectionType::BRUSH );
+
+    m_moduleState.add( m_propCondition );
 
     ready();
 
@@ -73,6 +75,8 @@ void WMLineDrawer::moduleMain()
         {
             break;
         }
+
+        manager.setSelectionType( static_cast< WSelectionManager::WSelectionType >( m_selection->get().getItemIndexOfSelected( 0 ) ) );
     }
 }
 
@@ -83,5 +87,16 @@ void WMLineDrawer::connectors()
 
 void WMLineDrawer::properties()
 {
+    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+
+    WItemSelection::SPtr selections = WItemSelection::SPtr( new WItemSelection() );
+    selections->addItem( ItemType::create( "Brush", "Brush", "", NULL ) );
+    selections->addItem( ItemType::create( "Line Loop", "Line Loop", "", NULL ) );
+    selections->addItem( ItemType::create( "Box", "Box", "", NULL ) );
+
+    m_selection = m_properties->addProperty( "Selection Type", "The type of the selection", selections->getSelectorFirst(), m_propCondition );
+    WPropertyHelper::PC_SELECTONLYONE::addTo( m_selection );
+    WPropertyHelper::PC_NOTEMPTY::addTo( m_selection );
+
     WModule::properties();
 }

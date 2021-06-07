@@ -28,6 +28,9 @@
 #include <string>
 #include <vector>
 
+#include "core/common/WItemSelectionItem.h"
+#include "core/common/WItemSelectionItemTyped.h"
+#include "core/common/WItemSelector.h"
 #include "core/kernel/WModule.h"
 #include "WSelectionManager.h"
 
@@ -43,6 +46,11 @@ public:
      * A shared_ptr to this class.
      */
     typedef boost::shared_ptr< WMLineDrawer > SPtr;
+
+    /**
+     * Type of selectable items.
+     */
+    typedef WItemSelectionItemTyped< std::string > ItemType;
 
     /**
      * Constructor. Creates the module skeleton.
@@ -95,6 +103,17 @@ protected:
      * Initialize the properties for this module.
      */
     virtual void properties();
+
+private:
+    /**
+     * A condition used to notify about changes in several properties.
+     */
+    boost::shared_ptr< WCondition > m_propCondition;
+
+    /**
+     * The property for the selection type.
+     */
+    WPropSelection m_selection;
 };
 
 #endif  // WMLINEDRAWER_H

@@ -24,6 +24,8 @@
 
 #include "WSelectionManager.h"
 
+static const osg::Vec4 SEL_COLOR( 0.39, 0.58, 0.93, 1 );
+
 WSelectionManager::WSelectionManager():
     m_overlay( new WOverlay() ),
     m_selectionType( WSelectionType::BRUSH ),
@@ -47,8 +49,14 @@ void WSelectionManager::start( float x, float y )
     }
     m_hasStarted = true;
 
-    m_line = WLine();
-    m_line.push_back( WPosition( x, y, 0 ) );
+    m_line.clear();
+    WPosition pos( x, y, 0 );
+
+    m_line.push_back( pos );
+    if( m_selectionType == WSelectionType::BOX )
+    {
+        m_line.push_back( pos );
+    }
     updateDisplay();
 }
 
@@ -60,14 +68,19 @@ void WSelectionManager::end( float x, float y )
     }
     m_hasStarted = false;
 
-    if( m_selectionType == WSelectionType::BRUSH )
+    WPosition pos( x, y, 0 );
+    switch( m_selectionType )
     {
-        m_line.push_back( WPosition( x, y, 0 ) );
-    }
-    else if( m_selectionType == WSelectionType::LINELOOP )
-    {
-        m_line.push_back( WPosition( x, y, 0 ) );
-        m_line.push_back( m_line.at( 0 ) );
+        case WSelectionType::BRUSH:
+            m_line.push_back( pos );
+            break;
+        case WSelectionType::LINELOOP:
+            m_line.push_back( pos );
+            m_line.push_back( m_line.at( 0 ) );
+            break;
+        case WSelectionType::BOX:
+            m_line.at( 1 ) = pos;
+            break;
     }
     updateDisplay();
 }
@@ -79,7 +92,18 @@ void WSelectionManager::move( float x, float y )
         return;
     }
 
-    m_line.push_back( WPosition( x, y, 0 ) );
+    WPosition pos( x, y, 0 );
+    switch( m_selectionType )
+    {
+        case WSelectionType::BRUSH:
+        case WSelectionType::LINELOOP:
+            m_line.push_back( pos );
+            break;
+        case WSelectionType::BOX:
+            m_line.at( 1 ) = pos;
+            break;
+    }
+
     updateDisplay();
 }
 
@@ -104,20 +128,43 @@ void WSelectionManager::updateDisplay()
     osg::ref_ptr< osg::Vec3Array > vertices = osg::ref_ptr< osg::Vec3Array >( new osg::Vec3Array() );
     osg::ref_ptr< osg::Vec4Array > colors = osg::ref_ptr< osg::Vec4Array >( new osg::Vec4Array() );
 
-    for( size_t i = 0; i < m_line.size(); i++ )
+    if( m_selectionType == WSelectionType::BOX )
     {
-        WPosition pos = m_line.at( i );
-        vertices->push_back( osg::Vec3( pos.x(), pos.y(), pos.z() ) );
-        colors->push_back( osg::Vec4( 0.39, 0.58, 0.93, 1 ) );
+        WPosition pos1 = m_line.at( 0 );
+        WPosition pos2 = m_line.at( 1 );
+
+        vertices->push_back( osg::Vec3( pos1.x(), pos1.y(), 0 ) );
+        vertices->push_back( osg::Vec3( pos2.x(), pos1.y(), 0 ) );
+        vertices->push_back( osg::Vec3( pos2.x(), pos2.y(), 0 ) );
+        vertices->push_back( osg::Vec3( pos1.x(), pos2.y(), 0 ) );
+        vertices->push_back( osg::Vec3( pos1.x(), pos1.y(), 0 ) );
+
+        colors->push_back( SEL_COLOR );
+        colors->push_back( SEL_COLOR );
+        colors->push_back( SEL_COLOR );
+        colors->push_back( SEL_COLOR );
+        colors->push_back( SEL_COLOR );
+        geometry->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::LINE_STRIP, 0, 5 ) );
     }
-    geometry->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::LINE_STRIP, 0, m_line.size() ) );
+    else
+    {
+        for( size_t i = 0; i < m_line.size(); i++ )
+        {
+            WPosition pos = m_line.at( i );
+            vertices->push_back( osg::Vec3( pos.x(), pos.y(), pos.z() ) );
+            colors->push_back( SEL_COLOR );
+        }
+        geometry->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::LINE_STRIP, 0, m_line.size() ) );
+    }
 
     geometry->setVertexArray( vertices );
     geometry->setColorArray( colors );
     geometry->setColorBinding( osg::Geometry::BIND_PER_VERTEX );
 
     lines->addDrawable( geometry );
-    lines->getOrCreateStateSet()->setAttributeAndModes( new osg::LineWidth( 10.0 ), osg::StateAttribute::ON );
+
+    float width = m_selectionType == WSelectionType::BRUSH ? 25.0 : m_selectionType == WSelectionType::LINELOOP ? 10.0 : 5.0;
+    lines->getOrCreateStateSet()->setAttributeAndModes( new osg::LineWidth( width ), osg::StateAttribute::ON );
 
     osg::ref_ptr< osg::MatrixTransform > matrix = new osg::MatrixTransform();
     matrix->setMatrix( osg::Matrix::identity() );

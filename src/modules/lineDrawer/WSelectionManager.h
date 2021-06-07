@@ -25,11 +25,12 @@
 #ifndef WSELECTIONMANAGER_H
 #define WSELECTIONMANAGER_H
 
+#include <vector>
+
 #include <osg/Geode>
 #include <osg/Geometry>
 #include <osg/LineWidth>
 
-#include "core/common/math/WLine.h"
 #include "core/kernel/WKernel.h"
 #include "WOverlay.h"
 #include "WSelectionHandler.h"
@@ -112,7 +113,7 @@ private:
 
     osg::ref_ptr< WSelectionHandler > m_selectionHandler; //!< The SelectionHandler for this object.
 
-    WLine m_line; //!< The points that are used for the selection.
+    std::vector< WPosition > m_line; //!< The points that are used for the selection.
 
     bool m_hasStarted; //!< Whether a selection has been started or not.
 };

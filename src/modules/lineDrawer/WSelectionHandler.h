@@ -45,7 +45,7 @@ public:
     /**
      * Construct a new WDrawHandler object.
      * 
-     * \param drawer The WSelectionManager this belongs to.
+     * \param manager The WSelectionManager this belongs to.
      */
     explicit WSelectionHandler( WSelectionManager* manager );
 
