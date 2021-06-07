@@ -22,32 +22,32 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WDRAWHANDLER_H
-#define WDRAWHANDLER_H
+#ifndef WSELECTIONHANDLER_H
+#define WSELECTIONHANDLER_H
 
 #include <osg/Viewport>
 #include <osgGA/GUIEventHandler>
 #include <osgViewer/Viewer>
 
-#include "WMLineDrawer.h"
+#include "WSelectionManager.h"
 
 /**
- * Forward declaration of the LineDrawer.
+ * Forward declaration of the WSelectionManager.
  */
-class WMLineDrawer;
+class WSelectionManager;
 
 /**
- * Handles the GUIEvents in context of the LineDrawer.
+ * Handles the GUIEvents in context of the WSelectionManager.
  */
-class WDrawHandler : public osgGA::GUIEventHandler
+class WSelectionHandler : public osgGA::GUIEventHandler
 {
 public:
     /**
      * Construct a new WDrawHandler object.
      * 
-     * \param drawer The LineDrawer this belongs to.
+     * \param drawer The WSelectionManager this belongs to.
      */
-    explicit WDrawHandler( WMLineDrawer* drawer );
+    explicit WSelectionHandler( WSelectionManager* manager );
 
     /**
      * Handles the incoming events.
@@ -60,10 +60,10 @@ public:
     bool handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa );
 
 private:
-    WMLineDrawer* m_drawer; //!< The LineDrawer this belongs to.
+    WSelectionManager* m_manager;   //!< The WSelectionManager this belongs to.
 
-    bool m_mousePressed;    //!< Whether the mouse is pressed or not.
-    bool m_shiftPressed;    //!< Whether shift is pressed or not.
+    bool m_mousePressed;            //!< Whether the mouse is pressed or not.
+    bool m_shiftPressed;            //!< Whether shift is pressed or not.
 };
 
-#endif  // WDRAWHANDLER_H
+#endif  // WSELECTIONHANDLER_H

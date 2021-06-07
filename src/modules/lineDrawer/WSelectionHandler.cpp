@@ -22,20 +22,23 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WDrawHandler.h"
+#include "WSelectionHandler.h"
 
 static const unsigned int SHIFT_DOWN = 65505;
 static const unsigned int SHIFT_UP = 16777248;
 
-WDrawHandler::WDrawHandler( WMLineDrawer* drawer ):
-    m_drawer( drawer ),
+WSelectionHandler::WSelectionHandler( WSelectionManager* manager ):
+    m_manager( manager ),
     m_mousePressed( false ),
     m_shiftPressed( false )
 {
 }
 
-bool WDrawHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
+bool WSelectionHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
 {
+    float x = ( ea.getXnormalized() + 1.0 ) / 2.0;
+    float y =  ( ea.getYnormalized() + 1.0 ) / 2.0;
+
     if( ea.getEventType() == osgGA::GUIEventAdapter::KEYDOWN )
     {
         if( ea.getKey() == SHIFT_DOWN )
@@ -48,6 +51,7 @@ bool WDrawHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAda
         if( ea.getKey() == SHIFT_UP )
         {
             m_shiftPressed = false;
+            m_manager->end( x, y );
         }
     }
 
@@ -61,18 +65,19 @@ bool WDrawHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAda
         if( ea.getEventType() == osgGA::GUIEventAdapter::PUSH )
         {
             m_mousePressed = true;
-            m_drawer->startNewLine();
+            m_manager->start( x, y );
         }
         else if( ea.getEventType() == osgGA::GUIEventAdapter::RELEASE )
         {
             m_mousePressed = false;
+            m_manager->end( x, y );
         }
+        return true;
     }
 
     if( m_mousePressed && ea.getEventType() == osgGA::GUIEventAdapter::DRAG )
     {
-        m_drawer->addPoint( ( ea.getXnormalized() + 1.0 ) / 2.0, ( ea.getYnormalized() + 1.0 ) / 2.0 );
-        m_drawer->updateLines();
+        m_manager->move( x, y );
         return true;
     }
 

@@ -28,16 +28,8 @@
 #include <string>
 #include <vector>
 
-#include <osg/Depth>
-#include <osg/Geode>
-#include <osg/Geometry>
-#include <osg/LineWidth>
-
-#include "core/common/math/WLine.h"
-#include "core/kernel/WKernel.h"
 #include "core/kernel/WModule.h"
-#include "WDrawHandler.h"
-#include "WOverlay.h"
+#include "WSelectionManager.h"
 
 /**
  * This module allows to draw in the two-dimensional space.
@@ -88,24 +80,6 @@ public:
      */
     virtual const char** getXPMIcon() const;
 
-    /**
-     * Updates the rendered lines.
-     */
-    void updateLines();
-
-    /**
-     * Starts a new line.
-     */
-    void startNewLine();
-
-    /**
-     * Adds a point to the current line.
-
-     * \param x The normalized x position of the point.
-     * \param y The normalized y position of the point.
-     */
-    void addPoint( float x, float y );
-
 protected:
     /**
      * Entry point after loading the module. Runs in separate thread.
@@ -115,17 +89,12 @@ protected:
     /**
      * Initialize the connectors this module is using.
      */
-    virtual void conenctors();
+    virtual void connectors();
 
     /**
      * Initialize the properties for this module.
      */
     virtual void properties();
-
-private:
-    osg::ref_ptr< WOverlay > m_overlay; //!< The overlay where the lines are drawn.
-
-    boost::shared_ptr< std::vector< WLine > > m_lines;  //!< All the lines that are drawn.
 };
 
 #endif  // WMLINEDRAWER_H
