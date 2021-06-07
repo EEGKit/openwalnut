@@ -144,10 +144,5 @@ void WMLineDrawer::startNewLine()
 void WMLineDrawer::addPoint( float x, float y )
 {
     WLine& line = m_lines->back();
-    WPosition pos = WPosition( x, y, 0 );
-    if( line.size() > 0 && distance2( line.back(), pos ) < 0.0001 )
-    {
-        return;
-    }
-    line.push_back( pos );
+    line.push_back( WPosition( x, y, 0 ) );
 }
