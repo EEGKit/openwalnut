@@ -27,6 +27,8 @@
 layout( lines_adjacency ) in;
 layout( triangle_strip, max_vertices = 4 ) out;
 
+uniform vec2 u_viewport;
+
 void main()
 {
     // calc vectors
@@ -56,10 +58,9 @@ void main()
     }
 
     // calc miter length
-    // TODO(eschbach): Put screen size into the miter length calculation as the length is relative to the screen size at the moment.
-    // TODO(eschbach): 0.01 is thickness needs to be an attribute
-    float len1 = 0.01 / proj1;
-    float len2 = 0.01 / proj2;
+    // TODO(eschbach): 10 is thickness needs to be an attribute or uniform
+    float len1 = 10 / proj1;
+    float len2 = 10 / proj2;
 
     // prevent too long miters
     // TODO(eschbach): On too long miters the points could cross each other resulting something looking like the lines has horns.
@@ -74,16 +75,40 @@ void main()
         len2 = 0.01;
     }
 
-    gl_Position = gl_in[1].gl_Position - m1 * len1;
+    vec4 p = gl_in[1].gl_Position;
+    p.x *= u_viewport.x;
+    p.y *= u_viewport.y;
+    p = p - m1 * len1;
+    p.x /= u_viewport.x;
+    p.y /= u_viewport.y;
+    gl_Position = p;
     EmitVertex();
 
-    gl_Position = gl_in[1].gl_Position + m1 * len1;
+    p = gl_in[1].gl_Position;
+    p.x *= u_viewport.x;
+    p.y *= u_viewport.y;
+    p = p + m1 * len1;
+    p.x /= u_viewport.x;
+    p.y /= u_viewport.y;
+    gl_Position = p;
     EmitVertex();
 
-    gl_Position = gl_in[2].gl_Position - m2 * len2;
+    p = gl_in[2].gl_Position;
+    p.x *= u_viewport.x;
+    p.y *= u_viewport.y;
+    p = p - m2 * len2;
+    p.x /= u_viewport.x;
+    p.y /= u_viewport.y;
+    gl_Position = p;
     EmitVertex();
 
-    gl_Position = gl_in[2].gl_Position + m2 * len2;
+    p = gl_in[2].gl_Position;
+    p.x *= u_viewport.x;
+    p.y *= u_viewport.y;
+    p = p + m2 * len2;
+    p.x /= u_viewport.x;
+    p.y /= u_viewport.y;
+    gl_Position = p;
     EmitVertex();
 
     EndPrimitive();

@@ -183,8 +183,9 @@ void WSelectionManager::updateDisplay()
 
     lines->addDrawable( geometry );
 
-    /*float width = m_selectionType == WSelectionType::BRUSH ? 25.0 : m_selectionType == WSelectionType::LINELOOP ? 10.0 : 5.0;
-    lines->getOrCreateStateSet()->setAttributeAndModes( new osg::LineWidth( width ), osg::StateAttribute::ON );*/
+    osg::Camera* camera = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera();
+    lines->getOrCreateStateSet()->addUniform(
+        new osg::Uniform( "u_viewport", osg::Vec2( camera->getViewport()->width(), camera->getViewport()->height() ) ) );
 
     osg::ref_ptr< osg::MatrixTransform > matrix = new osg::MatrixTransform();
     matrix->setMatrix( osg::Matrix::identity() );
