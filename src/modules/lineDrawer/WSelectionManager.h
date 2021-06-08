@@ -31,6 +31,7 @@
 #include <osg/Geometry>
 #include <osg/LineWidth>
 
+#include "core/graphicsEngine/shaders/WGEShader.h"
 #include "core/kernel/WKernel.h"
 #include "WOverlay.h"
 #include "WSelectionHandler.h"
@@ -116,6 +117,8 @@ private:
     std::vector< WPosition > m_line; //!< The points that are used for the selection.
 
     bool m_hasStarted; //!< Whether a selection has been started or not.
+
+    osg::ref_ptr< WGEShader > m_shader; //!< The shader for the selection.
 };
 
 #endif  // WSELECTIONMANAGER_H

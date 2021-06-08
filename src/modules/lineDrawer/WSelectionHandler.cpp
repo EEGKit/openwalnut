@@ -37,7 +37,7 @@ WSelectionHandler::WSelectionHandler( WSelectionManager* manager ):
 bool WSelectionHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
 {
     float x = ( ea.getXnormalized() + 1.0 ) / 2.0;
-    float y =  ( ea.getYnormalized() + 1.0 ) / 2.0;
+    float y = ( ea.getYnormalized() + 1.0 ) / 2.0;
 
     if( ea.getEventType() == osgGA::GUIEventAdapter::KEYDOWN )
     {
