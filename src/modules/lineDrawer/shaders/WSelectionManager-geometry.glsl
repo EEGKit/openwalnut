@@ -28,6 +28,17 @@ layout( lines_adjacency ) in;
 layout( triangle_strip, max_vertices = 4 ) out;
 
 uniform vec2 u_viewport;
+uniform float u_thickness;
+
+vec4 calcPoint( vec4 position, vec4 miter, float len )
+{
+    position.x *= u_viewport.x;
+    position.y *= u_viewport.y;
+    position = position + miter * len;
+    position.x /= u_viewport.x;
+    position.y /= u_viewport.y;
+    return position;
+}
 
 void main()
 {
@@ -58,58 +69,33 @@ void main()
     }
 
     // calc miter length
-    // TODO(eschbach): 10 is thickness needs to be an attribute or uniform
-    float len1 = 10 / proj1;
-    float len2 = 10 / proj2;
+    float len1 = u_thickness / proj1;
+    float len2 = u_thickness / proj2;
 
     // prevent too long miters
-    // TODO(eschbach): On too long miters the points could cross each other resulting something looking like the lines has horns.
     if( dot( v1, v2 ) < -0.75 )
     {
         m1 = n2;
-        len1 = 0.01;
+        len1 = u_thickness;
     }
     if( dot( v2, v3 ) < -0.75 )
     {
         m2 = n2;
-        len2 = 0.01;
+        len2 = u_thickness;
     }
 
-    vec4 p = gl_in[1].gl_Position;
-    p.x *= u_viewport.x;
-    p.y *= u_viewport.y;
-    p = p - m1 * len1;
-    p.x /= u_viewport.x;
-    p.y /= u_viewport.y;
-    gl_Position = p;
+    gl_Position = calcPoint( gl_in[1].gl_Position, -m1, len1 );
     EmitVertex();
 
-    p = gl_in[1].gl_Position;
-    p.x *= u_viewport.x;
-    p.y *= u_viewport.y;
-    p = p + m1 * len1;
-    p.x /= u_viewport.x;
-    p.y /= u_viewport.y;
-    gl_Position = p;
+    gl_Position = calcPoint( gl_in[1].gl_Position,  m1, len1 );
     EmitVertex();
 
-    p = gl_in[2].gl_Position;
-    p.x *= u_viewport.x;
-    p.y *= u_viewport.y;
-    p = p - m2 * len2;
-    p.x /= u_viewport.x;
-    p.y /= u_viewport.y;
-    gl_Position = p;
+    gl_Position = calcPoint( gl_in[2].gl_Position, -m2, len2 );
     EmitVertex();
 
-    p = gl_in[2].gl_Position;
-    p.x *= u_viewport.x;
-    p.y *= u_viewport.y;
-    p = p + m2 * len2;
-    p.x /= u_viewport.x;
-    p.y /= u_viewport.y;
-    gl_Position = p;
+    gl_Position = calcPoint( gl_in[2].gl_Position,  m2, len2 );
     EmitVertex();
+
 
     EndPrimitive();
 }

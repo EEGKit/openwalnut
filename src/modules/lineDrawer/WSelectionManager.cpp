@@ -183,9 +183,12 @@ void WSelectionManager::updateDisplay()
 
     lines->addDrawable( geometry );
 
+    float thickness = m_selectionType == WSelectionType::BRUSH ? 25 : m_selectionType == WSelectionType::LINELOOP ? 5 : 10;
+
+    osg::StateSet* state = lines->getOrCreateStateSet();
     osg::Camera* camera = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera();
-    lines->getOrCreateStateSet()->addUniform(
-        new osg::Uniform( "u_viewport", osg::Vec2( camera->getViewport()->width(), camera->getViewport()->height() ) ) );
+    state->addUniform( new osg::Uniform( "u_viewport", osg::Vec2( camera->getViewport()->width(), camera->getViewport()->height() ) ) );
+    state->addUniform( new osg::Uniform( "u_thickness", thickness ) );
 
     osg::ref_ptr< osg::MatrixTransform > matrix = new osg::MatrixTransform();
     matrix->setMatrix( osg::Matrix::identity() );
