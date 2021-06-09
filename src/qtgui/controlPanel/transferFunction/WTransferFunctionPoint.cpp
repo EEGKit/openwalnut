@@ -90,8 +90,8 @@ void WTransferFunctionPoint::paint( QPainter *painter, const QStyleOptionGraphic
 
     if( option->state & QStyle::State_Sunken )
     {
-        gradient.setColorAt( 0, QColor( Qt::yellow ).light( 120 ) );
-        gradient.setColorAt( 1, QColor( Qt::darkYellow ).light( 120 ) );
+        gradient.setColorAt( 0, QColor( Qt::yellow ).lighter( 120 ) );
+        gradient.setColorAt( 1, QColor( Qt::darkYellow ).lighter( 120 ) );
         painter->setPen( QPen( Qt::red, 0 ) );
     }
     else
