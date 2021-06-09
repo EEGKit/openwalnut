@@ -125,7 +125,7 @@ void WMVRCamera::requirements()
 bool WMVRCamera::setupVRInterface()
 {
     // Exit if we do not have an HMD present
-    if(!vr::VR_IsHmdPresent())
+    if( !vr::VR_IsHmdPresent() )
     {
         errorLog() << "No valid HMD present!" << std::endl;
         return false;
@@ -136,7 +136,7 @@ bool WMVRCamera::setupVRInterface()
     vr::EVRInitError eError = vr::VRInitError_None;
     m_vrSystem = vr::VR_Init( &eError, vr::VRApplication_Scene );
 
-    if(eError != vr::VRInitError_None )
+    if( eError != vr::VRInitError_None )
     {
         m_vrSystem = nullptr;
         errorLog()
@@ -208,14 +208,14 @@ void WMVRCamera::moduleMain()
 
     //Set Nodemask so this modules Node are culled in the Mainview
     osg::Node::NodeMask vrNodeMask = 0x10000000;
-    WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->setCullMask(~vrNodeMask);
-    m_rootnode->setNodeMask(vrNodeMask);
+    WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->setCullMask( ~vrNodeMask );
+    m_rootnode->setNodeMask( vrNodeMask );
 
     // get side-views
     boost::shared_ptr< WGEViewer > leftEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" );
     boost::shared_ptr< WGEViewer > rightEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" );
-    leftEyeView->setScene(m_leftEyeNode);
-    rightEyeView->setScene(m_rightEyeNode);    
+    leftEyeView->setScene( m_leftEyeNode );
+    rightEyeView->setScene( m_rightEyeNode );
     leftEyeView->reset();
     rightEyeView->reset();
 
@@ -250,7 +250,7 @@ void WMVRCamera::moduleMain()
     leftEyeView->getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
     //leftEyeView->getCamera()->setNearFarRatio( 0.000001 ); Not exactly sure what this does
     leftEyeView->getCamera()->setViewport( 0, 0, m_vrRenderWidth, m_vrRenderHeight );
-    leftEyeView->getCamera()->setCullMask(vrNodeMask);
+    leftEyeView->getCamera()->setCullMask( vrNodeMask );
 
     rightEyeView->getCamera()->setClearMask( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     rightEyeView->getCamera()->setRenderTargetImplementation( osg::Camera::FRAME_BUFFER_OBJECT );
@@ -258,7 +258,7 @@ void WMVRCamera::moduleMain()
     rightEyeView->getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
     //rightEyeView->getCamera()->setNearFarRatio( 0.000001 ); Not exactly sure what this does
     rightEyeView->getCamera()->setViewport( 0, 0, m_vrRenderWidth, m_vrRenderHeight );
-    rightEyeView->getCamera()->setCullMask(vrNodeMask);
+    rightEyeView->getCamera()->setCullMask( vrNodeMask );
 
 
     m_leftTexture = new osg::Texture2D;
@@ -295,8 +295,10 @@ void WMVRCamera::moduleMain()
     );
 
     //Add Geometry to render pipeline
-    osg::ref_ptr< WGEOffscreenRenderPass > geometryPassLeft = offscreenRenderLeft->addGeometryRenderPass( m_leftEyeGeometryNode, "GeometryPassLeft" );
-    osg::ref_ptr< WGEOffscreenRenderPass> geometryPassRight = offscreenRenderRight->addGeometryRenderPass( m_rightEyeGeometryNode, "GeometryPassRight" );
+    osg::ref_ptr< WGEOffscreenRenderPass > geometryPassLeft =
+        offscreenRenderLeft->addGeometryRenderPass( m_leftEyeGeometryNode, "GeometryPassLeft" );
+    osg::ref_ptr< WGEOffscreenRenderPass> geometryPassRight =
+        offscreenRenderRight->addGeometryRenderPass( m_rightEyeGeometryNode, "GeometryPassRight" );
 
     //Add a texture processing step to render pipeline
     osg::ref_ptr< WGEOffscreenTexturePass > texturePassLeft = offscreenRenderLeft->addTextureProcessingPass(
@@ -334,50 +336,52 @@ void WMVRCamera::moduleMain()
     finalPassLeft->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
     finalPassRight->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
 
-    osg::ref_ptr< osg::Node > plane_left = wge::genFinitePlane( 
+    osg::ref_ptr< osg::Node > plane_left = wge::genFinitePlane(
                                 osg::Vec3( -100.0, 0.0, -100.0 ),   // base
                                 osg::Vec3( 200.0, 0.0, 0.0 ), // spanning vector a
                                 osg::Vec3( 0.0, 0.0, 200.0 ), // spanning vector b
                                 WColor( 0.0, 1.0, 0.0, 1.0 )  // a color.
            );
-    osg::ref_ptr< osg::Node > plane_right = wge::genFinitePlane( 
+    osg::ref_ptr< osg::Node > plane_right = wge::genFinitePlane(
                                 osg::Vec3( -100.0, 0.0, -100.0 ),   // base
                                 osg::Vec3( 200.0, 0.0, 0.0 ), // spanning vector a
                                 osg::Vec3( 0.0, 0.0, 200.0 ), // spanning vector b
                                 WColor( 0.0, 0.0, 1.0, 1.0 )  // a color.
            );
 
-    osg::ref_ptr< osg::Node > plane_left2 = wge::genFinitePlane( 
+    osg::ref_ptr< osg::Node > plane_left2 = wge::genFinitePlane(
                                 osg::Vec3( -200.0, 0.0, -200.0 ),   // base
                                 osg::Vec3( 100.0, 0.0, 0.0 ), // spanning vector a
                                 osg::Vec3( 0.0, 0.0, 100.0 ), // spanning vector b
                                 WColor( 0.0, 1.0, 0.0, 1.0 )  // a color.
            );
-    osg::ref_ptr< osg::Node > plane_right2 = wge::genFinitePlane( 
+    osg::ref_ptr< osg::Node > plane_right2 = wge::genFinitePlane(
                                 osg::Vec3( -200.0, 0.0, -200.0 ),   // base
                                 osg::Vec3( 100.0, 0.0, 0.0 ), // spanning vector a
                                 osg::Vec3( 0.0, 0.0, 100.0 ), // spanning vector b
                                 WColor( 0.0, 0.0, 1.0, 1.0 )  // a color.
            );
 
-    osg::ref_ptr< osg::Node > plane_main = wge::genFinitePlane( 
+    osg::ref_ptr< osg::Node > plane_main = wge::genFinitePlane(
                                 osg::Vec3( -100.0, 0.0, -100.0 ),   // base
                                 osg::Vec3( 200.0, 0.0, 0.0 ), // spanning vector a
                                 osg::Vec3( 0.0, 0.0, 200.0 ), // spanning vector b
                                 WColor( 1.0, 0.0, 0.0, 1.0 )  // a color.
            );
 
-    m_leftEyeGeometryNode->addChild(plane_left);
-    m_rightEyeGeometryNode->addChild(plane_right);
-    m_leftEyeGeometryNode->addChild(plane_left2);
-    m_rightEyeGeometryNode->addChild(plane_right2);
-    m_rootnode->addChild(plane_main);
+    m_leftEyeGeometryNode->addChild( plane_left );
+    m_rightEyeGeometryNode->addChild( plane_right );
+    m_leftEyeGeometryNode->addChild( plane_left2 );
+    m_rightEyeGeometryNode->addChild( plane_right2 );
+    m_rootnode->addChild( plane_main );
 
-    m_leftEyeGeometryNode->addChild(dynamic_cast<osg::Node*>(WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone(osg::CopyOp::DEEP_COPY_ALL)));
-    m_rightEyeGeometryNode->addChild(dynamic_cast<osg::Node*>(WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone(osg::CopyOp::DEEP_COPY_ALL)));
-    
-    leftEyeView->getScene()->insert(offscreenRenderLeft);
-    rightEyeView->getScene()->insert(offscreenRenderRight);
+    m_leftEyeGeometryNode->addChild( dynamic_cast<osg::Node*>(
+                                         WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone( osg::CopyOp::DEEP_COPY_ALL ) ) );
+    m_rightEyeGeometryNode->addChild( dynamic_cast<osg::Node*>(
+                                          WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone( osg::CopyOp::DEEP_COPY_ALL ) ) );
+
+    leftEyeView->getScene()->insert( offscreenRenderLeft );
+    rightEyeView->getScene()->insert( offscreenRenderRight );
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Main loop
@@ -407,7 +411,7 @@ void WMVRCamera::moduleMain()
     debugLog() << "Shutting down openVRCamera";
 
     //Reset CullMask
-    WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->setCullMask(0xFFFFFFFF);
+    WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->setCullMask( 0xFFFFFFFF );
 
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_rootnode );
 }
@@ -434,7 +438,7 @@ void WMVRCamera::activate()
 std::string WMVRCamera::getDeviceProperty( vr::TrackedDeviceProperty prop )
 {
     uint32_t bufferLen = m_vrSystem->GetStringTrackedDeviceProperty( vr::k_unTrackedDeviceIndex_Hmd, prop, NULL, 0 );
-    if(bufferLen == 0)
+    if( bufferLen == 0 )
     {
         return "";
     }
@@ -492,16 +496,18 @@ void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent )
 
 void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisitor* nv )
 {
-
-
     std::chrono::_V2::system_clock::time_point now = std::chrono::system_clock::now();
     double elapsedSeconds = ( now - m_lastFrame ).count()/1000000000.0;
     m_lastFrame = now;
-    m_lastFrames [m_frameCounter++] = elapsedSeconds;
-    if(m_frameCounter>=120)m_frameCounter=0;
+    m_lastFrames[m_frameCounter++] = elapsedSeconds;
+    if( m_frameCounter >= 120 )
+    {
+        m_frameCounter = 0;
+    }
     double elapsedSecondsSum = 0;
-    for(int i=0;i<=119;i++){
-        elapsedSecondsSum += m_lastFrames [i];
+    for( int i = 0; i <= 119; i++ )
+    {
+        elapsedSecondsSum += m_lastFrames[i];
     }
     double averageElapsedSeconds = elapsedSecondsSum/120.0;
 
@@ -530,7 +536,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
         m_module->m_debugTrigger2->set( WPVBaseTypes::PV_TRIGGER_READY, false );
     }
 
-    if( m_module->m_vrOn->changed(true) )
+    if( m_module->m_vrOn->changed( true ) )
     {
         if( m_module->m_vrOn->get() )
         {
@@ -574,7 +580,10 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node* node, osg::NodeVisit
         }
 
         //get all OpenVR tracking information
-        for(uint32_t i = 0; i < vr::k_unMaxTrackedDeviceCount; ++i) m_module->m_poses[i].bPoseIsValid = false;
+        for( uint32_t i = 0; i < vr::k_unMaxTrackedDeviceCount; ++i )
+        {
+            m_module->m_poses[i].bPoseIsValid = false;
+        }
         vr::VRCompositor()->WaitGetPoses( m_module->m_poses, vr::k_unMaxTrackedDeviceCount, NULL, 0 );
 
         //handle controller events

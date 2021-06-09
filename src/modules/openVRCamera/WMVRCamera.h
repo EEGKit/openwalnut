@@ -169,16 +169,16 @@ private:
          */
         std::chrono::_V2::system_clock::time_point m_lastFrame;
 
-        
+
         /**
          * timestamps of the last 120 frames
          */
-        double m_lastFrames [120];
+        double m_lastFrames[120];
 
         /**
          * current position in m_lastFrames for saving the next timestamp
          */
-        unsigned short m_frameCounter = 0;
+        unsigned int m_frameCounter = 0;
 
         /**
          * Denotes whether the update callback is called the first time. It is especially useful
