@@ -231,12 +231,15 @@ void WQtNetworkEditorView::wheelEvent( QWheelEvent* event )
 {
     // scale the view ie. do the zoom
     double scaleFactor = 1.15;
-    if( event->delta() > 0 )
+
+    if( event->angleDelta().y() > 0 )
     {
         // zoom in
         scale( scaleFactor, scaleFactor );
     }
-    else
+    // We check both because smaller AND larger than zero because
+    // we want to handle y events and ignore x events
+    else if( event->angleDelta().y() < 0 )
     {
         // zooming out
         scale( 1.0 / scaleFactor, 1.0 / scaleFactor );
@@ -276,4 +279,3 @@ void WQtNetworkEditorView::dropEvent( QDropEvent* event )
     emit dragDrop( event );
     QGraphicsView::dropEvent( event );
 }
-

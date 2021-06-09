@@ -357,16 +357,9 @@ void WQtGLWidget::wheelEvent( QWheelEvent* event )
     if( m_Viewer )
     {
         int x, y;
-        if( event->orientation() == Qt::Vertical )
-        {
-            x = 0;
-            y = event->delta();
-        }
-        else
-        {
-            x = event->delta();
-            y = 0;
-        }
+        x = event->angleDelta().x();
+        y = event->angleDelta().y();
+
         m_Viewer->mouseEvent( WGEViewer::MOUSESCROLL, x, y, 0 );
     }
 }
