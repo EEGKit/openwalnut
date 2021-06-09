@@ -725,7 +725,7 @@ boost::shared_ptr< std::list< boost::shared_ptr< WTriangleMesh > > > tm_utils::c
     WUnionFind uf( mesh.vertSize() ); // idea: every vertex in own component, then successivley join in accordance with the triangles
 
     const std::vector< size_t >& triangles = mesh.getTriangles();
-    for( size_t vID = 0; vID <= triangles.size() - 3; vID += 3)
+    for( size_t vID = 0; vID <= triangles.size() - 3; vID += 3 )
     {
         uf.merge( triangles[ vID ], triangles[ vID + 1 ] );
         uf.merge( triangles[ vID ], triangles[ vID + 2 ] ); // uf.merge( triangles[ vID + 2 ], triangles[ vID + 1 ] ); they are already in same

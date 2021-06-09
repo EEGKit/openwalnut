@@ -99,10 +99,10 @@ CreateWorkingDir()
     ##############################################################################################
     # Step 2: filter stuff
 
-    # normally, not everything is needed. For example: git files. Some packages also do not need
+    # normally, not everything is needed. For example: hg files. Some packages also do not need
     # exterrnal code
-    find $UPSTREAM_SRC_DIR -name ".git" -and -type d | xargs rm -rf
-    find $UPSTREAM_SRC_DIR -name ".git*" -and -type f | xargs rm -f
+    find $UPSTREAM_SRC_DIR -name ".hg" -and -type d | xargs rm -rf
+    find $UPSTREAM_SRC_DIR -name ".hg*" -and -type f | xargs rm -f
 
     # re-package with exclusion list
     for ex in $EXCLUDE_LIST

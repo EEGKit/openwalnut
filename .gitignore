@@ -39,3 +39,11 @@ src/modules/modules-user.toolbox
 
 # Visual Studio Code config files
 .vscode
+
+# jetbrains CLion / IntelliJ files
+**/.idea
+
+openwalnut.log
+
+# AppImage
+tools/AppImage/AppImageBuild

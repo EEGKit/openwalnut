@@ -82,6 +82,6 @@ int WMarchingCubesAlgorithm::getEdgeID( unsigned int nX, unsigned int nY, unsign
 
 unsigned int WMarchingCubesAlgorithm::getVertexID( unsigned int nX, unsigned int nY, unsigned int nZ )
 {
-    return nZ * ( m_nCellsY + 1 ) * ( m_nCellsX + 1) + nY * ( m_nCellsX + 1 ) + nX;
+    return nZ * ( m_nCellsY + 1 ) * ( m_nCellsX + 1 ) + nY * ( m_nCellsX + 1 ) + nX;
 }
 

@@ -163,7 +163,7 @@ namespace WStructuredTextParser
         if( elementName == *keyIter )
         {
             // only if the key path continues AND the current element is no leaf, traverse
-            if( !elementIsKeyValuePair && ( ( keyIter + 1 ) != keyEnd) )
+            if( !elementIsKeyValuePair && ( ( keyIter + 1 ) != keyEnd ) )
             {
                 ObjectType elementAsObj = boost::get< ObjectType >( current );
                 for( std::vector< MemberType >::const_iterator nodeIter = elementAsObj.m_nodes.begin();

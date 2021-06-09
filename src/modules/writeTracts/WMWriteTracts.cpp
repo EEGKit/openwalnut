@@ -206,7 +206,7 @@ bool WMWriteTracts::saveJson() const
     dataFile << ( "    \"vertices\" : [" );
     boost::shared_ptr<std::vector<float> > verts = ds->getVertices();
     float fValue;
-    for( size_t i = 0; i < (verts->size() - 1 )/ 3; ++i )
+    for( size_t i = 0; i < ( verts->size() - 1 ) / 3; ++i )
     {
         fValue = verts->at( i * 3 );
         dataFile << fValue << ",";

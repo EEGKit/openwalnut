@@ -199,7 +199,7 @@ osg::ref_ptr< osg::Image > WDataTexture3D::createTexture( T* source, int compone
 
     size_t nbVoxels = getTextureWidth() * getTextureHeight() * getTextureDepth();
 
-    if( components == 1)
+    if( components == 1 )
     {
         // OpenGL just supports float textures
         ima->allocateImage( getTextureWidth(), getTextureHeight(), getTextureDepth(), GL_LUMINANCE_ALPHA, type );
@@ -213,7 +213,7 @@ osg::ref_ptr< osg::Image > WDataTexture3D::createTexture( T* source, int compone
             data[ ( 2 * i ) + 1] = wge::GLType< T >::FullIntensity() * ( source[i] != min );
         }
     }
-    else if( components == 2)
+    else if( components == 2 )
     {
         // OpenGL just supports float textures
         ima->allocateImage( getTextureWidth(), getTextureHeight(), getTextureDepth(), GL_RGBA, type );
@@ -229,7 +229,7 @@ osg::ref_ptr< osg::Image > WDataTexture3D::createTexture( T* source, int compone
             data[ ( 4 * i ) + 3 ] = wge::GLType< T >::FullIntensity();
         }
     }
-    else if( components == 3)
+    else if( components == 3 )
     {
         // OpenGL just supports float textures
         ima->allocateImage( getTextureWidth(), getTextureHeight(), getTextureDepth(), GL_RGBA, type );
@@ -245,7 +245,7 @@ osg::ref_ptr< osg::Image > WDataTexture3D::createTexture( T* source, int compone
             data[ ( 4 * i ) + 3 ] = wge::GLType< T >::FullIntensity();
         }
     }
-    else if( components == 4)
+    else if( components == 4 )
     {
         // OpenGL just supports float textures
         ima->allocateImage( getTextureWidth(), getTextureHeight(), getTextureDepth(), GL_RGBA, type );

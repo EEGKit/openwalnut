@@ -221,15 +221,15 @@ boost::shared_ptr< WValueSet< float > > WMDistanceMap::createOffset( boost::shar
     npixels = nbands * nrows * ncols;
 
     floatDataset.resize( npixels );
-    for( int i = 0; i < npixels; ++i)
+    for( int i = 0; i < npixels; ++i )
     {
         floatDataset[i] = 0.0;
     }
 
     bool* bitmask = new bool[npixels];
-    for( int i = 0; i < npixels; ++i)
+    for( int i = 0; i < npixels; ++i )
     {
-        if( valueSet->getScalar(i) < 0.01 )
+        if( valueSet->getScalar( i ) < 0.01 )
         {
             bitmask[i] = true;
         }
@@ -247,12 +247,12 @@ boost::shared_ptr< WValueSet< float > > WMDistanceMap::createOffset( boost::shar
             new WProgress( "Distance Map", nbands + nbands + nrows + nbands + nbands + nbands )
     );
     m_progress->addSubProgress( progress1 );
-    for( b = 0; b < nbands; ++b)
+    for( b = 0; b < nbands; ++b )
     {
         ++*progress1;
-        for( r = 0; r < nrows; ++r)
+        for( r = 0; r < nrows; ++r )
         {
-            for( c = 0; c < ncols; ++c)
+            for( c = 0; c < ncols; ++c )
             {
                 //if(VPixel(src,b,r,c,VBit) == 1)
                 if( bitmask[b * nrows * ncols + r * ncols + c] )
@@ -263,7 +263,7 @@ boost::shared_ptr< WValueSet< float > > WMDistanceMap::createOffset( boost::shar
 
                 srcpix = bitmask + b * nrows * ncols + r * ncols + c;
                 cc1 = c;
-                while(cc1 < ncols && *srcpix++ == 0)
+                while( cc1 < ncols && *srcpix++ == 0 )
                     cc1++;
                 d1 = ( cc1 >= ncols ? ncols : ( cc1 - c ) );
 
@@ -337,7 +337,7 @@ boost::shared_ptr< WValueSet< float > > WMDistanceMap::createOffset( boost::shar
 
             for( b = 0; b < nbands; b++ )
             {
-                if(bitmask[b * nrows * ncols + r * ncols + c] == 1)
+                if( bitmask[b * nrows * ncols + r * ncols + c] == 1 )
                     continue;
 
                 dmin = dmax;
@@ -368,13 +368,13 @@ boost::shared_ptr< WValueSet< float > > WMDistanceMap::createOffset( boost::shar
     delete[] array;
 
     float max = 0;
-    for( i = 0; i < npixels; ++i)
+    for( i = 0; i < npixels; ++i )
     {
         floatDataset[i] = sqrt( static_cast< double >( floatDataset[i] ) );
-        if(floatDataset[i] > max)
+        if( floatDataset[i] > max )
             max = floatDataset[i];
     }
-    for( i = 0; i < npixels; ++i)
+    for( i = 0; i < npixels; ++i )
     {
         floatDataset[i] = floatDataset[i] / max;
     }
@@ -393,7 +393,7 @@ boost::shared_ptr< WValueSet< float > > WMDistanceMap::createOffset( boost::shar
     double x = -static_cast< float >( dim );
 
     double uu;
-    for( int i = 0; i < n; ++i)
+    for( int i = 0; i < n; ++i )
     {
         uu = xxgauss( x, sigma );
         sum += uu;
@@ -402,7 +402,7 @@ boost::shared_ptr< WValueSet< float > > WMDistanceMap::createOffset( boost::shar
     }
 
     /* normalize */
-    for( int i = 0; i < n; ++i)
+    for( int i = 0; i < n; ++i )
     {
         uu = kernel[i];
         uu /= sum;

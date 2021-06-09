@@ -284,7 +284,7 @@ void WMarchingLegoAlgorithm::addSurface( size_t x, size_t y, size_t z, size_t su
 
 size_t WMarchingLegoAlgorithm::getVertexID( size_t nX, size_t nY, size_t nZ )
 {
-    return nZ * ( m_nCellsY + 1 ) * ( m_nCellsX + 1) + nY * ( m_nCellsX + 1 ) + nX;
+    return nZ * ( m_nCellsY + 1 ) * ( m_nCellsX + 1 ) + nY * ( m_nCellsX + 1 ) + nX;
 }
 
 boost::shared_ptr<WTriangleMesh> WMarchingLegoAlgorithm::genSurfaceOneValue( size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,

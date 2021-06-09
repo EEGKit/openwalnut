@@ -42,6 +42,11 @@
 // prototype instance as singleton
 boost::shared_ptr< WPrototyped > WDataSetFibers::m_prototype = boost::shared_ptr< WPrototyped >();
 
+static bool checkBelowTwo( size_t number )
+{
+    return number < 2;
+}
+
 WDataSetFibers::WDataSetFibers()
     : WDataSet()
 {
@@ -61,6 +66,8 @@ WDataSetFibers::WDataSetFibers( WDataSetFibers::VertexArray vertices,
       m_bb( boundingBox )
 {
     WAssert( m_vertices->size() % 3 == 0,  "Invalid vertex array."  );
+    WAssert( std::find_if( m_lineLengths->begin(), m_lineLengths->end(), checkBelowTwo ) == m_lineLengths->end(), "Invalid line lengths." );
+
     init();
 }
 
@@ -75,6 +82,8 @@ WDataSetFibers::WDataSetFibers( WDataSetFibers::VertexArray vertices,
       m_verticesReverse( verticesReverse )
 {
     WAssert( m_vertices->size() % 3 == 0,  "Invalid vertex array."  );
+    WAssert( std::find_if( m_lineLengths->begin(), m_lineLengths->end(), checkBelowTwo ) == m_lineLengths->end(), "Invalid line lengths." );
+
     // determine bounding box
     for( size_t i = 0; i < vertices->size()/3; ++i )
     {
@@ -99,6 +108,8 @@ WDataSetFibers::WDataSetFibers( WDataSetFibers::VertexArray vertices,
       m_vertexParameters( 1, vertexParameters )
 {
     WAssert( m_vertices->size() % 3 == 0,  "Invalid vertex array."  );
+    WAssert( std::find_if( m_lineLengths->begin(), m_lineLengths->end(), checkBelowTwo ) == m_lineLengths->end(), "Invalid line lengths." );
+
     init();
 }
 
@@ -115,6 +126,8 @@ WDataSetFibers::WDataSetFibers( WDataSetFibers::VertexArray vertices,
       m_vertexParameters( 1, vertexParameters )
 {
     WAssert( m_vertices->size() % 3 == 0,  "Invalid vertex array."  );
+    WAssert( std::find_if( m_lineLengths->begin(), m_lineLengths->end(), checkBelowTwo ) == m_lineLengths->end(), "Invalid line lengths." );
+
     // determine bounding box
     for( size_t i = 0; i < vertices->size()/3; ++i )
     {
@@ -289,7 +302,7 @@ void WDataSetFibers::replaceColorScheme( WDataSetFibers::ColorArray oldColors, W
     for( WItemSelection::Iterator i = l->get().begin(); i != l->get().end(); ++i )
     {
         boost::shared_ptr< ColorScheme > ci = boost::static_pointer_cast< ColorScheme >( *i );
-        if(ci->getColor() == oldColors )
+        if( ci->getColor() == oldColors )
         {
             ci->setColor( newColors );
         }
@@ -308,6 +321,11 @@ const boost::shared_ptr< WDataSetFibers::ColorScheme > WDataSetFibers::getColorS
     }
 
     return boost::static_pointer_cast< ColorScheme >( *i );
+}
+
+void WDataSetFibers::setSelectedColorScheme( size_t idx )
+{
+    m_colorProp->set( m_colors->getSelector( idx ) );
 }
 
 const boost::shared_ptr< WDataSetFibers::ColorScheme > WDataSetFibers::getColorScheme( size_t idx ) const

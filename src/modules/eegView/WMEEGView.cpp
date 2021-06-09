@@ -320,7 +320,7 @@ void WMEEGView::moduleMain()
         {
             debugLog() << "New event position: " << event->getTime();
 
-            for( std::vector< osg::ref_ptr< WROIBox > >::iterator iter = m_rois.begin(); iter != m_rois.end(); ++iter)
+            for( std::vector< osg::ref_ptr< WROIBox > >::iterator iter = m_rois.begin(); iter != m_rois.end(); ++iter )
             {
                 WKernel::getRunningKernel()->getRoiManager()->removeRoi( *iter );
             }
@@ -421,7 +421,7 @@ void WMEEGView::createColorMap()
     image->setInternalTextureFormat( GL_RGBA );
 
     osg::Vec4* data = reinterpret_cast< osg::Vec4* >( image->data() );
-    for( int i = 0; i < size; ++i)
+    for( int i = 0; i < size; ++i )
     {
         data[i] = m_colorMap->getColor( ( 2 * i + 1 - size ) / static_cast< float >( size - 1 ) );
     }
@@ -495,7 +495,7 @@ void WMEEGView::redraw()
     }
 
     // reset event position
-    if( !m_butterfly->changed(true) )
+    if( !m_butterfly->changed( true ) )
     {
         m_event->set( boost::shared_ptr< WEEGEvent >( new WEEGEvent ) );
     }

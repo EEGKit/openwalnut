@@ -128,13 +128,13 @@ void WModuleContainer::add( boost::shared_ptr< WModule > module, bool run )
 
     // connect default notifiers:
     boost::shared_lock<boost::shared_mutex> slock = boost::shared_lock<boost::shared_mutex>( m_errorNotifiersLock );
-    for( std::list< t_ModuleErrorSignalHandlerType >::iterator iter = m_errorNotifiers.begin(); iter != m_errorNotifiers.end(); ++iter)
+    for( std::list< t_ModuleErrorSignalHandlerType >::iterator iter = m_errorNotifiers.begin(); iter != m_errorNotifiers.end(); ++iter )
     {
         signalCon = module->subscribeSignal( WM_ERROR, ( *iter ) );
         subscriptionsLock->get().insert( ModuleSubscription( module, signalCon ) );
     }
     slock = boost::shared_lock<boost::shared_mutex>( m_associatedNotifiersLock );
-    for( std::list< t_ModuleGenericSignalHandlerType >::iterator iter = m_associatedNotifiers.begin(); iter != m_associatedNotifiers.end(); ++iter)
+    for( std::list< t_ModuleGenericSignalHandlerType >::iterator iter = m_associatedNotifiers.begin(); iter != m_associatedNotifiers.end(); ++iter )
     {
         // call associated notifier
         ( *iter )( module );
@@ -161,7 +161,7 @@ void WModuleContainer::add( boost::shared_ptr< WModule > module, bool run )
         }
     }
     slock = boost::shared_lock<boost::shared_mutex>( m_readyNotifiersLock );
-    for( std::list< t_ModuleGenericSignalHandlerType >::iterator iter = m_readyNotifiers.begin(); iter != m_readyNotifiers.end(); ++iter)
+    for( std::list< t_ModuleGenericSignalHandlerType >::iterator iter = m_readyNotifiers.begin(); iter != m_readyNotifiers.end(); ++iter )
     {
         signalCon = module->subscribeSignal( WM_READY, ( *iter ) );
         subscriptionsLock->get().insert( ModuleSubscription( module, signalCon ) );
@@ -235,7 +235,7 @@ void WModuleContainer::remove( boost::shared_ptr< WModule > module )
 
     // tell all interested about removal
     boost::shared_lock<boost::shared_mutex> slock = boost::shared_lock<boost::shared_mutex>( m_removedNotifiersLock );
-    for( std::list< t_ModuleGenericSignalHandlerType >::iterator iter = m_removedNotifiers.begin(); iter != m_removedNotifiers.end(); ++iter)
+    for( std::list< t_ModuleGenericSignalHandlerType >::iterator iter = m_removedNotifiers.begin(); iter != m_removedNotifiers.end(); ++iter )
     {
         // call associated notifier
         ( *iter )( module );
@@ -342,7 +342,7 @@ const std::string WModuleContainer::getDescription() const
 void WModuleContainer::addDefaultNotifier( MODULE_SIGNAL signal, t_ModuleGenericSignalHandlerType notifier )
 {
     boost::unique_lock<boost::shared_mutex> lock;
-    switch( signal)
+    switch( signal )
     {
         case WM_ASSOCIATED:
             lock = boost::unique_lock<boost::shared_mutex>( m_associatedNotifiersLock );
@@ -370,7 +370,7 @@ void WModuleContainer::addDefaultNotifier( MODULE_SIGNAL signal, t_ModuleGeneric
 void WModuleContainer::addDefaultNotifier( MODULE_SIGNAL signal, t_ModuleErrorSignalHandlerType notifier )
 {
     boost::unique_lock<boost::shared_mutex> lock;
-    switch( signal)
+    switch( signal )
     {
         case WM_ERROR:
             lock = boost::unique_lock<boost::shared_mutex>( m_errorNotifiersLock );
@@ -388,7 +388,7 @@ void WModuleContainer::addDefaultNotifier( MODULE_SIGNAL signal, t_ModuleErrorSi
 void WModuleContainer::addDefaultNotifier( MODULE_CONNECTOR_SIGNAL signal, t_GenericSignalHandlerType notifier )
 {
     boost::unique_lock<boost::shared_mutex> lock;
-    switch( signal)
+    switch( signal )
     {
         case CONNECTION_ESTABLISHED:
             lock = boost::unique_lock<boost::shared_mutex>( m_connectorNotifiersLock );

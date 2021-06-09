@@ -84,6 +84,9 @@ void WPropertyFilenameWidget::buttonReleased()
 {
     QString path;
 
+    QFileDialog::Option options = m_fnProperty->countConstraint( PC_CONFIRMOVERWRITE ) != 0 ?
+                                                               ( QFileDialog::Option ) 0 : QFileDialog::DontConfirmOverwrite;
+
     // if there is a "IsDirectory" constraint -> set a special option in the dialog
     if( m_fnProperty->countConstraint( PC_ISDIRECTORY ) != 0 )
     {
@@ -91,21 +94,21 @@ void WPropertyFilenameWidget::buttonReleased()
         path = QFileDialog::getExistingDirectory( this,
                 QString::fromStdString( "Select directory for " + m_fnProperty->getName() ),
                 QString::fromStdString( m_fnProperty->get().string() ),
-                QFileDialog::DontConfirmOverwrite );
+                options );
     }
     else if( m_fnProperty->countConstraint( PC_PATHEXISTS ) != 0 )
     {
         path = QFileDialog::getOpenFileName( this,
                 QString::fromStdString( "Select existing file for " + m_fnProperty->getName() ),
                 QString::fromStdString( m_fnProperty->get().string() ), QString(), 0,
-                QFileDialog::DontConfirmOverwrite );
+                options );
     }
     else
     {
         path = QFileDialog::getSaveFileName( this,
                 QString::fromStdString( "Select file for " + m_fnProperty->getName() ),
                 QString::fromStdString( m_fnProperty->get().string() ), QString(), 0,
-                QFileDialog::DontConfirmOverwrite );
+                options );
     }
 
     // convert it back to a filename property

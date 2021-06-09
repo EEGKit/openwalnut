@@ -332,9 +332,19 @@ void WPickHandler::pick( osgViewer::View* view, const osgGA::GUIEventAdapter& ea
         pickPos[2] = hitr->getWorldIntersectPoint()[2];
 
         WVector3d pickNormal;
-        pickNormal[0] = hitr->getWorldIntersectNormal()[0];
+        // For whatever reason the intersection algorithm gets the wrong normals, so we grab them ourselves
+        /*pickNormal[0] = hitr->getWorldIntersectNormal()[0];
         pickNormal[1] = hitr->getWorldIntersectNormal()[1];
-        pickNormal[2] = hitr->getWorldIntersectNormal()[2];
+        pickNormal[2] = hitr->getWorldIntersectNormal()[2];*/
+
+        const osgUtil::LineSegmentIntersector::Intersection::IndexList& vil = hitr->indexList;
+        osg::ref_ptr< osg::Geometry > geo = dynamic_cast< osg::Geometry* >( hitr->drawable.get() );
+        float* normals = ( float* ) geo->getNormalArray()->getDataPointer();
+        size_t vertexIdx = vil[0];
+        pickNormal[0] = normals[vertexIdx * 3];
+        pickNormal[1] = normals[vertexIdx * 3 + 1];
+        pickNormal[2] = normals[vertexIdx * 3 + 2];
+
         pickInfo = WPickInfo( extractSuitableName( hitr ), m_viewerName, pickPos, std::make_pair( x, y ),
                               pickInfo.getModifierKey(), m_mouseButton, pickNormal, m_scrollWheel );
     }

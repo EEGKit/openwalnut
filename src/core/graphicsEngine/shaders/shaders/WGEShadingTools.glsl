@@ -125,7 +125,7 @@ vec4 blinnPhongIllumination( vec3 ambient, vec3 diffuse, vec3 specular, float sh
 
     // compute specular term
     float specularLight = pow( max( dot( H, normalDir ), 0.0 ), shininess );
-    if( diffuseLight <= 0.) specularLight = 0.;
+    if( diffuseLight <= 0. ) specularLight = 0.;
     vec3 specularV = specular * specularLight;
 
     return vec4( ambientV + ( diffuseV + specularV ) * lightColor, 1.0 );
@@ -165,7 +165,7 @@ float blinnPhongIlluminationIntensity( float ambient, float diffuse, float specu
 
     // compute specular term
     float specularLight = pow( max( dot( H, normalDir ), 0.0 ), shininess );
-    if( diffuseLight <= 0.) specularLight = 0.;
+    if( diffuseLight <= 0. ) specularLight = 0.;
     float specularV = specular * specularLight;
 
     return ambientV + ( diffuseV + specularV ) * lightIntensity;

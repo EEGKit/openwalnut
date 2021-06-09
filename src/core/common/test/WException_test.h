@@ -66,7 +66,7 @@ public:
      */
     void testBacktrace( void )
     {
-#if ( defined( __linux__ ) && defined( __GNUC__ ) )
+#if( defined( __linux__ ) && defined( __GNUC__ ) )
         try
         {
             new WException();

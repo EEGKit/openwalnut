@@ -88,16 +88,17 @@ void WMTransferFunctionColorBar::properties()
 {
     m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
 
-    // m_replace = m_properties->addProperty( "Keep position",
-    //                                        "If true, new texture on the input connector get placed in the list where the old one was.", true );
-
     WPropGroup colorBarGroup = m_properties->addPropertyGroup( "Colorbar", "The colorbar with several properties." );
-    // m_showColorbar = colorBarGroup->addProperty( "Show Colorbar", "If true, a colorbar is shown for the current colormap.", false );
     m_colorBarBorder = colorBarGroup->addProperty( "Show Border", "If true, a thin white border is shown around the colorbar.", true );
     m_colorBarName = colorBarGroup->addProperty( "Show Name", "If true, a shortened version of the data name is shown.", true );
     m_colorBarLabels = colorBarGroup->addProperty( "Colorbar Labels", "This defines the number of labels.", 10 );
     m_colorBarLabels->setMin( 0 );
     m_colorBarLabels->setMax( 55 );
+
+    m_minScaleValue = m_properties->addProperty( "Min scale value", "Minimum scale value in dataset", 0.0, true );
+    m_maxScaleValue = m_properties->addProperty( "Max scale value", "Maximum scale value in dataset", 1.0, true );
+    m_colorBarDescription = m_properties->addProperty( "Description", "Description of current transfer function",
+                                                       std::string( "TransferFunction" ), true ),
 
     WModule::properties();
 }
@@ -154,11 +155,10 @@ void WMTransferFunctionColorBar::moduleMain()
             boost::shared_ptr< WDataSetSingle > dataSet = m_input->getData();
 
             // add a colorbar
-            if( dataSet/* && dataSet->isTexture()*/ )
+            if( dataSet )
             {
                 // create camera oriented 2d projection
                 m_barProjection = new osg::Projection();
-                // m_barProjection->addUpdateCallback( new WGENodeMaskCallback( m_showColorbar ) );
                 m_barProjection->addUpdateCallback( new WGENodeMaskCallback( m_active ) );
                 m_barProjection->setMatrix( osg::Matrix::ortho2D( 0, 1.0, 0, 1.0 ) );
                 m_barProjection->getOrCreateStateSet()->setRenderBinDetails( 15, "RenderBin" );
@@ -173,54 +173,38 @@ void WMTransferFunctionColorBar::moduleMain()
                 osg::ref_ptr< osg::Geode > colorBarBorder = wge::genFinitePlane( osg::Vec3( 0.025 - borderWidth, 0.1 - borderWidth, -0.1 ),
                                                                                  osg::Vec3( 0.025 + 2.0 * borderWidth, 0.0, -0.1 ),
                                                                                  osg::Vec3( 0.0, 0.8 + 2.0 * borderWidth, -0.1 ) );
-                // m_colorBar->getOrCreateStateSet()->addUniform( new WGEPropertyUniform< WPropSelection >( "u_colormap",
-                //                                                dataSet->getTexture()->colormap() ) );
                 colormapShader->apply( m_colorBar );
 
                 // create the texture for color lookup
-                // boost::shared_ptr< WDataSetSingle > dataSet = m_transferFunction->getData();
-                if( !dataSet )
+                WAssert( dataSet, "data set" );
+                boost::shared_ptr< WValueSetBase > valueSet = dataSet->getValueSet();
+                WAssert( valueSet, "value set" );
+                boost::shared_ptr< WValueSet< unsigned char > > cvalueSet( boost::dynamic_pointer_cast<WValueSet< unsigned char> >( valueSet ) );
+                if( !cvalueSet )
                 {
-                    debugLog() << "no data set?";
+                    debugLog() << "invalid type";
                 }
                 else
                 {
-                    WAssert( dataSet, "data set" );
-                    boost::shared_ptr< WValueSetBase > valueSet = dataSet->getValueSet();
-                    WAssert( valueSet, "value set" );
-                    boost::shared_ptr< WValueSet< unsigned char > > cvalueSet( boost::dynamic_pointer_cast<WValueSet< unsigned char> >( valueSet ) );
-                    if( !cvalueSet )
-                    {
-                        debugLog() << "invalid type";
-                    }
-                    else
-                    {
-                        size_t tfsize =  cvalueSet->rawSize();
-                        const unsigned char* orig =  cvalueSet->rawData();
-                        unsigned char* data =  new unsigned char[  tfsize ];
-                        std::copy(  orig, &orig[  tfsize ], data );
-                        osg::ref_ptr <  osg::Image >  tfImg(  new osg::Image() );
-                        tfImg->setImage(  tfsize/4, 1, 1, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE,
-                                data, osg::Image::USE_NEW_DELETE ); // FIXME: check allocation mode
-                        // tfTexEnableDefine->setActive( false );
-                        osg::ref_ptr< osg::Texture1D > tfTexture = new osg::Texture1D();
-                        tfTexture->setImage( tfImg );
-                        wge::bindTexture( m_colorBar, tfTexture, 0, "u_transferFunction" );
-                        // tfTexEnableDefine->setActive( true );
-                    }
+                    size_t tfsize =  cvalueSet->rawSize();
+                    const unsigned char* orig =  cvalueSet->rawData();
+                    unsigned char* data =  new unsigned char[  tfsize ];
+                    std::copy(  orig, &orig[  tfsize ], data );
+                    osg::ref_ptr <  osg::Image >  tfImg(  new osg::Image() );
+                    tfImg->setImage(  tfsize/4, 1, 1, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE,
+                            data, osg::Image::USE_NEW_DELETE ); // FIXME: check allocation mode
+                    osg::ref_ptr< osg::Texture1D > tfTexture = new osg::Texture1D();
+                    tfTexture->setImage( tfImg );
+                    wge::bindTexture( m_colorBar, tfTexture, 0, "u_transferFunction" );
                 }
 
                 // add the name label
                 osg::ref_ptr< WGELabel > nameLabel = new WGELabel();
                 nameLabel->setPosition( osg::Vec3( 0.015, 0.9, 0.0 ) );
-                // nameLabel->setText( format( dataSet->getTexture()->name()->get() ) );
-                nameLabel->setText( format( "TransferFunction" ) );
+                nameLabel->setText( format( m_colorBarDescription->get() ) );
                 nameLabel->setCharacterSize( 0.015 );
                 nameLabel->setLayout( osgText::TextBase::VERTICAL );
                 nameLabel->setAlignment( osgText::Text::BASE_LINE );
-                // nameLabel->setUpdateCallback( new WGEFunctorCallback< osg::Drawable >(
-                //     boost::bind( &WMTransferFunctionColorBar::updateColorbarName, this, boost::placeholders::_1 ) )
-                // );
 
                 // the bar and the labels need to be added in an identity modelview matrix node
                 osg::ref_ptr< osg::MatrixTransform > matrix = new osg::MatrixTransform();
@@ -246,8 +230,8 @@ void WMTransferFunctionColorBar::moduleMain()
                 matrix->addChild( labels );
                 m_barProjection->addChild( matrix );
 
-                m_valueMin = 0.0; // dataSet->getTexture()->minimum()->get();
-                m_valueScale = 1.0; // dataSet->getTexture()->scale()->get();
+                m_valueMin = dataSet->getTexture()->minimum()->get();
+                m_valueScale = dataSet->getTexture()->scale()->get();
 
                 // add
                 WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_barProjection );
@@ -261,27 +245,22 @@ void WMTransferFunctionColorBar::moduleMain()
 
 void WMTransferFunctionColorBar::activate()
 {
-    // deactivate the output if wanted
-    // if( m_lastDataSet )
-    // {
-    //    m_lastDataSet->getTexture()->active()->set( m_active->get( true ) );
-    // }
-
     // Always call WModule's activate!
     WModule::activate();
 }
 
-// void WMTransferFunctionColorBar::updateColorbarName( osg::Drawable* label )
-// {
-    // if( m_lastDataSet )
-    // {
-    //     dynamic_cast< WGELabel* >( label )->setText( format( m_lastDataSet->getTexture()->name()->get() ) );
-    // }
-// }
-
 void WMTransferFunctionColorBar::updateColorbarScale( osg::Node* scaleLabels )
 {
-    if( m_colorBarLabels->changed( true ) )
+    if( m_minScaleValue->changed( false ) )
+    {
+        m_valueMin = m_minScaleValue->get();
+    }
+    if( m_maxScaleValue->changed( false ) )
+    {
+        m_valueScale = m_maxScaleValue->get();
+    }
+
+    if( m_colorBarLabels->changed( true ) || m_minScaleValue->changed( true ) || m_maxScaleValue->changed( true ) )
     {
         const double labelXPos = 0.060;
         osg::Geode* g = scaleLabels->asGeode();
@@ -329,4 +308,3 @@ void WMTransferFunctionColorBar::updateColorbarScale( osg::Node* scaleLabels )
         g->addDrawable( lines );
     }
 }
-

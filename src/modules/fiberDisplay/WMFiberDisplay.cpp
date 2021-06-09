@@ -123,7 +123,7 @@ void WMFiberDisplay::properties()
     m_clipPlaneDistance->setMax( 1000.0 );
 
     m_lineGroup = m_properties->addPropertyGroup( "Line Rendering", "Line rendering specific options." );
-    m_lineWidth = m_lineGroup->addProperty( "Width", "The line width.", 1.0 );
+    m_lineWidth = m_lineGroup->addProperty( "Line width", "The line width.", 1.0 );
     m_lineWidth->setMin( 1.0 );
     m_lineWidth->setMax( 10.0 );
     m_lineSmooth = m_lineGroup->addProperty( "Anti-Alias", "Anti-aliased line rendering. This can be slow!", false );
@@ -415,9 +415,18 @@ void WMFiberDisplay::moduleMain()
             WGEColormapping::apply( endCapGeode, m_endCapShader );
 
             // for line smoothing and width features
-            geode->getOrCreateStateSet()->setUpdateCallback( new WGEFunctorCallback< osg::StateSet >(
+            osg::ref_ptr< osg::StateSet > state = geode->getOrCreateStateSet();
+            state->setUpdateCallback( new WGEFunctorCallback< osg::StateSet >(
                 boost::bind( &WMFiberDisplay::lineGeodeStateCallback, this, boost::placeholders::_1 ) )
             );
+
+            // set attributes
+            state->setAttributeAndModes( new osg::LineWidth( m_lineWidth->get( true ) ), osg::StateAttribute::ON );
+
+            osg::StateAttribute::GLModeValue onoff = m_lineSmooth->get() ? osg::StateAttribute::ON : osg::StateAttribute::OFF;
+            state->setAttributeAndModes( new osg::Hint( GL_LINE_SMOOTH_HINT, GL_NICEST ), onoff );
+            state->setMode( GL_LINE_SMOOTH, onoff );
+            state->setMode( GL_BLEND, osg::StateAttribute::ON );
 
             // Add geometry
             WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_plane );

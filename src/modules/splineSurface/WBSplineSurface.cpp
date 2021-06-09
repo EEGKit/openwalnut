@@ -46,7 +46,7 @@ WBSplineSurface::WBSplineSurface( int order1,
     for( int i = 0; i < ( n + k ); i++ )
     {
         int tempKnot = 0;
-        if( i < k)
+        if( i < k )
             tempKnot = k - 1;
         if( ( i >= k ) && ( i < n ) )
             tempKnot = i;
@@ -59,7 +59,7 @@ WBSplineSurface::WBSplineSurface( int order1,
     //define a normalized knotVector2
     n = m_numDeBoorPoints2;
     k = m_order2;
-    for( int i = 0; i < ( n + k ); i++)
+    for( int i = 0; i < ( n + k ); i++ )
     {
         int tempKnot = 0;
         if( i < k )

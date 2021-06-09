@@ -298,7 +298,7 @@ void WQtNetworkItem::updater()
 
             // we add the percent-counter to the front because the fitLook method shortens the subtext string if it is too long. This might clip out
             // the percentage if the p->getCombinedNames string is quite long.
-            if(m_busyIsDetermined ) // <- of course only add if we have a known percentage
+            if( m_busyIsDetermined ) // <- of course only add if we have a known percentage
             {
                 // NOTE: Percentage of a WProgressCombiner always multiplicatively combines all percentages of the children
                 m_subtitleFull = string_utils::toString( static_cast< uint16_t >( p->getProgress() ) ) + "% - " + m_subtitleFull;
@@ -740,14 +740,14 @@ void WQtNetworkItem::fitLook( float maximumWidth, float minimumWidth )
     m_rect = rect;
 
     // 4: use the sizes and set the positions and sizes of the text elements properly
-    if( m_text != 0)
+    if( m_text != 0 )
     {
         qreal x = ( m_width / 2.0 ) - ( m_text->boundingRect().width() / 2.0 );
         qreal y = ( m_height / 2.0 ) - ( wholeTextHeight / 2.0 );
         m_text->setPos( x, y );
     }
 
-    if( m_subtitle != 0)
+    if( m_subtitle != 0 )
     {
         qreal x = ( m_width / 2.0 ) - ( m_subtitle->boundingRect().width() / 2.0 );
         qreal y = ( m_height / 2.0 ) - ( subtextMargin );

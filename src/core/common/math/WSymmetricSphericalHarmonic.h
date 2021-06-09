@@ -661,7 +661,7 @@ WMatrix< T > WSymmetricSphericalHarmonic< T >::calcBaseMatrix( const std::vector
   // calc B Matrix like in the 2007 Descoteaux paper ("Regularized, Fast, and Robust Analytical Q-Ball Imaging")
   int j = 0;
   const T rootOf2 = std::sqrt( 2.0 );
-  for(uint32_t row = 0; row < orientations.size(); row++ )
+  for( uint32_t row = 0; row < orientations.size(); row++ )
   {
     const T theta = orientations[row].getTheta();
     const T phi = orientations[row].getPhi();

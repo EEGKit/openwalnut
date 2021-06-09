@@ -184,10 +184,10 @@ float blinnPhongIlluminationIntensity( float ambient, float diffuse, float specu
 
     // compute specular term
     float specularLight = pow( max( dot( H, normalDir ), 0. ), shininess );
-    if( diffuseLight <= 0.) specularLight = 0.;
+    if( diffuseLight <= 0. ) specularLight = 0.;
     float specularV = specular * specularLight;
 
-    return ambientV + (diffuseV + specularV)*lightIntensity;
+    return ambientV + ( diffuseV + specularV ) * lightIntensity;
 }
 
 bool epsilonEquals( float value, float equals, float epsilon = 0.01 )

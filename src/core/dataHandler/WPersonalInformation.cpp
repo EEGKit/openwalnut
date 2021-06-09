@@ -122,5 +122,5 @@ bool WPersonalInformation::operator==( WPersonalInformation info ) const
 
 bool WPersonalInformation::operator!=( WPersonalInformation info ) const
 {
-    return !( (*this) == info );
+    return !( ( *this ) == info );
 }

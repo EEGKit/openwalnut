@@ -459,7 +459,7 @@ template< typename T > WMatrix< T > WMatrix< T >::operator*( const WMatrix< T >&
     WAssert( rhs.getNbRows() == getNbCols(), "Incompatible number of rows of rhs and columns of lhs." );
     WMatrix< T > result( getNbRows(), rhs.getNbCols() );
 
-    for( size_t r = 0; r < getNbRows(); ++r)
+    for( size_t r = 0; r < getNbRows(); ++r )
     {
         for( size_t c = 0; c < rhs.getNbCols(); ++c )
         {
@@ -477,7 +477,7 @@ template< typename T > WValue< T > WMatrix< T >::operator*( const WValue< T >& r
     WAssert( rhs.size() == getNbCols(), "Incompatible number of rows of rhs and columns of lhs." );
     WValue< T > result( getNbRows() );
 
-    for( size_t r = 0; r < getNbRows(); ++r)
+    for( size_t r = 0; r < getNbRows(); ++r )
     {
         for( size_t i = 0; i < getNbCols(); ++i )
         {
@@ -492,7 +492,7 @@ template< typename T > WVector3d WMatrix< T >::operator*( const WVector3d& rhs )
     WAssert( rhs.getRows() == getNbCols(), "Incompatible number of rows of rhs and columns of lhs." );
     WVector3d result;
 
-    for( size_t r = 0; r < getNbRows(); ++r)
+    for( size_t r = 0; r < getNbRows(); ++r )
     {
         for( size_t i = 0; i < getNbCols(); ++i )
         {

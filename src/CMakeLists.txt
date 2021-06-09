@@ -62,14 +62,15 @@ INCLUDE( OpenWalnut )
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 # copy our debug utilities. This is only useful if compiled debug or RelWithDebInfo
-IF( NOT cmake_build_type_tolower STREQUAL "release" )
-    # NOTE: DO NOT add and install target here. Debugging tools are not useful and wished in an OpenWalnut installation.
-    ADD_CUSTOM_TARGET( CopyDebugUtilities
-        ALL
-        COMMAND ${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/../tools/debugging" "${PROJECT_BINARY_DIR}/"
-        COMMENT "Copying debug utilities"
-    )
-ENDIF()
+# Commented out as there are no debugging tools
+#IF( NOT cmake_build_type_tolower STREQUAL "release" )
+#    # NOTE: DO NOT add and install target here. Debugging tools are not useful and wished in an OpenWalnut installation.
+#    ADD_CUSTOM_TARGET( CopyDebugUtilities
+#        ALL
+#        COMMAND ${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/../tools/debugging" "${PROJECT_BINARY_DIR}/"
+#        COMMENT "Copying debug utilities"
+#    )
+#ENDIF()
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 #

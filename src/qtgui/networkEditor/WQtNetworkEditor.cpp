@@ -129,7 +129,7 @@ void WQtNetworkEditor::selectItem()
     if( m_scene->selectedItems().size() != 0 &&
          m_scene->selectedItems().at( 0 )->type() == WQtNetworkItem::Type )
     {
-        if( m_scene->selectedItems().at(0)->type() == WQtNetworkItem::Type )
+        if( m_scene->selectedItems().at( 0 )->type() == WQtNetworkItem::Type )
         {
             module = ( static_cast< WQtNetworkItem* >( m_scene->selectedItems().at( 0 ) ) )->getModule();
             m_mainWindow->getControlPanel()->setActiveModule( module );

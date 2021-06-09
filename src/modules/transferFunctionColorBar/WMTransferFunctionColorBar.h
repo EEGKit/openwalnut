@@ -105,12 +105,10 @@ private:
      */
     boost::shared_ptr< WCondition > m_propCondition;
 
-    boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;  //!< Input connector required by this module.
-
     /**
-     * This is a pointer to the dataset the module is currently working on.
+     * Input connector required by this module.
      */
-    // boost::shared_ptr< WDataSetSingle > m_lastDataSet;
+    boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;
 
     /**
      * The min of the current dataset. We store them here to avoid many calls to getTexture()->minimum()->get() and scale()->get().
@@ -121,16 +119,6 @@ private:
      * The scaling factor of the current dataset. We store them here to avoid many calls to getTexture()->minimum()->get() and scale()->get().
      */
     double m_valueScale;
-
-    /**
-     * If true, the new texture gets placed at the position of the old one in the texture sorter
-     */
-    // WPropBool m_replace;
-
-    /**
-     * If true, a colorbar is shown.
-     */
-    // WPropBool m_showColorbar;
 
     /**
      * The number of colorbar labels
@@ -148,6 +136,21 @@ private:
     WPropBool m_colorBarBorder;
 
     /**
+     * Maximum scaling factor of the current dataset.
+     */
+    WPropDouble m_maxScaleValue;
+
+    /**
+     * Minimum scaling factor of the current dataset.
+     */
+    WPropDouble m_minScaleValue;
+
+    /**
+     * Description of the color bar.
+     */
+    WPropString m_colorBarDescription;
+
+    /**
      * The projection node for the colorbar and labels
      */
     osg::ref_ptr< osg::Projection > m_barProjection;
@@ -156,13 +159,6 @@ private:
      * The colorbar.
      */
     osg::ref_ptr< osg::Geode > m_colorBar;
-
-    /**
-     * Updates the label for the dataset name
-     *
-     * \param label the label to update
-     */
-    // void updateColorbarName( osg::Drawable* label );
 
     /**
      * The colorbar scale labels
@@ -178,4 +174,3 @@ private:
 };
 
 #endif  // WMTRANSFERFUNCTIONCOLORBAR_H
-
