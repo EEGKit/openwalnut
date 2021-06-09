@@ -266,6 +266,7 @@ void WCsvConverter::addEdepAndSize( WDataSetCSV::Content::iterator dataRow, floa
 
 void WCsvConverter::calculateFibers()
 {
+    size_t skippedPoints = 0;
     boost::shared_ptr< std::map< size_t, boost::shared_ptr< WFiber > > > fibers( new std::map< size_t, boost::shared_ptr< WFiber > >() );
     boost::shared_ptr< std::map< size_t, SPFloatVector > > colors( new std::map< size_t, SPFloatVector >() );
 
@@ -289,11 +290,19 @@ void WCsvConverter::calculateFibers()
             fibers->operator[]( eID ) = fib;
             colors->operator[]( eID ) = col;
         }
-        fib->push_back( pos );
-        col->push_back( m_vectors->getColors()->at( i * 4 ) );
-        col->push_back( m_vectors->getColors()->at( i * 4 + 1 ) );
-        col->push_back( m_vectors->getColors()->at( i * 4 + 2 ) );
-        col->push_back( m_vectors->getColors()->at( i * 4 + 3 ) );
+
+        if( std::find( fib->begin(), fib->end(), pos ) == fib->end() )
+        {
+            fib->push_back( pos );
+            col->push_back( m_vectors->getColors()->at( i * 4 ) );
+            col->push_back( m_vectors->getColors()->at( i * 4 + 1 ) );
+            col->push_back( m_vectors->getColors()->at( i * 4 + 2 ) );
+            col->push_back( m_vectors->getColors()->at( i * 4 + 3 ) );
+        }
+        else
+        {
+            skippedPoints++;
+        }
     }
 
     WDataSetFiberVector::SPtr newDS( new WDataSetFiberVector() );
@@ -311,6 +320,11 @@ void WCsvConverter::calculateFibers()
     m_fibers = newDS->toWDataSetFibers();
     m_fibers->addColorScheme( cols, "Energy deposition", "Color fibers based on their energy." );
     m_fibers->setSelectedColorScheme( 3 );
+
+    if( skippedPoints > 0 )
+    {
+        wlog::warn( "WCsvConverter" ) << "Skipped " << skippedPoints << " duplicated points for \"WDataSetFibers\".";
+    }
 }
 
 void WCsvConverter::createOutputPoints()
