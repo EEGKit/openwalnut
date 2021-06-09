@@ -64,7 +64,7 @@ WScaleLabel::WScaleLabel( const QString &text, QWidget* parent ):
 
 void WScaleLabel::construct()
 {
-    setMinimumWidth( fontMetrics().horizontalAdvance( m_orgText.left( m_minLength ) + tr( "..." ) ) + m_additionalWidth ); 
+    setMinimumWidth( fontMetrics().horizontalAdvance( m_orgText.left( m_minLength ) + tr( "..." ) ) + m_additionalWidth );
     setSizePolicy( QSizePolicy::MinimumExpanding, QSizePolicy::Maximum );
     setMargin( WGLOBAL_MARGIN );
     setTextInteractionFlags( Qt::TextSelectableByMouse );
