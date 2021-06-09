@@ -32,7 +32,7 @@
 
 #include <string>
 
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 #include "core/kernel/WKernel.h"
 #include "core/common/WPathHelper.h"

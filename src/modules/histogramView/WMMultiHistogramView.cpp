@@ -30,7 +30,7 @@
 
 #include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 #include <osg/Drawable>
 #include <osg/Geode>

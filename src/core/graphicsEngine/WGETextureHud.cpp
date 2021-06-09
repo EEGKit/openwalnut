@@ -25,7 +25,7 @@
 #include <iostream>
 #include <string>
 
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/function.hpp>
 
 #include <osg/Camera>
