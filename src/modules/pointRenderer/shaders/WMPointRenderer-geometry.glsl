@@ -1,10 +1,33 @@
+//---------------------------------------------------------------------------
+//
+// Project: OpenWalnut ( http://www.openwalnut.org )
+//
+// Copyright 2009 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
+// For more information see http://www.openwalnut.org/copying
+//
+// This file is part of OpenWalnut.
+//
+// OpenWalnut is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// OpenWalnut is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with OpenWalnut. If not, see <http://www.gnu.org/licenses/>.
+//
+//---------------------------------------------------------------------------
 
-#version 150 core
+#version 150
 
 //#include "WGETransformationTools.glsl"
 
-layout(points) in;
-layout(triangle_strip, max_vertices = 4) out;
+layout( points ) in;
+layout( triangle_strip, max_vertices = 4 ) out;
 
 uniform mat4 osg_ProjectionMatrix;
 uniform mat4 osg_ModelViewMatrix;
@@ -28,7 +51,7 @@ out vec4 fColor;
 
 void main()
 {
-    if(v_clip[0] != 0.0)
+    if( v_clip[0] != 0.0 )
     {
         return;
     }
@@ -46,34 +69,34 @@ void main()
     v_centerPoint = vertex;
     v_worldVertex = v_worldCenterVertex[0];
 
-    vec4 nearestVertex = vec4(v_centerPoint.xy, v_centerPoint.z - v_worldSpaceRadius, 1.0);
+    vec4 nearestVertex = vec4( v_centerPoint.xy, v_centerPoint.z - v_worldSpaceRadius, 1.0 );
     vec4 nearestVertexProjected = osg_ProjectionMatrix * nearestVertex;
-    v_nearestVertexDepth = (0.5 * nearestVertexProjected.z / nearestVertexProjected.w) + 0.5;
+    v_nearestVertexDepth = ( 0.5 * nearestVertexProjected.z / nearestVertexProjected.w ) + 0.5;
 
-    vec4 centerVertex = vec4(v_centerPoint.xyz, 1.0);
+    vec4 centerVertex = vec4( v_centerPoint.xyz, 1.0 );
     vec4 centerVertexProjected = osg_ProjectionMatrix * centerVertex;
-    v_centerVertexDepth = (0.5 * centerVertexProjected.z / centerVertexProjected.w) * 0.5;
+    v_centerVertexDepth = ( 0.5 * centerVertexProjected.z / centerVertexProjected.w ) * 0.5;
 
     v_vertexDepthDiff = v_centerVertexDepth - v_nearestVertexDepth;
 
-    v_texCoord = ( -a ) + ( -b);
+    v_texCoord = ( -a ) + ( -b );
     v_vertex = v_centerPoint + v_worldSpaceRadius * v_texCoord;
-    gl_Position = osg_ProjectionMatrix * vec4(v_vertex, 1.0);
+    gl_Position = osg_ProjectionMatrix * vec4( v_vertex, 1.0 );
     EmitVertex();
 
-    v_texCoord = ( -a ) + ( +b);
+    v_texCoord = ( -a ) + ( +b );
     v_vertex = v_centerPoint + v_worldSpaceRadius * v_texCoord;
-    gl_Position = osg_ProjectionMatrix * vec4(v_vertex, 1.0);
+    gl_Position = osg_ProjectionMatrix * vec4( v_vertex, 1.0 );
     EmitVertex();
 
-    v_texCoord = ( +a ) + ( -b);
+    v_texCoord = ( +a ) + ( -b );
     v_vertex = v_centerPoint + v_worldSpaceRadius * v_texCoord;
-    gl_Position = osg_ProjectionMatrix * vec4(v_vertex, 1.0);
+    gl_Position = osg_ProjectionMatrix * vec4( v_vertex, 1.0 );
     EmitVertex();
 
-    v_texCoord = ( +a ) + ( +b);
+    v_texCoord = ( +a ) + ( +b );
     v_vertex = v_centerPoint + v_worldSpaceRadius * v_texCoord;
-    gl_Position = osg_ProjectionMatrix * vec4(v_vertex, 1.0);
+    gl_Position = osg_ProjectionMatrix * vec4( v_vertex, 1.0 );
     EmitVertex();
 
     EndPrimitive();
