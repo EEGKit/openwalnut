@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WSELECTIONMANAGER_H
-#define WSELECTIONMANAGER_H
+#ifndef WONSCREENSELECTION_H
+#define WONSCREENSELECTION_H
 
 #include <vector>
 
@@ -121,4 +121,4 @@ private:
     osg::ref_ptr< WGEShader > m_shader; //!< The shader for the selection.
 };
 
-#endif  // WSELECTIONMANAGER_H
+#endif  // WONSCREENSELECTION_H
