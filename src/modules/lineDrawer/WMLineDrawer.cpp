@@ -59,8 +59,8 @@ const char** WMLineDrawer::getXPMIcon() const
 
 void WMLineDrawer::moduleMain()
 {
-    WSelectionManager manager;
-    manager.setSelectionType( WSelectionManager::WSelectionType::BRUSH );
+    WOnscreenSelection manager;
+    manager.setSelectionType( WOnscreenSelection::WSelectionType::BRUSH );
 
     m_moduleState.add( m_propCondition );
 
@@ -76,7 +76,7 @@ void WMLineDrawer::moduleMain()
             break;
         }
 
-        manager.setSelectionType( static_cast< WSelectionManager::WSelectionType >( m_selection->get().getItemIndexOfSelected( 0 ) ) );
+        manager.setSelectionType( static_cast< WOnscreenSelection::WSelectionType >( m_selection->get().getItemIndexOfSelected( 0 ) ) );
     }
 }
 

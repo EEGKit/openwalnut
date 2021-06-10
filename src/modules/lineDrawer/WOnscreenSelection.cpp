@@ -22,25 +22,25 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WSelectionManager.h"
+#include "WOnscreenSelection.h"
 
-WSelectionManager::WSelectionManager():
+WOnscreenSelection::WOnscreenSelection():
     m_overlay( new WOverlay() ),
     m_selectionType( WSelectionType::BRUSH ),
     m_hasStarted( false ),
-    m_shader( new WGEShader( "../modules/lineDrawer/shaders/WSelectionManager" ) ) // TODO(eschbach): Remove path when resourcing it to the core
+    m_shader( new WGEShader( "../modules/lineDrawer/shaders/WOnscreenSelection" ) ) // TODO(eschbach): Remove path when resourcing it to the core
 {
     m_selectionHandler = new WSelectionHandler( this );
-    WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView()->addEventHandler( m_selectionHandler );
+    WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView()->addEventHandler( m_selectionHandler.get() );
 }
 
-WSelectionManager::~WSelectionManager()
+WOnscreenSelection::~WOnscreenSelection()
 {
-    WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView()->removeEventHandler( m_selectionHandler );
+    WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView()->removeEventHandler( m_selectionHandler.get() );
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_overlay );
 }
 
-void WSelectionManager::start( float x, float y )
+void WOnscreenSelection::start( float x, float y )
 {
     if( m_hasStarted )
     {
@@ -59,7 +59,7 @@ void WSelectionManager::start( float x, float y )
     updateDisplay();
 }
 
-void WSelectionManager::end( float x, float y )
+void WOnscreenSelection::end( float x, float y )
 {
     if( !m_hasStarted )
     {
@@ -82,7 +82,7 @@ void WSelectionManager::end( float x, float y )
     updateDisplay();
 }
 
-void WSelectionManager::move( float x, float y )
+void WOnscreenSelection::move( float x, float y )
 {
     if( !m_hasStarted )
     {
@@ -104,17 +104,17 @@ void WSelectionManager::move( float x, float y )
     updateDisplay();
 }
 
-enum WSelectionManager::WSelectionType WSelectionManager::getSelectionType()
+enum WOnscreenSelection::WSelectionType WOnscreenSelection::getSelectionType()
 {
     return m_selectionType;
 }
 
-void WSelectionManager::setSelectionType( enum WSelectionManager::WSelectionType selectionType )
+void WOnscreenSelection::setSelectionType( enum WOnscreenSelection::WSelectionType selectionType )
 {
     m_selectionType = selectionType;
 }
 
-void WSelectionManager::updateDisplay()
+void WOnscreenSelection::updateDisplay()
 {
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_overlay );
 

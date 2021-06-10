@@ -27,7 +27,7 @@
 static const unsigned int SHIFT_DOWN = 65505;
 static const unsigned int SHIFT_UP = 16777248;
 
-WSelectionHandler::WSelectionHandler( WSelectionManager* manager ):
+WSelectionHandler::WSelectionHandler( WOnscreenSelection* manager ):
     m_manager( manager ),
     m_mousePressed( false ),
     m_shiftPressed( false )

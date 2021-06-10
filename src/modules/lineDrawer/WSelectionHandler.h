@@ -29,15 +29,15 @@
 #include <osgGA/GUIEventHandler>
 #include <osgViewer/Viewer>
 
-#include "WSelectionManager.h"
+#include "WOnscreenSelection.h"
 
 /**
- * Forward declaration of the WSelectionManager.
+ * Forward declaration of the WOnscreenSelection.
  */
-class WSelectionManager;
+class WOnscreenSelection;
 
 /**
- * Handles the GUIEvents in context of the WSelectionManager.
+ * Handles the GUIEvents in context of the WOnscreenSelection.
  */
 class WSelectionHandler : public osgGA::GUIEventHandler
 {
@@ -45,9 +45,9 @@ public:
     /**
      * Construct a new WDrawHandler object.
      * 
-     * \param manager The WSelectionManager this belongs to.
+     * \param manager The WOnscreenSelection this belongs to.
      */
-    explicit WSelectionHandler( WSelectionManager* manager );
+    explicit WSelectionHandler( WOnscreenSelection* manager );
 
     /**
      * Handles the incoming events.
@@ -60,7 +60,7 @@ public:
     bool handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa );
 
 private:
-    WSelectionManager* m_manager;   //!< The WSelectionManager this belongs to.
+    WOnscreenSelection* m_manager;   //!< The WOnscreenSelection this belongs to.
 
     bool m_mousePressed;            //!< Whether the mouse is pressed or not.
     bool m_shiftPressed;            //!< Whether shift is pressed or not.

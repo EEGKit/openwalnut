@@ -44,7 +44,7 @@ class WSelectionHandler;
 /**
  * Manages different types of selection.
  */
-class WSelectionManager
+class WOnscreenSelection
 {
 public:
     /**
@@ -58,12 +58,12 @@ public:
     /**
      * Not only creates the Object but also sets up the drawing context.
      */
-    WSelectionManager();
+    WOnscreenSelection();
 
     /**
      * Cleans up all the now unneeded drawing context stuff.
      */
-    ~WSelectionManager();
+    ~WOnscreenSelection();
 
     /**
      * Starts the selection.

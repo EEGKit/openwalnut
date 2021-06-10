@@ -32,7 +32,7 @@
 #include "core/common/WItemSelectionItemTyped.h"
 #include "core/common/WItemSelector.h"
 #include "core/kernel/WModule.h"
-#include "WSelectionManager.h"
+#include "WOnscreenSelection.h"
 
 /**
  * This module allows to draw in the two-dimensional space.
