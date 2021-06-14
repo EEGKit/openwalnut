@@ -25,19 +25,19 @@
 #include "WOnscreenSelection.h"
 
 WOnscreenSelection::WOnscreenSelection():
-    m_overlay( new WOverlay() ),
+    m_projection( new osg::Projection() ),
     m_selectionType( WSelectionType::BRUSH ),
     m_hasStarted( false ),
-    m_shader( new WGEShader( "../modules/lineDrawer/shaders/WOnscreenSelection" ) ) // TODO(eschbach): Remove path when resourcing it to the core
+    m_shader( new WGEShader( "WOnscreenSelection" ) )
 {
-    m_selectionHandler = new WSelectionHandler( this );
+    m_selectionHandler = new WOnscreenSelectionHandler( this );
     WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView()->addEventHandler( m_selectionHandler.get() );
 }
 
 WOnscreenSelection::~WOnscreenSelection()
 {
     WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView()->removeEventHandler( m_selectionHandler.get() );
-    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_overlay );
+    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_projection );
 }
 
 void WOnscreenSelection::start( float x, float y )
@@ -116,9 +116,14 @@ void WOnscreenSelection::setSelectionType( enum WOnscreenSelection::WSelectionTy
 
 void WOnscreenSelection::updateDisplay()
 {
-    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_overlay );
+    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_projection );
 
-    m_overlay = new WOverlay();
+    m_projection = new osg::Projection();
+    m_projection->setMatrix( osg::Matrix::ortho2D( 0, 1.0, 0, 1.0 ) );
+    m_projection->getOrCreateStateSet()->setRenderBinDetails( 15, "RenderBin" );
+    m_projection->getOrCreateStateSet()->setDataVariance( osg::Object::DYNAMIC );
+    m_projection->getOrCreateStateSet()->setMode( GL_DEPTH_TEST, osg::StateAttribute::OFF );
+    m_projection->getOrCreateStateSet()->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
 
     osg::ref_ptr< osg::Geode > lines = new osg::Geode();
     osg::ref_ptr< osg::Geometry > geometry = new osg::Geometry();
@@ -196,7 +201,7 @@ void WOnscreenSelection::updateDisplay()
 
     m_shader->apply( lines );
     matrix->addChild( lines );
-    m_overlay->addChild( matrix );
+    m_projection->addChild( matrix );
 
-    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_overlay );
+    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_projection );
 }

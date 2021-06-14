@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WSELECTIONHANDLER_H
-#define WSELECTIONHANDLER_H
+#ifndef WONSCREENSELECTIONHANDLER_H
+#define WONSCREENSELECTIONHANDLER_H
 
 #include <osg/Viewport>
 #include <osgGA/GUIEventHandler>
@@ -39,7 +39,7 @@ class WOnscreenSelection;
 /**
  * Handles the GUIEvents in context of the WOnscreenSelection.
  */
-class WSelectionHandler : public osgGA::GUIEventHandler
+class WOnscreenSelectionHandler : public osgGA::GUIEventHandler
 {
 public:
     /**
@@ -47,7 +47,7 @@ public:
      * 
      * \param manager The WOnscreenSelection this belongs to.
      */
-    explicit WSelectionHandler( WOnscreenSelection* manager );
+    explicit WOnscreenSelectionHandler( WOnscreenSelection* manager );
 
     /**
      * Handles the incoming events.
@@ -66,4 +66,4 @@ private:
     bool m_shiftPressed;            //!< Whether shift is pressed or not.
 };
 
-#endif  // WSELECTIONHANDLER_H
+#endif  // WONSCREENSELECTIONHANDLER_H

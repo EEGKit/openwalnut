@@ -22,19 +22,19 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WSelectionHandler.h"
+#include "WOnscreenSelectionHandler.h"
 
 static const unsigned int SHIFT_DOWN = 65505;
 static const unsigned int SHIFT_UP = 16777248;
 
-WSelectionHandler::WSelectionHandler( WOnscreenSelection* manager ):
+WOnscreenSelectionHandler::WOnscreenSelectionHandler( WOnscreenSelection* manager ):
     m_manager( manager ),
     m_mousePressed( false ),
     m_shiftPressed( false )
 {
 }
 
-bool WSelectionHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
+bool WOnscreenSelectionHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& )
 {
     float x = ( ea.getXnormalized() + 1.0 ) / 2.0;
     float y = ( ea.getYnormalized() + 1.0 ) / 2.0;

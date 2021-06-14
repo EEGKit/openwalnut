@@ -30,16 +30,16 @@
 #include <osg/Geode>
 #include <osg/Geometry>
 #include <osg/LineWidth>
+#include <osg/Projection>
 
 #include "core/graphicsEngine/shaders/WGEShader.h"
 #include "core/kernel/WKernel.h"
-#include "WOverlay.h"
-#include "WSelectionHandler.h"
+#include "WOnscreenSelectionHandler.h"
 
 /**
  * Forward declaration of the SelectionHandler.
  */
-class WSelectionHandler;
+class WOnscreenSelectionHandler;
 
 /**
  * Manages different types of selection.
@@ -108,11 +108,11 @@ private:
      */
     void updateDisplay();
 
-    osg::ref_ptr< WOverlay > m_overlay; //!< The overlay to draw on.
+    osg::ref_ptr< osg::Projection > m_projection; //!< The Projection to draw on.
 
     enum WSelectionType m_selectionType; //!< The current selection type.
 
-    osg::ref_ptr< WSelectionHandler > m_selectionHandler; //!< The SelectionHandler for this object.
+    osg::ref_ptr< WOnscreenSelectionHandler > m_selectionHandler; //!< The SelectionHandler for this object.
 
     std::vector< WPosition > m_line; //!< The points that are used for the selection.
 
