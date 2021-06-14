@@ -378,7 +378,7 @@ void WCsvConverter::createOutputPointsAndEventIDs()
                 new WDataSetPoints(
                         m_vectors->getVertices(),
                         m_vectors->getColors(),
-                        boost::shared_ptr< WValueSet< int > >( new WValueSet< int >( 0, 1, m_vectors->getEventIDs() ) )
+                        boost::shared_ptr< WValueSet< size_t > >( new WValueSet< size_t >( 0, 1, m_vectors->getEventIDs() ) )
                 )
         );
     }

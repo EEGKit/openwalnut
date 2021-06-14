@@ -36,7 +36,7 @@ WConverterVectors::WConverterVectors()
     m_fiberStartIndexes = SPSizeVector( new std::vector< size_t >() );
     m_fiberLengths = SPSizeVector( new std::vector< size_t >() );
     m_verticesReverse = SPSizeVector( new std::vector< size_t >() );
-    m_eventIDs = SPIntVector( new std::vector< int >() );
+    m_eventIDs = SPSizeVector( new std::vector< size_t >() );
 }
 
 void WConverterVectors::clear()
@@ -86,7 +86,7 @@ SPSizeVector WConverterVectors::getVerticesReverse()
     return m_verticesReverse;
 }
 
-SPIntVector WConverterVectors::getEventIDs()
+SPSizeVector WConverterVectors::getEventIDs()
 {
     return m_eventIDs;
 }

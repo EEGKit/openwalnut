@@ -41,11 +41,6 @@ typedef boost::shared_ptr< std::vector< float > > SPFloatVector;
 typedef boost::shared_ptr< std::vector< size_t > > SPSizeVector;
 
 /**
- * represents a boost::shared_ptr to a vector containing a vector of size_t.
- */
-typedef boost::shared_ptr< std::vector< int > > SPIntVector;
-
-/**
  * Holds the vectors that store the data for the points and fibers.
  */
 class WConverterVectors
@@ -112,7 +107,7 @@ public:
      * Gets the event IDs as shared_ptr to a size_t vector.
      * \return SPSizeVector The event IDs.
      */
-    SPIntVector getEventIDs();
+    SPSizeVector getEventIDs();
 
 private:
     SPFloatVector m_vertices;   //!< The vertices.
@@ -129,7 +124,7 @@ private:
 
     SPSizeVector m_verticesReverse; //!< The reverse vertices.
 
-    SPIntVector m_eventIDs;    //!< the event IDs.
+    SPSizeVector m_eventIDs;    //!< the event IDs.
 };
 
 #endif  // WCONVERTERVECTORS_H

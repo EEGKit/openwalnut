@@ -116,7 +116,7 @@ private:
      * \param fibers selected points as fibers from Point-Connector
      * \return list of internal vertex with id 
      */
-    std::list< std::tuple < float, float, float, int > > getListOfInternalVertex( WDataSetFibers::SPtr fibers );
+    std::list< std::tuple < float, float, float, size_t > > getListOfInternalVertex( WDataSetFibers::SPtr fibers );
 
     /**
      * Helpermethod: Returns the path from Filedialog 
@@ -145,7 +145,7 @@ private:
      * \param listOfInternalVertex get selected EventIDs
      * \return next free EventID 
      */
-    size_t createStartCounter( std::list< std::tuple < float, float, float, int > > listOfInternalVertex );
+    size_t createStartCounter( std::list< std::tuple < float, float, float, size_t > > listOfInternalVertex );
 
     /**
      * The filename property -> where to write the csv file

@@ -36,7 +36,7 @@ WKeyboardHandler::WKeyboardHandler( WMPointConnector* connector ):
 {
 }
 
-bool WKeyboardHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
+bool WKeyboardHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& )
 {
     if( ea.getEventType() == osgGA::GUIEventAdapter::KEYDOWN )
     {

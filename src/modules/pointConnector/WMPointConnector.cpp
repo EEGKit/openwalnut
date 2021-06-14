@@ -171,7 +171,7 @@ void WMPointConnector::handleInput()
         return;
     }
 
-    boost::shared_ptr< WValueSet< int > > eventIDs = boost::dynamic_pointer_cast< WValueSet< int > >( points->getValueSet() );
+    boost::shared_ptr< WValueSet< size_t > > eventIDs = boost::dynamic_pointer_cast< WValueSet< size_t > >( points->getValueSet() );
 
     m_connectorData->clear();
 
@@ -186,7 +186,7 @@ void WMPointConnector::handleInput()
 
         if( eventIDs )
         {
-            int eventID = eventIDs->getScalar( pointIdx );
+            size_t eventID = eventIDs->getScalar( pointIdx );
 
             while( fibers->size() <= eventID )
             {
