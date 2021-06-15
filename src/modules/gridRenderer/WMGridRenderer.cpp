@@ -123,6 +123,10 @@ void WMGridRenderer::moduleMain()
             continue;
         }
 
+        m_infoProperties->removeProperty( currentDataInfoProperties );
+        currentDataInfoProperties = dataSet->getInformationProperties(); // update properties
+        m_infoProperties->addProperty( currentDataInfoProperties );
+
         // the grid to show
         WGridRegular3D::SPtr regGrid;
 

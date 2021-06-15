@@ -119,6 +119,8 @@ private:
 
     WPropInt m_gridLineWidth; //!< the width of the grid lines
 
+    boost::shared_ptr< WProperties > currentDataInfoProperties; //!< Kept reference to current data infos as properties
+
     /**
      * This condition denotes whether we need to recompute the surface
      */
