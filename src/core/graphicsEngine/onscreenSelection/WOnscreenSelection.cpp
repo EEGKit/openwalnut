@@ -27,10 +27,11 @@
 WOnscreenSelection::WOnscreenSelection():
     m_projection( new osg::Projection() ),
     m_selectionType( WSelectionType::BRUSH ),
-    m_hasStarted( false ),
-    m_shader( new WGEShader( "WOnscreenSelection" ) )
+    m_selectionHandler( new WOnscreenSelectionHandler( this ) ),
+    m_isSelecting( false ),
+    m_shader( new WGEShader( "WOnscreenSelection" ) ),
+    m_thickness( 25.0f )
 {
-    m_selectionHandler = new WOnscreenSelectionHandler( this );
     WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView()->addEventHandler( m_selectionHandler.get() );
 }
 
@@ -42,13 +43,14 @@ WOnscreenSelection::~WOnscreenSelection()
 
 void WOnscreenSelection::start( float x, float y )
 {
-    if( m_hasStarted )
+    if( m_isSelecting )
     {
         return;
     }
-    m_hasStarted = true;
 
-    m_line.clear();
+    clear();
+
+    m_isSelecting = true;
     WPosition pos( x, y, 0 );
 
     m_line.push_back( pos );
@@ -57,15 +59,20 @@ void WOnscreenSelection::start( float x, float y )
         m_line.push_back( pos );
     }
     updateDisplay();
+
+    if( m_onstart )
+    {
+        m_onstart( m_selectionType, x, y );
+    }
 }
 
 void WOnscreenSelection::end( float x, float y )
 {
-    if( !m_hasStarted )
+    if( !m_isSelecting )
     {
         return;
     }
-    m_hasStarted = false;
+    m_isSelecting = false;
 
     WPosition pos( x, y, 0 );
     switch( m_selectionType )
@@ -80,11 +87,16 @@ void WOnscreenSelection::end( float x, float y )
             break;
     }
     updateDisplay();
+
+    if( m_onend )
+    {
+        m_onend( m_selectionType, x, y );
+    }
 }
 
 void WOnscreenSelection::move( float x, float y )
 {
-    if( !m_hasStarted )
+    if( !m_isSelecting )
     {
         return;
     }
@@ -102,6 +114,11 @@ void WOnscreenSelection::move( float x, float y )
     }
 
     updateDisplay();
+
+    if( m_onmove )
+    {
+        m_onmove( m_selectionType, x, y );
+    }
 }
 
 enum WOnscreenSelection::WSelectionType WOnscreenSelection::getSelectionType()
@@ -117,6 +134,11 @@ void WOnscreenSelection::setSelectionType( enum WOnscreenSelection::WSelectionTy
 void WOnscreenSelection::updateDisplay()
 {
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_projection );
+
+    if( m_line.empty() )
+    {
+        return;
+    }
 
     m_projection = new osg::Projection();
     m_projection->setMatrix( osg::Matrix::ortho2D( 0, 1.0, 0, 1.0 ) );
@@ -188,7 +210,7 @@ void WOnscreenSelection::updateDisplay()
 
     lines->addDrawable( geometry );
 
-    float thickness = m_selectionType == WSelectionType::BRUSH ? 25 : m_selectionType == WSelectionType::LINELOOP ? 5 : 10;
+    float thickness = m_selectionType == WSelectionType::BRUSH ? m_thickness : 5;
 
     osg::StateSet* state = lines->getOrCreateStateSet();
     osg::Camera* camera = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera();
@@ -204,4 +226,170 @@ void WOnscreenSelection::updateDisplay()
     m_projection->addChild( matrix );
 
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_projection );
+}
+
+void WOnscreenSelection::setOnstart( CallbackType onstart )
+{
+    m_onstart = onstart;
+}
+
+void WOnscreenSelection::setOnend( CallbackType onend )
+{
+    m_onend = onend;
+}
+
+void WOnscreenSelection::setOnmove( CallbackType onmove )
+{
+    m_onmove = onmove;
+}
+
+bool WOnscreenSelection::isSelecting()
+{
+    return m_isSelecting;
+}
+
+void WOnscreenSelection::clear()
+{
+    m_line.clear();
+    updateDisplay();
+}
+
+bool WOnscreenSelection::isSelected( float x, float y, float z )
+{
+    if( m_line.empty() )
+    {
+        return false;
+    }
+
+    // Calculate normalized screen coordinates for 3D point.
+    osg::Camera* camera = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera();
+    osg::Matrix viewMatrix = camera->getViewMatrix();
+    osg::Matrix projectionMatrix = camera->getProjectionMatrix();
+    osg::Matrix cameraMatrix = viewMatrix * projectionMatrix;
+    osg::Vec3 point = osg::Vec3( x, y, z ) * cameraMatrix;
+    float xPos = ( point.x()  + 1.0 ) / 2.0;
+    float yPos = ( point.y()  + 1.0 ) / 2.0;
+
+    if( xPos < 0 || xPos > 1 || yPos < 0 || yPos > 1 )
+    {
+        return false;
+    }
+
+    // TODO(eschbach): selection checks
+    switch( m_selectionType )
+    {
+        case WSelectionType::BRUSH:
+            return brushCheck( xPos, yPos );
+        case WSelectionType::LINELOOP:
+            return lineloopCheck( xPos, yPos );
+        case WSelectionType::BOX:
+            return boxCheck( xPos, yPos );
+        default:
+            return false;
+    }
+}
+
+bool WOnscreenSelection::boxCheck( float x, float y )
+{
+    WPosition pos1 = m_line.at( 0 );
+    WPosition pos2 = m_line.at( 1 );
+
+    float maxX = fmax( pos1.x(), pos2.x() );
+    float maxY = fmax( pos1.y(), pos2.y() );
+    float minX = fmin( pos1.x(), pos2.x() );
+    float minY = fmin( pos1.y(), pos2.y() );
+
+    return x >= minX && x <= maxX && y >= minY && y <= maxY;
+}
+
+bool WOnscreenSelection::brushCheck( float x, float y )
+{
+    osg::Camera* camera = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera();
+    float thick2 = m_thickness * m_thickness;
+    float width = camera->getViewport()->width();
+    float height = camera->getViewport()->height();
+
+    x = x * width;
+    y = y * height;
+
+    for( size_t i = 0; i < m_line.size() - 1; i++ )
+    {
+        WPosition pos1 = m_line.at( i );
+        WPosition pos2 = m_line.at( i + 1 );
+
+        // denormalize
+        pos1 = WPosition( pos1.x() * width, pos1.y() * height, 0.0 );
+        pos2 = WPosition( pos2.x() * width, pos2.y() * height, 0.0 );
+
+        // calculate distance to linesegment
+        float segLen2 = pow( pos1.x() - pos2.x(), 2.0 ) + pow( pos1.y() - pos2.y(), 2.0 );
+        if( segLen2 == 0.0 )
+        {
+            continue;
+        }
+
+        float segParam = ( ( x - pos1.x() ) * ( pos2.x() - pos1.x() ) + ( y - pos1.y() ) * ( pos2.y() - pos1.y() ) ) / segLen2;
+        segParam = fmax( 0.0, fmin( 1.0, segParam ) );
+
+        float xPos = pos1.x() + segParam * ( pos2.x() - pos1.x() );
+        float yPos = pos1.y() + segParam * ( pos2.y() - pos1.y() );
+
+        float dis2 = pow( x - xPos, 2.0 ) + pow( y - yPos, 2.0 );
+
+        if( dis2 <= thick2 )
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool WOnscreenSelection::lineloopCheck( float x, float y )
+{
+    int t = -1;
+    for( size_t i = 0; i < m_line.size(); i++ )
+    {
+        WPosition pos1 = m_line.at( i );
+        WPosition pos2 = i == m_line.size() - 1 ? m_line.at( 0 ) : m_line.at( i + 1 );
+
+        t = t * crossingNumberProduct( x, y, pos1, pos2 );
+        if( t == 0 )
+        {
+            break;
+        }
+    }
+    return t >= 0;
+}
+
+int WOnscreenSelection::crossingNumberProduct( float x, float y, WPosition b, WPosition c )
+{
+    if( y == b.y() && y == c.y() )
+    {
+        if( ( b.x() <= x && x <= c.y() ) || ( c.x() <= x && x <= b.x() ) )
+        {
+            return 0;
+        }
+        else
+        {
+            return 1;
+        }
+    }
+    if( y == b.y() && x == b.x() )
+    {
+        return 0;
+    }
+
+    if( b.y() > c.y() )
+    {
+        WPosition help = b;
+        b = c;
+        c = help;
+    }
+    if( y <= b.y() || y > c.y() )
+    {
+        return 1;
+    }
+
+    float delta = ( b.x() - x ) * ( c.y() - y ) - ( b.y() - y ) * ( c.x() - x );
+    return delta > 0 ? -1 : delta < 0 ? 1 : 0;
 }

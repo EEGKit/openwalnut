@@ -27,6 +27,7 @@
 
 #include <vector>
 
+#include <boost/function.hpp>
 #include <osg/Geode>
 #include <osg/Geometry>
 #include <osg/LineWidth>
@@ -54,6 +55,11 @@ public:
     {
         BRUSH, LINELOOP, BOX
     };
+
+    /**
+     * A typedef for the type of the callbacks.
+     */
+    typedef boost::function< void ( enum WSelectionType, float, float ) > CallbackType;
 
     /**
      * Not only creates the Object but also sets up the drawing context.
@@ -97,10 +103,93 @@ public:
     enum WSelectionType getSelectionType();
 
     /**
+     * Clears the current selection.
+     */
+    void clear();
+
+    /**
+     * Whether a point is selected or not.
+     * \param x The x position.
+     * \param y The y position.
+     * \param z The z position.
+     * \return true The point is selected.
+     * \return false The point is not selected.
+     */
+    bool isSelected( float x, float y, float z );
+
+    /**
      * Sets the current selection type.
      * \param selectionType The selection type to set.
      */
     void setSelectionType( enum WSelectionType selectionType );
+
+    /**
+     * Sets the callback for the onstart function.
+     * Use NULL to reset.
+     * 
+     * \param onstart The Callback or NULL. 
+     */
+    void setOnstart( CallbackType onstart );
+
+    /**
+     * Sets the callback for the onend function.
+     * Use NULL to reset.
+     * 
+     * \param onend The Callback or NULL. 
+     */
+    void setOnend( CallbackType onend );
+
+    /**
+     * Sets the callback for the onmove function.
+     * Use NULL to reset.
+     * 
+     * \param onmove The Callback or NULL. 
+     */
+    void setOnmove( CallbackType onmove );
+
+    /**
+     * Returns whether this manager is currently creating a selection.
+     * \return true It is creating a selection.
+     * \return false It is not creating a selection.
+     */
+    bool isSelecting();
+
+    /**
+     * Check for the box selection.
+     * \param x The x position of the point.
+     * \param y The y position of the point.
+     * \return true The point is inside of the box.
+     * \return false The point is not inside of the box
+     */
+    bool boxCheck( float x, float y );
+
+    /**
+     * Check for the brush selection.
+     * \param x The x position of the point.
+     * \param y The y position of the point.
+     * \return true The point is on the brush.
+     * \return false The point is not on the brush
+     */
+    bool brushCheck( float x, float y );
+
+    /**
+     * Check for the lineloop selection.
+     * \param x The x position of the point.
+     * \param y The y position of the point.
+     * \return true The point is inside of the lineloop.
+     * \return false The point is inside of the lineloop
+     */
+    bool lineloopCheck( float x, float y );
+
+    /**
+     * Calculates the crossing number product.
+     * \param x The x position of the point.
+     * \param y The y position of the point.
+     * \param b The start of the line.
+     * \param c The end of the line.
+     * \return int Either -1, 0 or 1.
+     */
+    int crossingNumberProduct( float x, float y, WPosition b, WPosition c );
 
 private:
     /**
@@ -116,9 +205,17 @@ private:
 
     std::vector< WPosition > m_line; //!< The points that are used for the selection.
 
-    bool m_hasStarted; //!< Whether a selection has been started or not.
+    bool m_isSelecting; //!< Whether a selection has been started or not.
 
     osg::ref_ptr< WGEShader > m_shader; //!< The shader for the selection.
+
+    float m_thickness; //!< The thickness of the brush.
+
+    CallbackType m_onstart; //!< The Callback for the start function.
+
+    CallbackType m_onend; //!< The Callback for the end function.
+
+    CallbackType m_onmove; //!< The Callback for the move function.
 };
 
 #endif  // WONSCREENSELECTION_H

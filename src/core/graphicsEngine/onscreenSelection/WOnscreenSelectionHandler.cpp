@@ -57,6 +57,10 @@ bool WOnscreenSelectionHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA:
 
     if( !m_shiftPressed )
     {
+        if( ea.getEventType() == osgGA::GUIEventAdapter::DRAG )
+        {
+            m_manager->clear();
+        }
         return false;
     }
 

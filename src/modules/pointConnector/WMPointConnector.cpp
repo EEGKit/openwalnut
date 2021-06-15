@@ -87,6 +87,10 @@ void WMPointConnector::properties()
 
 void WMPointConnector::moduleMain()
 {
+    m_onscreenSelection = boost::shared_ptr< WOnscreenSelection >( new WOnscreenSelection() );
+    m_onscreenSelection->setOnend( boost::bind( &WMPointConnector::selectionEnd, this,
+                                   boost::placeholders::_1, boost::placeholders::_2, boost::placeholders::_3 ) );
+
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_pointInput->getDataChangedCondition() );
 
@@ -449,4 +453,26 @@ WConnectorData::SPtr WMPointConnector::getConnectorData()
 WFiberHandler::SPtr WMPointConnector::getFiberHandler()
 {
     return m_fiberHandler;
+}
+
+void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float, float )
+{
+    for( size_t idx = 0; idx < m_connectorData->getVertices()->size(); idx++ )
+    {
+        osg::Vec3 vertex = m_connectorData->getVertices()->at( idx );
+        if( !m_fiberHandler->getFiberOfPoint( vertex ) && m_onscreenSelection->isSelected( vertex.x(), vertex.y(), vertex.z() ) )
+        {
+            m_connectorData->deselectPoint();
+            m_connectorData->selectPoint( idx );
+            m_fiberHandler->addVertexToFiber( vertex, m_fiberHandler->getSelectedFiber() );
+        }
+    }
+
+    updatePoints();
+    updateOutput();
+}
+
+boost::shared_ptr< WOnscreenSelection > WMPointConnector::getOnscreenSelection()
+{
+    return m_onscreenSelection;
 }

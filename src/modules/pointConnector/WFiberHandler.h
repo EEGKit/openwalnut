@@ -260,6 +260,11 @@ private:
     WPropSelection m_fiberSelection;
 
     /**
+     * The type of the selection.
+     */
+    WPropSelection m_selectionType;
+
+    /**
      * Property (button) to add a new fiber.
      */
     WPropTrigger m_addFiber;
