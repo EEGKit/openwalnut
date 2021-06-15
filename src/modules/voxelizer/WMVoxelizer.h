@@ -249,7 +249,7 @@ private:
     /**
      * The number of voxels per unit in the coordinate system
      */
-    WPropInt  m_voxelsPerUnit;
+    WPropDouble  m_voxelsPerUnit;
 
     /**
      * The available parameterization algorithms.

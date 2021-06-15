@@ -92,7 +92,7 @@ void WMVoxelizer::properties()
 {
     m_antialiased     = m_properties->addProperty( "Antialiasing", "Enable/Disable antialiased drawing of voxels.", true, m_fullUpdate );
     m_voxelsPerUnit   = m_properties->addProperty( "Voxels per Unit", "Specified the number of voxels per unit in the coordinate system. This "
-                                                                       "is useful to increase the resolution of the grid", 1, m_fullUpdate );
+                                                                       "is useful to increase the resolution of the grid", 1.0, m_fullUpdate );
     // for selecting the parameterization method
     m_paramAlgoSelections = boost::shared_ptr< WItemSelection >( new WItemSelection() );
     m_paramAlgoSelections->addItem( "No Parameterization", "Disable parameterization." );          // NOTE: you can add XPM images here.
@@ -215,7 +215,7 @@ boost::shared_ptr< WGridRegular3D > WMVoxelizer::constructGrid( boost::shared_pt
         bb = tracts->getBoundingBox();
     }
 
-    int32_t nbVoxelsPerUnit = m_voxelsPerUnit->get( true );
+    float nbVoxelsPerUnit = m_voxelsPerUnit->get( true );
 
     // TODO(math): remove hardcoded meta grid here.
     // the "+1" in the following three statements is because there may be some more voxels
