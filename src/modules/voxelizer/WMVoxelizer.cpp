@@ -90,9 +90,12 @@ const char** WMVoxelizer::getXPMIcon() const
 
 void WMVoxelizer::properties()
 {
-    m_antialiased     = m_properties->addProperty( "Antialiasing", "Enable/Disable antialiased drawing of voxels.", true, m_fullUpdate );
+    m_antialiased     = m_properties->addProperty( "Antialiasing", "Enable/disable antialiased rasterization of voxels.", true, m_fullUpdate );
     m_voxelsPerUnit   = m_properties->addProperty( "Voxels per Unit", "Specified the number of voxels per unit in the coordinate system. This "
                                                                        "is useful to increase the resolution of the grid", 1.0, m_fullUpdate );
+
+    m_renderingActive = m_properties->addProperty( "Rendering", "Enable/disable rendering of voxels.", false, m_fullUpdate );
+
     // for selecting the parameterization method
     m_paramAlgoSelections = boost::shared_ptr< WItemSelection >( new WItemSelection() );
     m_paramAlgoSelections->addItem( "No Parameterization", "Disable parameterization." );          // NOTE: you can add XPM images here.
@@ -189,7 +192,10 @@ void WMVoxelizer::moduleMain()
             }
 
             m_rootNode->clear();
-            m_rootNode->insert( genDataSetGeode( result[0] ) );
+            if( m_renderingActive->get() )
+            {
+                m_rootNode->insert( genDataSetGeode( result[0] ) );
+            }
         }
 
         infoLog() << "Finished.";

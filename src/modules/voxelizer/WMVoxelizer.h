@@ -234,10 +234,8 @@ private:
      */
     boost::shared_ptr< WCondition > m_fullUpdate;
 
-    /**
-     * Enable/Disable anti-aliased drawing of voxels
-     */
-    WPropBool m_antialiased;
+    WPropBool m_antialiased; //!< Enable/disable anti-aliased rasterization of voxels
+    WPropBool m_renderingActive; //!< Enable/disable rendering of voxels.
 
     /**
      * List for selecting the rasterization method.
