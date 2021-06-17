@@ -398,7 +398,7 @@ int WOnscreenSelection::crossingNumberProduct( float x, float y, WPosition b, WP
     return delta > 0 ? -1 : delta < 0 ? 1 : 0;
 }
 
-void WOnscreenSelection::setClickType(bool clickType)
+void WOnscreenSelection::setClickType( bool clickType )
 {
     m_clickType = clickType;
 }
