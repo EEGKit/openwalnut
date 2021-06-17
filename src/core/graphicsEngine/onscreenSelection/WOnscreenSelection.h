@@ -28,11 +28,13 @@
 #include <vector>
 
 #include <boost/function.hpp>
+#include <osg/Depth>
 #include <osg/Geode>
 #include <osg/Geometry>
 #include <osg/LineWidth>
 #include <osg/Projection>
 
+#include "core/graphicsEngine/postprocessing/WGEPostprocessingNode.h"
 #include "core/graphicsEngine/shaders/WGEShader.h"
 #include "core/kernel/WKernel.h"
 #include "WOnscreenSelectionHandler.h"
@@ -191,6 +193,19 @@ public:
      */
     int crossingNumberProduct( float x, float y, WPosition b, WPosition c );
 
+    /**
+     * Sets the click type.
+     * \param clickType true for left click, false for right click.
+     */
+    void setClickType( bool clickType );
+
+    /**
+     * Gets the click type.
+     * \return true left click.
+     * \return false right click.
+     */
+    bool getClickType();
+
 private:
     /**
      * Updates the current rendered data.
@@ -210,6 +225,8 @@ private:
     osg::ref_ptr< WGEShader > m_shader; //!< The shader for the selection.
 
     float m_thickness; //!< The thickness of the brush.
+
+    bool m_clickType; //!< Whether this is a left click or not.
 
     CallbackType m_onstart; //!< The Callback for the start function.
 

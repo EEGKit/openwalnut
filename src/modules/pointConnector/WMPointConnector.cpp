@@ -460,11 +460,23 @@ void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float, 
     for( size_t idx = 0; idx < m_connectorData->getVertices()->size(); idx++ )
     {
         osg::Vec3 vertex = m_connectorData->getVertices()->at( idx );
-        if( !m_fiberHandler->getFiberOfPoint( vertex ) && m_onscreenSelection->isSelected( vertex.x(), vertex.y(), vertex.z() ) )
+        if( m_onscreenSelection->isSelected( vertex.x(), vertex.y(), vertex.z() ) )
         {
-            m_connectorData->deselectPoint();
-            m_connectorData->selectPoint( idx );
-            m_fiberHandler->addVertexToFiber( vertex, m_fiberHandler->getSelectedFiber() );
+            if( m_onscreenSelection->getClickType() )
+            {
+                if( !m_fiberHandler->getFiberOfPoint( vertex ) )
+                {
+                    m_connectorData->deselectPoint();
+                    m_connectorData->selectPoint( idx );
+                    m_fiberHandler->addVertexToFiber( vertex, m_fiberHandler->getSelectedFiber() );
+                }
+            }
+            else
+            {
+                m_connectorData->deselectPoint();
+                m_fiberHandler->removeVertexFromFiber( m_connectorData->getVertices()->at( idx ), m_fiberHandler->getSelectedFiber() );
+                m_fiberHandler->selectLastPoint();
+            }
         }
     }
 

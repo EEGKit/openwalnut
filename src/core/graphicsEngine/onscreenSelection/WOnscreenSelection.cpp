@@ -30,7 +30,8 @@ WOnscreenSelection::WOnscreenSelection():
     m_selectionHandler( new WOnscreenSelectionHandler( this ) ),
     m_isSelecting( false ),
     m_shader( new WGEShader( "WOnscreenSelection" ) ),
-    m_thickness( 25.0f )
+    m_thickness( 25.0f ),
+    m_clickType( false )
 {
     WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView()->addEventHandler( m_selectionHandler.get() );
 }
@@ -146,6 +147,8 @@ void WOnscreenSelection::updateDisplay()
     m_projection->getOrCreateStateSet()->setDataVariance( osg::Object::DYNAMIC );
     m_projection->getOrCreateStateSet()->setMode( GL_DEPTH_TEST, osg::StateAttribute::OFF );
     m_projection->getOrCreateStateSet()->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
+    m_projection->getOrCreateStateSet()->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
+    m_projection->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 
     osg::ref_ptr< osg::Geode > lines = new osg::Geode();
     osg::ref_ptr< osg::Geometry > geometry = new osg::Geometry();
@@ -216,6 +219,7 @@ void WOnscreenSelection::updateDisplay()
     osg::Camera* camera = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera();
     state->addUniform( new osg::Uniform( "u_viewport", osg::Vec2( camera->getViewport()->width(), camera->getViewport()->height() ) ) );
     state->addUniform( new osg::Uniform( "u_thickness", thickness ) );
+    state->addUniform( new osg::Uniform( "u_clickType", m_clickType ) );
 
     osg::ref_ptr< osg::MatrixTransform > matrix = new osg::MatrixTransform();
     matrix->setMatrix( osg::Matrix::identity() );
@@ -305,7 +309,7 @@ bool WOnscreenSelection::boxCheck( float x, float y )
 bool WOnscreenSelection::brushCheck( float x, float y )
 {
     osg::Camera* camera = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera();
-    float thick2 = m_thickness * m_thickness;
+    float thick2 = ( m_thickness * 0.5 ) * ( m_thickness * 0.5 ); // * 0.5 because we need distance to center of the brush
     float width = camera->getViewport()->width();
     float height = camera->getViewport()->height();
 
@@ -392,4 +396,14 @@ int WOnscreenSelection::crossingNumberProduct( float x, float y, WPosition b, WP
 
     float delta = ( b.x() - x ) * ( c.y() - y ) - ( b.y() - y ) * ( c.x() - x );
     return delta > 0 ? -1 : delta < 0 ? 1 : 0;
+}
+
+void WOnscreenSelection::setClickType(bool clickType)
+{
+    m_clickType = clickType;
+}
+
+bool WOnscreenSelection::getClickType()
+{
+    return m_clickType;
 }

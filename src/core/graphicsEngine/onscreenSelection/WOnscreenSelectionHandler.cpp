@@ -64,8 +64,9 @@ bool WOnscreenSelectionHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA:
         return false;
     }
 
-    if( ea.getButton() == osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON  )
+    if( ea.getButton() == osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON || ea.getButton() == osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON )
     {
+        m_manager->setClickType( ea.getButton() == osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON );
         if( ea.getEventType() == osgGA::GUIEventAdapter::PUSH )
         {
             m_mousePressed = true;
