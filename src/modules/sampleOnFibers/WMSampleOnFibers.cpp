@@ -45,9 +45,9 @@ WMSampleOnFibers::~WMSampleOnFibers()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMSampleOnFibers::factory() const
+std::shared_ptr< WModule > WMSampleOnFibers::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMSampleOnFibers() );
+    return std::shared_ptr< WModule >( new WMSampleOnFibers() );
 }
 
 const char** WMSampleOnFibers::getXPMIcon() const
@@ -68,7 +68,7 @@ const std::string WMSampleOnFibers::getDescription() const
 void WMSampleOnFibers::connectors()
 {
     // The input fiber dataset
-    m_fiberInput = boost::shared_ptr< WModuleInputData < WDataSetFibers > >(
+    m_fiberInput = std::shared_ptr< WModuleInputData < WDataSetFibers > >(
         new WModuleInputData< WDataSetFibers >( shared_from_this(), "fibers", "The fiber dataset" )
     );
 
@@ -76,7 +76,7 @@ void WMSampleOnFibers::connectors()
     addConnector( m_fiberInput );
 
     // the points
-    m_pointsOutput = boost::shared_ptr< WModuleOutputData < WDataSetPoints > >(
+    m_pointsOutput = std::shared_ptr< WModuleOutputData < WDataSetPoints > >(
         new WModuleOutputData< WDataSetPoints >( shared_from_this(), "out", "The point data." )
     );
 
@@ -89,7 +89,7 @@ void WMSampleOnFibers::connectors()
 
 void WMSampleOnFibers::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_paramHint = m_properties->addProperty( "Hint", "If you see this, your data does not contain fiber parameters.",
                                               std::string( "Your data cannot be filtered due to missing parameters." ) );
@@ -126,7 +126,7 @@ void WMSampleOnFibers::moduleMain()
 
         // To query whether an input was updated, simply ask the input:
         bool dataUpdated = m_fiberInput->handledUpdate();
-        boost::shared_ptr< WDataSetFibers > dataSet = m_fiberInput->getData();
+        std::shared_ptr< WDataSetFibers > dataSet = m_fiberInput->getData();
         bool dataValid = ( dataSet != NULL );
         bool propsChanged = m_parameter ||
                             m_color->changed();

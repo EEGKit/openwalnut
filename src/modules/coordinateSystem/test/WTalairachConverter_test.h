@@ -48,7 +48,7 @@ public:
         WVector3d ac( 150, 122, 90 );
         WVector3d pc( 110, 124, 97 );
         WVector3d ihp( 140, 119, 188 );
-        m_tc = boost::shared_ptr<WTalairachConverter> ( new WTalairachConverter( ac, pc, ihp ) );
+        m_tc = std::shared_ptr<WTalairachConverter> ( new WTalairachConverter( ac, pc, ihp ) );
 
         m_tc->setAp( WVector3d( 80, 0, 0 ) );
         m_tc->setPp( WVector3d( -97, 0, 0 ) );
@@ -124,7 +124,7 @@ private:
     /**
      * The Talairach converter object that is tested in the testing functions.
      */
-    boost::shared_ptr<WTalairachConverter> m_tc;
+    std::shared_ptr<WTalairachConverter> m_tc;
 };
 
 #endif  // WTALAIRACHCONVERTER_TEST_H

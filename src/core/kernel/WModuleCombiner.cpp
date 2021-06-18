@@ -29,7 +29,7 @@
 
 #include "WModuleCombiner.h"
 
-WModuleCombiner::WModuleCombiner( boost::shared_ptr< WModuleContainer > target ):
+WModuleCombiner::WModuleCombiner( std::shared_ptr< WModuleContainer > target ):
     WThreadedRunner(),
     m_container( target )
 {

@@ -50,7 +50,7 @@ WTriangleMesh::SPtr WMeshReaderVTK::operator()( WProgressCombiner::SPtr parentPr
     std::string fileName = file.string();
     WAssert( !fileName.empty(), "No filename specified." );
 
-    boost::shared_ptr< WProgress > progress( new WProgress( "Read Mesh", 3 ) );
+    std::shared_ptr< WProgress > progress( new WProgress( "Read Mesh", 3 ) );
     parentProgress->addSubProgress( progress );
 
     std::ifstream ifs;
@@ -71,7 +71,7 @@ WTriangleMesh::SPtr WMeshReaderVTK::operator()( WProgressCombiner::SPtr parentPr
         {
             WLogger::getLogger()->addLogMessage( "Unexpected end of file: " + fileName, "Read Mesh", LL_ERROR );
             progress->finish();
-            return boost::shared_ptr< WTriangleMesh >();
+            return std::shared_ptr< WTriangleMesh >();
         }
         header.push_back( line );
     }
@@ -84,7 +84,7 @@ WTriangleMesh::SPtr WMeshReaderVTK::operator()( WProgressCombiner::SPtr parentPr
     {
         WLogger::getLogger()->addLogMessage( "Only ASCII files supported, not " + header.at( 2 ), "Read Mesh", LL_ERROR );
         progress->finish();
-        return boost::shared_ptr< WTriangleMesh >();
+        return std::shared_ptr< WTriangleMesh >();
     }
 
     if(  su::tokenize( header.at( 3 ) ).size() < 2 ||
@@ -92,7 +92,7 @@ WTriangleMesh::SPtr WMeshReaderVTK::operator()( WProgressCombiner::SPtr parentPr
     {
         WLogger::getLogger()->addLogMessage( "Invalid VTK DATASET type: " + su::tokenize( header.back() )[1], "Read Mesh", LL_ERROR );
         progress->finish();
-        return boost::shared_ptr< WTriangleMesh >();
+        return std::shared_ptr< WTriangleMesh >();
     }
 
     // ------ POINTS -------
@@ -104,7 +104,7 @@ WTriangleMesh::SPtr WMeshReaderVTK::operator()( WProgressCombiner::SPtr parentPr
     {
         WLogger::getLogger()->addLogMessage( "Invalid VTK POINTS declaration: " + line, "Read Mesh", LL_ERROR );
         progress->finish();
-        return boost::shared_ptr< WTriangleMesh >();
+        return std::shared_ptr< WTriangleMesh >();
     }
     try
     {
@@ -114,7 +114,7 @@ WTriangleMesh::SPtr WMeshReaderVTK::operator()( WProgressCombiner::SPtr parentPr
     {
         WLogger::getLogger()->addLogMessage( "Invalid number of points: " + tokens.at( 1 ), "Read Mesh", LL_ERROR );
         progress->finish();
-        return boost::shared_ptr< WTriangleMesh >();
+        return std::shared_ptr< WTriangleMesh >();
     }
 
 
@@ -133,7 +133,7 @@ WTriangleMesh::SPtr WMeshReaderVTK::operator()( WProgressCombiner::SPtr parentPr
     size_t nbNumbers;
     ifs >> cellsMarker >> nbCells >> nbNumbers;
 
-    boost::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( numPoints, nbCells ) );
+    std::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( numPoints, nbCells ) );
 
     for( unsigned int i = 0; i < numPoints; ++i )
     {
@@ -152,7 +152,7 @@ WTriangleMesh::SPtr WMeshReaderVTK::operator()( WProgressCombiner::SPtr parentPr
             WLogger::getLogger()->addLogMessage( "Number of cell vertices should be 3 but found " +
                                                  string_utils::toString( nbCellVerts ) + ".", "Read Mesh", LL_ERROR );
             progress->finish();
-            return boost::shared_ptr< WTriangleMesh >();
+            return std::shared_ptr< WTriangleMesh >();
         }
     }
 
@@ -170,7 +170,7 @@ WTriangleMesh::SPtr WMeshReaderVTK::operator()( WProgressCombiner::SPtr parentPr
         {
             WLogger::getLogger()->addLogMessage( "Invalid cell type: " + string_utils::toString( cellType ) + ".", "Read Mesh", LL_ERROR );
             progress->finish();
-            return boost::shared_ptr< WTriangleMesh >();
+            return std::shared_ptr< WTriangleMesh >();
         }
     }
 

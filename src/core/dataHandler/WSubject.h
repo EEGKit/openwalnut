@@ -61,7 +61,7 @@ public:
     /**
      * For shortening: a type defining a shared vector of WSubject pointers.
      */
-    typedef std::vector< boost::shared_ptr< WDataSet > > DatasetContainerType;
+    typedef std::vector< std::shared_ptr< WDataSet > > DatasetContainerType;
 
     /**
      * The alias for a shared container.
@@ -114,14 +114,14 @@ public:
      *
      * \param dataset a pointer to the dataset that will be added
      */
-    void addDataSet( boost::shared_ptr< WDataSet > dataset );
+    void addDataSet( std::shared_ptr< WDataSet > dataset );
 
     /**
      * Removes the specified dataset if it is in the set.
      *
      * \param dataset the dataset to remove.
      */
-    void removeDataSet( boost::shared_ptr< WDataSet > dataset );
+    void removeDataSet( std::shared_ptr< WDataSet > dataset );
 
     /**
      * Remove all datasets from the subjects.
@@ -147,14 +147,14 @@ public:
      *
      * \return the condition
      */
-    boost::shared_ptr< WCondition > getChangeCondition() const;
+    std::shared_ptr< WCondition > getChangeCondition() const;
 
     /**
      * This condition fires whenever the list of datasets changes.
      *
      * \return the condition
      */
-    boost::shared_ptr< WCondition > getListChangeCondition() const;
+    std::shared_ptr< WCondition > getListChangeCondition() const;
 
 protected:
     /**
@@ -165,12 +165,12 @@ protected:
     /**
      * This condition set fires whenever one dataset gets dirty or the list of datasets changes.
      */
-    boost::shared_ptr< WConditionSet > m_changeCondition;
+    std::shared_ptr< WConditionSet > m_changeCondition;
 
     /**
      * This condition set fires whenever the list of datasets changes.
      */
-    boost::shared_ptr< WConditionSet > m_listChangeCondition;
+    std::shared_ptr< WConditionSet > m_listChangeCondition;
 
 private:
     WPersonalInformation m_personalInfo; //!< Information on the person represented by this WSubject.

@@ -43,9 +43,9 @@ WMReadSphericalHarmonics::~WMReadSphericalHarmonics()
 {
 }
 
-boost::shared_ptr< WModule > WMReadSphericalHarmonics::factory() const
+std::shared_ptr< WModule > WMReadSphericalHarmonics::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMReadSphericalHarmonics() );
+    return std::shared_ptr< WModule >( new WMReadSphericalHarmonics() );
 }
 
 const char** WMReadSphericalHarmonics::getXPMIcon() const
@@ -65,7 +65,7 @@ const std::string WMReadSphericalHarmonics::getDescription() const
 
 void WMReadSphericalHarmonics::connectors()
 {
-    m_output= boost::shared_ptr< WModuleOutputData< WDataSetSphericalHarmonics > >( new WModuleOutputData< WDataSetSphericalHarmonics >(
+    m_output= std::shared_ptr< WModuleOutputData< WDataSetSphericalHarmonics > >( new WModuleOutputData< WDataSetSphericalHarmonics >(
                 shared_from_this(), "Spherical Harmonics", "A loaded spherical harmonics dataset." )
             );
     addConnector( m_output );
@@ -75,7 +75,7 @@ void WMReadSphericalHarmonics::connectors()
 
 void WMReadSphericalHarmonics::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
     m_dataFile = m_properties->addProperty( "NIfTI file", "", WPathHelper::getAppPath() );
     m_readTriggerProp = m_properties->addProperty( "Do read",  "Press!", WPVBaseTypes::PV_TRIGGER_READY, m_propCondition );
     WPropertyHelper::PC_PATHEXISTS::addTo( m_dataFile );
@@ -102,19 +102,19 @@ void WMReadSphericalHarmonics::moduleMain()
         }
         std::string fileName = m_dataFile->get().string();
 
-        boost::shared_ptr< WProgress > progress;
-        progress = boost::shared_ptr< WProgress >( new WProgress( "Reading ...", 2 ) );
+        std::shared_ptr< WProgress > progress;
+        progress = std::shared_ptr< WProgress >( new WProgress( "Reading ...", 2 ) );
         m_progress->addSubProgress( progress );
 
         WReaderNIfTI niiLoader( fileName );
-        boost::shared_ptr< WDataSet > data;
+        std::shared_ptr< WDataSet > data;
         data = niiLoader.load( W_DATASET_SPHERICALHARMONICS );
 
         ++*progress;
 
         if( data )
         {
-            m_data = boost::dynamic_pointer_cast< WDataSetSphericalHarmonics >( data );
+            m_data = std::dynamic_pointer_cast< WDataSetSphericalHarmonics >( data );
             if( m_data )
             {
                 m_runtimeName->set( string_utils::tokenize( fileName, "/" ).back() );

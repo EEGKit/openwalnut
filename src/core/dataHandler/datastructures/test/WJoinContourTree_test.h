@@ -134,12 +134,12 @@ protected:
         //   |___ |___ |____|      |___ |___ |____|
         //  15   11   -1   -3      0    1    2    3
 
-        boost::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( 4, 4, 1 ) );
+        std::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( 4, 4, 1 ) );
         double isoValuesData[] = { 15, 11, -1, -3, 13, 12, 1, 0, 3, 5, 10, 9, 2, 4, 8, 14 }; // NOLINT
-        boost::shared_ptr< std::vector< double > > isoValues =
-            boost::shared_ptr< std::vector< double > >( new std::vector< double >( isoValuesData, isoValuesData + 16 ) );
-        boost::shared_ptr< WValueSet< double > > valueset( new WValueSet< double >( 0, 1, isoValues, W_DT_DOUBLE ) );
-        m_dataset = boost::shared_ptr< WDataSetSingle >( new WDataSetSingle( valueset, grid ) );
+        std::shared_ptr< std::vector< double > > isoValues =
+            std::shared_ptr< std::vector< double > >( new std::vector< double >( isoValuesData, isoValuesData + 16 ) );
+        std::shared_ptr< WValueSet< double > > valueset( new WValueSet< double >( 0, 1, isoValues, W_DT_DOUBLE ) );
+        m_dataset = std::shared_ptr< WDataSetSingle >( new WDataSetSingle( valueset, grid ) );
     }
 
     /**
@@ -150,7 +150,7 @@ protected:
         m_dataset.reset();
     }
 
-    boost::shared_ptr< WDataSetSingle > m_dataset; //!< Dataset which is used to create the join tree
+    std::shared_ptr< WDataSetSingle > m_dataset; //!< Dataset which is used to create the join tree
 };
 
 #endif  // WJOINCONTOURTREE_TEST_H

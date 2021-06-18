@@ -31,9 +31,9 @@
 
 #include "WOSSIMHelper.h"
 
-boost::shared_ptr< NEWMAT::Matrix > WOSSIMHelper::OWMatrixToOSSIMMatrix( const WMatrix<double> &input )
+std::shared_ptr< NEWMAT::Matrix > WOSSIMHelper::OWMatrixToOSSIMMatrix( const WMatrix<double> &input )
 {
-  boost::shared_ptr< NEWMAT::Matrix > result( new NEWMAT::Matrix( input.getNbRows(), input.getNbCols() ) );
+  std::shared_ptr< NEWMAT::Matrix > result( new NEWMAT::Matrix( input.getNbRows(), input.getNbCols() ) );
   for( size_t row = 0; row < input.getNbRows(); row++ )
   {
     for( size_t col = 0; col < input.getNbCols(); col++ )
@@ -95,7 +95,7 @@ void WOSSIMHelper::computeSVD( const WMatrix< double >& A,
                                      WValue< double >& S )
 {
   // create matrices in OSSIM format
-  boost::shared_ptr< NEWMAT::Matrix > AA( OWMatrixToOSSIMMatrix( A ) );
+  std::shared_ptr< NEWMAT::Matrix > AA( OWMatrixToOSSIMMatrix( A ) );
   NEWMAT::DiagonalMatrix SS( static_cast<int>( S.size() ) );
   NEWMAT::Matrix UU( static_cast<int>( U.getNbRows() ), static_cast<int>( U.getNbCols() ) );
   NEWMAT::Matrix VV( static_cast<int>( V.getNbRows() ), static_cast<int>( V.getNbCols() ) );

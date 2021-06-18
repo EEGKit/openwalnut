@@ -43,9 +43,9 @@ WMFiberFilterROI::~WMFiberFilterROI()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMFiberFilterROI::factory() const
+std::shared_ptr< WModule > WMFiberFilterROI::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMFiberFilterROI() );
+    return std::shared_ptr< WModule >( new WMFiberFilterROI() );
 }
 
 const std::string WMFiberFilterROI::getName() const
@@ -74,7 +74,7 @@ void WMFiberFilterROI::connectors()
 
 void WMFiberFilterROI::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
     m_aTrigger = m_properties->addProperty( "Update", "Trigger an update of your result data.", WPVBaseTypes::PV_TRIGGER_READY,
                                             m_propCondition );
 
@@ -103,7 +103,7 @@ void WMFiberFilterROI::moduleMain()
         }
 
         // Remember the above criteria. We now need to check if the data is valid. After a connect-update, it might be NULL.
-        boost::shared_ptr< WDataSetFibers > dataSet = m_input->getData();
+        std::shared_ptr< WDataSetFibers > dataSet = m_input->getData();
         bool dataValid = ( dataSet != NULL );
         bool dataChanged = dataSet != m_fibers;
 
@@ -138,13 +138,13 @@ void WMFiberFilterROI::moduleMain()
 void WMFiberFilterROI::updateOutput()
 {
     // target memory
-    boost::shared_ptr< std::vector< bool > >    active = m_fiberSelector->getBitfield();
-    boost::shared_ptr< std::vector< float > >   vertices( new std::vector< float >() );
-    boost::shared_ptr< std::vector< size_t > >  lineStartIndexes( new std::vector< size_t >() );
-    boost::shared_ptr< std::vector< size_t > >  lineLengths( new std::vector< size_t >() );
-    boost::shared_ptr< std::vector< size_t > >  verticesReverse( new std::vector< size_t >() );
+    std::shared_ptr< std::vector< bool > >    active = m_fiberSelector->getBitfield();
+    std::shared_ptr< std::vector< float > >   vertices( new std::vector< float >() );
+    std::shared_ptr< std::vector< size_t > >  lineStartIndexes( new std::vector< size_t >() );
+    std::shared_ptr< std::vector< size_t > >  lineLengths( new std::vector< size_t >() );
+    std::shared_ptr< std::vector< size_t > >  verticesReverse( new std::vector< size_t >() );
 
-    boost::shared_ptr< WProgress > progress1( new WProgress( "Filtering", active->size() ) );
+    std::shared_ptr< WProgress > progress1( new WProgress( "Filtering", active->size() ) );
     m_progress->addSubProgress( progress1 );
 
     size_t countLines = 0;
@@ -171,17 +171,17 @@ void WMFiberFilterROI::updateOutput()
         }
     }
 
-    boost::shared_ptr< WDataSetFibers> newOutput( new WDataSetFibers( vertices, lineStartIndexes, lineLengths, verticesReverse,
+    std::shared_ptr< WDataSetFibers> newOutput( new WDataSetFibers( vertices, lineStartIndexes, lineLengths, verticesReverse,
                                                                       m_fibers->getBoundingBox() ) );
     m_fiberOutput->updateData( newOutput );
     progress1->finish();
 
-    progress1 = boost::shared_ptr< WProgress >( new WProgress( "Create Clustering", active->size() ) );
+    progress1 = std::shared_ptr< WProgress >( new WProgress( "Create Clustering", active->size() ) );
     m_progress->addSubProgress( progress1 );
 
-    boost::shared_ptr< WDataSetFiberClustering > clustering( new WDataSetFiberClustering() );
-    boost::shared_ptr< WFiberCluster > cl0( new WFiberCluster() );
-    boost::shared_ptr< WFiberCluster > cl1( new WFiberCluster() );
+    std::shared_ptr< WDataSetFiberClustering > clustering( new WDataSetFiberClustering() );
+    std::shared_ptr< WFiberCluster > cl0( new WFiberCluster() );
+    std::shared_ptr< WFiberCluster > cl1( new WFiberCluster() );
 
     for( size_t l = 0; l < active->size(); ++l )
     {

@@ -46,9 +46,9 @@ WMMeshToPoints::~WMMeshToPoints()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMMeshToPoints::factory() const
+std::shared_ptr< WModule > WMMeshToPoints::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMMeshToPoints() );
+    return std::shared_ptr< WModule >( new WMMeshToPoints() );
 }
 
 const char** WMMeshToPoints::getXPMIcon() const
@@ -69,7 +69,7 @@ const std::string WMMeshToPoints::getDescription() const
 void WMMeshToPoints::connectors()
 {
     // The input triangle mesh
-    m_meshInput = boost::shared_ptr< WModuleInputData < WTriangleMesh > >(
+    m_meshInput = std::shared_ptr< WModuleInputData < WTriangleMesh > >(
         new WModuleInputData< WTriangleMesh >( shared_from_this(), "mesh", "The mesh dataset" )
     );
 
@@ -77,7 +77,7 @@ void WMMeshToPoints::connectors()
     addConnector( m_meshInput );
 
     // the points
-    m_pointsOutput = boost::shared_ptr< WModuleOutputData < WDataSetPoints > >(
+    m_pointsOutput = std::shared_ptr< WModuleOutputData < WDataSetPoints > >(
         new WModuleOutputData< WDataSetPoints >( shared_from_this(), "out", "The point data." )
     );
 
@@ -90,7 +90,7 @@ void WMMeshToPoints::connectors()
 
 void WMMeshToPoints::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_doRefinement = m_properties->addProperty( "Resample", "If enabled, the mesh is sampled more dense.", false, m_propCondition );
     m_minDistance = m_properties->addProperty( "Min Distance",
@@ -179,7 +179,7 @@ void WMMeshToPoints::moduleMain()
 
         // To query whether an input was updated, simply ask the input:
         bool dataUpdated = m_meshInput->handledUpdate();
-        boost::shared_ptr< WTriangleMesh > dataSet = m_meshInput->getData();
+        std::shared_ptr< WTriangleMesh > dataSet = m_meshInput->getData();
         bool dataValid = ( dataSet != NULL );
         bool propsChanged = m_doRefinement->changed() || m_maxIterations->changed() || m_minDistance->changed();
 

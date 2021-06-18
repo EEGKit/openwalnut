@@ -77,7 +77,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -105,7 +105,7 @@ private:
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * The number of iterations to use for filtering
@@ -130,7 +130,7 @@ private:
      *
      * \return the filtered value for a given position
      */
-    template< typename T > double filterAtPosition(  boost::shared_ptr< WValueSet< T > > vals,
+    template< typename T > double filterAtPosition(  std::shared_ptr< WValueSet< T > > vals,
                                                      size_t nX, size_t nY, size_t nZ, size_t x, size_t y, size_t z, size_t offset );
 
     /**
@@ -141,9 +141,9 @@ private:
      *
      * \return the filtered array of values.
      */
-    template< typename T > std::vector< double > filterField( boost::shared_ptr< WValueSet< T > > vals,
-                                                              boost::shared_ptr< WGridRegular3D > grid,
-                                                              boost::shared_ptr< WProgress > prog );
+    template< typename T > std::vector< double > filterField( std::shared_ptr< WValueSet< T > > vals,
+                                                              std::shared_ptr< WGridRegular3D > grid,
+                                                              std::shared_ptr< WProgress > prog );
 
 
     /**
@@ -161,7 +161,7 @@ private:
     template< typename T >
     void filterField1D( std::vector<T>* newVals,
                         const std::vector<T>&vals,
-                        boost::shared_ptr< WProgress > prog,
+                        std::shared_ptr< WProgress > prog,
                         size_t Nx, size_t Ny, size_t Nz, size_t dx, size_t dy, size_t dz );
 
 
@@ -179,8 +179,8 @@ private:
      */
     template< typename T >
     void filterField1D( std::vector<double>* newVals,
-                        boost::shared_ptr< WValueSet< T > > vals,
-                        boost::shared_ptr< WProgress > prog,
+                        std::shared_ptr< WValueSet< T > > vals,
+                        std::shared_ptr< WProgress > prog,
                         size_t Nx, size_t Ny, size_t Nz, size_t dx, size_t dy, size_t dz );
     /**
      * Run the filter iteratively over the field. The number of iterations is determined by m_iterations.
@@ -190,11 +190,11 @@ private:
      *
      * \return the filtered valueset.
      */
-    template< typename T > boost::shared_ptr< WValueSet< double > > iterativeFilterField( boost::shared_ptr< WValueSet< T > > vals,
+    template< typename T > std::shared_ptr< WValueSet< double > > iterativeFilterField( std::shared_ptr< WValueSet< T > > vals,
                                                                                           unsigned int iterations );
 
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_input;  //!< Input connector required by this module.
-    boost::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output; //!< The only output of this filter module.
-    boost::shared_ptr< WDataSetScalar > m_dataSet; //!< Pointer providing access to the treated data set in the whole module.
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_input;  //!< Input connector required by this module.
+    std::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output; //!< The only output of this filter module.
+    std::shared_ptr< WDataSetScalar > m_dataSet; //!< Pointer providing access to the treated data set in the whole module.
 };
 #endif  // WMGAUSSFILTERING_H

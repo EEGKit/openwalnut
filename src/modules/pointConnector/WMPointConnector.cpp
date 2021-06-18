@@ -49,9 +49,9 @@ WMPointConnector::~WMPointConnector()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMPointConnector::factory() const
+std::shared_ptr< WModule > WMPointConnector::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMPointConnector() );
+    return std::shared_ptr< WModule >( new WMPointConnector() );
 }
 
 const char** WMPointConnector::getXPMIcon() const
@@ -171,7 +171,7 @@ void WMPointConnector::handleInput()
         return;
     }
 
-    boost::shared_ptr< WValueSet< size_t > > eventIDs = boost::dynamic_pointer_cast< WValueSet< size_t > >( points->getValueSet() );
+    std::shared_ptr< WValueSet< size_t > > eventIDs = std::dynamic_pointer_cast< WValueSet< size_t > >( points->getValueSet() );
 
     m_connectorData->clear();
 
@@ -377,11 +377,11 @@ void WMPointConnector::updateOutput()
         return;
     }
 
-    boost::shared_ptr< std::vector< float > > vertices = boost::shared_ptr< std::vector< float > >( new std::vector< float >() );
-    boost::shared_ptr< std::vector< float > > colors = boost::shared_ptr< std::vector< float > >( new std::vector< float >() );
-    boost::shared_ptr< std::vector< size_t > > lineStartIndexes = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
-    boost::shared_ptr< std::vector< size_t > > lineLength = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
-    boost::shared_ptr< std::vector< size_t > > verticesReverse = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
+    std::shared_ptr< std::vector< float > > vertices = std::shared_ptr< std::vector< float > >( new std::vector< float >() );
+    std::shared_ptr< std::vector< float > > colors = std::shared_ptr< std::vector< float > >( new std::vector< float >() );
+    std::shared_ptr< std::vector< size_t > > lineStartIndexes = std::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
+    std::shared_ptr< std::vector< size_t > > lineLength = std::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
+    std::shared_ptr< std::vector< size_t > > verticesReverse = std::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
 
     for( size_t idx = 0; idx < m_fiberHandler->getFibers()->size(); idx++ )
     {

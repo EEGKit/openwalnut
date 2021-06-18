@@ -63,10 +63,10 @@ public:
         x = normalize( x );
         y = normalize( y );
 
-        boost::shared_ptr< WDataSetSingle > ds = buildTestData( WVector3d( 0.0, 1.0, 0.0 ) );
+        std::shared_ptr< WDataSetSingle > ds = buildTestData( WVector3d( 0.0, 1.0, 0.0 ) );
         // test the test
         TS_ASSERT( ds );
-        boost::shared_ptr< WGridRegular3D > g = boost::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
+        std::shared_ptr< WGridRegular3D > g = std::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
 
         WVector3d v( 1.0, 0.0, 0.0 );
         v += x * -0.5;
@@ -131,8 +131,8 @@ public:
 
         WVector3d v( 1.0, 0.0, 0.0 );
 
-        boost::shared_ptr< WDataSetSingle > ds = buildTestData( WVector3d( 0.0, 1.0, 0.0 ) );
-        boost::shared_ptr< WGridRegular3D > g = boost::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
+        std::shared_ptr< WDataSetSingle > ds = buildTestData( WVector3d( 0.0, 1.0, 0.0 ) );
+        std::shared_ptr< WGridRegular3D > g = std::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
 
         TS_ASSERT_DELTA( wtracking::WTrackingUtility::getDistanceToBoundary( g, v, x ), 0.5, TRACKING_EPS );
         TS_ASSERT_DELTA( wtracking::WTrackingUtility::getDistanceToBoundary( g, v, y ), 1.0, TRACKING_EPS );
@@ -168,8 +168,8 @@ public:
             x = normalize( x );
             y = normalize( y );
 
-            boost::shared_ptr< WDataSetSingle > ds = buildTestData( WVector3d( 0.0, 1.0, 0.0 ) );
-            boost::shared_ptr< WGridRegular3D > g = boost::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
+            std::shared_ptr< WDataSetSingle > ds = buildTestData( WVector3d( 0.0, 1.0, 0.0 ) );
+            std::shared_ptr< WGridRegular3D > g = std::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
 
             wtracking::WTrackingUtility::JobType j;
             // TODO(wiebel): somehow changing the order of the last multiplication does not find the desired operator*
@@ -210,7 +210,7 @@ private:
      *
      * \return the test dataset
      */
-    boost::shared_ptr< WDataSetSingle > buildTestData( WVector3d data )
+    std::shared_ptr< WDataSetSingle > buildTestData( WVector3d data )
     {
         WVector3d x( 0.707, 0.707, 0.0 );
         WVector3d y( -0.707, 0.707, 0.0 );
@@ -236,11 +236,11 @@ private:
         mat( 0, 3 ) = 1.0;
 
         WGridTransformOrtho t( mat );
-        boost::shared_ptr< WGrid > g( new WGridRegular3D( 5, 5, 5, t ) );
+        std::shared_ptr< WGrid > g( new WGridRegular3D( 5, 5, 5, t ) );
 
         data = normalize( data );
 
-        boost::shared_ptr< std::vector< double > > v( new  std::vector< double > ( 5 * 5 * 5 * 3 ) );
+        std::shared_ptr< std::vector< double > > v( new  std::vector< double > ( 5 * 5 * 5 * 3 ) );
         for( std::size_t k = 0; k < 5 * 5 * 5; ++k )
         {
             v->at( 3 * k + 0 ) = data[ 0 ];
@@ -248,8 +248,8 @@ private:
             v->at( 3 * k + 2 ) = data[ 2 ];
         }
 
-        boost::shared_ptr< WValueSetBase > vs( new WValueSet< double >( 1, 3, v, W_DT_DOUBLE ) );
-        return boost::shared_ptr< WDataSetSingle >( new WDataSetSingle( vs, g ) );
+        std::shared_ptr< WValueSetBase > vs( new WValueSet< double >( 1, 3, v, W_DT_DOUBLE ) );
+        return std::shared_ptr< WDataSetSingle >( new WDataSetSingle( vs, g ) );
     }
 };
 
@@ -274,8 +274,8 @@ public:
         std::size_t numSeeds = 1;
         std::size_t seedsPerPosition = 1;
 
-        boost::shared_ptr< WDataSetSingle > ds = buildTestData( WVector3d( 1.0, 0.0, 0.0 ), 5 );
-        boost::shared_ptr< WGridRegular3D > g = boost::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
+        std::shared_ptr< WDataSetSingle > ds = buildTestData( WVector3d( 1.0, 0.0, 0.0 ), 5 );
+        std::shared_ptr< WGridRegular3D > g = std::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
         TS_ASSERT( g );
 
         {
@@ -350,8 +350,8 @@ public:
         std::size_t numSeeds = 1;
         std::size_t seedsPerPosition = 1;
 
-        boost::shared_ptr< WDataSetSingle > ds = buildTestData( WVector3d( 1.0, 0.0, 0.0 ), 5 );
-        boost::shared_ptr< WGridRegular3D > g = boost::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
+        std::shared_ptr< WDataSetSingle > ds = buildTestData( WVector3d( 1.0, 0.0, 0.0 ), 5 );
+        std::shared_ptr< WGridRegular3D > g = std::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
         TS_ASSERT( g );
 
         {
@@ -425,8 +425,8 @@ public:
         std::size_t numSeeds = 2;
         std::size_t seedsPerPosition = 1;
 
-        boost::shared_ptr< WDataSetSingle > ds = buildTestData( WVector3d( 1.0, 0.0, 0.0 ), 5 );
-        boost::shared_ptr< WGridRegular3D > g = boost::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
+        std::shared_ptr< WDataSetSingle > ds = buildTestData( WVector3d( 1.0, 0.0, 0.0 ), 5 );
+        std::shared_ptr< WGridRegular3D > g = std::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
         TS_ASSERT( g );
 
         {
@@ -497,8 +497,8 @@ public:
      */
     void testInstantiation()
     {
-        boost::shared_ptr< WDataSetSingle > ds = buildTestData( WVector3d( 1.0, 0.0, 0.0 ), 5 );
-        boost::shared_ptr< WGridRegular3D > g = boost::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
+        std::shared_ptr< WDataSetSingle > ds = buildTestData( WVector3d( 1.0, 0.0, 0.0 ), 5 );
+        std::shared_ptr< WGridRegular3D > g = std::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
         TS_ASSERT( g );
 
         TS_ASSERT_THROWS_NOTHING(
@@ -521,8 +521,8 @@ public:
      */
     void testGetJob()
     {
-        boost::shared_ptr< WDataSetSingle > ds = buildTestData( WVector3d( 1.0, 0.0, 0.0 ), 7 );
-        boost::shared_ptr< WGridRegular3D > g = boost::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
+        std::shared_ptr< WDataSetSingle > ds = buildTestData( WVector3d( 1.0, 0.0, 0.0 ), 7 );
+        std::shared_ptr< WGridRegular3D > g = std::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
         TS_ASSERT( g );
 
         wtracking::WThreadedTrackingFunction w( ds, boost::bind( &This::dirFunc,
@@ -555,8 +555,8 @@ public:
         x = normalize( x );
         y = normalize( y );
 
-        boost::shared_ptr< WDataSetSingle > ds = buildTestData( WVector3d( 1.0, 0.0, 0.0 ), 7 );
-        boost::shared_ptr< WGridRegular3D > g = boost::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
+        std::shared_ptr< WDataSetSingle > ds = buildTestData( WVector3d( 1.0, 0.0, 0.0 ), 7 );
+        std::shared_ptr< WGridRegular3D > g = std::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
         TS_ASSERT( g );
         {
             wtracking::WThreadedTrackingFunction w( ds, boost::bind( &This::dirFunc, this, boost::placeholders::_1, boost::placeholders::_2, x ),
@@ -597,7 +597,7 @@ private:
      *
      * \return The dataset.
      */
-    boost::shared_ptr< WDataSetSingle > buildTestData( WVector3d data, int n )
+    std::shared_ptr< WDataSetSingle > buildTestData( WVector3d data, int n )
     {
         WVector3d x( 0.707, 0.707, 0.0 );
         WVector3d y( -0.707, 0.707, 0.0 );
@@ -621,11 +621,11 @@ private:
         mat( 0, 3 ) = 1.0;
 
         WGridTransformOrtho t( mat );
-        boost::shared_ptr< WGrid > g( new WGridRegular3D( n, n, n, t ) );
+        std::shared_ptr< WGrid > g( new WGridRegular3D( n, n, n, t ) );
 
         data = normalize( data );
 
-        boost::shared_ptr< std::vector< double > > v( new  std::vector< double >( n * n * n * 3 ) );
+        std::shared_ptr< std::vector< double > > v( new  std::vector< double >( n * n * n * 3 ) );
         for( std::size_t k = 0; k < static_cast< std::size_t >( n * n * n ); ++k )
         {
             v->at( 3 * k + 0 ) = data[ 0 ];
@@ -633,8 +633,8 @@ private:
             v->at( 3 * k + 2 ) = data[ 2 ];
         }
 
-        boost::shared_ptr< WValueSetBase > vs( new WValueSet< double >( 1, 3, v, W_DT_DOUBLE ) );
-        return boost::shared_ptr< WDataSetSingle >( new WDataSetSingle( vs, g ) );
+        std::shared_ptr< WValueSetBase > vs( new WValueSet< double >( 1, 3, v, W_DT_DOUBLE ) );
+        return std::shared_ptr< WDataSetSingle >( new WDataSetSingle( vs, g ) );
     }
 
     /**

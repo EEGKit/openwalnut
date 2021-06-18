@@ -90,7 +90,7 @@ public:
      * \param ui initialized ui.
      * \return the kernel instance.
      */
-    static WKernel* instance( boost::shared_ptr< WGraphicsEngine > ge, boost::shared_ptr< WUI > ui );
+    static WKernel* instance( std::shared_ptr< WGraphicsEngine > ge, std::shared_ptr< WUI > ui );
 
     /**
      * Destructor.
@@ -121,7 +121,7 @@ public:
      *
      * \return the graphics engine instance.
      */
-    boost::shared_ptr< WGraphicsEngine > getGraphicsEngine() const;
+    std::shared_ptr< WGraphicsEngine > getGraphicsEngine() const;
 
     /**
      * Returns pointer to the currently running kernel.
@@ -170,42 +170,42 @@ public:
      *
      * \return the newly created module connected with the one specified in applyOn.
      */
-    boost::shared_ptr< WModule > applyModule( boost::shared_ptr< WModule > applyOn, boost::shared_ptr< WModule > prototype );
+    std::shared_ptr< WModule > applyModule( std::shared_ptr< WModule > applyOn, std::shared_ptr< WModule > prototype );
 
     /**
      * Returns the root module container. This is the actual module graph container.
      *
      * \return the root container.
      */
-    boost::shared_ptr< WModuleContainer > getRootContainer() const;
+    std::shared_ptr< WModuleContainer > getRootContainer() const;
 
     /**
      * Getter for the associated UI.
      *
      * \return the UI.
      */
-    boost::shared_ptr< WUI > getUI() const;
+    std::shared_ptr< WUI > getUI() const;
 
     /**
      * get for roi manager
      *
      * \return Pointer to the ROI manager.
      */
-    boost::shared_ptr< WROIManager> getRoiManager();
+    std::shared_ptr< WROIManager> getRoiManager();
 
     /**
      * get for selection manager
      *
      * \return Pointer to the selection manager.
      */
-    boost::shared_ptr< WSelectionManager> getSelectionManager();
+    std::shared_ptr< WSelectionManager> getSelectionManager();
 
     /**
      * Get the script engine of this kernel.
      *
      * \return A pointer to the script engine.
      */
-    boost::shared_ptr< WScriptEngine > getScriptEngine();
+    std::shared_ptr< WScriptEngine > getScriptEngine();
 
     /**
      * Returns the system timer. If you need timing for animations and similar, use this one. This timer can change to frame based timing if the
@@ -223,7 +223,7 @@ protected:
      * \param ge initialized graphics engine.
      * \param ui initialized UI.
      */
-    WKernel( boost::shared_ptr< WGraphicsEngine > ge, boost::shared_ptr< WUI > ui );
+    WKernel( std::shared_ptr< WGraphicsEngine > ge, std::shared_ptr< WUI > ui );
 
     /**
      * Function that has to be overwritten for execution. It gets executed in a separate thread after run()
@@ -234,37 +234,37 @@ protected:
     /**
      * The UI.
      */
-    boost::shared_ptr< WUI > m_ui;
+    std::shared_ptr< WUI > m_ui;
 
     /**
      * Pointer to an initialized graphics engine.
      */
-    boost::shared_ptr< WGraphicsEngine > m_graphicsEngine;
+    std::shared_ptr< WGraphicsEngine > m_graphicsEngine;
 
     /**
      * Pointer to a roi manager
      */
-    boost::shared_ptr< WROIManager >m_roiManager;
+    std::shared_ptr< WROIManager >m_roiManager;
 
     /**
      * pointer to a selection manager
      */
-    boost::shared_ptr< WSelectionManager >m_selectionManager;
+    std::shared_ptr< WSelectionManager >m_selectionManager;
 
     /**
      * The module factory to use.
      */
-    boost::shared_ptr< WModuleFactory > m_moduleFactory;
+    std::shared_ptr< WModuleFactory > m_moduleFactory;
 
     /**
      * The container containing the modules.
      */
-    boost::shared_ptr< WModuleContainer > m_moduleContainer;
+    std::shared_ptr< WModuleContainer > m_moduleContainer;
 
     /**
      * The script engine to use.
      */
-    boost::shared_ptr< WScriptEngine > m_scriptEngine;
+    std::shared_ptr< WScriptEngine > m_scriptEngine;
 
 private:
     /**

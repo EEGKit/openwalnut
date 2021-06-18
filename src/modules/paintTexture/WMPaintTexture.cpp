@@ -49,9 +49,9 @@ WMPaintTexture::~WMPaintTexture()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMPaintTexture::factory() const
+std::shared_ptr< WModule > WMPaintTexture::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMPaintTexture() );
+    return std::shared_ptr< WModule >( new WMPaintTexture() );
 }
 
 const char** WMPaintTexture::getXPMIcon() const
@@ -71,11 +71,11 @@ const std::string WMPaintTexture::getDescription() const
 void WMPaintTexture::connectors()
 {
     // the input dataset is just used as source for resolurtion and transformation matrix
-    m_input = boost::shared_ptr< WModuleInputData < WDataSetSingle  > >(
+    m_input = std::shared_ptr< WModuleInputData < WDataSetSingle  > >(
         new WModuleInputData< WDataSetSingle >( shared_from_this(), "in", "The input dataset." ) );
     addConnector( m_input );
 
-    m_output = boost::shared_ptr< WModuleOutputData < WDataSetScalar  > >(
+    m_output = std::shared_ptr< WModuleOutputData < WDataSetScalar  > >(
         new WModuleOutputData< WDataSetScalar >( shared_from_this(), "out", "The extracted image." ) );
     addConnector( m_output );
 
@@ -84,12 +84,12 @@ void WMPaintTexture::connectors()
 
 void WMPaintTexture::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_painting = m_properties->addProperty( "Paint", "If active, left click in the scene with pressed ctrl key"
                                                       " will paint something.", false, m_propCondition );
 
-    m_pencilSelectionsList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_pencilSelectionsList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_pencilSelectionsList->addItem( "1x1", "" );
     m_pencilSelectionsList->addItem( "3x3", "" );
     m_pencilSelectionsList->addItem( "5x5", "" );
@@ -102,7 +102,7 @@ void WMPaintTexture::properties()
     m_paintIndex->setMin( 0 );
     m_paintIndex->setMax( 255 );
 
-    m_colorMapSelectionsList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_colorMapSelectionsList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_colorMapSelectionsList->addItem( "Grayscale", "" );
     m_colorMapSelectionsList->addItem( "Rainbow", "" );
     m_colorMapSelectionsList->addItem( "Hot iron", "" );
@@ -148,7 +148,7 @@ void WMPaintTexture::moduleMain()
             break;
         }
 
-        boost::shared_ptr< WDataSetSingle > newDataSet = m_input->getData();
+        std::shared_ptr< WDataSetSingle > newDataSet = m_input->getData();
         bool dataChanged = ( m_dataSet != newDataSet );
         bool dataValid   = ( newDataSet != NULL );
 
@@ -213,7 +213,7 @@ void WMPaintTexture::moduleMain()
         else // case !dataValid
         {
             if( m_outData )
-            m_outData = boost::shared_ptr< WDataSetScalar >();
+            m_outData = std::shared_ptr< WDataSetScalar >();
             m_output->updateData( m_outData );
         }
         if( m_queueAdded->changed() && m_queueAdded->get( true ) )
@@ -403,7 +403,7 @@ void WMPaintTexture::setColorFromPick( WPickInfo pickInfo )
 
 void WMPaintTexture::createTexture()
 {
-    m_grid = boost::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
+    m_grid = std::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
 
     osg::ref_ptr< osg::Image > ima = new osg::Image;
     ima->allocateImage( m_grid->getNbCoordsX(), m_grid->getNbCoordsY(), m_grid->getNbCoordsZ(), GL_LUMINANCE, GL_UNSIGNED_BYTE );
@@ -431,30 +431,30 @@ void WMPaintTexture::updateOutDataset()
     WAssert( m_dataSet->getGrid(), "" );
 
     unsigned char* data = m_texture->getImage()->data();
-    boost::shared_ptr< std::vector< unsigned char > > values =
-        boost::shared_ptr< std::vector< unsigned char > >( new std::vector< unsigned char >( m_grid->size(), 0.0 ) );
+    std::shared_ptr< std::vector< unsigned char > > values =
+        std::shared_ptr< std::vector< unsigned char > >( new std::vector< unsigned char >( m_grid->size(), 0.0 ) );
 
     for( unsigned int i = 0; i < m_grid->size(); ++i )
     {
         ( *values )[i] = data[i];
     }
 
-    boost::shared_ptr< WValueSet< unsigned char > > vs =
-        boost::shared_ptr< WValueSet< unsigned char > >( new WValueSet< unsigned char >( 0, 1, values, W_DT_UINT8 ) );
+    std::shared_ptr< WValueSet< unsigned char > > vs =
+        std::shared_ptr< WValueSet< unsigned char > >( new WValueSet< unsigned char >( 0, 1, values, W_DT_UINT8 ) );
 
-    m_outData = boost::shared_ptr< WDataSetScalar >( new WDataSetScalar( vs, m_grid ) );
+    m_outData = std::shared_ptr< WDataSetScalar >( new WDataSetScalar( vs, m_grid ) );
     m_outData->getTexture()->interpolation()->set( false );
     m_output->updateData( m_outData );
 }
 
 void WMPaintTexture::copyFromInput()
 {
-    m_grid = boost::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
+    m_grid = std::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
 
     unsigned char* data = m_texture->getImage()->data();
 
-    boost::shared_ptr< WValueSet< unsigned char > > vals;
-    vals =  boost::dynamic_pointer_cast< WValueSet< unsigned char > >( m_dataSet->getValueSet() );
+    std::shared_ptr< WValueSet< unsigned char > > vals;
+    vals =  std::dynamic_pointer_cast< WValueSet< unsigned char > >( m_dataSet->getValueSet() );
 
     for( unsigned int i = 0; i < m_grid->size(); ++i )
     {

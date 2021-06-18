@@ -60,9 +60,9 @@ WMVectorNormalize::~WMVectorNormalize()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMVectorNormalize::factory() const
+std::shared_ptr< WModule > WMVectorNormalize::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMVectorNormalize() );
+    return std::shared_ptr< WModule >( new WMVectorNormalize() );
 }
 
 const std::string WMVectorNormalize::getName() const
@@ -87,7 +87,7 @@ void WMVectorNormalize::connectors()
 
 void WMVectorNormalize::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_zeroTol = m_properties->addProperty( "Zero Tolerance", "Vector lengths smaller than this are assumed as being 0.", 0.000001, m_propCondition );
     m_zeroTol->setMin( 0.0 );
@@ -99,7 +99,7 @@ void WMVectorNormalize::properties()
 /**
  * Visitor for discriminating the type of the first valueset.
  */
-class VisitorVSetA: public boost::static_visitor< boost::shared_ptr< WValueSetBase > >
+class VisitorVSetA: public boost::static_visitor< std::shared_ptr< WValueSetBase > >
 {
 public:
     /**
@@ -153,9 +153,9 @@ public:
         }
 
         // create result value set
-        return boost::shared_ptr< WValueSet< T > >( new WValueSet< T >( 1,
+        return std::shared_ptr< WValueSet< T > >( new WValueSet< T >( 1,
                                                                         3,
-                                                                        boost::shared_ptr< std::vector< T > >(
+                                                                        std::shared_ptr< std::vector< T > >(
                                                                             new std::vector< T >( data ) ),
                                                                         DataType< T >::type ) );
     }
@@ -193,24 +193,24 @@ void WMVectorNormalize::moduleMain()
         // has the data changed?
         if( m_zeroTol->changed() || m_inputA->handledUpdate() )
         {
-            boost::shared_ptr< WDataSetVector > dataSetA = m_inputA->getData();
+            std::shared_ptr< WDataSetVector > dataSetA = m_inputA->getData();
 
             // valid data?
             if( dataSetA )
             {
-                boost::shared_ptr< WValueSetBase > valueSetA = dataSetA->getValueSet();
+                std::shared_ptr< WValueSetBase > valueSetA = dataSetA->getValueSet();
 
                 // use a custom progress combiner
-                boost::shared_ptr< WProgress > prog = boost::shared_ptr< WProgress >(
+                std::shared_ptr< WProgress > prog = std::shared_ptr< WProgress >(
                     new WProgress( "Applying operator on data" ) );
                 m_progress->addSubProgress( prog );
 
                 // apply the operation to each voxel
                 debugLog() << "Processing ...";
-                boost::shared_ptr< WValueSetBase > newValueSet = valueSetA->applyFunction( VisitorVSetA( m_zeroTol->get( true ) ) );
+                std::shared_ptr< WValueSetBase > newValueSet = valueSetA->applyFunction( VisitorVSetA( m_zeroTol->get( true ) ) );
 
                 // Create the new dataset and export it
-                m_output->updateData( boost::shared_ptr<WDataSetVector>( new WDataSetVector( newValueSet, m_inputA->getData()->getGrid() ) ) );
+                m_output->updateData( std::shared_ptr<WDataSetVector>( new WDataSetVector( newValueSet, m_inputA->getData()->getGrid() ) ) );
 
                 // done
                 prog->finish();

@@ -42,7 +42,7 @@ WFiberHandler::WFiberHandler( WMPointConnector* pointConnector )
     m_pointConnector = pointConnector;
     m_actionHandler = WActionHandler::SPtr( new WActionHandler() );
     m_fibers = PCFiberListSPtr( new PCFiberList() );
-    m_hidden = boost::shared_ptr< std::vector< char > >( new std::vector< char >() );
+    m_hidden = std::shared_ptr< std::vector< char > >( new std::vector< char >() );
 
     m_selectedFiber = 0;
     m_fiberCount = 1;
@@ -166,7 +166,7 @@ void WFiberHandler::createProperties( WPropertyGroup::SPtr properties )
     m_redoTrigger = undoGroup->addProperty( "Redo", "Redo Changes", WPVBaseTypes::PV_TRIGGER_READY, notifier );
 }
 
-static bool sortComparator( boost::shared_ptr< WItemSelectionItem > a, boost::shared_ptr< WItemSelectionItem > b )
+static bool sortComparator( std::shared_ptr< WItemSelectionItem > a, std::shared_ptr< WItemSelectionItem > b )
 {
     return a->getName().compare( b->getName() ) < 0;
 }

@@ -62,9 +62,9 @@ WMHARDIToSphericalHarmonics::~WMHARDIToSphericalHarmonics()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMHARDIToSphericalHarmonics::factory() const
+std::shared_ptr< WModule > WMHARDIToSphericalHarmonics::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMHARDIToSphericalHarmonics() );
+    return std::shared_ptr< WModule >( new WMHARDIToSphericalHarmonics() );
 }
 
 const char** WMHARDIToSphericalHarmonics::getXPMIcon() const
@@ -109,7 +109,7 @@ void WMHARDIToSphericalHarmonics::moduleMain()
             break;
         }
 
-        boost::shared_ptr< WDataSetRawHARDI > newDataSet = m_input->getData();
+        std::shared_ptr< WDataSetRawHARDI > newDataSet = m_input->getData();
         bool dataChanged = ( m_dataSet != newDataSet );
         bool dataValid   = ( newDataSet != NULL );
 
@@ -155,7 +155,7 @@ void WMHARDIToSphericalHarmonics::moduleMain()
             debugLog() << "Data changed. Recalculating output.";
 
             // Calculate new data
-            boost::shared_ptr< WDataSetSphericalHarmonics > newData;
+            std::shared_ptr< WDataSetSphericalHarmonics > newData;
 
             // **********************************************
             // * Determine usable gradients and its indices *
@@ -226,10 +226,10 @@ void WMHARDIToSphericalHarmonics::moduleMain()
                     order,
                     m_regularisationFactorLambda->get( true ) );
             }
-            parameter.m_TransformMatrix = boost::shared_ptr< WMatrix< double > >( new WMatrix< double >( transformMatrix ) );
+            parameter.m_TransformMatrix = std::shared_ptr< WMatrix< double > >( new WMatrix< double >( transformMatrix ) );
 
             //to show progess
-            parameter.m_progress = boost::shared_ptr< WProgress >( new WProgress( "Creating Spherical Harmonics",
+            parameter.m_progress = std::shared_ptr< WProgress >( new WProgress( "Creating Spherical Harmonics",
                                                                    m_dataSet->getValueSet()->size() ) );
             m_progress->addSubProgress( parameter.m_progress );
 
@@ -257,18 +257,18 @@ void WMHARDIToSphericalHarmonics::moduleMain()
 void WMHARDIToSphericalHarmonics::connectors()
 {
     // initialize connectors
-    m_input = boost::shared_ptr< WModuleInputData < WDataSetRawHARDI > >(
+    m_input = std::shared_ptr< WModuleInputData < WDataSetRawHARDI > >(
         new WModuleInputData< WDataSetRawHARDI >( shared_from_this(), "in", "Dataset to compute the spherical harmonics for." ) );
 
     // add it to the list of connectors. Please note, that a connector NOT added via addConnector will not work as expected.
     addConnector( m_input );
 
-    m_output = boost::shared_ptr< WModuleOutputData< WDataSetSphericalHarmonics > >(
+    m_output = std::shared_ptr< WModuleOutputData< WDataSetSphericalHarmonics > >(
             new WModuleOutputData< WDataSetSphericalHarmonics >( shared_from_this(), "out", "The grid with the calculated spherical harmonics." ) );
 
     addConnector( m_output );
 
-    m_outputResiduals = boost::shared_ptr< WModuleOutputData< WDataSetRawHARDI > >(
+    m_outputResiduals = std::shared_ptr< WModuleOutputData< WDataSetRawHARDI > >(
             new WModuleOutputData< WDataSetRawHARDI >( shared_from_this(), "residualsOut", "The residual of the reprojection." ) );
 
     addConnector( m_outputResiduals );
@@ -279,10 +279,10 @@ void WMHARDIToSphericalHarmonics::connectors()
 
 void WMHARDIToSphericalHarmonics::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
 
-    m_reconstructionTypes = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_reconstructionTypes = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_reconstructionTypes->addItem( "default", "default" );
     m_reconstructionTypes->addItem( "Constant solid angle", "Constant Solid Angle" );
     m_reconstructionTypeProp = m_properties->addProperty( "Reconstruction Type",
@@ -362,22 +362,22 @@ void WMHARDIToSphericalHarmonics::properties()
 
     m_order->setMin( 0 );
     m_order->setMax( 4 );
-    m_order->addConstraint( boost::shared_ptr< evenInt >( new evenInt ) );
+    m_order->addConstraint( std::shared_ptr< evenInt >( new evenInt ) );
 }
 
-bool WMHARDIToSphericalHarmonics::evenInt::accept( boost::shared_ptr< WPropertyVariable< WPVBaseTypes::PV_INT > >,
+bool WMHARDIToSphericalHarmonics::evenInt::accept( std::shared_ptr< WPropertyVariable< WPVBaseTypes::PV_INT > >,
                                        const WPVBaseTypes::PV_INT& value )
 {
     return ( value % 2 == 0 );
 }
 
-boost::shared_ptr< WPropertyVariable< WPVBaseTypes::PV_INT >::PropertyConstraint > WMHARDIToSphericalHarmonics::evenInt::clone()
+std::shared_ptr< WPropertyVariable< WPVBaseTypes::PV_INT >::PropertyConstraint > WMHARDIToSphericalHarmonics::evenInt::clone()
 {
-    return boost::shared_ptr< WPropertyVariable< WPVBaseTypes::PV_INT >::PropertyConstraint >( new WMHARDIToSphericalHarmonics::evenInt( *this ) );
+    return std::shared_ptr< WPropertyVariable< WPVBaseTypes::PV_INT >::PropertyConstraint >( new WMHARDIToSphericalHarmonics::evenInt( *this ) );
 }
 
 WMHARDIToSphericalHarmonics::HARDICalculation::HARDICalculation( WSphericalHarmonicsCoefficientsThread<>::ThreadParameter threadParams,
-                                                                 bool multiThreaded, boost::shared_ptr< WGrid > grid,
+                                                                 bool multiThreaded, std::shared_ptr< WGrid > grid,
                                                                  std::vector< WVector3d > const& gradients )
     : m_parameter( threadParams ),
       m_multiThreaded( multiThreaded ),

@@ -82,7 +82,7 @@ WQtGui::~WQtGui()
     delete m_settings;
 }
 
-void WQtGui::moduleError( boost::shared_ptr< WModule > module, const WException& exception )
+void WQtGui::moduleError( std::shared_ptr< WModule > module, const WException& exception )
 {
     QCoreApplication::postEvent( m_mainWindow, new WModuleCrashEvent( module, exception.what() ) );
     QCoreApplication::postEvent( m_mainWindow->getNetworkEditor(), new WModuleCrashEvent( module, exception.what() ) );
@@ -200,7 +200,7 @@ int WQtGui::run()
     m_ge = WGraphicsEngine::getGraphicsEngine();
 
     // and startup kernel
-    m_kernel = boost::shared_ptr< WKernel >( WKernel::instance( m_ge, shared_from_this() ) );
+    m_kernel = std::shared_ptr< WKernel >( WKernel::instance( m_ge, shared_from_this() ) );
     m_kernel->run();
     m_kernel->subscribeSignal( WKernel::KERNEL_STARTUPCOMPLETE, boost::bind( &WQtGui::deferredLoad, this ) );
 
@@ -237,15 +237,15 @@ int WQtGui::run()
                                                                      boost::placeholders::_2 );
     m_kernel->getRootContainer()->addDefaultNotifier( CONNECTION_CLOSED, connectionClosedSignal );
 
-    boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > assocRoiSignal;
+    std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > assocRoiSignal;
     assocRoiSignal =
-        boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > >(
+        std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > >(
             new boost::function< void( osg::ref_ptr< WROI > ) > ( boost::bind( &WQtGui::slotAddRoiToTree, this, boost::placeholders::_1 ) ) );
     m_kernel->getRoiManager()->addAddNotifier( assocRoiSignal );
 
-    boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > removeRoiSignal;
+    std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > removeRoiSignal;
     removeRoiSignal =
-        boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > >(
+        std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > >(
             new boost::function< void( osg::ref_ptr< WROI > ) > ( boost::bind( &WQtGui::slotRemoveRoiFromTree, this, boost::placeholders::_1 ) ) );
     m_kernel->getRoiManager()->addRemoveNotifier( removeRoiSignal );
 
@@ -300,7 +300,7 @@ void WQtGui::slotAddLog( const WLogEntry& entry )
     }
 }
 
-void WQtGui::slotAddDatasetOrModuleToTree( boost::shared_ptr< WModule > module )
+void WQtGui::slotAddDatasetOrModuleToTree( std::shared_ptr< WModule > module )
 {
     // create a new event for this and insert it into event queue
     if( m_mainWindow->getNetworkEditor() )
@@ -320,7 +320,7 @@ void WQtGui::slotRemoveRoiFromTree( osg::ref_ptr< WROI > roi )
     QCoreApplication::postEvent( m_mainWindow->getControlPanel(), new WRoiRemoveEvent( roi ) );
 }
 
-void WQtGui::slotActivateDatasetOrModuleInTree( boost::shared_ptr< WModule > module )
+void WQtGui::slotActivateDatasetOrModuleInTree( std::shared_ptr< WModule > module )
 {
     // create a new event for this and insert it into event queue
     if( m_mainWindow->getNetworkEditor() )
@@ -331,7 +331,7 @@ void WQtGui::slotActivateDatasetOrModuleInTree( boost::shared_ptr< WModule > mod
     QCoreApplication::postEvent( m_mainWindow, new WModuleReadyEvent( module ) );
 }
 
-void WQtGui::slotRemoveDatasetOrModuleInTree( boost::shared_ptr< WModule > module )
+void WQtGui::slotRemoveDatasetOrModuleInTree( std::shared_ptr< WModule > module )
 {
     // create a new event for this and insert it into event queue
     QCoreApplication::postEvent( m_mainWindow->getControlPanel(), new WModuleRemovedEvent( module ) );
@@ -342,7 +342,7 @@ void WQtGui::slotRemoveDatasetOrModuleInTree( boost::shared_ptr< WModule > modul
     }
 }
 
-void WQtGui::slotConnectionEstablished( boost::shared_ptr<WModuleConnector> in, boost::shared_ptr<WModuleConnector> out )
+void WQtGui::slotConnectionEstablished( std::shared_ptr<WModuleConnector> in, std::shared_ptr<WModuleConnector> out )
 {
     // create a new event for this and insert it into event queue
     if( in->isInputConnector() )
@@ -363,7 +363,7 @@ void WQtGui::slotConnectionEstablished( boost::shared_ptr<WModuleConnector> in, 
     }
 }
 
-void WQtGui::slotConnectionClosed( boost::shared_ptr<WModuleConnector> in, boost::shared_ptr<WModuleConnector> out )
+void WQtGui::slotConnectionClosed( std::shared_ptr<WModuleConnector> in, std::shared_ptr<WModuleConnector> out )
 {
     // create a new event for this and insert it into event queue
     if( in->isInputConnector() )
@@ -384,7 +384,7 @@ void WQtGui::slotConnectionClosed( boost::shared_ptr<WModuleConnector> in, boost
     }
 }
 
-boost::shared_ptr< WModule > WQtGui::getSelectedModule()
+std::shared_ptr< WModule > WQtGui::getSelectedModule()
 {
     return m_mainWindow->getControlPanel()->getSelectedModule();
 }

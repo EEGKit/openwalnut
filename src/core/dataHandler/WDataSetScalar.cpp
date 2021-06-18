@@ -33,10 +33,10 @@
 #include "WDataSetScalar.h"
 
 // prototype instance as singleton
-boost::shared_ptr< WPrototyped > WDataSetScalar::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WDataSetScalar::m_prototype = std::shared_ptr< WPrototyped >();
 
-WDataSetScalar::WDataSetScalar( boost::shared_ptr< WValueSetBase > newValueSet,
-                                boost::shared_ptr< WGrid > newGrid )
+WDataSetScalar::WDataSetScalar( std::shared_ptr< WValueSetBase > newValueSet,
+                                std::shared_ptr< WGrid > newGrid )
     : WDataSetSingle( newValueSet, newGrid )
 {
     WAssert( newValueSet, "No value set given." );
@@ -55,17 +55,17 @@ WDataSetScalar::~WDataSetScalar()
 {
 }
 
-WDataSetSingle::SPtr WDataSetScalar::clone( boost::shared_ptr< WValueSetBase > newValueSet, boost::shared_ptr< WGrid > newGrid ) const
+WDataSetSingle::SPtr WDataSetScalar::clone( std::shared_ptr< WValueSetBase > newValueSet, std::shared_ptr< WGrid > newGrid ) const
 {
     return WDataSetSingle::SPtr( new WDataSetScalar( newValueSet, newGrid ) );
 }
 
-WDataSetSingle::SPtr WDataSetScalar::clone( boost::shared_ptr< WValueSetBase > newValueSet ) const
+WDataSetSingle::SPtr WDataSetScalar::clone( std::shared_ptr< WValueSetBase > newValueSet ) const
 {
     return WDataSetSingle::SPtr( new WDataSetScalar( newValueSet, getGrid() ) );
 }
 
-WDataSetSingle::SPtr WDataSetScalar::clone( boost::shared_ptr< WGrid > newGrid ) const
+WDataSetSingle::SPtr WDataSetScalar::clone( std::shared_ptr< WGrid > newGrid ) const
 {
     return WDataSetSingle::SPtr( new WDataSetScalar( getValueSet(), newGrid ) );
 }
@@ -95,11 +95,11 @@ double WDataSetScalar::getMin() const
     return m_valueSet->getMinimumValue();
 }
 
-boost::shared_ptr< WPrototyped > WDataSetScalar::getPrototype()
+std::shared_ptr< WPrototyped > WDataSetScalar::getPrototype()
 {
     if( !m_prototype )
     {
-        m_prototype = boost::shared_ptr< WPrototyped >( new WDataSetScalar() );
+        m_prototype = std::shared_ptr< WPrototyped >( new WDataSetScalar() );
     }
 
     return m_prototype;
@@ -107,7 +107,7 @@ boost::shared_ptr< WPrototyped > WDataSetScalar::getPrototype()
 
 double WDataSetScalar::interpolate( const WPosition& pos, bool* success ) const
 {
-    boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( m_grid );
+    std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( m_grid );
 
     WAssert( grid, "This data set has a grid whose type is not yet supported for interpolation." );
     WAssert( ( m_valueSet->order() == 0 &&  m_valueSet->dimension() == 1 ),
@@ -160,7 +160,7 @@ double WDataSetScalar::interpolate( const WPosition& pos, bool* success ) const
 
 double WDataSetScalar::getValueAt( int x, int y, int z ) const
 {
-    boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( m_grid );
+    std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( m_grid );
     size_t id = x + y * grid->getNbCoordsX() + z * grid->getNbCoordsX() * grid->getNbCoordsY();
 
     return WDataSetSingle::getSingleRawValue( id );
@@ -171,7 +171,7 @@ double WDataSetScalar::getValueAt( size_t id ) const
     return WDataSetSingle::getSingleRawValue( id );
 }
 
-boost::shared_ptr< const WValueSetHistogram > WDataSetScalar::getHistogram( size_t buckets )
+std::shared_ptr< const WValueSetHistogram > WDataSetScalar::getHistogram( size_t buckets )
 {
     boost::lock_guard<boost::mutex> lock( m_histogramLock );
 
@@ -181,7 +181,7 @@ boost::shared_ptr< const WValueSetHistogram > WDataSetScalar::getHistogram( size
     }
 
     // create if not yet existing
-    m_histograms[ buckets ] = boost::shared_ptr< WValueSetHistogram >( new WValueSetHistogram( m_valueSet, buckets ) );
+    m_histograms[ buckets ] = std::shared_ptr< WValueSetHistogram >( new WValueSetHistogram( m_valueSet, buckets ) );
 
     return m_histograms[ buckets ];
 }

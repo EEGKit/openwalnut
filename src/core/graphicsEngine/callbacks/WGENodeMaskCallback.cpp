@@ -24,7 +24,7 @@
 
 #include "WGENodeMaskCallback.h"
 
-WGENodeMaskCallback::WGENodeMaskCallback( boost::shared_ptr< WBoolFlag > flag ):
+WGENodeMaskCallback::WGENodeMaskCallback( std::shared_ptr< WBoolFlag > flag ):
     osg::NodeCallback(),
     m_flag( flag )
 {

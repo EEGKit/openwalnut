@@ -54,7 +54,7 @@ WValueSetBase::SPtr WDataCreatorSingleDirection::operator()( WProgress::SPtr pro
         return ValueSetType::SPtr();
     }
 
-    boost::shared_ptr< std::vector< ValueType > > data( new std::vector< ValueType > );
+    std::shared_ptr< std::vector< ValueType > > data( new std::vector< ValueType > );
 
     size_t valuesPerVoxel = ValueSetType::getRequiredRawSizePerVoxel( order, dimension );
     data->resize( valuesPerVoxel * grid->size() );

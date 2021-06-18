@@ -119,7 +119,7 @@ public:
      * \param data the vector holding the raw data
      * \param inDataType indicator telling us which dataType comes in
      */
-    WValueSet( size_t order, size_t dimension, const boost::shared_ptr< std::vector< T > > data, dataType inDataType )
+    WValueSet( size_t order, size_t dimension, const std::shared_ptr< std::vector< T > > data, dataType inDataType )
         : WValueSetBase( order, dimension, inDataType ),
           m_data( data )
     {
@@ -141,7 +141,7 @@ public:
      * \param dimension tensor dimension of values stored in the value set
      * \param data the vector holding the raw data
      */
-    WValueSet( size_t order, size_t dimension, const boost::shared_ptr< std::vector< T > > data )
+    WValueSet( size_t order, size_t dimension, const std::shared_ptr< std::vector< T > > data )
         : WValueSetBase( order, dimension, DataType< T >::type ),
           m_data( data )
     {
@@ -316,7 +316,7 @@ private:
     /**
      * Stores the values of type T as simple array which never should be modified.
      */
-    const boost::shared_ptr< std::vector< T > > m_data;  // WARNING: don't remove constness since &m_data[0] won't work anymore!
+    const std::shared_ptr< std::vector< T > > m_data;  // WARNING: don't remove constness since &m_data[0] won't work anymore!
 
     /**
      * Get a variant reference to this valueset (the reference is stored in the variant).

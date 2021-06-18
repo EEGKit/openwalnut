@@ -63,7 +63,7 @@ osg::ref_ptr< WGEGroupNode > WUIQtViewWidget::getScene() const
     return m_scene;
 }
 
-boost::shared_ptr< WGEViewer > WUIQtViewWidget::getViewer() const
+std::shared_ptr< WGEViewer > WUIQtViewWidget::getViewer() const
 {
     // should be safe to call from outside the GUI thread !?
     return m_widgetDock->getGLWidget()->getViewer();

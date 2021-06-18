@@ -51,7 +51,7 @@ public:
      *
      * \return reference to the dataset
      */
-    boost::shared_ptr< WEEGPositionsLibrary > read();
+    std::shared_ptr< WEEGPositionsLibrary > read();
 
 protected:
 private:

@@ -73,10 +73,10 @@ WMTemplateDataLoader::~WMTemplateDataLoader()
 {
 }
 
-boost::shared_ptr< WModule > WMTemplateDataLoader::factory() const
+std::shared_ptr< WModule > WMTemplateDataLoader::factory() const
 {
     // NOTE: Refer to WMTemplate.cpp if you do not understand these commands.
-    return boost::shared_ptr< WModule >( new WMTemplateDataLoader() );
+    return std::shared_ptr< WModule >( new WMTemplateDataLoader() );
 }
 
 const std::string WMTemplateDataLoader::getName() const
@@ -114,7 +114,7 @@ void WMTemplateDataLoader::properties()
     // way to define properties which are used before creating and starting the WDataModule. Read on!
 
     // NOTE: Refer to WMTemplate.cpp if you do not understand these commands.
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
     // Add your properties as you are used to:
     // m_enableFeature    = m_properties->addProperty( "Enable feature", "Description.", true );
 
@@ -231,7 +231,7 @@ void WMTemplateDataLoader::load()
     infoLog() << "Start Loading from \"" << p.string() << "\"";
 
     // also add some progress to give feedback:
-    boost::shared_ptr< WProgress > progress( new WProgress( "Loading" ) );
+    std::shared_ptr< WProgress > progress( new WProgress( "Loading" ) );
     m_progress->addSubProgress( progress );
 
     // LOAD LOAD LOAD LOAD

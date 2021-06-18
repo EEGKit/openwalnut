@@ -25,7 +25,7 @@
 #include "callbacks/WGENodeMaskCallback.h"
 #include "WGEManagedGroupNode.h"
 
-WGEManagedGroupNode::WGEManagedGroupNode( boost::shared_ptr< WBoolFlag > active ):
+WGEManagedGroupNode::WGEManagedGroupNode( std::shared_ptr< WBoolFlag > active ):
     WGEGroupNode()
 {
     setDataVariance( osg::Object::DYNAMIC );

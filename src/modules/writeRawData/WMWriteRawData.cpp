@@ -44,9 +44,9 @@ WMWriteRawData::~WMWriteRawData()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMWriteRawData::factory() const
+std::shared_ptr< WModule > WMWriteRawData::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMWriteRawData() );
+    return std::shared_ptr< WModule >( new WMWriteRawData() );
 }
 
 const char** WMWriteRawData::getXPMIcon() const
@@ -66,7 +66,7 @@ const std::string WMWriteRawData::getDescription() const
 
 void WMWriteRawData::connectors()
 {
-    m_input = boost::shared_ptr< WModuleInputData< WDataSetScalar > >(
+    m_input = std::shared_ptr< WModuleInputData< WDataSetScalar > >(
             new WModuleInputData< WDataSetScalar >( shared_from_this(), "Data", "The data to write." ) );
 
     addConnector( m_input );
@@ -76,7 +76,7 @@ void WMWriteRawData::connectors()
 
 void WMWriteRawData::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
     m_dataFile = m_properties->addProperty( "File", "", WPathHelper::getAppPath(), m_propCondition );
 
     WModule::properties();
@@ -154,7 +154,7 @@ void WMWriteRawData::moduleMain()
         if( m_dataSet && ( dataSetChanged || m_dataFile->changed() ) )
         {
             debugLog() << "Writing " << m_dataFile->get().string() << ".";
-            boost::shared_ptr< WProgress > progress( new WProgress( "Write File", 2 ) );
+            std::shared_ptr< WProgress > progress( new WProgress( "Write File", 2 ) );
             m_progress->addSubProgress( progress );
 
             // call visitor for this job

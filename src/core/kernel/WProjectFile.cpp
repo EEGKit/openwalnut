@@ -46,16 +46,16 @@ WProjectFile::ParserList WProjectFile::m_additionalParsers;
 
 WProjectFile::WProjectFile( boost::filesystem::path project ):
     WThreadedRunner(),
-    boost::enable_shared_from_this< WProjectFile >(),
+    std::enable_shared_from_this< WProjectFile >(),
     m_project( project )
 {
     // initialize members
-    boost::shared_ptr< WProjectFileIO > p1( new WModuleProjectFileCombiner() );
-    boost::shared_ptr< WProjectFileIO > p2( new WRoiProjectFileIO() );
-    boost::shared_ptr< WProjectFileIO > p3( new WGEProjectFileIO() );
+    std::shared_ptr< WProjectFileIO > p1( new WModuleProjectFileCombiner() );
+    std::shared_ptr< WProjectFileIO > p2( new WRoiProjectFileIO() );
+    std::shared_ptr< WProjectFileIO > p3( new WGEProjectFileIO() );
 
     // The module graph parser
-    m_moduleIO = boost::dynamic_pointer_cast< WModuleProjectFileCombiner >( p1->clone( this ) );
+    m_moduleIO = std::dynamic_pointer_cast< WModuleProjectFileCombiner >( p1->clone( this ) );
     m_parsers.push_back( m_moduleIO );
     m_writers.push_back( m_moduleIO );
 
@@ -91,17 +91,17 @@ WProjectFile::WProjectFile( boost::filesystem::path project ):
 
 WProjectFile::WProjectFile( boost::filesystem::path project, ProjectLoadCallback doneCallback ):
     WThreadedRunner(),
-    boost::enable_shared_from_this< WProjectFile >(),
+    std::enable_shared_from_this< WProjectFile >(),
     m_project( project ),
     m_signalLoadDoneConnection( m_signalLoadDone.connect( doneCallback ) )
 {
     // initialize members
-    boost::shared_ptr< WProjectFileIO > p1( new WModuleProjectFileCombiner() );
-    boost::shared_ptr< WProjectFileIO > p2( new WRoiProjectFileIO() );
-    boost::shared_ptr< WProjectFileIO > p3( new WGEProjectFileIO() );
+    std::shared_ptr< WProjectFileIO > p1( new WModuleProjectFileCombiner() );
+    std::shared_ptr< WProjectFileIO > p2( new WRoiProjectFileIO() );
+    std::shared_ptr< WProjectFileIO > p3( new WGEProjectFileIO() );
 
     // The module graph parser
-    m_moduleIO = boost::dynamic_pointer_cast< WModuleProjectFileCombiner >( p1->clone( this ) );
+    m_moduleIO = std::dynamic_pointer_cast< WModuleProjectFileCombiner >( p1->clone( this ) );
     m_parsers.push_back( m_moduleIO );
     m_writers.push_back( m_moduleIO );
 
@@ -143,19 +143,19 @@ WProjectFile::~WProjectFile()
     m_signalLoadDoneConnection.disconnect();
 }
 
-boost::shared_ptr< WProjectFileIO > WProjectFile::getCameraWriter()
+std::shared_ptr< WProjectFileIO > WProjectFile::getCameraWriter()
 {
-    return boost::shared_ptr< WProjectFileIO >( new WGEProjectFileIO() );
+    return std::shared_ptr< WProjectFileIO >( new WGEProjectFileIO() );
 }
 
-boost::shared_ptr< WProjectFileIO > WProjectFile::getModuleWriter()
+std::shared_ptr< WProjectFileIO > WProjectFile::getModuleWriter()
 {
-    return boost::shared_ptr< WProjectFileIO >( new WModuleProjectFileCombiner() );
+    return std::shared_ptr< WProjectFileIO >( new WModuleProjectFileCombiner() );
 }
 
-boost::shared_ptr< WProjectFileIO > WProjectFile::getROIWriter()
+std::shared_ptr< WProjectFileIO > WProjectFile::getROIWriter()
 {
-    return boost::shared_ptr< WProjectFileIO >( new WRoiProjectFileIO() );
+    return std::shared_ptr< WProjectFileIO >( new WRoiProjectFileIO() );
 }
 
 void WProjectFile::load()
@@ -167,13 +167,13 @@ void WProjectFile::load()
     run();
 }
 
-void WProjectFile::save( const std::vector< boost::shared_ptr< WProjectFileIO > >& writer )
+void WProjectFile::save( const std::vector< std::shared_ptr< WProjectFileIO > >& writer )
 {
-    std::list< boost::shared_ptr< WProjectFileIO > > l( writer.begin(), writer.end() );
+    std::list< std::shared_ptr< WProjectFileIO > > l( writer.begin(), writer.end() );
     save( l );
 }
 
-void WProjectFile::save( const std::list< boost::shared_ptr< WProjectFileIO > >& writer )
+void WProjectFile::save( const std::list< std::shared_ptr< WProjectFileIO > >& writer )
 {
     wlog::info( "Project File" ) << "Saving project file \"" << m_project.string() << "\".";
 
@@ -186,7 +186,7 @@ void WProjectFile::save( const std::list< boost::shared_ptr< WProjectFileIO > >&
     }
 
     // allow each parser to handle save request
-    for( std::list< boost::shared_ptr< WProjectFileIO > >::const_iterator iter = writer.begin(); iter != writer.end(); ++iter )
+    for( std::list< std::shared_ptr< WProjectFileIO > >::const_iterator iter = writer.begin(); iter != writer.end(); ++iter )
     {
         ( *iter )->save( output );
         output << std::endl;
@@ -238,7 +238,7 @@ void WProjectFile::threadMain()
         match = false;
 
         // allow each parser to handle the line.
-        for( std::list< boost::shared_ptr< WProjectFileIO > >::const_iterator iter = m_parsers.begin(); iter != m_parsers.end(); ++iter )
+        for( std::list< std::shared_ptr< WProjectFileIO > >::const_iterator iter = m_parsers.begin(); iter != m_parsers.end(); ++iter )
         {
             try
             {
@@ -267,7 +267,7 @@ void WProjectFile::threadMain()
     input.close();
 
     // finally, let every one know that we have finished
-    for( std::list< boost::shared_ptr< WProjectFileIO > >::const_iterator iter = m_parsers.begin(); iter != m_parsers.end(); ++iter )
+    for( std::list< std::shared_ptr< WProjectFileIO > >::const_iterator iter = m_parsers.begin(); iter != m_parsers.end(); ++iter )
     {
         try
         {
@@ -321,12 +321,12 @@ void WProjectFile::deregisterParser( WProjectFileIO::SPtr parser )
     m_additionalParsers.remove( parser );
 }
 
-boost::shared_ptr< WModule > WProjectFile::mapToModule( unsigned int id ) const
+std::shared_ptr< WModule > WProjectFile::mapToModule( unsigned int id ) const
 {
     return m_moduleIO->mapToModule( id );
 }
 
-unsigned int WProjectFile::mapFromModule(  boost::shared_ptr< WModule > module ) const
+unsigned int WProjectFile::mapFromModule(  std::shared_ptr< WModule > module ) const
 {
     return m_moduleIO->mapFromModule( module );
 }

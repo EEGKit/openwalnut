@@ -77,7 +77,7 @@ public:
      */
     void testConvinienceFunctions( void )
     {
-        boost::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( 3, 3, 3 ) );
+        std::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( 3, 3, 3 ) );
         boost::array< unsigned int, 3 > expectedNbCoords = { { 3, 3, 3 } }; // NOLINT curly braces
         TS_ASSERT_EQUALS( expectedNbCoords, getNbCoords< double >( grid ) );
         boost::array< double, 3 > expectedOffsets = { { 1.0, 1.0, 1.0 } }; // NOLINT curly braces
@@ -220,7 +220,7 @@ public:
      */
     void testGetVoxelNumberOfGeneralPosition( void )
     {
-        using boost::shared_ptr;
+        using std::shared_ptr;
 
         WMatrix< double > mat( 4, 4 );
         mat.makeIdentity();
@@ -238,7 +238,7 @@ public:
      */
     void testGetVoxelNumberOfPositionOutsideOfGrid( void )
     {
-        using boost::shared_ptr;
+        using std::shared_ptr;
 
         shared_ptr< WGridRegular3D > g = shared_ptr< WGridRegular3D >( new WGridRegular3D( 3, 3, 3 ) );
         TS_ASSERT_EQUALS( g->getVoxelNum( WPosition( 0 - m_delta, 0, 0 ) ), -1 );

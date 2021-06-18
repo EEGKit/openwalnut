@@ -52,14 +52,14 @@ public:
     typedef WPropertyList< ValueType > WPropertyListType;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< WPropertyList >.
+     * Convenience typedef for a std::shared_ptr< WPropertyList >.
      */
-    typedef boost::shared_ptr< WPropertyList< ValueType > > SPtr;
+    typedef std::shared_ptr< WPropertyList< ValueType > > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WPropertyList >.
+     * Convenience typedef for a std::shared_ptr< const WPropertyList >.
      */
-    typedef boost::shared_ptr< const WPropertyList< ValueType > > ConstSPtr;
+    typedef std::shared_ptr< const WPropertyList< ValueType > > ConstSPtr;
 
     /**
      * Create an empty named property.
@@ -162,10 +162,10 @@ public:
      *
      * \return true if the value has been accepted.
      */
-    virtual bool set( boost::shared_ptr< WPropertyBase > value )
+    virtual bool set( std::shared_ptr< WPropertyBase > value )
     {
         // is this the same type as we are?
-        typename WPropertyListType::SPtr v = boost::dynamic_pointer_cast< WPropertyListType >( value );
+        typename WPropertyListType::SPtr v = std::dynamic_pointer_cast< WPropertyListType >( value );
         if( !v )
         {
             // it is not a WPropertyList with the same type

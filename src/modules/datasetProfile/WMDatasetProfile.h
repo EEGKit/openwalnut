@@ -88,7 +88,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -165,29 +165,29 @@ private:
     /**
      * An input connector that accepts order 1 datasets.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_input;
 
     /**
      * This is a pointer to the dataset the module is currently working on.
      */
-    boost::shared_ptr< WDataSetScalar > m_dataSet;
+    std::shared_ptr< WDataSetScalar > m_dataSet;
 
     /**
      * stores a pointer to the grid we use;
      */
-    boost::shared_ptr< WGridRegular3D > m_grid;
+    std::shared_ptr< WGridRegular3D > m_grid;
 
 
 
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * A list of cluster selection methods
      */
-    boost::shared_ptr< WItemSelection > m_snapSelectionsList;
+    std::shared_ptr< WItemSelection > m_snapSelectionsList;
 
     /**
      * Selection property for clusters
@@ -234,7 +234,7 @@ private:
      */
     std::vector< osg::ref_ptr<WROISphere> >knobs;
 
-    boost::shared_ptr< boost::function< void() > > m_changeRoiSignal; //!< Signal that can be used to update the graph
+    std::shared_ptr< boost::function< void() > > m_changeRoiSignal; //!< Signal that can be used to update the graph
 
     int m_oldViewHeight; //!< stores the old viewport resolution to check whether a resize happened
     int m_oldViewWidth; //!< stores the old viewport resolution to check whether a resize happened

@@ -85,7 +85,7 @@ public:
      *
      * \return the module
      */
-    virtual boost::shared_ptr< WModule > getSelectedModule();
+    virtual std::shared_ptr< WModule > getSelectedModule();
 
     /**
      * Slot gets called whenever we need to update the texture sorter.
@@ -99,7 +99,7 @@ public:
      *
      * \note This can be used to add datasets or other modules.
      */
-    virtual void slotAddDatasetOrModuleToTree( boost::shared_ptr< WModule > module );
+    virtual void slotAddDatasetOrModuleToTree( std::shared_ptr< WModule > module );
 
     /**
      * Slot gets called whenever a new ROI is added.
@@ -120,14 +120,14 @@ public:
      *
      * \param module the module.
      */
-    virtual void slotActivateDatasetOrModuleInTree( boost::shared_ptr< WModule > module );
+    virtual void slotActivateDatasetOrModuleInTree( std::shared_ptr< WModule > module );
 
     /**
      * Slot gets called whenever a module has been removed from the root container.
      *
      * \param module the module
      */
-    virtual void slotRemoveDatasetOrModuleInTree( boost::shared_ptr< WModule > module );
+    virtual void slotRemoveDatasetOrModuleInTree( std::shared_ptr< WModule > module );
 
     /**
      * Slot gets called whenever a connector pair got connected.
@@ -135,7 +135,7 @@ public:
      * \param in input connector
      * \param out output connector
      */
-    virtual void slotConnectionEstablished( boost::shared_ptr<WModuleConnector> in, boost::shared_ptr<WModuleConnector> out );
+    virtual void slotConnectionEstablished( std::shared_ptr<WModuleConnector> in, std::shared_ptr<WModuleConnector> out );
 
     /**
      * Slot gets called whenever a connector pair got disconnected.
@@ -143,7 +143,7 @@ public:
      * \param in input connector
      * \param out output connector
      */
-    virtual void slotConnectionClosed( boost::shared_ptr<WModuleConnector> in, boost::shared_ptr<WModuleConnector> out );
+    virtual void slotConnectionClosed( std::shared_ptr<WModuleConnector> in, std::shared_ptr<WModuleConnector> out );
 
     /**
      * Getter functions for the signals provided by the gui
@@ -240,7 +240,7 @@ protected:
      * \param module the module which has thrown the exception
      * \param exception the exception the module has thrown
      */
-    void moduleError( boost::shared_ptr< WModule > module, const WException& exception );
+    void moduleError( std::shared_ptr< WModule > module, const WException& exception );
 
 private:
     /**
@@ -256,7 +256,7 @@ private:
     /**
      * Graphics Engine instance.
      */
-    boost::shared_ptr< WGraphicsEngine > m_ge;
+    std::shared_ptr< WGraphicsEngine > m_ge;
 
     /**
      * The connection to the AddLog signal of the logger
@@ -266,7 +266,7 @@ private:
     /**
      * Kernel instance.
      */
-    boost::shared_ptr< WKernel > m_kernel;
+    std::shared_ptr< WKernel > m_kernel;
 
     const boost::program_options::variables_map& m_optionsMap; //!< Map storing the program options.
 

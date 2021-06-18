@@ -66,7 +66,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -91,11 +91,11 @@ protected:
     virtual void properties();
 
 private:
-    boost::shared_ptr< WModuleInputData< WDataSetFibers > >  m_fiberInput; //!< Input connector for a fiber dataset.
-    boost::shared_ptr< WDataSetFibers >                      m_rawDataset; //!< Pointer to the fiber data set in WDataSetFibers format
-    boost::shared_ptr< WModuleOutputData< WDataSetFibers > > m_output; //!< Output connector for the culled fibers
+    std::shared_ptr< WModuleInputData< WDataSetFibers > >  m_fiberInput; //!< Input connector for a fiber dataset.
+    std::shared_ptr< WDataSetFibers >                      m_rawDataset; //!< Pointer to the fiber data set in WDataSetFibers format
+    std::shared_ptr< WModuleOutputData< WDataSetFibers > > m_output; //!< Output connector for the culled fibers
 
-    boost::shared_ptr< WCondition > m_recompute; //!< A condition which indicates complete recomputation
+    std::shared_ptr< WCondition > m_recompute; //!< A condition which indicates complete recomputation
 
     WPropBool     m_save; //!< If true, transformed fibers are saved to a file
     WPropFilename m_savePath; //!< Path where transformed fibers should be stored

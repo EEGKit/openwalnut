@@ -54,7 +54,7 @@ public:
      *
      * \return true if value >= m_min
      */
-    virtual bool accept( boost::shared_ptr< WPropertyVariable< T > > property, const T& value );
+    virtual bool accept( std::shared_ptr< WPropertyVariable< T > > property, const T& value );
 
     /**
      * Allows simple identification of the real constraint type.
@@ -68,7 +68,7 @@ public:
      *
      * \return the constraint.
      */
-    virtual boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > clone();
+    virtual std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > clone();
 
 private:
 };
@@ -84,7 +84,7 @@ WPropertyConstraintNotEmpty< T >::~WPropertyConstraintNotEmpty()
 }
 
 template < typename T >
-bool WPropertyConstraintNotEmpty< T >::accept( boost::shared_ptr< WPropertyVariable< T > > /* property */, const T& value )
+bool WPropertyConstraintNotEmpty< T >::accept( std::shared_ptr< WPropertyVariable< T > > /* property */, const T& value )
 {
     return !value.empty();
 }
@@ -96,9 +96,9 @@ PROPERTYCONSTRAINT_TYPE WPropertyConstraintNotEmpty< T >::getType()
 }
 
 template < typename T >
-boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > WPropertyConstraintNotEmpty< T >::clone()
+std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > WPropertyConstraintNotEmpty< T >::clone()
 {
-    return boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint >( new WPropertyConstraintNotEmpty< T >( *this ) );
+    return std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint >( new WPropertyConstraintNotEmpty< T >( *this ) );
 }
 
 #endif  // WPROPERTYCONSTRAINTNOTEMPTY_H

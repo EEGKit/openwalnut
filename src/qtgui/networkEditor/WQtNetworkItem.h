@@ -60,7 +60,7 @@ public:
      * \param editor the editor containing this item
      * \param module the module represented by the item
      */
-    WQtNetworkItem( WQtNetworkEditor* editor, boost::shared_ptr< WModule > module );
+    WQtNetworkItem( WQtNetworkEditor* editor, std::shared_ptr< WModule > module );
 
     /**
      * Destructor.
@@ -141,7 +141,7 @@ public:
      * Get the WModule represented by this object.
      * \return the related WModule
      */
-    boost::shared_ptr< WModule > getModule();
+    std::shared_ptr< WModule > getModule();
 
     /**
      * Here the module can be enabled when the WModule is ready.
@@ -325,7 +325,7 @@ private:
      */
     void changeState( State state );
 
-    boost::shared_ptr< WModule > m_module; //!< the module
+    std::shared_ptr< WModule > m_module; //!< the module
 
     QList< WQtNetworkInputPort* > m_inPorts; //!< the input ports of the item
 

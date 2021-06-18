@@ -84,7 +84,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
 protected:
     /**
@@ -116,12 +116,12 @@ private:
     /**
      * Input connector for scalar data.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_scalarIC;
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_scalarIC;
 
     /**
      * The transfer function as an input data set
      */
-    boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_transferFunction;
+    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_transferFunction;
 
     /**
      * The OSG root node for this module. All other geodes or OSG nodes will be attached on this single node.
@@ -131,7 +131,7 @@ private:
     /**
      * Needed for recreating the geometry, incase when resolution changes.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * Typedef for plane orientation selection
@@ -141,7 +141,7 @@ private:
     /**
      * Plane orientation type selection.
      */
-    boost::shared_ptr< WItemSelection > m_possibleSelectionsUsingTypes;
+    std::shared_ptr< WItemSelection > m_possibleSelectionsUsingTypes;
 
     /**
      * Plane orientation type.
@@ -201,7 +201,7 @@ private:
     /**
      * The treated data set.
      */
-    boost::shared_ptr< WDataSetScalar > scalarData;
+    std::shared_ptr< WDataSetScalar > scalarData;
 };
 
 #endif  // WMPROJECTIONSASCONTEXT_H

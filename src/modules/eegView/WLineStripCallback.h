@@ -56,7 +56,7 @@ public:
     WLineStripCallback( std::size_t channelID,
                         WPropDouble timePos,
                         WPropDouble timeRange,
-                        boost::shared_ptr< WEEG2Segment > segment,
+                        std::shared_ptr< WEEG2Segment > segment,
                         double samplingRate );
 
     /**
@@ -100,7 +100,7 @@ private:
     /**
      * pointer to the EEG segment
      */
-    boost::shared_ptr< WEEG2Segment > m_segment;
+    std::shared_ptr< WEEG2Segment > m_segment;
 
     /**
      * sampling rate used by the recording

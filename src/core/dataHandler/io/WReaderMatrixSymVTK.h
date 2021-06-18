@@ -52,7 +52,7 @@ public:
      *
      * \param table vector where to place the elements of the table
      */
-    void readTable( boost::shared_ptr< std::vector< double > > table ) const;
+    void readTable( std::shared_ptr< std::vector< double > > table ) const;
 
 protected:
 private:

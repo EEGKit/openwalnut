@@ -29,13 +29,13 @@
 #include "WColoredVertices.h"
 
 // init _static_ member variable and provide a linker reference to it
-boost::shared_ptr< WPrototyped > WColoredVertices::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WColoredVertices::m_prototype = std::shared_ptr< WPrototyped >();
 
-boost::shared_ptr< WPrototyped > WColoredVertices::getPrototype()
+std::shared_ptr< WPrototyped > WColoredVertices::getPrototype()
 {
     if( !m_prototype )
     {
-         m_prototype = boost::shared_ptr< WPrototyped >( new WColoredVertices() );
+         m_prototype = std::shared_ptr< WPrototyped >( new WColoredVertices() );
     }
     return m_prototype;
 }

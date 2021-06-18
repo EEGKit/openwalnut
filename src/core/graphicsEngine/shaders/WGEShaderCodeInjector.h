@@ -40,12 +40,12 @@ public:
     /**
      * Shortcut for a shared_ptr.
      */
-    typedef boost::shared_ptr< WGEShaderCodeInjector > SPtr;
+    typedef std::shared_ptr< WGEShaderCodeInjector > SPtr;
 
     /**
      * Shortcut for a const shared_ptr.
      */
-    typedef boost::shared_ptr< WGEShaderCodeInjector > ConstSPtr;
+    typedef std::shared_ptr< WGEShaderCodeInjector > ConstSPtr;
 
     /**
      * Default constructor.

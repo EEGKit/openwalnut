@@ -68,14 +68,14 @@ namespace wtracking // note that this is not final
         typedef WDataSetSingle DataSetType;
 
         //! a pointer to a dataset
-        typedef boost::shared_ptr< DataSetType const > DataSetPtr;
+        typedef std::shared_ptr< DataSetType const > DataSetPtr;
 
         //! a function that calculates a direction to continue tracking
         typedef boost::function< WVector3d ( DataSetPtr, JobType const& ) > DirFunc;
 
         //! a pointer to a regular 3d grid
         // other grid types are not supported at the moment
-        typedef boost::shared_ptr< WGridRegular3D > Grid3DPtr;
+        typedef std::shared_ptr< WGridRegular3D > Grid3DPtr;
 
         /**
          * A function that follows a direction until leaving the current voxel.
@@ -162,7 +162,7 @@ namespace wtracking // note that this is not final
     typedef WGridRegular3D GridType;
 
     //! a pointer to the grid
-    typedef boost::shared_ptr< GridType > GridPtr;
+    typedef std::shared_ptr< GridType > GridPtr;
 
     //! the direction calculation function
     typedef WTrackingUtility::DirFunc DirFunc;

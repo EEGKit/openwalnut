@@ -51,7 +51,7 @@ public:
      *
      * \param mc The module container.
      */
-    explicit WModuleContainerWrapper( boost::shared_ptr< WModuleContainer > mc );
+    explicit WModuleContainerWrapper( std::shared_ptr< WModuleContainer > mc );
 
     /**
      * Destructor.
@@ -83,7 +83,7 @@ public:
 
 private:
     //! The module container.
-    boost::shared_ptr< WModuleContainer > m_mc;
+    std::shared_ptr< WModuleContainer > m_mc;
 };
 
 #endif  // WMODULECONTAINERWRAPPER_H

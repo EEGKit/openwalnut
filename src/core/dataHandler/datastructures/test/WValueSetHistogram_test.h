@@ -46,14 +46,14 @@ class WValueSetHistogramTest : public CxxTest::TestSuite
         {
             // create some test data
             double a[2] = { 0.0, 3.1415 };
-            const boost::shared_ptr< std::vector< double > > v =
-                boost::shared_ptr< std::vector< double > >(
+            const std::shared_ptr< std::vector< double > > v =
+                std::shared_ptr< std::vector< double > >(
                     new std::vector< double >( a, a + sizeof( a ) / sizeof( double ) ) );
             WValueSet< double >* valueSet = new WValueSet< double >( 0, 1, v, W_DT_DOUBLE );
 
             // test both constructors with default bucket size
             TS_ASSERT_THROWS_NOTHING( WValueSetHistogram hist( *valueSet ) );
-            boost::shared_ptr< WValueSet< double > > vsPtr( valueSet );
+            std::shared_ptr< WValueSet< double > > vsPtr( valueSet );
             TS_ASSERT_THROWS_NOTHING( WValueSetHistogram hist( vsPtr ) );
         }
 
@@ -64,8 +64,8 @@ class WValueSetHistogramTest : public CxxTest::TestSuite
         {
             // create some test data
             double a[4] = { 0.0, 1.0, 1.0, 4.0 };
-            const boost::shared_ptr< std::vector< double > > v =
-                boost::shared_ptr< std::vector< double > >(
+            const std::shared_ptr< std::vector< double > > v =
+                std::shared_ptr< std::vector< double > >(
                     new std::vector< double >( a, a + sizeof( a ) / sizeof( double ) ) );
             WValueSet< double >* valueSet = new WValueSet< double >( 0, 1, v, W_DT_DOUBLE );
 
@@ -85,8 +85,8 @@ class WValueSetHistogramTest : public CxxTest::TestSuite
         {
             // create some test data
             double a[4] = { 0.0, 1.0, 1.0, 4.0 };
-            const boost::shared_ptr< std::vector< double > > v =
-                boost::shared_ptr< std::vector< double > >(
+            const std::shared_ptr< std::vector< double > > v =
+                std::shared_ptr< std::vector< double > >(
                     new std::vector< double >( a, a + sizeof( a ) / sizeof( double ) ) );
             WValueSet< double >* valueSet = new WValueSet< double >( 0, 1, v, W_DT_DOUBLE );
 
@@ -111,8 +111,8 @@ class WValueSetHistogramTest : public CxxTest::TestSuite
         {
             // create some test data
             double a[4] = { 0.0, -5.0, 1.0, 2.0 };
-            const boost::shared_ptr< std::vector< double > > v =
-                boost::shared_ptr< std::vector< double > >(
+            const std::shared_ptr< std::vector< double > > v =
+                std::shared_ptr< std::vector< double > >(
                     new std::vector< double >( a, a + sizeof( a ) / sizeof( double ) ) );
             WValueSet< double >* valueSet = new WValueSet< double >( 0, 1, v, W_DT_DOUBLE );
 
@@ -130,8 +130,8 @@ class WValueSetHistogramTest : public CxxTest::TestSuite
         {
             // create some test data
             double a[5] = { 0.0, 4.0, 1.0, 2.0, 1.0 };
-            const boost::shared_ptr< std::vector< double > > v =
-                boost::shared_ptr< std::vector< double > >(
+            const std::shared_ptr< std::vector< double > > v =
+                std::shared_ptr< std::vector< double > >(
                     new std::vector< double >( a, a + sizeof( a ) / sizeof( double ) ) );
             WValueSet< double >* valueSet = new WValueSet< double >( 0, 1, v, W_DT_DOUBLE );
 
@@ -149,8 +149,8 @@ class WValueSetHistogramTest : public CxxTest::TestSuite
         {
             // create some test data
             double a[5] = { 0.0, 4.0, 1.0, 2.0, 1.0 };
-            const boost::shared_ptr< std::vector< double > > v =
-                boost::shared_ptr< std::vector< double > >(
+            const std::shared_ptr< std::vector< double > > v =
+                std::shared_ptr< std::vector< double > >(
                     new std::vector< double >( a, a + sizeof( a ) / sizeof( double ) ) );
             WValueSet< double >* valueSet = new WValueSet< double >( 0, 1, v, W_DT_DOUBLE );
 
@@ -176,8 +176,8 @@ class WValueSetHistogramTest : public CxxTest::TestSuite
         {
             // create some test data
             double a[5] = { 0.0, 4.0, 1.0, 2.0, 1.0 };
-            const boost::shared_ptr< std::vector< double > > v =
-                boost::shared_ptr< std::vector< double > >(
+            const std::shared_ptr< std::vector< double > > v =
+                std::shared_ptr< std::vector< double > >(
                     new std::vector< double >( a, a + sizeof( a ) / sizeof( double ) ) );
             WValueSet< double >* valueSet = new WValueSet< double >( 0, 1, v, W_DT_DOUBLE );
 
@@ -200,8 +200,8 @@ class WValueSetHistogramTest : public CxxTest::TestSuite
         {
             // create some test data
             double a[5] = { 0.0, 4.0, 1.0, 2.0, 1.0 };
-            const boost::shared_ptr< std::vector< double > > v =
-                boost::shared_ptr< std::vector< double > >(
+            const std::shared_ptr< std::vector< double > > v =
+                std::shared_ptr< std::vector< double > >(
                     new std::vector< double >( a, a + sizeof( a ) / sizeof( double ) ) );
             WValueSet< double >* valueSet = new WValueSet< double >( 0, 1, v, W_DT_DOUBLE );
 
@@ -240,8 +240,8 @@ class WValueSetHistogramTest : public CxxTest::TestSuite
         {
             // create some test data
             double a[5] = { 0.0, 4.0, 1.0, 2.0, 1.0 };
-            const boost::shared_ptr< std::vector< double > > v =
-                boost::shared_ptr< std::vector< double > >(
+            const std::shared_ptr< std::vector< double > > v =
+                std::shared_ptr< std::vector< double > >(
                     new std::vector< double >( a, a + sizeof( a ) / sizeof( double ) ) );
             WValueSet< double >* valueSet = new WValueSet< double >( 0, 1, v, W_DT_DOUBLE );
 

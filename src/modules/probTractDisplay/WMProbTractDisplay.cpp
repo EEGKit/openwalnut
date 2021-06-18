@@ -45,9 +45,9 @@ WMProbTractDisplay::~WMProbTractDisplay()
 {
 }
 
-boost::shared_ptr< WModule > WMProbTractDisplay::factory() const
+std::shared_ptr< WModule > WMProbTractDisplay::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMProbTractDisplay() );
+    return std::shared_ptr< WModule >( new WMProbTractDisplay() );
 }
 
 const char** WMProbTractDisplay::getXPMIcon() const

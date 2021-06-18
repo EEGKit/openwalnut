@@ -49,7 +49,7 @@ WTriangleMesh::SPtr WMeshReaderFreesurfer::operator()( WProgressCombiner::SPtr /
     std::string fileName = file.string();
     WAssert( !fileName.empty(), "No filename specified." );
 
-    boost::shared_ptr< std::ifstream > ifs( new std::ifstream() );
+    std::shared_ptr< std::ifstream > ifs( new std::ifstream() );
     ifs->open( fileName.c_str(), std::ifstream::in | std::ifstream::binary );
     if( !ifs || ifs->bad() )
     {
@@ -73,7 +73,7 @@ WTriangleMesh::SPtr WMeshReaderFreesurfer::operator()( WProgressCombiner::SPtr /
     ifs->read( reinterpret_cast< char* >( tris ), 3 * sizeof( int ) * numTriangles );
     switchByteOrderOfArray( tris, numTriangles * 3 );
 
-    boost::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( numVertices, numTriangles ) );
+    std::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( numVertices, numTriangles ) );
 
     for( size_t i = 0; i < numVertices; ++i )
     {

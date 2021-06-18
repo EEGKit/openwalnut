@@ -49,8 +49,8 @@ void WProgressCombiner::update()
     // This updates the internal state. Here, all states from child progress' get combined.
 
     // get read lock
-    boost::shared_lock< boost::shared_mutex > rlock;
-    rlock = boost::shared_lock< boost::shared_mutex >( m_updateLock );
+    boost::shared_lock< std::shared_mutex > rlock;
+    rlock = boost::shared_lock< std::shared_mutex >( m_updateLock );
 
     m_pending = false;
     m_determined = true;
@@ -58,7 +58,7 @@ void WProgressCombiner::update()
     unsigned int numPendingChildren = 0;
 
     // as the children define this progress' state -> iterate children
-    for( std::set< boost::shared_ptr< WProgress > >::iterator i = m_children.begin(); i != m_children.end(); ++i )
+    for( std::set< std::shared_ptr< WProgress > >::iterator i = m_children.begin(); i != m_children.end(); ++i )
     {
         // enforce child to update
         ( *i )->update();
@@ -84,12 +84,12 @@ void WProgressCombiner::update()
 std::string WProgressCombiner::getCombinedNames( bool excludeFinished ) const
 {
     // read lock combiner
-    boost::shared_lock< boost::shared_mutex > rlock = boost::shared_lock< boost::shared_mutex >( m_updateLock );
+    boost::shared_lock< std::shared_mutex > rlock = boost::shared_lock< std::shared_mutex >( m_updateLock );
 
     std::stringstream ss;
     bool addComma = false; // when true, a "," is appended before printing the next name. This is needed as we do not know if an element is the
                            // last one if excludeFinished == true.
-    for( std::set< boost::shared_ptr< WProgress > >::const_iterator i = m_children.begin(); i != m_children.end(); ++i )
+    for( std::set< std::shared_ptr< WProgress > >::const_iterator i = m_children.begin(); i != m_children.end(); ++i )
     {
         if( !( !( *i )->isPending() && excludeFinished ) )
         {
@@ -110,17 +110,17 @@ std::string WProgressCombiner::getCombinedNames( bool excludeFinished ) const
     return ss.str();
 }
 
-void WProgressCombiner::addSubProgress( boost::shared_ptr< WProgress > progress )
+void WProgressCombiner::addSubProgress( std::shared_ptr< WProgress > progress )
 {
-    boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_updateLock );
+    std::unique_lock<std::shared_mutex> lock = std::unique_lock<std::shared_mutex>( m_updateLock );
     // add the progress to the children list
     m_children.insert( progress );
     lock.unlock();
 }
 
-void WProgressCombiner::removeSubProgress( boost::shared_ptr< WProgress > progress )
+void WProgressCombiner::removeSubProgress( std::shared_ptr< WProgress > progress )
 {
-    boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_updateLock );
+    std::unique_lock<std::shared_mutex> lock = std::unique_lock<std::shared_mutex>( m_updateLock );
     // add the progress to the children list
     m_children.erase( progress );
     lock.unlock();
@@ -129,10 +129,10 @@ void WProgressCombiner::removeSubProgress( boost::shared_ptr< WProgress > progre
 void WProgressCombiner::finish()
 {
     // combiner just propagate the finish request down to all children
-    boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_updateLock );
+    std::unique_lock<std::shared_mutex> lock = std::unique_lock<std::shared_mutex>( m_updateLock );
 
     // as the children define this progress' state -> iterate children
-    for( std::set< boost::shared_ptr< WProgress > >::iterator i = m_children.begin(); i != m_children.end(); ++i )
+    for( std::set< std::shared_ptr< WProgress > >::iterator i = m_children.begin(); i != m_children.end(); ++i )
     {
         // enforce child to update
         ( *i )->finish();

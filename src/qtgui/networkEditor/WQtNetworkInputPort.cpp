@@ -24,7 +24,7 @@
 
 #include "WQtNetworkInputPort.h"
 
-WQtNetworkInputPort::WQtNetworkInputPort( boost::shared_ptr<WModuleInputConnector> connector )
+WQtNetworkInputPort::WQtNetworkInputPort( std::shared_ptr<WModuleInputConnector> connector )
     : WQtNetworkPort()
 {
     setPortName( connector.get()->getName().c_str() );
@@ -64,7 +64,7 @@ int WQtNetworkInputPort::type() const
     return Type;
 }
 
-boost::shared_ptr<WModuleInputConnector> WQtNetworkInputPort::getConnector()
+std::shared_ptr<WModuleInputConnector> WQtNetworkInputPort::getConnector()
 {
     return m_connector;
 }

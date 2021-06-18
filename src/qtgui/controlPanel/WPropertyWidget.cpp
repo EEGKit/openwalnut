@@ -48,7 +48,7 @@
 
 #include "WQtPropertyGroupWidget.h"
 
-WPropertyWidget::WPropertyWidget(  boost::shared_ptr< WPropertyBase > property, QGridLayout* propertyGrid, QWidget* parent ):
+WPropertyWidget::WPropertyWidget(  std::shared_ptr< WPropertyBase > property, QGridLayout* propertyGrid, QWidget* parent ):
     QStackedWidget( parent ),
     m_property( property ),
     m_propertyGrid( propertyGrid ),
@@ -177,7 +177,7 @@ std::string WPropertyWidget::getTooltip() const
     return tip + m_property->getDescription();
 }
 
-boost::shared_ptr< WPropertyBase > WPropertyWidget::getProperty()
+std::shared_ptr< WPropertyBase > WPropertyWidget::getProperty()
 {
     return m_property;
 }

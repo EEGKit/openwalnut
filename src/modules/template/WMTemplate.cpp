@@ -90,7 +90,7 @@ WMTemplate::~WMTemplate()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMTemplate::factory() const
+std::shared_ptr< WModule > WMTemplate::factory() const
 {
     // To properly understand what this is, we need to have a look at how module instances get created. At first, if you are not familiar with the
     // design patterns "Prototype", "Abstract Factory" and "Factory Method" you should probably read about them first. For short: while the kernel
@@ -119,7 +119,7 @@ boost::shared_ptr< WModule > WMTemplate::factory() const
     //
     // So you always have to write this method and always return a valid pointer to an object of your module class.
     // Never initialize something else in here!
-    return boost::shared_ptr< WModule >( new WMTemplate() );
+    return std::shared_ptr< WModule >( new WMTemplate() );
 }
 
 const char** WMTemplate::getXPMIcon() const
@@ -185,7 +185,7 @@ void WMTemplate::properties()
     // To create and add a new property, every module has a member m_properties. It is a set of properties this module provides to the outer
     // world. As with connectors, a property which not has been added to m_properties is not visible for others. Now, how to add a new property?
 
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
     m_aTrigger         = m_properties->addProperty( "Do it now!",               "Trigger Button Text.", WPVBaseTypes::PV_TRIGGER_READY,
                                                     m_propCondition );
 
@@ -217,7 +217,7 @@ void WMTemplate::properties()
     // All these above properties are not that usable for selections. Assume the following situation. Your module allows two different kinds of
     // algorithms to run on some data and you want the user to select which one should do the work. This might be done with integer properties but it
     // is simply ugly. Therefore, properties of type WPropSelection are available. First you need to define a list of alternatives:
-    m_possibleSelections = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_possibleSelections = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_possibleSelections->addItem( "Beer", "Cold and fresh.", template_bier_xpm );          // NOTE: you can add XPM images here.
     m_possibleSelections->addItem( "Steaks", "Medium please.",  template_steak_xpm );
     m_possibleSelections->addItem( "Sausages", "With Sauerkraut.", template_wurst_xpm );
@@ -323,7 +323,7 @@ void WMTemplate::properties()
 
     // The most amazing feature is: custom constraints. Similar to OSG update callbacks, you just need to write your own PropertyConstraint class
     // to define the allowed values for your constraint. Take a look at the StringLength class in this module's code on how to do it.
-    m_aString->addConstraint( boost::shared_ptr< StringLength >( new StringLength ) );
+    m_aString->addConstraint( std::shared_ptr< StringLength >( new StringLength ) );
     WPropertyHelper::PC_NOTEMPTY::addTo( m_aString );
 
     // One last thing to mention is the active property. This property is available in all modules and represents the activation state of the
@@ -497,7 +497,7 @@ void WMTemplate::moduleMain()
         bool dataUpdated = m_input->updated();
 
         // Remember the above criteria. We now need to check if the data is valid. After a connect-update, it might be NULL.
-        boost::shared_ptr< WDataSetSingle > dataSet = m_input->getData();
+        std::shared_ptr< WDataSetSingle > dataSet = m_input->getData();
         bool dataValid = ( dataSet != NULL );
         // After calling getData(), the update flag is reset and false again. Please keep in mind, that the module lives in an multi-threaded
         // world where the update flag and data can change at any time. DO NEVER use getData directly in several places of your module as the
@@ -619,14 +619,14 @@ void WMTemplate::moduleMain()
             debugLog() << "Data changed. Recalculating output.";
 
             // Calculate your new data here. This example just forwards the input to the output ;-).
-            boost::shared_ptr< WDataSetSingle > newData = dataSet;
+            std::shared_ptr< WDataSetSingle > newData = dataSet;
 
             // Doing a lot of work without notifying the user visually is not a good idea. So how is it possible to report progress? Therefore,
             // the WModule class provides a member m_progress which is of type WPropgressCombiner. You can create own progress objects and count
             // them individually. The m_progress combiner provides this information to the GUI and the user.
             // Here is a simple example:
             int steps = 10;
-            boost::shared_ptr< WProgress > progress1( new WProgress( "Doing work 1", steps ) );
+            std::shared_ptr< WProgress > progress1( new WProgress( "Doing work 1", steps ) );
             m_progress->addSubProgress( progress1 );
             for( int i = 0; i < steps; ++i )
             {
@@ -641,7 +641,7 @@ void WMTemplate::moduleMain()
             // Sometimes, the number of steps is not known. WProgress can also handle this. Simply leave away the last parameter (the number of
             // steps. As with the other progress, you need to add it to the modules progress combiner and you need to mark it as finished with
             // finish() if you are done with your work.
-            boost::shared_ptr< WProgress > progress2( new WProgress( "Doing work 2" ) );
+            std::shared_ptr< WProgress > progress2( new WProgress( "Doing work 2" ) );
             m_progress->addSubProgress( progress2 );
             sleep( 2 );
             progress2->finish();
@@ -676,7 +676,7 @@ void WMTemplate::moduleMain()
 
             // Do something here. As above, do not forget to inform the user about your progress.
             int steps = 10;
-            boost::shared_ptr< WProgress > progress1( new WProgress( "Doing something important", steps ) );
+            std::shared_ptr< WProgress > progress1( new WProgress( "Doing something important", steps ) );
             m_progress->addSubProgress( progress1 );
             for( int i = 0; i < steps; ++i )
             {
@@ -805,7 +805,7 @@ void WMTemplate::TranslateCallback::operator()( osg::Node* node, osg::NodeVisito
     traverse( node, nv );
 }
 
-bool WMTemplate::StringLength::accept( boost::shared_ptr< WPropertyVariable< WPVBaseTypes::PV_STRING > > /* property */,
+bool WMTemplate::StringLength::accept( std::shared_ptr< WPropertyVariable< WPVBaseTypes::PV_STRING > > /* property */,
                                        const WPVBaseTypes::PV_STRING& value )
 {
     // This method gets called every time the m_aString property is going to be changed. It can decide whether the new value is valid or not. If
@@ -817,11 +817,11 @@ bool WMTemplate::StringLength::accept( boost::shared_ptr< WPropertyVariable< WPV
     return ( value.length() <= 10 ) && ( value.length() >= 5 );
 }
 
-boost::shared_ptr< WPropertyVariable< WPVBaseTypes::PV_STRING >::PropertyConstraint > WMTemplate::StringLength::clone()
+std::shared_ptr< WPropertyVariable< WPVBaseTypes::PV_STRING >::PropertyConstraint > WMTemplate::StringLength::clone()
 {
     // If you write your own constraints, you NEED to provide a clone function. It creates a new copied instance of the constraints with the
     // correct runtime type.
-    return boost::shared_ptr< WPropertyVariable< WPVBaseTypes::PV_STRING >::PropertyConstraint >( new WMTemplate::StringLength( *this ) );
+    return std::shared_ptr< WPropertyVariable< WPVBaseTypes::PV_STRING >::PropertyConstraint >( new WMTemplate::StringLength( *this ) );
 }
 
 void WMTemplate::activate()

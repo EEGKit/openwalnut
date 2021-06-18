@@ -50,9 +50,9 @@ public:
      * \param newGradients the Gradients of the
      * \param diffusionBValue Strength of the gradient
      */
-    WDataSetRawHARDI( boost::shared_ptr< WValueSetBase > newValueSet,
-                      boost::shared_ptr< WGrid > newGrid,
-                      boost::shared_ptr< std::vector< WVector3d > > newGradients,
+    WDataSetRawHARDI( std::shared_ptr< WValueSetBase > newValueSet,
+                      std::shared_ptr< WGrid > newGrid,
+                      std::shared_ptr< std::vector< WVector3d > > newGradients,
                       double diffusionBValue = 1.0 );
 
     /**
@@ -66,10 +66,10 @@ public:
      * \param newGradients the Gradients of the
      * \param diffusionBValues Strength of the gradient for every gradient
      */
-    WDataSetRawHARDI( boost::shared_ptr< WValueSetBase > newValueSet,
-                      boost::shared_ptr< WGrid > newGrid,
-                      boost::shared_ptr< std::vector< WVector3d > > newGradients,
-                      boost::shared_ptr< std::vector< float > > diffusionBValues );
+    WDataSetRawHARDI( std::shared_ptr< WValueSetBase > newValueSet,
+                      std::shared_ptr< WGrid > newGrid,
+                      std::shared_ptr< std::vector< WVector3d > > newGradients,
+                      std::shared_ptr< std::vector< float > > diffusionBValues );
 
     /**
      * Construct an empty and unusable instance. This is needed for the prototype mechanism.
@@ -90,7 +90,7 @@ public:
       *
       * \return the clone
       */
-     virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WValueSetBase > newValueSet, boost::shared_ptr< WGrid > newGrid ) const;
+     virtual WDataSetSingle::SPtr clone( std::shared_ptr< WValueSetBase > newValueSet, std::shared_ptr< WGrid > newGrid ) const;
 
 
     /**
@@ -101,7 +101,7 @@ public:
      *
      * \return the clone
      */
-    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WValueSetBase > newValueSet ) const;
+    virtual WDataSetSingle::SPtr clone( std::shared_ptr< WValueSetBase > newValueSet ) const;
 
     /**
      * Creates a copy (clone) of this instance but allows one to change the grid. Unlike copy construction, this is a very useful function if you
@@ -111,7 +111,7 @@ public:
      *
      * \return the clone
      */
-    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WGrid > newGrid ) const;
+    virtual WDataSetSingle::SPtr clone( std::shared_ptr< WGrid > newGrid ) const;
 
     /**
      * Creates a copy (clone) of this instance. Unlike copy construction, this is a very useful function if you
@@ -126,7 +126,7 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
     /**
      * Returns the gradient for the index.
@@ -163,7 +163,7 @@ public:
      *
      * \return A vector of orientations.
      */
-    boost::shared_ptr< std::vector< WVector3d > > getOrientations() const;
+    std::shared_ptr< std::vector< WVector3d > > getOrientations() const;
 
     /**
      * Get the indexes of zero gradients.
@@ -200,13 +200,13 @@ public:
      *
      * \return a vector of b-values
      */
-    boost::shared_ptr< std::vector< float > > getDiffusionBValues() const;
+    std::shared_ptr< std::vector< float > > getDiffusionBValues() const;
 
 protected:
     /**
      * The prototype as singleton.
      */
-    static boost::shared_ptr< WPrototyped > m_prototype;
+    static std::shared_ptr< WPrototyped > m_prototype;
 
 private:
     /**
@@ -216,21 +216,21 @@ private:
      * \param newGrid The grid
      * \param newGradients The gradients
      */
-    void init( boost::shared_ptr< WValueSetBase > newValueSet,
-               boost::shared_ptr< WGrid > newGrid,
-               boost::shared_ptr< std::vector< WVector3d > > newGradients );
+    void init( std::shared_ptr< WValueSetBase > newValueSet,
+               std::shared_ptr< WGrid > newGrid,
+               std::shared_ptr< std::vector< WVector3d > > newGradients );
     /**
      * Build indexes for the zero and non-zero gradients.
      */
     void buildGradientIndexes();
 
-    boost::shared_ptr< std::vector< WVector3d > > m_gradients; //!< Gradients of measurements
+    std::shared_ptr< std::vector< WVector3d > > m_gradients; //!< Gradients of measurements
 
     /**
      * Strength (b-value) of the so-called magnetic diffusion gradient. The vector contains only
      * one value, incase all gradients (except b0 images) share the same b-value.
      */
-    boost::shared_ptr< std::vector< float > > m_diffusionBValues;
+    std::shared_ptr< std::vector< float > > m_diffusionBValues;
 
     /**
      * The indexes for the which gradient is zero.
@@ -257,7 +257,7 @@ template< typename T > WValue< T > WDataSetRawHARDI::getNonZeroGradientSignals( 
 {
     WValue< T > result( m_nonZeroGradientIndexes.size() );
     size_t idx = 0;
-    boost::shared_ptr< WValueSet< T > > vs = boost::dynamic_pointer_cast< WValueSet< T > >( m_valueSet );
+    std::shared_ptr< WValueSet< T > > vs = std::dynamic_pointer_cast< WValueSet< T > >( m_valueSet );
     WValue< T > signal( vs->getWValue( index ) );
     for( std::vector< size_t >::const_iterator cit = m_nonZeroGradientIndexes.begin(); cit != m_nonZeroGradientIndexes.end(); ++cit )
     {

@@ -39,12 +39,12 @@ public:
     /**
      * Shared pointer abbreviation.
      */
-    typedef boost::shared_ptr< WSinglePosition > SPtr;
+    typedef std::shared_ptr< WSinglePosition > SPtr;
 
     /**
      * Const shared pointer abbreviation.
      */
-    typedef boost::shared_ptr< const WSinglePosition > ConstSPtr;
+    typedef std::shared_ptr< const WSinglePosition > ConstSPtr;
 
     /**
      * Copies the specified \ref WPosition instance.
@@ -83,13 +83,13 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
 protected:
     /**
      * Prototype for this dataset
      */
-    static boost::shared_ptr< WPrototyped > m_prototype;
+    static std::shared_ptr< WPrototyped > m_prototype;
 };
 
 inline const std::string WSinglePosition::getName() const

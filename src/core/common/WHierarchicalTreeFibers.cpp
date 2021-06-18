@@ -82,13 +82,13 @@ void WHierarchicalTreeFibers::addCluster( size_t cluster1, size_t cluster2, size
     ++m_clusterCount;
 }
 
-boost::shared_ptr< std::vector<bool> > WHierarchicalTreeFibers::getOutputBitfield( size_t cluster )
+std::shared_ptr< std::vector<bool> > WHierarchicalTreeFibers::getOutputBitfield( size_t cluster )
 {
-    boost::shared_ptr< std::vector< bool > > bf;
+    std::shared_ptr< std::vector< bool > > bf;
     // only a single fiber selected
     if( cluster < m_leafCount )
     {
-        bf = boost::shared_ptr< std::vector< bool > >( new std::vector< bool >( m_leafCount, false ) );
+        bf = std::shared_ptr< std::vector< bool > >( new std::vector< bool >( m_leafCount, false ) );
         ( *bf )[cluster] = true;
     }
     else
@@ -98,7 +98,7 @@ boost::shared_ptr< std::vector<bool> > WHierarchicalTreeFibers::getOutputBitfiel
             return bf;
         }
 
-        bf = boost::shared_ptr< std::vector< bool > >( new std::vector< bool >( m_leafCount, false ) );
+        bf = std::shared_ptr< std::vector< bool > >( new std::vector< bool >( m_leafCount, false ) );
 
         std::vector<size_t> fibers = m_containsLeafes[cluster];
         for( size_t i = 0; i < fibers.size(); ++i )
@@ -111,12 +111,12 @@ boost::shared_ptr< std::vector<bool> > WHierarchicalTreeFibers::getOutputBitfiel
     return bf;
 }
 
-boost::shared_ptr< std::vector<bool> >WHierarchicalTreeFibers::getOutputBitfield( std::vector<size_t>clusters )
+std::shared_ptr< std::vector<bool> >WHierarchicalTreeFibers::getOutputBitfield( std::vector<size_t>clusters )
 {
-    boost::shared_ptr< std::vector< bool > > bf;
+    std::shared_ptr< std::vector< bool > > bf;
     // only a single fiber selected
 
-    bf = boost::shared_ptr< std::vector< bool > >( new std::vector< bool >( m_leafCount, false ) );
+    bf = std::shared_ptr< std::vector< bool > >( new std::vector< bool >( m_leafCount, false ) );
 
     for( size_t k = 0; k < clusters.size(); ++k )
     {

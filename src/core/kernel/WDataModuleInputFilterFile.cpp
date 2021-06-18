@@ -44,7 +44,7 @@ WDataModuleInputFilterFile::~WDataModuleInputFilterFile()
 
 bool WDataModuleInputFilterFile::matches( WDataModuleInput::ConstSPtr input ) const
 {
-    WDataModuleInputFile::ConstSPtr file = boost::dynamic_pointer_cast< const WDataModuleInputFile >( input );
+    WDataModuleInputFile::ConstSPtr file = std::dynamic_pointer_cast< const WDataModuleInputFile >( input );
     if( file )
     {
         return boost::algorithm::ends_with( file->getFilename().string(), m_extension );

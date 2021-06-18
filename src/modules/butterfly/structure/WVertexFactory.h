@@ -46,7 +46,7 @@ namespace butterfly
          * Creates a vertex factory object and assigns the triangle mesh that should be analyzed in future.#
          * \param triangleMesh Associated triangle mesh that should be analyzed.
          */
-        explicit WVertexFactory( boost::shared_ptr< WTriangleMesh > triangleMesh );
+        explicit WVertexFactory( std::shared_ptr< WTriangleMesh > triangleMesh );
         /**
          * Creates a vertex factory object.
          */
@@ -61,7 +61,7 @@ namespace butterfly
          * \author schwarzkopf
          * \param triangleMesh Triangle mesh to be registered.
          */
-        void setTriangleMesh( boost::shared_ptr< WTriangleMesh > triangleMesh );
+        void setTriangleMesh( std::shared_ptr< WTriangleMesh > triangleMesh );
 
         /**
          * Resizes the Vertex property list to the wished size.
@@ -163,7 +163,7 @@ namespace butterfly
          * \param progress Progress which is actualized during the calculation.
          */
         void examineStencilRange( size_t fromVertex, size_t toVertex,
-                boost::shared_ptr< WProgress > progress );
+                std::shared_ptr< WProgress > progress );
 
         /**
          * Calculate distance between two vertices.
@@ -196,7 +196,7 @@ namespace butterfly
         /**
          * Assigned Triangle mesh. It's necessary for the proper examination.
          */
-        boost::shared_ptr< WTriangleMesh > m_triangleMesh;
+        std::shared_ptr< WTriangleMesh > m_triangleMesh;
 
         /**
          * Vertex count of the property list.

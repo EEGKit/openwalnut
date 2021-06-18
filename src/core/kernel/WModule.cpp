@@ -69,13 +69,13 @@ WModule::WModule():
     m_isRunning( new WCondition(), false ),
     m_isLoadFinished( new WConditionOneShot(), false ),
     m_restoreMode( false ),
-    m_readyProgress( boost::shared_ptr< WProgress >( new WProgress( "Initializing Module" ) ) ),
+    m_readyProgress( std::shared_ptr< WProgress >( new WProgress( "Initializing Module" ) ) ),
     m_moduleState(),
     m_localPath( WPathHelper::getSharePath() )
 {
     // initialize members
-    m_properties = boost::shared_ptr< WProperties >( new WProperties( "Properties", "Module's properties" ) );
-    m_infoProperties = boost::shared_ptr< WProperties >( new WProperties( "Informational Properties", "Module's information properties" ) );
+    m_properties = std::shared_ptr< WProperties >( new WProperties( "Properties", "Module's properties" ) );
+    m_infoProperties = std::shared_ptr< WProperties >( new WProperties( "Informational Properties", "Module's information properties" ) );
     m_infoProperties->setPurpose( PV_PURPOSE_INFORMATION );
 
     m_runtimeName = m_properties->addProperty( "Name", "The name of the module defined by the user. This is, by default, the module name but "
@@ -91,8 +91,8 @@ WModule::WModule():
     cs->add( m_isReady.getCondition() );
     cs->add( m_isCrashed.getCondition() );
 
-    m_container = boost::shared_ptr< WModuleContainer >();
-    m_progress = boost::shared_ptr< WProgressCombiner >( new WProgressCombiner() );
+    m_container = std::shared_ptr< WModuleContainer >();
+    m_progress = std::shared_ptr< WProgressCombiner >( new WProgressCombiner() );
 
     // add a progress indicator which finishes on "ready()"
     m_progress->addSubProgress( m_readyProgress );
@@ -106,14 +106,14 @@ WModule::~WModule()
     // cleanup
 }
 
-void WModule::addConnector( boost::shared_ptr< WModuleInputConnector > con )
+void WModule::addConnector( std::shared_ptr< WModuleInputConnector > con )
 {
     size_t c = std::count_if( m_inputConnectors.begin(), m_inputConnectors.end(),
-                              WPredicateHelper::Name< boost::shared_ptr< WModuleInputConnector > >( con->getName() )
+                              WPredicateHelper::Name< std::shared_ptr< WModuleInputConnector > >( con->getName() )
     );
     // well ... we want it to be unique in both:
     c += std::count_if( m_outputConnectors.begin(), m_outputConnectors.end(),
-                        WPredicateHelper::Name< boost::shared_ptr< WModuleOutputConnector > >( con->getName() )
+                        WPredicateHelper::Name< std::shared_ptr< WModuleOutputConnector > >( con->getName() )
     );
 
     // if there already is one ... exception
@@ -125,14 +125,14 @@ void WModule::addConnector( boost::shared_ptr< WModuleInputConnector > con )
     m_inputConnectors.push_back( con );
 }
 
-void WModule::addConnector( boost::shared_ptr< WModuleOutputConnector > con )
+void WModule::addConnector( std::shared_ptr< WModuleOutputConnector > con )
 {
     size_t c = std::count_if( m_inputConnectors.begin(), m_inputConnectors.end(),
-                              WPredicateHelper::Name< boost::shared_ptr< WModuleInputConnector > >( con->getName() )
+                              WPredicateHelper::Name< std::shared_ptr< WModuleInputConnector > >( con->getName() )
     );
     // well ... we want it to be unique in both:
     c += std::count_if( m_outputConnectors.begin(), m_outputConnectors.end(),
-                        WPredicateHelper::Name< boost::shared_ptr< WModuleOutputConnector > >( con->getName() )
+                        WPredicateHelper::Name< std::shared_ptr< WModuleOutputConnector > >( con->getName() )
     );
 
     // if there already is one ... exception
@@ -266,17 +266,17 @@ void WModule::cleanup()
     removeConnectors();
 }
 
-boost::shared_ptr< WModuleContainer > WModule::getAssociatedContainer() const
+std::shared_ptr< WModuleContainer > WModule::getAssociatedContainer() const
 {
     return m_container;
 }
 
-void WModule::setAssociatedContainer( boost::shared_ptr< WModuleContainer > container )
+void WModule::setAssociatedContainer( std::shared_ptr< WModuleContainer > container )
 {
     m_container = container;
 
     // true if the pointer is set
-    m_isAssociated( m_container != boost::shared_ptr< WModuleContainer >() );
+    m_isAssociated( m_container != std::shared_ptr< WModuleContainer >() );
     m_isUsable( m_initialized() && m_isAssociated() );
 }
 
@@ -295,7 +295,7 @@ const WModule::OutputConnectorList& WModule::getOutputConnectors() const
     return m_outputConnectors;
 }
 
-boost::shared_ptr< WModuleInputConnector > WModule::findInputConnector( std::string name )
+std::shared_ptr< WModuleInputConnector > WModule::findInputConnector( std::string name )
 {
     // simply search
     for( InputConnectorList::const_iterator listIter = m_inputConnectors.begin();
@@ -308,12 +308,12 @@ boost::shared_ptr< WModuleInputConnector > WModule::findInputConnector( std::str
         }
     }
 
-    return boost::shared_ptr< WModuleInputConnector >();
+    return std::shared_ptr< WModuleInputConnector >();
 }
 
-boost::shared_ptr< WModuleInputConnector > WModule::getInputConnector( std::string name )
+std::shared_ptr< WModuleInputConnector > WModule::getInputConnector( std::string name )
 {
-    boost::shared_ptr< WModuleInputConnector > p = findInputConnector( name );
+    std::shared_ptr< WModuleInputConnector > p = findInputConnector( name );
 
     if( !p )
     {
@@ -324,7 +324,7 @@ boost::shared_ptr< WModuleInputConnector > WModule::getInputConnector( std::stri
     return p;
 }
 
-boost::shared_ptr< WModuleOutputConnector > WModule::findOutputConnector( std::string name )
+std::shared_ptr< WModuleOutputConnector > WModule::findOutputConnector( std::string name )
 {
     // simply search
     for( OutputConnectorList::const_iterator listIter = m_outputConnectors.begin();
@@ -337,12 +337,12 @@ boost::shared_ptr< WModuleOutputConnector > WModule::findOutputConnector( std::s
         }
     }
 
-    return boost::shared_ptr< WModuleOutputConnector >();
+    return std::shared_ptr< WModuleOutputConnector >();
 }
 
-boost::shared_ptr< WModuleOutputConnector > WModule::getOutputConnector( std::string name )
+std::shared_ptr< WModuleOutputConnector > WModule::getOutputConnector( std::string name )
 {
-    boost::shared_ptr< WModuleOutputConnector > p = findOutputConnector( name );
+    std::shared_ptr< WModuleOutputConnector > p = findOutputConnector( name );
 
     if( !p )
     {
@@ -354,10 +354,10 @@ boost::shared_ptr< WModuleOutputConnector > WModule::getOutputConnector( std::st
     return p;
 }
 
-boost::shared_ptr< WModuleConnector > WModule::findConnector( std::string name )
+std::shared_ptr< WModuleConnector > WModule::findConnector( std::string name )
 {
     // simply search both
-    boost::shared_ptr< WModuleConnector > p = findInputConnector( name );
+    std::shared_ptr< WModuleConnector > p = findInputConnector( name );
     if( p ) // found?
     {
         return p;
@@ -367,9 +367,9 @@ boost::shared_ptr< WModuleConnector > WModule::findConnector( std::string name )
     return findOutputConnector( name );
 }
 
-boost::shared_ptr< WModuleConnector > WModule::getConnector( std::string name )
+std::shared_ptr< WModuleConnector > WModule::getConnector( std::string name )
 {
-    boost::shared_ptr< WModuleConnector > p = findConnector( name );
+    std::shared_ptr< WModuleConnector > p = findConnector( name );
 
     if( !p )
     {
@@ -458,35 +458,35 @@ const WBoolFlag& WModule::isRunning() const
     return m_isRunning;
 }
 
-void WModule::notifyConnectionEstablished( boost::shared_ptr< WModuleConnector > /*here*/,
-                                           boost::shared_ptr< WModuleConnector > /*there*/ )
+void WModule::notifyConnectionEstablished( std::shared_ptr< WModuleConnector > /*here*/,
+                                           std::shared_ptr< WModuleConnector > /*there*/ )
 {
     // By default this callback does nothing. Overwrite it in your module.
 }
 
-void WModule::notifyConnectionClosed( boost::shared_ptr< WModuleConnector > /*here*/,
-                                      boost::shared_ptr< WModuleConnector > /*there*/ )
+void WModule::notifyConnectionClosed( std::shared_ptr< WModuleConnector > /*here*/,
+                                      std::shared_ptr< WModuleConnector > /*there*/ )
 {
     // By default this callback does nothing. Overwrite it in your module.
 }
 
-void WModule::notifyDataChange( boost::shared_ptr< WModuleConnector > /*input*/,
-                                boost::shared_ptr< WModuleConnector > /*output*/ )
+void WModule::notifyDataChange( std::shared_ptr< WModuleConnector > /*input*/,
+                                std::shared_ptr< WModuleConnector > /*output*/ )
 {
     // By default this callback does nothing. Overwrite it in your module.
 }
 
-boost::shared_ptr< WProperties > WModule::getProperties() const
+std::shared_ptr< WProperties > WModule::getProperties() const
 {
     return m_properties;
 }
 
-boost::shared_ptr< WProperties > WModule::getInformationProperties() const
+std::shared_ptr< WProperties > WModule::getInformationProperties() const
 {
     return m_infoProperties;
 }
 
-boost::shared_ptr< WProgressCombiner > WModule::getRootProgressCombiner()
+std::shared_ptr< WProgressCombiner > WModule::getRootProgressCombiner()
 {
     return m_progress;
 }

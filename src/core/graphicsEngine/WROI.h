@@ -26,6 +26,7 @@
 #define WROI_H
 
 #include <list>
+#include <shared_mutex>
 #include <string>
 
 #include <boost/signals2/signal.hpp>
@@ -108,21 +109,21 @@ public:
      * Getter
      * \return the properties object for this roi
      */
-    boost::shared_ptr< WProperties > getProperties();
+    std::shared_ptr< WProperties > getProperties();
 
     /**
      * Add a specified notifier to the list of default notifiers which get connected to each roi.
      *
      * \param notifier  the notifier function
      */
-    void addROIChangeNotifier( boost::shared_ptr< boost::function< void() > > notifier );
+    void addROIChangeNotifier( std::shared_ptr< boost::function< void() > > notifier );
 
     /**
      * Remove a specified notifier from the list of default notifiers which get connected to each roi.
      *
      * \param notifier  the notifier function
      */
-    void removeROIChangeNotifier( boost::shared_ptr< boost::function< void() > > notifier );
+    void removeROIChangeNotifier( std::shared_ptr< boost::function< void() > > notifier );
 
     /**
      * Invert property.
@@ -173,7 +174,7 @@ protected:
     /**
      * the property object for the module
      */
-    boost::shared_ptr< WProperties > m_properties;
+    std::shared_ptr< WProperties > m_properties;
 
     /**
      * dirty flag, indicating the graphics needs updating, it is no longer used for bitfield updating
@@ -214,13 +215,13 @@ protected:
     /**
      * The notifiers connected to added rois by default.
      */
-    std::list< boost::shared_ptr< boost::function< void() > > > m_changeNotifiers;
+    std::list< std::shared_ptr< boost::function< void() > > > m_changeNotifiers;
 
 
     /**
      * Lock for associated notifiers set.
      */
-    boost::shared_mutex m_associatedNotifiersLock;
+    std::shared_mutex m_associatedNotifiersLock;
 
 private:
     /**

@@ -91,7 +91,7 @@ public:
      * \param length length of the sample range
      * \return matrix of values
      */
-    virtual boost::shared_ptr< WEEGValueMatrix > getValues( std::size_t segmentID, std::size_t start, std::size_t length ) const = 0;
+    virtual std::shared_ptr< WEEGValueMatrix > getValues( std::size_t segmentID, std::size_t start, std::size_t length ) const = 0;
 
     /**
      * Get the sampling rate used by the recording.

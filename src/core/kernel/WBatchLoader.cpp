@@ -32,9 +32,9 @@
 
 #include "WBatchLoader.h"
 
-WBatchLoader::WBatchLoader( std::vector< std::string > filenames, boost::shared_ptr< WModuleContainer > targetContainer ):
+WBatchLoader::WBatchLoader( std::vector< std::string > filenames, std::shared_ptr< WModuleContainer > targetContainer ):
     WThreadedRunner(),
-    boost::enable_shared_from_this< WBatchLoader >(),
+    std::enable_shared_from_this< WBatchLoader >(),
     m_filenamesToLoad( filenames ),
     m_targetContainer( targetContainer ),
     m_suppressColormaps( false )
@@ -75,10 +75,10 @@ void WBatchLoader::threadMain()
             continue;
         }
 
-        boost::shared_ptr< WModule > mod = WModuleFactory::getModuleFactory()->create(
+        std::shared_ptr< WModule > mod = WModuleFactory::getModuleFactory()->create(
             dataModules[0]
         );
-        WDataModule::SPtr dmod = boost::static_pointer_cast< WDataModule >( mod );
+        WDataModule::SPtr dmod = std::static_pointer_cast< WDataModule >( mod );
 
         // set the input
         dmod->setSuppressColormaps( m_suppressColormaps );

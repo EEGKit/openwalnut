@@ -26,6 +26,7 @@
 #define WROIMANAGER_H
 
 #include <list>
+#include <shared_mutex>
 #include <vector>
 
 #include <boost/enable_shared_from_this.hpp>
@@ -35,7 +36,7 @@
 /**
  * Class to store and manage different ROI's for fiber selection
  */
-class  WROIManager: public boost::enable_shared_from_this< WROIManager >
+class  WROIManager: public std::enable_shared_from_this< WROIManager >
 {
 public:
     /**
@@ -53,7 +54,7 @@ public:
      *
      * \return the new branch.
      */
-    boost::shared_ptr< WRMBranch > addBranch();
+    std::shared_ptr< WRMBranch > addBranch();
 
     /**
      * Adds a new master ROI
@@ -76,7 +77,7 @@ public:
      * \param newRoi the new ROI to add
      * \param toBranch the branch to add the ROI to.
      */
-    void addRoi( osg::ref_ptr< WROI > newRoi, boost::shared_ptr< WRMBranch > toBranch );
+    void addRoi( osg::ref_ptr< WROI > newRoi, std::shared_ptr< WRMBranch > toBranch );
 
     /**
      * removes a roi
@@ -98,7 +99,7 @@ public:
      * \param roi
      * \return branch
      */
-    boost::shared_ptr< WRMBranch> getBranch( osg::ref_ptr< WROI > roi );
+    std::shared_ptr< WRMBranch> getBranch( osg::ref_ptr< WROI > roi );
 
     /**
      * sets the dirty flag which will cause recalculation of the bit field
@@ -119,14 +120,14 @@ public:
      *
      * \param notifier  the notifier function
      */
-    void addAddNotifier( boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > notifier );
+    void addAddNotifier( std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > notifier );
 
     /**
      * Remove a specified notifier from the list of default notifiers which get connected to each added roi.
      *
      * \param notifier  the notifier function
      */
-    void removeAddNotifier( boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > notifier );
+    void removeAddNotifier( std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > notifier );
 
 
     /**
@@ -134,28 +135,28 @@ public:
      *
      * \param notifier  the notifier function
      */
-    void addRemoveNotifier( boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > notifier );
+    void addRemoveNotifier( std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > notifier );
 
     /**
      * Remove a specified notifier from the list of default notifiers which get connected to each removed roi.
      *
      * \param notifier  the notifier function
      */
-    void removeRemoveNotifier( boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > notifier );
+    void removeRemoveNotifier( std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > notifier );
 
     /**
      * Add a specified notifier to the list of default notifiers which get connected to each removed branch.
      *
      * \param notifier  the notifier function
      */
-    void addRemoveBranchNotifier( boost::shared_ptr< boost::function< void( boost::shared_ptr< WRMBranch > ) > > notifier );
+    void addRemoveBranchNotifier( std::shared_ptr< boost::function< void( std::shared_ptr< WRMBranch > ) > > notifier );
 
     /**
      * Remove a specified notifier from the list of default notifiers which get connected to each removed branch.
      *
      * \param notifier  the notifier function
      */
-    void removeRemoveBranchNotifier(  boost::shared_ptr< boost::function< void( boost::shared_ptr< WRMBranch > ) > > notifier );
+    void removeRemoveBranchNotifier(  std::shared_ptr< boost::function< void( std::shared_ptr< WRMBranch > ) > > notifier );
     /// @endcond
 
     /**
@@ -175,7 +176,7 @@ public:
      * getter for the properties object
      * \return the properties object
      */
-    boost::shared_ptr< WProperties > getProperties();
+    std::shared_ptr< WProperties > getProperties();
 
     /**
      * ROI list
@@ -191,7 +192,7 @@ public:
     /**
      * Branches list
      */
-    typedef std::vector< boost::shared_ptr< WRMBranch > > Branches;
+    typedef std::vector< std::shared_ptr< WRMBranch > > Branches;
 
     /**
      * Get a copy of the current branch list. Please note that after getting the list, it might already have been changed by another thread.
@@ -202,27 +203,27 @@ public:
 
 protected:
 private:
-    std::list< boost::shared_ptr< WRMBranch > > m_branches; //!< list of branches in the logical tree structure
+    std::list< std::shared_ptr< WRMBranch > > m_branches; //!< list of branches in the logical tree structure
 
     /**
      * Lock for associated notifiers set.
      */
-    boost::shared_mutex m_associatedNotifiersLock;
+    std::shared_mutex m_associatedNotifiersLock;
 
     /**
      * The notifiers connected to added rois by default.
      */
-    std::list<  boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > > m_addNotifiers;
+    std::list<  std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > > m_addNotifiers;
 
     /**
      * The notifiers connected to removed rois by default.
      */
-    std::list<  boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > > m_removeNotifiers;
+    std::list<  std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > > m_removeNotifiers;
 
     /**
      * The notifiers connected to removed rois by default.
      */
-    std::list<  boost::shared_ptr< boost::function< void( boost::shared_ptr< WRMBranch > ) > > > m_removeBranchNotifiers;
+    std::list<  std::shared_ptr< boost::function< void( std::shared_ptr< WRMBranch > ) > > > m_removeBranchNotifiers;
 
 
     osg::ref_ptr< WROI > m_selectedRoi; //!< stores a pointer to the currently selected roi
@@ -230,7 +231,7 @@ private:
     /**
      * The property object for the module.
      */
-    boost::shared_ptr< WProperties > m_properties;
+    std::shared_ptr< WProperties > m_properties;
 
     /**
      * dirty flag
@@ -248,7 +249,7 @@ inline bool WROIManager::dirty( bool reset )
     return ret;
 }
 
-inline boost::shared_ptr< WProperties > WROIManager::getProperties()
+inline std::shared_ptr< WProperties > WROIManager::getProperties()
 {
     return m_properties;
 }

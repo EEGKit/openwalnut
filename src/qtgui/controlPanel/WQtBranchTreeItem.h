@@ -49,7 +49,7 @@ public:
      * \param parent
      * \param branch
      */
-    explicit WQtBranchTreeItem( QTreeWidgetItem * parent, boost::shared_ptr< WRMBranch > branch );
+    explicit WQtBranchTreeItem( QTreeWidgetItem * parent, std::shared_ptr< WRMBranch > branch );
 
     /**
      * destructor
@@ -68,7 +68,7 @@ public:
      * getter
      * \return the branch representation object
      */
-    boost::shared_ptr< WRMBranch > getBranch();
+    std::shared_ptr< WRMBranch > getBranch();
 
     /**
      * Create a representation widget for this item.
@@ -83,7 +83,7 @@ public:
     void updateRoiManagerSorting();
 protected:
 private:
-    boost::shared_ptr< WRMBranch > m_branch; //!< ROI
+    std::shared_ptr< WRMBranch > m_branch; //!< ROI
 
     /**
      * Widget representing the item.

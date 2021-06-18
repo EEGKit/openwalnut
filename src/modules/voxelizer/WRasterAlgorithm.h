@@ -25,6 +25,7 @@
 #ifndef WRASTERALGORITHM_H
 #define WRASTERALGORITHM_H
 
+#include <shared_mutex>
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
@@ -53,7 +54,7 @@ public:
      *
      * \param grid The grid specifying the voxels.
      */
-    explicit WRasterAlgorithm( boost::shared_ptr< WGridRegular3D > grid );
+    explicit WRasterAlgorithm( std::shared_ptr< WGridRegular3D > grid );
 
     /**
      * Dispose a this raster algorithm.
@@ -75,7 +76,7 @@ public:
      * \return Dataset where all voxels which are hit by the rastered lines are
      * non zero.
      */
-    boost::shared_ptr< WDataSetScalar > generateDataSet() const;
+    std::shared_ptr< WDataSetScalar > generateDataSet() const;
 
     /**
      * This method allows the user of the raster algorithm to add arbitrary parameterizations. Each parameterization creates a new volume dataset
@@ -83,7 +84,7 @@ public:
      *
      * \param algorithm the algorithm
      */
-    void addParameterizationAlgorithm( boost::shared_ptr< WRasterParameterization > algorithm );
+    void addParameterizationAlgorithm( std::shared_ptr< WRasterParameterization > algorithm );
 
     /**
      * Called whenever all lines have been rasterized.
@@ -94,12 +95,12 @@ protected:
     /**
      * All the parameterization algorithms to apply while rasterizing a line.
      */
-    std::vector< boost::shared_ptr< WRasterParameterization > > m_parameterizations;
+    std::vector< std::shared_ptr< WRasterParameterization > > m_parameterizations;
 
     /**
      * The mutex used to lock access to m_parameterizations.
      */
-    boost::shared_mutex m_parameterizationsLock;
+    std::shared_mutex m_parameterizationsLock;
 
     /**
      * The grid is used for the following purposes:
@@ -108,7 +109,7 @@ protected:
      *    construction time
      *  - Third we need it when computing the value number out of a position
      */
-    boost::shared_ptr< WGridRegular3D > m_grid;
+    std::shared_ptr< WGridRegular3D > m_grid;
 
     /**
      * Stores the value of each voxel. If and only if a voxel is _not_ hit by

@@ -34,12 +34,12 @@ class WGEViewerEffectHorizon: public WGEViewerEffect
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WGEViewerEffectHorizon >.
+     * Convenience typedef for a std::shared_ptr< WGEViewerEffectHorizon >.
      */
     typedef osg::ref_ptr< WGEViewerEffectHorizon > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WGEViewerEffectHorizon >.
+     * Convenience typedef for a std::shared_ptr< const WGEViewerEffectHorizon >.
      */
     typedef osg::ref_ptr< const WGEViewerEffectHorizon > ConstSPtr;
 

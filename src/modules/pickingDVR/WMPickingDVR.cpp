@@ -78,9 +78,9 @@ WMPickingDVR::~WMPickingDVR()
 {
 }
 
-boost::shared_ptr< WModule > WMPickingDVR::factory() const
+std::shared_ptr< WModule > WMPickingDVR::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMPickingDVR() );
+    return std::shared_ptr< WModule >( new WMPickingDVR() );
 }
 
 const std::string WMPickingDVR::getName() const
@@ -110,7 +110,7 @@ void WMPickingDVR::connectors()
 
 void WMPickingDVR::properties()
 {
-    m_selectionTypesList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_selectionTypesList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_selectionTypesList->addItem( "Position (Picking)" );
     m_selectionTypesList->addItem( "Line (First Hit)" );
     m_selectionTypesList->addItem( "Line (VisiTrace)" );
@@ -158,7 +158,7 @@ void WMPickingDVR::properties()
     m_crossSize->setMin( 0.001 );
     m_crossSize->setMax( 1000.0 );
 
-    m_pickingCriteriaList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_pickingCriteriaList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_pickingCriteriaList->addItem( WMPICKINGDVR_FIRST_HIT, WMPICKINGDVR_FIRST_HIT );
     m_pickingCriteriaList->addItem( WMPICKINGDVR_THRESHOLD, WMPICKINGDVR_THRESHOLD );
     m_pickingCriteriaList->addItem( WMPICKINGDVR_MOST_CONTRIBUTING, WMPICKINGDVR_MOST_CONTRIBUTING );
@@ -182,7 +182,7 @@ void WMPickingDVR::properties()
     m_alphaThreshold->setMax( 1.0 );
 
 
-    m_wysiwypPositionTypesList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_wysiwypPositionTypesList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_wysiwypPositionTypesList->addItem( "Front" );
     m_wysiwypPositionTypesList->addItem( "Center" );
 
@@ -350,8 +350,8 @@ void WMPickingDVR::pickHandler( WPickInfo pickInfo )
 
     m_pickInProgress = true;
 
-    boost::shared_ptr< WGraphicsEngine > graphicsEngine = WGraphicsEngine::getGraphicsEngine();
-    boost::shared_ptr< WGEViewer > mainView = graphicsEngine->getViewerByName( "Main View" );
+    std::shared_ptr< WGraphicsEngine > graphicsEngine = WGraphicsEngine::getGraphicsEngine();
+    std::shared_ptr< WGEViewer > mainView = graphicsEngine->getViewerByName( "Main View" );
 
     osg::ref_ptr< osgViewer::Viewer > view = mainView->getView();
     osgUtil::LineSegmentIntersector::Intersections intersections;
@@ -378,8 +378,8 @@ void WMPickingDVR::pickHandler( WPickInfo pickInfo )
 void WMPickingDVR::setPickPositionSource()
 {
     // Get Camera and Register the callback
-    boost::shared_ptr< WGraphicsEngine > graphicsEngine = WGraphicsEngine::getGraphicsEngine();
-    boost::shared_ptr< WGEViewer > mainView = graphicsEngine->getViewerByName( "Main View" );
+    std::shared_ptr< WGraphicsEngine > graphicsEngine = WGraphicsEngine::getGraphicsEngine();
+    std::shared_ptr< WGEViewer > mainView = graphicsEngine->getViewerByName( "Main View" );
 
     if( m_externalScreenPos->isConnected() == 0 )
     {
@@ -406,8 +406,8 @@ void WMPickingDVR::setPickPositionFromConnector()
     float fPosX = ( *( m_externalScreenPos->getData() ) )[0];
     float fPosY = ( *( m_externalScreenPos->getData() ) )[1];
 
-    boost::shared_ptr< WGraphicsEngine > graphicsEngine = WGraphicsEngine::getGraphicsEngine();
-    boost::shared_ptr< WGEViewer > mainView = graphicsEngine->getViewerByName( "Main View" );
+    std::shared_ptr< WGraphicsEngine > graphicsEngine = WGraphicsEngine::getGraphicsEngine();
+    std::shared_ptr< WGEViewer > mainView = graphicsEngine->getViewerByName( "Main View" );
     osg::ref_ptr< osgViewer::Viewer > view = mainView->getView();
     osgUtil::LineSegmentIntersector::Intersections intersections;
 
@@ -567,7 +567,7 @@ std::vector< std::pair< double, WPosition > > WMPickingDVR::sampleIntensityAlong
     }
 
     // Get scalar field
-    boost::shared_ptr< WDataSetScalar > scalarData = m_scalarIC->getData();
+    std::shared_ptr< WDataSetScalar > scalarData = m_scalarIC->getData();
     if( !scalarData )
     {
         errorLog()<< "[Invalid scalar field]";
@@ -596,18 +596,18 @@ std::vector< std::pair< double, WPosition > > WMPickingDVR::sampleIntensityAlong
 double WMPickingDVR::getTFAlpha( const double scalar ) const
 {
     // Get transferfunction data
-    boost::shared_ptr< WDataSetSingle > transferFunctionData = m_transferFunction->getData();
+    std::shared_ptr< WDataSetSingle > transferFunctionData = m_transferFunction->getData();
     if( !transferFunctionData )
     {
         WAssert( false, "Invalid transferfunction data" );
     }
 
     // Get transferfunction values
-    boost::shared_ptr< WValueSetBase > transferFunctionValues = transferFunctionData->getValueSet();
+    std::shared_ptr< WValueSetBase > transferFunctionValues = transferFunctionData->getValueSet();
 
 
     // Get scalar field
-    boost::shared_ptr< WDataSetScalar > scalarData = m_scalarIC->getData();
+    std::shared_ptr< WDataSetScalar > scalarData = m_scalarIC->getData();
     if( !scalarData )
     {
         WAssert( false, "Invalid scalar field" );

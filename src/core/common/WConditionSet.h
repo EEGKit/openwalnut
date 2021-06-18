@@ -26,6 +26,7 @@
 #define WCONDITIONSET_H
 
 #include <map>
+#include <shared_mutex>
 #include <utility>
 
 #include <boost/shared_ptr.hpp>
@@ -46,12 +47,12 @@ public:
     /**
      * Shared pointer to instance of this class.
      */
-    typedef boost::shared_ptr< WConditionSet > SPtr;
+    typedef std::shared_ptr< WConditionSet > SPtr;
 
     /**
      * Shared pointer to const instance of this class.
      */
-    typedef boost::shared_ptr< const WConditionSet > ConstSPtr;
+    typedef std::shared_ptr< const WConditionSet > ConstSPtr;
 
     /**
      * Default constructor.
@@ -69,14 +70,14 @@ public:
      *
      * \param condition the condition to add.
      */
-    virtual void add( boost::shared_ptr< WCondition > condition );
+    virtual void add( std::shared_ptr< WCondition > condition );
 
     /**
      * Removes the specified condition. As add() this immediately takes effect on running wait() calls.
      *
      * \param condition the condition to remove
      */
-    virtual void remove( boost::shared_ptr< WCondition > condition );
+    virtual void remove( std::shared_ptr< WCondition > condition );
 
     /**
      * Wait for the condition. Sets the calling thread asleep. If the condition set is resetable, this will return immediately
@@ -129,7 +130,7 @@ protected:
      * We need to keep track of the connections a condition has made since boost::function objects do not provide a == operator and can therefore
      * not easily be removed from a signals by signal.desconnect( functor ).
      */
-    typedef std::map< boost::shared_ptr< WCondition >, boost::signals2::connection > ConditionConnectionMap;
+    typedef std::map< std::shared_ptr< WCondition >, boost::signals2::connection > ConditionConnectionMap;
 
     /**
      * Set of conditions to be waited for.
@@ -139,12 +140,12 @@ protected:
     /**
      * Each condition has a connection.
      */
-    typedef std::pair< boost::shared_ptr< WCondition >, boost::signals2::connection > ConditionConnectionPair;
+    typedef std::pair< std::shared_ptr< WCondition >, boost::signals2::connection > ConditionConnectionPair;
 
     /**
      * Lock used for thread-safe writing to the condition set.
      */
-    boost::shared_mutex m_conditionSetLock;
+    std::shared_mutex m_conditionSetLock;
 
     /**
      * Notifier function getting notified whenever a condition got fired.

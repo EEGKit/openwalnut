@@ -77,7 +77,7 @@ public:
         /**
          * Pointer to the HARDI measurements
          */
-        boost::shared_ptr< WValueSetBase > m_valueSet;
+        std::shared_ptr< WValueSetBase > m_valueSet;
 
         /**
          * Indices of nonzero gradients
@@ -92,7 +92,7 @@ public:
         /**
          * Output data, the spherical harmonics coefficients
          */
-        boost::shared_ptr< std::vector<double> > m_data;
+        std::shared_ptr< std::vector<double> > m_data;
 
         /**
          * The order of the calculated spherical harmonics
@@ -103,7 +103,7 @@ public:
          * Transformation-Matrix for conversion from HARDI measurements to spherical harmonics coefficients
          * (see Descoteaux dissertation)
          */
-        boost::shared_ptr< WMatrix< double > > m_TransformMatrix;
+        std::shared_ptr< WMatrix< double > > m_TransformMatrix;
 
         /**
          * Gradients of all measurements (including )
@@ -113,7 +113,7 @@ public:
         /**
          * Pointer to progess indicator
          */
-        boost::shared_ptr< WProgress > m_progress;
+        std::shared_ptr< WProgress > m_progress;
 
         /**
          * Indicate if the is error calculation is done.
@@ -134,7 +134,7 @@ public:
         /**
          * The stored residuals.
          */
-        boost::shared_ptr< std::vector<double> > m_dataResiduals;
+        std::shared_ptr< std::vector<double> > m_dataResiduals;
 
         /**
          * The b-value used during the creation of the HARDI-data.
@@ -228,7 +228,7 @@ void WSphericalHarmonicsCoefficientsThread< T >::threadMain()
         }
 
         // get measure vector
-        boost::shared_ptr< WValueSet< T > > vs = boost::dynamic_pointer_cast< WValueSet< T > >( m_parameter.m_valueSet );
+        std::shared_ptr< WValueSet< T > > vs = std::dynamic_pointer_cast< WValueSet< T > >( m_parameter.m_valueSet );
         if( !vs )
         {
             throw WException( "Valueset pointer not valid." );

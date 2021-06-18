@@ -60,9 +60,9 @@ WMProjectionsAsContext::~WMProjectionsAsContext()
 {
 }
 
-boost::shared_ptr< WModule > WMProjectionsAsContext::factory() const
+std::shared_ptr< WModule > WMProjectionsAsContext::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMProjectionsAsContext() );
+    return std::shared_ptr< WModule >( new WMProjectionsAsContext() );
 }
 
 const std::string WMProjectionsAsContext::getName() const
@@ -87,7 +87,7 @@ void WMProjectionsAsContext::connectors()
 
 void WMProjectionsAsContext::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_possibleSelectionsUsingTypes = WItemSelection::SPtr( new WItemSelection() );
     m_possibleSelectionsUsingTypes->addItem(
@@ -248,8 +248,8 @@ void WMProjectionsAsContext::moduleMain()
         }
 
         // extract size of grid - needed for step size in shader (sampling rate)
-        WDataSetSingle::SPtr dsSingle = boost::dynamic_pointer_cast< WDataSetSingle >( scalarData );
-        WGridRegular3D::SPtr regGrid = boost::dynamic_pointer_cast< WGridRegular3D >( dsSingle->getGrid() );
+        WDataSetSingle::SPtr dsSingle = std::dynamic_pointer_cast< WDataSetSingle >( scalarData );
+        WGridRegular3D::SPtr regGrid = std::dynamic_pointer_cast< WGridRegular3D >( dsSingle->getGrid() );
         int X, Y, Z;
         X = regGrid->getNbCoordsX();
         Y = regGrid->getNbCoordsY();
@@ -379,7 +379,7 @@ void WMProjectionsAsContext::moduleMain()
         if( m_transferFunction->updated() )
         {
             wge::bindTexture( m_geode, tfTexture, 3, "u_transferFunction" );
-            boost::shared_ptr< WDataSetSingle > dataSet = m_transferFunction->getData();
+            std::shared_ptr< WDataSetSingle > dataSet = m_transferFunction->getData();
             if( !dataSet )
             {
                 debugLog() << "no data set?";
@@ -387,10 +387,10 @@ void WMProjectionsAsContext::moduleMain()
             else
             {
                 WAssert( dataSet, "data set" );
-                boost::shared_ptr< WValueSetBase > valueSet = dataSet->getValueSet();
+                std::shared_ptr< WValueSetBase > valueSet = dataSet->getValueSet();
                 WAssert( valueSet, "value set" );
-                boost::shared_ptr< WValueSet< unsigned char > > cvalueSet(
-                    boost::dynamic_pointer_cast<WValueSet< unsigned char> >( valueSet )
+                std::shared_ptr< WValueSet< unsigned char > > cvalueSet(
+                    std::dynamic_pointer_cast<WValueSet< unsigned char> >( valueSet )
                     );
                 if( !cvalueSet )
                 {

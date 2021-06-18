@@ -41,9 +41,9 @@ WMWriteDendrogram::~WMWriteDendrogram()
 {
 }
 
-boost::shared_ptr< WModule > WMWriteDendrogram::factory() const
+std::shared_ptr< WModule > WMWriteDendrogram::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMWriteDendrogram() );
+    return std::shared_ptr< WModule >( new WMWriteDendrogram() );
 }
 
 const char** WMWriteDendrogram::getXPMIcon() const

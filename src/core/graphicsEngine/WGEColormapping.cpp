@@ -36,7 +36,7 @@
 #include "WGEColormapping.h"
 
 // instance as singleton
-boost::shared_ptr< WGEColormapping > WGEColormapping::m_instance = boost::shared_ptr< WGEColormapping >();
+std::shared_ptr< WGEColormapping > WGEColormapping::m_instance = std::shared_ptr< WGEColormapping >();
 
 /**
  * This functions simply sets some defines to a shader. It sets the texture unit and gl_MultiTexCoord variable names properly.
@@ -97,11 +97,11 @@ WGEColormapping::~WGEColormapping()
     // cleanup
 }
 
-boost::shared_ptr< WGEColormapping > WGEColormapping::instance()
+std::shared_ptr< WGEColormapping > WGEColormapping::instance()
 {
     if( !m_instance )
     {
-        m_instance = boost::shared_ptr< WGEColormapping >( new WGEColormapping() );
+        m_instance = std::shared_ptr< WGEColormapping >( new WGEColormapping() );
     }
 
     return m_instance;

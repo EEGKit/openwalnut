@@ -47,7 +47,7 @@ public:
     /**
      * Function variables for updating the data 
      */
-    typedef boost::shared_ptr< WFilterPropertyHandler > SPtr;
+    typedef std::shared_ptr< WFilterPropertyHandler > SPtr;
 
     /**
      * shared_ptr that points to itself 
@@ -286,7 +286,7 @@ private:
     /**
      * Stores selectable items.
      */
-    boost::shared_ptr< WItemSelection > m_particleItemSelectionList;
+    std::shared_ptr< WItemSelection > m_particleItemSelectionList;
 
     /**
      * vector of the options of PDG

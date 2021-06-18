@@ -60,12 +60,12 @@ public:
     /**
      * Convenience typedef for a shared_ptr of WPropertyVariable.
      */
-    typedef boost::shared_ptr< WPropertyVariable< T > > SPtr;
+    typedef std::shared_ptr< WPropertyVariable< T > > SPtr;
 
     /**
      * Convenience typedef for a shared_ptr of const WPropertyVariable.
      */
-    typedef boost::shared_ptr< const WPropertyVariable< T > > ConstSPtr;
+    typedef std::shared_ptr< const WPropertyVariable< T > > ConstSPtr;
 
     //! The type of the data of this property.
     typedef T DataType;
@@ -88,7 +88,7 @@ public:
      * \param initial the initial value
      * \param condition use this external condition for notification.
      */
-    WPropertyVariable( std::string name, std::string description, const T& initial, boost::shared_ptr< WCondition > condition );
+    WPropertyVariable( std::string name, std::string description, const T& initial, std::shared_ptr< WCondition > condition );
 
     /**
      * Create an empty instance just containing a name. This constructor allows an external callback to be used for notification.
@@ -119,7 +119,7 @@ public:
      *        condition ( getCondition() ) for other properties, since they would also share the callbacks
      *
      */
-    WPropertyVariable( std::string name, std::string description, const T& initial, boost::shared_ptr< WCondition > condition,
+    WPropertyVariable( std::string name, std::string description, const T& initial, std::shared_ptr< WCondition > condition,
                        PropertyChangeNotifierType notifier );
 
     /**
@@ -147,7 +147,7 @@ public:
      *
      * \return the deep clone of this property.
      */
-    virtual boost::shared_ptr< WPropertyBase > clone();
+    virtual std::shared_ptr< WPropertyBase > clone();
 
     /**
      * Determines whether the specified value is acceptable.
@@ -195,7 +195,7 @@ public:
          *
          * \return true whenever the new value is acceptable for the property.
          */
-        virtual bool accept( boost::shared_ptr< WPropertyVariable< T > > property, const T& value ) = 0;
+        virtual bool accept( std::shared_ptr< WPropertyVariable< T > > property, const T& value ) = 0;
 
         /**
          * Allows simple identification of the real constraint type.
@@ -212,30 +212,30 @@ public:
          *
          * \return NULL if the type is unknown or an constraint instance
          */
-        static boost::shared_ptr< PropertyConstraint > create( PROPERTYCONSTRAINT_TYPE type );
+        static std::shared_ptr< PropertyConstraint > create( PROPERTYCONSTRAINT_TYPE type );
 
         /**
          * Method to clone the constraint and create a new one with the correct dynamic type.
          *
          * \return the constraint.
          */
-        virtual boost::shared_ptr< PropertyConstraint > clone() = 0;
+        virtual std::shared_ptr< PropertyConstraint > clone() = 0;
     };
 
     /**
      * The alias for a shared container.
      */
-    typedef WSharedAssociativeContainer< std::set< boost::shared_ptr< PropertyConstraint > > > ConstraintContainerType;
+    typedef WSharedAssociativeContainer< std::set< std::shared_ptr< PropertyConstraint > > > ConstraintContainerType;
 
     /**
      * Alias for min constraints. It is an alias for convenience.
      */
-    typedef boost::shared_ptr< WPropertyConstraintMin< T > > PropertyConstraintMin;
+    typedef std::shared_ptr< WPropertyConstraintMin< T > > PropertyConstraintMin;
 
     /**
      * Alias for max constraints. It is an alias for convenience.
      */
-    typedef boost::shared_ptr< WPropertyConstraintMax< T > > PropertyConstraintMax;
+    typedef std::shared_ptr< WPropertyConstraintMax< T > > PropertyConstraintMax;
 
     /**
      * Add a new constraint. This is useful to disallow several (custom) values for this property.
@@ -243,7 +243,7 @@ public:
      * \param constraint the new constraint.
      *
      */
-    void addConstraint( boost::shared_ptr< PropertyConstraint > constraint );
+    void addConstraint( std::shared_ptr< PropertyConstraint > constraint );
 
     /**
      * Returns all the current constraints of a WPropertyVariable. They can be iterated using the provided access object.
@@ -258,7 +258,7 @@ public:
      *
      * \return the condition.
      */
-    boost::shared_ptr< WCondition > getContraintsChangedCondition();
+    std::shared_ptr< WCondition > getContraintsChangedCondition();
 
     /**
      * Creates a new WPropertyConstraintMin for this WPropertyVariable.
@@ -316,7 +316,7 @@ public:
      * \param constraint the new constraint
      * \param type the type of constraints to replace
      */
-    void replaceConstraint( boost::shared_ptr< PropertyConstraint > constraint, PROPERTYCONSTRAINT_TYPE type );
+    void replaceConstraint( std::shared_ptr< PropertyConstraint > constraint, PROPERTYCONSTRAINT_TYPE type );
 
     /**
      * This replaces all existing constraints of a certain type by a new specified constraint.
@@ -325,7 +325,7 @@ public:
      * \param type the type of constraints to replace
      * \return the constraint created
      */
-    boost::shared_ptr< PropertyConstraint > replaceConstraint( PROPERTYCONSTRAINT_TYPE constraint, PROPERTYCONSTRAINT_TYPE type );
+    std::shared_ptr< PropertyConstraint > replaceConstraint( PROPERTYCONSTRAINT_TYPE constraint, PROPERTYCONSTRAINT_TYPE type );
 
     /**
      * Cleans list of constraints from all existing constrains of the specified type.
@@ -339,7 +339,7 @@ public:
      *
      * \param constraint the constraint to remove.
      */
-    void removeConstraint( boost::shared_ptr< PropertyConstraint > constraint );
+    void removeConstraint( std::shared_ptr< PropertyConstraint > constraint );
 
     /**
      * Method searching the first appearance of a constrained with the specified type.
@@ -348,7 +348,7 @@ public:
      *
      * \return the constraint, or NULL if none.
      */
-    boost::shared_ptr< PropertyConstraint > getFirstConstraint( PROPERTYCONSTRAINT_TYPE type );
+    std::shared_ptr< PropertyConstraint > getFirstConstraint( PROPERTYCONSTRAINT_TYPE type );
 
     /**
      * Method searching the first appearance of a constrained with the specified type.
@@ -386,7 +386,7 @@ public:
      *
      * \return true if the value has been accepted.
      */
-    virtual bool set( boost::shared_ptr< WPropertyBase > value, bool recommendedOnly = false );
+    virtual bool set( std::shared_ptr< WPropertyBase > value, bool recommendedOnly = false );
 
     /**
      * Sets the new value for this flag. Also notifies waiting threads. After setting a value, changed() will be true.
@@ -441,7 +441,7 @@ protected:
     /**
      * A set of constraints applied on this property.
      */
-    boost::shared_ptr< ConstraintContainerType > m_constraints;
+    std::shared_ptr< ConstraintContainerType > m_constraints;
 
 private:
     /**
@@ -465,7 +465,7 @@ WPropertyVariable< T >::WPropertyVariable( std::string name, std::string descrip
 }
 
 template < typename T >
-WPropertyVariable< T >::WPropertyVariable( std::string name, std::string description, const T& initial, boost::shared_ptr< WCondition > condition ):
+WPropertyVariable< T >::WPropertyVariable( std::string name, std::string description, const T& initial, std::shared_ptr< WCondition > condition ):
         WFlag< T >( condition, initial ),
         WPropertyBase( name, description ),
         m_constraints( new ConstraintContainerType() ),
@@ -500,7 +500,7 @@ WPropertyVariable< T >::WPropertyVariable( std::string name, std::string descrip
 }
 
 template < typename T >
-WPropertyVariable< T >::WPropertyVariable( std::string name, std::string description, const T& initial, boost::shared_ptr< WCondition > condition,
+WPropertyVariable< T >::WPropertyVariable( std::string name, std::string description, const T& initial, std::shared_ptr< WCondition > condition,
                                            PropertyChangeNotifierType notifier ):
         WFlag< T >( condition, initial ),
         WPropertyBase( name, description ),
@@ -563,9 +563,9 @@ WPropertyVariable< T >::~WPropertyVariable()
 }
 
 template < typename T >
-boost::shared_ptr< WPropertyBase > WPropertyVariable< T >::clone()
+std::shared_ptr< WPropertyBase > WPropertyVariable< T >::clone()
 {
-    return boost::shared_ptr< WPropertyBase >( new WPropertyVariable< T >( *this ) );
+    return std::shared_ptr< WPropertyBase >( new WPropertyVariable< T >( *this ) );
 }
 
 template < typename T >
@@ -585,7 +585,7 @@ bool WPropertyVariable< T >::accept( const T& newValue )
     bool acceptable = WFlag< T >::accept( newValue );
     for( typename ConstraintContainerType::ConstIterator it = l->get().begin(); it !=  l->get().end(); ++it )
     {
-        acceptable &= ( *it )->accept( boost::static_pointer_cast< WPropertyVariable< T > >( shared_from_this() ), newValue );
+        acceptable &= ( *it )->accept( std::static_pointer_cast< WPropertyVariable< T > >( shared_from_this() ), newValue );
     }
 
     return acceptable;
@@ -618,10 +618,10 @@ std::string WPropertyVariable< T >::getAsString()
 }
 
 template < typename T >
-bool WPropertyVariable< T >::set( boost::shared_ptr< WPropertyBase > value, bool recommendedOnly )
+bool WPropertyVariable< T >::set( std::shared_ptr< WPropertyBase > value, bool recommendedOnly )
 {
     // try to cast the given property to a WPropertyVariable of right type:
-    boost::shared_ptr< WPropertyVariable< T > > v = boost::dynamic_pointer_cast< WPropertyVariable< T > >( value );
+    std::shared_ptr< WPropertyVariable< T > > v = std::dynamic_pointer_cast< WPropertyVariable< T > >( value );
     if( v )
     {
         if( recommendedOnly )
@@ -676,7 +676,7 @@ bool WPropertyVariable< T >::ensureValidity( const T& newValidValue, bool suppre
 }
 
 template < typename T >
-void WPropertyVariable< T >::addConstraint( boost::shared_ptr< PropertyConstraint > constraint )
+void WPropertyVariable< T >::addConstraint( std::shared_ptr< PropertyConstraint > constraint )
 {
     // lock, unlocked if l looses focus
     typename WPropertyVariable< T >::ConstraintContainerType::WriteTicket l = m_constraints->getWriteTicket();
@@ -687,7 +687,7 @@ void WPropertyVariable< T >::addConstraint( boost::shared_ptr< PropertyConstrain
 }
 
 template < typename T >
-boost::shared_ptr< WCondition > WPropertyVariable< T >::getContraintsChangedCondition()
+std::shared_ptr< WCondition > WPropertyVariable< T >::getContraintsChangedCondition()
 {
     return m_constraints->getChangeCondition();
 }
@@ -700,35 +700,35 @@ void WPropertyVariable< T >::updateType()
 }
 
 template < typename T >
-boost::shared_ptr< WPropertyConstraintMin< T > > WPropertyVariable< T >::minConstraint( const T& min )
+std::shared_ptr< WPropertyConstraintMin< T > > WPropertyVariable< T >::minConstraint( const T& min )
 {
-    return boost::shared_ptr< WPropertyConstraintMin< T > >( new WPropertyConstraintMin< T >( min ) );
+    return std::shared_ptr< WPropertyConstraintMin< T > >( new WPropertyConstraintMin< T >( min ) );
 }
 
 template < typename T >
-boost::shared_ptr< WPropertyConstraintMax< T > > WPropertyVariable< T >::maxConstraint( const T& max )
+std::shared_ptr< WPropertyConstraintMax< T > > WPropertyVariable< T >::maxConstraint( const T& max )
 {
-    return boost::shared_ptr< WPropertyConstraintMax< T > >( new WPropertyConstraintMax< T >( max ) );
+    return std::shared_ptr< WPropertyConstraintMax< T > >( new WPropertyConstraintMax< T >( max ) );
 }
 
 template < typename T >
-boost::shared_ptr< WPropertyConstraintMin< T > > WPropertyVariable< T >::setMin( const T& min )
+std::shared_ptr< WPropertyConstraintMin< T > > WPropertyVariable< T >::setMin( const T& min )
 {
-    boost::shared_ptr< WPropertyConstraintMin< T > > c = minConstraint( min );
+    std::shared_ptr< WPropertyConstraintMin< T > > c = minConstraint( min );
     replaceConstraint( c, PC_MIN );
     return c;
 }
 
 template < typename T >
-boost::shared_ptr< WPropertyConstraintMax< T > > WPropertyVariable< T >::setMax( const T& max )
+std::shared_ptr< WPropertyConstraintMax< T > > WPropertyVariable< T >::setMax( const T& max )
 {
-    boost::shared_ptr< WPropertyConstraintMax< T > > c = maxConstraint( max );
+    std::shared_ptr< WPropertyConstraintMax< T > > c = maxConstraint( max );
     replaceConstraint( c, PC_MAX );
     return c;
 }
 
 template < typename T >
-void WPropertyVariable< T >::replaceConstraint( boost::shared_ptr< PropertyConstraint > constraint, PROPERTYCONSTRAINT_TYPE type )
+void WPropertyVariable< T >::replaceConstraint( std::shared_ptr< PropertyConstraint > constraint, PROPERTYCONSTRAINT_TYPE type )
 {
     // lock, unlocked if l looses focus
     typename WPropertyVariable< T >::ConstraintContainerType::WriteTicket l = m_constraints->getWriteTicket();
@@ -738,16 +738,16 @@ void WPropertyVariable< T >::replaceConstraint( boost::shared_ptr< PropertyConst
 }
 
 template < typename T >
-boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint >
+std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint >
 WPropertyVariable< T >::replaceConstraint( PROPERTYCONSTRAINT_TYPE constraint, PROPERTYCONSTRAINT_TYPE type )
 {
-    boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > c = PropertyConstraint::create( constraint );
+    std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > c = PropertyConstraint::create( constraint );
     replaceConstraint( c, type );
     return c;
 }
 
 template < typename T >
-boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint >
+std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint >
 WPropertyVariable< T >::getFirstConstraint( PROPERTYCONSTRAINT_TYPE type )
 {
     // lock, unlocked if l looses focus
@@ -762,7 +762,7 @@ WPropertyVariable< T >::getFirstConstraint( PROPERTYCONSTRAINT_TYPE type )
         }
     }
 
-    return boost::shared_ptr< PropertyConstraint >();
+    return std::shared_ptr< PropertyConstraint >();
 }
 
 template < typename T >
@@ -785,33 +785,33 @@ int WPropertyVariable< T >::countConstraint( PROPERTYCONSTRAINT_TYPE type )
 }
 
 template < typename T >
-boost::shared_ptr< WPropertyConstraintMin< T > > WPropertyVariable< T >::getMin()
+std::shared_ptr< WPropertyConstraintMin< T > > WPropertyVariable< T >::getMin()
 {
     // get min
-    boost::shared_ptr< PropertyConstraint > c = getFirstConstraint( PC_MIN );
+    std::shared_ptr< PropertyConstraint > c = getFirstConstraint( PC_MIN );
     if( !c.get() )
     {
         // return NULL if not found
-        return boost::shared_ptr< WPropertyConstraintMin< T > >();
+        return std::shared_ptr< WPropertyConstraintMin< T > >();
     }
 
     // cast to proper type
-    return boost::static_pointer_cast< WPropertyConstraintMin< T > >( c );
+    return std::static_pointer_cast< WPropertyConstraintMin< T > >( c );
 }
 
 template < typename T >
-boost::shared_ptr< WPropertyConstraintMax< T > > WPropertyVariable< T >::getMax()
+std::shared_ptr< WPropertyConstraintMax< T > > WPropertyVariable< T >::getMax()
 {
     // get min
-    boost::shared_ptr< PropertyConstraint > c = getFirstConstraint( PC_MAX );
+    std::shared_ptr< PropertyConstraint > c = getFirstConstraint( PC_MAX );
     if( !c.get() )
     {
         // return NULL if not found
-        return boost::shared_ptr< WPropertyConstraintMax< T > >();
+        return std::shared_ptr< WPropertyConstraintMax< T > >();
     }
 
     // cast to proper type
-    return boost::static_pointer_cast< WPropertyConstraintMax< T > >( c );
+    return std::static_pointer_cast< WPropertyConstraintMax< T > >( c );
 }
 
 template< typename T >
@@ -871,7 +871,7 @@ void WPropertyVariable< T >::removeConstraint( PROPERTYCONSTRAINT_TYPE type )
 }
 
 template < typename T >
-void WPropertyVariable< T >::removeConstraint( boost::shared_ptr< PropertyConstraint > constraint )
+void WPropertyVariable< T >::removeConstraint( std::shared_ptr< PropertyConstraint > constraint )
 {
     // lock released automatically
     typename WPropertyVariable< T >::ConstraintContainerType::WriteTicket l = m_constraints->getWriteTicket();

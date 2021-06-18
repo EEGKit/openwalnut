@@ -27,7 +27,7 @@
 #include "WDataSetDipoles.h"
 
 // prototype instance as singleton
-boost::shared_ptr< WPrototyped > WDataSetDipoles::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WDataSetDipoles::m_prototype = std::shared_ptr< WPrototyped >();
 
 
 WDataSetDipoles::WDataSetDipoles() :
@@ -51,11 +51,11 @@ WDataSetDipoles::~WDataSetDipoles()
 {
 }
 
-boost::shared_ptr< WPrototyped > WDataSetDipoles::getPrototype()
+std::shared_ptr< WPrototyped > WDataSetDipoles::getPrototype()
 {
     if( !m_prototype )
     {
-        m_prototype = boost::shared_ptr< WPrototyped >( new WDataSetDipoles() );
+        m_prototype = std::shared_ptr< WPrototyped >( new WDataSetDipoles() );
     }
 
     return m_prototype;

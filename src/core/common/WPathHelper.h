@@ -48,7 +48,7 @@ public:
      *
      * \return the running path helper instance.
      */
-    static boost::shared_ptr< WPathHelper > getPathHelper();
+    static std::shared_ptr< WPathHelper > getPathHelper();
 
     /**
      * Set the current application path. This should be called only once. The home path hereby is NOT the users home. It is a directory, where
@@ -261,7 +261,7 @@ private:
     /**
      * Singleton instance of WPathHelper.
      */
-    static boost::shared_ptr< WPathHelper > m_instance;
+    static std::shared_ptr< WPathHelper > m_instance;
 };
 
 #endif  // WPATHHELPER_H

@@ -43,14 +43,14 @@ class WGEImage
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WGEImage >.
+     * Convenience typedef for a std::shared_ptr< WGEImage >.
      */
-    typedef boost::shared_ptr< WGEImage > SPtr;
+    typedef std::shared_ptr< WGEImage > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WGEImage >.
+     * Convenience typedef for a std::shared_ptr< const WGEImage >.
      */
-    typedef boost::shared_ptr< const WGEImage > ConstSPtr;
+    typedef std::shared_ptr< const WGEImage > ConstSPtr;
 
     /**
      * Default constructor.

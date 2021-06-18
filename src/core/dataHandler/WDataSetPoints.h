@@ -44,22 +44,22 @@ public:
     /**
      * Pointer to dataset.
      */
-    typedef boost::shared_ptr< WDataSetPoints > SPtr;
+    typedef std::shared_ptr< WDataSetPoints > SPtr;
 
     /**
      * Pointer to const dataset.
      */
-    typedef boost::shared_ptr< const WDataSetPoints > ConstSPtr;
+    typedef std::shared_ptr< const WDataSetPoints > ConstSPtr;
 
     /**
      * List of vertex coordinates in term of components of vertices.
      */
-    typedef boost::shared_ptr< std::vector< float > > VertexArray;
+    typedef std::shared_ptr< std::vector< float > > VertexArray;
 
     /**
      * Colors for each vertex in VertexArray.
      */
-    typedef boost::shared_ptr< std::vector< float > > ColorArray;
+    typedef std::shared_ptr< std::vector< float > > ColorArray;
 
     /**
      * Constructs a new set of points. If no color is specified, white is used for all points.
@@ -130,7 +130,7 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
     /**
      * Getter for the point vertices
@@ -215,7 +215,7 @@ protected:
     /**
      * The prototype as singleton.
      */
-    static boost::shared_ptr< WPrototyped > m_prototype;
+    static std::shared_ptr< WPrototyped > m_prototype;
 
 private:
     /**

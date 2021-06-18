@@ -44,12 +44,12 @@ public:
     /**
      * Shared pointer for this class.
      */
-    typedef boost::shared_ptr< WGEShaderDefine< ValueType > > SPtr;
+    typedef std::shared_ptr< WGEShaderDefine< ValueType > > SPtr;
 
     /**
      * A const shared pointer for this class.
      */
-    typedef boost::shared_ptr< const WGEShaderDefine< ValueType > > ConstSPtr;
+    typedef std::shared_ptr< const WGEShaderDefine< ValueType > > ConstSPtr;
 
     /**
      * Constructs a define with a given name and initial value.

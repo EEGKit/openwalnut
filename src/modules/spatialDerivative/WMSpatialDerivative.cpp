@@ -45,9 +45,9 @@ WMSpatialDerivative::~WMSpatialDerivative()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMSpatialDerivative::factory() const
+std::shared_ptr< WModule > WMSpatialDerivative::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMSpatialDerivative() );
+    return std::shared_ptr< WModule >( new WMSpatialDerivative() );
 }
 
 const char** WMSpatialDerivative::getXPMIcon() const
@@ -81,7 +81,7 @@ void WMSpatialDerivative::connectors()
 
 void WMSpatialDerivative::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     // normalizing?
     m_normalize = m_properties->addProperty( "Normalize", "If true, vectors get normalized.", true, m_propCondition );
@@ -114,7 +114,7 @@ void WMSpatialDerivative::moduleMain()
 
         // To query whether an input was updated, simply ask the input:
         bool dataUpdated = m_scalarIn->handledUpdate() || m_normalize->changed();
-        boost::shared_ptr< WDataSetScalar > dataSet = m_scalarIn->getData();
+        std::shared_ptr< WDataSetScalar > dataSet = m_scalarIn->getData();
 
         bool dataValid = ( dataSet != NULL );
 
@@ -131,11 +131,11 @@ void WMSpatialDerivative::moduleMain()
         }
 
         // prepare progress indicators
-        boost::shared_ptr< WProgress > progress( new WProgress( "Processing", 0 ) );
+        std::shared_ptr< WProgress > progress( new WProgress( "Processing", 0 ) );
         m_progress->addSubProgress( progress );
 
         // loop through each voxel
-        boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( dataSet->getGrid() );
+        std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( dataSet->getGrid() );
         if( !grid )
         {
             errorLog() << "Only regular 3D grids allowed.";
@@ -146,40 +146,40 @@ void WMSpatialDerivative::moduleMain()
         {
             case W_DT_UNSIGNED_CHAR:
             {
-                boost::shared_ptr<WValueSet<unsigned char> > vals;
-                vals = boost::dynamic_pointer_cast<WValueSet<unsigned char> >( dataSet->getValueSet() );
+                std::shared_ptr<WValueSet<unsigned char> > vals;
+                vals = std::dynamic_pointer_cast<WValueSet<unsigned char> >( dataSet->getValueSet() );
                 WAssert( vals, "Data type and data type indicator must fit." );
                 derive( grid, vals );
                 break;
             }
             case W_DT_INT16:
             {
-                boost::shared_ptr<WValueSet<int16_t> > vals;
-                vals = boost::dynamic_pointer_cast<WValueSet<int16_t> >( dataSet->getValueSet() );
+                std::shared_ptr<WValueSet<int16_t> > vals;
+                vals = std::dynamic_pointer_cast<WValueSet<int16_t> >( dataSet->getValueSet() );
                 WAssert( vals, "Data type and data type indicator must fit." );
                 derive( grid, vals );
                 break;
             }
             case W_DT_SIGNED_INT:
             {
-                boost::shared_ptr<WValueSet<int32_t> > vals;
-                vals = boost::dynamic_pointer_cast<WValueSet<int32_t> >( dataSet->getValueSet() );
+                std::shared_ptr<WValueSet<int32_t> > vals;
+                vals = std::dynamic_pointer_cast<WValueSet<int32_t> >( dataSet->getValueSet() );
                 WAssert( vals, "Data type and data type indicator must fit." );
                 derive( grid, vals );
                 break;
             }
             case W_DT_FLOAT:
             {
-                boost::shared_ptr< WValueSet< float > > vals;
-                vals = boost::dynamic_pointer_cast< WValueSet< float > >( dataSet->getValueSet() );
+                std::shared_ptr< WValueSet< float > > vals;
+                vals = std::dynamic_pointer_cast< WValueSet< float > >( dataSet->getValueSet() );
                 WAssert( vals, "Data type and data type indicator must fit." );
                 derive( grid, vals );
                 break;
             }
             case W_DT_DOUBLE:
             {
-                boost::shared_ptr< WValueSet< double > > vals;
-                vals = boost::dynamic_pointer_cast< WValueSet< double > >( dataSet->getValueSet() );
+                std::shared_ptr< WValueSet< double > > vals;
+                vals = std::dynamic_pointer_cast< WValueSet< double > >( dataSet->getValueSet() );
                 WAssert( vals, "Data type and data type indicator must fit." );
                 derive( grid, vals );
                 break;
@@ -202,14 +202,14 @@ size_t getId( size_t xDim, size_t yDim, size_t /*zDim*/, size_t x, size_t y, siz
 }
 
 template< typename T >
-void WMSpatialDerivative::derive( boost::shared_ptr< WGridRegular3D > grid, boost::shared_ptr< WValueSet< T > > values )
+void WMSpatialDerivative::derive( std::shared_ptr< WGridRegular3D > grid, std::shared_ptr< WValueSet< T > > values )
 {
     size_t nX = grid->getNbCoordsX();
     size_t nY = grid->getNbCoordsY();
     size_t nZ = grid->getNbCoordsZ();
 
-    boost::shared_ptr< std::vector< double > > vectors =
-        boost::shared_ptr< std::vector< double > >( new std::vector< double >( 3 * nX * nY * nZ, 0.0 ) );
+    std::shared_ptr< std::vector< double > > vectors =
+        std::shared_ptr< std::vector< double > >( new std::vector< double >( 3 * nX * nY * nZ, 0.0 ) );
 
     // iterate field
     for( size_t z = 1; z < nZ - 1; z++ )
@@ -244,10 +244,10 @@ void WMSpatialDerivative::derive( boost::shared_ptr< WGridRegular3D > grid, boos
         }
     }
 
-    boost::shared_ptr< WValueSet< double > > valueset = boost::shared_ptr< WValueSet< double > >(
+    std::shared_ptr< WValueSet< double > > valueset = std::shared_ptr< WValueSet< double > >(
                                                             new WValueSet< double >( 1, 3, vectors, W_DT_DOUBLE )
                                                         );
     // register new
-    m_vectorOut->updateData( boost::shared_ptr< WDataSetVector >( new WDataSetVector( valueset, grid ) ) );
+    m_vectorOut->updateData( std::shared_ptr< WDataSetVector >( new WDataSetVector( valueset, grid ) ) );
 }
 

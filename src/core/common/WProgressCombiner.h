@@ -26,6 +26,7 @@
 #define WPROGRESSCOMBINER_H
 
 #include <set>
+#include <shared_mutex>
 #include <string>
 
 #include <boost/thread.hpp>
@@ -44,12 +45,12 @@ public:
     /**
      * Abbreviate shared_ptr for this class.
      */
-    typedef boost::shared_ptr< WProgressCombiner > SPtr;
+    typedef std::shared_ptr< WProgressCombiner > SPtr;
 
     /**
      * Abbreviate shared_ptr for this class.
      */
-    typedef boost::shared_ptr< const  WProgressCombiner > ConstSPtr;
+    typedef std::shared_ptr< const  WProgressCombiner > ConstSPtr;
 
     /**
      * Default constructor. It creates a empty combiner.
@@ -93,14 +94,14 @@ public:
      * \param progress the progress to add as a child.
      * \note it is possible to add ProgressCombiner instances as well.
      */
-    virtual void addSubProgress( boost::shared_ptr< WProgress > progress );
+    virtual void addSubProgress( std::shared_ptr< WProgress > progress );
 
     /**
      * Removes the specified sub progress from this combiner.
      *
      * \param progress the progress to remove.
      */
-    virtual void removeSubProgress( boost::shared_ptr< WProgress > progress );
+    virtual void removeSubProgress( std::shared_ptr< WProgress > progress );
 
     /**
      * Function updating the internal state. This needs to be called before any get function to ensure the getter return the right
@@ -133,12 +134,12 @@ protected:
     /**
      * Set of all child progress.
      */
-    std::set< boost::shared_ptr< WProgress > > m_children;
+    std::set< std::shared_ptr< WProgress > > m_children;
 
     /**
      * Lock for the above child set and the internal state update.
      */
-    mutable boost::shared_mutex m_updateLock;
+    mutable std::shared_mutex m_updateLock;
 
 private:
 };

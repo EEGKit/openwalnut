@@ -38,12 +38,12 @@ public:
     /**
      * shared_ptr abbreviation
      */
-    typedef boost::shared_ptr< WDataSetVector > SPtr;
+    typedef std::shared_ptr< WDataSetVector > SPtr;
 
     /**
      * const shared_ptr abbreviation
      */
-    typedef boost::shared_ptr< const WDataSetVector > ConstSPtr;
+    typedef std::shared_ptr< const WDataSetVector > ConstSPtr;
 
     /**
      * Constructs an instance out of an appropriate value set and a grid.
@@ -51,8 +51,8 @@ public:
      * \param newValueSet the vector value set to use
      * \param newGrid the grid which maps world space to the value set
      */
-    WDataSetVector( boost::shared_ptr< WValueSetBase > newValueSet,
-                    boost::shared_ptr< WGrid > newGrid );
+    WDataSetVector( std::shared_ptr< WValueSetBase > newValueSet,
+                    std::shared_ptr< WGrid > newGrid );
 
     /**
      * Construct an empty and unusable instance. This is needed for the prototype mechanism.
@@ -73,7 +73,7 @@ public:
      *
      * \return the clone
      */
-    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WValueSetBase > newValueSet, boost::shared_ptr< WGrid > newGrid ) const;
+    virtual WDataSetSingle::SPtr clone( std::shared_ptr< WValueSetBase > newValueSet, std::shared_ptr< WGrid > newGrid ) const;
 
     /**
      * Creates a copy (clone) of this instance but allows one to change the valueset. Unlike copy construction, this is a very useful function if you
@@ -83,7 +83,7 @@ public:
      *
      * \return the clone
      */
-    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WValueSetBase > newValueSet ) const;
+    virtual WDataSetSingle::SPtr clone( std::shared_ptr< WValueSetBase > newValueSet ) const;
 
     /**
      * Creates a copy (clone) of this instance but allows one to change the grid. Unlike copy construction, this is a very useful function if you
@@ -93,7 +93,7 @@ public:
      *
      * \return the clone
      */
-    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WGrid > newGrid ) const;
+    virtual WDataSetSingle::SPtr clone( std::shared_ptr< WGrid > newGrid ) const;
 
     /**
      * Creates a copy (clone) of this instance. Unlike copy construction, this is a very useful function if you
@@ -108,7 +108,7 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
     /**
      * Interpolates the vector field at the given position
@@ -153,20 +153,20 @@ public:
      *
      * \return Non empty reference to the dataset if it is a vector dataset, empty if not.
      */
-    boost::shared_ptr< WDataSetVector > isVectorDataSet();
+    std::shared_ptr< WDataSetVector > isVectorDataSet();
 
 protected:
     /**
      * The prototype as singleton.
      */
-    static boost::shared_ptr< WPrototyped > m_prototype;
+    static std::shared_ptr< WPrototyped > m_prototype;
 
 private:
 };
 
-inline boost::shared_ptr< WDataSetVector > WDataSetVector::isVectorDataSet()
+inline std::shared_ptr< WDataSetVector > WDataSetVector::isVectorDataSet()
 {
-    return boost::static_pointer_cast< WDataSetVector >( shared_from_this() );
+    return std::static_pointer_cast< WDataSetVector >( shared_from_this() );
 }
 
 #endif  // WDATASETVECTOR_H

@@ -28,11 +28,11 @@
 #include "WCreateColorArraysThread.h"
 
 
-WCreateColorArraysThread::WCreateColorArraysThread(  int left, int right, boost::shared_ptr< std::vector< float > >vertices,
-        boost::shared_ptr< std::vector< size_t > > lineLengths,
-        boost::shared_ptr< std::vector< float > > globalColors,
-        boost::shared_ptr< std::vector< float > > localColors,
-        boost::shared_ptr< std::vector< float > > tangents ):
+WCreateColorArraysThread::WCreateColorArraysThread(  int left, int right, std::shared_ptr< std::vector< float > >vertices,
+        std::shared_ptr< std::vector< size_t > > lineLengths,
+        std::shared_ptr< std::vector< float > > globalColors,
+        std::shared_ptr< std::vector< float > > localColors,
+        std::shared_ptr< std::vector< float > > tangents ):
     WThreadedRunner(),
     m_myThreadFinished( false ),
     m_left( left ),

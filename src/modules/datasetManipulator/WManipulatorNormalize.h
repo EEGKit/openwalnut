@@ -41,7 +41,7 @@ public:
      * Constructor.
      * \param dataSet The data set to be transformed
      */
-    explicit WManipulatorNormalize( boost::shared_ptr< WDataSet >* dataSet );
+    explicit WManipulatorNormalize( std::shared_ptr< WDataSet >* dataSet );
 
     /**
      * Destructor.
@@ -72,7 +72,7 @@ private:
     WPropPosition m_normalize;
 
     //! Pointer to the dataset to be normalized
-    boost::shared_ptr< WDataSet >* m_dataSet;
+    std::shared_ptr< WDataSet >* m_dataSet;
 };
 
 #endif  // WMANIPULATORNORMALIZE_H

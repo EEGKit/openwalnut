@@ -66,10 +66,10 @@ WMClusterDisplayVoxels::~WMClusterDisplayVoxels()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMClusterDisplayVoxels::factory() const
+std::shared_ptr< WModule > WMClusterDisplayVoxels::factory() const
 {
     // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WMClusterDisplayVoxels() );
+    return std::shared_ptr< WModule >( new WMClusterDisplayVoxels() );
 }
 
 const char** WMClusterDisplayVoxels::getXPMIcon() const
@@ -92,11 +92,11 @@ const std::string WMClusterDisplayVoxels::getDescription() const
 void WMClusterDisplayVoxels::connectors()
 {
     // the input dataset is just used as source for resolurtion and transformation matrix
-    m_input = boost::shared_ptr< WModuleInputData < WDataSetSingle  > >(
+    m_input = std::shared_ptr< WModuleInputData < WDataSetSingle  > >(
         new WModuleInputData< WDataSetSingle >( shared_from_this(), "in", "The input dataset." ) );
     addConnector( m_input );
 
-    m_output = boost::shared_ptr< WModuleOutputData < WDataSetScalar  > >(
+    m_output = std::shared_ptr< WModuleOutputData < WDataSetScalar  > >(
         new WModuleOutputData< WDataSetScalar >( shared_from_this(), "out", "The extracted image." ) );
     addConnector( m_output );
 
@@ -105,7 +105,7 @@ void WMClusterDisplayVoxels::connectors()
 
 void WMClusterDisplayVoxels::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_propClusterFile = m_properties->addProperty( "Cluster file", "", boost::filesystem::path( "/SCR/schurade/data/david/whole/avg.txt" ) );
     m_propReadTrigger = m_properties->addProperty( "Do read",  "Press!", WPVBaseTypes::PV_TRIGGER_READY, m_propCondition );
@@ -114,7 +114,7 @@ void WMClusterDisplayVoxels::properties()
     // Group selection
     m_groupSelection = m_properties->addPropertyGroup( "Cluster selections",  "Groups the different cluster selection methods" ); //NOLINT
 
-    m_clusterSelectionsList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_clusterSelectionsList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_clusterSelectionsList->addItem( "Single", "" );
     m_clusterSelectionsList->addItem( "Biggest", "" );
     m_clusterSelectionsList->addItem( "X Clusters", "" );
@@ -164,7 +164,7 @@ void WMClusterDisplayVoxels::properties()
 
     m_propShowSelectedButtons = m_groupSelection->addProperty( "Show Buttons", "Shows/Hides the buttons for selected cluster on the left side", true, m_propCondition ); //NOLINT
 
-    m_buttonLabelList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_buttonLabelList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_buttonLabelList->addItem( "Number", "" );
     m_buttonLabelList->addItem( "Size", "" );
     m_buttonLabelList->addItem( "Level", "" );
@@ -280,7 +280,7 @@ void WMClusterDisplayVoxels::moduleMain()
             break;
         }
 
-        boost::shared_ptr< WDataSetSingle > newDataSet = m_input->getData();
+        std::shared_ptr< WDataSetSingle > newDataSet = m_input->getData();
         bool dataChanged = ( m_dataSet != newDataSet );
         bool dataValid   = ( newDataSet != NULL );
 
@@ -289,7 +289,7 @@ void WMClusterDisplayVoxels::moduleMain()
             if( dataChanged )
             {
                 m_dataSet = newDataSet;
-                m_grid = boost::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
+                m_grid = std::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
                 break;
             }
         }
@@ -1082,17 +1082,17 @@ void WMClusterDisplayVoxels::updateOutDataset()
     WAssert( m_dataSet->getValueSet(), "" );
     WAssert( m_dataSet->getGrid(), "" );
 
-    boost::shared_ptr< std::vector< float > >ptr( new std::vector< float >( m_data.size() ) );
+    std::shared_ptr< std::vector< float > >ptr( new std::vector< float >( m_data.size() ) );
 
     for( size_t i = 0; i < m_data.size(); ++i )
     {
         ptr->at( i ) = static_cast<float>( m_data[i] );
     }
 
-    boost::shared_ptr< WValueSet< float > > vs =
-        boost::shared_ptr< WValueSet< float > >( new WValueSet< float >( 0, 1, ptr, W_DT_FLOAT ) );
+    std::shared_ptr< WValueSet< float > > vs =
+        std::shared_ptr< WValueSet< float > >( new WValueSet< float >( 0, 1, ptr, W_DT_FLOAT ) );
 
-    m_outData = boost::shared_ptr< WDataSetScalar >( new WDataSetScalar( vs, m_grid ) );
+    m_outData = std::shared_ptr< WDataSetScalar >( new WDataSetScalar( vs, m_grid ) );
     m_output->updateData( m_outData );
 }
 

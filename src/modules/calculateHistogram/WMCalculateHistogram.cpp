@@ -40,9 +40,9 @@ WMCalculateHistogram::~WMCalculateHistogram()
 {
 }
 
-boost::shared_ptr< WModule > WMCalculateHistogram::factory() const
+std::shared_ptr< WModule > WMCalculateHistogram::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMCalculateHistogram() );
+    return std::shared_ptr< WModule >( new WMCalculateHistogram() );
 }
 
 const char** WMCalculateHistogram::getXPMIcon() const
@@ -62,11 +62,11 @@ const std::string WMCalculateHistogram::getDescription() const
 
 void WMCalculateHistogram::connectors()
 {
-    m_dataInput = boost::shared_ptr< WModuleInputData< WDataSetSingle > >( new WModuleInputData< WDataSetSingle >(
+    m_dataInput = std::shared_ptr< WModuleInputData< WDataSetSingle > >( new WModuleInputData< WDataSetSingle >(
                     shared_from_this(), "Input data", "A dataset to calculate the histogram from." ) );
     addConnector( m_dataInput );
 
-    m_histogramOutput = boost::shared_ptr< WModuleOutputData< WDataSetHistogram1D > >( new WModuleOutputData< WDataSetHistogram1D >(
+    m_histogramOutput = std::shared_ptr< WModuleOutputData< WDataSetHistogram1D > >( new WModuleOutputData< WDataSetHistogram1D >(
                     shared_from_this(), "Histogram", "The calculated histogram." ) );
     addConnector( m_histogramOutput );
 
@@ -75,7 +75,7 @@ void WMCalculateHistogram::connectors()
 
 void WMCalculateHistogram::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition );
 
     m_histogramBins = m_properties->addProperty( "Histogram bins", "The number of bins in the calculated histogram.", 100, m_propCondition );
     m_histogramBins->setMin( 1 );
@@ -123,7 +123,7 @@ void WMCalculateHistogram::moduleMain()
 
 void WMCalculateHistogram::updateOutput()
 {
-    boost::shared_ptr< WHistogramBasic > histo( new WHistogramBasic( m_data->getValueSet()->getMinimumValue(),
+    std::shared_ptr< WHistogramBasic > histo( new WHistogramBasic( m_data->getValueSet()->getMinimumValue(),
                                                                      m_data->getValueSet()->getMaximumValue(),
                                                                      m_histogramBins->get( true ) ) );
     for( std::size_t j = 0; j < m_data->getValueSet()->size(); ++j )
@@ -131,6 +131,6 @@ void WMCalculateHistogram::updateOutput()
         histo->insert( m_data->getValueSet()->getScalarDouble( j ) );
     }
 
-    m_histogramOutput->updateData( boost::shared_ptr< WDataSetHistogram1D >( new WDataSetHistogram1D( histo ) ) );
+    m_histogramOutput->updateData( std::shared_ptr< WDataSetHistogram1D >( new WDataSetHistogram1D( histo ) ) );
 }
 

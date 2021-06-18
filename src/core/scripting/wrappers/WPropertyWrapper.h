@@ -46,7 +46,7 @@ public:
      *
      * \param prop The property.
      */
-    explicit WPropertyWrapper( boost::shared_ptr< WPropertyBase > prop );
+    explicit WPropertyWrapper( std::shared_ptr< WPropertyBase > prop );
 
     /**
      * Return the name of the property.
@@ -180,7 +180,7 @@ public:
 
 private:
     //! The property.
-    boost::shared_ptr< WPropertyBase > m_prop;
+    std::shared_ptr< WPropertyBase > m_prop;
 };
 
 #endif  // WPROPERTYWRAPPER_H

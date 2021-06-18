@@ -49,7 +49,7 @@ WTriangleMesh::SPtr WMeshReaderBrainVISA::operator()( WProgressCombiner::SPtr pa
     std::string fileName = file.string();
     WAssert( !fileName.empty(), "No filename specified." );
 
-    boost::shared_ptr< WProgress > progress( new WProgress( "Read Mesh", 3 ) );
+    std::shared_ptr< WProgress > progress( new WProgress( "Read Mesh", 3 ) );
     parentProgress->addSubProgress( progress );
 
     std::ifstream ifs;
@@ -72,7 +72,7 @@ WTriangleMesh::SPtr WMeshReaderBrainVISA::operator()( WProgressCombiner::SPtr pa
     {
         WLogger::getLogger()->addLogMessage( "Unsupported file type", "Read Mesh", LL_ERROR );
         progress->finish();
-        return boost::shared_ptr< WTriangleMesh >();
+        return std::shared_ptr< WTriangleMesh >();
     }
     size_t numVertices = 0;
     size_t numNormals = 0;
@@ -91,7 +91,7 @@ WTriangleMesh::SPtr WMeshReaderBrainVISA::operator()( WProgressCombiner::SPtr pa
     ifs.read( reinterpret_cast< char* >( count ), 4 );
     numTriangles = count[0];
 
-    boost::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( numVertices, numTriangles ) );
+    std::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( numVertices, numTriangles ) );
 
     ifs.seekg( 33 );
     float *pointData = new float[ 3 * numVertices ];

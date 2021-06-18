@@ -74,7 +74,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -106,14 +106,14 @@ private:
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
-    boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;  //!< Input connector required by this module.
+    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;  //!< Input connector required by this module.
 
     /**
      * This is a pointer to the dataset the module is currently working on.
      */
-    boost::shared_ptr< WDataSetSingle > m_lastDataSet;
+    std::shared_ptr< WDataSetSingle > m_lastDataSet;
 
     /**
      * The min of the current dataset. We store them here to avoid many calls to getTexture()->minimum()->get() and scale()->get().
@@ -249,7 +249,7 @@ private:
     /**
      * A list of colorbar name positions
      */
-    boost::shared_ptr< WItemSelection > m_possibleNamePositions;
+    std::shared_ptr< WItemSelection > m_possibleNamePositions;
 };
 
 #endif  // WMCOLORMAPPER_H

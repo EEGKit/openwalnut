@@ -71,7 +71,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -105,12 +105,12 @@ private:
      * Scalar dataset representing the probability field either in real numbers in [0,1] or gray values or just simply the connectivity
      * score (\#visits per voxel).
      */
-    boost::shared_ptr< WModuleInputForwardData< WDataSetScalar > > m_input;
+    std::shared_ptr< WModuleInputForwardData< WDataSetScalar > > m_input;
 
     /**
      * Submodules for the iso surface generation.
      */
-    std::vector< boost::shared_ptr< WModule > > m_isoSurfaces;
+    std::vector< std::shared_ptr< WModule > > m_isoSurfaces;
 };
 
 #endif  // WMPROBTRACTDISPLAY_H

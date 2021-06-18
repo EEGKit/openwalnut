@@ -47,10 +47,10 @@ WMOpenIGTLinkSender::~WMOpenIGTLinkSender()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMOpenIGTLinkSender::factory() const
+std::shared_ptr< WModule > WMOpenIGTLinkSender::factory() const
 {
     // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WMOpenIGTLinkSender() );
+    return std::shared_ptr< WModule >( new WMOpenIGTLinkSender() );
 }
 
 const char** WMOpenIGTLinkSender::getXPMIcon() const
@@ -77,7 +77,7 @@ void WMOpenIGTLinkSender::connectors()
 
 void WMOpenIGTLinkSender::properties()
 {
-    m_propCondition =  boost::shared_ptr < WCondition > ( new WCondition() );
+    m_propCondition =  std::shared_ptr < WCondition > ( new WCondition() );
 
     m_propActive =  m_properties->addProperty( "Active",
             "Set to true to start the connection or to start the server."
@@ -85,7 +85,7 @@ void WMOpenIGTLinkSender::properties()
             " and the remote or local port is only performed whenever the active flag changes.",
             false, m_propCondition );
 
-    m_propServerOrClientSelections = boost::shared_ptr < WItemSelection > ( new WItemSelection() );
+    m_propServerOrClientSelections = std::shared_ptr < WItemSelection > ( new WItemSelection() );
     m_propServerOrClientSelections->addItem( "Server", "TCP/IP server listening for incoming connections." );
     m_propServerOrClientSelections->addItem( "Client", "TCP/IP client activenly making a connection to the remote host." );
     m_propServerOrClient =  m_properties->addProperty( "Act as:", "Server or Client.",
@@ -127,7 +127,7 @@ void WMOpenIGTLinkSender::moduleMain()
     ready();
     debugLog() << "Module is now ready.";
 
-    boost::shared_ptr < WIGTLinkRemote > remote;
+    std::shared_ptr < WIGTLinkRemote > remote;
 
     if( m_propActive->get() )
     {

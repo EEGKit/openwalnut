@@ -73,7 +73,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -99,22 +99,22 @@ protected:
     virtual void properties();
 
 private:
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_input;  //!< Input connector required by this module.
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_input;  //!< Input connector required by this module.
 
     /**
      * Source dataset.
      */
-    boost::shared_ptr< WDataSetScalar > m_dataSet;
+    std::shared_ptr< WDataSetScalar > m_dataSet;
 
     /**
      * Connector to provide the distance map to other modules.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output;
+    std::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output;
 
     /**
      * Target dataset.
      */
-    boost::shared_ptr< WDataSetScalar > m_distanceMapDataSet;
+    std::shared_ptr< WDataSetScalar > m_distanceMapDataSet;
 
     /**
      * Function to create a distance map from Anatomy data set.
@@ -124,7 +124,7 @@ private:
      *
      * \return the distance map values
      */
-    boost::shared_ptr< WValueSet< float > > createOffset( boost::shared_ptr< const WDataSetScalar > dataSet );
+    std::shared_ptr< WValueSet< float > > createOffset( std::shared_ptr< const WDataSetScalar > dataSet );
 
     /**
      * Gauss function.

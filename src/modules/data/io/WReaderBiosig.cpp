@@ -72,7 +72,7 @@ void WReaderBiosig::fillSegmentRowBased( std::vector<std::vector<double> >* segm
     }
 }
 
-boost::shared_ptr< WDataSet > WReaderBiosig::load()
+std::shared_ptr< WDataSet > WReaderBiosig::load()
 {
     WAssert( m_fname.substr( m_fname.size() - 4 ) == ".edf", "We expect only EDF for the biosig loader so far." );
 
@@ -153,7 +153,7 @@ boost::shared_ptr< WDataSet > WReaderBiosig::load()
         // TODO(wiebel): set second channel
     }
 
-    boost::shared_ptr< WEEG > eeg( new WEEG( segments, lib, labels ) );
+    std::shared_ptr< WEEG > eeg( new WEEG( segments, lib, labels ) );
     eeg->setFilename( m_fname );
 
 

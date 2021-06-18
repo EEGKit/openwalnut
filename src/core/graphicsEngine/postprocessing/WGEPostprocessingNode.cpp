@@ -36,13 +36,13 @@
 WGEPostprocessingNode::WGEPostprocessingNode( osg::ref_ptr< WGECamera > reference, size_t width, size_t height, bool noHud ):
     osg::Switch(),
     m_childs( new WGEGroupNode() ),
-    m_properties( boost::shared_ptr< WProperties >( new WProperties( "Post-processing", "Post-processing properties" ) ) )
+    m_properties( std::shared_ptr< WProperties >( new WProperties( "Post-processing", "Post-processing properties" ) ) )
 {
     // the geometry is always the first in the switch node
     addChild( m_childs );
 
     // this node has some properties:
-    boost::shared_ptr< WItemSelection > m_possibleSelections( new WItemSelection() );
+    std::shared_ptr< WItemSelection > m_possibleSelections( new WItemSelection() );
     m_possibleSelections->addItem( "None", "No postprocessing." );
 
     m_showHud = m_properties->addProperty( "Texture debug", "If set, all intermediate texture are shown on screen for debugging.", false );

@@ -64,7 +64,7 @@ public:
      * \return pointer to a WDataSetCSV.
      * \throws WException If the file could not be opened.
      */
-    virtual boost::shared_ptr< WDataSetCSV > read();
+    virtual std::shared_ptr< WDataSetCSV > read();
 private:
     /**
      * Transforms a given string into a string vector, by a predefined delimiter

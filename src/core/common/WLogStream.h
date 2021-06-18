@@ -37,7 +37,7 @@
 class WLogStream // NOLINT
 {
 public:
-    typedef boost::shared_ptr< WLogStream > SharedPtr;  //!< shared pointer type
+    typedef std::shared_ptr< WLogStream > SharedPtr;  //!< shared pointer type
     typedef WLogStream* Ptr; //!< pointer type
     typedef WLogStream& Ref; //!< reference
     typedef const WLogStream& ConstRef; //!< const reference

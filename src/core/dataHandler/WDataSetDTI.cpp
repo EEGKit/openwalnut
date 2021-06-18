@@ -27,7 +27,7 @@
 #include "WDataSetDTI.h"
 
 // prototype instance as singleton
-boost::shared_ptr< WPrototyped > WDataSetDTI::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WDataSetDTI::m_prototype = std::shared_ptr< WPrototyped >();
 
 WDataSetDTI::WDataSetDTI()
     : WDataSetSingle()
@@ -35,7 +35,7 @@ WDataSetDTI::WDataSetDTI()
     // default constructor used by the prototype mechanism
 }
 
-WDataSetDTI::WDataSetDTI( boost::shared_ptr< WValueSetBase > newValueSet, boost::shared_ptr< WGrid > newGrid )
+WDataSetDTI::WDataSetDTI( std::shared_ptr< WValueSetBase > newValueSet, std::shared_ptr< WGrid > newGrid )
     : WDataSetSingle( newValueSet, newGrid )
 {
     WAssert( newValueSet, "No value set given." );
@@ -49,17 +49,17 @@ WDataSetDTI::~WDataSetDTI()
 {
 }
 
-WDataSetSingle::SPtr WDataSetDTI::clone( boost::shared_ptr< WValueSetBase > newValueSet, boost::shared_ptr< WGrid > newGrid ) const
+WDataSetSingle::SPtr WDataSetDTI::clone( std::shared_ptr< WValueSetBase > newValueSet, std::shared_ptr< WGrid > newGrid ) const
 {
     return WDataSetSingle::SPtr( new WDataSetDTI( newValueSet, newGrid ) );
 }
 
-WDataSetSingle::SPtr WDataSetDTI::clone( boost::shared_ptr< WValueSetBase > newValueSet ) const
+WDataSetSingle::SPtr WDataSetDTI::clone( std::shared_ptr< WValueSetBase > newValueSet ) const
 {
     return WDataSetSingle::SPtr( new WDataSetDTI( newValueSet, getGrid() ) );
 }
 
-WDataSetSingle::SPtr WDataSetDTI::clone( boost::shared_ptr< WGrid > newGrid ) const
+WDataSetSingle::SPtr WDataSetDTI::clone( std::shared_ptr< WGrid > newGrid ) const
 {
     return WDataSetSingle::SPtr( new WDataSetDTI( getValueSet(), newGrid ) );
 }
@@ -71,7 +71,7 @@ WDataSetSingle::SPtr WDataSetDTI::clone() const
 
 WTensorSym< 2, 3, float > WDataSetDTI::getTensor( size_t index ) const
 {
-    boost::shared_ptr< WValueSet< float > > values = boost::dynamic_pointer_cast< WValueSet< float > >( m_valueSet );
+    std::shared_ptr< WValueSet< float > > values = std::dynamic_pointer_cast< WValueSet< float > >( m_valueSet );
     WAssert( values, "The value set of a WDataSetDTI must be a WValueSet< float >, nothing else!" );
     return WTensorSym< 2, 3, float >( values->getWValue( index ) );
 }
@@ -87,11 +87,11 @@ const std::string WDataSetDTI::getDescription() const
 }
 
 
-boost::shared_ptr< WPrototyped > WDataSetDTI::getPrototype()
+std::shared_ptr< WPrototyped > WDataSetDTI::getPrototype()
 {
     if( !m_prototype )
     {
-        m_prototype = boost::shared_ptr< WPrototyped >( new WDataSetDTI() );
+        m_prototype = std::shared_ptr< WPrototyped >( new WDataSetDTI() );
     }
 
     return m_prototype;

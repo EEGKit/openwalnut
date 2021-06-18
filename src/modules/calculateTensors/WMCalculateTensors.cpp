@@ -46,9 +46,9 @@ WMCalculateTensors::~WMCalculateTensors()
 {
 }
 
-boost::shared_ptr< WModule > WMCalculateTensors::factory() const
+std::shared_ptr< WModule > WMCalculateTensors::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMCalculateTensors() );
+    return std::shared_ptr< WModule >( new WMCalculateTensors() );
 }
 
 const char** WMCalculateTensors::getXPMIcon() const
@@ -67,12 +67,12 @@ const std::string WMCalculateTensors::getDescription() const
 
 void WMCalculateTensors::connectors()
 {
-    m_input = boost::shared_ptr< WModuleInputData< WDataSetSphericalHarmonics > >(
+    m_input = std::shared_ptr< WModuleInputData< WDataSetSphericalHarmonics > >(
                             new WModuleInputData< WDataSetSphericalHarmonics >( shared_from_this(),
                                 "shInput", "A spherical harmonics dataset." )
             );
 
-    m_output = boost::shared_ptr< WModuleOutputData< WDataSetDTI > >( new WModuleOutputData< WDataSetDTI >( shared_from_this(),
+    m_output = std::shared_ptr< WModuleOutputData< WDataSetDTI > >( new WModuleOutputData< WDataSetDTI >( shared_from_this(),
                 "dtiOutput", "The diffusion tensor image." )
             );
 
@@ -85,7 +85,7 @@ void WMCalculateTensors::connectors()
 
 void WMCalculateTensors::properties()
 {
-    m_exceptionCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_exceptionCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     WModule::properties();
 }
@@ -114,7 +114,7 @@ void WMCalculateTensors::moduleMain()
         debugLog() << "Waiting.";
         m_moduleState.wait();
 
-        boost::shared_ptr< WDataSetSphericalHarmonics > inData = m_input->getData();
+        std::shared_ptr< WDataSetSphericalHarmonics > inData = m_input->getData();
         bool dataChanged = ( m_dataSet != inData );
 
         if( dataChanged && inData )
@@ -133,10 +133,10 @@ void WMCalculateTensors::moduleMain()
         {
             debugLog() << "Computation finished.";
             m_currentProgress->finish();
-            boost::shared_ptr< WDataSetSingle > temp = m_tensorFunc->getResult();
-            m_result = boost::shared_ptr< WDataSetDTI >( new WDataSetDTI( temp->getValueSet(), temp->getGrid() ) );
-            m_tensorPool = boost::shared_ptr< TensorPoolType >();
-            m_tensorFunc = boost::shared_ptr< TensorFuncType >();
+            std::shared_ptr< WDataSetSingle > temp = m_tensorFunc->getResult();
+            m_result = std::shared_ptr< WDataSetDTI >( new WDataSetDTI( temp->getValueSet(), temp->getGrid() ) );
+            m_tensorPool = std::shared_ptr< TensorPoolType >();
+            m_tensorFunc = std::shared_ptr< TensorFuncType >();
 
             // forward result
             m_output->updateData( m_result );
@@ -177,15 +177,15 @@ void WMCalculateTensors::resetTensorPool()
 
     if( m_dataSet->getSphericalHarmonicAt( 0 ).getOrder() == 2 )
     {
-        boost::shared_ptr< WGridRegular3D > g = boost::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
+        std::shared_ptr< WGridRegular3D > g = std::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
         WAssert( g, "" );
         resetProgress( g->getNbCoordsX() * g->getNbCoordsY() * g->getNbCoordsZ() );
 
         // create a new one
-        m_tensorFunc = boost::shared_ptr< TensorFuncType >( new TensorFuncType( m_dataSet, boost::bind( &This::perVoxelTensorFunc,
+        m_tensorFunc = std::shared_ptr< TensorFuncType >( new TensorFuncType( m_dataSet, boost::bind( &This::perVoxelTensorFunc,
                                                                                                         this,
                                                                                                         boost::placeholders::_1 ) ) );
-        m_tensorPool = boost::shared_ptr< TensorPoolType >( new TensorPoolType( 0, m_tensorFunc ) );
+        m_tensorPool = std::shared_ptr< TensorPoolType >( new TensorPoolType( 0, m_tensorFunc ) );
         m_tensorPool->subscribeExceptionSignal( boost::bind( &This::handleException, this, boost::placeholders::_1 ) );
         m_moduleState.add( m_tensorPool->getThreadsDoneCondition() );
     }
@@ -197,7 +197,7 @@ void WMCalculateTensors::resetTensorPool()
 
 void WMCalculateTensors::handleException( WException const& e )
 {
-    m_lastException = boost::shared_ptr< WException >( new WException( e ) );
+    m_lastException = std::shared_ptr< WException >( new WException( e ) );
     m_exceptionCondition->notify();
 }
 
@@ -207,7 +207,7 @@ void WMCalculateTensors::resetProgress( std::size_t todo )
     {
         m_currentProgress->finish();
     }
-    m_currentProgress = boost::shared_ptr< WProgress >( new WProgress( "calculate tensors", todo ) );
+    m_currentProgress = std::shared_ptr< WProgress >( new WProgress( "calculate tensors", todo ) );
     m_progress->addSubProgress( m_currentProgress );
 }
 

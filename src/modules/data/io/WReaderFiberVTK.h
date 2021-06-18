@@ -72,7 +72,7 @@ public:
      *
      * \return Reference to the dataset.
      */
-    virtual boost::shared_ptr< WDataSetFibers > read();
+    virtual std::shared_ptr< WDataSetFibers > read();
 
 protected:
     /**
@@ -104,11 +104,11 @@ protected:
      * \note The i'th point starts at the 3*i index since every point consumes
      * 3 elements.
      */
-    boost::shared_ptr< std::vector< float > > m_points;
+    std::shared_ptr< std::vector< float > > m_points;
 
-    boost::shared_ptr< std::vector< size_t > > m_fiberStartIndices; //!< Stores the start indices (in the point array) for every fiber
+    std::shared_ptr< std::vector< size_t > > m_fiberStartIndices; //!< Stores the start indices (in the point array) for every fiber
 
-    boost::shared_ptr< std::vector< size_t > > m_fiberLengths; //!< Stores the length of every fiber
+    std::shared_ptr< std::vector< size_t > > m_fiberLengths; //!< Stores the length of every fiber
 
     WDataSetFibers::VertexParemeterArray m_fiberParameters; //!< additional colors if found in file.
 
@@ -117,9 +117,9 @@ protected:
      * \note This vector has as many components as there are points, hence its
      * length is just a third of the length of the points vector.
      */
-    boost::shared_ptr< std::vector< size_t > > m_pointFiberMapping;
+    std::shared_ptr< std::vector< size_t > > m_pointFiberMapping;
 
-    boost::shared_ptr< std::ifstream > m_ifs; //!< Pointer to the input file stream reader.
+    std::shared_ptr< std::ifstream > m_ifs; //!< Pointer to the input file stream reader.
 
 private:
     /**

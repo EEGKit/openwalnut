@@ -38,12 +38,12 @@ public:
     /**
      * Abbreviation for a shared pointer.
      */
-    typedef boost::shared_ptr< WItemSelectionItem > SPtr;
+    typedef std::shared_ptr< WItemSelectionItem > SPtr;
 
     /**
      * Abbreviation for a const shared pointer.
      */
-    typedef boost::shared_ptr< const WItemSelectionItem > ConstSPtr;
+    typedef std::shared_ptr< const WItemSelectionItem > ConstSPtr;
 
     /**
      * Constructs a new item with the specified values.

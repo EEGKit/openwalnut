@@ -77,7 +77,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -112,12 +112,12 @@ private:
     /**
      * An input connector that accepts spherical harmonics datasets.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetSphericalHarmonics > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSetSphericalHarmonics > > m_input;
 
     /**
      * This condition denotes whether we need to recompute the surface
      */
-    boost::shared_ptr< WCondition > m_recompute;
+    std::shared_ptr< WCondition > m_recompute;
 
     /**
      * Just a preliminary function to avoid polluting moduleMain()
@@ -136,11 +136,11 @@ private:
      */
     void renderSlice( size_t sliceId );
 
-    boost::shared_ptr< WDataSetSphericalHarmonics > m_dataSet; //!< Pointer to the treated data set.
+    std::shared_ptr< WDataSetSphericalHarmonics > m_dataSet; //!< Pointer to the treated data set.
 
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_inputGFA; //!< The input for the GFA.
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_inputGFA; //!< The input for the GFA.
     osg::ref_ptr< WGEShader > m_shader; //!< The shader used for the glyph surfaces
-    boost::shared_ptr< WItemSelection > m_sliceOrientations; //!< A list of the selectable slice orientations, i.e  x, y and z.
+    std::shared_ptr< WItemSelection > m_sliceOrientations; //!< A list of the selectable slice orientations, i.e  x, y and z.
     WPropSelection m_sliceOrientationSelectionProp; //!< To choose whether to x, y or z slice.
     WPropBool m_usePolarPlotProp; //!< Property indicating whether to use polar plot instead of HOME glyph
     WPropBool m_useNormalizationProp; //!< Indicates whether to use min max normalization.
@@ -149,7 +149,7 @@ private:
     WPropDouble m_GFAThresholdProp; //!< Property holding the threshold of GFA above which glyphs should be drawn.
     WPropDouble m_glyphSizeProp; //!< Property holding the size of the displayed glyphs
     WPropInt m_sliceIdProp; //!< Property holding the slice ID
-    boost::shared_ptr< WItemSelection > m_orders; //!< A list of the selectable orders
+    std::shared_ptr< WItemSelection > m_orders; //!< A list of the selectable orders
     WPropSelection m_orderProp; //!< Property holding the order of the SH to show.
 
     WPropInt m_moduloProp; //!< Property holding information on how many glyphs will be omited between two glyphs (modulo-1).
@@ -159,11 +159,11 @@ private:
     osg::ref_ptr< WGEGroupNode > m_moduleNode; //!< Pointer to the modules group node.
 
     //! The last exception thrown by any worker thread.
-    boost::shared_ptr< WException > m_lastException;
+    std::shared_ptr< WException > m_lastException;
     boost::mutex m_moduleNodeLock; //!< Lock to prevent concurrent threads trying access m_moduleNode
 
     //! condition indicating if any exception was thrown.
-    boost::shared_ptr< WCondition > m_exceptionCondition;
+    std::shared_ptr< WCondition > m_exceptionCondition;
 
     /**
      * This class actually generated the glyph geometry. This class has () operator that the work.
@@ -189,8 +189,8 @@ private:
          * \param useRadiusNormalization Scale glyphs to make them all the same size.
          * \param hideNegativeLobes Vertices with negative radius will be set to zero.
          */
-        GlyphGeneration(  boost::shared_ptr< WDataSetSphericalHarmonics > dataSet,
-                          boost::shared_ptr< WDataSetScalar > dataGFA,
+        GlyphGeneration(  std::shared_ptr< WDataSetSphericalHarmonics > dataSet,
+                          std::shared_ptr< WDataSetScalar > dataGFA,
                           double thresholdGFA,
                           const size_t& sliceId,
                           const size_t& order,
@@ -236,9 +236,9 @@ private:
         size_t m_nX; //!< Number of voxels in x direction.
         size_t m_nY; //!< Number of voxels in y direction.
         size_t m_nZ; //!< Number of voxels in z direction.
-        boost::shared_ptr< WDataSetSphericalHarmonics > m_dataSet; //!< Pointer to the treated data set.
-        boost::shared_ptr< WDataSetScalar > m_dataGFA; //!< Pointer to possible GFA data set.
-        boost::shared_ptr< WGridRegular3D > m_grid; //!< Pointer to the grid of the treated data set.
+        std::shared_ptr< WDataSetSphericalHarmonics > m_dataSet; //!< Pointer to the treated data set.
+        std::shared_ptr< WDataSetScalar > m_dataGFA; //!< Pointer to possible GFA data set.
+        std::shared_ptr< WGridRegular3D > m_grid; //!< Pointer to the grid of the treated data set.
         osg::ref_ptr< osg::Vec3Array > m_vertArray; //!< Vertices of the triangles of the glyphs.
         osg::ref_ptr< osg::Vec3Array > m_normals; //!< Normals of the vertices of the glyphs.
         osg::ref_ptr< osg::Vec4Array > m_colors; //!< Colors of the vertices of the glyphs.

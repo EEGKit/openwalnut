@@ -76,7 +76,7 @@ public:
      * \param cluster
      * \return shared pointer to the bitfield
      */
-    boost::shared_ptr< std::vector<bool> >getOutputBitfield( size_t cluster );
+    std::shared_ptr< std::vector<bool> >getOutputBitfield( size_t cluster );
 
     /**
      * generates a bitfield where for every leaf in the selected cluster the value is true, false otherwise
@@ -84,7 +84,7 @@ public:
      * \param clusters
      * \return shared pointer to the bitfield
      */
-    boost::shared_ptr< std::vector<bool> >getOutputBitfield( std::vector<size_t>clusters );
+    std::shared_ptr< std::vector<bool> >getOutputBitfield( std::vector<size_t>clusters );
 
     /**
      * finds clusters that match a given ROI up to a certain percentage
@@ -108,18 +108,18 @@ public:
      * setter
      * \param bitfield
      */
-    void setRoiBitField( boost::shared_ptr< std::vector<bool> > bitfield );
+    void setRoiBitField( std::shared_ptr< std::vector<bool> > bitfield );
 
 protected:
 private:
     /**
      * stores a pointer to the bitfield by the current roi setting
      */
-    boost::shared_ptr< std::vector<bool> > m_roiSelection;
+    std::shared_ptr< std::vector<bool> > m_roiSelection;
 };
 
 
-inline void WHierarchicalTreeFibers::setRoiBitField( boost::shared_ptr< std::vector<bool> > bitfield )
+inline void WHierarchicalTreeFibers::setRoiBitField( std::shared_ptr< std::vector<bool> > bitfield )
 {
     m_roiSelection = bitfield;
 }

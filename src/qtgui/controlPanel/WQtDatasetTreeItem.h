@@ -43,7 +43,7 @@ public:
      * \param parent The parent widget that manages this widget.
      * \param module The module that will be represented by the item.
      */
-    WQtDatasetTreeItem( QTreeWidgetItem * parent, boost::shared_ptr< WModule > module );
+    WQtDatasetTreeItem( QTreeWidgetItem * parent, std::shared_ptr< WModule > module );
 
     /**
      * Destructor

@@ -77,7 +77,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -159,17 +159,17 @@ private:
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * An input connector used to get meshes from other modules. The connection management between connectors must not be handled by the module.
      */
-    boost::shared_ptr< WModuleInputData< WTriangleMesh > > m_meshInput;
+    std::shared_ptr< WModuleInputData< WTriangleMesh > > m_meshInput;
 
     /**
      * A map for mapping each vertex to a color.
      */
-    boost::shared_ptr< WModuleInputData< WColoredVertices > > m_colorMapInput;
+    std::shared_ptr< WModuleInputData< WColoredVertices > > m_colorMapInput;
 
     /**
      * A group wich contains all transformation tools.
@@ -186,7 +186,7 @@ private:
      *
      * \param mesh The mesh to be rendered.
      */
-    void renderMesh( boost::shared_ptr< WTriangleMesh > mesh );
+    void renderMesh( std::shared_ptr< WTriangleMesh > mesh );
     /**
      * OSG Uniform for the transformation matrix which transforms the mesh. Needed for the colormapper
     */

@@ -24,7 +24,7 @@
 
 #include "WOutputConnectorWrapper.h"
 
-WOutputConnectorWrapper::WOutputConnectorWrapper( boost::shared_ptr< WModuleOutputConnector > conn )
+WOutputConnectorWrapper::WOutputConnectorWrapper( std::shared_ptr< WModuleOutputConnector > conn )
     : m_conn( conn )
 {
 }
@@ -34,7 +34,7 @@ void WOutputConnectorWrapper::disconnect()
     m_conn->disconnectAll();
 }
 
-boost::shared_ptr< WModuleOutputConnector > WOutputConnectorWrapper::getConnectorPtr()
+std::shared_ptr< WModuleOutputConnector > WOutputConnectorWrapper::getConnectorPtr()
 {
     return m_conn;
 }

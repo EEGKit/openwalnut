@@ -31,7 +31,7 @@ WMeshReaderInterface::~WMeshReaderInterface()
     // cleanup
 }
 
-std::string WMeshReaderInterface::getLine( boost::shared_ptr< std::ifstream > ifs, const std::string& desc ) const
+std::string WMeshReaderInterface::getLine( std::shared_ptr< std::ifstream > ifs, const std::string& desc ) const
 {
     return getLine( *( ifs ), desc );
 }

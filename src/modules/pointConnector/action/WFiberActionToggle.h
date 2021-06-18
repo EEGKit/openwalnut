@@ -43,7 +43,7 @@ public:
     /**
      * A shared_ptr to this class.
      */
-    typedef boost::shared_ptr< WFiberActionToggle > SPtr;
+    typedef std::shared_ptr< WFiberActionToggle > SPtr;
 
     /**
      * Creates this action.

@@ -49,7 +49,7 @@
 #include "WQtNetworkColors.h"
 
 
-WQtNetworkItem::WQtNetworkItem( WQtNetworkEditor* editor, boost::shared_ptr< WModule > module ):
+WQtNetworkItem::WQtNetworkItem( WQtNetworkEditor* editor, std::shared_ptr< WModule > module ):
     QGraphicsObject(),
     m_isHovered( false ),
     m_isSelected( false ),
@@ -85,8 +85,8 @@ WQtNetworkItem::WQtNetworkItem( WQtNetworkEditor* editor, boost::shared_ptr< WMo
     m_text->setDefaultTextColor( Qt::white );
 
     // for captions of data modules
-    boost::shared_ptr< WDataModule > dataModule;
-    dataModule = boost::dynamic_pointer_cast< WDataModule >( module );
+    std::shared_ptr< WDataModule > dataModule;
+    dataModule = std::dynamic_pointer_cast< WDataModule >( module );
     if( dataModule )
     {
         if( dataModule->getInput() )
@@ -279,7 +279,7 @@ void WQtNetworkItem::updater()
     if( m_currentState != Crashed )
     {
         // handle progress indication
-        boost::shared_ptr< WProgressCombiner> p = m_module->getRootProgressCombiner();
+        std::shared_ptr< WProgressCombiner> p = m_module->getRootProgressCombiner();
 
         // update the progress combiners internal state
         p->update();
@@ -327,7 +327,7 @@ void WQtNetworkItem::updater()
             // if busy indication was active -> update to remove it again
             needUpdate |= m_busyIndicatorShow;
             m_busyIndicatorShow = false;
-            WDataModule::SPtr dataModule = boost::dynamic_pointer_cast< WDataModule >( m_module );
+            WDataModule::SPtr dataModule = std::dynamic_pointer_cast< WDataModule >( m_module );
             if( dataModule )
             {
                 m_subtitleFull = "Idle";
@@ -575,7 +575,7 @@ void WQtNetworkItem::mouseDoubleClickEvent( QGraphicsSceneMouseEvent* event )
             contentLayout->setAlignment( Qt::AlignTop );
 
             // if this module is a data module:
-            WDataModule::SPtr dataModule = boost::dynamic_pointer_cast< WDataModule >( m_module );
+            WDataModule::SPtr dataModule = std::dynamic_pointer_cast< WDataModule >( m_module );
             if( dataModule )
             {
                 contentLayout->addWidget( new WQtDataModuleInput( dataModule ) );
@@ -798,7 +798,7 @@ void WQtNetworkItem::changeState( State state )
     update();
 }
 
-boost::shared_ptr< WModule > WQtNetworkItem::getModule()
+std::shared_ptr< WModule > WQtNetworkItem::getModule()
 {
     return m_module;
 }

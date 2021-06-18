@@ -42,7 +42,7 @@ public:
      *
      * \param conn The input connector.
      */
-    explicit WOutputConnectorWrapper( boost::shared_ptr< WModuleOutputConnector > conn );
+    explicit WOutputConnectorWrapper( std::shared_ptr< WModuleOutputConnector > conn );
 
     /**
      * Disconnect this connector.
@@ -54,11 +54,11 @@ public:
      *
      * \return The pointer to the connector.
      */
-    boost::shared_ptr< WModuleOutputConnector > getConnectorPtr();
+    std::shared_ptr< WModuleOutputConnector > getConnectorPtr();
 
 private:
     //! The actual input connector.
-    boost::shared_ptr< WModuleOutputConnector > m_conn;
+    std::shared_ptr< WModuleOutputConnector > m_conn;
 };
 
 #endif  // WOUTPUTCONNECTORWRAPPER_H

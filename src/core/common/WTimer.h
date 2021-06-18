@@ -38,12 +38,12 @@ public:
     /**
      * Convenience typedef for a shared_ptr
      */
-    typedef boost::shared_ptr< WTimer > SPtr;
+    typedef std::shared_ptr< WTimer > SPtr;
 
     /**
      * Convenience typedef for a const shared_ptr.
      */
-    typedef boost::shared_ptr< const WTimer > ConstSPtr;
+    typedef std::shared_ptr< const WTimer > ConstSPtr;
 
     /**
      * Constructs a animation timer.

@@ -33,7 +33,7 @@
 
 #include "WModuleOutputConnector.h"
 
-WModuleOutputConnector::WModuleOutputConnector( boost::shared_ptr< WModule > module, std::string name, std::string description )
+WModuleOutputConnector::WModuleOutputConnector( std::shared_ptr< WModule > module, std::string name, std::string description )
     : WModuleConnector( module, name, description )
 {
 }
@@ -43,7 +43,7 @@ WModuleOutputConnector::~WModuleOutputConnector()
     // cleanup
 }
 
-bool WModuleOutputConnector::connectable( boost::shared_ptr<WModuleConnector> con )
+bool WModuleOutputConnector::connectable( std::shared_ptr<WModuleConnector> con )
 {
     // output connectors are just allowed to get connected with input connectors
     if( dynamic_cast<WModuleInputConnector*>( con.get() ) )  // NOLINT - since we really need them here
@@ -54,7 +54,7 @@ bool WModuleOutputConnector::connectable( boost::shared_ptr<WModuleConnector> co
     return false;
 }
 
-bool WModuleOutputConnector::lazyConnectable( boost::shared_ptr<WModuleConnector> con )
+bool WModuleOutputConnector::lazyConnectable( std::shared_ptr<WModuleConnector> con )
 {
     // output connectors are just allowed to get connected with input connectors
     if( dynamic_cast<WModuleInputConnector*>( con.get() ) )  // NOLINT - since we really need them here
@@ -80,7 +80,7 @@ boost::signals2::connection WModuleOutputConnector::subscribeSignal( MODULE_CONN
 
 void WModuleOutputConnector::propagateDataChange()
 {
-    signal_DataChanged( boost::shared_ptr<WModuleConnector>(), shared_from_this() );
+    signal_DataChanged( std::shared_ptr<WModuleConnector>(), shared_from_this() );
     m_dataChangedCondition->notify();
 }
 

@@ -55,9 +55,9 @@ WMVectorPlot::~WMVectorPlot()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMVectorPlot::factory() const
+std::shared_ptr< WModule > WMVectorPlot::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMVectorPlot() );
+    return std::shared_ptr< WModule >( new WMVectorPlot() );
 }
 
 const char** WMVectorPlot::getXPMIcon() const
@@ -77,7 +77,7 @@ const std::string WMVectorPlot::getDescription() const
 
 void WMVectorPlot::connectors()
 {
-    m_input = boost::shared_ptr< WModuleInputData < WDataSetVector > >(
+    m_input = std::shared_ptr< WModuleInputData < WDataSetVector > >(
         new WModuleInputData< WDataSetVector >( shared_from_this(), "in", "The dataset to display" )
         );
 
@@ -136,10 +136,10 @@ void WMVectorPlot::moduleMain()
             break;
         }
 
-        boost::shared_ptr< WProgress > progress( new WProgress( "Vector Plot", 2 ) );
+        std::shared_ptr< WProgress > progress( new WProgress( "Vector Plot", 2 ) );
         m_progress->addSubProgress( progress );
 
-        boost::shared_ptr< WDataSetVector > newDataSet = m_input->getData();
+        std::shared_ptr< WDataSetVector > newDataSet = m_input->getData();
         bool dataChanged = ( m_dataSet != newDataSet );
         bool dataValid   = ( newDataSet != NULL );
 
@@ -241,7 +241,7 @@ void WMVectorPlot::activate()
 
 void WMVectorPlot::transformVerts( osg::ref_ptr< osg::Vec3Array > verts )
 {
-    WMatrix< double > mat = boost::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() )->getTransformationMatrix();
+    WMatrix< double > mat = std::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() )->getTransformationMatrix();
 
     for( size_t i = 0; i < verts->size(); ++i )
     {

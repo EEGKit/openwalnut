@@ -61,47 +61,47 @@ public:
     /**
      * Pointer to dataset.
      */
-    typedef boost::shared_ptr< WDataSetFibers > SPtr;
+    typedef std::shared_ptr< WDataSetFibers > SPtr;
 
     /**
      * Pointer to const dataset.
      */
-    typedef boost::shared_ptr< const WDataSetFibers > ConstSPtr;
+    typedef std::shared_ptr< const WDataSetFibers > ConstSPtr;
 
     /**
      * List of vertex coordinates in term of components of vertices.
      */
-    typedef boost::shared_ptr< std::vector< float > > VertexArray;
+    typedef std::shared_ptr< std::vector< float > > VertexArray;
 
     /**
      * Index list indexing fibers in VertexArray in terms of vertex numbers.
      */
-    typedef boost::shared_ptr< std::vector< size_t > > IndexArray;
+    typedef std::shared_ptr< std::vector< size_t > > IndexArray;
 
     /**
      * Lengths of fibers in terms of vertices.
      */
-    typedef boost::shared_ptr< std::vector< size_t > > LengthArray;
+    typedef std::shared_ptr< std::vector< size_t > > LengthArray;
 
     /**
      * Tangents at each vertex in VertexArray.
      */
-    typedef boost::shared_ptr< std::vector< float > > TangentArray;
+    typedef std::shared_ptr< std::vector< float > > TangentArray;
 
     /**
      * Colors for each vertex in VertexArray.
      */
-    typedef boost::shared_ptr< std::vector< float > > ColorArray;
+    typedef std::shared_ptr< std::vector< float > > ColorArray;
 
     /**
      * Parameter storage for each vertex.
      */
-    typedef boost::shared_ptr< std::vector< double > > VertexParemeterArray;
+    typedef std::shared_ptr< std::vector< double > > VertexParemeterArray;
 
     /**
      * Parameter storage for each line.
      */
-    typedef boost::shared_ptr< std::vector< double > > LineParemeterArray;
+    typedef std::shared_ptr< std::vector< double > > LineParemeterArray;
 
     /**
      * Iterator to go through the fibers.
@@ -202,10 +202,10 @@ public:
      * \param verticesReverse stores for each vertex the index of the corresponding fiber
      * \param boundingBox The bounding box of the fibers (first minimum, second maximum).
      */
-    WDataSetFibers( boost::shared_ptr< std::vector< float > >vertices,
-                    boost::shared_ptr< std::vector< size_t > > lineStartIndexes,
-                    boost::shared_ptr< std::vector< size_t > > lineLengths,
-                    boost::shared_ptr< std::vector< size_t > > verticesReverse,
+    WDataSetFibers( std::shared_ptr< std::vector< float > >vertices,
+                    std::shared_ptr< std::vector< size_t > > lineStartIndexes,
+                    std::shared_ptr< std::vector< size_t > > lineLengths,
+                    std::shared_ptr< std::vector< size_t > > verticesReverse,
                     WBoundingBox boundingBox );
 
     /**
@@ -216,10 +216,10 @@ public:
      * \param lineLengths how many vertices belong to a fiber
      * \param verticesReverse stores for each vertex the index of the corresponding fiber
      */
-    WDataSetFibers( boost::shared_ptr< std::vector< float > >vertices,
-                    boost::shared_ptr< std::vector< size_t > > lineStartIndexes,
-                    boost::shared_ptr< std::vector< size_t > > lineLengths,
-                    boost::shared_ptr< std::vector< size_t > > verticesReverse );
+    WDataSetFibers( std::shared_ptr< std::vector< float > >vertices,
+                    std::shared_ptr< std::vector< size_t > > lineStartIndexes,
+                    std::shared_ptr< std::vector< size_t > > lineLengths,
+                    std::shared_ptr< std::vector< size_t > > verticesReverse );
 
     /**
      * Constructs a new set of fibers.
@@ -231,10 +231,10 @@ public:
      * \param boundingBox The bounding box of the fibers (first minimum, second maximum).
      * \param vertexParameters optional per-vertex scalar.
      */
-    WDataSetFibers( boost::shared_ptr< std::vector< float > >vertices,
-                    boost::shared_ptr< std::vector< size_t > > lineStartIndexes,
-                    boost::shared_ptr< std::vector< size_t > > lineLengths,
-                    boost::shared_ptr< std::vector< size_t > > verticesReverse,
+    WDataSetFibers( std::shared_ptr< std::vector< float > >vertices,
+                    std::shared_ptr< std::vector< size_t > > lineStartIndexes,
+                    std::shared_ptr< std::vector< size_t > > lineLengths,
+                    std::shared_ptr< std::vector< size_t > > verticesReverse,
                     WBoundingBox boundingBox,
                     VertexParemeterArray vertexParameters );
 
@@ -247,10 +247,10 @@ public:
      * \param verticesReverse stores for each vertex the index of the corresponding fiber
      * \param vertexParameters optional per-vertex scalar.
      */
-    WDataSetFibers( boost::shared_ptr< std::vector< float > >vertices,
-                    boost::shared_ptr< std::vector< size_t > > lineStartIndexes,
-                    boost::shared_ptr< std::vector< size_t > > lineLengths,
-                    boost::shared_ptr< std::vector< size_t > > verticesReverse,
+    WDataSetFibers( std::shared_ptr< std::vector< float > >vertices,
+                    std::shared_ptr< std::vector< size_t > > lineStartIndexes,
+                    std::shared_ptr< std::vector< size_t > > lineLengths,
+                    std::shared_ptr< std::vector< size_t > > verticesReverse,
                     VertexParemeterArray vertexParameters );
 
     /**
@@ -290,7 +290,7 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
     /**
      * Getter for the lines' vertices
@@ -388,7 +388,7 @@ public:
      * \return the color scheme
      * \throw WDHNoSuchDataSet if the name could not be found.
      */
-    const boost::shared_ptr< ColorScheme > getColorScheme( std::string name ) const;
+    const std::shared_ptr< ColorScheme > getColorScheme( std::string name ) const;
 
     /**
      * Get the color scheme with the specified ID. If the index is invalid, an exception gets thrown.
@@ -397,7 +397,7 @@ public:
      *
      * \return the color scheme
      */
-    const boost::shared_ptr< ColorScheme > getColorScheme( size_t idx ) const;
+    const std::shared_ptr< ColorScheme > getColorScheme( size_t idx ) const;
 
     /**
      * Sets the selected color scheme.
@@ -412,7 +412,7 @@ public:
      *
      * \return the current active color scheme
      */
-    const boost::shared_ptr< ColorScheme > getColorScheme() const;
+    const std::shared_ptr< ColorScheme > getColorScheme() const;
 
     /**
      * Returns the property controlling the color scheme selection.
@@ -505,7 +505,7 @@ protected:
     /**
      * The prototype as singleton.
      */
-    static boost::shared_ptr< WPrototyped > m_prototype;
+    static std::shared_ptr< WPrototyped > m_prototype;
 
 private:
     /**
@@ -526,7 +526,7 @@ private:
     /**
      * An array of color arrays. The first two elements are: 0: global color, 1: local color
      */
-    boost::shared_ptr< WItemSelection > m_colors;
+    std::shared_ptr< WItemSelection > m_colors;
 
     /**
      * Property keeping track of the active color in m_colors.
@@ -1082,7 +1082,7 @@ public:
      *
      * \return the color.
      */
-    WColor getColor( const boost::shared_ptr< WDataSetFibers::ColorScheme > scheme ) const;
+    WColor getColor( const std::shared_ptr< WDataSetFibers::ColorScheme > scheme ) const;
 
 protected:
     /**

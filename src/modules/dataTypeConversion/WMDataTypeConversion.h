@@ -73,7 +73,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -98,13 +98,13 @@ protected:
     virtual void properties();
 
 private:
-    boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;  //!< Input connector required by this module.
-    boost::shared_ptr< WModuleOutputData< WDataSetSingle > > m_output; //!< The only output of this filter module.
-    boost::shared_ptr< WDataSetSingle > m_dataSet; //!< Pointer providing access to the treated data set in the whole module.
+    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;  //!< Input connector required by this module.
+    std::shared_ptr< WModuleOutputData< WDataSetSingle > > m_output; //!< The only output of this filter module.
+    std::shared_ptr< WDataSetSingle > m_dataSet; //!< Pointer providing access to the treated data set in the whole module.
 
-    boost::shared_ptr< WItemSelection > m_dataTypeSelectionsList; //!< A list of file type selection types
+    std::shared_ptr< WItemSelection > m_dataTypeSelectionsList; //!< A list of file type selection types
     WPropSelection m_dataTypeSelection; //!< Selection
 
-    boost::shared_ptr< WCondition > m_propCondition;  //!< A condition used to notify about changes in several properties.
+    std::shared_ptr< WCondition > m_propCondition;  //!< A condition used to notify about changes in several properties.
 };
 #endif  // WMDATATYPECONVERSION_H

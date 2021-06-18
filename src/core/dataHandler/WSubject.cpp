@@ -35,16 +35,16 @@
 
 WSubject::WSubject():
     m_datasets(),
-    m_changeCondition( boost::shared_ptr< WConditionSet >( new WConditionSet() ) ),
-    m_listChangeCondition( boost::shared_ptr< WConditionSet >( new WConditionSet() ) ),
+    m_changeCondition( std::shared_ptr< WConditionSet >( new WConditionSet() ) ),
+    m_listChangeCondition( std::shared_ptr< WConditionSet >( new WConditionSet() ) ),
     m_personalInfo( WPersonalInformation::createDummyInformation() )
 {
 }
 
 WSubject::WSubject( WPersonalInformation personInfo ):
     m_datasets(),
-    m_changeCondition( boost::shared_ptr< WConditionSet >( new WConditionSet() ) ),
-    m_listChangeCondition( boost::shared_ptr< WConditionSet >( new WConditionSet() ) ),
+    m_changeCondition( std::shared_ptr< WConditionSet >( new WConditionSet() ) ),
+    m_listChangeCondition( std::shared_ptr< WConditionSet >( new WConditionSet() ) ),
     m_personalInfo( personInfo )
 {
 }
@@ -64,7 +64,7 @@ WPersonalInformation WSubject::getPersonalInformation() const
     return m_personalInfo;
 }
 
-void WSubject::addDataSet( boost::shared_ptr< WDataSet > dataset )
+void WSubject::addDataSet( std::shared_ptr< WDataSet > dataset )
 {
     // simply add the new dataset
     m_datasets.push_back( dataset );
@@ -72,7 +72,7 @@ void WSubject::addDataSet( boost::shared_ptr< WDataSet > dataset )
     m_listChangeCondition->notify();
 }
 
-void WSubject::removeDataSet( boost::shared_ptr< WDataSet > dataset )
+void WSubject::removeDataSet( std::shared_ptr< WDataSet > dataset )
 {
     DatasetSharedContainerType::WriteTicket l = m_datasets.getWriteTicket();
 
@@ -108,12 +108,12 @@ WSubject::DatasetSharedContainerType::WriteTicket WSubject::getDatasetsForWritin
     return m_datasets.getWriteTicket();
 }
 
-boost::shared_ptr< WCondition > WSubject::getChangeCondition() const
+std::shared_ptr< WCondition > WSubject::getChangeCondition() const
 {
     return m_changeCondition;
 }
 
-boost::shared_ptr< WCondition > WSubject::getListChangeCondition() const
+std::shared_ptr< WCondition > WSubject::getListChangeCondition() const
 {
     return m_listChangeCondition;
 }

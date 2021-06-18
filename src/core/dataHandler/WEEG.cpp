@@ -29,7 +29,7 @@
 #include "WEEG.h"
 
 // prototype instance as singleton
-boost::shared_ptr< WPrototyped > WEEG::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WEEG::m_prototype = std::shared_ptr< WPrototyped >();
 
 WEEG::WEEG( const WEEGSegmentArray& data,
             const WEEGElectrodeLibrary& electrodeLib,
@@ -74,11 +74,11 @@ const std::string WEEG::getDescription() const
     return "Contains data acquired using EEG.";
 }
 
-boost::shared_ptr< WPrototyped > WEEG::getPrototype()
+std::shared_ptr< WPrototyped > WEEG::getPrototype()
 {
     if( !m_prototype )
     {
-        m_prototype = boost::shared_ptr< WPrototyped >( new WEEG() );
+        m_prototype = std::shared_ptr< WPrototyped >( new WEEG() );
     }
 
     return m_prototype;

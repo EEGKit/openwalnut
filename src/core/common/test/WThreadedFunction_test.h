@@ -111,7 +111,7 @@ class WThreadedFunctionTest : public CxxTest::TestSuite
 
     private:
         //! the input data
-        boost::shared_ptr< int const > m_input;
+        std::shared_ptr< int const > m_input;
 
         //! the result
         WSharedObject< int > m_result;
@@ -142,7 +142,7 @@ public:
      */
     void testMultipleThreads()
     {
-        boost::shared_ptr< FuncType > func( new FuncType( 5 ) );
+        std::shared_ptr< FuncType > func( new FuncType( 5 ) );
         // test 1 thread
         {
             WThreadedFunction< FuncType > f( 1, func );
@@ -202,7 +202,7 @@ public:
      */
     void testStopThreads()
     {
-        boost::shared_ptr< FuncType > func( new FuncType( 100000000 ) );
+        std::shared_ptr< FuncType > func( new FuncType( 100000000 ) );
         WThreadedFunction< FuncType > f( 6, func );
 
         TS_ASSERT_EQUALS( f.status(), W_THREADS_INITIALIZED );
@@ -222,7 +222,7 @@ public:
      */
     void testStopCondition()
     {
-        boost::shared_ptr< FuncType > func( new FuncType( 5 ) );
+        std::shared_ptr< FuncType > func( new FuncType( 5 ) );
         WThreadedFunction< FuncType > f( 6, func );
 
         TS_ASSERT_EQUALS( f.status(), W_THREADS_INITIALIZED );
@@ -241,7 +241,7 @@ public:
      */
     void testExceptionHandling()
     {
-        boost::shared_ptr< ExceptionalFuncType > func( new ExceptionalFuncType );
+        std::shared_ptr< ExceptionalFuncType > func( new ExceptionalFuncType );
         WThreadedFunction< ExceptionalFuncType > f( 7, func );
         f.subscribeExceptionSignal( boost::bind( &WThreadedFunctionTest::handleException, this, boost::placeholders::_1 ) );
 

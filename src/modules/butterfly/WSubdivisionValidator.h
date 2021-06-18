@@ -53,7 +53,7 @@ public:
      * \param processedMesh Triangle mesh that should be processed.
      * \param vertexFactory Vertex factory for Triangle mesh examination.
      */
-    void setTriangleMesh( boost::shared_ptr< WTriangleMesh > processedMesh, WVertexFactory* vertexFactory );
+    void setTriangleMesh( std::shared_ptr< WTriangleMesh > processedMesh, WVertexFactory* vertexFactory );
 
     /**
      * Generating statistical information of the triangle mesh. The data is stored in the vertex factory.
@@ -68,8 +68,8 @@ public:
      * \param inputMesh Input mesh to process and put out
      * \return Processed triangle mesh.
      */
-    boost::shared_ptr< WTriangleMesh > joinNarrowVertices(
-            boost::shared_ptr< WTriangleMesh > inputMesh ); //TODO(schwarzkopf): setting param should be done over setTriangleMesh
+    std::shared_ptr< WTriangleMesh > joinNarrowVertices(
+            std::shared_ptr< WTriangleMesh > inputMesh ); //TODO(schwarzkopf): setting param should be done over setTriangleMesh
 
     /**
      * Searchs for all triangles which has two angles below a preset value. Found values will be rotate
@@ -79,8 +79,8 @@ public:
      * \param inputMesh Input mesh to process and put out
      * \return Processed triangle mesh.
      */
-    boost::shared_ptr< WTriangleMesh > flipTrianglesAtLowAngles(
-            boost::shared_ptr< WTriangleMesh > inputMesh ); //TODO(schwarzkopf): setting param should be done over setTriangleMesh
+    std::shared_ptr< WTriangleMesh > flipTrianglesAtLowAngles(
+            std::shared_ptr< WTriangleMesh > inputMesh ); //TODO(schwarzkopf): setting param should be done over setTriangleMesh
 
     /**
      * Corrects Coordinates if they are determined to be invalid using validation settings.
@@ -386,7 +386,7 @@ private:
     /**
      * Associated triangle mesh for validation instances.
      */
-    boost::shared_ptr< WTriangleMesh > m_processedMesh;
+    std::shared_ptr< WTriangleMesh > m_processedMesh;
 
     /**
      * Associated analysis data of the the triangle mesh to be validated.

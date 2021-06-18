@@ -78,7 +78,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -141,26 +141,26 @@ private:
      *
      * \return Data in the selected box
      */
-    template< typename T > boost::shared_ptr< std::vector< float > > cutArea( boost::shared_ptr< WGrid > inGrid,
-                                                                              boost::shared_ptr< WValueSet< T > > vals );
+    template< typename T > std::shared_ptr< std::vector< float > > cutArea( std::shared_ptr< WGrid > inGrid,
+                                                                              std::shared_ptr< WValueSet< T > > vals );
 
     /**
      * This condition denotes whether we need to recompute the surface
      */
-    boost::shared_ptr< WCondition > m_recompute;
+    std::shared_ptr< WCondition > m_recompute;
 
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_input;  //!< Input connector required by this module.
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_input;  //!< Input connector required by this module.
 
-    boost::shared_ptr< const WDataSetScalar > m_dataSet; //!< pointer to dataSet to be able to access it throughout the whole module.
+    std::shared_ptr< const WDataSetScalar > m_dataSet; //!< pointer to dataSet to be able to access it throughout the whole module.
 
-    boost::shared_ptr< WValueSet< float > > m_newValueSet; //!< pointer to the created cut valueSet
+    std::shared_ptr< WValueSet< float > > m_newValueSet; //!< pointer to the created cut valueSet
 
     osg::ref_ptr< WROIBox > m_selectionROI; //!< stores a pointer to the cutting tool ROI
 
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * A trigger which can be used to trigger some kind of operation.
@@ -175,7 +175,7 @@ private:
 
     osg::ref_ptr< osg::Geode > m_outputGeode; //!< Pointer to geode containing the glpyhs
 
-    boost::shared_ptr< WTriangleMesh > m_triMesh; //!< This triangle mesh is provided as output through the connector.
+    std::shared_ptr< WTriangleMesh > m_triMesh; //!< This triangle mesh is provided as output through the connector.
 
     bool m_showSelector; //!< flag indication if the temporary ROI should be shown;
 

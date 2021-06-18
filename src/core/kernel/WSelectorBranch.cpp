@@ -27,20 +27,20 @@
 
 #include "WSelectorBranch.h"
 
-WSelectorBranch::WSelectorBranch( boost::shared_ptr< const WDataSetFibers > fibers, boost::shared_ptr<WRMBranch> branch ) :
+WSelectorBranch::WSelectorBranch( std::shared_ptr< const WDataSetFibers > fibers, std::shared_ptr<WRMBranch> branch ) :
     m_fibers( fibers ),
     m_size( fibers->size() ),
     m_dirty( true ),
     m_branch( branch )
 {
-    m_bitField = boost::shared_ptr< std::vector<bool> >( new std::vector<bool>( m_size, false ) );
+    m_bitField = std::shared_ptr< std::vector<bool> >( new std::vector<bool>( m_size, false ) );
 
     m_changeSignal =
-        boost::shared_ptr< boost::function< void() > >( new boost::function< void() >( boost::bind( &WSelectorBranch::setDirty, this ) ) );
+        std::shared_ptr< boost::function< void() > >( new boost::function< void() >( boost::bind( &WSelectorBranch::setDirty, this ) ) );
     m_branch->addChangeNotifier( m_changeSignal );
 
     m_changeRoiSignal =
-        boost::shared_ptr< boost::function< void() > >( new boost::function< void() >( boost::bind( &WSelectorBranch::setDirty, this ) ) );
+        std::shared_ptr< boost::function< void() > >( new boost::function< void() >( boost::bind( &WSelectorBranch::setDirty, this ) ) );
 }
 
 WSelectorBranch::~WSelectorBranch()
@@ -48,19 +48,19 @@ WSelectorBranch::~WSelectorBranch()
     m_branch->removeChangeNotifier( m_changeSignal );
 
     // We need the following because not all ROIs are removed per slot below
-    for( std::list< boost::shared_ptr< WSelectorRoi > >::iterator roiIter = m_rois.begin(); roiIter != m_rois.end(); ++roiIter )
+    for( std::list< std::shared_ptr< WSelectorRoi > >::iterator roiIter = m_rois.begin(); roiIter != m_rois.end(); ++roiIter )
     {
         ( *roiIter )->getRoi()->removeROIChangeNotifier( m_changeRoiSignal );
     }
 }
 
-void WSelectorBranch::addRoi( boost::shared_ptr< WSelectorRoi > roi )
+void WSelectorBranch::addRoi( std::shared_ptr< WSelectorRoi > roi )
 {
     m_rois.push_back( roi );
     roi->getRoi()->addROIChangeNotifier( m_changeRoiSignal );
 }
 
-std::list< boost::shared_ptr< WSelectorRoi > > WSelectorBranch::getROIs()
+std::list< std::shared_ptr< WSelectorRoi > > WSelectorBranch::getROIs()
 {
     return m_rois;
 }
@@ -72,7 +72,7 @@ void WSelectorBranch::setDirty()
 
 void WSelectorBranch::removeRoi( osg::ref_ptr< WROI > roi )
 {
-    for( std::list< boost::shared_ptr< WSelectorRoi > >::iterator iter = m_rois.begin(); iter != m_rois.end(); ++iter )
+    for( std::list< std::shared_ptr< WSelectorRoi > >::iterator iter = m_rois.begin(); iter != m_rois.end(); ++iter )
     {
         if( ( *iter )->getRoi() == roi )
         {
@@ -87,7 +87,7 @@ void WSelectorBranch::recalculate()
 {
     bool atLeastOneActive = false;
 
-    for( std::list< boost::shared_ptr< WSelectorRoi > >::iterator iter = m_rois.begin(); iter != m_rois.end(); ++iter )
+    for( std::list< std::shared_ptr< WSelectorRoi > >::iterator iter = m_rois.begin(); iter != m_rois.end(); ++iter )
     {
         if( ( *iter )->getRoi()->active() )
         {
@@ -97,13 +97,13 @@ void WSelectorBranch::recalculate()
 
     if( atLeastOneActive )
     {
-        m_workerBitfield = boost::shared_ptr< std::vector< bool > >( new std::vector< bool >( m_size, true ) );
+        m_workerBitfield = std::shared_ptr< std::vector< bool > >( new std::vector< bool >( m_size, true ) );
 
-        for( std::list< boost::shared_ptr< WSelectorRoi > >::iterator iter = m_rois.begin(); iter != m_rois.end(); ++iter )
+        for( std::list< std::shared_ptr< WSelectorRoi > >::iterator iter = m_rois.begin(); iter != m_rois.end(); ++iter )
         {
             if( ( *iter )->getRoi()->active() )
             {
-                boost::shared_ptr< std::vector<bool> > bf = ( *iter )->getBitField();
+                std::shared_ptr< std::vector<bool> > bf = ( *iter )->getBitField();
                 bool isnot = ( *iter )->getRoi()->isNot();
                 if( !isnot )
                 {
@@ -132,7 +132,7 @@ void WSelectorBranch::recalculate()
     }
     else
     {
-        m_workerBitfield = boost::shared_ptr< std::vector< bool > >( new std::vector< bool >( m_size, false ) );
+        m_workerBitfield = std::shared_ptr< std::vector< bool > >( new std::vector< bool >( m_size, false ) );
     }
 
     m_bitField = m_workerBitfield;

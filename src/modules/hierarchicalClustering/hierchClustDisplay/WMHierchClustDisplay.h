@@ -113,7 +113,7 @@ public:
      * should never be initialized or modified in some other way. A simple new instance is required.
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
 protected:
     //! Entry point after loading the module. Runs in separate thread.
@@ -309,11 +309,11 @@ private:
 
     // === PRIVATE MEMBER DATA ===
 
-    boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;    //!< An input connector that accepts order 1 datasets.
-    boost::shared_ptr< WModuleOutputData< WDataSetVector > > m_output;    //!< An output connector for the output scalar dsataset
-    boost::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output2;    //!< An output connector for the output coordinate vector.
-    boost::shared_ptr< WDataSetVector > m_outData;    //!< This is a pointer to the current output1.
-    boost::shared_ptr< WDataSetScalar > m_outData2;    //!< This is a pointer to the current output2.
+    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;    //!< An input connector that accepts order 1 datasets.
+    std::shared_ptr< WModuleOutputData< WDataSetVector > > m_output;    //!< An output connector for the output scalar dsataset
+    std::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output2;    //!< An output connector for the output coordinate vector.
+    std::shared_ptr< WDataSetVector > m_outData;    //!< This is a pointer to the current output1.
+    std::shared_ptr< WDataSetScalar > m_outData2;    //!< This is a pointer to the current output2.
 
     osgWidget::WindowManager* m_wm;    //!< stores a pointer to the window manager used for osg wdgets and overlay stuff
     osg::Camera* m_camera;    //!< stores the camera object
@@ -329,10 +329,10 @@ private:
      */
     osg::ref_ptr< WGEShader > m_shader;
 
-    boost::shared_ptr< WDataSetSingle > m_anatomy;    //!< This is a pointer to the anatomy dataset the module is currently working on.
+    std::shared_ptr< WDataSetSingle > m_anatomy;    //!< This is a pointer to the anatomy dataset the module is currently working on.
     osg::ref_ptr<osg::Texture3D> m_texture;    //!< stores a pointer to the texture we paint in (to overlay to anatomy)
     std::vector< size_t >m_textureLabels;    //!< label vector for texture creation
-    boost::shared_ptr< WGridRegular3D > m_grid;    //!< stores a pointer to the grid we use;
+    std::shared_ptr< WGridRegular3D > m_grid;    //!< stores a pointer to the grid we use;
 
     WHtree m_tree;    //!< stores the tree object as loaded from file;
     bool m_treeDirty;    //!< true if the dendrogram needs redrawing
@@ -353,14 +353,14 @@ private:
     std::vector<size_t>m_selectionClusters; //!< stores the currently activated clusters
     std::vector<size_t>m_selectionLeaves; //!< stores the leaves output by the selection
 
-    boost::shared_ptr< WTriangleMesh > m_cubeMesh; //!< Cube-like triangulation of the seed voxels
-    boost::shared_ptr< WTriangleMesh > m_discardedMesh; //!< Cube-like triangulation of the discarded voxels
+    std::shared_ptr< WTriangleMesh > m_cubeMesh; //!< Cube-like triangulation of the seed voxels
+    std::shared_ptr< WTriangleMesh > m_discardedMesh; //!< Cube-like triangulation of the discarded voxels
 
     std::vector< osg::ref_ptr<WOSGButton> >m_selectionLabels; //!< list of buttons for the active cluster selection
 
     // === MODULE PROPERTIES ===
 
-    boost::shared_ptr< WCondition > m_propTriggerChange; //!< A condition used to notify about changes in several properties.
+    std::shared_ptr< WCondition > m_propTriggerChange; //!< A condition used to notify about changes in several properties.
 
     WPropGroup m_groupInfoSelected; //!< grouping the selected info
     WPropInt m_infoSelectedID; //!< Info property: clusters in current partition
@@ -394,7 +394,7 @@ private:
     WPropBool m_propTriangleLeaves; //!< specifies a minimum size for a cluster so that too small cluster won't get an own color
     WPropTrigger m_propDendroZoomIn; //!< zoom into tree, sets m_treeZoom true and m_zoomRoot to the currently selected cluster
     WPropTrigger m_propDendroZoomOut; //!< zooms out, m_treeZoom = false, dendrogram shows the whole tree
-    boost::shared_ptr< WItemSelection > m_propDendroSideList; //!< A list of dendrogram positions
+    std::shared_ptr< WItemSelection > m_propDendroSideList; //!< A list of dendrogram positions
     WPropSelection m_propDendroSideSelector; //!< Selection property for dendrogram positions
     WPropGroup m_groupDendroManual; //!< grouping the dendrogram manual resizing properties
     WPropInt m_propDendroSizeX; //!< controls the width of the dendrogram
@@ -406,9 +406,9 @@ private:
     WPropTrigger m_propPartRoot; //!< triggers the selection of root cluster
     WPropInt m_propSourceCluster; //!< the current subtree root cluster
     WPropSelection m_propPartitionSelector; //!< Selection property for clusters
-    boost::shared_ptr< WItemSelection > m_propPartitionSelectionList; //!< A list of cluster selection methods
+    std::shared_ptr< WItemSelection > m_propPartitionSelectionList; //!< A list of cluster selection methods
     WPropSelection m_propConditionSelector; //!< Selection condition for clusters
-    boost::shared_ptr< WItemSelection > m_propConditionSelectionsList; //!< A list of condition selection methods
+    std::shared_ptr< WItemSelection > m_propConditionSelectionsList; //!< A list of condition selection methods
     WPropInt m_propPartNumClusters; //!< number of clusters of the desired partition
     WPropInt m_propPartSizeValue; //!< size cut value for the desired partition
     WPropInt m_propPartSearchDepthValue; //!< depth of search for optimized partitioning
@@ -422,13 +422,13 @@ private:
     WPropGroup m_groupVisualization; //!< grouping the different visualization options
     WPropInt m_propSubselectedCluster; //!< the currently selected cluster
     WPropColor m_propSubselectedcolor; //!< color for subselected cluster
-    boost::shared_ptr< WItemSelection > m_propColorSchemeList; //!< List of color schemes
+    std::shared_ptr< WItemSelection > m_propColorSchemeList; //!< List of color schemes
     WPropSelection m_propColorSchemeSelector; //!< selection of color schemes
-    boost::shared_ptr< WItemSelection > m_propColorActionList; //!< List of color schemes
+    std::shared_ptr< WItemSelection > m_propColorActionList; //!< List of color schemes
     WPropSelection m_propColorActionSelector; //!< selection of color schemes
     WPropTrigger m_propColorActionTrigger; //!< shuffle current colors
     WPropBool m_propShowLabels; //!< show info labels for selected clusters
-    boost::shared_ptr< WItemSelection > m_propLabelList; //!< List of label contents
+    std::shared_ptr< WItemSelection > m_propLabelList; //!< List of label contents
     WPropSelection m_propLabelInfoSelector; //!< selection of info on button labels
     WPropBool m_propShowDiscarded; //!< visualize also discarded voxels
     WPropBool m_propShowCubeMesh; //!< visualize voxel cube triangulation
@@ -439,7 +439,7 @@ private:
 
     WPropGroup m_groupTreeProcess; //!< grouping the different tree processing methods
     WPropSelection m_propProcessSelector; //!< Selection property for processing
-    boost::shared_ptr< WItemSelection > m_propProcessSelectionsList; //!< A list of cluster selection methods
+    std::shared_ptr< WItemSelection > m_propProcessSelectionsList; //!< A list of cluster selection methods
     WPropInt m_propSafeSize; //!< maximum size to be pruned
     WPropInt m_propPruneJoinSize; //!< join size for pruning process
     WPropDouble m_propPruneSizeRatio; //!< size ratio for pruning process

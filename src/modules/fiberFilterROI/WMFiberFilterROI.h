@@ -71,7 +71,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
 protected:
     /**
@@ -93,22 +93,22 @@ private:
     /**
      * An input for the fiber data.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetFibers > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSetFibers > > m_input;
 
     /**
      * The output connector for the filtered data.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetFibers > > m_fiberOutput;
+    std::shared_ptr< WModuleOutputData< WDataSetFibers > > m_fiberOutput;
 
     /**
      * The output connector for the resulting clustering.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetFiberClustering > > m_clusterOutput;
+    std::shared_ptr< WModuleOutputData< WDataSetFiberClustering > > m_clusterOutput;
 
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * Trigger output update

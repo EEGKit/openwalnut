@@ -61,7 +61,7 @@ public:
      *
      * \param input The input.
      */
-    WThreadedJobs( boost::shared_ptr< InputType const > input ); // NOLINT
+    WThreadedJobs( std::shared_ptr< InputType const > input ); // NOLINT
 
     /**
      * Destructor.
@@ -92,16 +92,16 @@ public:
      * \param input The input data.
      * \param job The current job.
      */
-    virtual void compute( boost::shared_ptr< InputType const > input, JobType const& job ) = 0;
+    virtual void compute( std::shared_ptr< InputType const > input, JobType const& job ) = 0;
 
 protected:
     //! the input
-    boost::shared_ptr< InputType const > m_input;
+    std::shared_ptr< InputType const > m_input;
 private:
 };
 
 template< class Input_T, class Job_T >
-WThreadedJobs< Input_T, Job_T >::WThreadedJobs( boost::shared_ptr< InputType const > input )
+WThreadedJobs< Input_T, Job_T >::WThreadedJobs( std::shared_ptr< InputType const > input )
     : m_input( input )
 {
     if( !m_input )
@@ -144,7 +144,7 @@ public:
      *
      * \param input The input.
      */
-    WThreadedStripingJobs( boost::shared_ptr< InputType const > input ); // NOLINT
+    WThreadedStripingJobs( std::shared_ptr< InputType const > input ); // NOLINT
 
     /**
      * Destructor.
@@ -167,16 +167,16 @@ public:
      * \param input The input data.
      * \param voxelNum The voxel number to operate on.
      */
-    virtual void compute( boost::shared_ptr< InputType const > input, std::size_t voxelNum ) = 0;
+    virtual void compute( std::shared_ptr< InputType const > input, std::size_t voxelNum ) = 0;
 
 protected:
     //! the input
-    boost::shared_ptr< InputType const > m_input;
+    std::shared_ptr< InputType const > m_input;
 private:
 };
 
 template< class Input_T, class Job_T >
-WThreadedStripingJobs< Input_T, Job_T >::WThreadedStripingJobs( boost::shared_ptr< InputType const > input )
+WThreadedStripingJobs< Input_T, Job_T >::WThreadedStripingJobs( std::shared_ptr< InputType const > input )
     : m_input( input )
 {
     if( !m_input )

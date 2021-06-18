@@ -74,8 +74,8 @@ public:
      */
     void testInstantiation( void )
     {
-        boost::shared_ptr< WPropertyVariable< bool > > p;
-        TS_ASSERT_THROWS_NOTHING( p =  boost::shared_ptr< WPropertyVariable< bool > >( new WPropertyVariable< bool >( "hey", "you", false ) ) );
+        std::shared_ptr< WPropertyVariable< bool > > p;
+        TS_ASSERT_THROWS_NOTHING( p =  std::shared_ptr< WPropertyVariable< bool > >( new WPropertyVariable< bool >( "hey", "you", false ) ) );
 
         // test names
         TS_ASSERT( p->getName() == "hey" );
@@ -92,8 +92,8 @@ public:
     {
         WException::disableBacktrace(); // in tests, turn of backtrace globally
 
-        boost::shared_ptr< WPropertyVariable< bool > > p;
-        TS_ASSERT_THROWS( p = boost::shared_ptr< WPropertyVariable< bool > >( new WPropertyVariable< bool >( "hey/you", "you", false ) ),
+        std::shared_ptr< WPropertyVariable< bool > > p;
+        TS_ASSERT_THROWS( p = std::shared_ptr< WPropertyVariable< bool > >( new WPropertyVariable< bool >( "hey/you", "you", false ) ),
                           const WPropertyNameMalformed& );
     }
 
@@ -108,8 +108,8 @@ public:
         // Create an original
 
         // create an int property
-        boost::shared_ptr< WPropertyVariable< int > > p =
-            boost::shared_ptr< WPropertyVariable< int > >( new WPropertyVariable< int >( "hey", "you", false ) );
+        std::shared_ptr< WPropertyVariable< int > > p =
+            std::shared_ptr< WPropertyVariable< int > >( new WPropertyVariable< int >( "hey", "you", false ) );
         // add a min/max prop
         WPropertyVariable< int >::PropertyConstraintMin cmin = p->setMin( 0 );
         WPropertyVariable< int >::PropertyConstraintMax cmax = p->setMax( 9 );
@@ -118,7 +118,7 @@ public:
         /////////////////////////
         // Clone it
 
-        boost::shared_ptr< WPropertyVariable< int > > clone = p->clone()->toPropInt();
+        std::shared_ptr< WPropertyVariable< int > > clone = p->clone()->toPropInt();
 
         // some rudimentary tests (from WPropertyBase)
         TS_ASSERT( clone );
@@ -184,8 +184,8 @@ public:
         WException::disableBacktrace(); // in tests, turn of backtrace globally
 
         // create an int property
-        boost::shared_ptr< WPropertyVariable< int > > p =
-            boost::shared_ptr< WPropertyVariable< int > >( new WPropertyVariable< int >( "hey", "you", false ) );
+        std::shared_ptr< WPropertyVariable< int > > p =
+            std::shared_ptr< WPropertyVariable< int > >( new WPropertyVariable< int >( "hey", "you", false ) );
 
         // by default there should be no min/max property set. Only IF the property was created using a WProperties::addProperty.
         WPropertyVariable< int >::PropertyConstraintMin cmin = p->getMin();
@@ -262,8 +262,8 @@ public:
         WException::disableBacktrace(); // in tests, turn of backtrace globally
 
         // create an int property
-        boost::shared_ptr< WPropertyVariable< int > > p =
-            boost::shared_ptr< WPropertyVariable< int > >( new WPropertyVariable< int >( "hey", "you", false ) );
+        std::shared_ptr< WPropertyVariable< int > > p =
+            std::shared_ptr< WPropertyVariable< int > >( new WPropertyVariable< int >( "hey", "you", false ) );
 
         // register a condition callback
         p->getUpdateCondition()->subscribeSignal( boost::bind( &WPropertyVariableTest::setTemporary1, this ) );
@@ -274,7 +274,7 @@ public:
         // add a constraint
         m_testTemporary1 = false;
         WPropertyVariable< int >::PropertyConstraintMin cmin =
-            boost::shared_ptr< WPropertyConstraintMin< int > >( new  WPropertyConstraintMin< int >( 10 ) );
+            std::shared_ptr< WPropertyConstraintMin< int > >( new  WPropertyConstraintMin< int >( 10 ) );
         p->addConstraint( cmin );
         TS_ASSERT( p->m_constraints->getReadTicket()->get().size() == 1 );
         TS_ASSERT( m_testTemporary1 );    // the update condition has to be fired on constraint updates
@@ -298,7 +298,7 @@ public:
         // replace a constraint
         m_testTemporary1 = false;
         WPropertyVariable< int >::PropertyConstraintMax cmax =
-            boost::shared_ptr< WPropertyConstraintMax< int > >( new  WPropertyConstraintMax< int >( 15 ) );
+            std::shared_ptr< WPropertyConstraintMax< int > >( new  WPropertyConstraintMax< int >( 15 ) );
 
         // replace non existent type
         TS_ASSERT_THROWS_NOTHING( p->replaceConstraint( cmax, PC_MAX ) );  // since there is no max constraint, replace acts like addConstraint
@@ -307,7 +307,7 @@ public:
         // replace existent type ( note: there is now a min and a max constraint )
         m_testTemporary1 = false;
         WPropertyVariable< int >::PropertyConstraintMax cmax2 =
-            boost::shared_ptr< WPropertyConstraintMax< int > >( new  WPropertyConstraintMax< int >( 20 ) );
+            std::shared_ptr< WPropertyConstraintMax< int > >( new  WPropertyConstraintMax< int >( 20 ) );
         p->replaceConstraint( cmax2, PC_MAX );
         TS_ASSERT( m_testTemporary1 );
         TS_ASSERT( cmax2 == p->getFirstConstraint( PC_MAX ) );

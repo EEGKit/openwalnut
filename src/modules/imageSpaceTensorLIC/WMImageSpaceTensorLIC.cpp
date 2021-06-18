@@ -224,9 +224,9 @@ WMImageSpaceTensorLIC::~WMImageSpaceTensorLIC()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMImageSpaceTensorLIC::factory() const
+std::shared_ptr< WModule > WMImageSpaceTensorLIC::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMImageSpaceTensorLIC() );
+    return std::shared_ptr< WModule >( new WMImageSpaceTensorLIC() );
 }
 
 const std::string WMImageSpaceTensorLIC::getName() const
@@ -255,7 +255,7 @@ void WMImageSpaceTensorLIC::connectors()
 
 void WMImageSpaceTensorLIC::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_geometryGroup   = m_properties->addPropertyGroup( "Geometry",  "Selection of used geometry to apply LIC to." );
 
@@ -326,7 +326,7 @@ void WMImageSpaceTensorLIC::properties()
     WModule::properties();
 }
 
-void WMImageSpaceTensorLIC::initOSG( boost::shared_ptr< WGridRegular3D > grid, boost::shared_ptr< WTriangleMesh > mesh )
+void WMImageSpaceTensorLIC::initOSG( std::shared_ptr< WGridRegular3D > grid, std::shared_ptr< WTriangleMesh > mesh )
 {
     // remove the old slices
     m_output->clear();
@@ -608,10 +608,10 @@ void WMImageSpaceTensorLIC::moduleMain()
         // To query whether an input was updated, simply ask the input:
         bool dataUpdated = m_evec1In->handledUpdate() || m_evec2In->handledUpdate() || m_meshIn->handledUpdate();
         bool propertyUpdated = m_useSlices->changed();
-        boost::shared_ptr< WDataSetVector > dataSetEvec1 = m_evec1In->getData();
-        boost::shared_ptr< WDataSetVector > dataSetEvec2 = m_evec2In->getData();
-        boost::shared_ptr< WDataSetVector > dataSetEvals = m_evalsIn->getData();
-        boost::shared_ptr< WTriangleMesh > mesh = m_meshIn->getData();
+        std::shared_ptr< WDataSetVector > dataSetEvec1 = m_evec1In->getData();
+        std::shared_ptr< WDataSetVector > dataSetEvec2 = m_evec2In->getData();
+        std::shared_ptr< WDataSetVector > dataSetEvals = m_evalsIn->getData();
+        std::shared_ptr< WTriangleMesh > mesh = m_meshIn->getData();
 
         bool dataValid = ( dataSetEvals && dataSetEvec1 && dataSetEvec2 );
 
@@ -630,9 +630,9 @@ void WMImageSpaceTensorLIC::moduleMain()
         }
 
         // prefer vector dataset if existing
-        boost::shared_ptr< WGridRegular3D > grid;
+        std::shared_ptr< WGridRegular3D > grid;
         // get grid and prepare OSG
-        grid = boost::dynamic_pointer_cast< WGridRegular3D >( dataSetEvec1->getGrid() );
+        grid = std::dynamic_pointer_cast< WGridRegular3D >( dataSetEvec1->getGrid() );
         m_xPos->setMax( grid->getNbCoordsX() - 1 );
         m_yPos->setMax( grid->getNbCoordsY() - 1 );
         m_zPos->setMax( grid->getNbCoordsZ() - 1 );

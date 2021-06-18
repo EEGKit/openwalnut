@@ -43,14 +43,14 @@ class WGEPostprocessorMergeOp: public WGEPostprocessor
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WGEPostprocessorMergeOp >.
+     * Convenience typedef for a std::shared_ptr< WGEPostprocessorMergeOp >.
      */
-    typedef boost::shared_ptr< WGEPostprocessorMergeOp > SPtr;
+    typedef std::shared_ptr< WGEPostprocessorMergeOp > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WGEPostprocessorMergeOp >.
+     * Convenience typedef for a std::shared_ptr< const WGEPostprocessorMergeOp >.
      */
-    typedef boost::shared_ptr< const WGEPostprocessorMergeOp > ConstSPtr;
+    typedef std::shared_ptr< const WGEPostprocessorMergeOp > ConstSPtr;
 
     /**
      * Default constructor.

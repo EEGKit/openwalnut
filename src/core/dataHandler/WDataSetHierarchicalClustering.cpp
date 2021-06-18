@@ -30,7 +30,7 @@
 #include "WDataSetHierarchicalClustering.h"
 
 // The prototype as singleton. Created during first getPrototype() call
-boost::shared_ptr< WPrototyped > WDataSetHierarchicalClustering::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WDataSetHierarchicalClustering::m_prototype = std::shared_ptr< WPrototyped >();
 
 WDataSetHierarchicalClustering::WDataSetHierarchicalClustering()
 {
@@ -50,11 +50,11 @@ WDataSetHierarchicalClustering::~WDataSetHierarchicalClustering()
     // cleanup
 }
 
-boost::shared_ptr< WPrototyped > WDataSetHierarchicalClustering::getPrototype()
+std::shared_ptr< WPrototyped > WDataSetHierarchicalClustering::getPrototype()
 {
     if( !m_prototype )
     {
-        m_prototype = boost::shared_ptr< WPrototyped >( new WDataSetHierarchicalClustering() );
+        m_prototype = std::shared_ptr< WPrototyped >( new WDataSetHierarchicalClustering() );
     }
     return m_prototype;
 }

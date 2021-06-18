@@ -74,7 +74,7 @@ public:
      *
      * \return the line
      */
-    std::string getLine( boost::shared_ptr< std::ifstream > ifs, const std::string& desc ) const;
+    std::string getLine( std::shared_ptr< std::ifstream > ifs, const std::string& desc ) const;
 
     /**
      * Read a line from the given input stream and throw an exception on error.

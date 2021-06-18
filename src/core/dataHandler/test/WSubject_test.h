@@ -82,8 +82,8 @@ public:
      */
     void testAddGetDataSet()
     {
-        boost::shared_ptr< WDataSet > dummyDataSet;
-        dummyDataSet = boost::shared_ptr< WDataSet >( new WDataSet );
+        std::shared_ptr< WDataSet > dummyDataSet;
+        dummyDataSet = std::shared_ptr< WDataSet >( new WDataSet );
         std::string filename = "Hallo";
         dummyDataSet->setFilename( filename );
 
@@ -109,8 +109,8 @@ public:
      */
     void testGetNumberOfDataSet()
     {
-        boost::shared_ptr< WDataSet > dummyDataSet;
-        dummyDataSet = boost::shared_ptr< WDataSet >( new WDataSet );
+        std::shared_ptr< WDataSet > dummyDataSet;
+        dummyDataSet = std::shared_ptr< WDataSet >( new WDataSet );
         std::string filename = "Hallo";
         dummyDataSet->setFilename( filename );
 

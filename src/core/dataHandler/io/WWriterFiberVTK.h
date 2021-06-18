@@ -54,14 +54,14 @@ public:
      *
      * \param fiberDS The WDataSetFiberVector where the data is taken from
      */
-    void writeFibs( boost::shared_ptr< const WDataSetFiberVector > fiberDS ) const;
+    void writeFibs( std::shared_ptr< const WDataSetFiberVector > fiberDS ) const;
 
     /**
      * Writes tracts of a WDataSetFibers to the previousely given file.
      *
      * \param fiberDS The tract data set
      */
-    void writeFibs( boost::shared_ptr< const WDataSetFibers > fiberDS ) const;
+    void writeFibs( std::shared_ptr< const WDataSetFibers > fiberDS ) const;
 
 protected:
 private:

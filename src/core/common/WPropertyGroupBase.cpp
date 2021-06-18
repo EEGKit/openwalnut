@@ -78,14 +78,14 @@ WPropertyGroupBase::WPropertyGroupBase( const WPropertyGroupBase& from ):
     m_updateCondition->add( m_properties.getChangeCondition() );
 }
 
-bool WPropertyGroupBase::propNamePredicate( boost::shared_ptr< WPropertyBase > prop1, boost::shared_ptr< WPropertyBase > prop2 ) const
+bool WPropertyGroupBase::propNamePredicate( std::shared_ptr< WPropertyBase > prop1, std::shared_ptr< WPropertyBase > prop2 ) const
 {
     return ( prop1->getName() == prop2->getName() );
 }
 
-boost::shared_ptr< WPropertyBase > WPropertyGroupBase::findProperty( const WPropertyGroupBase* const props, std::string name ) const
+std::shared_ptr< WPropertyBase > WPropertyGroupBase::findProperty( const WPropertyGroupBase* const props, std::string name ) const
 {
-    boost::shared_ptr< WPropertyBase > result = boost::shared_ptr< WPropertyBase >();
+    std::shared_ptr< WPropertyBase > result = std::shared_ptr< WPropertyBase >();
 
     // lock, unlocked if l looses focus
     PropertySharedContainerType::ReadTicket l = props->m_properties.getReadTicket();
@@ -104,9 +104,9 @@ boost::shared_ptr< WPropertyBase > WPropertyGroupBase::findProperty( const WProp
     return result;
 }
 
-boost::shared_ptr< WPropertyBase > WPropertyGroupBase::findProperty( std::string name ) const
+std::shared_ptr< WPropertyBase > WPropertyGroupBase::findProperty( std::string name ) const
 {
-    boost::shared_ptr< WPropertyBase > result = boost::shared_ptr< WPropertyBase >();
+    std::shared_ptr< WPropertyBase > result = std::shared_ptr< WPropertyBase >();
 
     // tokenize the name -> contains any paths?
     typedef boost::tokenizer<boost::char_separator< char > > tokenizer;
@@ -121,7 +121,7 @@ boost::shared_ptr< WPropertyBase > WPropertyGroupBase::findProperty( std::string
         if( result && !WPVBaseTypes::isPropertyGroup( result->getType() ) )
         {
             // no it wasn't. This means that one token inside the path is no group, but it needs to be one
-            return boost::shared_ptr< WPropertyBase >();
+            return std::shared_ptr< WPropertyBase >();
         }
 
         // get the properties along the path
@@ -129,7 +129,7 @@ boost::shared_ptr< WPropertyBase > WPropertyGroupBase::findProperty( std::string
         if( !result )
         {
             // not found? Return NULL.
-            return boost::shared_ptr< WPropertyBase >();
+            return std::shared_ptr< WPropertyBase >();
         }
         else if( result && WPVBaseTypes::isPropertyGroup( result->getType() ) )
         {
@@ -180,13 +180,13 @@ void WPropertyGroupBase::visitAsString( WPropertyGroupBase::PropertyStringVisito
 
 bool WPropertyGroupBase::existsProperty( std::string name )
 {
-    return ( findProperty( name ) != boost::shared_ptr< WPropertyBase >() );
+    return ( findProperty( name ) != std::shared_ptr< WPropertyBase >() );
 }
 
-boost::shared_ptr< WPropertyBase > WPropertyGroupBase::getProperty( std::string name )
+std::shared_ptr< WPropertyBase > WPropertyGroupBase::getProperty( std::string name )
 {
-    boost::shared_ptr< WPropertyBase > p = findProperty( name );
-    if( p == boost::shared_ptr< WPropertyBase >() )
+    std::shared_ptr< WPropertyBase > p = findProperty( name );
+    if( p == std::shared_ptr< WPropertyBase >() )
     {
         throw WPropertyUnknown( std::string( "Property \"" + name + "\" can't be found." ) );
     }

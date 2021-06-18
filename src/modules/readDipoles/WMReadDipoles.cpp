@@ -48,9 +48,9 @@ WMReadDipoles::~WMReadDipoles()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMReadDipoles::factory() const
+std::shared_ptr< WModule > WMReadDipoles::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMReadDipoles() );
+    return std::shared_ptr< WModule >( new WMReadDipoles() );
 }
 
 const char** WMReadDipoles::getXPMIcon() const
@@ -69,7 +69,7 @@ const std::string WMReadDipoles::getDescription() const
 
 void WMReadDipoles::connectors()
 {
-    m_dipoles = boost::shared_ptr< WModuleOutputData< WDataSetDipoles > >( new WModuleOutputData< WDataSetDipoles >(
+    m_dipoles = std::shared_ptr< WModuleOutputData< WDataSetDipoles > >( new WModuleOutputData< WDataSetDipoles >(
         shared_from_this(), "Dipoles", "The loaded dipoles reconstructed from EEG." ) );
     addConnector( m_dipoles );
 
@@ -78,7 +78,7 @@ void WMReadDipoles::connectors()
 
 void WMReadDipoles::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
     m_dataFile = m_properties->addProperty( "File", "", WPathHelper::getAppPath(), m_propCondition );
     WPropertyHelper::PC_PATHEXISTS::addTo( m_dataFile );
 
@@ -105,7 +105,7 @@ void WMReadDipoles::moduleMain()
             break;
         }
 
-        boost::shared_ptr< WProgress > progress( new WProgress( "Read Dipoles", 2 ) );
+        std::shared_ptr< WProgress > progress( new WProgress( "Read Dipoles", 2 ) );
         ++*progress;
         if( !m_metaFile->get() )
         {
@@ -122,7 +122,7 @@ void WMReadDipoles::moduleMain()
 }
 
 
-boost::shared_ptr< WDataSetDipoles > WMReadDipoles::readMetaData( std::string filename )
+std::shared_ptr< WDataSetDipoles > WMReadDipoles::readMetaData( std::string filename )
 {
     std::vector< std::string > names;
     std::ifstream ifs;
@@ -222,7 +222,7 @@ void WMReadDipoles::readFile( std::string filename, WPosition* pos, std::vector<
     ifs.close();
 }
 
-boost::shared_ptr< WDataSetDipoles > WMReadDipoles::readFiles( std::vector< std::string > filenames )
+std::shared_ptr< WDataSetDipoles > WMReadDipoles::readFiles( std::vector< std::string > filenames )
 {
     WPosition pos;
     std::vector< float > times;
@@ -231,7 +231,7 @@ boost::shared_ptr< WDataSetDipoles > WMReadDipoles::readFiles( std::vector< std:
     size_t lastTimeStep;
 
     readFile( filenames[0], &pos, &times, &magnitudes, &firstTimeStep, &lastTimeStep );
-    boost::shared_ptr< WDataSetDipoles > loadedData( new WDataSetDipoles( pos, magnitudes, times, firstTimeStep, lastTimeStep ) );
+    std::shared_ptr< WDataSetDipoles > loadedData( new WDataSetDipoles( pos, magnitudes, times, firstTimeStep, lastTimeStep ) );
 
     for( size_t fileId = 1; fileId < filenames.size(); ++fileId )
     {

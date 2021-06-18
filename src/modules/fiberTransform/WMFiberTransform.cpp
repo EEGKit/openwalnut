@@ -44,10 +44,10 @@ WMFiberTransform::~WMFiberTransform()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMFiberTransform::factory() const
+std::shared_ptr< WModule > WMFiberTransform::factory() const
 {
     // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WMFiberTransform() );
+    return std::shared_ptr< WModule >( new WMFiberTransform() );
 }
 
 const char** WMFiberTransform::getXPMIcon() const
@@ -59,10 +59,10 @@ void WMFiberTransform::connectors()
 {
     // Put the code for your connectors here. See "src/modules/template/" for an extensively documented example.
     typedef WModuleInputData< WDataSetFibers > FiberInputData;  // just an alias
-    m_fiberInput = boost::shared_ptr< FiberInputData >( new FiberInputData( shared_from_this(), "fiberInput", "A loaded fiber dataset." ) );
+    m_fiberInput = std::shared_ptr< FiberInputData >( new FiberInputData( shared_from_this(), "fiberInput", "A loaded fiber dataset." ) );
 
     typedef WModuleOutputData< WDataSetFibers > FiberOutputData;  // just an alias
-    m_output = boost::shared_ptr< FiberOutputData >( new FiberOutputData( shared_from_this(), "fiberOutput", "The transformed fibers." ) );
+    m_output = std::shared_ptr< FiberOutputData >( new FiberOutputData( shared_from_this(), "fiberOutput", "The transformed fibers." ) );
 
     addConnector( m_fiberInput );
     addConnector( m_output );
@@ -169,11 +169,11 @@ void WMFiberTransform::update()
     transformationMatrix( 3, 2 ) = m_matrix3Prop->get()[2];
     transformationMatrix( 3, 3 ) = 1.0;
 
-    boost::shared_ptr< WProgress > progress( new WProgress( "Transforming", 4 + save ) );
+    std::shared_ptr< WProgress > progress( new WProgress( "Transforming", 4 + save ) );
     m_progress->addSubProgress( progress );
 
     infoLog() << "Start: WDataSetFibers => WDataSetFiberVector";
-    boost::shared_ptr< WDataSetFiberVector > dataset( new WDataSetFiberVector( m_rawDataset ) );
+    std::shared_ptr< WDataSetFiberVector > dataset( new WDataSetFiberVector( m_rawDataset ) );
     infoLog() << "Stop:  WDataSetFibers => WDataSetFiberVector";
     ++*progress;
 

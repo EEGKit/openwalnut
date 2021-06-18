@@ -45,9 +45,9 @@ WMFibersToPoints::~WMFibersToPoints()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMFibersToPoints::factory() const
+std::shared_ptr< WModule > WMFibersToPoints::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMFibersToPoints() );
+    return std::shared_ptr< WModule >( new WMFibersToPoints() );
 }
 
 const char** WMFibersToPoints::getXPMIcon() const
@@ -68,7 +68,7 @@ const std::string WMFibersToPoints::getDescription() const
 void WMFibersToPoints::connectors()
 {
     // The input fiber dataset
-    m_fiberInput = boost::shared_ptr< WModuleInputData < WDataSetFibers > >(
+    m_fiberInput = std::shared_ptr< WModuleInputData < WDataSetFibers > >(
         new WModuleInputData< WDataSetFibers >( shared_from_this(), "fibers", "The fiber dataset" )
     );
 
@@ -76,7 +76,7 @@ void WMFibersToPoints::connectors()
     addConnector( m_fiberInput );
 
     // the points
-    m_pointsOutput = boost::shared_ptr< WModuleOutputData < WDataSetPoints > >(
+    m_pointsOutput = std::shared_ptr< WModuleOutputData < WDataSetPoints > >(
         new WModuleOutputData< WDataSetPoints >( shared_from_this(), "out", "The point data." )
     );
 
@@ -89,7 +89,7 @@ void WMFibersToPoints::connectors()
 
 void WMFibersToPoints::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_filterGroup = m_properties->addPropertyGroup( "Filtering", "Filtering based on fiber parameters." );
     m_paramHint = m_filterGroup->addProperty( "Hint", "If you see this, your data does not contain fiber parameters.",
@@ -129,7 +129,7 @@ void WMFibersToPoints::moduleMain()
 
         // To query whether an input was updated, simply ask the input:
         bool dataUpdated = m_fiberInput->handledUpdate();
-        boost::shared_ptr< WDataSetFibers > dataSet = m_fiberInput->getData();
+        std::shared_ptr< WDataSetFibers > dataSet = m_fiberInput->getData();
         bool dataValid = ( dataSet != NULL );
         bool propsChanged = m_parametersFilterValue->changed() ||
                             m_parametersFilterWidth->changed() ||

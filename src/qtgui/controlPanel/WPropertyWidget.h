@@ -55,7 +55,7 @@ public:
      * \param parent the parent widget.
      * \param propertyGrid the grid used to layout the labels and property widgets
      */
-    WPropertyWidget( boost::shared_ptr< WPropertyBase > property, QGridLayout* propertyGrid, QWidget* parent = 0 );
+    WPropertyWidget( std::shared_ptr< WPropertyBase > property, QGridLayout* propertyGrid, QWidget* parent = 0 );
 
     /**
      * Destructor.
@@ -67,7 +67,7 @@ public:
      *
      * \return the property
      */
-    boost::shared_ptr< WPropertyBase > getProperty();
+    std::shared_ptr< WPropertyBase > getProperty();
 
     /**
      * This method marks this widget as invalid. This is useful to let the user know about wrong inputs.
@@ -128,7 +128,7 @@ protected:
     /**
      * The property handled by the widget.
      */
-    boost::shared_ptr< WPropertyBase > m_property;
+    std::shared_ptr< WPropertyBase > m_property;
 
     /**
      * The grid used to layout label and widget.

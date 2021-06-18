@@ -56,20 +56,20 @@ public:
     {
 #ifdef OW_USE_ITK
         // build a dataset
-        boost::shared_ptr< std::vector< int > > values( new std::vector< int >( 27, 0 ) );
+        std::shared_ptr< std::vector< int > > values( new std::vector< int >( 27, 0 ) );
         for( int k = 0; k < 27; ++k )
         {
             ( *values )[ k ] = 27 - k;
         }
-        boost::shared_ptr< WGridRegular3D > g( new WGridRegular3D( 3, 3, 3 ) );
-        boost::shared_ptr< WValueSet< int > > v( new WValueSet< int >( 0, 1, values, W_DT_SIGNED_INT ) );
-        boost::shared_ptr< WDataSetScalar > ds( new WDataSetScalar( v, g ) );
+        std::shared_ptr< WGridRegular3D > g( new WGridRegular3D( 3, 3, 3 ) );
+        std::shared_ptr< WValueSet< int > > v( new WValueSet< int >( 0, 1, values, W_DT_SIGNED_INT ) );
+        std::shared_ptr< WDataSetScalar > ds( new WDataSetScalar( v, g ) );
 
         itk::Image< int, 3 >::Pointer i = makeImageFromDataSet< int >( ds );
-        boost::shared_ptr< WDataSetScalar > newds = makeDataSetFromImage< int >( i );
+        std::shared_ptr< WDataSetScalar > newds = makeDataSetFromImage< int >( i );
 
-        TS_ASSERT_SAME_DATA( boost::dynamic_pointer_cast< WValueSet< int > >( ds->getValueSet() )->rawData(),
-                             boost::dynamic_pointer_cast< WValueSet< int > >( newds->getValueSet() )->rawData(), sizeof( int ) * 27 );
+        TS_ASSERT_SAME_DATA( std::dynamic_pointer_cast< WValueSet< int > >( ds->getValueSet() )->rawData(),
+                             std::dynamic_pointer_cast< WValueSet< int > >( newds->getValueSet() )->rawData(), sizeof( int ) * 27 );
 #endif  // OW_USE_ITK
     }
 };

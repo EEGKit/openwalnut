@@ -104,7 +104,7 @@ public:
      *
      * \return A pointer to the tree widget item
      */
-    WQtDatasetTreeItem* addDataset( boost::shared_ptr< WModule > module, int subjectId = 0 );
+    WQtDatasetTreeItem* addDataset( std::shared_ptr< WModule > module, int subjectId = 0 );
 
     /**
      * Adds a module to the control panel.
@@ -113,7 +113,7 @@ public:
      *
      * \return the representation in control panel.
      */
-    WQtModuleTreeItem* addModule( boost::shared_ptr< WModule > module );
+    WQtModuleTreeItem* addModule( std::shared_ptr< WModule > module );
 
     /**
      * Adds a ROI entry to the control panel
@@ -139,7 +139,7 @@ public:
      *
      * \return the module.
      */
-    boost::shared_ptr< WModule > getSelectedModule();
+    std::shared_ptr< WModule > getSelectedModule();
 
     /**
      * Returns the currently selected ROI.
@@ -251,7 +251,7 @@ protected:
      * \param module pointer to the currently selected module
      *
      */
-    void createCompatibleButtons( boost::shared_ptr< WModule > module );
+    void createCompatibleButtons( std::shared_ptr< WModule > module );
 
     /**
      * Reference to the main window of the application.
@@ -266,7 +266,7 @@ protected:
      *
      * \return a list of all matching items.
      */
-    std::list< WQtTreeItem* > findItemsByModule( boost::shared_ptr< WModule > module, QTreeWidgetItem* where );
+    std::list< WQtTreeItem* > findItemsByModule( std::shared_ptr< WModule > module, QTreeWidgetItem* where );
 
     /**
      * Searches the tree for all tree items matching the specified module.
@@ -275,7 +275,7 @@ protected:
      *
      * \return a list of all matching items.
      */
-    std::list< WQtTreeItem* > findItemsByModule( boost::shared_ptr< WModule > module );
+    std::list< WQtTreeItem* > findItemsByModule( std::shared_ptr< WModule > module );
 
     /**
      * As QTabWidget::clear() does not delete tabs, we have to manage that ourselves.
@@ -431,7 +431,7 @@ private slots:
      * \param name the name used as title. Can be empty but should not.
      * \param inject inject this widget to the property tab.
      */
-    void buildPropTab( boost::shared_ptr< WProperties > props, boost::shared_ptr< WProperties > infoProps,
+    void buildPropTab( std::shared_ptr< WProperties > props, std::shared_ptr< WProperties > infoProps,
                        const std::string& name, QWidget* inject = NULL );
 
     /**

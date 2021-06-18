@@ -44,9 +44,9 @@ WMFiberTranslator::~WMFiberTranslator()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMFiberTranslator::factory() const
+std::shared_ptr< WModule > WMFiberTranslator::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMFiberTranslator() );
+    return std::shared_ptr< WModule >( new WMFiberTranslator() );
 }
 
 const char** WMFiberTranslator::getXPMIcon() const
@@ -65,7 +65,7 @@ const std::string WMFiberTranslator::getDescription() const
 
 void WMFiberTranslator::connectors()
 {
-    m_output = boost::shared_ptr< WModuleOutputData< WDataSetFibers > >(
+    m_output = std::shared_ptr< WModuleOutputData< WDataSetFibers > >(
             new WModuleOutputData< WDataSetFibers >( shared_from_this(), "outFibers", "" ) );
 
     addConnector( m_output );
@@ -75,7 +75,7 @@ void WMFiberTranslator::connectors()
 
 void WMFiberTranslator::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_propInputDirectory = m_properties->addProperty( "Input data directory", "A directory containing .txt files, each file"
                                                       " contains the coordinates of one fiber (e.g. produced by mrtrix).",
@@ -115,8 +115,8 @@ void WMFiberTranslator::moduleMain()
 
         if( m_propInputDirectory->changed() )
         {
-            boost::shared_ptr< WDataSetFibers > fibers = mergeFibers( m_propInputDirectory->get( true ) );
-            // boost::shared_ptr< WDataSetFibers > fibers = mergeFibersBinary( m_propInputDirectory->get( true ) );
+            std::shared_ptr< WDataSetFibers > fibers = mergeFibers( m_propInputDirectory->get( true ) );
+            // std::shared_ptr< WDataSetFibers > fibers = mergeFibersBinary( m_propInputDirectory->get( true ) );
             if( fibers )
             {
                 m_output->updateData( fibers );
@@ -125,7 +125,7 @@ void WMFiberTranslator::moduleMain()
 
         if( m_propInputFile->changed() )
         {
-            boost::shared_ptr< WDataSetFibers > fibers = loadExploreDTIFibers( m_propInputFile->get( true ) );
+            std::shared_ptr< WDataSetFibers > fibers = loadExploreDTIFibers( m_propInputFile->get( true ) );
             if( fibers )
             {
                 m_output->updateData( fibers );
@@ -134,14 +134,14 @@ void WMFiberTranslator::moduleMain()
     }
 }
 
-boost::shared_ptr< WDataSetFibers > WMFiberTranslator::mergeFibers( boost::filesystem::path dir )
+std::shared_ptr< WDataSetFibers > WMFiberTranslator::mergeFibers( boost::filesystem::path dir )
 {
     debugLog() << "Merging fibers.";
 
     if( !boost::filesystem::exists( dir ) || !boost::filesystem::is_directory( dir ) )
     {
         errorLog() << "Directory " << dir.string() << " does not exist!";
-        return boost::shared_ptr< WDataSetFibers >();
+        return std::shared_ptr< WDataSetFibers >();
     }
 
     WFiberAccumulator accu;
@@ -178,14 +178,14 @@ boost::shared_ptr< WDataSetFibers > WMFiberTranslator::mergeFibers( boost::files
     return accu.buildDataSet();
 }
 
-boost::shared_ptr< WDataSetFibers > WMFiberTranslator::mergeFibersNrrd( boost::filesystem::path dir )
+std::shared_ptr< WDataSetFibers > WMFiberTranslator::mergeFibersNrrd( boost::filesystem::path dir )
 {
     debugLog() << "Merging fibers (binary).";
 
     if( !boost::filesystem::exists( dir ) || !boost::filesystem::is_directory( dir ) )
     {
         errorLog() << "Directory " << dir.string() << " does not exist!";
-        return boost::shared_ptr< WDataSetFibers >();
+        return std::shared_ptr< WDataSetFibers >();
     }
 
     WFiberAccumulator accu;
@@ -224,21 +224,21 @@ boost::shared_ptr< WDataSetFibers > WMFiberTranslator::mergeFibersNrrd( boost::f
     return accu.buildDataSet();
 }
 
-boost::shared_ptr< WDataSetFibers > WMFiberTranslator::loadExploreDTIFibers( boost::filesystem::path file )
+std::shared_ptr< WDataSetFibers > WMFiberTranslator::loadExploreDTIFibers( boost::filesystem::path file )
 {
     debugLog() << "Loading fibers from ExploreDTI text format.";
 
     if( !boost::filesystem::exists( file ) || boost::filesystem::is_directory( file ) )
     {
         errorLog() << "File " << file.string() << " does not exist!";
-        return boost::shared_ptr< WDataSetFibers >();
+        return std::shared_ptr< WDataSetFibers >();
     }
 
     // the file should end in "_coordinates.txt"
     if( file.string().length() < 16 || file.string().find( "_coordinates.txt" ) != file.string().length() - 16 )
     {
         errorLog() << "File " << file << " does not end in _coordinates.txt. Ignoring.";
-        return boost::shared_ptr< WDataSetFibers >();
+        return std::shared_ptr< WDataSetFibers >();
     }
 
     // get the name of the corresponding fiber length file
@@ -260,7 +260,7 @@ boost::shared_ptr< WDataSetFibers > WMFiberTranslator::loadExploreDTIFibers( boo
         if( l < 2.0 )
         {
             errorLog() << "Lengths file contains an invalid length of " << l << ", aborting.";
-            return boost::shared_ptr< WDataSetFibers >();
+            return std::shared_ptr< WDataSetFibers >();
         }
 
         std::vector< WVector3d > fiber;

@@ -42,9 +42,9 @@ WSelectionManager::WSelectionManager() :
     m_textureOpacity( 1.0 ),
     m_useTexture( false )
 {
-    m_crosshair = boost::shared_ptr< WCrosshair >( new WCrosshair() );
+    m_crosshair = std::shared_ptr< WCrosshair >( new WCrosshair() );
 
-    m_sliceGroup = boost::shared_ptr< WProperties >( new WProperties( "Slice Properties",
+    m_sliceGroup = std::shared_ptr< WProperties >( new WProperties( "Slice Properties",
                     "Properties relating to the Axial,Coronal and Sagittal Slices." ) );
 
     // create dummy properties for slices. Get updated by modules.
@@ -72,14 +72,14 @@ WSelectionManager::~WSelectionManager()
 {
 }
 
-boost::shared_ptr< WCrosshair >WSelectionManager::getCrosshair()
+std::shared_ptr< WCrosshair >WSelectionManager::getCrosshair()
 {
     return m_crosshair;
 }
 
 int WSelectionManager::getFrontSector()
 {
-    boost::shared_ptr< WGEViewer > viewer;
+    std::shared_ptr< WGEViewer > viewer;
     viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Main View" );
     viewer->getCamera()->getViewMatrix();
     osg::Matrix rm = viewer->getCamera()->getViewMatrix();
@@ -148,14 +148,14 @@ WPaintMode WSelectionManager::getPaintMode()
     return m_paintMode;
 }
 
-void WSelectionManager::setTexture( osg::ref_ptr< osg::Texture3D > texture, boost::shared_ptr< WGridRegular3D >grid )
+void WSelectionManager::setTexture( osg::ref_ptr< osg::Texture3D > texture, std::shared_ptr< WGridRegular3D >grid )
 {
     m_texture = texture;
     m_textureGrid = grid;
 }
 
 
-boost::shared_ptr< WGridRegular3D >WSelectionManager::getGrid()
+std::shared_ptr< WGridRegular3D >WSelectionManager::getGrid()
 {
     return m_textureGrid;
 }

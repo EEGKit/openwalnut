@@ -46,20 +46,20 @@ class WItemSelector;
  * not implement any function that might change the item list, use the provided ones. If the item list changes, existing selectors get invalid
  * automatically using the change condition of the inherited WSharedSequenceContainer.
  */
-class WItemSelection: public boost::enable_shared_from_this< WItemSelection >,
-                      public WSharedSequenceContainer< std::vector< boost::shared_ptr< WItemSelectionItem > > >
+class WItemSelection: public std::enable_shared_from_this< WItemSelection >,
+                      public WSharedSequenceContainer< std::vector< std::shared_ptr< WItemSelectionItem > > >
 {
     friend class WItemSelector; //!< for proper locking and unlocking
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WItemSelection >
+     * Convenience typedef for a std::shared_ptr< WItemSelection >
      */
-    typedef boost::shared_ptr< WItemSelection > SPtr;
+    typedef std::shared_ptr< WItemSelection > SPtr;
 
     /**
-     * Convenience typedef for a  boost::shared_ptr< const WItemSelection >
+     * Convenience typedef for a  std::shared_ptr< const WItemSelection >
      */
-    typedef boost::shared_ptr< const WItemSelection > ConstSPtr;
+    typedef std::shared_ptr< const WItemSelection > ConstSPtr;
 
     /**
      * Default constructor.
@@ -117,9 +117,9 @@ public:
      *
      * \return the Item.
      */
-    static boost::shared_ptr< WItemSelectionItem > Item( std::string name, std::string description = "", const char** icon = NULL )
+    static std::shared_ptr< WItemSelectionItem > Item( std::string name, std::string description = "", const char** icon = NULL )
     {
-        return boost::shared_ptr< WItemSelectionItem >( new WItemSelectionItem( name, description, icon ) );
+        return std::shared_ptr< WItemSelectionItem >( new WItemSelectionItem( name, description, icon ) );
     }
 
     /**
@@ -137,7 +137,7 @@ public:
      *
      * \param item WItemSelectionItem or derivation which should be add.
      */
-    void addItem( boost::shared_ptr< WItemSelectionItem > item );
+    void addItem( std::shared_ptr< WItemSelectionItem > item );
 
 private:
 };

@@ -69,7 +69,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
 protected:
     /**
@@ -88,14 +88,14 @@ protected:
     virtual void properties();
 
 private:
-    boost::shared_ptr< WCondition > m_propCondition;  //!< A condition used to notify about changes in several properties.
+    std::shared_ptr< WCondition > m_propCondition;  //!< A condition used to notify about changes in several properties.
     WPropFilename m_dataFile; //!< The data will be read from this file.
     WPropBool m_loadAttrib; //!< Load additional attribute.
     WPropInt m_attrib; //!< The index of the attribute to use.
     WPropTrigger m_readTriggerProp; //!< The trigger for loading
 
-    boost::shared_ptr< WDataSetFibers > m_dataSet; //!< This data set is provided as output through the connector.
-    boost::shared_ptr< WModuleOutputData< WDataSetFibers > > m_output;  //!< Output connector provided by this module.
+    std::shared_ptr< WDataSetFibers > m_dataSet; //!< This data set is provided as output through the connector.
+    std::shared_ptr< WModuleOutputData< WDataSetFibers > > m_output;  //!< Output connector provided by this module.
 
     /**
      * Read VCL data

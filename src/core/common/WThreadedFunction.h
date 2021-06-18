@@ -111,7 +111,7 @@ public:
      *
      * \return The condition indicating all threads are done.
      */
-    boost::shared_ptr< WCondition > getThreadsDoneCondition();
+    std::shared_ptr< WCondition > getThreadsDoneCondition();
 
     /**
      * Subscribe a function to an exception signal.
@@ -134,7 +134,7 @@ protected:
     WThreadedFunctionBase& operator = ( WThreadedFunctionBase const& );
 
     //! a condition that gets notified when the work is complete
-    boost::shared_ptr< WCondition > m_doneCondition;
+    std::shared_ptr< WCondition > m_doneCondition;
 
     //! a signal for exceptions
     ExceptionSignal m_exceptionSignal;
@@ -189,7 +189,7 @@ public:
      *
      * \note If the number of threads equals 0, a good number of threads will be determined by the threadpool.
      */
-    WThreadedFunction( std::size_t numThreads, boost::shared_ptr< Function_T > function );
+    WThreadedFunction( std::size_t numThreads, std::shared_ptr< Function_T > function );
 
     /**
      * Destroys the thread pool and stops all threads, if any one of them is still running.
@@ -244,17 +244,17 @@ private:
 
     //! the threads
     // use shared_ptr here, because WWorkerThread is non-copyable
-    std::vector< boost::shared_ptr< WWorkerThread< Function_T > > > m_threads;
+    std::vector< std::shared_ptr< WWorkerThread< Function_T > > > m_threads;
 
     //! the function object
-    boost::shared_ptr< Function_T > m_func;
+    std::shared_ptr< Function_T > m_func;
 
     //! a counter that keeps track of how many threads have finished
     WSharedObject< std::size_t > m_threadsDone;
 };
 
 template< class Function_T >
-WThreadedFunction< Function_T >::WThreadedFunction( std::size_t numThreads, boost::shared_ptr< Function_T > function )
+WThreadedFunction< Function_T >::WThreadedFunction( std::size_t numThreads, std::shared_ptr< Function_T > function )
     : WThreadedFunctionBase(),
       m_numThreads( numThreads ),
       m_threads(),
@@ -282,7 +282,7 @@ WThreadedFunction< Function_T >::WThreadedFunction( std::size_t numThreads, boos
     // create threads
     for( std::size_t k = 0; k < m_numThreads; ++k )
     {
-        boost::shared_ptr< WWorkerThread< Function_T > > t( new WWorkerThread< Function_T >( m_func, k, m_numThreads ) );
+        std::shared_ptr< WWorkerThread< Function_T > > t( new WWorkerThread< Function_T >( m_func, k, m_numThreads ) );
         t->subscribeStopSignal( boost::bind( &WThreadedFunction::handleThreadDone, this ) );
         t->subscribeExceptionSignal( boost::bind( &WThreadedFunction::handleThreadException, this, boost::placeholders::_1 ) );
         m_threads.push_back( t );
@@ -315,7 +315,7 @@ void WThreadedFunction< Function_T >::stop()
     // change status
     m_status.getWriteTicket()->get() = W_THREADS_STOP_REQUESTED;
 
-    typename std::vector< boost::shared_ptr< WWorkerThread< Function_T > > >::iterator it;
+    typename std::vector< std::shared_ptr< WWorkerThread< Function_T > > >::iterator it;
     // tell the threads to stop
     for( it = m_threads.begin(); it != m_threads.end(); ++it )
     {
@@ -326,7 +326,7 @@ void WThreadedFunction< Function_T >::stop()
 template< class Function_T >
 void WThreadedFunction< Function_T >::wait()
 {
-    typename std::vector< boost::shared_ptr< WWorkerThread< Function_T > > >::iterator it;
+    typename std::vector< std::shared_ptr< WWorkerThread< Function_T > > >::iterator it;
     // wait for the threads to stop
     for( it = m_threads.begin(); it != m_threads.end(); ++it )
     {

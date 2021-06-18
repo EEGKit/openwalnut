@@ -60,10 +60,10 @@ WMSurfaceIllustrator::~WMSurfaceIllustrator()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMSurfaceIllustrator::factory() const
+std::shared_ptr< WModule > WMSurfaceIllustrator::factory() const
 {
     // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WMSurfaceIllustrator() );
+    return std::shared_ptr< WModule >( new WMSurfaceIllustrator() );
 }
 
 const char** WMSurfaceIllustrator::getXPMIcon() const
@@ -153,7 +153,7 @@ void WMSurfaceIllustrator::properties()
     m_nbVertices->setMax( std::numeric_limits< int >::max() );
 
     // some properties need to trigger an update
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     // setup all the properties. See header file for their meaning and purpose.
     m_showOutline = m_properties->addProperty( "Outline", "Show all edges of the trinagulation as lines.", false, m_propCondition );
@@ -165,7 +165,7 @@ void WMSurfaceIllustrator::properties()
     m_opacity->setMax( 100.0 );
 
     // Allow the user to select different color modes
-    boost::shared_ptr< WItemSelection > colorModes( boost::shared_ptr< WItemSelection >( new WItemSelection() ) );
+    std::shared_ptr< WItemSelection > colorModes( std::shared_ptr< WItemSelection >( new WItemSelection() ) );
     colorModes->addItem( "Single Color", "The whole surface is colored using the default color." );
     colorModes->addItem( "From Mesh", "The surface is colored according to the mesh." );
     colorModes->addItem( "From colormap connector", "The surface is colored using the colormap on colorMap connector." );
@@ -186,7 +186,7 @@ void WMSurfaceIllustrator::properties()
     m_parameterWidth->setMax( 2.0 );
 
     // Allow the user to select different rendering modes
-    boost::shared_ptr< WItemSelection > illustrationModes( boost::shared_ptr< WItemSelection >( new WItemSelection() ) );
+    std::shared_ptr< WItemSelection > illustrationModes( std::shared_ptr< WItemSelection >( new WItemSelection() ) );
     illustrationModes->addItem( "None", "Standard rendering." );
     illustrationModes->addItem( "X-slab", "Slab normal to x-axis." );
     illustrationModes->addItem( "Stream ribbon", "A range of streamlines (if red color represents s-parameter of surface)." );
@@ -255,7 +255,7 @@ void WMSurfaceIllustrator::moduleMain()
         }
 
         // Get data and check for invalid data.
-        boost::shared_ptr< WTriangleMesh > mesh = m_meshInput->getData();
+        std::shared_ptr< WTriangleMesh > mesh = m_meshInput->getData();
         if( !mesh )
         {
             debugLog() << "Invalid Data. Disabling.";
@@ -271,9 +271,9 @@ void WMSurfaceIllustrator::moduleMain()
 
 
 
-void WMSurfaceIllustrator::renderMesh( boost::shared_ptr< WTriangleMesh > mesh )
+void WMSurfaceIllustrator::renderMesh( std::shared_ptr< WTriangleMesh > mesh )
 {
-    boost::shared_ptr< WColoredVertices > colorMap = m_colorMapInput->getData();
+    std::shared_ptr< WColoredVertices > colorMap = m_colorMapInput->getData();
 
     m_nbTriangles->set( mesh->triangleSize() );
     m_nbVertices->set( mesh->vertSize() );
@@ -313,7 +313,7 @@ void WMSurfaceIllustrator::renderMesh( boost::shared_ptr< WTriangleMesh > mesh )
     }
 
     // start rendering
-    boost::shared_ptr< WProgress > progress( new WProgress( "Rendering", 3 ) );
+    std::shared_ptr< WProgress > progress( new WProgress( "Rendering", 3 ) );
     m_progress->addSubProgress( progress );
 
     ++*progress;

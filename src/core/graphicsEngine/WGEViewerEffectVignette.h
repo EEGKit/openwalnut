@@ -34,12 +34,12 @@ class WGEViewerEffectVignette: public WGEViewerEffect
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WGEViewerEffectVignette >.
+     * Convenience typedef for a std::shared_ptr< WGEViewerEffectVignette >.
      */
     typedef osg::ref_ptr< WGEViewerEffectVignette > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WGEViewerEffectVignette >.
+     * Convenience typedef for a std::shared_ptr< const WGEViewerEffectVignette >.
      */
     typedef osg::ref_ptr< const WGEViewerEffectVignette > ConstSPtr;
 

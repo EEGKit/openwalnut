@@ -46,14 +46,14 @@ class WQtNetworkSceneLayout
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WQtNetworkSceneLayout >.
+     * Convenience typedef for a std::shared_ptr< WQtNetworkSceneLayout >.
      */
-    typedef boost::shared_ptr< WQtNetworkSceneLayout > SPtr;
+    typedef std::shared_ptr< WQtNetworkSceneLayout > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WQtNetworkSceneLayout >.
+     * Convenience typedef for a std::shared_ptr< const WQtNetworkSceneLayout >.
      */
-    typedef boost::shared_ptr< const WQtNetworkSceneLayout > ConstSPtr;
+    typedef std::shared_ptr< const WQtNetworkSceneLayout > ConstSPtr;
 
     /**
      * Default constructor.

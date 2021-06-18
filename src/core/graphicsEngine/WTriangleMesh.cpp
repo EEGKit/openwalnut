@@ -44,13 +44,13 @@
 #include "WTriangleMesh.h"
 
 // init _static_ member variable and provide a linker reference to it
-boost::shared_ptr< WPrototyped > WTriangleMesh::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WTriangleMesh::m_prototype = std::shared_ptr< WPrototyped >();
 
-boost::shared_ptr< WPrototyped > WTriangleMesh::getPrototype()
+std::shared_ptr< WPrototyped > WTriangleMesh::getPrototype()
 {
     if( !m_prototype )
     {
-         m_prototype = boost::shared_ptr< WPrototyped >( new WTriangleMesh( 0, 0 ) );
+         m_prototype = std::shared_ptr< WPrototyped >( new WTriangleMesh( 0, 0 ) );
     }
     return m_prototype;
 }
@@ -613,7 +613,7 @@ size_t WTriangleMesh::loopGetThirdVert( size_t coVert1, size_t coVert2, size_t t
     return getTriVertId2( triangleNum );
 }
 
-void WTriangleMesh::addMesh( boost::shared_ptr<WTriangleMesh> mesh, float xOff, float yOff, float zOff )
+void WTriangleMesh::addMesh( std::shared_ptr<WTriangleMesh> mesh, float xOff, float yOff, float zOff )
 {
     size_t oldVertSize = m_countVerts;
 
@@ -702,9 +702,9 @@ std::ostream& tm_utils::operator<<( std::ostream& os, const WTriangleMesh& rhs )
     return os << ss.str();
 }
 
-boost::shared_ptr< std::list< boost::shared_ptr< WTriangleMesh > > > tm_utils::componentDecomposition( const WTriangleMesh& mesh )
+std::shared_ptr< std::list< std::shared_ptr< WTriangleMesh > > > tm_utils::componentDecomposition( const WTriangleMesh& mesh )
 {
-    boost::shared_ptr< std::list< boost::shared_ptr< WTriangleMesh > > > result( new std::list< boost::shared_ptr< WTriangleMesh > >() );
+    std::shared_ptr< std::list< std::shared_ptr< WTriangleMesh > > > result( new std::list< std::shared_ptr< WTriangleMesh > >() );
     if( mesh.vertSize() <= 0 ) // no component possible
     {
         return result;
@@ -777,7 +777,7 @@ boost::shared_ptr< std::list< boost::shared_ptr< WTriangleMesh > > > tm_utils::c
         {
             newVertices->at( vit->second ) = vit->first; // if you are sure that vit->second is always valid replace at() call with operator[]
         }
-        boost::shared_ptr< WTriangleMesh > newMesh( new WTriangleMesh( newVertices, cit->second.second ) );
+        std::shared_ptr< WTriangleMesh > newMesh( new WTriangleMesh( newVertices, cit->second.second ) );
         result->push_back( newMesh );
     }
 
@@ -927,8 +927,8 @@ void WTriangleMesh::estimateCurvature()
     std::vector< osg::Vec3 > normals( m_verts->size() );
 
     // init vectors
-    m_mainNormalCurvature = boost::shared_ptr< std::vector< float > >( new std::vector< float >( m_verts->size() ) );
-    m_secondaryNormalCurvature = boost::shared_ptr< std::vector< float > >( new std::vector< float >( m_verts->size() ) );
+    m_mainNormalCurvature = std::shared_ptr< std::vector< float > >( new std::vector< float >( m_verts->size() ) );
+    m_secondaryNormalCurvature = std::shared_ptr< std::vector< float > >( new std::vector< float >( m_verts->size() ) );
     m_mainCurvaturePrincipalDirection = osg::ref_ptr< osg::Vec3Array >( new osg::Vec3Array( m_verts->size() ) );
     m_secondaryCurvaturePrincipalDirection = osg::ref_ptr< osg::Vec3Array >( new osg::Vec3Array( m_verts->size() ) );
 
@@ -1176,12 +1176,12 @@ double WTriangleMesh::getSecondaryCurvature( std::size_t vtxId ) const
     return m_secondaryNormalCurvature->operator[] ( vtxId );
 }
 
-boost::shared_ptr< std::vector< float > > const& WTriangleMesh::getMainCurvatures() const
+std::shared_ptr< std::vector< float > > const& WTriangleMesh::getMainCurvatures() const
 {
     return m_mainNormalCurvature;
 }
 
-boost::shared_ptr< std::vector< float > > const& WTriangleMesh::getSecondaryCurvatures() const
+std::shared_ptr< std::vector< float > > const& WTriangleMesh::getSecondaryCurvatures() const
 {
     return m_secondaryNormalCurvature;
 }

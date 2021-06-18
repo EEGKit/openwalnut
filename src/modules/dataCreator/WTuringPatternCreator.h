@@ -50,7 +50,7 @@ public:
      * \param progress The progress indicator to use.
      * \param numThreads The number of threads to use.
      */
-    WTuringPatternCreator( boost::shared_ptr< WProgress > const progress, std::size_t numThreads = boost::thread::hardware_concurrency() );
+    WTuringPatternCreator( std::shared_ptr< WProgress > const progress, std::size_t numThreads = boost::thread::hardware_concurrency() );
 
     /**
      * Destructor.
@@ -66,7 +66,7 @@ public:
      *
      * \return The vector containing the pattern data.
      */
-    boost::shared_ptr< std::vector< float > > create( std::size_t sizeX, std::size_t sizeY, std::size_t sizeZ );
+    std::shared_ptr< std::vector< float > > create( std::size_t sizeX, std::size_t sizeY, std::size_t sizeZ );
 
     /**
      * Sets the spotsize parameter.
@@ -108,8 +108,8 @@ private:
          * \param waitForMainThreadCondition The condition used to wait for the main thread to prepare the next iteration.
          * \param counter A counter used by all threads to signal how many have finished the current iteration.
          */
-        PatternThread( std::size_t id, std::size_t max, boost::shared_ptr< WCondition > const mainThreadContinueCondition,
-                       boost::shared_ptr< WCondition > const waitForMainThreadCondition, WCounter* const counter );
+        PatternThread( std::size_t id, std::size_t max, std::shared_ptr< WCondition > const mainThreadContinueCondition,
+                       std::shared_ptr< WCondition > const waitForMainThreadCondition, WCounter* const counter );
 
         /**
          * Destructor.
@@ -205,10 +205,10 @@ private:
         std::vector< float >* m_delta2;
 
         //! The condition used to tell the main thread we are done for this iteration.
-        boost::shared_ptr< WCondition > m_mainThreadContinueCondition;
+        std::shared_ptr< WCondition > m_mainThreadContinueCondition;
 
         //! The condition used by the main thread to notify we are ready to start the next iteration.
-        boost::shared_ptr< WCondition > m_waitForMainThreadCondition;
+        std::shared_ptr< WCondition > m_waitForMainThreadCondition;
 
         //! Counts the number of threads done with the current iteration.
         WCounter* const m_counter;
@@ -230,7 +230,7 @@ private:
     float m_spotSize;
 
     //! The progress to increment.
-    boost::shared_ptr< WProgress > m_progress;
+    std::shared_ptr< WProgress > m_progress;
 };
 
 #endif  // WTURINGPATTERNCREATOR_H

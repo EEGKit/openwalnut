@@ -64,7 +64,7 @@ W_LOADABLE_MODULE( WMIsosurface )
 
 WMIsosurface::WMIsosurface():
     WModule(),
-    m_recompute( boost::shared_ptr< WCondition >( new WCondition() ) ),
+    m_recompute( std::shared_ptr< WCondition >( new WCondition() ) ),
     m_dataSet(),
     m_moduleNodeInserted( false ),
     m_surfaceGeode( 0 )
@@ -79,9 +79,9 @@ WMIsosurface::~WMIsosurface()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMIsosurface::factory() const
+std::shared_ptr< WModule > WMIsosurface::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMIsosurface() );
+    return std::shared_ptr< WModule >( new WMIsosurface() );
 }
 
 const char** WMIsosurface::getXPMIcon() const
@@ -148,7 +148,7 @@ void WMIsosurface::moduleMain()
 
         // query changes in data and data validity
         bool dataChanged = m_input->handledUpdate();
-        boost::shared_ptr< WDataSetScalar > incomingDataSet = m_input->getData();
+        std::shared_ptr< WDataSetScalar > incomingDataSet = m_input->getData();
         bool propChanged = m_useMarchingLego->changed() || m_isoValueProp->changed();
         if( !incomingDataSet )
         {
@@ -182,7 +182,7 @@ void WMIsosurface::moduleMain()
         // update isosurface
         debugLog() << "Computing surface ...";
 
-        boost::shared_ptr< WProgress > progress( new WProgress( "Marching Cubes", 2 ) );
+        std::shared_ptr< WProgress > progress( new WProgress( "Marching Cubes", 2 ) );
         m_progress->addSubProgress( progress );
 
         generateSurfacePre( m_isoValueProp->get( true ) );
@@ -203,7 +203,7 @@ void WMIsosurface::moduleMain()
 void WMIsosurface::connectors()
 {
     // initialize connectors
-    m_input = boost::shared_ptr< WModuleInputData < WDataSetScalar > >(
+    m_input = std::shared_ptr< WModuleInputData < WDataSetScalar > >(
         new WModuleInputData< WDataSetScalar >( shared_from_this(),
                                                                "values", "Dataset to compute isosurface for." )
         );
@@ -211,7 +211,7 @@ void WMIsosurface::connectors()
     // add it to the list of connectors. Please note, that a connector NOT added via addConnector will not work as expected.
     addConnector( m_input );
 
-    m_output = boost::shared_ptr< WModuleOutputData< WTriangleMesh > >(
+    m_output = std::shared_ptr< WModuleOutputData< WTriangleMesh > >(
             new WModuleOutputData< WTriangleMesh >( shared_from_this(), "surface mesh", "The mesh representing the isosurface." ) );
 
     addConnector( m_output );
@@ -256,11 +256,11 @@ namespace
         {
         }
 
-        virtual boost::shared_ptr< WTriangleMesh > execute( size_t x, size_t y, size_t z,
+        virtual std::shared_ptr< WTriangleMesh > execute( size_t x, size_t y, size_t z,
                                                             const WMatrix<double>& matrix,
-                                                            boost::shared_ptr<WValueSetBase> valueSet,
+                                                            std::shared_ptr<WValueSetBase> valueSet,
                                                             double isoValue,
-                                                            boost::shared_ptr<WProgressCombiner> ) = 0;
+                                                            std::shared_ptr<WProgressCombiner> ) = 0;
     };
 
     /**
@@ -292,14 +292,14 @@ namespace
         {
         }
 
-        virtual boost::shared_ptr< WTriangleMesh > execute( size_t x, size_t y, size_t z,
+        virtual std::shared_ptr< WTriangleMesh > execute( size_t x, size_t y, size_t z,
                                                             const WMatrix<double>& matrix,
-                                                            boost::shared_ptr<WValueSetBase> valueSet,
+                                                            std::shared_ptr<WValueSetBase> valueSet,
                                                             double isoValue,
-                                                            boost::shared_ptr<WProgressCombiner> progress )
+                                                            std::shared_ptr<WProgressCombiner> progress )
         {
-            boost::shared_ptr< WValueSet< T > > vals(
-                    boost::dynamic_pointer_cast< WValueSet< T > >( valueSet ) );
+            std::shared_ptr< WValueSet< T > > vals(
+                    std::dynamic_pointer_cast< WValueSet< T > >( valueSet ) );
             WAssert( vals, "Data type and data type indicator must fit." );
             return AlgoBase::generateSurface( x, y, z, matrix, vals->rawDataVectorPointer(), isoValue, progress );
         }
@@ -317,11 +317,11 @@ namespace
      * \param enum_type the OpenWalnut type enum of the data on which the isosurface should be computed.
       */
     template<typename AlgoBase>
-    boost::shared_ptr<MCAlgoMapperBase<AlgoBase> > createAlgo( int enum_type )
+    std::shared_ptr<MCAlgoMapperBase<AlgoBase> > createAlgo( int enum_type )
     {
 #define CASE( enum_type ) \
         case enum_type:\
-            return boost::shared_ptr<MCAlgoMapperBase<AlgoBase> >( new MCAlgoMapper<AlgoBase, DataTypeRT< enum_type >::type >() )
+            return std::shared_ptr<MCAlgoMapperBase<AlgoBase> >( new MCAlgoMapper<AlgoBase, DataTypeRT< enum_type >::type >() )
 
         switch( enum_type )
         {
@@ -341,7 +341,7 @@ namespace
             default:
             WAssert( false, "Data type not implemented because it is not a scalar or just not implemented, yet" );
         }
-        return boost::shared_ptr<MCAlgoMapperBase<AlgoBase> >(); // something went wrong, we got an unreasonable type
+        return std::shared_ptr<MCAlgoMapperBase<AlgoBase> >(); // something went wrong, we got an unreasonable type
 #undef CASE
     }
 }  // namespace
@@ -353,13 +353,13 @@ void WMIsosurface::generateSurfacePre( double isoValue )
 
     WMarchingCubesAlgorithm mcAlgo;
     WMarchingLegoAlgorithm mlAlgo;
-    boost::shared_ptr< WGridRegular3D > gridRegular3D = boost::dynamic_pointer_cast< WGridRegular3D >( ( *m_dataSet ).getGrid() );
+    std::shared_ptr< WGridRegular3D > gridRegular3D = std::dynamic_pointer_cast< WGridRegular3D >( ( *m_dataSet ).getGrid() );
     WAssert( gridRegular3D, "Grid is not of type WGridRegular3D." );
     m_grid = gridRegular3D;
 
-    boost::shared_ptr< WValueSetBase > valueSet( m_dataSet->getValueSet() );
+    std::shared_ptr< WValueSetBase > valueSet( m_dataSet->getValueSet() );
 
-    boost::shared_ptr<MCBase> algo;
+    std::shared_ptr<MCBase> algo;
     if( m_useMarchingLego->get( true ) )
     {
         algo = createAlgo<WMarchingLegoAlgorithm>( valueSet->getDataType() );
@@ -386,8 +386,8 @@ void WMIsosurface::renderMesh()
 {
     {
         // Remove the previous node in a thread safe way.
-        boost::unique_lock< boost::shared_mutex > lock;
-        lock = boost::unique_lock< boost::shared_mutex >( m_updateLock );
+        std::unique_lock< std::shared_mutex > lock;
+        lock = std::unique_lock< std::shared_mutex >( m_updateLock );
 
         m_moduleNode->remove( m_surfaceGeode );
 
@@ -457,8 +457,8 @@ void WMIsosurface::renderMesh()
 
 void WMIsosurface::updateGraphicsCallback()
 {
-    boost::unique_lock< boost::shared_mutex > lock;
-    lock = boost::unique_lock< boost::shared_mutex >( m_updateLock );
+    std::unique_lock< std::shared_mutex > lock;
+    lock = std::unique_lock< std::shared_mutex >( m_updateLock );
 
     if( m_surfaceColor->changed() )
     {

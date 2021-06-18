@@ -69,18 +69,18 @@ class WMouseLocationHandler;
  * \ingroup ge
  */
 class WGEViewer: public WGEGraphicsWindow,
-                 public boost::enable_shared_from_this< WGEViewer >
+                 public std::enable_shared_from_this< WGEViewer >
 {
 public:
     /**
      * Convenience typedef
      */
-    typedef boost::shared_ptr< WGEViewer > SPtr;
+    typedef std::shared_ptr< WGEViewer > SPtr;
 
     /**
      * Convenience typedef
      */
-    typedef boost::shared_ptr< const WGEViewer > ConstSPtr;
+    typedef std::shared_ptr< const WGEViewer > ConstSPtr;
 
     /**
      * Default constructor.

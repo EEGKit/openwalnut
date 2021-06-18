@@ -62,7 +62,7 @@ public:
      *
      * \param dataset Reference to the dataset.
      */
-    explicit WJoinContourTree( boost::shared_ptr< WDataSetSingle > dataset );
+    explicit WJoinContourTree( std::shared_ptr< WDataSetSingle > dataset );
 
     WJoinContourTree();
 
@@ -78,7 +78,7 @@ public:
      *
      * \return Set of voxel indices
      */
-    boost::shared_ptr< std::set< size_t > > getVolumeVoxelsEnclosedByIsoSurface( const double isoValue ) const;
+    std::shared_ptr< std::set< size_t > > getVolumeVoxelsEnclosedByIsoSurface( const double isoValue ) const;
 
     /**
      * Gets the name of this prototype.
@@ -99,7 +99,7 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
 protected:
     /**
@@ -107,11 +107,11 @@ protected:
      */
     void sortIndexArray();
 
-    static boost::shared_ptr< WPrototyped > m_prototype; //!< The prototype as singleton.
+    static std::shared_ptr< WPrototyped > m_prototype; //!< The prototype as singleton.
 
 private:
-    boost::shared_ptr< WGridRegular3D > m_grid; //!< Stores the reference to the grid of the given dataset to get the neighbours of a voxel
-    boost::shared_ptr< WValueSet< double > > m_valueSet; //!< Stores reference to the isovalues, so we may sort them indirect on their value
+    std::shared_ptr< WGridRegular3D > m_grid; //!< Stores the reference to the grid of the given dataset to get the neighbours of a voxel
+    std::shared_ptr< WValueSet< double > > m_valueSet; //!< Stores reference to the isovalues, so we may sort them indirect on their value
 
     std::vector< size_t > m_elementIndices; //!< Stores the component number for the i'th vertex in the value set
     std::vector< size_t > m_joinTree; //!< For each index stores which node it is connected to
@@ -128,7 +128,7 @@ private:
          *
          * \param valueSet Value set on which the comparision is done.
          */
-        explicit IndirectCompare( boost::shared_ptr< WValueSet< double > > valueSet );
+        explicit IndirectCompare( std::shared_ptr< WValueSet< double > > valueSet );
 
         /**
          * Compares the isovalue of the elments with index i and j.
@@ -142,7 +142,7 @@ private:
         bool operator()( size_t i, size_t j );
 
     private: // NOLINT
-        boost::shared_ptr< WValueSet < double > > m_valueSet; //!< Reference to the isovalues
+        std::shared_ptr< WValueSet < double > > m_valueSet; //!< Reference to the isovalues
     };
 };
 

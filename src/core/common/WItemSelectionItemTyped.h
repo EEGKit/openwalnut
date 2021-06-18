@@ -46,12 +46,12 @@ public:
     /**
      * Abbreviation for a shared pointer.
      */
-    typedef boost::shared_ptr< WItemSelectionItemTyped< T > > SPtr;
+    typedef std::shared_ptr< WItemSelectionItemTyped< T > > SPtr;
 
     /**
      * Abbreviation for a const shared pointer.
      */
-    typedef boost::shared_ptr< const WItemSelectionItemTyped< T > > ConstSPtr;
+    typedef std::shared_ptr< const WItemSelectionItemTyped< T > > ConstSPtr;
 
     /**
      * The type of the value stored in here.

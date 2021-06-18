@@ -36,7 +36,7 @@
 #endif
 
 // path helper instance as singleton
-boost::shared_ptr< WPathHelper > WPathHelper::m_instance = boost::shared_ptr< WPathHelper >();
+std::shared_ptr< WPathHelper > WPathHelper::m_instance = std::shared_ptr< WPathHelper >();
 
 WPathHelper::WPathHelper()
 {
@@ -48,11 +48,11 @@ WPathHelper::~WPathHelper()
     // cleanup
 }
 
-boost::shared_ptr< WPathHelper > WPathHelper::getPathHelper()
+std::shared_ptr< WPathHelper > WPathHelper::getPathHelper()
 {
     if( !m_instance )
     {
-        m_instance = boost::shared_ptr< WPathHelper >( new WPathHelper() );
+        m_instance = std::shared_ptr< WPathHelper >( new WPathHelper() );
     }
 
     return m_instance;

@@ -46,7 +46,7 @@ WReaderELC::WReaderELC( std::string fname )
 {
 }
 
-boost::shared_ptr< WEEGPositionsLibrary > WReaderELC::read()
+std::shared_ptr< WEEGPositionsLibrary > WReaderELC::read()
 {
     std::ifstream ifs;
     ifs.open( m_fname.c_str(), std::ifstream::in );
@@ -146,5 +146,5 @@ boost::shared_ptr< WEEGPositionsLibrary > WReaderELC::read()
         wlog::debug( "WReaderELC" ) << iter->first << ": " << iter->second;
     }
 
-    return boost::shared_ptr< WEEGPositionsLibrary >( new WEEGPositionsLibrary( positionsMap ) );
+    return std::shared_ptr< WEEGPositionsLibrary >( new WEEGPositionsLibrary( positionsMap ) );
 }

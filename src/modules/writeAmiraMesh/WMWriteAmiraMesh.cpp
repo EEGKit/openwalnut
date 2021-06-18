@@ -43,10 +43,10 @@ WMWriteAmiraMesh::~WMWriteAmiraMesh()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMWriteAmiraMesh::factory() const
+std::shared_ptr< WModule > WMWriteAmiraMesh::factory() const
 {
     // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WMWriteAmiraMesh() );
+    return std::shared_ptr< WModule >( new WMWriteAmiraMesh() );
 }
 
 const std::string WMWriteAmiraMesh::getName() const

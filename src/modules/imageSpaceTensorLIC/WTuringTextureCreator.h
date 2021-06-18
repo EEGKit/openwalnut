@@ -223,7 +223,7 @@ private:
     /**
      * The thread pool.
      */
-    std::vector< boost::shared_ptr< TextureThread > > m_threads;
+    std::vector< std::shared_ptr< TextureThread > > m_threads;
 };
 
 #endif  // WTURINGTEXTURECREATOR_H

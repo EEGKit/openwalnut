@@ -49,10 +49,10 @@ WMWebglSupport::~WMWebglSupport()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMWebglSupport::factory() const
+std::shared_ptr< WModule > WMWebglSupport::factory() const
 {
     // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WMWebglSupport() );
+    return std::shared_ptr< WModule >( new WMWebglSupport() );
 }
 
 const char** WMWebglSupport::getXPMIcon() const
@@ -74,23 +74,23 @@ const std::string WMWebglSupport::getDescription() const
 
 void WMWebglSupport::connectors()
 {
-    m_meshInput = boost::shared_ptr< WModuleInputData < WTriangleMesh > >(
+    m_meshInput = std::shared_ptr< WModuleInputData < WTriangleMesh > >(
         new WModuleInputData< WTriangleMesh >( shared_from_this(), "mesh", "The input mesh" )
         );
     addConnector( m_meshInput );
 
-    m_meshOutput = boost::shared_ptr< WModuleOutputData< WTriangleMesh > >(
+    m_meshOutput = std::shared_ptr< WModuleOutputData< WTriangleMesh > >(
             new WModuleOutputData< WTriangleMesh >( shared_from_this(), "surface mesh", "The output mesh" ) );
     addConnector( m_meshOutput );
 
-    m_datasetInputScalar = boost::shared_ptr< WModuleInputData < WDataSetScalar > >(
+    m_datasetInputScalar = std::shared_ptr< WModuleInputData < WDataSetScalar > >(
         new WModuleInputData< WDataSetScalar >( shared_from_this(), "values scalar", "Dataset to color the mesh with" )
         );
 
     // add it to the list of connectors. Please note, that a connector NOT added via addConnector will not work as expected.
     addConnector( m_datasetInputScalar );
 
-    m_datasetInputVector = boost::shared_ptr< WModuleInputData < WDataSetVector > >(
+    m_datasetInputVector = std::shared_ptr< WModuleInputData < WDataSetVector > >(
         new WModuleInputData< WDataSetVector >( shared_from_this(), "values vector", "Dataset to color the mesh with" )
         );
 
@@ -103,7 +103,7 @@ void WMWebglSupport::connectors()
 
 void WMWebglSupport::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
     m_propTriggerSaveGray = m_properties->addProperty( "Do Save gray",  "Press!", WPVBaseTypes::PV_TRIGGER_READY, m_propCondition );
     m_propTriggerSaveRGB = m_properties->addProperty( "Do Save RGB",  "Press!", WPVBaseTypes::PV_TRIGGER_READY, m_propCondition );
     m_fileName = m_properties->addProperty( "file name", "", WPathHelper::getAppPath() );
@@ -185,7 +185,7 @@ void WMWebglSupport::moduleMain()
 
 void WMWebglSupport::colorTriMeshGray()
 {
-    //boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( ( *m_datasetScalar ).getGrid() );
+    //std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( ( *m_datasetScalar ).getGrid() );
     //bool success;
 
     for( size_t i = 0; i < m_triMesh->vertSize(); ++i )
@@ -210,7 +210,7 @@ void WMWebglSupport::colorTriMeshGray()
 
 void WMWebglSupport::colorTriMeshRGB()
 {
-    //boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( ( *m_datasetScalar ).getGrid() );
+    //std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( ( *m_datasetScalar ).getGrid() );
     bool success;
 
     for( size_t i = 0; i < m_triMesh->vertSize(); ++i )
@@ -238,7 +238,7 @@ void WMWebglSupport::saveSlicesGray()
 {
     using namespace boost::filesystem; //NOLINT
 
-    boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( ( *m_datasetScalar ).getGrid() );
+    std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( ( *m_datasetScalar ).getGrid() );
     debugLog() << grid->getNbCoordsX() << " " << grid->getNbCoordsY() << " " << grid->getNbCoordsZ();
 
     osg::ref_ptr< osg::Image > ima = new osg::Image;
@@ -328,7 +328,7 @@ void WMWebglSupport::saveSlicesRGB()
 {
     using namespace boost::filesystem; //NOLINT
 
-//    boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( ( *m_datasetScalar ).getGrid() );
+//    std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( ( *m_datasetScalar ).getGrid() );
 //    debugLog() << grid->getNbCoordsX() << " " << grid->getNbCoordsY() << " " << grid->getNbCoordsZ();
 
     osg::ref_ptr< osg::Image > ima = new osg::Image;
