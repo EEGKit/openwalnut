@@ -74,7 +74,6 @@ WQtGui::WQtGui( const boost::program_options::variables_map& options, int argc, 
     m_optionsMap( options ),
     m_loadDeferredOnce( true )
 {
-    QCoreApplication::setAttribute( Qt::AA_X11InitThreads );
 }
 
 WQtGui::~WQtGui()
