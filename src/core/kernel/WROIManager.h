@@ -56,14 +56,14 @@ public:
     boost::shared_ptr< WRMBranch > addBranch();
 
     /**
-     * Adds a new master ROI
+     * Adds a new main ROI
      *
      * \param newRoi
      */
     void addRoi( osg::ref_ptr< WROI > newRoi );
 
     /**
-     * Adds a new ROI below a master ROI
+     * Adds a new ROI below a main ROI
      *
      * \param newRoi
      * \param parentRoi

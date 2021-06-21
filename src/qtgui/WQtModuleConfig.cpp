@@ -83,9 +83,9 @@ WQtModuleConfig::WQtModuleConfig( QWidget* parent, Qt::WindowFlags f ):
     QTabWidget* tab = new QTabWidget( this );
     tab->addTab( p1, "Allowed Modules" );
     tab->addTab( p2, "Module Paths" );
-    QVBoxLayout* masterLayout = new QVBoxLayout();
-    masterLayout->addWidget( tab );
-    setLayout( masterLayout );
+    QVBoxLayout* mainLayout = new QVBoxLayout();
+    mainLayout->addWidget( tab );
+    setLayout( mainLayout );
 
     QString helpText = "This dialog allows you to modify the list of modules used everywhere in OpenWalnut. The list contains all loaded modules. "
                        "By default, the list is interpreted as white-list. This means, you have to select the modules you want "
@@ -204,7 +204,7 @@ WQtModuleConfig::WQtModuleConfig( QWidget* parent, Qt::WindowFlags f ):
     connect( defButtons, SIGNAL( accepted() ), this, SLOT( accept() ) );
     connect( defButtons, SIGNAL( rejected() ), this, SLOT( reject() ) );
     connect( defButtons->button( QDialogButtonBox::RestoreDefaults ), SIGNAL( clicked() ), this, SLOT( reset() ) );
-    masterLayout->addWidget( defButtons );
+    mainLayout->addWidget( defButtons );
 
     // initialize the widgets
     loadListsFromSettings();

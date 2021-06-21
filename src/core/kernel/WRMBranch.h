@@ -219,7 +219,7 @@ private:
     boost::shared_ptr< WROIManager > m_roiManager; //!< stores a pointer to the roi manager
 
     std::vector< osg::ref_ptr< WROI > > m_rois; //!< list of rois in this this branch,
-                                                  // first in the list is the master roi
+                                                  // first in the list is the main roi
     /**
      * the property object for the module
      */
