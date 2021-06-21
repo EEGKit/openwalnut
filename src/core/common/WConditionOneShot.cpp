@@ -38,7 +38,7 @@ WConditionOneShot::~WConditionOneShot()
     {
         m_lock.unlock();
     }
-    catch( const boost::lock_error &e )
+    catch( const std::system_error &e )
     {
         // ignore this particular error since it is thrown when the lock is not locked anymore
     }
@@ -57,7 +57,7 @@ void WConditionOneShot::notify()
     {
         m_lock.unlock();
     }
-    catch( const boost::lock_error &e )
+    catch( const std::system_error &e )
     {
         // ignore this particular error since it is thrown when the lock is not locked anymore
         // because the notify was called multiple times
