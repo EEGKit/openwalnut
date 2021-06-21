@@ -90,6 +90,11 @@ varying float v_nearestVertexDepth;
  */
 varying float v_vertexDepthDiff;
 
+/**
+ * The color passed over from the geometry shader
+ */
+varying vec4 v_colorOut;
+
 /////////////////////////////////////////////////////////////////////////////
 // Variables
 /////////////////////////////////////////////////////////////////////////////
@@ -103,7 +108,7 @@ varying float v_vertexDepthDiff;
  */
 void main()
 {
-    if( gl_Color.a == 0.0 )
+    if( v_colorOut.a == 0.0 )
         discard;
 
     // create a sphere
@@ -121,7 +126,7 @@ void main()
 
     // finally set the color and depth
     wgeInitGBuffer();
-    wge_FragColor = vec4( gl_Color.rgb * r, gl_Color.a );
+    wge_FragColor = vec4( v_colorOut.rgb * r, v_colorOut.a );
     wge_FragNormal = textureNormalize( sphereSurf );
     wge_FragZoom = v_worldScale;
     wge_FragTangent = textureNormalize( vec3( 0.0, 1.0, 0.0 ) );

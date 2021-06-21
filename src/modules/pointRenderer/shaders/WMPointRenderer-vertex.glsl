@@ -46,6 +46,8 @@ varying float v_clip;
 
 varying float v_pointSize;
 
+varying vec4 v_colorIn;
+
 /**
  * Vertex in world space.
  */
@@ -77,7 +79,7 @@ void main()
 #endif
 
     // forward to geometry shader
-    gl_FrontColor = gl_Color;
+    v_colorIn = gl_Color;
     gl_Position = gl_ModelViewMatrix * gl_Vertex;
 
     v_worldCenterVertex = gl_Vertex;
