@@ -46,9 +46,10 @@ WConditionOneShot::~WConditionOneShot()
 
 void WConditionOneShot::wait() const
 {
-    // now we wait until the write lock is released and we can get a read lock
-    boost::shared_lock<std::shared_mutex> slock = boost::shared_lock<std::shared_mutex>( m_mutex );
-    slock.unlock();
+    if( m_lock.owns_lock() )
+    {
+        m_condition.wait( m_mutex );
+    }
 }
 
 void WConditionOneShot::notify()
