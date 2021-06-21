@@ -83,6 +83,8 @@ WGEViewer::WGEViewer( std::string name, osg::ref_ptr<osg::Referenced> wdata, int
 
         m_View->getCamera()->setGraphicsContext( m_GraphicsWindow.get() );
 
+        m_View->getCamera()->getGraphicsContext()->getState()->setUseModelViewAndProjectionUniforms( true );
+
         m_mouseLocationHandler = new WMouseLocationHandler( name );
         m_View->addEventHandler( m_mouseLocationHandler );
 

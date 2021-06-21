@@ -123,9 +123,6 @@ void WMPointRenderer::moduleMain()
     m_properties->addProperty( postNode->getProperties() );
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( postNode );
 
-    osg::State* state = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->getGraphicsContext()->getState();
-    state->setUseModelViewAndProjectionUniforms( true );
-
     // load the GLSL shader:
     m_shader = new WGEShader( "WMPointRenderer", m_localPath );
     // set geometry shader options
