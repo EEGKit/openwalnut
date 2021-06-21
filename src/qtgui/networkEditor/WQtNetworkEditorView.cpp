@@ -174,7 +174,7 @@ void WQtNetworkEditorView::mousePressEvent( QMouseEvent* event )
     }
 
     // also ignore middle mouse button
-    if( event->button() == Qt::MidButton )
+    if( event->button() == Qt::MiddleButton )
     {
         event->accept();
         return;
@@ -193,7 +193,7 @@ void WQtNetworkEditorView::mousePressEvent( QMouseEvent* event )
 void WQtNetworkEditorView::mouseReleaseEvent( QMouseEvent* event )
 {
     // middle mouse button release: open add-menu
-    if( event->button() == Qt::MidButton )
+    if( event->button() == Qt::MiddleButton )
     {
         if( m_addMenu )
         {

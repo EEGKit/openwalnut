@@ -45,7 +45,7 @@ WQtMessageDock::WQtMessageDock( QString dockTitle, QWidget* parent ):
 {
     setObjectName( "MessageDock:" + dockTitle );
     setAllowedAreas( Qt::AllDockWidgetAreas );
-    setFeatures( QDockWidget::AllDockWidgetFeatures );
+    setFeatures( QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable );
 
     // log messages
     m_logList = new QListWidget( this );

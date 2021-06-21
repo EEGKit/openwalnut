@@ -213,7 +213,7 @@ void WMainWindow::setupGUI()
     //network Editor
     m_networkEditor = NULL;
     m_networkEditor = new WQtNetworkEditor( this );
-    m_networkEditor->setFeatures( QDockWidget::AllDockWidgetFeatures );
+    m_networkEditor->setFeatures( QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable );
 
     // strangely, the QGraphics* objects do not properly forward drag/drop events. We need to explicitly handle them.
     connect( m_networkEditor->getView(), SIGNAL( dragDrop( QDropEvent* ) ),
@@ -221,7 +221,7 @@ void WMainWindow::setupGUI()
 
     // the control panel instance is needed for the menu
     m_controlPanel = new WQtControlPanel( this );
-    m_controlPanel->setFeatures( QDockWidget::AllDockWidgetFeatures );
+    m_controlPanel->setFeatures(  QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable );
     m_controlPanel->addSubject( "Default Subject" );
 
     // add all docks
@@ -388,7 +388,7 @@ void WMainWindow::setupGUI()
         {
             m_navAxial = boost::shared_ptr< WQtNavGLWidget >( new WQtNavGLWidget( "Axial View", "Axial View", this, "Axial Slice",
                                                                                   m_mainGLWidget ) );
-            m_navAxial->setFeatures( QDockWidget::AllDockWidgetFeatures );
+            m_navAxial->setFeatures(  QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable );
             m_navAxial->setSliderProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropAxialPos() );
             m_navAxial->getGLWidget()->setCameraManipulator( WQtGLWidget::NO_OP );
 
@@ -396,7 +396,7 @@ void WMainWindow::setupGUI()
 
             m_navCoronal = boost::shared_ptr< WQtNavGLWidget >( new WQtNavGLWidget( "Coronal View", "Coronal View", this, "Coronal Slice",
                                                                                     m_mainGLWidget ) );
-            m_navCoronal->setFeatures( QDockWidget::AllDockWidgetFeatures );
+            m_navCoronal->setFeatures( QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable );
             m_navCoronal->setSliderProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropCoronalPos() );
             m_navCoronal->getGLWidget()->setCameraManipulator( WQtGLWidget::NO_OP );
 
@@ -405,7 +405,7 @@ void WMainWindow::setupGUI()
             m_navSagittal =
                 boost::shared_ptr< WQtNavGLWidget >( new WQtNavGLWidget( "Sagittal View", "Sagittal View", this, "Sagittal Slice",
                                                                          m_mainGLWidget ) );
-            m_navSagittal->setFeatures( QDockWidget::AllDockWidgetFeatures );
+            m_navSagittal->setFeatures( QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable );
             m_navSagittal->setSliderProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropSagittalPos() );
             m_navSagittal->getGLWidget()->setCameraManipulator( WQtGLWidget::NO_OP );
 

@@ -237,7 +237,7 @@ int WQtGLWidget::translateButton( QMouseEvent* event )
     {
         case( Qt::LeftButton ):
             return 1;
-        case( Qt::MidButton ):
+        case( Qt::MiddleButton ):
             return 2;
         case( Qt::RightButton ):
             return 3;

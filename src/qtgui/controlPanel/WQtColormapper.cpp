@@ -65,7 +65,7 @@ WQtColormapper::WQtColormapper( QWidget* parent )
                                      + QString().setNum( WGETexture3D::MAX_NUMBER_OF_TEXTURES )
                                      + "</b> textures will be applied." );
     this->setAllowedAreas( Qt::AllDockWidgetAreas );
-    this->setFeatures( QDockWidget::AllDockWidgetFeatures );
+    this->setFeatures( QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable );
     m_textureListWidget->setDragDropMode( QAbstractItemView::InternalMove );
 
     // be notified when moving items around
