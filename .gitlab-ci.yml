@@ -66,6 +66,12 @@ doc_job:
                 - pwd
                 - ls
                 - make doc
+        artifacts:
+                paths:
+                        - doc/developer/html/
+                expire_in: 1 week
+                expose_as: doc
+                name: doc
 
 buildAndTest:
         stage: Build_and_test_release_stage
