@@ -66,9 +66,10 @@ doc_job:
                 - pwd
                 - ls
                 - make doc
+                - tar -zcf doc.tar.gz ../../doc/developer/html/
         artifacts:
                 paths:
-                        - doc/developer/html/
+                        - build/debug/doc.tar.gz
                 expire_in: 1 week
                 expose_as: doc
                 name: doc
