@@ -21,6 +21,7 @@
 #   VERSION=1.2.0rc1+gitX -> first release candidate version
 #   VERSION=1.2.0sometext1+gitX -> even arbitrary texts are allowd. Be careful as many packaging
 #                                 systems refuse to accept these arbitrary version strings.
+#   VERSION=1.2.0 (gitBranch) -> Adds the current branch
 
 # The current version string:
-VERSION=1.5.0dev+gitX
+VERSION=1.5.0dev+gitX (gitBranch)
