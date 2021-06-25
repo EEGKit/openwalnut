@@ -3,6 +3,7 @@ stages:
         - Stylecheck_doc_stage
         - Build_and_test_release_stage
         - Build_and_test_debug_stage
+        - AppImage_and_artifact_stage
 
 create_directory_and_cmake___release:
         stage: Initialization_stage
@@ -66,13 +67,6 @@ doc_job:
                 - pwd
                 - ls
                 - make doc
-                - tar -zcf doc.tar.gz ../../doc/developer/html/
-        artifacts:
-                paths:
-                        - build/debug/doc.tar.gz
-                expire_in: 1 week
-                expose_as: doc
-                name: doc
 
 buildAndTest:
         stage: Build_and_test_release_stage
@@ -103,3 +97,12 @@ buildAndTestDebug:
                 - ls
                 - make -j 8
                 - make vtest
+
+buildAppImage:
+        stage: AppImage_and_artifact_stage
+        script:
+                - pwd
+                - cd tools/AppImage
+                - pwd
+                - ls
+                - ./appimage.sh build
