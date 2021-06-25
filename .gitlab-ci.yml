@@ -100,6 +100,7 @@ buildAndTestDebug:
 
 buildAppImage:
         stage: AppImage_and_artifact_stage
+        image: ladbukkit/openwalnut_build_environment:1.1.1
         script:
                 - pwd
                 - cd tools/AppImage
