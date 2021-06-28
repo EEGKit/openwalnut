@@ -106,10 +106,13 @@ buildAppImage:
                 paths:
                         - build/release
         image: appimagecrafters/appimage-builder:0.8.8
-        script:
-                - pwd
+        before_script:
+                - apt-get update
+                - apt-get install -y cmake
                 - mkdir -p tools/AppImage/AppImageBuild
                 - rm -rf tools/AppImage/AppImageBuild/AppDir
+        script:
+                - pwd
                 - cd build/release
                 - pwd
                 - ls
