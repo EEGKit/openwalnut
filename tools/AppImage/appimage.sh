@@ -29,7 +29,7 @@ BUILD_DIR=AppImageBuild
 Build()
 {
     echo "* Creating build folder"
-    mkdir $BUILD_DIR
+    mkdir -p $BUILD_DIR
     cd $BUILD_DIR
 
     echo "* Configure build system"
@@ -100,6 +100,7 @@ UsageExit()
         echo "  COMMANDS:"
         echo "    clean: removes created build sub-directories"
         echo "    build: does the building and packaging."
+        echo "    package: only packages"
         echo ""
         exit 2
 }
@@ -111,6 +112,9 @@ case "$1" in
         ;;
     build)
         BuildAll || exit $?
+        ;;
+    package)
+        Package || exit $?
         ;;
     *)
         UsageExit

@@ -101,13 +101,21 @@ buildAndTestDebug:
 
 buildAppImage:
         stage: Build_appimage_stage
-        image: ladbukkit/openwalnut_build_environment:1.2
+        image: appimagecrafters/appimage-builder:0.8.8
         script:
                 - pwd
-                - cd tools/AppImage
+                - mkdir -p tools/AppImage/AppImageBuild
+                - rm -rf tools/AppImage/AppImageBuild/AppDir
+                - cd build/release
                 - pwd
                 - ls
-                - ./appimage.sh build
+                - make install DESTDIR=../../tools/AppImage/AppImageBuild/AppDir
+                - pwd
+                - cd ../../tools/AppImage
+                - pwd
+                - ls
+                - chmod +x appimage.sh
+                - ./appimage.sh package
 
 uploadArtifacts:
         stage: Upload_artifacts_stage
@@ -117,4 +125,5 @@ uploadArtifacts:
                 - cd tools/upload
                 - pwd
                 - ls
+                - chmod +x seafile.sh
                 - ./seafile.sh
