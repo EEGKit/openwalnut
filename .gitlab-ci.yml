@@ -101,6 +101,10 @@ buildAndTestDebug:
 
 buildAppImage:
         stage: Build_appimage_stage
+        cache:
+                key: "CacheRelease"
+                paths:
+                        - build/release
         image: appimagecrafters/appimage-builder:0.8.8
         script:
                 - pwd
