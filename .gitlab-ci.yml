@@ -108,7 +108,7 @@ buildAppImage:
                 - pwd
                 - ls
                 - chmod +x appimage.sh
-                - ./appimage.sh package
+                - ./appimage.sh build
 
 uploadArtifacts:
         stage: Upload_artifacts_stage
