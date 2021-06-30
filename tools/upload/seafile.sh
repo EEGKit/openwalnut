@@ -27,7 +27,7 @@
 DOC_UPLOAD="https://seafile.rlp.net/ajax/u/d/1452fc748c4448638847/upload/?r=18ca3568-f333-400a-afeb-5895eff3de62"
 APP_UPLOAD="https://seafile.rlp.net/ajax/u/d/1452fc748c4448638847/upload/?r=18ca3568-f333-400a-afeb-5895eff3de62"
 UPLOAD_REGEX="\\{\"url\": \"([^\"]*)\"\\}"
-GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+GIT_BRANCH=$(git branch --remote --verbose --no-abbrev --contains | sed -rne 's/^[^\/]*\/([^\ ]+).*$/\1/p')
 GIT_COMMIT=$(git rev-parse --short HEAD)
 DATE=$(date '+%Y-%m-%d_%H-%M')
 
