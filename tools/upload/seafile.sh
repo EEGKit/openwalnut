@@ -24,8 +24,8 @@
 #
 #---------------------------------------------------------------------------
 
-DOC_UPLOAD="https://seafile.rlp.net/ajax/u/d/1452fc748c4448638847/upload/?r=18ca3568-f333-400a-afeb-5895eff3de62"
-APP_UPLOAD="https://seafile.rlp.net/ajax/u/d/1452fc748c4448638847/upload/?r=18ca3568-f333-400a-afeb-5895eff3de62"
+DOC_UPLOAD="https://seafile.rlp.net/ajax/u/d/4f71896e2f744c8796fb/upload/?r=b7d1e764-0c95-4b94-aa00-c8c67c869a9a"
+APP_UPLOAD="https://seafile.rlp.net/ajax/u/d/39a0552b276f4f0797da/upload/?r=b7d1e764-0c95-4b94-aa00-c8c67c869a9a"
 UPLOAD_REGEX="\\{\"url\": \"([^\"]*)\"\\}"
 GIT_BRANCH=$(git branch --remote --verbose --no-abbrev --contains | sed -rne 's/^[^\/]*\/([^\ ]+).*$/\1/p')
 GIT_COMMIT=$(git rev-parse --short HEAD)
