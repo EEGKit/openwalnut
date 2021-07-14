@@ -46,11 +46,16 @@ uploadDoc() {
         link="${BASH_REMATCH[1]}"
     fi
 
-    docUploadDone=$(curl "$link" -F file=@./$DOC_NAME -F parent_dir="/")
+    docUploadDone=$(curl "$link" -F file=@./$DOC_NAME -F parent_dir="/Documentation/")
     echo "$docUploadDone"
 
     echo "REMOVE DOC"
     rm -f $DOC_NAME
+    
+    if [[ $docUploadDone == *"error"* ]]
+    then
+        exit -1
+    fi
 }
 
 uploadAppImage() {
@@ -65,11 +70,16 @@ uploadAppImage() {
         link="${BASH_REMATCH[1]}"
     fi
 
-    appUploadDone=$(curl "$link" -F file=@./$APP_NAME -F parent_dir="/")
+    appUploadDone=$(curl "$link" -F file=@./$APP_NAME -F parent_dir="/AppImage/")
     echo "$appUploadDone"
 
     echo "REMOVE APPIMAGE"
     rm -f $APP_NAME
+
+    if [[ $docUploadDone == *"error"* ]]
+    then
+        exit -1
+    fi
 }
 
 if [[ "$GIT_BRANCH" == "master" ]]
