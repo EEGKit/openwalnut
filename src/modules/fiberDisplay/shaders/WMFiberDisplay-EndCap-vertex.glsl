@@ -79,6 +79,11 @@ varying float v_worldScale;
  */
 varying vec4 v_clusterColor;
 
+/**
+ * The color passed to the geometry shader.
+ */
+varying vec4 v_colorIn;
+
 /////////////////////////////////////////////////////////////////////////////
 // Variables
 /////////////////////////////////////////////////////////////////////////////
@@ -106,7 +111,7 @@ void main()
 
     // forward to geometry shader
     v_normal = gl_Normal;
-    gl_FrontColor = gl_Color;
+    v_colorIn = gl_Color;
     gl_Position = gl_Vertex;
 }
 

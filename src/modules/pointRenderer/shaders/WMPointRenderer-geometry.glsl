@@ -24,7 +24,7 @@
 
 #version 150
 
-#include "WGETransformationTools.glsl"
+#include "WGETransformationTools-geometry.glsl"
 
 layout( points ) in;
 layout( triangle_strip, max_vertices = 4 ) out;

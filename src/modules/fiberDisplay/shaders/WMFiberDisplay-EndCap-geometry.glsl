@@ -22,15 +22,20 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150
 
-#extension GL_EXT_geometry_shader4 : enable
+#include "WGETransformationTools-geometry.glsl"
 
-#include "WGETransformationTools.glsl"
+layout( points ) in;
+layout( triangle_strip, max_vertices = 4 ) out;
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
 /////////////////////////////////////////////////////////////////////////////
+
+uniform mat4 osg_ModelViewMatrix
+
+uniform mat4 osg_ProjectionMatrix
 
 /**
  * A point on the plane.
@@ -63,37 +68,52 @@ uniform float u_tubeSize;
 /**
  * The normal/tangent in scene-space
  */
-varying in vec3 v_normal[];
+in vec3 v_normal[];
 
 /**
  * The normal/tangent in scene-space
  */
-varying in float v_discard[];
+in float v_discard[];
 
 /**
  * Second color array
  */
-varying in vec4 v_secondaryColor[];
+in vec4 v_secondaryColor[];
+
+/**
+ * The Color passed from the vertex shader
+ */
+in vec4 v_colorIn[];
 
 /**
  * The output normal for the fragment shader in world-space
  */
-varying out vec3 v_normalWorld;
+out vec3 v_normalWorld;
 
 /**
  * The vertex coordinates in world-space
  */
-varying out vec4 v_vertex;
+out vec4 v_vertex;
 
 /**
  * The scaling component of the modelview matrix.
  */
-varying out float v_worldScale;
+out float v_worldScale;
 
 /**
  * This varying carries the current cluster color.
  */
-varying out vec4 v_clusterColor;
+out vec4 v_clusterColor;
+
+/**
+ * The color of this primitive
+ */
+out vec4 v_colorOut;
+
+/**
+ * The texture coordinates
+ */
+out vec4 v_texCoord;
 
 /////////////////////////////////////////////////////////////////////////////
 // Variables
@@ -120,7 +140,7 @@ void main()
     // define the plane
     vec3 n = normalize( u_planeVector );
     float d = dot( u_planePoint, n );
-    float dist = dot( gl_PositionIn[0].xyz, n ) - d;
+    float dist = dot( gl_in[0].gl_Position.xyz, n ) - d;
 
     if( abs( dist ) >= u_distance )
     {
@@ -139,48 +159,48 @@ void main()
 
     // grab the info we got from the vertex array:
     vec3 tangent = normalize( v_normal[0] );
-    vec4 vertex = gl_PositionIn[0];
+    vec4 vertex = gl_in[0].gl_Position;
 
     // camera view direction
-    vec3 view = normalize( ( gl_ModelViewMatrixInverse * vec4( 0.0, 0.0, -1.0, 0.0 ) ).xyz );
+    vec3 view = normalize( ( inverse( osg_ModelViewMatrix ) * vec4( 0.0, 0.0, -1.0, 0.0 ) ).xyz );
     float angle = step( 0.0, sign( dot( view, tangent ) ) );
 
     // the plane of the sprite is determined by the tangent ond two orthogonal vectors a and b
     vec4 a = 0.2 * u_tubeSize * vec4( normalize( cross( tangent, view ) ), 0.0 );
     vec4 b = 0.2 * u_tubeSize * vec4( normalize( cross( tangent, a.xyz ) ), 0.0 );
 
-    gl_FrontColor = gl_FrontColorIn[0];
+    v_colorOut = v_colorIn[0];
     v_clusterColor = v_secondaryColor[0];
 
     // create the quad
-    v_normalWorld = ( gl_ModelViewMatrix * vec4( v_normal[0], 0.0 ) ).xyz;
+    v_normalWorld = ( osg_ModelViewMatrix * vec4( v_normal[0], 0.0 ) ).xyz;
     // let it point towards the camera
     v_normalWorld *= sign( dot( normalize( v_normalWorld ), vec3( 0.0, 0.0, 1.0 ) ) );
 
     v_worldScale = getModelViewScale();
 
     // vertex 1
-    gl_TexCoord[0] = vec4( -1.0, -1.0, 0.0, angle );
-    v_vertex = gl_ModelViewMatrix * ( vertex + ( -0.5 * a ) + ( -0.5 * b ) );
-    gl_Position = gl_ProjectionMatrix * v_vertex;
+    v_texCoord = vec4( -1.0, -1.0, 0.0, angle );
+    v_vertex = osg_ModelViewMatrix * ( vertex + ( -0.5 * a ) + ( -0.5 * b ) );
+    gl_Position = osg_ProjectionMatrix * v_vertex;
     EmitVertex();
 
     // vertex 2
-    gl_TexCoord[0] = vec4( -1.0, 1.0, 0.0, angle );
-    v_vertex = gl_ModelViewMatrix * ( vertex + ( -0.5 * a ) + ( 0.5 * b ) );
-    gl_Position = gl_ProjectionMatrix * v_vertex;
+    v_texCoord = vec4( -1.0, 1.0, 0.0, angle );
+    v_vertex = osg_ModelViewMatrix * ( vertex + ( -0.5 * a ) + ( 0.5 * b ) );
+    gl_Position = osg_ProjectionMatrix * v_vertex;
     EmitVertex();
 
     // vertex 3
-    gl_TexCoord[0] = vec4( 1.0, -1.0, 0.0, angle );
-    v_vertex = gl_ModelViewMatrix * ( vertex + ( 0.5 * a ) + ( -0.5 * b ) );
-    gl_Position = gl_ProjectionMatrix * v_vertex;
+    v_texCoord = vec4( 1.0, -1.0, 0.0, angle );
+    v_vertex = osg_ModelViewMatrix * ( vertex + ( 0.5 * a ) + ( -0.5 * b ) );
+    gl_Position = osg_ProjectionMatrix * v_vertex;
     EmitVertex();
 
     // vertex 4
-    gl_TexCoord[0] = vec4( 1.0, 1.0, 0.0, angle );
-    v_vertex = gl_ModelViewMatrix * ( vertex + ( 0.5 * a ) + ( 0.5 * b ) );
-    gl_Position = gl_ProjectionMatrix * v_vertex;
+    v_texCoord = vec4( 1.0, 1.0, 0.0, angle );
+    v_vertex = osg_ModelViewMatrix * ( vertex + ( 0.5 * a ) + ( 0.5 * b ) );
+    gl_Position = osg_ProjectionMatrix * v_vertex;
     EmitVertex();
 
     EndPrimitive();
