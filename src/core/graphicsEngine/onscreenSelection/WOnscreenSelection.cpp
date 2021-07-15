@@ -293,6 +293,22 @@ bool WOnscreenSelection::isSelected( float x, float y, float z )
     }
 }
 
+std::vector< WPosition > WOnscreenSelection::isSelected( std::vector< WPosition> positions )
+{
+    std::vector< WPosition > out;
+    for( size_t i = 0; i < positions.size(); i++ )
+    {
+        WPosition pos = positions.at( i );
+        if( isSelected( pos.x(), pos.y(), pos.z() ) )
+        {
+            out.push_back( pos );
+        }
+    }
+
+    return out;
+}
+
+
 bool WOnscreenSelection::boxCheck( float x, float y )
 {
     WPosition pos1 = m_line.at( 0 );

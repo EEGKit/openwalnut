@@ -120,6 +120,13 @@ public:
     bool isSelected( float x, float y, float z );
 
     /**
+     * Checks if the positions are selected and only returns those that are.
+     * \param positions The positions to check
+     * \return std::vector< WPosition > A vector of selected positions
+     */
+    std::vector< WPosition > isSelected( std::vector< WPosition> positions );
+
+    /**
      * Sets the current selection type.
      * \param selectionType The selection type to set.
      */

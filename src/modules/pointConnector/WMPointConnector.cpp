@@ -457,9 +457,16 @@ WFiberHandler::SPtr WMPointConnector::getFiberHandler()
 
 void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float, float )
 {
+    std::vector<WPosition> positions;
     for( size_t idx = 0; idx < m_connectorData->getVertices()->size(); idx++ )
     {
         osg::Vec3 vertex = m_connectorData->getVertices()->at( idx );
+        positions.push_back( WPosition( vertex.x(), vertex.y(), vertex.z() ) );
+    }
+
+    for( size_t idx = 0; idx < positions.size(); idx++ )
+    {
+        WPosition vertex = positions.at( idx );
         if( m_onscreenSelection->isSelected( vertex.x(), vertex.y(), vertex.z() ) )
         {
             if( m_onscreenSelection->getClickType() )
