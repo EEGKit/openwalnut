@@ -553,8 +553,10 @@ FUNCTION( GET_VERSION_STRING _version _api_version )
     IF( EXISTS ${OW_VERSION_FILENAME} )
         # Read the version file
         FILE( READ ${OW_VERSION_FILENAME} OW_VERSION_FILE_CONTENT )
-        # The first regex will mathc 
-        STRING( REGEX REPLACE ".*[^#]VERSION=([0-9]+\\.[0-9]+\\.[0-9]+[_~a-z,A-Z,0-9]*(\\+gitX?[0-9]*)?).*" "\\1"  OW_VERSION_FILE  ${OW_VERSION_FILE_CONTENT} ) 
+        # The first regex will match
+        # The old regex
+        # STRING( REGEX REPLACE ".*[^#]VERSION=([0-9]+\\.[0-9]+\\.[0-9]+[_~a-z,A-Z,0-9]*(\\+gitX?[0-9]*)?).*" "\\1"  OW_VERSION_FILE  ${OW_VERSION_FILE_CONTENT} )
+        STRING( REGEX REPLACE ".*\n[^#\n]*VERSION=([^#\n]*).*\n.*" "\\1"  OW_VERSION_FILE  ${OW_VERSION_FILE_CONTENT} ) 
         STRING( COMPARE EQUAL ${OW_VERSION_FILE} ${OW_VERSION_FILE_CONTENT}  OW_VERSION_FILE_INVALID )
         IF( OW_VERSION_FILE_INVALID )
             UNSET( OW_VERSION_FILE )
@@ -585,6 +587,20 @@ FUNCTION( GET_VERSION_STRING _version _api_version )
         # if we have the git info -> complement the version string
         STRING( REGEX REPLACE "\n$" "" OW_VERSION_GIT "${OW_VERSION_GIT}" )
         STRING( REGEX REPLACE "gitX" "git${OW_VERSION_GIT}" OW_VERSION ${OW_VERSION_FILE} )
+    ENDIF()
+
+    # Use git to query branch information.
+    EXECUTE_PROCESS( COMMAND git rev-parse --abbrev-ref HEAD OUTPUT_VARIABLE OW_BRANCH_GIT RESULT_VARIABLE gitRetVar 
+                     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                    )
+    IF( NOT ${gitRetVar} STREQUAL 0 )
+        UNSET( OW_BRANCH_GIT )
+        # be more nice if we do not find git version. The simply strip the +git tag.
+        STRING( REGEX REPLACE "\\(gitBranch\\)" "" OW_VERSION ${OW_VERSION} )
+    ELSE()
+        # if we have the git info -> complement the version string
+        STRING( REGEX REPLACE "\n$" "" OW_BRANCH_GIT "${OW_BRANCH_GIT}" )
+        STRING( REGEX REPLACE "gitBranch" "${OW_BRANCH_GIT}" OW_VERSION ${OW_VERSION} )
     ENDIF()
   
     SET( ${_version} ${OW_VERSION} PARENT_SCOPE )
