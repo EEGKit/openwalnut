@@ -22,6 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
+#include <vector>
+
 #include "WOnscreenSelection.h"
 
 WOnscreenSelection::WOnscreenSelection():

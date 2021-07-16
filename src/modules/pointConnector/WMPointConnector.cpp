@@ -25,6 +25,7 @@
 #include <string>
 #include <vector>
 
+#include "WAngleHelper.h"
 #include "WClickHandler.h"
 #include "WConnectorData.h"
 #include "WFiberHandler.h"
@@ -463,6 +464,9 @@ void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float, 
         osg::Vec3 vertex = m_connectorData->getVertices()->at( idx );
         positions.push_back( WPosition( vertex.x(), vertex.y(), vertex.z() ) );
     }
+
+    positions = m_onscreenSelection->isSelected( positions );
+    positions = WAngleHelper::findSmoothestPath( positions, m_fiberHandler->getFibers()->at( m_fiberHandler->getSelectedFiber() ) );
 
     for( size_t idx = 0; idx < positions.size(); idx++ )
     {
