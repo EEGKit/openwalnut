@@ -45,7 +45,7 @@ WModuleLoader::~WModuleLoader()
     m_libs.clear();
 }
 
-void WModuleLoader::load( WSharedAssociativeContainer< std::set< boost::shared_ptr< WModule > > >::WriteTicket ticket,
+void WModuleLoader::load( WSharedAssociativeContainer< std::set< std::shared_ptr< WModule > > >::WriteTicket ticket,
                           boost::filesystem::path dir, unsigned int level )
 {
     for( boost::filesystem::directory_iterator i = boost::filesystem::directory_iterator( dir );
@@ -81,7 +81,7 @@ void WModuleLoader::load( WSharedAssociativeContainer< std::set< boost::shared_p
             try
             {
                 // load lib
-                boost::shared_ptr< WSharedLib > l( new WSharedLib( i->path() ) );
+                std::shared_ptr< WSharedLib > l( new WSharedLib( i->path() ) );
 
                 bool isLoadableModule = false;
                 bool isLoadableArbitrary = false;
@@ -161,7 +161,7 @@ void WModuleLoader::load( WSharedAssociativeContainer< std::set< boost::shared_p
     }
 }
 
-void WModuleLoader::load( WSharedAssociativeContainer< std::set< boost::shared_ptr< WModule > > >::WriteTicket ticket )
+void WModuleLoader::load( WSharedAssociativeContainer< std::set< std::shared_ptr< WModule > > >::WriteTicket ticket )
 {
     std::vector< boost::filesystem::path > allPaths = WPathHelper::getAllModulePaths();
 

@@ -79,7 +79,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -132,22 +132,22 @@ private:
     /**
      * The input dataset. It contains the second order tensor data needed here.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetDTI > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSetDTI > > m_input;
 
     /**
      * The current tensor dataset.
      */
-    boost::shared_ptr< const WDataSetDTI > m_dataSet;
+    std::shared_ptr< const WDataSetDTI > m_dataSet;
 
     /**
      * The current tensor dataset's grid.
      */
-    boost::shared_ptr< WGridRegular3D > m_dataSetGrid;
+    std::shared_ptr< WGridRegular3D > m_dataSetGrid;
 
     /**
      * The current tensor dataset's valueset.
      */
-    boost::shared_ptr< WValueSetBase > m_dataSetValueSet;
+    std::shared_ptr< WValueSetBase > m_dataSetValueSet;
 
     /**
      * Number of cells in X direction. Stored as a member to avoid permanent gird look ups.
@@ -187,7 +187,7 @@ private:
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     WPropInt      m_xPos; //!< x position of the slice
 

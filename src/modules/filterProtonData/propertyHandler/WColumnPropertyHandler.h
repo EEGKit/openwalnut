@@ -63,7 +63,7 @@ public:
     /**
      * shared_ptr that points to itself 
      */
-    typedef boost::shared_ptr< WColumnPropertyHandler > SPtr;
+    typedef std::shared_ptr< WColumnPropertyHandler > SPtr;
 
     /**
      * constructor
@@ -153,7 +153,7 @@ private:
      * \param typeName Type of column.
      * \return content of WItemSelection
      */
-    boost::shared_ptr< WItemSelection > initializeSelectionItem( std::list< std::string > typeName );
+    std::shared_ptr< WItemSelection > initializeSelectionItem( std::list< std::string > typeName );
 
     /**
      * converts the index to the filtered index  

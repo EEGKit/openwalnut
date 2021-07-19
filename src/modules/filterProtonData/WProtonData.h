@@ -48,7 +48,7 @@ public:
     /**
      * shared_ptr that points to itself 
      */
-    typedef boost::shared_ptr< WProtonData > SPtr;
+    typedef std::shared_ptr< WProtonData > SPtr;
 
     /**
      * constructor

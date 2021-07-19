@@ -54,10 +54,10 @@ WMTemplateUI::~WMTemplateUI()
 {
 }
 
-boost::shared_ptr< WModule > WMTemplateUI::factory() const
+std::shared_ptr< WModule > WMTemplateUI::factory() const
 {
     // NOTE: Refer to WMTemplate.cpp if you do not understand these commands.
-    return boost::shared_ptr< WModule >( new WMTemplateUI() );
+    return std::shared_ptr< WModule >( new WMTemplateUI() );
 }
 
 const std::string WMTemplateUI::getName() const
@@ -82,7 +82,7 @@ void WMTemplateUI::connectors()
 void WMTemplateUI::properties()
 {
     // NOTE: Refer to WMTemplate.cpp if you do not understand these commands.
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     // We create some dummy preferences here to use in our widgets:
     m_triggerProp = m_properties->addProperty( "Do it now!",               "Trigger Button Text.", WPVBaseTypes::PV_TRIGGER_READY );

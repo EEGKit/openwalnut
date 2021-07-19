@@ -51,12 +51,12 @@ public:
     /**
      * Shared pointer
      */
-    typedef boost::shared_ptr< WTriangleMesh > SPtr;
+    typedef std::shared_ptr< WTriangleMesh > SPtr;
 
     /**
      * Const shared pointer
      */
-    typedef boost::shared_ptr< const WTriangleMesh > ConstSPtr;
+    typedef std::shared_ptr< const WTriangleMesh > ConstSPtr;
 
     /**
      * constructor that already reserves space for a given number of triangles and vertexes
@@ -84,7 +84,7 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
     /**
      * Gets the name of this prototype.
@@ -379,7 +379,7 @@ public:
      *  \param yOff
      *  \param zOff
      */
-    void addMesh( boost::shared_ptr<WTriangleMesh> mesh, float xOff = 0., float yOff = 0., float zOff = 0. );
+    void addMesh( std::shared_ptr<WTriangleMesh> mesh, float xOff = 0., float yOff = 0., float zOff = 0. );
 
     /**
      *  moves the entire mesh to a new postion
@@ -456,14 +456,14 @@ public:
      *
      * \return The curvature values for all the vertices.
      */
-    boost::shared_ptr< std::vector< float > > const& getMainCurvatures() const;
+    std::shared_ptr< std::vector< float > > const& getMainCurvatures() const;
 
     /**
      * Get the vector of secondary curvature values.
      *
      * \return The curvature values for all the vertices.
      */
-    boost::shared_ptr< std::vector< float > > const& getSecondaryCurvatures() const;
+    std::shared_ptr< std::vector< float > > const& getSecondaryCurvatures() const;
 
     /**
      * Retreive the 3d principal direction of curvature of a vertex.
@@ -510,7 +510,7 @@ public:
     void setAutoRecalcNormals( bool autoRecalc = true );
 
 protected:
-    static boost::shared_ptr< WPrototyped > m_prototype; //!< The prototype as singleton.
+    static std::shared_ptr< WPrototyped > m_prototype; //!< The prototype as singleton.
 private:
     /**
      * we don't allow the standard constructor
@@ -780,10 +780,10 @@ private:
     std::vector< std::vector< size_t > > m_triangleNeighbors; //!< edge neighbors for each triangle
 
     //! Stores the maximum normal curvature (for the first principal direction) for each vertex.
-    boost::shared_ptr< std::vector< float > > m_mainNormalCurvature;
+    std::shared_ptr< std::vector< float > > m_mainNormalCurvature;
 
     //! Stores the minimum normal curvature (for the second principal direction) for each vertex.
-    boost::shared_ptr< std::vector< float > > m_secondaryNormalCurvature;
+    std::shared_ptr< std::vector< float > > m_secondaryNormalCurvature;
 
     //! Stores the first principal curvature direction for each vertex.
     osg::ref_ptr< osg::Vec3Array > m_mainCurvaturePrincipalDirection;
@@ -808,7 +808,7 @@ namespace tm_utils
      *
      * \return List of components where each of them is a WTriangleMesh again.
      */
-    boost::shared_ptr< std::list< boost::shared_ptr< WTriangleMesh > > > componentDecomposition( const WTriangleMesh& mesh );
+    std::shared_ptr< std::list< std::shared_ptr< WTriangleMesh > > > componentDecomposition( const WTriangleMesh& mesh );
 
     /**
      * Prints for each mesh \#vertices and \#triangles, as well as each triangle with its positions. No point IDs are printed.

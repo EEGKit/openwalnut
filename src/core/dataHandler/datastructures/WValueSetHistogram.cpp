@@ -35,7 +35,7 @@
 
 #include "WValueSetHistogram.h"
 
-WValueSetHistogram::WValueSetHistogram( boost::shared_ptr< WValueSetBase > valueSet, size_t buckets ):
+WValueSetHistogram::WValueSetHistogram( std::shared_ptr< WValueSetBase > valueSet, size_t buckets ):
     WHistogram( valueSet->getMinimumValue(), valueSet->getMaximumValue(), buckets )
 {
     buildHistogram( *valueSet );
@@ -47,7 +47,7 @@ WValueSetHistogram::WValueSetHistogram( const WValueSetBase& valueSet, size_t bu
     buildHistogram( valueSet );
 }
 
-WValueSetHistogram::WValueSetHistogram( boost::shared_ptr< WValueSetBase > valueSet, double min, double max, size_t buckets ):
+WValueSetHistogram::WValueSetHistogram( std::shared_ptr< WValueSetBase > valueSet, double min, double max, size_t buckets ):
     WHistogram( min, max, buckets )
 {
     buildHistogram( *valueSet );

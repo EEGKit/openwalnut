@@ -76,7 +76,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -101,9 +101,9 @@ protected:
     virtual void properties();
 
 private:
-    boost::shared_ptr< WTriangleMesh > m_triMesh; //!< This triangle mesh is provided as output through the connector.
-    boost::shared_ptr< WModuleOutputData< WTriangleMesh > > m_output;  //!< Output connector provided by this module.
-    boost::shared_ptr< WCondition > m_propCondition;  //!< A condition used to notify about changes in several properties.
+    std::shared_ptr< WTriangleMesh > m_triMesh; //!< This triangle mesh is provided as output through the connector.
+    std::shared_ptr< WModuleOutputData< WTriangleMesh > > m_output;  //!< Output connector provided by this module.
+    std::shared_ptr< WCondition > m_propCondition;  //!< A condition used to notify about changes in several properties.
 
     WPropTrigger  m_readTriggerProp; //!< This property triggers the actual reading,
     WPropFilename m_meshFile; //!< The mesh will be read from this file.
@@ -111,7 +111,7 @@ private:
     /**
      * A list of file type selection types
      */
-    boost::shared_ptr< WItemSelection > m_fileTypeSelectionsList;
+    std::shared_ptr< WItemSelection > m_fileTypeSelectionsList;
 
     /**
      * Selection property for file types

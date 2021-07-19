@@ -329,7 +329,7 @@ void WQtNetworkArrow::doneDrag( const QPointF& /*pos*/ )
     if( m_connectTo )
     {
         // connect new
-        boost::shared_ptr< WApplyCombiner > x( new WApplyCombiner( m_startPort->getConnector()->getModule(),
+        std::shared_ptr< WApplyCombiner > x( new WApplyCombiner( m_startPort->getConnector()->getModule(),
               m_startPort->getConnector()->getName(), m_connectTo->getConnector()->getModule(), m_connectTo->getConnector()->getName() ) );
 
         // remove old connection if needed

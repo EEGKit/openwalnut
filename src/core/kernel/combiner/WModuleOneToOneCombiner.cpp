@@ -26,9 +26,9 @@
 
 #include "WModuleOneToOneCombiner.h"
 
-WModuleOneToOneCombiner::WModuleOneToOneCombiner( boost::shared_ptr< WModuleContainer > target,
-                                                  boost::shared_ptr< WModule > srcModule, std::string srcConnector,
-                                                  boost::shared_ptr< WModule > prototype, std::string targetConnector ):
+WModuleOneToOneCombiner::WModuleOneToOneCombiner( std::shared_ptr< WModuleContainer > target,
+                                                  std::shared_ptr< WModule > srcModule, std::string srcConnector,
+                                                  std::shared_ptr< WModule > prototype, std::string targetConnector ):
     WModuleCombiner( target ),
     m_srcModule( srcModule ),
     m_srcConnector( srcConnector ),
@@ -37,8 +37,8 @@ WModuleOneToOneCombiner::WModuleOneToOneCombiner( boost::shared_ptr< WModuleCont
 {
 }
 
-WModuleOneToOneCombiner::WModuleOneToOneCombiner( boost::shared_ptr< WModule > srcModule, std::string srcConnector,
-                                                  boost::shared_ptr< WModule > prototype, std::string targetConnector ):
+WModuleOneToOneCombiner::WModuleOneToOneCombiner( std::shared_ptr< WModule > srcModule, std::string srcConnector,
+                                                  std::shared_ptr< WModule > prototype, std::string targetConnector ):
     WModuleCombiner(),
     m_srcModule( srcModule ),
     m_srcConnector( srcConnector ),
@@ -52,7 +52,7 @@ WModuleOneToOneCombiner::~WModuleOneToOneCombiner()
     // cleanup
 }
 
-boost::shared_ptr< WModule > WModuleOneToOneCombiner::getSrcModule() const
+std::shared_ptr< WModule > WModuleOneToOneCombiner::getSrcModule() const
 {
     return m_srcModule;
 }
@@ -62,7 +62,7 @@ std::string WModuleOneToOneCombiner::getSrcConnector() const
     return m_srcConnector;
 }
 
-boost::shared_ptr< WModule > WModuleOneToOneCombiner::getTargetModule() const
+std::shared_ptr< WModule > WModuleOneToOneCombiner::getTargetModule() const
 {
     return m_targetModule;
 }

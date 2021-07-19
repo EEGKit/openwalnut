@@ -44,9 +44,9 @@ WMMergeComponentsToVector::~WMMergeComponentsToVector()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMMergeComponentsToVector::factory() const
+std::shared_ptr< WModule > WMMergeComponentsToVector::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMMergeComponentsToVector() );
+    return std::shared_ptr< WModule >( new WMMergeComponentsToVector() );
 }
 
 const std::string WMMergeComponentsToVector::getName() const
@@ -80,7 +80,7 @@ void WMMergeComponentsToVector::connectors()
 
 void WMMergeComponentsToVector::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     // call WModule's initialization
     WModule::properties();
@@ -115,9 +115,9 @@ void WMMergeComponentsToVector::moduleMain()
                            m_scalarInY->handledUpdate() ||
                            m_scalarInZ->handledUpdate();
 
-        boost::shared_ptr< WDataSetScalar > dataSetX = m_scalarInX->getData();
-        boost::shared_ptr< WDataSetScalar > dataSetY = m_scalarInY->getData();
-        boost::shared_ptr< WDataSetScalar > dataSetZ = m_scalarInZ->getData();
+        std::shared_ptr< WDataSetScalar > dataSetX = m_scalarInX->getData();
+        std::shared_ptr< WDataSetScalar > dataSetY = m_scalarInY->getData();
+        std::shared_ptr< WDataSetScalar > dataSetZ = m_scalarInZ->getData();
 
         bool dataValid = ( dataSetX && dataSetY && dataSetZ );
 
@@ -134,9 +134,9 @@ void WMMergeComponentsToVector::moduleMain()
         }
 
         // loop through each voxel
-        boost::shared_ptr< WGridRegular3D > gridX = boost::dynamic_pointer_cast< WGridRegular3D >( dataSetX->getGrid() );
-        boost::shared_ptr< WGridRegular3D > gridY = boost::dynamic_pointer_cast< WGridRegular3D >( dataSetY->getGrid() );
-        boost::shared_ptr< WGridRegular3D > gridZ = boost::dynamic_pointer_cast< WGridRegular3D >( dataSetZ->getGrid() );
+        std::shared_ptr< WGridRegular3D > gridX = std::dynamic_pointer_cast< WGridRegular3D >( dataSetX->getGrid() );
+        std::shared_ptr< WGridRegular3D > gridY = std::dynamic_pointer_cast< WGridRegular3D >( dataSetY->getGrid() );
+        std::shared_ptr< WGridRegular3D > gridZ = std::dynamic_pointer_cast< WGridRegular3D >( dataSetZ->getGrid() );
         if( !( gridX && gridY && gridZ ) )
         {
             errorLog() << "Only regular 3D grids allowed.";
@@ -151,7 +151,7 @@ void WMMergeComponentsToVector::moduleMain()
         }
 
         // prepare progress indicators
-        boost::shared_ptr< WProgress > progress( new WProgress( "Processing", dataSetX->getValueSet()->rawSize() ) );
+        std::shared_ptr< WProgress > progress( new WProgress( "Processing", dataSetX->getValueSet()->rawSize() ) );
         m_progress->addSubProgress( progress );
 
         // FIXME: this should be done using visitors, making it data type invariant. For now, using doubles all the time is enough
@@ -163,7 +163,7 @@ void WMMergeComponentsToVector::moduleMain()
         }
 
         // create target valueset
-        boost::shared_ptr< std::vector< double > > data( new std::vector< double >() );
+        std::shared_ptr< std::vector< double > > data( new std::vector< double >() );
         data->reserve( dataSetX->getValueSet()->rawSize() * 3 );
 
         for( size_t i = 0; i < dataSetX->getValueSet()->rawSize(); ++i )
@@ -180,7 +180,7 @@ void WMMergeComponentsToVector::moduleMain()
         }
 
         // create valueset, dataset and update
-        boost::shared_ptr< WValueSetBase > vs( new WValueSet< double >( 1, 3, data, W_DT_DOUBLE ) );
+        std::shared_ptr< WValueSetBase > vs( new WValueSet< double >( 1, 3, data, W_DT_DOUBLE ) );
         WDataSetVector::SPtr ds( new WDataSetVector( vs, gridX ) );
         m_vectorOut->updateData( ds );
 

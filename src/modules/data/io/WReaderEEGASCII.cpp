@@ -41,7 +41,7 @@ WReaderEEGASCII::WReaderEEGASCII( std::string fileName )
 {
 }
 
-boost::shared_ptr< WDataSet > WReaderEEGASCII::load()
+std::shared_ptr< WDataSet > WReaderEEGASCII::load()
 {
     std::ifstream in( m_fname.c_str() );
     if( in.fail() )
@@ -83,7 +83,7 @@ boost::shared_ptr< WDataSet > WReaderEEGASCII::load()
 
     WEEGElectrodeLibrary lib;  // TODO(wiebel): this is a dummy
 
-    boost::shared_ptr< WEEG > eeg( new WEEG( segments, lib, labels ) );
+    std::shared_ptr< WEEG > eeg( new WEEG( segments, lib, labels ) );
     eeg->setFilename( m_fname );
     return eeg;
 }

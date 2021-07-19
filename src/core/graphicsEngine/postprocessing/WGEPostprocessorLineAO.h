@@ -36,14 +36,14 @@ class WGEPostprocessorLineAO: public WGEPostprocessor
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WGEPostprocessorLineAO >.
+     * Convenience typedef for a std::shared_ptr< WGEPostprocessorLineAO >.
      */
-    typedef boost::shared_ptr< WGEPostprocessorLineAO > SPtr;
+    typedef std::shared_ptr< WGEPostprocessorLineAO > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WGEPostprocessorLineAO >.
+     * Convenience typedef for a std::shared_ptr< const WGEPostprocessorLineAO >.
      */
-    typedef boost::shared_ptr< const WGEPostprocessorLineAO > ConstSPtr;
+    typedef std::shared_ptr< const WGEPostprocessorLineAO > ConstSPtr;
 
     /**
      * Default constructor.

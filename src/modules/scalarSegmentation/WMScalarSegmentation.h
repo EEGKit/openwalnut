@@ -82,7 +82,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -114,7 +114,7 @@ protected:
 
 private:
     //! A List type for all available algorithms.
-    typedef std::vector< boost::shared_ptr< WSegmentationAlgo > > AlgoList;
+    typedef std::vector< std::shared_ptr< WSegmentationAlgo > > AlgoList;
 
     /**
      * Do a segmentation depending on the current module property values.
@@ -122,25 +122,25 @@ private:
     void doSegmentation();
 
     //! An input connector used to get datasets from other modules.
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_input;
 
     //! The output connector used to provide the calculated data to other modules.
-    boost::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output;
+    std::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output;
 
     //! This is a pointer to the dataset the module is currently working on.
-    boost::shared_ptr< WDataSetScalar > m_dataSet;
+    std::shared_ptr< WDataSetScalar > m_dataSet;
 
     //! This is a pointer to the segmented dataset.
-    boost::shared_ptr< WDataSetScalar > m_result;
+    std::shared_ptr< WDataSetScalar > m_result;
 
     //! A condition used to notify about changes in several properties.
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     //! The number of the currently selected segmentation method.
     std::size_t m_algoIndex;
 
     //! A list of possible segmentation algorithms.
-    boost::shared_ptr< WItemSelection > m_algoSelection;
+    std::shared_ptr< WItemSelection > m_algoSelection;
 
     //! A selection box for segmentation algorithms.
     WPropSelection m_algoType;

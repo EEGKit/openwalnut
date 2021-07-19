@@ -53,9 +53,9 @@ WMReadLAS::~WMReadLAS()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMReadLAS::factory() const
+std::shared_ptr< WModule > WMReadLAS::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMReadLAS() );
+    return std::shared_ptr< WModule >( new WMReadLAS() );
 }
 
 const std::string WMReadLAS::getName() const
@@ -157,7 +157,7 @@ void WMReadLAS::load()
     infoLog() << "LAS Header: Compressed = " << reader.GetHeader().Compressed();
     infoLog() << "LAS Header: File Signature = " << reader.GetHeader().GetFileSignature();
 
-    boost::shared_ptr< WProgress > progress1( new WProgress( "Loading" ) );
+    std::shared_ptr< WProgress > progress1( new WProgress( "Loading" ) );
     m_progress->addSubProgress( progress1 );
 
     // target memory
@@ -188,7 +188,7 @@ void WMReadLAS::load()
     infoLog() << "Loaded " << realNumPoints << " points from file. Done." << bb;
 
     // finally provide output data
-    boost::shared_ptr< WDataSetPoints> newOutput( new WDataSetPoints( vertices, colors, bb ) );
+    std::shared_ptr< WDataSetPoints> newOutput( new WDataSetPoints( vertices, colors, bb ) );
     m_output->updateData( newOutput );
 
     // done. close file and report finish

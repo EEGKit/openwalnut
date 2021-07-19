@@ -25,7 +25,7 @@
 #include "WManipulatorNormalize.h"
 #include "core/dataHandler/WDataSetSingle.h"
 
-WManipulatorNormalize::WManipulatorNormalize( boost::shared_ptr< WDataSet >* dataSet )
+WManipulatorNormalize::WManipulatorNormalize( std::shared_ptr< WDataSet >* dataSet )
     : WObjectNDIP< WManipulatorInterface >( "Normalize", "Scales the dataset to form a unit cube." ),
     m_dataSet( dataSet )
 {
@@ -40,7 +40,7 @@ WMatrixFixed< double, 4, 4 > WManipulatorNormalize::getTransformationMatrix() co
 {
     WMatrixFixed< double, 4, 4 > m = WMatrixFixed< double, 4, 4 >::identity();
 
-    WDataSetSingle::SPtr dsSingle = boost::dynamic_pointer_cast< WDataSetSingle >( *m_dataSet );
+    WDataSetSingle::SPtr dsSingle = std::dynamic_pointer_cast< WDataSetSingle >( *m_dataSet );
     if( !dsSingle )
     {
         return m;
@@ -50,7 +50,7 @@ WMatrixFixed< double, 4, 4 > WManipulatorNormalize::getTransformationMatrix() co
 
     // Is this a data set with a regular grid?
     WGridRegular3D::SPtr regGrid;
-    regGrid = boost::dynamic_pointer_cast< WGridRegular3D >( dsSingle->getGrid() );
+    regGrid = std::dynamic_pointer_cast< WGridRegular3D >( dsSingle->getGrid() );
     if( !regGrid )
     {
         return m;

@@ -84,7 +84,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -261,10 +261,10 @@ private:
      * A vector of histograms, one histogram per input. Histograms may be empty if an input
      * does not have a valid dataset.
      */
-    std::vector< boost::shared_ptr< WHistogramBasic > > m_histograms;
+    std::vector< std::shared_ptr< WHistogramBasic > > m_histograms;
 
     //! A condition for property updates.
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     //! The width of the window.
     int m_windowWidth;
@@ -320,10 +320,10 @@ private:
     // the next 3 vectors all have the same size, which is the maximum number of inputs allowed for this module
     // see NUM_INPUTS in the .cpp
     //! A vector of input connectors.
-    std::vector< boost::shared_ptr< WModuleInputData< WDataSetSingle > > > m_input;
+    std::vector< std::shared_ptr< WModuleInputData< WDataSetSingle > > > m_input;
 
     //! A vector of current datasets.
-    std::vector< boost::shared_ptr< WDataSetSingle > > m_data;
+    std::vector< std::shared_ptr< WDataSetSingle > > m_data;
 
     //! A vector of color properties for the datasets.
     std::vector< WPropColor > m_colors;

@@ -78,7 +78,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -138,31 +138,31 @@ private:
     void resetProgress( std::size_t todo );
 
     //! A pointer to the input dataset.
-    boost::shared_ptr< WDataSetSphericalHarmonics > m_dataSet;
+    std::shared_ptr< WDataSetSphericalHarmonics > m_dataSet;
 
     //! The output dataset.
-    boost::shared_ptr< WDataSetScalar > m_result;
+    std::shared_ptr< WDataSetScalar > m_result;
 
     //! The output Connector.
-    boost::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output;
+    std::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output;
 
     //! The input Connector for the SH data.
-    boost::shared_ptr< WModuleInputData< WDataSetSphericalHarmonics > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSetSphericalHarmonics > > m_input;
 
     //! The object that keeps track of the current progress.
-    boost::shared_ptr< WProgress > m_currentProgress;
+    std::shared_ptr< WProgress > m_currentProgress;
 
     //! The last exception thrown by any worker thread.
-    boost::shared_ptr< WException > m_lastException;
+    std::shared_ptr< WException > m_lastException;
 
     //! Condition indicating if any exception was thrown.
-    boost::shared_ptr< WCondition > m_exceptionCondition;
+    std::shared_ptr< WCondition > m_exceptionCondition;
 
     //! The threaded function object.
-    boost::shared_ptr< GFAFuncType > m_gfaFunc;
+    std::shared_ptr< GFAFuncType > m_gfaFunc;
 
     //! The threadpool.
-    boost::shared_ptr< GFAPoolType > m_gfaPool;
+    std::shared_ptr< GFAPoolType > m_gfaPool;
 
     //! A matrix of SH base function values for various gradients.
     WMatrix<double> m_BMat;

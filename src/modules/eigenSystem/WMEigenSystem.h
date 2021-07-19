@@ -82,7 +82,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -146,14 +146,14 @@ private:
      *
      * \param tensors The field of computed eigen systems, where each eigensystem is in the form: ev, evc, ev, evec, ev, evec.
      */
-    void resetEigenFunction( boost::shared_ptr< WDataSetDTI > tensors );
+    void resetEigenFunction( std::shared_ptr< WDataSetDTI > tensors );
 
     /**
      * Update the output connectors out of the computed eigensystem field.
      *
      * \param es Dataset carrying all eigen systems.
      */
-    void updateOCs( boost::shared_ptr< const WDataSetSingle > es );
+    void updateOCs( std::shared_ptr< const WDataSetSingle > es );
 
     /**
      * The function that computes the eigenvectors from the input tensor field.
@@ -210,12 +210,12 @@ private:
     /**
      * Input tensor field.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetDTI > > m_tensorIC;
+    std::shared_ptr< WModuleInputData< WDataSetDTI > > m_tensorIC;
 
     /**
      * Shortcut for the vector field output connectors.
      */
-    typedef boost::shared_ptr< WModuleOutputData< WDataSetVector > > EigenOutputConnector;
+    typedef std::shared_ptr< WModuleOutputData< WDataSetVector > > EigenOutputConnector;
 
     /**
      * Ouput vector field for principal eigenvectors as well as one for all eigenvalues at once.
@@ -225,21 +225,21 @@ private:
     /**
      * Output scalar field , each for an eigenvalue field.
      */
-    std::vector< boost::shared_ptr< WModuleOutputData< WDataSetScalar > > > m_evalOutputs;
+    std::vector< std::shared_ptr< WModuleOutputData< WDataSetScalar > > > m_evalOutputs;
 
     //! The threadpool for the eigenvector computation
-    boost::shared_ptr< WThreadedFunctionBase > m_eigenPool;
+    std::shared_ptr< WThreadedFunctionBase > m_eigenPool;
 
     //! the functor used for the calculation of the eigenvectors
-    boost::shared_ptr< TPVOFloat > m_eigenOperationFloat;
+    std::shared_ptr< TPVOFloat > m_eigenOperationFloat;
 
     //! the functor used for the calculation of the eigenvectors
-    boost::shared_ptr< TPVODouble > m_eigenOperationDouble;
+    std::shared_ptr< TPVODouble > m_eigenOperationDouble;
 
     /**
      * Indicating current work progress.
      */
-    boost::shared_ptr< WProgress > m_currentProgress;
+    std::shared_ptr< WProgress > m_currentProgress;
 
     /**
      * List for selecting the strategy.

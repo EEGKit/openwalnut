@@ -34,7 +34,7 @@ WModuleContainerWrapper::WModuleContainerWrapper()
 {
 }
 
-WModuleContainerWrapper::WModuleContainerWrapper( boost::shared_ptr< WModuleContainer > mc )
+WModuleContainerWrapper::WModuleContainerWrapper( std::shared_ptr< WModuleContainer > mc )
     : m_mc( mc )
 {
 }
@@ -51,7 +51,7 @@ WModuleWrapper WModuleContainerWrapper::create( std::string const& name )
 
 WModuleWrapper WModuleContainerWrapper::createDataModule( std::string const& filename )
 {
-    boost::shared_ptr< WDataModule > dataModule = boost::static_pointer_cast< WDataModule >(
+    std::shared_ptr< WDataModule > dataModule = std::static_pointer_cast< WDataModule >(
                                                     WModuleFactory::getModuleFactory()->create(
                                                       WModuleFactory::getModuleFactory()->getPrototypeByName( "Data Module" ) ) );
     dataModule->setSuppressColormaps( true );

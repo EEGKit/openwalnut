@@ -75,7 +75,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
 protected:
     /**
@@ -97,11 +97,11 @@ private:
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
-    boost::shared_ptr< WModuleInputData< WDataSetVector > > m_inputA;  //!< Input connector required by this module.
+    std::shared_ptr< WModuleInputData< WDataSetVector > > m_inputA;  //!< Input connector required by this module.
 
-    boost::shared_ptr< WModuleOutputData< WDataSetVector > > m_output; //!< The only output of this filter module.
+    std::shared_ptr< WModuleOutputData< WDataSetVector > > m_output; //!< The only output of this filter module.
 
     /**
      * Zero Tollerance.

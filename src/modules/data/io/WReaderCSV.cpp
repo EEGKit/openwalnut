@@ -38,7 +38,7 @@ WReaderCSV::~WReaderCSV() throw()
 }
 
 
-boost::shared_ptr< WDataSetCSV > WReaderCSV::read()
+std::shared_ptr< WDataSetCSV > WReaderCSV::read()
 {
     size_t columnCount = 0;
     std::string line;
@@ -89,7 +89,7 @@ boost::shared_ptr< WDataSetCSV > WReaderCSV::read()
 
     file.close();
 
-    boost::shared_ptr< WDataSetCSV > datasetcsv = boost::shared_ptr< WDataSetCSV >( new WDataSetCSV( header, data ) );
+    std::shared_ptr< WDataSetCSV > datasetcsv = std::shared_ptr< WDataSetCSV >( new WDataSetCSV( header, data ) );
     datasetcsv->setRawDataSet( rawRow );
 
     return datasetcsv;

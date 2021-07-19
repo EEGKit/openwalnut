@@ -46,12 +46,12 @@ public:
     /**
      * Shared pointer for this class.
      */
-    typedef boost::shared_ptr< WGEShaderDefineOptions > SPtr;
+    typedef std::shared_ptr< WGEShaderDefineOptions > SPtr;
 
     /**
      * A const shared pointer for this class.
      */
-    typedef boost::shared_ptr< const WGEShaderDefineOptions > ConstSPtr;
+    typedef std::shared_ptr< const WGEShaderDefineOptions > ConstSPtr;
 
     /**
      * The type of the index list

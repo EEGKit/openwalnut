@@ -46,7 +46,7 @@ public:
      *
      * \param rootContainer The root module container to use for modules inserted via scripts.
      */
-    explicit WScriptEngine( boost::shared_ptr< WModuleContainer > const& rootContainer );
+    explicit WScriptEngine( std::shared_ptr< WModuleContainer > const& rootContainer );
 
     /**
      * Destructor.
@@ -60,7 +60,7 @@ public:
      *
      * \return The matching script interpreter or a NULL-pointer, if no such interpreter was available.
      */
-    boost::shared_ptr< WScriptInterpreter > getInterpreterByFileExtension( std::string const& ext );
+    std::shared_ptr< WScriptInterpreter > getInterpreterByFileExtension( std::string const& ext );
 
     /**
      * This finds an interpreter by script language name.
@@ -69,7 +69,7 @@ public:
      *
      * \return The matching script interpreter or a NULL-pointer, if no such interpreter was available.
      */
-    boost::shared_ptr< WScriptInterpreter > getInterpreter( std::string const& name );
+    std::shared_ptr< WScriptInterpreter > getInterpreter( std::string const& name );
 
     /**
      * Get the number of script interpreters available.
@@ -85,11 +85,11 @@ public:
      *
      * \return The script interpreter or a NULL-pointer if the index was invalid.
      */
-    boost::shared_ptr< WScriptInterpreter > getInterpreter( std::size_t index );
+    std::shared_ptr< WScriptInterpreter > getInterpreter( std::size_t index );
 
 private:
     //! The list of available script interpreters.
-    std::vector< boost::shared_ptr< WScriptInterpreter > > m_interpreters;
+    std::vector< std::shared_ptr< WScriptInterpreter > > m_interpreters;
 };
 
 #endif  // WSCRIPTENGINE_H

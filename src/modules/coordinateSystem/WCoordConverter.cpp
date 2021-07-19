@@ -140,12 +140,12 @@ int WCoordConverter::numberToCsZ( int number )
     }
 }
 
-void WCoordConverter::setTalairachConverter( boost::shared_ptr<WTalairachConverter> tc )
+void WCoordConverter::setTalairachConverter( std::shared_ptr<WTalairachConverter> tc )
 {
     m_talairachConverter = tc;
 }
 
-boost::shared_ptr<WTalairachConverter> WCoordConverter::getTalairachConverter()
+std::shared_ptr<WTalairachConverter> WCoordConverter::getTalairachConverter()
 {
     return m_talairachConverter;
 }

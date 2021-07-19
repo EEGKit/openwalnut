@@ -68,13 +68,13 @@ void WModuleContainer::moduleMain()
     ready();
 }
 
-boost::shared_ptr< WModule > WModuleContainer::factory() const
+std::shared_ptr< WModule > WModuleContainer::factory() const
 {
     // this factory is not used actually.
-    return boost::shared_ptr< WModule >( new WModuleContainer( getName(), getDescription() ) );
+    return std::shared_ptr< WModule >( new WModuleContainer( getName(), getDescription() ) );
 }
 
-void WModuleContainer::add( boost::shared_ptr< WModule > module, bool run )
+void WModuleContainer::add( std::shared_ptr< WModule > module, bool run )
 {
     if( !module )
     {
@@ -112,7 +112,7 @@ void WModuleContainer::add( boost::shared_ptr< WModule > module, bool run )
     wlock->get().insert( module );
     wlock.reset();
 
-    module->setAssociatedContainer( boost::static_pointer_cast< WModuleContainer >( shared_from_this() ) );
+    module->setAssociatedContainer( std::static_pointer_cast< WModuleContainer >( shared_from_this() ) );
     WLogger::getLogger()->addLogMessage( "Associated module \"" + module->getName() + "\" with container." , "ModuleContainer (" + getName() + ")",
             LL_INFO );
 
@@ -127,19 +127,19 @@ void WModuleContainer::add( boost::shared_ptr< WModule > module, bool run )
     subscriptionsLock->get().insert( ModuleSubscription( module, signalCon ) );
 
     // connect default notifiers:
-    boost::shared_lock<boost::shared_mutex> slock = boost::shared_lock<boost::shared_mutex>( m_errorNotifiersLock );
+    boost::shared_lock<std::shared_mutex> slock = boost::shared_lock<std::shared_mutex>( m_errorNotifiersLock );
     for( std::list< t_ModuleErrorSignalHandlerType >::iterator iter = m_errorNotifiers.begin(); iter != m_errorNotifiers.end(); ++iter )
     {
         signalCon = module->subscribeSignal( WM_ERROR, ( *iter ) );
         subscriptionsLock->get().insert( ModuleSubscription( module, signalCon ) );
     }
-    slock = boost::shared_lock<boost::shared_mutex>( m_associatedNotifiersLock );
+    slock = boost::shared_lock<std::shared_mutex>( m_associatedNotifiersLock );
     for( std::list< t_ModuleGenericSignalHandlerType >::iterator iter = m_associatedNotifiers.begin(); iter != m_associatedNotifiers.end(); ++iter )
     {
         // call associated notifier
         ( *iter )( module );
     }
-    slock = boost::shared_lock<boost::shared_mutex>( m_connectorNotifiersLock );
+    slock = boost::shared_lock<std::shared_mutex>( m_connectorNotifiersLock );
     for( std::list< t_GenericSignalHandlerType >::iterator iter = m_connectorEstablishedNotifiers.begin();
                                                             iter != m_connectorEstablishedNotifiers.end(); ++iter )
     {
@@ -160,7 +160,7 @@ void WModuleContainer::add( boost::shared_ptr< WModule > module, bool run )
             subscriptionsLock->get().insert( ModuleSubscription( module, signalCon ) );
         }
     }
-    slock = boost::shared_lock<boost::shared_mutex>( m_readyNotifiersLock );
+    slock = boost::shared_lock<std::shared_mutex>( m_readyNotifiersLock );
     for( std::list< t_ModuleGenericSignalHandlerType >::iterator iter = m_readyNotifiers.begin(); iter != m_readyNotifiers.end(); ++iter )
     {
         signalCon = module->subscribeSignal( WM_READY, ( *iter ) );
@@ -194,7 +194,7 @@ WModule::SPtr WModuleContainer::createAndAdd( std::string name )
     return module;
 }
 
-void WModuleContainer::remove( boost::shared_ptr< WModule > module )
+void WModuleContainer::remove( std::shared_ptr< WModule > module )
 {
     // simple flat removal.
 
@@ -231,10 +231,10 @@ void WModuleContainer::remove( boost::shared_ptr< WModule > module )
     wlock->get().erase( module );
     wlock.reset();
 
-    module->setAssociatedContainer( boost::shared_ptr< WModuleContainer >() );
+    module->setAssociatedContainer( std::shared_ptr< WModuleContainer >() );
 
     // tell all interested about removal
-    boost::shared_lock<boost::shared_mutex> slock = boost::shared_lock<boost::shared_mutex>( m_removedNotifiersLock );
+    boost::shared_lock<std::shared_mutex> slock = boost::shared_lock<std::shared_mutex>( m_removedNotifiersLock );
     for( std::list< t_ModuleGenericSignalHandlerType >::iterator iter = m_removedNotifiers.begin(); iter != m_removedNotifiers.end(); ++iter )
     {
         // call associated notifier
@@ -256,7 +256,7 @@ WModuleContainer::DataModuleListType WModuleContainer::getDataModules()
         // is this module a data module?
         if( ( *iter )->getType() == MODULE_DATA )
         {
-            boost::shared_ptr< WDataModule > dm = boost::static_pointer_cast< WDataModule >( *iter );
+            std::shared_ptr< WDataModule > dm = std::static_pointer_cast< WDataModule >( *iter );
 
             // now check the contained dataset ( isTexture and whether it is ready )
             if( dm->isReady()() )
@@ -273,7 +273,7 @@ void WModuleContainer::removeAll()
 {
     const size_t nonZero = 1;
     size_t numberOfModules = nonZero;
-    std::vector< boost::shared_ptr< WModule > > modulesToRemove;
+    std::vector< std::shared_ptr< WModule > > modulesToRemove;
 
     while( numberOfModules != 0 )
     {
@@ -287,7 +287,7 @@ void WModuleContainer::removeAll()
                 modulesToRemove.push_back( *listIter );
             }
         }
-        for( std::vector<  boost::shared_ptr< WModule > >::iterator nameIter = modulesToRemove.begin();
+        for( std::vector<  std::shared_ptr< WModule > >::iterator nameIter = modulesToRemove.begin();
              nameIter != modulesToRemove.end();
              ++nameIter )
         {
@@ -301,8 +301,8 @@ void WModuleContainer::stop()
     WLogger::getLogger()->addLogMessage( "Stopping pending threads." , "ModuleContainer (" + getName() + ")", LL_INFO );
 
     // read lock
-    boost::shared_lock<boost::shared_mutex> slock = boost::shared_lock<boost::shared_mutex>( m_pendingThreadsLock );
-    for( std::set< boost::shared_ptr< WThreadedRunner > >::iterator listIter = m_pendingThreads.begin(); listIter != m_pendingThreads.end();
+    boost::shared_lock<std::shared_mutex> slock = boost::shared_lock<std::shared_mutex>( m_pendingThreadsLock );
+    for( std::set< std::shared_ptr< WThreadedRunner > >::iterator listIter = m_pendingThreads.begin(); listIter != m_pendingThreads.end();
             ++listIter )
     {
         ( *listIter )->wait( true );
@@ -319,7 +319,7 @@ void WModuleContainer::stop()
         WLogger::getLogger()->addLogMessage( "Waiting for module \"" + ( *listIter )->getName() + "\" to finish." ,
                 "ModuleContainer (" + getName() + ")", LL_INFO );
         ( *listIter )->wait( true );
-        ( *listIter )->setAssociatedContainer( boost::shared_ptr< WModuleContainer >() );   // remove last refs to this container inside the module
+        ( *listIter )->setAssociatedContainer( std::shared_ptr< WModuleContainer >() );   // remove last refs to this container inside the module
     }
     lock.reset();
 
@@ -341,21 +341,21 @@ const std::string WModuleContainer::getDescription() const
 
 void WModuleContainer::addDefaultNotifier( MODULE_SIGNAL signal, t_ModuleGenericSignalHandlerType notifier )
 {
-    boost::unique_lock<boost::shared_mutex> lock;
+    std::unique_lock<std::shared_mutex> lock;
     switch( signal )
     {
         case WM_ASSOCIATED:
-            lock = boost::unique_lock<boost::shared_mutex>( m_associatedNotifiersLock );
+            lock = std::unique_lock<std::shared_mutex>( m_associatedNotifiersLock );
             m_associatedNotifiers.push_back( notifier );
             lock.unlock();
             break;
         case WM_READY:
-            lock = boost::unique_lock<boost::shared_mutex>( m_readyNotifiersLock );
+            lock = std::unique_lock<std::shared_mutex>( m_readyNotifiersLock );
             m_readyNotifiers.push_back( notifier );
             lock.unlock();
             break;
         case WM_REMOVED:
-            lock = boost::unique_lock<boost::shared_mutex>( m_removedNotifiersLock );
+            lock = std::unique_lock<std::shared_mutex>( m_removedNotifiersLock );
             m_removedNotifiers.push_back( notifier );
             lock.unlock();
             break;
@@ -369,11 +369,11 @@ void WModuleContainer::addDefaultNotifier( MODULE_SIGNAL signal, t_ModuleGeneric
 
 void WModuleContainer::addDefaultNotifier( MODULE_SIGNAL signal, t_ModuleErrorSignalHandlerType notifier )
 {
-    boost::unique_lock<boost::shared_mutex> lock;
+    std::unique_lock<std::shared_mutex> lock;
     switch( signal )
     {
         case WM_ERROR:
-            lock = boost::unique_lock<boost::shared_mutex>( m_errorNotifiersLock );
+            lock = std::unique_lock<std::shared_mutex>( m_errorNotifiersLock );
             m_errorNotifiers.push_back( notifier );
             lock.unlock();
             break;
@@ -387,16 +387,16 @@ void WModuleContainer::addDefaultNotifier( MODULE_SIGNAL signal, t_ModuleErrorSi
 
 void WModuleContainer::addDefaultNotifier( MODULE_CONNECTOR_SIGNAL signal, t_GenericSignalHandlerType notifier )
 {
-    boost::unique_lock<boost::shared_mutex> lock;
+    std::unique_lock<std::shared_mutex> lock;
     switch( signal )
     {
         case CONNECTION_ESTABLISHED:
-            lock = boost::unique_lock<boost::shared_mutex>( m_connectorNotifiersLock );
+            lock = std::unique_lock<std::shared_mutex>( m_connectorNotifiersLock );
             m_connectorEstablishedNotifiers.push_back( notifier );
             lock.unlock();
             break;
         case CONNECTION_CLOSED:
-            lock = boost::unique_lock<boost::shared_mutex>( m_connectorNotifiersLock );
+            lock = std::unique_lock<std::shared_mutex>( m_connectorNotifiersLock );
             m_connectorClosedNotifiers.push_back( notifier );
             lock.unlock();
             break;
@@ -408,9 +408,9 @@ void WModuleContainer::addDefaultNotifier( MODULE_CONNECTOR_SIGNAL signal, t_Gen
     }
 }
 
-boost::shared_ptr< WModule > WModuleContainer::applyModule( boost::shared_ptr< WModule > applyOn, std::string what, bool tryOnly )
+std::shared_ptr< WModule > WModuleContainer::applyModule( std::shared_ptr< WModule > applyOn, std::string what, bool tryOnly )
 {
-    boost::shared_ptr< WModule >prototype = boost::shared_ptr< WModule >();
+    std::shared_ptr< WModule >prototype = std::shared_ptr< WModule >();
     if( tryOnly )
     {
         // isPrototypeAvailable returns the prototype or NULL if not found, but does not throw an exception
@@ -428,8 +428,8 @@ boost::shared_ptr< WModule > WModuleContainer::applyModule( boost::shared_ptr< W
     return applyModule( applyOn, prototype );
 }
 
-boost::shared_ptr< WModule > WModuleContainer::applyModule( boost::shared_ptr< WModule > applyOn,
-                                                                         boost::shared_ptr< WModule > prototype )
+std::shared_ptr< WModule > WModuleContainer::applyModule( std::shared_ptr< WModule > applyOn,
+                                                                         std::shared_ptr< WModule > prototype )
 {
     // is this module already associated with another container?
     if( applyOn->isAssociated()() && ( applyOn->getAssociatedContainer() != shared_from_this() ) )
@@ -439,7 +439,7 @@ boost::shared_ptr< WModule > WModuleContainer::applyModule( boost::shared_ptr< W
     }
 
     // create a new initialized instance of the module
-    boost::shared_ptr< WModule > m = WModuleFactory::getModuleFactory()->create( prototype );
+    std::shared_ptr< WModule > m = WModuleFactory::getModuleFactory()->create( prototype );
 
     // add it
     add( m, true );
@@ -466,7 +466,7 @@ boost::shared_ptr< WModule > WModuleContainer::applyModule( boost::shared_ptr< W
 WBatchLoader::SPtr WModuleContainer::loadDataSets( std::vector< std::string > filenames, bool suppressColormaps )
 {
     // create thread which actually loads the data
-    boost::shared_ptr< WBatchLoader > t( new WBatchLoader( filenames, boost::static_pointer_cast< WModuleContainer >( shared_from_this() ) ) );
+    std::shared_ptr< WBatchLoader > t( new WBatchLoader( filenames, std::static_pointer_cast< WModuleContainer >( shared_from_this() ) ) );
     t->setSuppressColormaps( suppressColormaps );
     t->run();
     return t;
@@ -475,28 +475,28 @@ WBatchLoader::SPtr WModuleContainer::loadDataSets( std::vector< std::string > fi
 WBatchLoader::SPtr WModuleContainer::loadDataSetsSynchronously( std::vector< std::string > filenames, bool suppressColormaps )
 {
     // create thread which actually loads the data
-    boost::shared_ptr< WBatchLoader > t( new WBatchLoader( filenames, boost::static_pointer_cast< WModuleContainer >( shared_from_this() ) ) );
+    std::shared_ptr< WBatchLoader > t( new WBatchLoader( filenames, std::static_pointer_cast< WModuleContainer >( shared_from_this() ) ) );
     t->setSuppressColormaps( suppressColormaps );
     t->run();
     t->wait();
     return t;
 }
 
-void WModuleContainer::addPendingThread( boost::shared_ptr< WThreadedRunner > thread )
+void WModuleContainer::addPendingThread( std::shared_ptr< WThreadedRunner > thread )
 {
-    boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_pendingThreadsLock );
+    std::unique_lock<std::shared_mutex> lock = std::unique_lock<std::shared_mutex>( m_pendingThreadsLock );
     m_pendingThreads.insert( thread );
     lock.unlock();
 }
 
-void WModuleContainer::finishedPendingThread( boost::shared_ptr< WThreadedRunner > thread )
+void WModuleContainer::finishedPendingThread( std::shared_ptr< WThreadedRunner > thread )
 {
-    boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_pendingThreadsLock );
+    std::unique_lock<std::shared_mutex> lock = std::unique_lock<std::shared_mutex>( m_pendingThreadsLock );
     m_pendingThreads.erase( thread );
     lock.unlock();
 }
 
-void WModuleContainer::moduleError( boost::shared_ptr< WModule > module, const WException& exception )
+void WModuleContainer::moduleError( std::shared_ptr< WModule > module, const WException& exception )
 {
     errorLog() << "Error in module \"" << module->getName() << "\". Forwarding to nesting container.";
 
@@ -542,7 +542,7 @@ WModuleContainer::ModuleVectorType WModuleContainer::getModules( std::string nam
     return result;
 }
 
-WCombinerTypes::WCompatiblesList WModuleContainer::getPossibleConnections( boost::shared_ptr< WModule > module )
+WCombinerTypes::WCompatiblesList WModuleContainer::getPossibleConnections( std::shared_ptr< WModule > module )
 {
     WCombinerTypes::WCompatiblesList complist;
 

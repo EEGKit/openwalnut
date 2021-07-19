@@ -26,6 +26,7 @@
 #define WGEGROUPNODE_H
 
 #include <queue>
+#include <shared_mutex>
 
 #include <boost/thread.hpp>
 
@@ -80,7 +81,7 @@ public:
      *
      * \param predicate the predicate.
      */
-    void remove_if( boost::shared_ptr< WGEGroupNode::NodePredicate > predicate );
+    void remove_if( std::shared_ptr< WGEGroupNode::NodePredicate > predicate );
 
     /**
      * Removes all children from this node.
@@ -152,7 +153,7 @@ protected:
          * \param what the operation to make
          * \param predicate the predicate to use for conditional operations (REMOVE_IF)
          */
-        ChildOperation( ChildOperationType what, boost::shared_ptr< NodePredicate > predicate ):
+        ChildOperation( ChildOperationType what, std::shared_ptr< NodePredicate > predicate ):
             m_operation( what ),
             m_item(),
             m_predicate( predicate )
@@ -161,19 +162,19 @@ protected:
 
         ChildOperationType m_operation;                     //!< the operation to take
         osg::ref_ptr< osg::Node > m_item;                   //!< the item to delete/add
-        boost::shared_ptr< NodePredicate > m_predicate;     //!< the predicate used by conditional operations
+        std::shared_ptr< NodePredicate > m_predicate;     //!< the predicate used by conditional operations
     };
 
     /**
      * Queue of childs that need to be added/removed during the next update cycle. It is a pair per operation, where the bool is denoting removal
      * or insertion.
      */
-    std::queue< boost::shared_ptr< ChildOperation > > m_childOperationQueue;
+    std::queue< std::shared_ptr< ChildOperation > > m_childOperationQueue;
 
     /**
      * Lock used for inserting and removing childs into the child insertion/removal queue.
      */
-    boost::shared_mutex m_childOperationQueueLock;
+    std::shared_mutex m_childOperationQueueLock;
 
     /**
      * Flag denoting whether the m_childOperationQueue should be considered during the next update of the node.

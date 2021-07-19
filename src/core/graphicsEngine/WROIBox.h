@@ -25,6 +25,7 @@
 #ifndef WROIBOX_H
 #define WROIBOX_H
 
+#include <shared_mutex>
 #include <string>
 #include <utility>
 
@@ -120,12 +121,12 @@ private:
     WVector3d m_pickNormal; //!< Store the normal that occured when the pick action was started.
     WVector2d m_oldPixelPosition; //!< Caches the old picked position to a allow for cmoparison
     int16_t m_oldScrollWheel; //!< caches scroll wheel value
-    boost::shared_mutex m_updateLock; //!< Lock to prevent concurrent threads trying to update the osg node
+    std::shared_mutex m_updateLock; //!< Lock to prevent concurrent threads trying to update the osg node
     osg::ref_ptr< osg::Geometry > m_surfaceGeometry; //!< store this pointer for use in updates
 
     WPickInfo m_pickInfo; //!< Stores the pick information for potential redraw
 
-    boost::shared_ptr< WGEViewer > m_viewer; //!< makes viewer available all over this class.
+    std::shared_ptr< WGEViewer > m_viewer; //!< makes viewer available all over this class.
 
     osg::Vec4 m_color; //!< the color of the box
 
@@ -170,7 +171,7 @@ private:
      *
      * \param property the property
      */
-    void boxPropertiesChanged( boost::shared_ptr< WPropertyBase > property );
+    void boxPropertiesChanged( std::shared_ptr< WPropertyBase > property );
 
     /**
      * Set new color of the box in the geometry

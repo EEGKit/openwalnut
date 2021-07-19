@@ -49,7 +49,7 @@ public:
      *
      * \param module The actual module.
      */
-    explicit WModuleWrapper( boost::shared_ptr< WModule > module );
+    explicit WModuleWrapper( std::shared_ptr< WModule > module );
 
     /**
      * Destructor.
@@ -75,7 +75,7 @@ public:
      *
      * \return The module pointer.
      */
-    boost::shared_ptr< WModule > getModulePtr();
+    std::shared_ptr< WModule > getModulePtr();
 
     /**
      * Returns a WPropertyGroupWrapper containing the module's properties. To be used in scripts.
@@ -109,7 +109,7 @@ public:
 
 private:
     //! A pointer to the module.
-    boost::shared_ptr< WModule > m_module;
+    std::shared_ptr< WModule > m_module;
 };
 
 #endif  // WMODULEWRAPPER_H

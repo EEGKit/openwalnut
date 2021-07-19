@@ -53,7 +53,7 @@ public:
      *
      * \return true if the file/path exists
      */
-    virtual bool accept( boost::shared_ptr< WPropertyVariable< T > > property, const T& value );
+    virtual bool accept( std::shared_ptr< WPropertyVariable< T > > property, const T& value );
 
     /**
      * Allows simple identification of the real constraint type.
@@ -67,7 +67,7 @@ public:
      *
      * \return the constraint.
      */
-    virtual boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > clone();
+    virtual std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > clone();
 
 private:
 };
@@ -83,7 +83,7 @@ WPropertyConstraintPathExists< T >::~WPropertyConstraintPathExists()
 }
 
 template < typename T >
-bool WPropertyConstraintPathExists< T >::accept( boost::shared_ptr< WPropertyVariable< T > > /* property */, const T& value )
+bool WPropertyConstraintPathExists< T >::accept( std::shared_ptr< WPropertyVariable< T > > /* property */, const T& value )
 {
     return boost::filesystem::exists( value );
 }
@@ -95,9 +95,9 @@ PROPERTYCONSTRAINT_TYPE WPropertyConstraintPathExists< T >::getType()
 }
 
 template < typename T >
-boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > WPropertyConstraintPathExists< T >::clone()
+std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > WPropertyConstraintPathExists< T >::clone()
 {
-    return boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint >( new WPropertyConstraintPathExists< T >( *this ) );
+    return std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint >( new WPropertyConstraintPathExists< T >( *this ) );
 }
 
 #endif  // WPROPERTYCONSTRAINTPATHEXISTS_H

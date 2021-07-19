@@ -156,7 +156,7 @@ void WGETextureHud::removeTexture( osg::ref_ptr< osg::Texture > texture )
     // boost::function.
 
     m_group->remove_if(
-        boost::shared_ptr< WGEGroupNode::NodePredicate >(
+        std::shared_ptr< WGEGroupNode::NodePredicate >(
             new TexCheck( boost::bind( &hudEntryPredicate, texture, boost::placeholders::_1 ) )
         )
     );

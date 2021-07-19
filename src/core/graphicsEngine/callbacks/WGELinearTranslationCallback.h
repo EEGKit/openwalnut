@@ -172,8 +172,8 @@ void WGELinearTranslationCallback< T >::operator()( osg::Node* node, osg::NodeVi
         osg::MatrixTransform* m = dynamic_cast< osg::MatrixTransform* >( node );
         if( m )
         {
-            boost::shared_ptr< WPropertyConstraintMax< typename T::element_type::DataType > > mx = m_pos->getMax();
-            boost::shared_ptr< WPropertyConstraintMin< typename T::element_type::DataType > > mn = m_pos->getMin();
+            std::shared_ptr< WPropertyConstraintMax< typename T::element_type::DataType > > mx = m_pos->getMax();
+            std::shared_ptr< WPropertyConstraintMin< typename T::element_type::DataType > > mn = m_pos->getMin();
 
             if( mn && mx )
             {

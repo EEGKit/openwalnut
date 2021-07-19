@@ -41,14 +41,14 @@ class WUIQtWidgetBase
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WUIQtWidgetBase >.
+     * Convenience typedef for a std::shared_ptr< WUIQtWidgetBase >.
      */
-    typedef boost::shared_ptr< WUIQtWidgetBase > SPtr;
+    typedef std::shared_ptr< WUIQtWidgetBase > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WUIQtWidgetBase >.
+     * Convenience typedef for a std::shared_ptr< const WUIQtWidgetBase >.
      */
-    typedef boost::shared_ptr< const WUIQtWidgetBase > ConstSPtr;
+    typedef std::shared_ptr< const WUIQtWidgetBase > ConstSPtr;
 
     /**
      * Default constructor.

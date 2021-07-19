@@ -55,7 +55,7 @@ public:
      *
      * \return the treeitem of the added module
      */
-    WQtModuleTreeItem* addModuleItem( boost::shared_ptr< WModule > module );
+    WQtModuleTreeItem* addModuleItem( std::shared_ptr< WModule > module );
 
 protected:
 private:

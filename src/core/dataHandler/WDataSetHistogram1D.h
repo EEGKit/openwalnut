@@ -43,12 +43,12 @@ public:
     /**
      * shared_ptr abbreviation
      */
-    typedef boost::shared_ptr< WDataSetHistogram1D > SPtr;
+    typedef std::shared_ptr< WDataSetHistogram1D > SPtr;
 
     /**
      * const shared_ptr abbreviation
      */
-    typedef boost::shared_ptr< const WDataSetHistogram1D > ConstSPtr;
+    typedef std::shared_ptr< const WDataSetHistogram1D > ConstSPtr;
 
     /**
      * Creates a dataset encapsulating a histogram.
@@ -56,7 +56,7 @@ public:
      *
      * \param histo The histogram to use.
      */
-    explicit WDataSetHistogram1D( boost::shared_ptr< WHistogramBasic const > const& histo );
+    explicit WDataSetHistogram1D( std::shared_ptr< WHistogramBasic const > const& histo );
 
     /**
      * Construct a histogram and allows to set an array of colors used for the bins.
@@ -64,7 +64,7 @@ public:
      * \param histo The histogram.
      * \param colors An array of one color per bin.
      */
-    WDataSetHistogram1D( boost::shared_ptr< WHistogramBasic const > const& histo, boost::shared_ptr< std::vector< WColor > const > const& colors );
+    WDataSetHistogram1D( std::shared_ptr< WHistogramBasic const > const& histo, std::shared_ptr< std::vector< WColor > const > const& colors );
 
     /**
      * Construct an empty and unusable instance. This is needed for the prototype mechanism.
@@ -95,14 +95,14 @@ public:
      *
      * \return A const ref pointer to the histogram.
      */
-    boost::shared_ptr< WHistogramBasic const > const& getHistogram() const;
+    std::shared_ptr< WHistogramBasic const > const& getHistogram() const;
 
     /**
      * Returns a prototype instantiated with the true type of the deriving class.
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
     /**
      * Whether this dataset has colors associated with the bins.
@@ -124,14 +124,14 @@ protected:
     /**
      * The prototype as singleton.
      */
-    static boost::shared_ptr< WPrototyped > m_prototype;
+    static std::shared_ptr< WPrototyped > m_prototype;
 
 private:
     //! The histogram.
-    boost::shared_ptr< WHistogramBasic const > const m_histogram;
+    std::shared_ptr< WHistogramBasic const > const m_histogram;
 
     //! The colors for the bins.
-    boost::shared_ptr< std::vector< WColor > const > const m_colors;
+    std::shared_ptr< std::vector< WColor > const > const m_colors;
 };
 
 #endif  // WDATASETHISTOGRAM1D_H

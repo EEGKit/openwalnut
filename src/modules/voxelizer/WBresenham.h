@@ -53,7 +53,7 @@ public:
      * \param antialiased If true then all voxels of a line are supported with
      * anti-aliasing voxels around
      */
-    WBresenham( boost::shared_ptr< WGridRegular3D > grid, bool antialiased = true );
+    WBresenham( std::shared_ptr< WGridRegular3D > grid, bool antialiased = true );
 
     /**
      * Finishes this raster algo.

@@ -77,7 +77,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -131,11 +131,11 @@ private:
      * \param  targetSize maximum resulting mesh size
      * \return vector of resulting meshes
      */
-    std::vector< boost::shared_ptr< WTriangleMesh > >splitMesh( boost::shared_ptr< WTriangleMesh > triMesh, size_t targetSize );
+    std::vector< std::shared_ptr< WTriangleMesh > >splitMesh( std::shared_ptr< WTriangleMesh > triMesh, size_t targetSize );
 
-    boost::shared_ptr< WModuleInputData< WTriangleMesh > > m_meshInput; //!< Input connector for a mesh
-    boost::shared_ptr< WTriangleMesh > m_triMesh; //!< A pointer to the currently processed tri mesh
-    boost::shared_ptr< WCondition > m_propCondition;  //!< A condition used to notify about changes in several properties.
+    std::shared_ptr< WModuleInputData< WTriangleMesh > > m_meshInput; //!< Input connector for a mesh
+    std::shared_ptr< WTriangleMesh > m_triMesh; //!< A pointer to the currently processed tri mesh
+    std::shared_ptr< WCondition > m_propCondition;  //!< A condition used to notify about changes in several properties.
     WPropGroup    m_savePropGroup; //!< Property group containing properties needed for saving the mesh.
     WPropTrigger  m_saveTriggerProp; //!< This property triggers the actual writing,
     WPropFilename m_meshFile; //!< The mesh will be written to this file.
@@ -143,7 +143,7 @@ private:
     /**
      * A list of file type selection types
      */
-    boost::shared_ptr< WItemSelection > m_fileTypeSelectionsList;
+    std::shared_ptr< WItemSelection > m_fileTypeSelectionsList;
 
     /**
      * Selection property for file types

@@ -28,7 +28,7 @@
 
 #include "WTractData.h"
 
-WTractData::WTractData( boost::shared_ptr< std::vector< float > > pointComponents, boost::shared_ptr< std::vector< size_t > > startIndices )
+WTractData::WTractData( std::shared_ptr< std::vector< float > > pointComponents, std::shared_ptr< std::vector< size_t > > startIndices )
     : m_pointComponents( pointComponents ),
       m_startIndices( startIndices )
 {

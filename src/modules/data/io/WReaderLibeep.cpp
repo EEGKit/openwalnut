@@ -44,7 +44,7 @@ WReaderLibeep::WReaderLibeep( std::string fileName )
 {
 }
 
-boost::shared_ptr< WDataSet > WReaderLibeep::load()
+std::shared_ptr< WDataSet > WReaderLibeep::load()
 {
     wlog::debug( "Libeep Reader" ) << "Opening " << m_fname;
 
@@ -111,7 +111,7 @@ boost::shared_ptr< WDataSet > WReaderLibeep::load()
     }
 
     // construct WEEG object and return it
-    boost::shared_ptr< WEEG > out( new WEEG(
+    std::shared_ptr< WEEG > out( new WEEG(
         WEEGSegmentArray( 1, segment ),
         electrodeLibrary,
         channelLabels

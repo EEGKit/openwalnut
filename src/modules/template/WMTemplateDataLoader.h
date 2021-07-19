@@ -78,7 +78,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Define a list of file filters we support.
@@ -122,12 +122,12 @@ private:
     /**
      * The output connector for the data.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output;
+    std::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output;
 
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * True if the load function needs to be called. Usually set by handleInputChange or the reload trigger

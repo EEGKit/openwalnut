@@ -29,7 +29,7 @@
 #include "core/common/math/linearAlgebra/WPosition.h"
 #include "WBresenhamDBL.h"
 
-WBresenhamDBL::WBresenhamDBL( boost::shared_ptr< WGridRegular3D > grid, bool antialiased )
+WBresenhamDBL::WBresenhamDBL( std::shared_ptr< WGridRegular3D > grid, bool antialiased )
     : WBresenham( grid, antialiased )
 {
 }

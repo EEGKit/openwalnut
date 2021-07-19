@@ -64,7 +64,7 @@ public:
     /**
      * A shared_ptr to this class.
      */
-    typedef boost::shared_ptr< WMPointConnector > SPtr;
+    typedef std::shared_ptr< WMPointConnector > SPtr;
 
     /**
      * Constructor. Creates the module skeleton.
@@ -94,7 +94,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -122,21 +122,21 @@ public:
     void updateOutput();
 
     /**
-     * \return boost::shared_ptr< WConnectorData > The WConnectorData of this module.
+     * \return std::shared_ptr< WConnectorData > The WConnectorData of this module.
      */
-    boost::shared_ptr< WConnectorData > getConnectorData();
+    std::shared_ptr< WConnectorData > getConnectorData();
 
     /**
-     * 
-     * \return boost::shared_ptr< WFiberHandler > The WFiberHandler of this module.
+     *
+     * \return std::shared_ptr< WFiberHandler > The WFiberHandler of this module.
      */
-    boost::shared_ptr< WFiberHandler > getFiberHandler();
+    std::shared_ptr< WFiberHandler > getFiberHandler();
 
     /**
-     * 
+     *
      * \return boost::shared_ptr< WOnscreenSelection > The WOnscreenSelection of this module.
      */
-    boost::shared_ptr< WOnscreenSelection > getOnscreenSelection();
+    std::shared_ptr< WOnscreenSelection > getOnscreenSelection();
 
 protected:
     /**
@@ -228,32 +228,32 @@ private:
     /**
      * The data of this module.
      */
-    boost::shared_ptr< WConnectorData > m_connectorData;
+    std::shared_ptr< WConnectorData > m_connectorData;
 
     /**
      * The WFiberHandler of this module.
      */
-    boost::shared_ptr< WFiberHandler > m_fiberHandler;
+    std::shared_ptr< WFiberHandler > m_fiberHandler;
 
     /**
      * An input connector used to get points from other modules.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetPoints > > m_pointInput;
+    std::shared_ptr< WModuleInputData< WDataSetPoints > > m_pointInput;
 
     /**
      * An output connector used to provide fibers to other modules.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetFibers > > m_fiberOutput;
+    std::shared_ptr< WModuleOutputData< WDataSetFibers > > m_fiberOutput;
 
     /**
      * The internal pointOutput to pass data to the WMPointRenderer
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetPoints > > m_pointOutput;
+    std::shared_ptr< WModuleOutputData< WDataSetPoints > > m_pointOutput;
 
     /**
      * Enables possibility for multiselection of points.
      */
-    boost::shared_ptr< WOnscreenSelection > m_onscreenSelection;
+    std::shared_ptr< WOnscreenSelection > m_onscreenSelection;
 };
 
 #endif  // WMPOINTCONNECTOR_H

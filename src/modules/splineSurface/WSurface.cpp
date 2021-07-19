@@ -252,7 +252,7 @@ void WSurface::execute()
     m_renderpointsPerCol = splineSurface.getNumSamplePointsU();
     m_renderpointsPerRow = splineSurface.getNumSamplePointsT();
 
-    boost::shared_ptr< WTriangleMesh > newMesh( new WTriangleMesh( m_splinePoints.size(), 2 * m_renderpointsPerCol * m_renderpointsPerRow ) );
+    std::shared_ptr< WTriangleMesh > newMesh( new WTriangleMesh( m_splinePoints.size(), 2 * m_renderpointsPerCol * m_renderpointsPerRow ) );
 
     for( std::vector< WVector3d >::iterator posIt = m_splinePoints.begin(); posIt != m_splinePoints.end(); ++posIt )
     {
@@ -296,7 +296,7 @@ void WSurface::setSupportPoints( std::vector< WVector3d> supportPoints, bool for
     }
 }
 
-boost::shared_ptr< WTriangleMesh > WSurface::getTriangleMesh()
+std::shared_ptr< WTriangleMesh > WSurface::getTriangleMesh()
 {
     return m_tMesh;
 }

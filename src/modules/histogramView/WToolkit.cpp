@@ -44,8 +44,8 @@
  */
 extern "C" void WLoadModule( WModuleList& m ) // NOLINT
 {
-    m.push_back( boost::shared_ptr< WModule >( new WMHistogramView ) );
-    m.push_back( boost::shared_ptr< WModule >( new WMMultiHistogramView ) );
+    m.push_back( std::shared_ptr< WModule >( new WMHistogramView ) );
+    m.push_back( std::shared_ptr< WModule >( new WMMultiHistogramView ) );
 }
 
 /**

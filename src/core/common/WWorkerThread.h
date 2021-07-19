@@ -63,7 +63,7 @@ public:
      * \param id A thread id.
      * \param numThreads The number of threads.
      */
-    WWorkerThread( boost::shared_ptr< Function_T > func, std::size_t id, std::size_t numThreads );
+    WWorkerThread( std::shared_ptr< Function_T > func, std::size_t id, std::size_t numThreads );
 
     /**
      * Default destructor.
@@ -104,7 +104,7 @@ private:
     WWorkerThread& operator = ( WWorkerThread const& );
 
     //! the functor called in threadMain()
-    boost::shared_ptr< Function_T > m_func;
+    std::shared_ptr< Function_T > m_func;
 
     //! a thread id between 0 and m_numThreads - 1
     std::size_t m_id;
@@ -120,7 +120,7 @@ private:
 };
 
 template< class Function_T >
-WWorkerThread< Function_T >::WWorkerThread( boost::shared_ptr< Function_T > func, std::size_t id, std::size_t numThreads )
+WWorkerThread< Function_T >::WWorkerThread( std::shared_ptr< Function_T > func, std::size_t id, std::size_t numThreads )
     : m_func( func ),
       m_id( id ),
       m_numThreads( numThreads ),

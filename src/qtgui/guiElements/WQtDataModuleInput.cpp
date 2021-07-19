@@ -128,7 +128,7 @@ void WQtDataModuleInput::onChange()
     for( std::vector< WDataModuleInputFilter::ConstSPtr >::const_iterator filterIter = filters.begin(); filterIter != filters.end();
             ++filterIter )
     {
-        WDataModuleInputFilterFile::ConstSPtr ff = boost::dynamic_pointer_cast< const WDataModuleInputFilterFile >( *filterIter );
+        WDataModuleInputFilterFile::ConstSPtr ff = std::dynamic_pointer_cast< const WDataModuleInputFilterFile >( *filterIter );
         if( ff )
         {
             QString description = QString::fromStdString( ff->getDescription() );

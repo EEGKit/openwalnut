@@ -53,7 +53,7 @@ WValueSetBase::SPtr WDataCreatorBreyzel5::operator()( WProgress::SPtr progress,
     typedef WValueSet< ValueType > ValueSetType;
 
     // create some memory for the data
-    boost::shared_ptr< std::vector< ValueType > > data( new std::vector< ValueType > );
+    std::shared_ptr< std::vector< ValueType > > data( new std::vector< ValueType > );
     // for scalar data we need only as much space as we have voxels
     data->resize( grid->size() );
 

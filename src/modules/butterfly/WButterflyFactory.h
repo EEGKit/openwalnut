@@ -86,7 +86,7 @@ namespace butterfly
          * \author schwarzkopf
          * \param associatedProgressCombiner Progress combiner to be associated.
          */
-        void assignProgressCombiner( boost::shared_ptr< WProgressCombiner > associatedProgressCombiner );
+        void assignProgressCombiner( std::shared_ptr< WProgressCombiner > associatedProgressCombiner );
 
         /**
          * Sets progress which iteration step and kind of cumputing step is currently done.
@@ -109,7 +109,7 @@ namespace butterfly
          * \param edgedMmesh Triangle mesh to be interpolated.
          * \return Interpolated triangle mesh.
          */
-        boost::shared_ptr< WTriangleMesh > getSubdividedMesh( boost::shared_ptr< WTriangleMesh > edgedMmesh );
+        std::shared_ptr< WTriangleMesh > getSubdividedMesh( std::shared_ptr< WTriangleMesh > edgedMmesh );
 
 
     private:
@@ -181,12 +181,12 @@ namespace butterfly
         /**
          * Base triangle mesh used for calculations.
          */
-        boost::shared_ptr< WTriangleMesh > m_inputMesh;
+        std::shared_ptr< WTriangleMesh > m_inputMesh;
 
         /**
          * Triangle mesh that is set up by interpolation.
          */
-        boost::shared_ptr< WTriangleMesh > m_outputMesh;
+        std::shared_ptr< WTriangleMesh > m_outputMesh;
 
         /**
          * Data set used for analyzation of the triangle mesh.
@@ -211,12 +211,12 @@ namespace butterfly
         /**
          * Progress combiner for changing the plugin status in the modules overview.
          */
-        boost::shared_ptr< WProgressCombiner > m_associatedProgressCombiner;
+        std::shared_ptr< WProgressCombiner > m_associatedProgressCombiner;
 
         /**
          * Current progress status.
          */
-        boost::shared_ptr< WProgress > m_progressStatus;
+        std::shared_ptr< WProgress > m_progressStatus;
 
         /**
          * CPU threads count for multithreading support.

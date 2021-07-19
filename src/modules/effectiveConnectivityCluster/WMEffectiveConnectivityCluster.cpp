@@ -77,9 +77,9 @@ WMEffectiveConnectivityCluster::~WMEffectiveConnectivityCluster()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMEffectiveConnectivityCluster::factory() const
+std::shared_ptr< WModule > WMEffectiveConnectivityCluster::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMEffectiveConnectivityCluster() );
+    return std::shared_ptr< WModule >( new WMEffectiveConnectivityCluster() );
 }
 
 const char** WMEffectiveConnectivityCluster::getXPMIcon() const
@@ -97,8 +97,8 @@ const std::string WMEffectiveConnectivityCluster::getDescription() const
     return WModuleContainer::getDescription();
 }
 
-void WMEffectiveConnectivityCluster::fiberDataChange( boost::shared_ptr< WModuleConnector > /*input*/,
-                                                      boost::shared_ptr< WModuleConnector > output )
+void WMEffectiveConnectivityCluster::fiberDataChange( std::shared_ptr< WModuleConnector > /*input*/,
+                                                      std::shared_ptr< WModuleConnector > output )
 {
     if( !output )
     {
@@ -110,15 +110,15 @@ void WMEffectiveConnectivityCluster::fiberDataChange( boost::shared_ptr< WModule
     }
 
     // cast it to the target type
-    boost::shared_ptr< WModuleOutputData < WFiberCluster > > o = boost::static_pointer_cast< WModuleOutputData< WFiberCluster > >( output );
+    std::shared_ptr< WModuleOutputData < WFiberCluster > > o = std::static_pointer_cast< WModuleOutputData< WFiberCluster > >( output );
     if( !o )
     {
         errorLog() << "New data is not a WFiberCluster? That should not happen!";
     }
 
     // grab data
-    boost::shared_ptr< WFiberCluster > fibs = o->getData();
-    boost::shared_ptr< WFiber > lline = fibs->getLongestLine();
+    std::shared_ptr< WFiberCluster > fibs = o->getData();
+    std::shared_ptr< WFiber > lline = fibs->getLongestLine();
 
     // the first and the last point of the longest line are required:
     m_labelPos2 = ( *lline )[ lline->size() - 2 ];
@@ -145,7 +145,7 @@ void WMEffectiveConnectivityCluster::moduleMain()
     m_fiberSelection->isReady().wait();
 
     // set some props
-    boost::shared_ptr< WProperties >  props = m_fiberSelection->getProperties();
+    std::shared_ptr< WProperties >  props = m_fiberSelection->getProperties();
     props->getProperty( "VOI1 threshold" )->toPropDouble()->set( 50.0 );
     props->getProperty( "VOI2 threshold" )->toPropDouble()->set( 50.0 );
     props->getProperty( "Cut fibers" )->toPropBool()->set( true );
@@ -341,7 +341,7 @@ void WMEffectiveConnectivityCluster::moduleMain()
 void WMEffectiveConnectivityCluster::connectors()
 {
     // this is the scalar field input
-    m_VOI1 = boost::shared_ptr< WModuleInputForwardData< WDataSetSingle > >(
+    m_VOI1 = std::shared_ptr< WModuleInputForwardData< WDataSetSingle > >(
         new WModuleInputForwardData< WDataSetSingle >( shared_from_this(),
                               "VOI1", "The first volume of interest." )
         );
@@ -350,7 +350,7 @@ void WMEffectiveConnectivityCluster::connectors()
     addConnector( m_VOI1 );
 
     // this is the scalar field input
-    m_VOI2 = boost::shared_ptr< WModuleInputForwardData< WDataSetSingle > >(
+    m_VOI2 = std::shared_ptr< WModuleInputForwardData< WDataSetSingle > >(
         new WModuleInputForwardData< WDataSetSingle >( shared_from_this(),
                               "VOI2", "The second volume of interest." )
         );
@@ -359,7 +359,7 @@ void WMEffectiveConnectivityCluster::connectors()
     addConnector( m_VOI2 );
 
     // this is the scalar field input
-    m_fiberInput = boost::shared_ptr< WModuleInputForwardData< WDataSetFibers > >(
+    m_fiberInput = std::shared_ptr< WModuleInputForwardData< WDataSetFibers > >(
         new WModuleInputForwardData< WDataSetFibers >( shared_from_this(),
                               "fibers", "The fiber dataset used to find connection path." )
         );
@@ -369,21 +369,21 @@ void WMEffectiveConnectivityCluster::connectors()
 
     // forwarder for some results
     // this is the parameter field
-    m_paramOutput = boost::shared_ptr< WModuleOutputForwardData< WDataSetScalar > >(
+    m_paramOutput = std::shared_ptr< WModuleOutputForwardData< WDataSetScalar > >(
         new WModuleOutputForwardData< WDataSetScalar >( shared_from_this(),
                               "paramOut", "The voxelized fiber parameterization field." )
         );
     addConnector( m_paramOutput );
 
     // this is the voxel field
-    m_voxelOutput = boost::shared_ptr< WModuleOutputForwardData< WDataSetScalar > >(
+    m_voxelOutput = std::shared_ptr< WModuleOutputForwardData< WDataSetScalar > >(
         new WModuleOutputForwardData< WDataSetScalar >( shared_from_this(),
                               "voxelsOut", "The voxelized fibers." )
         );
     addConnector( m_voxelOutput );
 
     // these are the fibers
-    m_fiberOutput = boost::shared_ptr< WModuleOutputForwardData< WDataSetFibers > >(
+    m_fiberOutput = std::shared_ptr< WModuleOutputForwardData< WDataSetFibers > >(
         new WModuleOutputForwardData< WDataSetFibers >( shared_from_this(),
                               "fibersOut", "The voxelized fibers." )
         );
@@ -396,7 +396,7 @@ void WMEffectiveConnectivityCluster::connectors()
 void WMEffectiveConnectivityCluster::properties()
 {
     // Initialize the properties
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_voi1Name = m_properties->addProperty( "Name of VOI1", "The name of the VOI1.", std::string( "" ), m_propCondition );
     m_voi2Name = m_properties->addProperty( "Name of VOI2", "The name of the VOI2.", std::string( "" ), m_propCondition );

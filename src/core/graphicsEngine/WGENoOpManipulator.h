@@ -47,12 +47,12 @@ class WGENoOpManipulator: public osgGA::MatrixManipulator
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WGENoOpManipulator >.
+     * Convenience typedef for a std::shared_ptr< WGENoOpManipulator >.
      */
     typedef osg::ref_ptr< WGENoOpManipulator > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WGENoOpManipulator >.
+     * Convenience typedef for a std::shared_ptr< const WGENoOpManipulator >.
      */
     typedef osg::ref_ptr< const WGENoOpManipulator > ConstSPtr;
 

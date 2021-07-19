@@ -33,7 +33,7 @@
 #include "WDataSetPoints.h"
 
 // prototype instance as singleton
-boost::shared_ptr< WPrototyped > WDataSetPoints::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WDataSetPoints::m_prototype = std::shared_ptr< WPrototyped >();
 
 WDataSetPoints::WDataSetPoints( WDataSetPoints::VertexArray vertices,
                                 WDataSetPoints::ColorArray colors,
@@ -151,11 +151,11 @@ const std::string WDataSetPoints::getDescription() const
     return "Dataset which contains points without any topological relation.";
 }
 
-boost::shared_ptr< WPrototyped > WDataSetPoints::getPrototype()
+std::shared_ptr< WPrototyped > WDataSetPoints::getPrototype()
 {
     if( !m_prototype )
     {
-        m_prototype = boost::shared_ptr< WPrototyped >( new WDataSetPoints() );
+        m_prototype = std::shared_ptr< WPrototyped >( new WDataSetPoints() );
     }
 
     return m_prototype;

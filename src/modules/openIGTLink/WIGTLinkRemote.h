@@ -46,7 +46,7 @@ class WValueSetBase;
 
 // there is no WDataSetScalar::SPtr definition, yet
 // so I use this workaround here for better readability
-typedef boost::shared_ptr<WDataSetScalar> WDataSetScalarSPtr;
+typedef std::shared_ptr<WDataSetScalar> WDataSetScalarSPtr;
 
 /**
  * Common base class for a IGT Link connection.
@@ -127,7 +127,7 @@ public:
      * \param imgMsg The image behind this pointer is used to create the dataset
      * \return Created value set.
      */
-    boost::shared_ptr < WValueSetBase > createValueSet( const igtl::ImageMessage::Pointer& imgMsg );
+    std::shared_ptr < WValueSetBase > createValueSet( const igtl::ImageMessage::Pointer& imgMsg );
 
     /**
      * Set whether we check the CRC. Otherwise, we just ignore it while unpacking the data.
@@ -161,12 +161,12 @@ public:
     /**
      * condition to notify receivers that new data is waiting
      */
-    boost::shared_ptr < WCondition > receiversCondition;
+    std::shared_ptr < WCondition > receiversCondition;
 
     /**
      * condition to notify a status change
      */
-    boost::shared_ptr < WCondition > statusCondition;
+    std::shared_ptr < WCondition > statusCondition;
 
     /**
      * queue of received data sets that should be read by the module

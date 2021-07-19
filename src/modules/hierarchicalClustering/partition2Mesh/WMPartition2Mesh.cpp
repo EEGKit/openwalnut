@@ -58,10 +58,10 @@ WMPartition2Mesh::~WMPartition2Mesh()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMPartition2Mesh::factory() const
+std::shared_ptr< WModule > WMPartition2Mesh::factory() const
 {
     // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WMPartition2Mesh() );
+    return std::shared_ptr< WModule >( new WMPartition2Mesh() );
 }
 
 const std::string WMPartition2Mesh::getName() const
@@ -91,7 +91,7 @@ void WMPartition2Mesh::connectors()
 
 void WMPartition2Mesh::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     // Info properties
     m_infoTotalVertices = m_infoProperties->addProperty( "Total vertices: ", "", 0 );
@@ -139,7 +139,7 @@ void WMPartition2Mesh::moduleMain()
     {
         m_moduleState.wait();
 
-        boost::shared_ptr< WDataSetScalar > newCoordVector = m_coordInput->getData();
+        std::shared_ptr< WDataSetScalar > newCoordVector = m_coordInput->getData();
         bool coordsChanged = ( m_coordinateVector != newCoordVector );
         bool coordsValid   = ( newCoordVector != NULL );
 
@@ -152,7 +152,7 @@ void WMPartition2Mesh::moduleMain()
             }
         }
 
-        boost::shared_ptr< WDataSetVector > newColorVector = m_colorInput->getData();
+        std::shared_ptr< WDataSetVector > newColorVector = m_colorInput->getData();
         bool colorsChanged = ( m_colorVector != newColorVector );
         bool colorsValid   = ( newColorVector != NULL );
 
@@ -165,7 +165,7 @@ void WMPartition2Mesh::moduleMain()
             }
         }
 
-        boost::shared_ptr< WTriangleMesh > newRefMesh = m_meshInput1->getData();
+        std::shared_ptr< WTriangleMesh > newRefMesh = m_meshInput1->getData();
         bool refMeshChanged = ( m_referenceMesh != newRefMesh );
         bool refMeshValid   = ( newRefMesh != NULL );
 
@@ -179,7 +179,7 @@ void WMPartition2Mesh::moduleMain()
             }
         }
 
-        boost::shared_ptr< WTriangleMesh > newOutMesh = m_meshInput2->getData();
+        std::shared_ptr< WTriangleMesh > newOutMesh = m_meshInput2->getData();
         bool outMeshChanged = ( m_outMesh != newOutMesh );
         bool outMeshValid   = ( newOutMesh != NULL );
 
@@ -203,14 +203,14 @@ void WMPartition2Mesh::moduleMain()
         {
             infoLog() << "Partition2Mesh: start recalc refs";
 
-            m_datasetSizeX = boost::dynamic_pointer_cast< WGridRegular3D >( m_colorInput->getData()->getGrid() )->getNbCoordsX();
-            m_datasetSizeY = boost::dynamic_pointer_cast< WGridRegular3D >( m_colorInput->getData()->getGrid() )->getNbCoordsY();
-            m_datasetSizeZ = boost::dynamic_pointer_cast< WGridRegular3D >( m_colorInput->getData()->getGrid() )->getNbCoordsZ();
+            m_datasetSizeX = std::dynamic_pointer_cast< WGridRegular3D >( m_colorInput->getData()->getGrid() )->getNbCoordsX();
+            m_datasetSizeY = std::dynamic_pointer_cast< WGridRegular3D >( m_colorInput->getData()->getGrid() )->getNbCoordsY();
+            m_datasetSizeZ = std::dynamic_pointer_cast< WGridRegular3D >( m_colorInput->getData()->getGrid() )->getNbCoordsZ();
             std::vector<size_t>volume( m_datasetSizeX * m_datasetSizeY * m_datasetSizeZ, 0 );
             std::cout << "color volume size " <<  m_datasetSizeX * m_datasetSizeY * m_datasetSizeZ << std::endl;
 
-            boost::shared_ptr<WValueSet<int> > coords;
-            coords = boost::dynamic_pointer_cast<WValueSet<int> >( ( *m_coordinateVector ).getValueSet() );
+            std::shared_ptr<WValueSet<int> > coords;
+            coords = std::dynamic_pointer_cast<WValueSet<int> >( ( *m_coordinateVector ).getValueSet() );
 
             std::cout << "fill volume" << std::endl;
             for( size_t i = 0; i < m_coordinateVector->getGrid()->size() / 3; ++i )
@@ -230,7 +230,7 @@ void WMPartition2Mesh::moduleMain()
             }
 
             m_refs.resize( m_referenceMesh->vertSize() );
-            boost::shared_ptr<WGridRegular3D> grid = boost::dynamic_pointer_cast< WGridRegular3D >( m_colorInput->getData()->getGrid() );
+            std::shared_ptr<WGridRegular3D> grid = std::dynamic_pointer_cast< WGridRegular3D >( m_colorInput->getData()->getGrid() );
             float xs = grid->getOffsetX() / 2.0;
             float ys = grid->getOffsetY() / 2.0;
             float zs = grid->getOffsetZ() / 2.0;
@@ -369,7 +369,7 @@ void WMPartition2Mesh::moduleMain()
             m_blankOutMesh = false;
             //infoLog() << "Partition2Mesh: write colors to out mesh";
 #if 1
-            boost::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( m_outMesh->vertSize(), m_outMesh->triangleSize() ) );
+            std::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( m_outMesh->vertSize(), m_outMesh->triangleSize() ) );
             for( size_t i = 0; i < m_outMesh->vertSize(); ++i )
             {
                 triMesh->addVertex( m_outMesh->getVertex( i ) );
@@ -380,14 +380,14 @@ void WMPartition2Mesh::moduleMain()
             }
             triMesh->getNormal( 0 );
 
-            int dimx = boost::dynamic_pointer_cast< WGridRegular3D >( m_colorInput->getData()->getGrid() )->getNbCoordsX();
-            int dimy = boost::dynamic_pointer_cast< WGridRegular3D >( m_colorInput->getData()->getGrid() )->getNbCoordsY();
-            //int dimz = boost::dynamic_pointer_cast< WGridRegular3D >( m_colorInput->getData()->getGrid() )->getNbCoordsZ();
+            int dimx = std::dynamic_pointer_cast< WGridRegular3D >( m_colorInput->getData()->getGrid() )->getNbCoordsX();
+            int dimy = std::dynamic_pointer_cast< WGridRegular3D >( m_colorInput->getData()->getGrid() )->getNbCoordsY();
+            //int dimz = std::dynamic_pointer_cast< WGridRegular3D >( m_colorInput->getData()->getGrid() )->getNbCoordsZ();
 
-            boost::shared_ptr<WValueSet<unsigned char> > colors;
-            colors = boost::dynamic_pointer_cast<WValueSet<unsigned char> >( ( *m_colorVector ).getValueSet() );
-            boost::shared_ptr<WValueSet<int> > coords;
-            coords = boost::dynamic_pointer_cast<WValueSet<int> >( ( *m_coordinateVector ).getValueSet() );
+            std::shared_ptr<WValueSet<unsigned char> > colors;
+            colors = std::dynamic_pointer_cast<WValueSet<unsigned char> >( ( *m_colorVector ).getValueSet() );
+            std::shared_ptr<WValueSet<int> > coords;
+            coords = std::dynamic_pointer_cast<WValueSet<int> >( ( *m_coordinateVector ).getValueSet() );
 
             WColor col1( m_propHoleColor->get( true ) );
             for( size_t i = 0; i < triMesh->vertSize(); ++i )
@@ -424,14 +424,14 @@ void WMPartition2Mesh::moduleMain()
             // this code shouold work to recolor the mesh, for some reason it does not,
             // and so a new output mesh has to be crated every time colors change
 #else
-            int dimx = boost::dynamic_pointer_cast< WGridRegular3D >( m_colorInput->getData()->getGrid() )->getNbCoordsX();
-            int dimy = boost::dynamic_pointer_cast< WGridRegular3D >( m_colorInput->getData()->getGrid() )->getNbCoordsY();
-            //int dimz = boost::dynamic_pointer_cast< WGridRegular3D >( m_colorInput->getData()->getGrid() )->getNbCoordsZ();
+            int dimx = std::dynamic_pointer_cast< WGridRegular3D >( m_colorInput->getData()->getGrid() )->getNbCoordsX();
+            int dimy = std::dynamic_pointer_cast< WGridRegular3D >( m_colorInput->getData()->getGrid() )->getNbCoordsY();
+            //int dimz = std::dynamic_pointer_cast< WGridRegular3D >( m_colorInput->getData()->getGrid() )->getNbCoordsZ();
 
-            boost::shared_ptr<WValueSet<unsigned char> > colors;
-            colors = boost::dynamic_pointer_cast<WValueSet<unsigned char> >( ( *m_colorVector ).getValueSet() );
-            boost::shared_ptr<WValueSet<int> > coords;
-            coords = boost::dynamic_pointer_cast<WValueSet<int> >( ( *m_coordinateVector ).getValueSet() );
+            std::shared_ptr<WValueSet<unsigned char> > colors;
+            colors = std::dynamic_pointer_cast<WValueSet<unsigned char> >( ( *m_colorVector ).getValueSet() );
+            std::shared_ptr<WValueSet<int> > coords;
+            coords = std::dynamic_pointer_cast<WValueSet<int> >( ( *m_coordinateVector ).getValueSet() );
 
             WColor col1( 0.9, 0.9, 0.9, 1.0 );
             for( size_t i = 0; i < m_outMesh->vertSize(); ++i )

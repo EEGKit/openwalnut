@@ -38,7 +38,7 @@
 
 #include "WQtNetworkItemActivator.h"
 
-WQtNetworkItemActivator::WQtNetworkItemActivator( boost::shared_ptr< WModule > module )
+WQtNetworkItemActivator::WQtNetworkItemActivator( std::shared_ptr< WModule > module )
     : m_module( module ), m_activeColor( WQtNetworkColors::ActivatorActive ),
                           m_inactiveColor( WQtNetworkColors::ActivatorInactive )
 {

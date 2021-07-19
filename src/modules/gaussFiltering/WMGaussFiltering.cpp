@@ -54,9 +54,9 @@ WMGaussFiltering::~WMGaussFiltering()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMGaussFiltering::factory() const
+std::shared_ptr< WModule > WMGaussFiltering::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMGaussFiltering() );
+    return std::shared_ptr< WModule >( new WMGaussFiltering() );
 }
 
 const char** WMGaussFiltering::getXPMIcon() const
@@ -92,7 +92,7 @@ double mask( size_t i, size_t j, size_t k )
 }
 
 template<typename T> double WMGaussFiltering::filterAtPosition(
-        boost::shared_ptr<WValueSet<T> > vals, size_t nX, size_t nY, size_t nZ,
+        std::shared_ptr<WValueSet<T> > vals, size_t nX, size_t nY, size_t nZ,
         size_t x, size_t y, size_t z, size_t offset )
 {
     double filtered = 0;
@@ -116,8 +116,8 @@ template<typename T> double WMGaussFiltering::filterAtPosition(
 }
 
 template< typename T >
-std::vector<double> WMGaussFiltering::filterField( boost::shared_ptr< WValueSet< T > > vals, boost::shared_ptr<WGridRegular3D> grid,
-                                                   boost::shared_ptr< WProgress > prog )
+std::vector<double> WMGaussFiltering::filterField( std::shared_ptr< WValueSet< T > > vals, std::shared_ptr<WGridRegular3D> grid,
+                                                   std::shared_ptr< WProgress > prog )
 {
     size_t nX = grid->getNbCoordsX();
     size_t nY = grid->getNbCoordsY();
@@ -159,8 +159,8 @@ std::vector<double> WMGaussFiltering::filterField( boost::shared_ptr< WValueSet<
 
 template< typename T >
 void WMGaussFiltering::filterField1D( std::vector<double>* newVals,
-                                      boost::shared_ptr< WValueSet< T > > vals,
-                                      boost::shared_ptr< WProgress > prog,
+                                      std::shared_ptr< WValueSet< T > > vals,
+                                      std::shared_ptr< WProgress > prog,
                                       size_t nX, size_t nY, size_t nZ, size_t dx, size_t dy, size_t dz )
 {
     for( size_t z = 1; z < nZ - 1; ++z )
@@ -181,7 +181,7 @@ void WMGaussFiltering::filterField1D( std::vector<double>* newVals,
 template< typename T >
 void WMGaussFiltering::filterField1D( std::vector<T>* newVals,
                                       const std::vector<T>& vals,
-                                      boost::shared_ptr< WProgress > prog,
+                                      std::shared_ptr< WProgress > prog,
                                       size_t nX, size_t nY, size_t nZ, size_t dx, size_t dy, size_t dz )
 {
     for( size_t z = 1; z < nZ - 1; ++z )
@@ -200,38 +200,38 @@ void WMGaussFiltering::filterField1D( std::vector<T>* newVals,
 }
 
 template< typename T >
-boost::shared_ptr< WValueSet< double > > WMGaussFiltering::iterativeFilterField( boost::shared_ptr< WValueSet< T > > vals, unsigned int iterations )
+std::shared_ptr< WValueSet< double > > WMGaussFiltering::iterativeFilterField( std::shared_ptr< WValueSet< T > > vals, unsigned int iterations )
 {
     // the grid used
-    boost::shared_ptr<WGridRegular3D> grid = boost::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
+    std::shared_ptr<WGridRegular3D> grid = std::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
     WAssert( grid, "Grid is not of type WGridRegular3D." );
 
     // use a custom progress combiner
-    boost::shared_ptr< WProgress > prog;
+    std::shared_ptr< WProgress > prog;
 
     if( m_3DMaskMode->get() )
     {
-        prog = boost::shared_ptr< WProgress >(
+        prog = std::shared_ptr< WProgress >(
             new WProgress( "Gauss Filter Iteration", iterations * grid->getNbCoordsZ() ) );
     }
     else
     {
-        prog = boost::shared_ptr< WProgress >(
+        prog = std::shared_ptr< WProgress >(
             new WProgress( "Gauss Filter Iteration", 3 * iterations * grid->getNbCoordsZ() ) );
     }
     m_progress->addSubProgress( prog );
 
     // iterate filter, apply at least once
-    boost::shared_ptr< WValueSet< double > > valueSet = boost::shared_ptr< WValueSet< double > >(
+    std::shared_ptr< WValueSet< double > > valueSet = std::shared_ptr< WValueSet< double > >(
         new WValueSet<double> ( vals->order(), vals->dimension(),
-        boost::shared_ptr< std::vector< double > >( new std::vector< double >( filterField( vals, grid, prog ) ) ),
+        std::shared_ptr< std::vector< double > >( new std::vector< double >( filterField( vals, grid, prog ) ) ),
         W_DT_DOUBLE )
     );
     for( unsigned int i = 1; i < iterations; ++i )    // this only runs if iter > 1
     {
-        valueSet = boost::shared_ptr< WValueSet< double > >(
+        valueSet = std::shared_ptr< WValueSet< double > >(
             new WValueSet<double> ( valueSet->order(), valueSet->dimension(),
-            boost::shared_ptr< std::vector< double > >( new std::vector< double >( filterField( valueSet, grid, prog ) ) ),
+            std::shared_ptr< std::vector< double > >( new std::vector< double >( filterField( valueSet, grid, prog ) ) ),
             W_DT_DOUBLE )
         );
     }
@@ -269,7 +269,7 @@ void WMGaussFiltering::moduleMain()
         }
 
         // has the data changed?
-        boost::shared_ptr< WDataSetScalar > newDataSet = m_input->getData();
+        std::shared_ptr< WDataSetScalar > newDataSet = m_input->getData();
         bool dataChanged = ( m_dataSet != newDataSet );
         if( dataChanged || !m_dataSet )
         // this condition will become true whenever the new data is different from the current one or our actual data is NULL. This handles all
@@ -304,54 +304,54 @@ void WMGaussFiltering::moduleMain()
 
         if( dataChanged )
         {
-            boost::shared_ptr< WValueSet< double > >  newValueSet;
+            std::shared_ptr< WValueSet< double > >  newValueSet;
 
             switch( ( *m_dataSet ).getValueSet()->getDataType() )
             {
                 case W_DT_UNSIGNED_CHAR:
                 {
-                    boost::shared_ptr<WValueSet<unsigned char> > vals;
-                    vals = boost::dynamic_pointer_cast<WValueSet<unsigned char> >( ( *m_dataSet ).getValueSet() );
+                    std::shared_ptr<WValueSet<unsigned char> > vals;
+                    vals = std::dynamic_pointer_cast<WValueSet<unsigned char> >( ( *m_dataSet ).getValueSet() );
                     WAssert( vals, "Data type and data type indicator must fit." );
                     newValueSet = iterativeFilterField( vals, iterations );
                     break;
                 }
                 case W_DT_INT16:
                 {
-                    boost::shared_ptr<WValueSet<int16_t> > vals;
-                    vals = boost::dynamic_pointer_cast<WValueSet<int16_t> >( ( *m_dataSet ).getValueSet() );
+                    std::shared_ptr<WValueSet<int16_t> > vals;
+                    vals = std::dynamic_pointer_cast<WValueSet<int16_t> >( ( *m_dataSet ).getValueSet() );
                     WAssert( vals, "Data type and data type indicator must fit." );
                     newValueSet = iterativeFilterField( vals, iterations );
                     break;
                 }
                 case W_DT_UINT16:
                 {
-                    boost::shared_ptr<WValueSet<uint16_t> > vals;
-                    vals = boost::dynamic_pointer_cast<WValueSet<uint16_t> >( ( *m_dataSet ).getValueSet() );
+                    std::shared_ptr<WValueSet<uint16_t> > vals;
+                    vals = std::dynamic_pointer_cast<WValueSet<uint16_t> >( ( *m_dataSet ).getValueSet() );
                     WAssert( vals, "Data type and data type indicator must fit." );
                     newValueSet = iterativeFilterField( vals, iterations );
                     break;
                 }
                 case W_DT_SIGNED_INT:
                 {
-                    boost::shared_ptr<WValueSet<int32_t> > vals;
-                    vals = boost::dynamic_pointer_cast<WValueSet<int32_t> >( ( *m_dataSet ).getValueSet() );
+                    std::shared_ptr<WValueSet<int32_t> > vals;
+                    vals = std::dynamic_pointer_cast<WValueSet<int32_t> >( ( *m_dataSet ).getValueSet() );
                     WAssert( vals, "Data type and data type indicator must fit." );
                     newValueSet = iterativeFilterField( vals, iterations );
                     break;
                 }
                 case W_DT_FLOAT:
                 {
-                    boost::shared_ptr<WValueSet<float> > vals;
-                    vals = boost::dynamic_pointer_cast<WValueSet<float> >( ( *m_dataSet ).getValueSet() );
+                    std::shared_ptr<WValueSet<float> > vals;
+                    vals = std::dynamic_pointer_cast<WValueSet<float> >( ( *m_dataSet ).getValueSet() );
                     WAssert( vals, "Data type and data type indicator must fit." );
                     newValueSet = iterativeFilterField( vals, iterations );
                     break;
                 }
                 case W_DT_DOUBLE:
                 {
-                    boost::shared_ptr<WValueSet<double> > vals;
-                    vals = boost::dynamic_pointer_cast<WValueSet<double> >( ( *m_dataSet ).getValueSet() );
+                    std::shared_ptr<WValueSet<double> > vals;
+                    vals = std::dynamic_pointer_cast<WValueSet<double> >( ( *m_dataSet ).getValueSet() );
                     WAssert( vals, "Data type and data type indicator must fit." );
                     newValueSet = iterativeFilterField( vals, iterations );
                     break;
@@ -360,7 +360,7 @@ void WMGaussFiltering::moduleMain()
                     WAssert( false, "Unknown data type in Gauss Filtering module" );
             }
 
-            m_output->updateData( boost::shared_ptr<WDataSetScalar>( new WDataSetScalar( newValueSet, m_dataSet->getGrid() ) ) );
+            m_output->updateData( std::shared_ptr<WDataSetScalar>( new WDataSetScalar( newValueSet, m_dataSet->getGrid() ) ) );
         }
 
         // if the number of iterations is 0 -> simply set the input as output
@@ -374,7 +374,7 @@ void WMGaussFiltering::moduleMain()
 void WMGaussFiltering::connectors()
 {
     // initialize connectors
-    m_input = boost::shared_ptr<WModuleInputData<WDataSetScalar> >(
+    m_input = std::shared_ptr<WModuleInputData<WDataSetScalar> >(
             new WModuleInputData<WDataSetScalar> ( shared_from_this(), "in",
                     "The dataset to filter" ) );
 
@@ -382,7 +382,7 @@ void WMGaussFiltering::connectors()
     addConnector( m_input );
 
     // initialize connectors
-    m_output = boost::shared_ptr<WModuleOutputData<WDataSetScalar> >(
+    m_output = std::shared_ptr<WModuleOutputData<WDataSetScalar> >(
             new WModuleOutputData<WDataSetScalar> ( shared_from_this(), "out",
                     "The filtered data set." ) );
 
@@ -395,7 +395,7 @@ void WMGaussFiltering::connectors()
 
 void WMGaussFiltering::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_iterations = m_properties->addProperty( "Iterations", "How often should the filter be applied.", 1, m_propCondition );
     m_iterations->setMin( 0 );

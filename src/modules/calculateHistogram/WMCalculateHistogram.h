@@ -69,7 +69,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -106,19 +106,19 @@ private:
     void updateOutput();
 
     //! The input connector for the data.
-    boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_dataInput;
+    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_dataInput;
 
     //! The output for the histogram.
-    boost::shared_ptr< WModuleOutputData< WDataSetHistogram1D > > m_histogramOutput;
+    std::shared_ptr< WModuleOutputData< WDataSetHistogram1D > > m_histogramOutput;
 
     //! The current input data.
-    boost::shared_ptr< WDataSetSingle > m_data;
+    std::shared_ptr< WDataSetSingle > m_data;
 
     //! A property for the number of bins in the histogram.
     WPropInt m_histogramBins;
 
     //! A property condition used to notify of changes in the properties.
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 };
 
 #endif  // WMCALCULATEHISTOGRAM_H

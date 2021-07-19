@@ -40,12 +40,12 @@ WMScalarSegmentation::WMScalarSegmentation():
     WModule()
 {
     m_algoIndex = 0;
-    m_algos.push_back( boost::shared_ptr< WSegmentationAlgo >( new WSegmentationAlgoThreshold() ) );
+    m_algos.push_back( std::shared_ptr< WSegmentationAlgo >( new WSegmentationAlgoThreshold() ) );
 #ifdef OW_USE_ITK
-    m_algos.push_back( boost::shared_ptr< WSegmentationAlgo >( new WSegmentationAlgoWatershed() ) );
-    m_algos.push_back( boost::shared_ptr< WSegmentationAlgo >( new WSegmentationAlgoOtsu() ) );
-    m_algos.push_back( boost::shared_ptr< WSegmentationAlgo >( new WSegmentationAlgoRegionGrowingConfidenceConnected() ) );
-    m_algos.push_back( boost::shared_ptr< WSegmentationAlgo >( new WSegmentationAlgoLevelSetCanny() ) );
+    m_algos.push_back( std::shared_ptr< WSegmentationAlgo >( new WSegmentationAlgoWatershed() ) );
+    m_algos.push_back( std::shared_ptr< WSegmentationAlgo >( new WSegmentationAlgoOtsu() ) );
+    m_algos.push_back( std::shared_ptr< WSegmentationAlgo >( new WSegmentationAlgoRegionGrowingConfidenceConnected() ) );
+    m_algos.push_back( std::shared_ptr< WSegmentationAlgo >( new WSegmentationAlgoLevelSetCanny() ) );
 #endif  // OW_USE_ITK
 }
 
@@ -54,9 +54,9 @@ WMScalarSegmentation::~WMScalarSegmentation()
     m_algos.clear();
 }
 
-boost::shared_ptr< WModule > WMScalarSegmentation::factory() const
+std::shared_ptr< WModule > WMScalarSegmentation::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMScalarSegmentation() );
+    return std::shared_ptr< WModule >( new WMScalarSegmentation() );
 }
 
 const char** WMScalarSegmentation::getXPMIcon() const
@@ -76,13 +76,13 @@ const std::string WMScalarSegmentation::getDescription() const
 
 void WMScalarSegmentation::connectors()
 {
-    m_input = boost::shared_ptr< WModuleInputData < WDataSetScalar  > >(
+    m_input = std::shared_ptr< WModuleInputData < WDataSetScalar  > >(
         new WModuleInputData< WDataSetScalar >( shared_from_this(), "inputSet", "The dataset to segment." )
         );
 
     addConnector( m_input );
 
-    m_output = boost::shared_ptr< WModuleOutputData < WDataSetScalar  > >(
+    m_output = std::shared_ptr< WModuleOutputData < WDataSetScalar  > >(
         new WModuleOutputData< WDataSetScalar >( shared_from_this(), "outputSet", "The calculated dataset." )
         );
 
@@ -93,9 +93,9 @@ void WMScalarSegmentation::connectors()
 
 void WMScalarSegmentation::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
-    m_algoSelection = boost::shared_ptr< WItemSelection >( new WItemSelection );
+    m_algoSelection = std::shared_ptr< WItemSelection >( new WItemSelection );
     for( AlgoList::iterator it = m_algos.begin(); it != m_algos.end(); ++it )
     {
         m_algoSelection->addItem( ( *it )->getName(), ( *it )->getDescription() );
@@ -137,7 +137,7 @@ void WMScalarSegmentation::moduleMain()
             break;
         }
 
-        boost::shared_ptr< WDataSetScalar > newDataSet = m_input->getData();
+        std::shared_ptr< WDataSetScalar > newDataSet = m_input->getData();
         bool dataChanged = ( m_dataSet != newDataSet );
         bool dataValid   = ( newDataSet != NULL );
 
@@ -147,7 +147,7 @@ void WMScalarSegmentation::moduleMain()
             if( !m_dataSet->getValueSet() || !m_dataSet->getGrid()
                 || m_dataSet->getValueSet()->dimension() != 1 || m_dataSet->getValueSet()->order() != 0 )
             {
-                m_dataSet = boost::shared_ptr< WDataSetScalar >();
+                m_dataSet = std::shared_ptr< WDataSetScalar >();
             }
         }
 

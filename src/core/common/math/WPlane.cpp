@@ -66,10 +66,10 @@ void WPlane::resetPosition( WPosition newPos )
 }
 
 
-boost::shared_ptr< std::set< WPosition > > WPlane::samplePoints( double stepWidth, size_t numX, size_t numY ) const
+std::shared_ptr< std::set< WPosition > > WPlane::samplePoints( double stepWidth, size_t numX, size_t numY ) const
 {
     // idea: start from m_pos in m_first direction until boundary reached, increment in m_second direction from m_pos and start again
-    boost::shared_ptr< std::set< WPosition > > result( new std::set< WPosition >() );
+    std::shared_ptr< std::set< WPosition > > result( new std::set< WPosition >() );
 
     // the plane has two directions m_first and m_second
     const WVector3d ycrement = stepWidth * m_second;

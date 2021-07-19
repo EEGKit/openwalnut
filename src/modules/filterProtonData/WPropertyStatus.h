@@ -44,7 +44,7 @@ public:
     /**
      * A shared_ptr to this class.
      */
-    typedef boost::shared_ptr< WPropertyStatus > SPtr;
+    typedef std::shared_ptr< WPropertyStatus > SPtr;
 
     /**
      * An empty constructor for class creation.

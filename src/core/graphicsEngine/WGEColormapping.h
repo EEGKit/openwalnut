@@ -99,7 +99,7 @@ public:
      *
      * \return the running module factory.
      */
-    static boost::shared_ptr< WGEColormapping > instance();
+    static std::shared_ptr< WGEColormapping > instance();
 
     /**
      * a bunch of nodes.
@@ -390,7 +390,7 @@ private:
     /**
      * Singleton instance of WGEColormapping
      */
-    static boost::shared_ptr< WGEColormapping > m_instance;
+    static std::shared_ptr< WGEColormapping > m_instance;
 
     /**
      * The textures managed by this instance.

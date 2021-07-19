@@ -39,9 +39,9 @@
 #include "WEEG2.h"
 
 
-boost::shared_ptr< WPrototyped > WEEG2::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WEEG2::m_prototype = std::shared_ptr< WPrototyped >();
 
-WEEG2::WEEG2( boost::shared_ptr< WPagerEEG > pager, boost::shared_ptr< WEEGPositionsLibrary > positionsLibrary )
+WEEG2::WEEG2( std::shared_ptr< WPagerEEG > pager, std::shared_ptr< WEEGPositionsLibrary > positionsLibrary )
 {
     if( !pager )
     {
@@ -76,13 +76,13 @@ WEEG2::WEEG2( boost::shared_ptr< WPagerEEG > pager, boost::shared_ptr< WEEGPosit
     m_segments.reserve( nbSegments );
     for( std::size_t segmentID = 0; segmentID < nbSegments; ++segmentID )
     {
-        m_segments.push_back( boost::shared_ptr< WEEG2Segment >( new WEEG2Segment( segmentID, pager ) ) );
+        m_segments.push_back( std::shared_ptr< WEEG2Segment >( new WEEG2Segment( segmentID, pager ) ) );
     }
 
     m_channelInfos.reserve( nbChannels );
     for( std::size_t channelID = 0; channelID < nbChannels; ++channelID )
     {
-        m_channelInfos.push_back( boost::shared_ptr< WEEGChannelInfo >( new WEEGChannelInfo( channelID, pager, positionsLibrary ) ) );
+        m_channelInfos.push_back( std::shared_ptr< WEEGChannelInfo >( new WEEGChannelInfo( channelID, pager, positionsLibrary ) ) );
     }
 }
 
@@ -105,7 +105,7 @@ double WEEG2::getSamplingRate() const
     return m_samplingRate;
 }
 
-boost::shared_ptr< WEEG2Segment > WEEG2::getSegment( std::size_t segmentID ) const
+std::shared_ptr< WEEG2Segment > WEEG2::getSegment( std::size_t segmentID ) const
 {
     if( segmentID >= m_segments.size() )
     {
@@ -117,7 +117,7 @@ boost::shared_ptr< WEEG2Segment > WEEG2::getSegment( std::size_t segmentID ) con
     return m_segments[segmentID];
 }
 
-boost::shared_ptr< WEEGChannelInfo > WEEG2::getChannelInfo( std::size_t channelID ) const
+std::shared_ptr< WEEGChannelInfo > WEEG2::getChannelInfo( std::size_t channelID ) const
 {
     if( channelID >= m_channelInfos.size() )
     {
@@ -139,11 +139,11 @@ const std::string WEEG2::getDescription() const
     return "Contains EEG data";
 }
 
-boost::shared_ptr< WPrototyped > WEEG2::getPrototype()
+std::shared_ptr< WPrototyped > WEEG2::getPrototype()
 {
     if( !m_prototype )
     {
-        m_prototype = boost::shared_ptr< WPrototyped >( new WEEG2() );
+        m_prototype = std::shared_ptr< WPrototyped >( new WEEG2() );
     }
 
     return m_prototype;

@@ -29,7 +29,7 @@
 #include "WRecording.h"
 
 // prototype instance as singleton
-boost::shared_ptr< WPrototyped > WRecording::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WRecording::m_prototype = std::shared_ptr< WPrototyped >();
 
 WRecording::WRecording()
     : WDataSet()
@@ -46,11 +46,11 @@ const std::string WRecording::getDescription() const
     return "Contains several recorded data, like EEG or FMRT.";
 }
 
-boost::shared_ptr< WPrototyped > WRecording::getPrototype()
+std::shared_ptr< WPrototyped > WRecording::getPrototype()
 {
     if( !m_prototype )
     {
-        m_prototype = boost::shared_ptr< WPrototyped >( new WRecording() );
+        m_prototype = std::shared_ptr< WPrototyped >( new WRecording() );
     }
 
     return m_prototype;

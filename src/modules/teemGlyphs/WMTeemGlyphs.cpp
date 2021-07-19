@@ -47,7 +47,7 @@ W_LOADABLE_MODULE( WMTeemGlyphs )
 
 WMTeemGlyphs::WMTeemGlyphs():
     WModule(),
-    m_recompute( boost::shared_ptr< WCondition >( new WCondition() ) )
+    m_recompute( std::shared_ptr< WCondition >( new WCondition() ) )
 {
 }
 
@@ -117,9 +117,9 @@ WMTeemGlyphs::~WMTeemGlyphs()
 {
 }
 
-boost::shared_ptr< WModule > WMTeemGlyphs::factory() const
+std::shared_ptr< WModule > WMTeemGlyphs::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMTeemGlyphs() );
+    return std::shared_ptr< WModule >( new WMTeemGlyphs() );
 }
 
 const char** WMTeemGlyphs::getXPMIcon() const
@@ -140,11 +140,11 @@ const std::string WMTeemGlyphs::getDescription() const
 
 void WMTeemGlyphs::connectors()
 {
-    m_input = boost::shared_ptr< WModuleInputData < WDataSetSphericalHarmonics > >(
+    m_input = std::shared_ptr< WModuleInputData < WDataSetSphericalHarmonics > >(
         new WModuleInputData< WDataSetSphericalHarmonics >( shared_from_this(), "in", "The input dataset." ) );
     addConnector( m_input );
 
-    m_inputGFA = boost::shared_ptr< WModuleInputData< WDataSetScalar > >( new WModuleInputData< WDataSetScalar >( shared_from_this(),
+    m_inputGFA = std::shared_ptr< WModuleInputData< WDataSetScalar > >( new WModuleInputData< WDataSetScalar >( shared_from_this(),
                 "inGFA", "Generalized fractional anisotropy." )
             );
     addConnector( m_inputGFA );
@@ -156,9 +156,9 @@ void WMTeemGlyphs::connectors()
 
 void WMTeemGlyphs::properties()
 {
-    m_exceptionCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_exceptionCondition = std::shared_ptr< WCondition >( new WCondition() );
 
-    m_sliceOrientations = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_sliceOrientations = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_sliceOrientations->addItem( "x", "x-slice" );
     m_sliceOrientations->addItem( "y", "y-slice" );
     m_sliceOrientations->addItem( "z", "z-slice" );
@@ -171,7 +171,7 @@ void WMTeemGlyphs::properties()
     m_sliceIdProp->setMin( 0 );
     m_sliceIdProp->setMax( 128 );
 
-    m_orders = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_orders = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_orders->addItem( "2", "Order 2" );
     m_orders->addItem( "4", "Order 4" );
     m_orders->addItem( "6", "Order 6" );
@@ -226,7 +226,7 @@ void WMTeemGlyphs::properties()
 
 void WMTeemGlyphs::handleException( WException const& e )
 {
-    m_lastException = boost::shared_ptr< WException >( new WException( e ) );
+    m_lastException = std::shared_ptr< WException >( new WException( e ) );
     m_exceptionCondition->notify();
 }
 
@@ -258,7 +258,7 @@ void WMTeemGlyphs::moduleMain()
                 dataChanged = true;
             }
 
-            boost::shared_ptr< WGridRegular3D > gridReg = boost::dynamic_pointer_cast< WGridRegular3D >( m_input->getData().get()->getGrid() );
+            std::shared_ptr< WGridRegular3D > gridReg = std::dynamic_pointer_cast< WGridRegular3D >( m_input->getData().get()->getGrid() );
             switch( m_sliceOrientationSelectionProp->get( true ).getItemIndexOfSelected( 0 ) )
             {
                 case 0:
@@ -277,7 +277,7 @@ void WMTeemGlyphs::moduleMain()
                 m_sliceIdProp->set( m_sliceIdProp->getMax()->getMax() / 2 );
             }
 
-            boost::shared_ptr< WDataSetScalar > gfa = m_inputGFA->getData();
+            std::shared_ptr< WDataSetScalar > gfa = m_inputGFA->getData();
             if( gfa )
             {
                 m_GFAThresholdProp->setMax( gfa->getMax() );
@@ -306,7 +306,7 @@ void WMTeemGlyphs::moduleMain()
     }
 
     {
-        boost::unique_lock< boost::mutex > lock( m_moduleNodeLock );
+        std::unique_lock< boost::mutex > lock( m_moduleNodeLock );
 
         WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_moduleNode );
 
@@ -319,8 +319,8 @@ void  WMTeemGlyphs::renderSlice( size_t sliceId )
     // Please look here  http://www.ci.uchicago.edu/~schultz/sphinx/home-glyph.htm
 
     debugLog() << "Rendering Slice " << sliceId;
-    boost::shared_ptr< WProgress > progress;
-    progress = boost::shared_ptr< WProgress >( new WProgress( "Glyph Generation", 2 ) );
+    std::shared_ptr< WProgress > progress;
+    progress = std::shared_ptr< WProgress >( new WProgress( "Glyph Generation", 2 ) );
     m_progress->addSubProgress( progress );
 
     size_t sliceType = m_sliceOrientationSelectionProp->get( true ).getItemIndexOfSelected( 0 );
@@ -328,7 +328,7 @@ void  WMTeemGlyphs::renderSlice( size_t sliceId )
         string_utils::fromString< float >( m_orders->getSelector( m_orderProp->get( true ).getItemIndexOfSelected( 0 ) ) .at( 0 )->getName() );
 
     {
-        boost::unique_lock< boost::mutex > lock( m_moduleNodeLock );
+        std::unique_lock< boost::mutex > lock( m_moduleNodeLock );
 
         if( m_moduleNode )
         {
@@ -340,10 +340,10 @@ void  WMTeemGlyphs::renderSlice( size_t sliceId )
 
     //-----------------------------------------------------------
     // run through the positions in the slice and draw the glyphs
-    boost::shared_ptr< GlyphGeneration > generator;
-    generator = boost::shared_ptr< GlyphGeneration >(
-                  new GlyphGeneration( boost::dynamic_pointer_cast< WDataSetSphericalHarmonics >( m_input->getData() ),
-                                       boost::dynamic_pointer_cast< WDataSetScalar >( m_inputGFA->getData() ),
+    std::shared_ptr< GlyphGeneration > generator;
+    generator = std::shared_ptr< GlyphGeneration >(
+                  new GlyphGeneration( std::dynamic_pointer_cast< WDataSetSphericalHarmonics >( m_input->getData() ),
+                                       std::dynamic_pointer_cast< WDataSetScalar >( m_inputGFA->getData() ),
                                        m_GFAThresholdProp->get( true ),
                                        sliceId,
                                        order,
@@ -362,7 +362,7 @@ void  WMTeemGlyphs::renderSlice( size_t sliceId )
     ++*progress;
 
     {
-        boost::unique_lock< boost::mutex > lock( m_moduleNodeLock );
+        std::unique_lock< boost::mutex > lock( m_moduleNodeLock );
 
         m_moduleNode = osg::ref_ptr< WGEGroupNode >( new WGEGroupNode() );
         osg::ref_ptr< osg::Geode > glyphsGeode = generator->getGraphics();
@@ -385,7 +385,7 @@ void  WMTeemGlyphs::renderSlice( size_t sliceId )
 
 void WMTeemGlyphs::activate()
 {
-    boost::unique_lock< boost::mutex > lock( m_moduleNodeLock );
+    std::unique_lock< boost::mutex > lock( m_moduleNodeLock );
 
     if( m_moduleNode )
     {
@@ -447,8 +447,8 @@ void WMTeemGlyphs::GlyphGeneration::minMaxNormalization( limnPolyData *glyph, co
     // else do nothing because all values are equal.
 }
 
-WMTeemGlyphs::GlyphGeneration::GlyphGeneration( boost::shared_ptr< WDataSetSphericalHarmonics > dataSet,
-                                                boost::shared_ptr< WDataSetScalar > dataGFA,
+WMTeemGlyphs::GlyphGeneration::GlyphGeneration( std::shared_ptr< WDataSetSphericalHarmonics > dataSet,
+                                                std::shared_ptr< WDataSetScalar > dataGFA,
                                                 double thresholdGFA,
                                                 const size_t& sliceId,
                                                 const size_t& order,
@@ -462,7 +462,7 @@ WMTeemGlyphs::GlyphGeneration::GlyphGeneration( boost::shared_ptr< WDataSetSpher
                                                 const bool& hideNegativeLobes ) :
     m_dataSet( dataSet ),
     m_dataGFA( dataGFA ),
-    m_grid( boost::dynamic_pointer_cast< WGridRegular3D >( dataSet->getGrid() ) ),
+    m_grid( std::dynamic_pointer_cast< WGridRegular3D >( dataSet->getGrid() ) ),
     m_thresholdGFA( thresholdGFA ),
     m_order( order ),
     m_sliceType( sliceType ),
@@ -607,7 +607,7 @@ void WMTeemGlyphs::GlyphGeneration::operator()( size_t id, size_t numThreads, WB
             }
 
             // do not compute positions of vertices if GFA below threshold
-            if(  m_dataGFA && boost::static_pointer_cast< WDataSetSingle >( m_dataGFA )->getValueAt( posId ) < m_thresholdGFA )
+            if(  m_dataGFA && std::static_pointer_cast< WDataSetSingle >( m_dataGFA )->getValueAt( posId ) < m_thresholdGFA )
             {
                 continue;
             }

@@ -68,7 +68,7 @@ public:
      *
      * \return the crosshair
      */
-    boost::shared_ptr< WCrosshair >getCrosshair();
+    std::shared_ptr< WCrosshair >getCrosshair();
 
     /**
      * function returns an index of the direction one is currently looking at the scene
@@ -97,13 +97,13 @@ public:
      * \param texture
      * \param grid
      */
-    void setTexture( osg::ref_ptr< osg::Texture3D > texture, boost::shared_ptr< WGridRegular3D >grid );
+    void setTexture( osg::ref_ptr< osg::Texture3D > texture, std::shared_ptr< WGridRegular3D >grid );
 
     /**
      * getter
      * \return grid
      */
-    boost::shared_ptr< WGridRegular3D >getGrid();
+    std::shared_ptr< WGridRegular3D >getGrid();
 
     /**
      * setter
@@ -191,7 +191,7 @@ private:
      */
     void updateCrosshairPosition();
 
-    boost::shared_ptr< WCrosshair >m_crosshair; //!< stores pointer to crosshair
+    std::shared_ptr< WCrosshair >m_crosshair; //!< stores pointer to crosshair
 
     /**
      * Contains the slice related properties
@@ -254,7 +254,7 @@ private:
     /**
      * stores a pointer to the grid to be used together with the texture
      */
-    boost::shared_ptr< WGridRegular3D >m_textureGrid;
+    std::shared_ptr< WGridRegular3D >m_textureGrid;
 
     /**
      * the texture opacity

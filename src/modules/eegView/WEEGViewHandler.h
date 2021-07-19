@@ -86,13 +86,13 @@ public:
                      WPropDouble ySpacing,
                      WPropDouble ySensitivity,
                      WPropDouble colorSensitivity,
-                     boost::shared_ptr< WFlag< boost::shared_ptr< WEEGEvent > > > event,
+                     std::shared_ptr< WFlag< std::shared_ptr< WEEGEvent > > > event,
                      osg::ref_ptr< WGEGroupNode > eventParentNode,
-                     boost::shared_ptr< WEEG2 > eeg,
+                     std::shared_ptr< WEEG2 > eeg,
                      std::size_t segmentID,
                      WPropBool snapToDipole,
                      WPropBool proofOfConcept,
-                     boost::shared_ptr< WDataSetDipoles > dipoles );
+                     std::shared_ptr< WDataSetDipoles > dipoles );
 
     /**
      * Handle events.
@@ -149,7 +149,7 @@ private:
     /**
      * event marking a special time position as WFlag
      */
-    boost::shared_ptr< WFlag< boost::shared_ptr< WEEGEvent > > > m_event;
+    std::shared_ptr< WFlag< std::shared_ptr< WEEGEvent > > > m_event;
 
     /**
      * parent node, where an marked event position is inserted and removed from
@@ -159,7 +159,7 @@ private:
     /**
      * pointer to the loaded EEG dataset
      */
-    boost::shared_ptr< WEEG2 > m_eeg;
+    std::shared_ptr< WEEG2 > m_eeg;
 
     /**
      * number of the segment
@@ -179,7 +179,7 @@ private:
     /**
      * Pointer to the loaded dipoles dataset
      */
-    boost::shared_ptr< WDataSetDipoles > m_dipoles;
+    std::shared_ptr< WDataSetDipoles > m_dipoles;
 
     float m_oldX; //!< previous mouse x position
     float m_oldY; //!< previous mouse y position

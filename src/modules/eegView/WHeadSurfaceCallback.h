@@ -57,7 +57,7 @@ public:
      */
     WHeadSurfaceCallback( const std::vector< std::size_t >& channelIDs,
                           WPropDouble colorSensitivity,
-                          boost::shared_ptr< WFlag< boost::shared_ptr< WEEGEvent > > > event );
+                          std::shared_ptr< WFlag< std::shared_ptr< WEEGEvent > > > event );
 
     /**
      * Callback method called by the NodeVisitor.
@@ -96,7 +96,7 @@ private:
     /**
      * event marking a special time position as WFlag
      */
-    boost::shared_ptr< WFlag< boost::shared_ptr< WEEGEvent > > > m_event;
+    std::shared_ptr< WFlag< std::shared_ptr< WEEGEvent > > > m_event;
 };
 
 #endif  // WHEADSURFACECALLBACK_H

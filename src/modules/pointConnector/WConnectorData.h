@@ -39,7 +39,7 @@ public:
     /**
      * A shared_ptr to this class.
      */
-    typedef boost::shared_ptr< WConnectorData > SPtr;
+    typedef std::shared_ptr< WConnectorData > SPtr;
 
     /**
      * Creates the internal vector arrays.

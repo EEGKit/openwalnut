@@ -58,9 +58,9 @@ WMDistanceMapIsosurface::~WMDistanceMapIsosurface()
 {
 }
 
-boost::shared_ptr< WModule > WMDistanceMapIsosurface::factory() const
+std::shared_ptr< WModule > WMDistanceMapIsosurface::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMDistanceMapIsosurface() );
+    return std::shared_ptr< WModule >( new WMDistanceMapIsosurface() );
 }
 
 const char** WMDistanceMapIsosurface::getXPMIcon() const
@@ -82,7 +82,7 @@ void WMDistanceMapIsosurface::moduleMain()
 
     // now wait for it to be ready
     m_isosurfaceModule->isReady().wait();
-    boost::shared_ptr< WProperties >  mcProps = m_isosurfaceModule->getProperties();
+    std::shared_ptr< WProperties >  mcProps = m_isosurfaceModule->getProperties();
     m_isoValueProp = mcProps->getProperty( "Iso value" )->toPropDouble();
     m_isoValueProp->set( 0.2 );
     m_isoValueProp->setMin( 0.0 );
@@ -153,7 +153,7 @@ void WMDistanceMapIsosurface::connectors()
     // initialize connectors
 
     // this is the scalar field input
-    m_input = boost::shared_ptr< WModuleInputForwardData< WDataSetScalar > >(
+    m_input = std::shared_ptr< WModuleInputForwardData< WDataSetScalar > >(
         new WModuleInputForwardData< WDataSetScalar >( shared_from_this(),
                                                                "in", "Dataset to compute distance map for." )
         );
@@ -162,7 +162,7 @@ void WMDistanceMapIsosurface::connectors()
     addConnector( m_input );
 
     // this output is used to provide the distance map to other modules.
-    m_output = boost::shared_ptr< WModuleOutputForwardData< WDataSetScalar > >(
+    m_output = std::shared_ptr< WModuleOutputForwardData< WDataSetScalar > >(
         new WModuleOutputForwardData< WDataSetScalar >( shared_from_this(),
                                                                "out", "Distance map for the input data set." )
         );

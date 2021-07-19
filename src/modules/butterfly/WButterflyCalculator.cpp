@@ -59,7 +59,7 @@ namespace butterfly
     {
         // TODO(schwarzkopf): Auto-generated destructor stub
     }
-    void WButterflyCalculator::assignInputMesh( boost::shared_ptr< WTriangleMesh > inputMesh,
+    void WButterflyCalculator::assignInputMesh( std::shared_ptr< WTriangleMesh > inputMesh,
             WVertexFactory* vertexProperties )
     {
         this->m_inputMesh = inputMesh;

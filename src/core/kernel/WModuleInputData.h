@@ -25,6 +25,7 @@
 #ifndef WMODULEINPUTDATA_H
 #define WMODULEINPUTDATA_H
 
+#include <shared_mutex>
 #include <string>
 
 #include <boost/shared_ptr.hpp>
@@ -51,17 +52,17 @@ public:
     /**
      * Pointer to this. For convenience.
      */
-    typedef boost::shared_ptr< WModuleInputData< T > > PtrType;
+    typedef std::shared_ptr< WModuleInputData< T > > PtrType;
 
     /**
      * Pointer to this. For convenience.
      */
-    typedef boost::shared_ptr< WModuleInputData< T > > SPtr;
+    typedef std::shared_ptr< WModuleInputData< T > > SPtr;
 
     /**
      * Pointer to this. For convenience.
      */
-    typedef boost::shared_ptr< const WModuleInputData< T > > ConstSPtr;
+    typedef std::shared_ptr< const WModuleInputData< T > > ConstSPtr;
 
     /**
      * Reference to this type.
@@ -87,7 +88,7 @@ public:
      *
      * \return the pointer to the created connector.
      */
-    static PtrType create( boost::shared_ptr< WModule > module, std::string name = "", std::string description = "" );
+    static PtrType create( std::shared_ptr< WModule > module, std::string name = "", std::string description = "" );
 
     /**
      * Convenience method to create a new instance of this in data connector with proper type and add it to the list of connectors of the
@@ -99,7 +100,7 @@ public:
      *
      * \return the pointer to the created connector.
      */
-    static PtrType createAndAdd( boost::shared_ptr< WModule > module, std::string name = "", std::string description = "" );
+    static PtrType createAndAdd( std::shared_ptr< WModule > module, std::string name = "", std::string description = "" );
 
     /**
      * Constructor.
@@ -108,7 +109,7 @@ public:
      * \param name The name of this connector.
      * \param description Short description of this connector.
      */
-    WModuleInputData( boost::shared_ptr< WModule > module, std::string name = "", std::string description = "" ):
+    WModuleInputData( std::shared_ptr< WModule > module, std::string name = "", std::string description = "" ):
         WModuleInputConnector( module, name, description ),
         m_disconnecting( false )
     {
@@ -127,7 +128,7 @@ public:
      * \param con the connector to disconnect.
      * \param removeFromOwnList if true the specified connection is also removed from the own connection list. If false it won't.
      */
-    virtual void disconnect( boost::shared_ptr<WModuleConnector> con, bool removeFromOwnList = true );
+    virtual void disconnect( std::shared_ptr<WModuleConnector> con, bool removeFromOwnList = true );
 
     /**
      * Gives the currently set data and resets the update flag.
@@ -136,10 +137,10 @@ public:
      *
      * \return the data currently set. NULL if no data has been sent yet or the connector is unconnected.
      */
-    const boost::shared_ptr< T > getData( bool reset = true )
+    const std::shared_ptr< T > getData( bool reset = true )
     {
         // get a lock
-        boost::shared_lock<boost::shared_mutex> lock = boost::shared_lock<boost::shared_mutex>( m_connectionListLock );
+        boost::shared_lock<std::shared_mutex> lock = boost::shared_lock<std::shared_mutex>( m_connectionListLock );
 
         // Only reset change flag of requested
         if( reset )
@@ -151,12 +152,12 @@ public:
         if( m_disconnecting || m_connected.empty() )
         {
             lock.unlock();
-            return boost::shared_ptr< T >();
+            return std::shared_ptr< T >();
         }
 
         // get data
-        boost::shared_ptr< T > dat = boost::dynamic_pointer_cast< T >(
-                boost::dynamic_pointer_cast< WModuleOutputConnector >( *m_connected.begin() )->getRawData()
+        std::shared_ptr< T > dat = std::dynamic_pointer_cast< T >(
+                std::dynamic_pointer_cast< WModuleOutputConnector >( *m_connected.begin() )->getRawData()
         );
 
         // unlock and return
@@ -172,7 +173,7 @@ public:
      *
      * \return true if compatible.
      */
-    virtual bool connectable( boost::shared_ptr<WModuleConnector> con )
+    virtual bool connectable( std::shared_ptr<WModuleConnector> con )
     {
         // NOTE: please consider the following: the input only accepts data which is of type T or higher. So only up casts from
         // con's type T2 to T are needed/allowed what ever
@@ -184,7 +185,7 @@ public:
 
         // this calls virtual function to achieve the prototype of the WTransferable created with the type specified in
         // WOutputData< XYZ >
-        boost::shared_ptr< WPrototyped > tProto =
+        std::shared_ptr< WPrototyped > tProto =
             dynamic_cast< WModuleOutputConnector* >( con.get() )->getTransferPrototype(); // NOLINT
 
         // NOTE: Check the type of the transfered object and whether the connector is an output
@@ -200,7 +201,7 @@ private:
 };
 
 template < typename T >
-void WModuleInputData< T >::disconnect( boost::shared_ptr<WModuleConnector> con, bool removeFromOwnList )
+void WModuleInputData< T >::disconnect( std::shared_ptr<WModuleConnector> con, bool removeFromOwnList )
 {
     m_disconnecting = true;
     WModuleInputConnector::disconnect( con, removeFromOwnList );
@@ -208,7 +209,7 @@ void WModuleInputData< T >::disconnect( boost::shared_ptr<WModuleConnector> con,
 }
 
 template < typename T >
-typename WModuleInputData< T >::PtrType WModuleInputData< T >::create( boost::shared_ptr< WModule > module, std::string name,
+typename WModuleInputData< T >::PtrType WModuleInputData< T >::create( std::shared_ptr< WModule > module, std::string name,
                                                                                                             std::string description )
 {
     typedef typename WModuleInputData< T >::PtrType PTR;
@@ -217,7 +218,7 @@ typename WModuleInputData< T >::PtrType WModuleInputData< T >::create( boost::sh
 }
 
 template < typename T >
-typename WModuleInputData< T >::PtrType WModuleInputData< T >::createAndAdd( boost::shared_ptr< WModule > module, std::string name,
+typename WModuleInputData< T >::PtrType WModuleInputData< T >::createAndAdd( std::shared_ptr< WModule > module, std::string name,
                                                                                                                   std::string description )
 {
     typename WModuleInputData< T >::PtrType c = create( module, name, description );

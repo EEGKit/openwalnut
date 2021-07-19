@@ -70,7 +70,7 @@ public:
      *
      * \return Reference to the dataset.
      */
-    virtual boost::shared_ptr< WDataSetHierarchicalClustering > read();
+    virtual std::shared_ptr< WDataSetHierarchicalClustering > read();
 
 protected:
     /**
@@ -91,7 +91,7 @@ protected:
     /**
      * The current hierarchy level the reader is reading
      */
-    boost::shared_ptr<size_t> m_level;
+    std::shared_ptr<size_t> m_level;
 };
 
 #endif  // WREADERCLUSTERING_H

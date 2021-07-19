@@ -55,9 +55,9 @@ WROIBox::WROIBox( WPosition minPos, WPosition maxPos ) :
     m_maxPos = m_propGrp->addProperty( "Max Position", "When a box is described by its diagonal, this is the upper, right, back corner of it.",
                                           maxPos, boost::bind( &WROIBox::boxPropertiesChanged, this, boost::placeholders::_1 ) );
 
-    boost::shared_ptr< WGraphicsEngine > ge = WGraphicsEngine::getGraphicsEngine();
+    std::shared_ptr< WGraphicsEngine > ge = WGraphicsEngine::getGraphicsEngine();
     assert( ge );
-    boost::shared_ptr< WGEViewer > viewer = ge->getViewerByName( "Main View" );
+    std::shared_ptr< WGEViewer > viewer = ge->getViewerByName( "Main View" );
     assert( viewer );
     m_viewer = viewer;
     m_pickHandler = m_viewer->getPickHandler();
@@ -122,23 +122,23 @@ WPropPosition WROIBox::getMaxPosProperty()
 
 void WROIBox::registerRedrawRequest( WPickInfo pickInfo )
 {
-    boost::unique_lock< boost::shared_mutex > lock;
-    lock = boost::unique_lock< boost::shared_mutex >( m_updateLock );
+    std::unique_lock< std::shared_mutex > lock;
+    lock = std::unique_lock< std::shared_mutex >( m_updateLock );
 
     m_pickInfo = pickInfo;
 
     lock.unlock();
 }
 
-void WROIBox::boxPropertiesChanged( boost::shared_ptr< WPropertyBase > /* property */ )
+void WROIBox::boxPropertiesChanged( std::shared_ptr< WPropertyBase > /* property */ )
 {
     m_needVertexUpdate = true;
 }
 
 void WROIBox::updateGFX()
 {
-    boost::unique_lock< boost::shared_mutex > lock;
-    lock = boost::unique_lock< boost::shared_mutex >( m_updateLock );
+    std::unique_lock< std::shared_mutex > lock;
+    lock = std::unique_lock< std::shared_mutex >( m_updateLock );
 
     std::stringstream ss;
     ss << "ROIBox" << boxId << "";

@@ -44,9 +44,9 @@ WMReadRawData::~WMReadRawData()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMReadRawData::factory() const
+std::shared_ptr< WModule > WMReadRawData::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMReadRawData() );
+    return std::shared_ptr< WModule >( new WMReadRawData() );
 }
 
 const char** WMReadRawData::getXPMIcon() const
@@ -66,7 +66,7 @@ const std::string WMReadRawData::getDescription() const
 
 void WMReadRawData::connectors()
 {
-    m_output = boost::shared_ptr< WModuleOutputData< WDataSetScalar > >(
+    m_output = std::shared_ptr< WModuleOutputData< WDataSetScalar > >(
             new WModuleOutputData< WDataSetScalar >( shared_from_this(), "Data", "The loaded data." ) );
 
     addConnector( m_output );
@@ -76,11 +76,11 @@ void WMReadRawData::connectors()
 
 void WMReadRawData::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
     m_dataFile = m_properties->addProperty( "File", "", WPathHelper::getAppPath(), m_propCondition );
     WPropertyHelper::PC_PATHEXISTS::addTo( m_dataFile );
 
-    m_dataTypeSelectionsList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_dataTypeSelectionsList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_dataTypeSelectionsList->addItem( "UINT8", "" );
     m_dataTypeSelectionsList->addItem( "UINT16", "" );
     m_dataTypeSelectionsList->addItem( "UINT32", "" );
@@ -135,7 +135,7 @@ void WMReadRawData::moduleMain()
         }
 
         debugLog() << "Loading " << m_dataFile->get().string() << ".";
-        boost::shared_ptr< WProgress > progress( new WProgress( "Read Raw Data", 2 ) );
+        std::shared_ptr< WProgress > progress( new WProgress( "Read Raw Data", 2 ) );
         ++*progress;
         m_dataSet = readData( m_dataFile->get().string() );
         ++*progress;
@@ -145,68 +145,68 @@ void WMReadRawData::moduleMain()
 }
 
 
-boost::shared_ptr< WDataSetScalar > WMReadRawData::readData( std::string fileName )
+std::shared_ptr< WDataSetScalar > WMReadRawData::readData( std::string fileName )
 {
     std::string dataTypeName = m_dataTypeSelection->get().at( 0 )->getName();
-    boost::shared_ptr< WValueSetBase > newValueSet;
+    std::shared_ptr< WValueSetBase > newValueSet;
     if( dataTypeName == "UINT8" )
     {
-        newValueSet =  boost::shared_ptr< WValueSetBase >( new WValueSet< uint8_t >( 0, 1, readDataTyped< uint8_t >( fileName ), W_DT_UINT8 ) );
+        newValueSet =  std::shared_ptr< WValueSetBase >( new WValueSet< uint8_t >( 0, 1, readDataTyped< uint8_t >( fileName ), W_DT_UINT8 ) );
     }
     else if( dataTypeName == "UINT16" )
     {
-        newValueSet =  boost::shared_ptr< WValueSetBase >( new WValueSet< uint16_t >( 0, 1, readDataTyped< uint16_t >( fileName ), W_DT_UINT16 ) );
+        newValueSet =  std::shared_ptr< WValueSetBase >( new WValueSet< uint16_t >( 0, 1, readDataTyped< uint16_t >( fileName ), W_DT_UINT16 ) );
     }
     else if( dataTypeName == "UINT32" )
     {
-        newValueSet =  boost::shared_ptr< WValueSetBase >( new WValueSet< uint32_t >( 0, 1, readDataTyped< uint32_t >( fileName ), W_DT_UINT32 ) );
+        newValueSet =  std::shared_ptr< WValueSetBase >( new WValueSet< uint32_t >( 0, 1, readDataTyped< uint32_t >( fileName ), W_DT_UINT32 ) );
     }
     else if( dataTypeName == "UINT64" )
     {
-        newValueSet =  boost::shared_ptr< WValueSetBase >( new WValueSet< uint64_t >( 0, 1, readDataTyped< uint64_t >( fileName ), W_DT_UINT64 ) );
+        newValueSet =  std::shared_ptr< WValueSetBase >( new WValueSet< uint64_t >( 0, 1, readDataTyped< uint64_t >( fileName ), W_DT_UINT64 ) );
     }
     else if( dataTypeName == "INT8" )
     {
-        newValueSet =  boost::shared_ptr< WValueSetBase >( new WValueSet< int8_t >( 0, 1, readDataTyped< int8_t >( fileName ), W_DT_INT8 ) );
+        newValueSet =  std::shared_ptr< WValueSetBase >( new WValueSet< int8_t >( 0, 1, readDataTyped< int8_t >( fileName ), W_DT_INT8 ) );
     }
     else if( dataTypeName == "INT16" )
     {
-        newValueSet =  boost::shared_ptr< WValueSetBase >( new WValueSet< int16_t >( 0, 1, readDataTyped< int16_t >( fileName ), W_DT_INT16 ) );
+        newValueSet =  std::shared_ptr< WValueSetBase >( new WValueSet< int16_t >( 0, 1, readDataTyped< int16_t >( fileName ), W_DT_INT16 ) );
     }
     else if( dataTypeName == "INT32" )
     {
-        newValueSet =  boost::shared_ptr< WValueSetBase >( new WValueSet< int32_t >( 0, 1, readDataTyped< int32_t >( fileName ), W_DT_SIGNED_INT ) );
+        newValueSet =  std::shared_ptr< WValueSetBase >( new WValueSet< int32_t >( 0, 1, readDataTyped< int32_t >( fileName ), W_DT_SIGNED_INT ) );
     }
     else if( dataTypeName == "INT64" )
     {
-        newValueSet =  boost::shared_ptr< WValueSetBase >( new WValueSet< int64_t >( 0, 1, readDataTyped< int64_t >( fileName ), W_DT_INT64 ) );
+        newValueSet =  std::shared_ptr< WValueSetBase >( new WValueSet< int64_t >( 0, 1, readDataTyped< int64_t >( fileName ), W_DT_INT64 ) );
     }
     else if( dataTypeName == "FLOAT" )
     {
-        newValueSet =  boost::shared_ptr< WValueSetBase >( new WValueSet< float >( 0, 1, readDataTyped< float >( fileName ), W_DT_FLOAT ) );
+        newValueSet =  std::shared_ptr< WValueSetBase >( new WValueSet< float >( 0, 1, readDataTyped< float >( fileName ), W_DT_FLOAT ) );
     }
     else if( dataTypeName == "DOUBLE" )
     {
-        newValueSet =  boost::shared_ptr< WValueSetBase >( new WValueSet< double >( 0, 1, readDataTyped< double >( fileName ), W_DT_DOUBLE ) );
+        newValueSet =  std::shared_ptr< WValueSetBase >( new WValueSet< double >( 0, 1, readDataTyped< double >( fileName ), W_DT_DOUBLE ) );
     }
     else if( dataTypeName == "FLOAT128" )
     {
         newValueSet =
-            boost::shared_ptr< WValueSetBase >( new WValueSet< long double >( 0, 1, readDataTyped< long double >( fileName ), W_DT_FLOAT128 ) );
+            std::shared_ptr< WValueSetBase >( new WValueSet< long double >( 0, 1, readDataTyped< long double >( fileName ), W_DT_FLOAT128 ) );
     }
     else
     {
         throw WException( "Not supported data type while reading raw data." );
     }
 
-    boost::shared_ptr< WGridRegular3D > newGrid;
+    std::shared_ptr< WGridRegular3D > newGrid;
     size_t numX = m_X->get();
     size_t numY = m_Y->get();
     size_t numZ = m_Z->get();
-    newGrid = boost::shared_ptr< WGridRegular3D >( new WGridRegular3D( numX, numY, numZ, m_xScale->get(), m_yScale->get(), m_zScale->get() ) );
+    newGrid = std::shared_ptr< WGridRegular3D >( new WGridRegular3D( numX, numY, numZ, m_xScale->get(), m_yScale->get(), m_zScale->get() ) );
 
-    boost::shared_ptr< WDataSetScalar > newDataSet;
-    newDataSet = boost::shared_ptr< WDataSetScalar >( new WDataSetScalar( newValueSet, newGrid ) );
+    std::shared_ptr< WDataSetScalar > newDataSet;
+    newDataSet = std::shared_ptr< WDataSetScalar >( new WDataSetScalar( newValueSet, newGrid ) );
 
     return newDataSet;
 }

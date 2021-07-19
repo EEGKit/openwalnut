@@ -127,7 +127,7 @@ void WGEViewerEffectImageOverlay::setReferenceViewer( WGEViewer::SPtr viewer )
     m_viewer = viewer;
 }
 
-const boost::shared_ptr< WGEViewer > WGEViewerEffectImageOverlay::getReferenceViewer() const
+const std::shared_ptr< WGEViewer > WGEViewerEffectImageOverlay::getReferenceViewer() const
 {
     return m_viewer;
 }

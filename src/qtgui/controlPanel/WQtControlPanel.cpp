@@ -325,7 +325,7 @@ bool WQtControlPanel::event( QEvent* event )
 
             // finally add the module
             // TODO(schurade): is this differentiation between data and "normal" modules really needed?
-            if( boost::dynamic_pointer_cast< WDataModule >( e1->getModule() ).get() )
+            if( std::dynamic_pointer_cast< WDataModule >( e1->getModule() ).get() )
             {
                 addDataset( e1->getModule(), 0 );
             }
@@ -375,8 +375,8 @@ bool WQtControlPanel::event( QEvent* event )
         }
 
         // get the module of the input involved in this connection
-        boost::shared_ptr< WModule > mIn = e->getInput()->getModule();
-        boost::shared_ptr< WModule > mOut = e->getOutput()->getModule();
+        std::shared_ptr< WModule > mIn = e->getInput()->getModule();
+        std::shared_ptr< WModule > mOut = e->getOutput()->getModule();
 
         // NOTE: the following is ugly. We definitely should rethink our GUI. We comment this out now, as the whole module tree is deprecated.
         /*
@@ -425,8 +425,8 @@ bool WQtControlPanel::event( QEvent* event )
         }
 
         // get the module of the input involved in this connection
-        boost::shared_ptr< WModule > mIn = e->getInput()->getModule();
-        boost::shared_ptr< WModule > mOut = e->getOutput()->getModule();
+        std::shared_ptr< WModule > mIn = e->getInput()->getModule();
+        std::shared_ptr< WModule > mOut = e->getOutput()->getModule();
 
         // NOTE: the following is ugly. We definitely should rethink our GUI
 
@@ -478,7 +478,7 @@ bool WQtControlPanel::event( QEvent* event )
         }
 
         // grab the module reference and print some info
-        boost::shared_ptr< WModule > module = e->getTreeItem()->getModule();
+        std::shared_ptr< WModule > module = e->getTreeItem()->getModule();
         WLogger::getLogger()->addLogMessage( "Deleting module \"" + module->getName() + "\" from Tree.",
                                              "ControlPanel", LL_DEBUG );
 
@@ -553,7 +553,7 @@ bool WQtControlPanel::event( QEvent* event )
     return WQtDockWidget::event( event );
 }
 
-std::list< WQtTreeItem* > WQtControlPanel::findItemsByModule( boost::shared_ptr< WModule > module, QTreeWidgetItem* where )
+std::list< WQtTreeItem* > WQtControlPanel::findItemsByModule( std::shared_ptr< WModule > module, QTreeWidgetItem* where )
 {
     std::list< WQtTreeItem* > l;
 
@@ -562,7 +562,7 @@ std::list< WQtTreeItem* > WQtControlPanel::findItemsByModule( boost::shared_ptr<
     while( *it )
     {
         WQtTreeItem* item = dynamic_cast< WQtTreeItem* >( *it );
-        boost::shared_ptr< WModule > itemModule = boost::shared_ptr< WModule >();
+        std::shared_ptr< WModule > itemModule = std::shared_ptr< WModule >();
         if( item )
         {
             itemModule = item->getModule();
@@ -586,7 +586,7 @@ std::list< WQtTreeItem* > WQtControlPanel::findItemsByModule( boost::shared_ptr<
     return l;
 }
 
-std::list< WQtTreeItem* > WQtControlPanel::findItemsByModule( boost::shared_ptr< WModule > module )
+std::list< WQtTreeItem* > WQtControlPanel::findItemsByModule( std::shared_ptr< WModule > module )
 {
     std::list< WQtTreeItem* > ret = findItemsByModule( module, m_moduleTreeWidget->invisibleRootItem() );
     std::list< WQtTreeItem* > ret2 = findItemsByModule( module, m_moduleTreeWidget->topLevelItem( 0 ) );
@@ -594,7 +594,7 @@ std::list< WQtTreeItem* > WQtControlPanel::findItemsByModule( boost::shared_ptr<
     return ret;
 }
 
-WQtDatasetTreeItem* WQtControlPanel::addDataset( boost::shared_ptr< WModule > module, int subjectId )
+WQtDatasetTreeItem* WQtControlPanel::addDataset( std::shared_ptr< WModule > module, int subjectId )
 {
     int c = getFirstSubject();
     WQtSubjectTreeItem* subject = static_cast< WQtSubjectTreeItem* >( m_moduleTreeWidget->topLevelItem( subjectId + c ) );
@@ -606,7 +606,7 @@ WQtDatasetTreeItem* WQtControlPanel::addDataset( boost::shared_ptr< WModule > mo
     return item;
 }
 
-WQtModuleTreeItem* WQtControlPanel::addModule( boost::shared_ptr< WModule > module )
+WQtModuleTreeItem* WQtControlPanel::addModule( std::shared_ptr< WModule > module )
 {
     m_tiModules->setExpanded( true );
     WQtModuleTreeItem* item;
@@ -701,7 +701,7 @@ void WQtControlPanel::removeRoi( osg::ref_ptr< WROI > roi )
     WKernel::getRunningKernel()->getRoiManager()->setSelectedRoi( getSelectedRoi() );
 }
 
-boost::shared_ptr< WModule > WQtControlPanel::getSelectedModule()
+std::shared_ptr< WModule > WQtControlPanel::getSelectedModule()
 {
     if( m_moduleTreeWidget->selectedItems().at( 0 )->type() == 1 )
     {
@@ -712,7 +712,7 @@ boost::shared_ptr< WModule > WQtControlPanel::getSelectedModule()
         return ( static_cast< WQtModuleTreeItem* >( m_moduleTreeWidget->selectedItems().at( 0 ) )->getModule() );
     }
 
-    return boost::shared_ptr< WModule >();
+    return std::shared_ptr< WModule >();
 }
 
 void WQtControlPanel::reselectTreeItem()
@@ -781,8 +781,8 @@ void WQtControlPanel::selectRoiTreeItem( QTreeWidgetItem* item )
         m_mainWindow->setCompatiblesToolbar( new WQtCombinerToolbar( m_mainWindow ) );
     }
 
-    boost::shared_ptr< WModule > module;
-    boost::shared_ptr< WProperties > props;
+    std::shared_ptr< WModule > module;
+    std::shared_ptr< WProperties > props;
 
     // activate the item
     m_roiTreeWidget->setCurrentItem( item );
@@ -813,7 +813,7 @@ void WQtControlPanel::selectRoiTreeItem( QTreeWidgetItem* item )
             break;
     }
 
-    buildPropTab( props, boost::shared_ptr< WProperties >(), "ROI" );
+    buildPropTab( props, std::shared_ptr< WProperties >(), "ROI" );
 }
 
 void WQtControlPanel::selectDataModule( osg::ref_ptr< WGETexture3D > texture )
@@ -831,7 +831,7 @@ QTreeWidgetItem* WQtControlPanel::findModuleItem( WModule::SPtr module ) const
         if( dynamic_cast< WQtModuleTreeItem* >( *it ) )
         {
             WModule::SPtr currentModule;
-            currentModule = boost::dynamic_pointer_cast< WModule >( ( dynamic_cast< WQtModuleTreeItem* >( *it ) )->getModule() );
+            currentModule = std::dynamic_pointer_cast< WModule >( ( dynamic_cast< WQtModuleTreeItem* >( *it ) )->getModule() );
             if( currentModule )
             {
                 if( currentModule == module )
@@ -843,8 +843,8 @@ QTreeWidgetItem* WQtControlPanel::findModuleItem( WModule::SPtr module ) const
         }
         else if( dynamic_cast< WQtDatasetTreeItem* >( *it ) )
         {
-            boost::shared_ptr< WDataModule > dataModule;
-            dataModule = boost::dynamic_pointer_cast< WDataModule >( ( dynamic_cast< WQtDatasetTreeItem* >( *it ) )->getModule() );
+            std::shared_ptr< WDataModule > dataModule;
+            dataModule = std::dynamic_pointer_cast< WDataModule >( ( dynamic_cast< WQtDatasetTreeItem* >( *it ) )->getModule() );
             if( dataModule )
             {
                 if( dataModule == module )
@@ -950,7 +950,7 @@ void WQtControlPanel::setActiveModule( WModule::SPtr module, bool forceUpdate )
             }
         }
 
-        WDataModule::SPtr dataModule = boost::dynamic_pointer_cast< WDataModule >( module );
+        WDataModule::SPtr dataModule = std::dynamic_pointer_cast< WDataModule >( module );
         if( dataModule )
         {
             buildPropTab( module->getProperties(), module->getInformationProperties(), name, new WQtDataModuleInput( dataModule, this ) );
@@ -1016,7 +1016,7 @@ void WQtControlPanel::setActiveModule( WModule::SPtr module, bool forceUpdate )
     m_ignoreSelectionChange = false;
 }
 
-void WQtControlPanel::buildPropTab( boost::shared_ptr< WProperties > props, boost::shared_ptr< WProperties > infoProps, const std::string& name,
+void WQtControlPanel::buildPropTab( std::shared_ptr< WProperties > props, std::shared_ptr< WProperties > infoProps, const std::string& name,
                                     QWidget* inject )
 {
     QWidget* tab = NULL;
@@ -1074,7 +1074,7 @@ void WQtControlPanel::buildPropTab( boost::shared_ptr< WProperties > props, boos
     }
 }
 
-void WQtControlPanel::createCompatibleButtons( boost::shared_ptr< WModule > module )
+void WQtControlPanel::createCompatibleButtons( std::shared_ptr< WModule > module )
 {
     // we need to clean up the action lists
     WQtCombinerActionList::deepDeleteActionList( m_addModuleActionList );

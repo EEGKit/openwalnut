@@ -45,7 +45,7 @@ WFiberAccumulator::~WFiberAccumulator()
 
 void WFiberAccumulator::add( std::vector< WVector3d > const& in )
 {
-    boost::unique_lock< boost::mutex > lock( m_fiberMutex );
+    std::unique_lock< boost::mutex > lock( m_fiberMutex );
 
     if( in.size() > 0 )
     {
@@ -63,16 +63,16 @@ void WFiberAccumulator::add( std::vector< WVector3d > const& in )
     }
 }
 
-boost::shared_ptr< WDataSetFibers > WFiberAccumulator::buildDataSet()
+std::shared_ptr< WDataSetFibers > WFiberAccumulator::buildDataSet()
 {
-    boost::unique_lock< boost::mutex > lock( m_fiberMutex );
+    std::unique_lock< boost::mutex > lock( m_fiberMutex );
 
-    boost::shared_ptr< WDataSetFibers > res( new WDataSetFibers( m_points, m_fiberIndices, m_fiberLengths, m_pointToFiber ) );
+    std::shared_ptr< WDataSetFibers > res( new WDataSetFibers( m_points, m_fiberIndices, m_fiberLengths, m_pointToFiber ) );
 
-    m_points = boost::shared_ptr< std::vector< float > >( new std::vector< float >() );
-    m_fiberIndices = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
-    m_fiberLengths = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
-    m_pointToFiber = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
+    m_points = std::shared_ptr< std::vector< float > >( new std::vector< float >() );
+    m_fiberIndices = std::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
+    m_fiberLengths = std::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
+    m_pointToFiber = std::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
 
     return res;
 }

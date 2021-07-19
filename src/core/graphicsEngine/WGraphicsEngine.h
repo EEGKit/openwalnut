@@ -26,6 +26,7 @@
 #define WGRAPHICSENGINE_H
 
 #include <map>
+#include <shared_mutex>
 #include <string>
 #include <vector>
 
@@ -84,7 +85,7 @@ public:
      * \exception WGEInitFailed thrown if initialization of graphics context or graphics window has failed.
      * \exception WNameNotUnique if the name if the viewer was not unique
      */
-    boost::shared_ptr< WGEViewer > createViewer( std::string name, osg::ref_ptr<osg::Referenced> wdata, int x, int y,
+    std::shared_ptr< WGEViewer > createViewer( std::string name, osg::ref_ptr<osg::Referenced> wdata, int x, int y,
                                                int width, int height, WGECamera::ProjectionMode projectionMode = WGECamera::ORTHOGRAPHIC,
                                                WColor bgColor = WColor( 1.0, 1.0, 1.0, 1.0 ) );
 
@@ -100,7 +101,7 @@ public:
      *
      * \param viewer the viewer
      */
-    void closeViewer( boost::shared_ptr< WGEViewer > viewer );
+    void closeViewer( std::shared_ptr< WGEViewer > viewer );
 
     /**
      * Searches for a viewer with a given name and returns it, if found.
@@ -108,21 +109,21 @@ public:
      * \param name the name of the viewer
      * \returns a shared pointer to the viewer or NULL if not found
      */
-    boost::shared_ptr< WGEViewer > getViewerByName( std::string name );
+    std::shared_ptr< WGEViewer > getViewerByName( std::string name );
 
     /**
      * Returns the unnamed view, which is the view for the default scene which can be acquired using getScene().
      *
      * \return the viewer for the default scene.
      */
-    boost::shared_ptr< WGEViewer > getViewer();
+    std::shared_ptr< WGEViewer > getViewer();
 
     /**
      * Returns instance of the graphics engine. If it does not exists, it will be created.
      *
      * \return the running graphics engine instance.
      */
-    static boost::shared_ptr< WGraphicsEngine > getGraphicsEngine();
+    static std::shared_ptr< WGraphicsEngine > getGraphicsEngine();
 
     /**
      * This requests all shaders to reload during the next update cycle.
@@ -204,7 +205,7 @@ protected:
     /**
      * Map between name of viewer and viewer
      */
-    typedef std::map< std::string, boost::shared_ptr< WGEViewer > > ViewerMap;
+    typedef std::map< std::string, std::shared_ptr< WGEViewer > > ViewerMap;
 
     /**
      * All registered viewers.
@@ -214,7 +215,7 @@ protected:
     /**
      * Mutex used to lock the map of viewers.
      */
-    boost::shared_mutex m_viewersLock;
+    std::shared_mutex m_viewersLock;
 
     /**
      * If true, the view thread checks for updates in the m_viewers list
@@ -251,7 +252,7 @@ private:
     /**
      * Singleton instance of WGraphicsEngine.
      */
-    static boost::shared_ptr< WGraphicsEngine > m_instance;
+    static std::shared_ptr< WGraphicsEngine > m_instance;
 
     /**
      * True if graphics engine is running.

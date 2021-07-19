@@ -68,7 +68,7 @@ namespace butterfly
          * \param inputMesh Triangle mesh that should be subdivided
          * \param vertexProperties The analyzed data of the input triangle mesh
          */
-        void assignInputMesh( boost::shared_ptr< WTriangleMesh > inputMesh,
+        void assignInputMesh( std::shared_ptr< WTriangleMesh > inputMesh,
                 WVertexFactory* vertexProperties );
 
         /**
@@ -146,7 +146,7 @@ namespace butterfly
         /**
          * Base triangle mesh used for calculations.
          */
-        boost::shared_ptr< WTriangleMesh > m_inputMesh;
+        std::shared_ptr< WTriangleMesh > m_inputMesh;
     };
 } /* namespace butterfly */
 #endif  // WBUTTERFLYCALCULATOR_H

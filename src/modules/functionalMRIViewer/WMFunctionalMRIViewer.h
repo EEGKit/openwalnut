@@ -70,7 +70,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -96,16 +96,16 @@ protected:
 
 private:
     //! The current input.
-    boost::shared_ptr< WDataSetTimeSeries > m_dataSet;
+    std::shared_ptr< WDataSetTimeSeries > m_dataSet;
 
     //! The dataset at the current time.
-    boost::shared_ptr< WDataSetScalar > m_dataSetAtTime;
+    std::shared_ptr< WDataSetScalar > m_dataSetAtTime;
 
     //! The input connector for the time series.
-    boost::shared_ptr< WModuleInputData< WDataSetTimeSeries > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSetTimeSeries > > m_input;
 
     //! The output connector for the currently selected time slice.
-    boost::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output;
+    std::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output;
 
     //! The current time.
     WPropDouble m_time;
@@ -114,7 +114,7 @@ private:
     WPropBool m_texScaleNormalized;
 
     //! A condition for property changes.
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 };
 
 #endif  // WMFUNCTIONALMRIVIEWER_H

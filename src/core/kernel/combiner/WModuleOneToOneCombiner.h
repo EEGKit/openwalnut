@@ -53,9 +53,9 @@ public:
      * \param targetModule      the module/prototype to use for connecting the module with
      * \param targetConnector   the input connector of the prototype to connect with srcConnector.
      */
-    WModuleOneToOneCombiner( boost::shared_ptr< WModuleContainer > target,
-                    boost::shared_ptr< WModule > srcModule, std::string srcConnector,
-                    boost::shared_ptr< WModule > targetModule, std::string targetConnector );
+    WModuleOneToOneCombiner( std::shared_ptr< WModuleContainer > target,
+                    std::shared_ptr< WModule > srcModule, std::string srcConnector,
+                    std::shared_ptr< WModule > targetModule, std::string targetConnector );
 
     /**
      * Creates a combiner which sets up the specified modules and prototype combination. This constructor automatically uses the kernel's root
@@ -68,8 +68,8 @@ public:
      * \param targetModule      the module/prototype to use for connecting the module with
      * \param targetConnector   the input connector of the prototype to connect with srcConnector.
      */
-    WModuleOneToOneCombiner( boost::shared_ptr< WModule > srcModule, std::string srcConnector,
-                    boost::shared_ptr< WModule > targetModule, std::string targetConnector );
+    WModuleOneToOneCombiner( std::shared_ptr< WModule > srcModule, std::string srcConnector,
+                    std::shared_ptr< WModule > targetModule, std::string targetConnector );
 
     /**
      * Destructor.
@@ -87,7 +87,7 @@ public:
      *
      * \return the source module.
      */
-    boost::shared_ptr< WModule > getSrcModule() const;
+    std::shared_ptr< WModule > getSrcModule() const;
 
     /**
      * The output connector of m_srcModule to connect with m_targetConnector.
@@ -101,7 +101,7 @@ public:
      *
      * \return the target module prototype.
      */
-    boost::shared_ptr< WModule > getTargetModule() const;
+    std::shared_ptr< WModule > getTargetModule() const;
 
     /**
      * The input connector the target module to connect with m_srcConnector.
@@ -114,7 +114,7 @@ protected:
     /**
      * The source module to connect with the target
      */
-    boost::shared_ptr< WModule > m_srcModule;
+    std::shared_ptr< WModule > m_srcModule;
 
     /**
      * The output connector of m_srcModule to connect with m_targetConnector.
@@ -124,7 +124,7 @@ protected:
     /**
      * The module/prototype to connect with m_srcMdodule.
      */
-    boost::shared_ptr< WModule > m_targetModule;
+    std::shared_ptr< WModule > m_targetModule;
 
     /**
      * The input connector the target module to connect with m_srcConnector.

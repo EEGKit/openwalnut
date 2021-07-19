@@ -27,7 +27,7 @@
 #include "WSinglePosition.h"
 
 // The prototype as singleton. Created during first getPrototype() call
-boost::shared_ptr< WPrototyped > WSinglePosition::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WSinglePosition::m_prototype = std::shared_ptr< WPrototyped >();
 
 WSinglePosition::WSinglePosition()
     : WTransferable(),
@@ -45,11 +45,11 @@ WSinglePosition::~WSinglePosition()
 {
 }
 
-boost::shared_ptr< WPrototyped > WSinglePosition::getPrototype()
+std::shared_ptr< WPrototyped > WSinglePosition::getPrototype()
 {
     if( !m_prototype )
     {
-        m_prototype = boost::shared_ptr< WPrototyped >( new WSinglePosition() );
+        m_prototype = std::shared_ptr< WPrototyped >( new WSinglePosition() );
     }
     return m_prototype;
 }

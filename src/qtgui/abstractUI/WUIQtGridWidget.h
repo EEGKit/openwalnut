@@ -44,14 +44,14 @@ class WUIQtGridWidget: public WUIGridWidget,
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WUIQtGridWidget >.
+     * Convenience typedef for a std::shared_ptr< WUIQtGridWidget >.
      */
-    typedef boost::shared_ptr< WUIQtGridWidget > SPtr;
+    typedef std::shared_ptr< WUIQtGridWidget > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WUIQtGridWidget >.
+     * Convenience typedef for a std::shared_ptr< const WUIQtGridWidget >.
      */
-    typedef boost::shared_ptr< const WUIQtGridWidget > ConstSPtr;
+    typedef std::shared_ptr< const WUIQtGridWidget > ConstSPtr;
 
     /**
      * Default constructor.

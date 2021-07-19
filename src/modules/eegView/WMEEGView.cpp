@@ -73,9 +73,9 @@ WMEEGView::~WMEEGView()
 {
 }
 
-boost::shared_ptr< WModule > WMEEGView::factory() const
+std::shared_ptr< WModule > WMEEGView::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMEEGView() );
+    return std::shared_ptr< WModule >( new WMEEGView() );
 }
 
 const std::string WMEEGView::getName() const
@@ -103,11 +103,11 @@ void WMEEGView::requirements()
 
 void WMEEGView::connectors()
 {
-    m_eeg_input = boost::shared_ptr< WModuleInputData< WEEG2 > >( new WModuleInputData< WEEG2 >(
+    m_eeg_input = std::shared_ptr< WModuleInputData< WEEG2 > >( new WModuleInputData< WEEG2 >(
         shared_from_this(), "EEG recording", "Loaded EEG-dataset." ) );
     addConnector( m_eeg_input );
 
-    m_dipoles_input = boost::shared_ptr< WModuleInputData< WDataSetDipoles > >( new WModuleInputData< WDataSetDipoles >(
+    m_dipoles_input = std::shared_ptr< WModuleInputData< WDataSetDipoles > >( new WModuleInputData< WDataSetDipoles >(
         shared_from_this(), "Dipoles", "The reconstructed dipoles for the EEG." ) );
     addConnector( m_dipoles_input );
 
@@ -117,7 +117,7 @@ void WMEEGView::connectors()
 
 void WMEEGView::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
     m_drawElectrodes   = m_properties->addProperty( "Draw electrodes",
                                                     "Draw the 3D positions of the electrodes.",
                                                     true,
@@ -207,13 +207,13 @@ void WMEEGView::properties()
 }
 
 void WMEEGView::notifyConnectionEstablished(
-    boost::shared_ptr< WModuleConnector > /*here*/, boost::shared_ptr< WModuleConnector > /*there*/ )
+    std::shared_ptr< WModuleConnector > /*here*/, std::shared_ptr< WModuleConnector > /*there*/ )
 {
     m_dataChanged.set( true );
 }
 
 void WMEEGView::notifyDataChange(
-    boost::shared_ptr< WModuleConnector > /*input*/, boost::shared_ptr< WModuleConnector > /*output*/ )
+    std::shared_ptr< WModuleConnector > /*input*/, std::shared_ptr< WModuleConnector > /*output*/ )
 {
     m_dataChanged.set( true );
 }
@@ -228,8 +228,8 @@ void WMEEGView::moduleMain()
     m_moduleState.add( m_propCondition );
 
     // create WFlag for the event
-    m_event = boost::shared_ptr< WFlag< boost::shared_ptr< WEEGEvent > > >( new WFlag< boost::shared_ptr< WEEGEvent > >(
-            m_propCondition, boost::shared_ptr< WEEGEvent >() ) );
+    m_event = std::shared_ptr< WFlag< std::shared_ptr< WEEGEvent > > >( new WFlag< std::shared_ptr< WEEGEvent > >(
+            m_propCondition, std::shared_ptr< WEEGEvent >() ) );
 
 
     createColorMap();
@@ -314,7 +314,7 @@ void WMEEGView::moduleMain()
         }
 
         // event position changed?
-        boost::shared_ptr< WEEGEvent > event = m_event->get();
+        std::shared_ptr< WEEGEvent > event = m_event->get();
         if( ( event && event->getTime() != m_currentEventTime )
             || m_ROIsize->changed() )
         {
@@ -497,7 +497,7 @@ void WMEEGView::redraw()
     // reset event position
     if( !m_butterfly->changed( true ) )
     {
-        m_event->set( boost::shared_ptr< WEEGEvent >( new WEEGEvent ) );
+        m_event->set( std::shared_ptr< WEEGEvent >( new WEEGEvent ) );
     }
 
     if( m_eeg.get() && m_eeg->getNumberOfSegments() > 0 )
@@ -520,7 +520,7 @@ void WMEEGView::redraw()
         double rate = m_eeg->getSamplingRate();
         debugLog() << "  Sampling Rate: " << rate;
         debugLog() << "  Segment " << 0;
-        boost::shared_ptr< WEEG2Segment > segment = m_eeg->getSegment( 0 );
+        std::shared_ptr< WEEG2Segment > segment = m_eeg->getSegment( 0 );
         size_t nbSamples = segment->getNumberOfSamples();
         debugLog() << "    Number of Samples: " << nbSamples;
 
@@ -551,7 +551,7 @@ void WMEEGView::redraw()
         for( size_t channelID = 0; channelID < nbChannels; ++channelID )
         {
             debugLog() << "    Channel " << channelID;
-            boost::shared_ptr< WEEGChannelInfo > channelInfo = m_eeg->getChannelInfo( channelID );
+            std::shared_ptr< WEEGChannelInfo > channelInfo = m_eeg->getChannelInfo( channelID );
             debugLog() << "      Channel unit: " << channelInfo->getUnit();
             debugLog() << "      Channel label: " << channelInfo->getLabel();
 
@@ -722,7 +722,7 @@ void WMEEGView::redraw()
         }
 
         // create new source calculator
-        m_sourceCalculator = boost::shared_ptr< WEEGSourceCalculator >( new WEEGSourceCalculator( m_eeg ) );
+        m_sourceCalculator = std::shared_ptr< WEEGSourceCalculator >( new WEEGSourceCalculator( m_eeg ) );
     }
     else
     {
@@ -747,7 +747,7 @@ osg::ref_ptr< osg::Node > WMEEGView::drawElectrodes()
 
     for( size_t channelID = 0; channelID < m_eeg->getNumberOfChannels(); ++channelID )
     {
-        boost::shared_ptr< WEEGChannelInfo > channelInfo = m_eeg->getChannelInfo( channelID );
+        std::shared_ptr< WEEGChannelInfo > channelInfo = m_eeg->getChannelInfo( channelID );
         try
         {
             osg::Vec3 pos = channelInfo->getPosition();
@@ -781,7 +781,7 @@ osg::ref_ptr< osg::Node > WMEEGView::drawHeadSurface()
     channelIDs.reserve( nbChannels );
     for( size_t channelID = 0; channelID < nbChannels; ++channelID )
     {
-        boost::shared_ptr< WEEGChannelInfo > channelInfo = m_eeg->getChannelInfo( channelID );
+        std::shared_ptr< WEEGChannelInfo > channelInfo = m_eeg->getChannelInfo( channelID );
         try
         {
             WPosition position = channelInfo->getPosition();
@@ -833,7 +833,7 @@ osg::ref_ptr< osg::Node > WMEEGView::drawLabels()
 
     for( size_t channelID = 0; channelID < m_eeg->getNumberOfChannels(); ++channelID )
     {
-        boost::shared_ptr< WEEGChannelInfo > channelInfo = m_eeg->getChannelInfo( channelID );
+        std::shared_ptr< WEEGChannelInfo > channelInfo = m_eeg->getChannelInfo( channelID );
         try
         {
             osg::Vec3 pos = channelInfo->getPosition();

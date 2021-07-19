@@ -52,7 +52,7 @@ public:
      * \param combiner the apply combiner which gets applied when triggered
      * \param advancedText if true a more complex text showing the used connectors is used instead of the plane target-module name
      */
-    WQtModuleOneToOneCombinerAction( QWidget* parent, WIconManager* iconManager, boost::shared_ptr< WModuleOneToOneCombiner > combiner,
+    WQtModuleOneToOneCombinerAction( QWidget* parent, WIconManager* iconManager, std::shared_ptr< WModuleOneToOneCombiner > combiner,
                           bool advancedText = false );
 
     /**
@@ -64,7 +64,7 @@ protected:
     /**
      * The combiner of this action
      */
-    boost::shared_ptr< WModuleOneToOneCombiner > m_combiner;
+    std::shared_ptr< WModuleOneToOneCombiner > m_combiner;
 
 private:
 public slots:

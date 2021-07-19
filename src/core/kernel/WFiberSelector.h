@@ -45,18 +45,18 @@ public:
     /**
      * Fiber selector pointer
      */
-    typedef boost::shared_ptr< WFiberSelector > SPtr;
+    typedef std::shared_ptr< WFiberSelector > SPtr;
 
     /**
      * Const fiber selector pointer.
      */
-    typedef boost::shared_ptr< const WFiberSelector > ConstSPtr;
+    typedef std::shared_ptr< const WFiberSelector > ConstSPtr;
 
     /**
      * constructor
      * \param fibers pointer to the datset this selector works on
      */
-    explicit WFiberSelector( boost::shared_ptr< const WDataSetFibers > fibers );
+    explicit WFiberSelector( std::shared_ptr< const WDataSetFibers > fibers );
 
     /**
      * destructor
@@ -74,7 +74,7 @@ public:
      * getter
      * \return the bitfield calculated from all active rois
      */
-    boost::shared_ptr< std::vector< bool > > getBitfield();
+    std::shared_ptr< std::vector< bool > > getBitfield();
 
     /**
      * Get color for fiber with given index.
@@ -89,13 +89,13 @@ public:
      * getter for the line start index array
      * \return line starts
      */
-    boost::shared_ptr< std::vector< size_t > > getStarts();
+    std::shared_ptr< std::vector< size_t > > getStarts();
 
     /**
      * getter for the line length array
      * \return line lengths
      */
-    boost::shared_ptr< std::vector< size_t > > getLengths();
+    std::shared_ptr< std::vector< size_t > > getLengths();
 
     /**
      * setter
@@ -141,7 +141,7 @@ protected:
      * listener function for removing rois
      * \param branch branch that is being removed
      */
-    void slotRemoveBranch( boost::shared_ptr< WRMBranch > branch );
+    void slotRemoveBranch( std::shared_ptr< WRMBranch > branch );
 
 private:
     /**
@@ -152,7 +152,7 @@ private:
     /**
      * Pointer to the fiber data set
      */
-    boost::shared_ptr< const WDataSetFibers > m_fibers;
+    std::shared_ptr< const WDataSetFibers > m_fibers;
 
     size_t m_size; //!< number of fibers in the dataset
 
@@ -161,18 +161,18 @@ private:
     /**
      * Stores a pointer to the kdTree used for fiber selection
      */
-    boost::shared_ptr< WKdTree > m_kdTree;
+    std::shared_ptr< WKdTree > m_kdTree;
 
-    boost::shared_ptr< std::vector< bool > >m_outputBitfield; //!< bit field of activated fibers
+    std::shared_ptr< std::vector< bool > >m_outputBitfield; //!< bit field of activated fibers
 
-    boost::shared_ptr< std::vector< float > >m_outputColorMap; //!< Map each fiber to a color
+    std::shared_ptr< std::vector< float > >m_outputColorMap; //!< Map each fiber to a color
 
-    std::list< boost::shared_ptr<WSelectorBranch> >m_branches; //!< list of branches int he roi structure
+    std::list< std::shared_ptr<WSelectorBranch> >m_branches; //!< list of branches int he roi structure
 
-    boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > m_assocRoiSignal; //!< Signal that can be used to update the selector
-    boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > m_removeRoiSignal; //!< Signal that can be used to update the selector
-    boost::shared_ptr< boost::function< void( boost::shared_ptr< WRMBranch > ) > > m_removeBranchSignal; //!< Signal for updating the selector
-    boost::shared_ptr< boost::function< void() > > m_changeRoiSignal; //!< Signal that can be used to update the selector
+    std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > m_assocRoiSignal; //!< Signal that can be used to update the selector
+    std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > m_removeRoiSignal; //!< Signal that can be used to update the selector
+    std::shared_ptr< boost::function< void( std::shared_ptr< WRMBranch > ) > > m_removeBranchSignal; //!< Signal for updating the selector
+    std::shared_ptr< boost::function< void() > > m_changeRoiSignal; //!< Signal that can be used to update the selector
 
     /**
      * Condition that fires on setDirty.
@@ -185,12 +185,12 @@ inline size_t WFiberSelector::size()
     return m_size;
 }
 
-inline boost::shared_ptr< std::vector< size_t > > WFiberSelector::getStarts()
+inline std::shared_ptr< std::vector< size_t > > WFiberSelector::getStarts()
 {
     return m_fibers->getLineStartIndexes();
 }
 
-inline boost::shared_ptr< std::vector< size_t > > WFiberSelector::getLengths()
+inline std::shared_ptr< std::vector< size_t > > WFiberSelector::getLengths()
 {
     return m_fibers->getLineLengths();
 }

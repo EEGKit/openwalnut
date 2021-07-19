@@ -125,7 +125,7 @@ void WQtNetworkEditor::selectByModule( WModule::SPtr module )
 
 void WQtNetworkEditor::selectItem()
 {
-    boost::shared_ptr< WModule > module;
+    std::shared_ptr< WModule > module;
     if( m_scene->selectedItems().size() != 0 &&
          m_scene->selectedItems().at( 0 )->type() == WQtNetworkItem::Type )
     {
@@ -233,8 +233,8 @@ bool WQtNetworkEditor::event( QEvent* event )
         WLogger::getLogger()->addLogMessage( "Connecting \"" + e->getInput()->getModule()->getName() +
                 "\" and \"" + e->getOutput()->getModule()->getName() + "\".", "NetworkEditor", LL_DEBUG );
 
-        boost::shared_ptr< WModule > mIn;
-        boost::shared_ptr< WModule > mOut;
+        std::shared_ptr< WModule > mIn;
+        std::shared_ptr< WModule > mOut;
 
         if( e->getInput()->isInputConnector() == true &&
             e->getOutput()->isOutputConnector() == true )
@@ -316,8 +316,8 @@ bool WQtNetworkEditor::event( QEvent* event )
                                              "\" and \"" + e->getOutput()->getCanonicalName() +
                                              "\"." , "NetworkEditor", LL_DEBUG );
 
-        boost::shared_ptr< WModule > mIn;
-        boost::shared_ptr< WModule > mOut;
+        std::shared_ptr< WModule > mIn;
+        std::shared_ptr< WModule > mOut;
 
         if( e->getInput()->isInputConnector() == true &&
             e->getOutput()->isOutputConnector() == true )
@@ -481,7 +481,7 @@ bool WQtNetworkEditor::event( QEvent* event )
     return WQtDockWidget::event( event );
 }
 
-WQtNetworkItem* WQtNetworkEditor::findItemByModule( boost::shared_ptr< WModule > module )
+WQtNetworkItem* WQtNetworkEditor::findItemByModule( std::shared_ptr< WModule > module )
 {
     for( QList< WQtNetworkItem* >::const_iterator iter = m_items.begin(); iter != m_items.end(); ++iter )
     {

@@ -67,9 +67,9 @@ WMIsosurfaceRaytracer::~WMIsosurfaceRaytracer()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMIsosurfaceRaytracer::factory() const
+std::shared_ptr< WModule > WMIsosurfaceRaytracer::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMIsosurfaceRaytracer() );
+    return std::shared_ptr< WModule >( new WMIsosurfaceRaytracer() );
 }
 
 const char** WMIsosurfaceRaytracer::getXPMIcon() const
@@ -92,7 +92,7 @@ const std::string WMIsosurfaceRaytracer::getDescription() const
 void WMIsosurfaceRaytracer::connectors()
 {
     // DVR needs one input: the scalar dataset
-    m_input = boost::shared_ptr< WModuleInputData < WDataSetScalar  > >(
+    m_input = std::shared_ptr< WModuleInputData < WDataSetScalar  > >(
         new WModuleInputData< WDataSetScalar >( shared_from_this(), "in", "The scalar dataset shown using isosurface." )
     );
 
@@ -109,7 +109,7 @@ void WMIsosurfaceRaytracer::connectors()
 void WMIsosurfaceRaytracer::properties()
 {
     // Initialize the properties
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_isoValue      = m_properties->addProperty( "Isovalue",         "The isovalue used whenever the isosurface Mode is turned on.",
                                                                       128.0 );
@@ -222,7 +222,7 @@ void WMIsosurfaceRaytracer::moduleMain()
 
         // was there an update?
         bool dataUpdated = m_input->updated() || m_gradients->updated();
-        boost::shared_ptr< WDataSetScalar > dataSet = m_input->getData();
+        std::shared_ptr< WDataSetScalar > dataSet = m_input->getData();
         bool dataValid   = ( dataSet != NULL );
 
         // valid data available?
@@ -249,7 +249,7 @@ void WMIsosurfaceRaytracer::moduleMain()
             m_isoValue->setRecommendedValue( dataSet->getTexture()->minimum()->get() + ( 0.5 * dataSet->getTexture()->scale()->get() ) );
 
             // First, grab the grid
-            boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( dataSet->getGrid() );
+            std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( dataSet->getGrid() );
             if( !grid )
             {
                 errorLog() << "The dataset does not provide a regular grid. Ignoring dataset.";
@@ -290,7 +290,7 @@ void WMIsosurfaceRaytracer::moduleMain()
             wge::bindTexture( cube, randTex, 1 );
 
             // if there is a gradient field available -> apply as texture too
-            boost::shared_ptr< WDataSetVector > gradients = m_gradients->getData();
+            std::shared_ptr< WDataSetVector > gradients = m_gradients->getData();
             if( gradients )
             {
                 debugLog() << "Uploading specified gradient field.";

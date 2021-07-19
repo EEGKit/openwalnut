@@ -38,14 +38,14 @@ class WDataModuleInputFilterFile: public WDataModuleInputFilter
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WDataModuleInputFilterFile >.
+     * Convenience typedef for a std::shared_ptr< WDataModuleInputFilterFile >.
      */
-    typedef boost::shared_ptr< WDataModuleInputFilterFile > SPtr;
+    typedef std::shared_ptr< WDataModuleInputFilterFile > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WDataModuleInputFilterFile >.
+     * Convenience typedef for a std::shared_ptr< const WDataModuleInputFilterFile >.
      */
-    typedef boost::shared_ptr< const WDataModuleInputFilterFile > ConstSPtr;
+    typedef std::shared_ptr< const WDataModuleInputFilterFile > ConstSPtr;
 
     /**
      * Default constructor. Provide an extension and description for it.

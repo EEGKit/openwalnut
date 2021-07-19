@@ -59,9 +59,9 @@ WMDeterministicFTMori::~WMDeterministicFTMori()
 {
 }
 
-boost::shared_ptr< WModule > WMDeterministicFTMori::factory() const
+std::shared_ptr< WModule > WMDeterministicFTMori::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMDeterministicFTMori() );
+    return std::shared_ptr< WModule >( new WMDeterministicFTMori() );
 }
 
 const char** WMDeterministicFTMori::getXPMIcon() const
@@ -104,10 +104,10 @@ void WMDeterministicFTMori::moduleMain()
             debugLog() << "Tracking done.";
             // forward result
             m_output->updateData( m_fiberSet );
-            m_trackingPool = boost::shared_ptr< TrackingFuncType >();
+            m_trackingPool = std::shared_ptr< TrackingFuncType >();
         }
 
-        boost::shared_ptr< WDataSetSingle > inData = m_input->getData();
+        std::shared_ptr< WDataSetSingle > inData = m_input->getData();
         bool dataChanged = ( m_dataSet != inData );
         if( dataChanged || !m_dataSet )
         {
@@ -144,7 +144,7 @@ void WMDeterministicFTMori::moduleMain()
                 m_eigenField = m_eigenOperationFloat->getResult();
             }
 
-            m_eigenPool = boost::shared_ptr< WThreadedFunctionBase >();
+            m_eigenPool = std::shared_ptr< WThreadedFunctionBase >();
             debugLog() << "Eigenvectors computed.";
 
             m_currentMinFA = m_minFA->get( true );
@@ -166,7 +166,7 @@ void WMDeterministicFTMori::moduleMain()
             // if there are no new eigenvectors or datasets,
             // restart the tracking, as there are changes to the parameters
             resetTracking();
-            boost::shared_ptr< WGridRegular3D > g( boost::dynamic_pointer_cast< WGridRegular3D >( m_eigenField->getGrid() ) );
+            std::shared_ptr< WGridRegular3D > g( std::dynamic_pointer_cast< WGridRegular3D >( m_eigenField->getGrid() ) );
             std::size_t todo = ( g->getNbCoordsX() - 2 ) * ( g->getNbCoordsY() - 2 ) * ( g->getNbCoordsZ() - 2 );
             resetProgress( todo );
             m_trackingPool->run();
@@ -198,11 +198,11 @@ void WMDeterministicFTMori::moduleMain()
 
 void WMDeterministicFTMori::connectors()
 {
-    m_output = boost::shared_ptr< WModuleOutputData< WDataSetFibers > >( new WModuleOutputData< WDataSetFibers >( shared_from_this(),
+    m_output = std::shared_ptr< WModuleOutputData< WDataSetFibers > >( new WModuleOutputData< WDataSetFibers >( shared_from_this(),
                 "det FT Mori output fibers", "A set of fibers extracted from the input set." )
             );
 
-    m_input = boost::shared_ptr< WModuleInputData< WDataSetSingle > >( new WModuleInputData< WDataSetSingle >( shared_from_this(),
+    m_input = std::shared_ptr< WModuleInputData< WDataSetSingle > >( new WModuleInputData< WDataSetSingle >( shared_from_this(),
                 "det FT Mori input tensor field", "An input set of 2nd-order tensors on a regular 3d-grid." )
             );
 
@@ -214,7 +214,7 @@ void WMDeterministicFTMori::connectors()
 
 void WMDeterministicFTMori::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_minFA = m_properties->addProperty( "Min. FA", "The fractional anisotropy threshold value needed by "
                                                     "Mori's fiber tracking algorithm.", 0.2, m_propCondition );
@@ -256,28 +256,28 @@ void WMDeterministicFTMori::resetEigenFunction()
     }
     // the threadpool should have finished computing by now
 
-    m_eigenOperationFloat = boost::shared_ptr< TPVOFloat >();
-    m_eigenOperationDouble = boost::shared_ptr< TPVODouble >();
+    m_eigenOperationFloat = std::shared_ptr< TPVOFloat >();
+    m_eigenOperationDouble = std::shared_ptr< TPVODouble >();
 
     // create a new one
     if( m_dataSet->getValueSet()->getDataType() == W_DT_DOUBLE )
     {
-        m_eigenOperationDouble = boost::shared_ptr< TPVODouble >( new TPVODouble( m_dataSet,
+        m_eigenOperationDouble = std::shared_ptr< TPVODouble >( new TPVODouble( m_dataSet,
                                                 boost::bind( &WMDeterministicFTMori::eigenFuncDouble, this, boost::placeholders::_1 ) ) );
-        m_eigenPool = boost::shared_ptr< WThreadedFunctionBase >( new EigenFunctionTypeDouble( WM_MORI_NUM_CORES, m_eigenOperationDouble ) );
+        m_eigenPool = std::shared_ptr< WThreadedFunctionBase >( new EigenFunctionTypeDouble( WM_MORI_NUM_CORES, m_eigenOperationDouble ) );
         m_moduleState.add( m_eigenPool->getThreadsDoneCondition() );
     }
     else if( m_dataSet->getValueSet()->getDataType() == W_DT_FLOAT )
     {
-        m_eigenOperationFloat = boost::shared_ptr< TPVOFloat >( new TPVOFloat( m_dataSet,
+        m_eigenOperationFloat = std::shared_ptr< TPVOFloat >( new TPVOFloat( m_dataSet,
                                                 boost::bind( &WMDeterministicFTMori::eigenFuncFloat, this, boost::placeholders::_1 ) ) );
-        m_eigenPool = boost::shared_ptr< WThreadedFunctionBase >( new EigenFunctionTypeFloat( WM_MORI_NUM_CORES, m_eigenOperationFloat ) );
+        m_eigenPool = std::shared_ptr< WThreadedFunctionBase >( new EigenFunctionTypeFloat( WM_MORI_NUM_CORES, m_eigenOperationFloat ) );
         m_moduleState.add( m_eigenPool->getThreadsDoneCondition() );
     }
     else
     {
         errorLog() << "Input data does not contain floating point values, skipping.";
-        m_eigenPool = boost::shared_ptr< WThreadedFunctionBase >();
+        m_eigenPool = std::shared_ptr< WThreadedFunctionBase >();
     }
 }
 
@@ -302,7 +302,7 @@ void WMDeterministicFTMori::resetTracking()
     m_fiberAccu.clear();
 
     // create a new one
-    boost::shared_ptr< Tracking > t( new Tracking( m_eigenField,
+    std::shared_ptr< Tracking > t( new Tracking( m_eigenField,
                                                    boost::bind( &This::getEigenDirection, this, boost::placeholders::_1, boost::placeholders::_2 ),
                                                    boost::bind( &wtracking::WTrackingUtility::followToNextVoxel,
                                                                 boost::placeholders::_1,
@@ -310,20 +310,20 @@ void WMDeterministicFTMori::resetTracking()
                                                                 boost::placeholders::_3 ),
                                                    boost::bind( &This::fiberVis, this, boost::placeholders::_1 ),
                                                    boost::bind( &This::pointVis, this, boost::placeholders::_1 ) ) );
-    m_trackingPool = boost::shared_ptr< TrackingFuncType >( new TrackingFuncType( WM_MORI_NUM_CORES, t ) );
+    m_trackingPool = std::shared_ptr< TrackingFuncType >( new TrackingFuncType( WM_MORI_NUM_CORES, t ) );
     m_moduleState.add( m_trackingPool->getThreadsDoneCondition() );
 }
 
-WVector3d WMDeterministicFTMori::getEigenDirection( boost::shared_ptr< WDataSetSingle const > ds,
+WVector3d WMDeterministicFTMori::getEigenDirection( std::shared_ptr< WDataSetSingle const > ds,
                                                            wtracking::WTrackingUtility::JobType const& j )
 {
     WAssert( ds, "" );
     WAssert( ds->getGrid(), "" );
     WAssert( ds->getValueSet(), "" );
-    boost::shared_ptr< WGridRegular3D > g = boost::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
+    std::shared_ptr< WGridRegular3D > g = std::dynamic_pointer_cast< WGridRegular3D >( ds->getGrid() );
     int i = g->getVoxelNum( j.first );
     WAssert( i != -1, "" );
-    boost::shared_ptr< WValueSet< double > > vs = boost::dynamic_pointer_cast< WValueSet< double > >( ds->getValueSet() );
+    std::shared_ptr< WValueSet< double > > vs = std::dynamic_pointer_cast< WValueSet< double > >( ds->getValueSet() );
     WAssert( vs, "" );
     if( vs->rawData()[ 4 * i + 3 ] < m_currentMinFA )
     {
@@ -449,6 +449,6 @@ void WMDeterministicFTMori::resetProgress( std::size_t todo )
     {
         m_currentProgress->finish();
     }
-    m_currentProgress = boost::shared_ptr< WProgress >( new WProgress( "det Mori FT", todo ) );
+    m_currentProgress = std::shared_ptr< WProgress >( new WProgress( "det Mori FT", todo ) );
     m_progress->addSubProgress( m_currentProgress );
 }

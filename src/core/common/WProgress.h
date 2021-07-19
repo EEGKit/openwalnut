@@ -45,12 +45,12 @@ public:
     /**
      * Shared pointer on a WProgress
      */
-    typedef boost::shared_ptr< WProgress > SPtr;
+    typedef std::shared_ptr< WProgress > SPtr;
 
     /**
      * Const Shared pointer on a WProgress
      */
-    typedef boost::shared_ptr< const WProgress > ConstSPtr;
+    typedef std::shared_ptr< const WProgress > ConstSPtr;
 
     /**
      * Creates a new progress instance as child of the specified progress. The instance is instantly marked "running".

@@ -46,14 +46,14 @@ class WUIWidgetBase
     friend class WUIWidgetFactory; //!< The factory needs to be able to call the constructor
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WUIWidgetBase >.
+     * Convenience typedef for a std::shared_ptr< WUIWidgetBase >.
      */
-    typedef boost::shared_ptr< WUIWidgetBase > SPtr;
+    typedef std::shared_ptr< WUIWidgetBase > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WUIWidgetBase >.
+     * Convenience typedef for a std::shared_ptr< const WUIWidgetBase >.
      */
-    typedef boost::shared_ptr< const WUIWidgetBase > ConstSPtr;
+    typedef std::shared_ptr< const WUIWidgetBase > ConstSPtr;
 
     /**
      * Destructor.

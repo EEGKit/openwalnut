@@ -50,12 +50,12 @@
 
 WEEGEvent::WEEGEvent( double time,
                       double yPos,
-                      boost::shared_ptr< WEEG2 > eeg,
+                      std::shared_ptr< WEEG2 > eeg,
                       std::size_t segmentID,
                       osg::ref_ptr< WGEGroupNode > parentNode,
                       bool snapToDipole,
                       bool proofOfConcept,
-                      boost::shared_ptr< WDataSetDipoles > dipoles )
+                      std::shared_ptr< WDataSetDipoles > dipoles )
     : m_time( time ),
       m_parentNode( parentNode )
 {
@@ -95,14 +95,14 @@ WEEGEvent::WEEGEvent( double time,
 
         const double sampleIDAsDouble = m_time * eeg->getSamplingRate();
 
-        boost::shared_ptr< WEEG2Segment > segment = eeg->getSegment( segmentID );
+        std::shared_ptr< WEEG2Segment > segment = eeg->getSegment( segmentID );
         if( 0.0 <= sampleIDAsDouble && sampleIDAsDouble < segment->getNumberOfSamples() - 1 )
         {
             // calculate value of each channel at the given time position using
             // linear interpolation
             const std::size_t sampleID = sampleIDAsDouble;
             const double fpart = sampleIDAsDouble - sampleID;
-            boost::shared_ptr< WEEGValueMatrix > rawValues = segment->getValues( sampleID, 2 );
+            std::shared_ptr< WEEGValueMatrix > rawValues = segment->getValues( sampleID, 2 );
             m_values.reserve( eeg->getNumberOfChannels() );
             for( std::size_t channelID = 0; channelID < eeg->getNumberOfChannels(); ++channelID )
             {

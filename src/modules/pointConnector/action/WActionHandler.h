@@ -39,7 +39,7 @@ public:
     /**
      * A shared_ptr to this class.
      */
-    typedef boost::shared_ptr< WActionHandler > SPtr;
+    typedef std::shared_ptr< WActionHandler > SPtr;
 
     /**
      * Creates the undo and redo vectors.
@@ -71,7 +71,7 @@ private:
     /**
      * A shared_ptr to a vector of an action.
      */
-    typedef boost::shared_ptr< std::vector< WFiberAction::SPtr > > ActionStack;
+    typedef std::shared_ptr< std::vector< WFiberAction::SPtr > > ActionStack;
 
     /**
      * The undo vector.

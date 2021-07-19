@@ -48,9 +48,9 @@ WMFiberParameterColoring::~WMFiberParameterColoring()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMFiberParameterColoring::factory() const
+std::shared_ptr< WModule > WMFiberParameterColoring::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMFiberParameterColoring() );
+    return std::shared_ptr< WModule >( new WMFiberParameterColoring() );
 }
 
 const char** WMFiberParameterColoring::getXPMIcon() const
@@ -71,7 +71,7 @@ const std::string WMFiberParameterColoring::getDescription() const
 void WMFiberParameterColoring::connectors()
 {
     // The input fiber dataset
-    m_fiberInput = boost::shared_ptr< WModuleInputData < WDataSetFibers > >(
+    m_fiberInput = std::shared_ptr< WModuleInputData < WDataSetFibers > >(
         new WModuleInputData< WDataSetFibers >( shared_from_this(), "fibers", "The fiber dataset to color" )
     );
 
@@ -79,7 +79,7 @@ void WMFiberParameterColoring::connectors()
     addConnector( m_fiberInput );
 
     // the selected fibers go to this output
-    m_fiberOutput = boost::shared_ptr< WModuleOutputData < WDataSetFibers > >(
+    m_fiberOutput = std::shared_ptr< WModuleOutputData < WDataSetFibers > >(
         new WModuleOutputData< WDataSetFibers >( shared_from_this(),
                                         "out", "The fiber dataset colored by this module." )
     );
@@ -93,7 +93,7 @@ void WMFiberParameterColoring::connectors()
 
 void WMFiberParameterColoring::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_baseColor  = m_properties->addProperty( "Base Color", "The base color. Some kind of color offset.", WColor( 1.0, 1.0, 1.0, 0.0 ),
                                               m_propCondition );
@@ -104,7 +104,7 @@ void WMFiberParameterColoring::properties()
     WModule::properties();
 }
 
-inline double getSegmentVector( size_t segment, size_t offset, boost::shared_ptr< std::vector< float > > verts, double* vec )
+inline double getSegmentVector( size_t segment, size_t offset, std::shared_ptr< std::vector< float > > verts, double* vec )
 {
     // get segment coordinates
     double x = verts->at( ( 3 * segment ) + offset + 0 ) - verts->at( ( 3 * ( segment + 1 ) ) + offset + 0 );
@@ -149,7 +149,7 @@ void WMFiberParameterColoring::moduleMain()
 
         // To query whether an input was updated, simply ask the input:
         bool dataUpdated = m_fiberInput->handledUpdate();
-        boost::shared_ptr< WDataSetFibers > dataSet = m_fiberInput->getData();
+        std::shared_ptr< WDataSetFibers > dataSet = m_fiberInput->getData();
         bool dataValid = ( dataSet != NULL );
         bool propUpdated = m_baseColor->changed() || m_scaleColor->changed();
 
@@ -171,9 +171,9 @@ void WMFiberParameterColoring::moduleMain()
         dataSet->removeColorScheme( m_fibLengthColors );
 
         // get the fiber definitions
-        boost::shared_ptr< std::vector< size_t > > fibStart = dataSet->getLineStartIndexes();
-        boost::shared_ptr< std::vector< size_t > > fibLen   = dataSet->getLineLengths();
-        boost::shared_ptr< std::vector< float > >  fibVerts = dataSet->getVertices();
+        std::shared_ptr< std::vector< size_t > > fibStart = dataSet->getLineStartIndexes();
+        std::shared_ptr< std::vector< size_t > > fibLen   = dataSet->getLineLengths();
+        std::shared_ptr< std::vector< float > >  fibVerts = dataSet->getVertices();
         m_fibCurvatureColors = WDataSetFibers::ColorArray( new WDataSetFibers::ColorArray::element_type() );
         m_fibLengthColors = WDataSetFibers::ColorArray( new WDataSetFibers::ColorArray::element_type() );
         WDataSetFibers::ColorScheme::ColorMode colorMode = WDataSetFibers::ColorScheme::RGBA;
@@ -181,8 +181,8 @@ void WMFiberParameterColoring::moduleMain()
         m_fibLengthColors->resize( colorMode * ( fibVerts->size() / 3  ), 0.0 ); // create an RGBA coloring
 
         // progress indication
-        boost::shared_ptr< WProgress > progress1( new WProgress( "Coloring fibers.", fibStart->size() ) );
-        boost::shared_ptr< WProgress > progress2( new WProgress( "Scaling Colors.", fibStart->size() ) );
+        std::shared_ptr< WProgress > progress1( new WProgress( "Coloring fibers.", fibStart->size() ) );
+        std::shared_ptr< WProgress > progress2( new WProgress( "Scaling Colors.", fibStart->size() ) );
         m_progress->addSubProgress( progress1 );
         m_progress->addSubProgress( progress2 );
 

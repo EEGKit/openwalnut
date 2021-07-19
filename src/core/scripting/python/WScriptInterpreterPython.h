@@ -54,7 +54,7 @@ public:
     /**
      * Constructor. Creates the interpreter.
      */
-    explicit WScriptInterpreterPython( boost::shared_ptr< WModuleContainer > const& rootContainer );
+    explicit WScriptInterpreterPython( std::shared_ptr< WModuleContainer > const& rootContainer );
 
     /**
      * Destructor. Destroys the interpreter.
@@ -159,7 +159,7 @@ private:
         boost::mutex m_queueMutex;
 
         //! A condition to be notified when a new script is added.
-        boost::shared_ptr< WCondition > m_condition;
+        std::shared_ptr< WCondition > m_condition;
 
         //! A condition set used for immidiate returns on wait() if it was notified beforehand.
         WConditionSet m_conditionSet;

@@ -66,9 +66,9 @@ void WColumnPropertyHandler::updateProperty()
 {
 }
 
-boost::shared_ptr< WItemSelection > WColumnPropertyHandler::initializeSelectionItem( std::list< std::string > typeNames )
+std::shared_ptr< WItemSelection > WColumnPropertyHandler::initializeSelectionItem( std::list< std::string > typeNames )
 {
-    boost::shared_ptr< WItemSelection > possibleSelectionsUsingTypes = WItemSelection::SPtr( new WItemSelection() );
+    std::shared_ptr< WItemSelection > possibleSelectionsUsingTypes = WItemSelection::SPtr( new WItemSelection() );
 
     std::vector< std::string > header = m_protonData->getHeaderFromType( typeNames );
 
@@ -118,7 +118,7 @@ WPropSelection WColumnPropertyHandler::addHeaderProperty( WColumnPropertyHandler
 
     m_protonData->setStateIndex( columnName, index );
 
-    boost::shared_ptr< WItemSelection > possibleSelectionsUsingTypes = initializeSelectionItem( type );
+    std::shared_ptr< WItemSelection > possibleSelectionsUsingTypes = initializeSelectionItem( type );
 
     WItemSelector selector = index < 0 ? possibleSelectionsUsingTypes->getSelectorLast() :
                                          possibleSelectionsUsingTypes->getSelector( indexSingleSelector );

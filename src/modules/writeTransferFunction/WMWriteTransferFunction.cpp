@@ -55,10 +55,10 @@ WMWriteTransferFunction::~WMWriteTransferFunction()
     // cleanup
 }
 
-boost::shared_ptr< WModule > WMWriteTransferFunction::factory() const
+std::shared_ptr< WModule > WMWriteTransferFunction::factory() const
 {
     // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WMWriteTransferFunction() );
+    return std::shared_ptr< WModule >( new WMWriteTransferFunction() );
 }
 
 const char** WMWriteTransferFunction::getXPMIcon() const
@@ -88,7 +88,7 @@ void WMWriteTransferFunction::connectors()
 
 void WMWriteTransferFunction::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_savePath = m_properties->addProperty( "Save Location", "Set the path to the file.", WPathHelper::getAppPath() / "tf.txt" );
     m_saveAsRaw = m_properties->addProperty( "Save binary", "Save file in RAW binary format.", false, m_propCondition );
@@ -128,7 +128,7 @@ void WMWriteTransferFunction::moduleMain()
             }
 
             // get value set and write it
-            boost::shared_ptr< WValueSetBase > vsb = d->getValueSet();
+            std::shared_ptr< WValueSetBase > vsb = d->getValueSet();
             if( ( vsb->order() != 1 ) || ( vsb->dimension() != 4 ) || ( vsb->getDataType() != W_DT_UNSIGNED_CHAR ) )
             {
                 errorLog() << "This is not a proper TF. Abort.";
@@ -136,7 +136,7 @@ void WMWriteTransferFunction::moduleMain()
             }
 
             // we ensured that the valuesetbase is this valueset:
-            boost::shared_ptr< WValueSet< unsigned char > > vs = boost::dynamic_pointer_cast< WValueSet< unsigned char > >( vsb );
+            std::shared_ptr< WValueSet< unsigned char > > vs = std::dynamic_pointer_cast< WValueSet< unsigned char > >( vsb );
 
             // valid path?
             boost::filesystem::path p = m_savePath->get( true );

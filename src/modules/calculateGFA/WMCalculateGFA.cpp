@@ -47,9 +47,9 @@ WMCalculateGFA::~WMCalculateGFA()
 {
 }
 
-boost::shared_ptr< WModule > WMCalculateGFA::factory() const
+std::shared_ptr< WModule > WMCalculateGFA::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMCalculateGFA() );
+    return std::shared_ptr< WModule >( new WMCalculateGFA() );
 }
 
 const char** WMCalculateGFA::getXPMIcon() const
@@ -68,12 +68,12 @@ const std::string WMCalculateGFA::getDescription() const
 
 void WMCalculateGFA::connectors()
 {
-    m_input = boost::shared_ptr< WModuleInputData< WDataSetSphericalHarmonics > >(
+    m_input = std::shared_ptr< WModuleInputData< WDataSetSphericalHarmonics > >(
                             new WModuleInputData< WDataSetSphericalHarmonics >( shared_from_this(),
                                 "inSH", "A spherical harmonics dataset." )
             );
 
-    m_output = boost::shared_ptr< WModuleOutputData< WDataSetScalar > >( new WModuleOutputData< WDataSetScalar >( shared_from_this(),
+    m_output = std::shared_ptr< WModuleOutputData< WDataSetScalar > >( new WModuleOutputData< WDataSetScalar >( shared_from_this(),
                 "outGFA", "The generalized fractional anisotropy map." )
             );
 
@@ -86,7 +86,7 @@ void WMCalculateGFA::connectors()
 
 void WMCalculateGFA::properties()
 {
-    m_exceptionCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_exceptionCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     WModule::properties();
 }
@@ -124,7 +124,7 @@ void WMCalculateGFA::moduleMain()
         debugLog() << "Waiting.";
         m_moduleState.wait();
 
-        boost::shared_ptr< WDataSetSphericalHarmonics > inData = m_input->getData();
+        std::shared_ptr< WDataSetSphericalHarmonics > inData = m_input->getData();
         bool dataChanged = ( m_dataSet != inData );
 
         if( dataChanged && inData )
@@ -140,9 +140,9 @@ void WMCalculateGFA::moduleMain()
         {
             debugLog() << "Computation finished.";
             m_currentProgress->finish();
-            m_result = boost::dynamic_pointer_cast< WDataSetScalar >( m_gfaFunc->getResult() );
-            m_gfaPool = boost::shared_ptr< GFAPoolType >();
-            m_gfaFunc = boost::shared_ptr< GFAFuncType >();
+            m_result = std::dynamic_pointer_cast< WDataSetScalar >( m_gfaFunc->getResult() );
+            m_gfaPool = std::shared_ptr< GFAPoolType >();
+            m_gfaFunc = std::shared_ptr< GFAFuncType >();
 
             // forward result
             m_output->updateData( m_result );
@@ -181,22 +181,22 @@ void WMCalculateGFA::resetGFAPool()
     }
     // the threadpool should have finished computing by now
 
-    boost::shared_ptr< WGridRegular3D > g = boost::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
+    std::shared_ptr< WGridRegular3D > g = std::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
     WAssert( g, "" );
     resetProgress( g->getNbCoordsX() * g->getNbCoordsY() * g->getNbCoordsZ() );
 
     // create a new one
-    m_gfaFunc = boost::shared_ptr< GFAFuncType >( new GFAFuncType( m_dataSet, boost::bind( &This::perVoxelGFAFunc,
+    m_gfaFunc = std::shared_ptr< GFAFuncType >( new GFAFuncType( m_dataSet, boost::bind( &This::perVoxelGFAFunc,
                                                                                            this,
                                                                                            boost::placeholders::_1 ) ) );
-    m_gfaPool = boost::shared_ptr< GFAPoolType >( new GFAPoolType( 0, m_gfaFunc ) );
+    m_gfaPool = std::shared_ptr< GFAPoolType >( new GFAPoolType( 0, m_gfaFunc ) );
     m_gfaPool->subscribeExceptionSignal( boost::bind( &This::handleException, this, boost::placeholders::_1 ) );
     m_moduleState.add( m_gfaPool->getThreadsDoneCondition() );
 }
 
 void WMCalculateGFA::handleException( WException const& e )
 {
-    m_lastException = boost::shared_ptr< WException >( new WException( e ) );
+    m_lastException = std::shared_ptr< WException >( new WException( e ) );
     m_exceptionCondition->notify();
 }
 
@@ -206,7 +206,7 @@ void WMCalculateGFA::resetProgress( std::size_t todo )
     {
         m_currentProgress->finish();
     }
-    m_currentProgress = boost::shared_ptr< WProgress >( new WProgress( "calculate gfa", todo ) );
+    m_currentProgress = std::shared_ptr< WProgress >( new WProgress( "calculate gfa", todo ) );
     m_progress->addSubProgress( m_currentProgress );
 }
 

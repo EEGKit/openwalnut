@@ -70,7 +70,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Return an icon for this module.
@@ -118,7 +118,7 @@ private:
      *
      * \return The voxel index.
      */
-    std::size_t coordsToIndex( boost::shared_ptr< WGridRegular3D > const& grid,
+    std::size_t coordsToIndex( std::shared_ptr< WGridRegular3D > const& grid,
                                std::size_t x, std::size_t y, std::size_t z );
 
     /**
@@ -127,8 +127,8 @@ private:
      * \param smoothed The temp array to copy to.
      * \param grid The grid, which is not used in this function.
      */
-    void copyData( boost::shared_ptr< std::vector< double > >& smoothed,  // NOLINT non-const ref
-                   boost::shared_ptr< WGridRegular3D > const& grid );
+    void copyData( std::shared_ptr< std::vector< double > >& smoothed,  // NOLINT non-const ref
+                   std::shared_ptr< WGridRegular3D > const& grid );
 
     /**
      * Calculates an array containing the derivatives in x, y and z directions of the image
@@ -140,8 +140,8 @@ private:
      * \param image The index of the image to calc the gradient from.
      * \param numImages The number of images in this dataset.
      */
-    void calcDeriv( std::vector< double >& deriv, boost::shared_ptr< std::vector< double > > const& smoothed,  // NOLINT non-const ref
-                    boost::shared_ptr< WGridRegular3D > const& grid, std::size_t image, std::size_t numImages );
+    void calcDeriv( std::vector< double >& deriv, std::shared_ptr< std::vector< double > > const& smoothed,  // NOLINT non-const ref
+                    std::shared_ptr< WGridRegular3D > const& grid, std::size_t image, std::size_t numImages );
 
     /**
      * Calculates the diffusion coeff for every voxel.
@@ -151,7 +151,7 @@ private:
      * \param grid The grid.
      */
     void calcCoeff( std::vector< double >& coeff, std::vector< double > const& deriv,  // NOLINT non-const ref
-                    boost::shared_ptr< WGridRegular3D > const& grid );
+                    std::shared_ptr< WGridRegular3D > const& grid );
 
     /**
      * Do the diffusion.
@@ -164,28 +164,28 @@ private:
      * \param numImages The number of images in this dataset.
      */
     void diffusion( std::vector< double > const& deriv, std::vector< double > const& coeff,
-                    boost::shared_ptr< std::vector< double > >& smoothed,  // NOLINT non-const ref
-                    boost::shared_ptr< WGridRegular3D > const& grid, std::size_t image, std::size_t numImages );
+                    std::shared_ptr< std::vector< double > >& smoothed,  // NOLINT non-const ref
+                    std::shared_ptr< WGridRegular3D > const& grid, std::size_t image, std::size_t numImages );
 
     /**
      * An input connector that accepts multi image datasets.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;
 
     /**
      * An output connector for the output dataset.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetSingle > > m_output;
+    std::shared_ptr< WModuleOutputData< WDataSetSingle > > m_output;
 
     /**
      * This is a pointer to the dataset the module is currently working on.
      */
-    boost::shared_ptr< WDataSetSingle > m_dataSet;
+    std::shared_ptr< WDataSetSingle > m_dataSet;
 
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     //! The edge preservation parameter used for diffusion coeff calculation.
     double m_k;

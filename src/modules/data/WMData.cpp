@@ -77,9 +77,9 @@ WMData::~WMData()
     // cleanup
 }
 
-boost::shared_ptr< WModule > WMData::factory() const
+std::shared_ptr< WModule > WMData::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMData() );
+    return std::shared_ptr< WModule >( new WMData() );
 }
 
 const char** WMData::getXPMIcon() const
@@ -119,7 +119,7 @@ std::vector< WDataModuleInputFilter::ConstSPtr > WMData::getInputFilter() const
 void WMData::connectors()
 {
     // initialize connectors
-    m_output= boost::shared_ptr< WModuleOutputData< WDataSet > >( new WModuleOutputData< WDataSet >(
+    m_output= std::shared_ptr< WModuleOutputData< WDataSet > >( new WModuleOutputData< WDataSet >(
                 shared_from_this(), "out", "A loaded dataset." )
             );
 
@@ -132,7 +132,7 @@ void WMData::connectors()
 
 void WMData::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     // Add standard datamodule props
     WDataModule::properties();
@@ -142,7 +142,7 @@ void WMData::properties()
     m_dataType = m_infoProperties->addProperty( "Data type", "The type of the single data values.", std::string( "" ) );
     m_dataSetType = m_infoProperties->addProperty( "Dataset type", "The name of the dataset type.", std::string( "" ) );
 
-    m_matrixSelectionsList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_matrixSelectionsList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_matrixSelectionsList->addItem( "No matrix", "" );
     m_matrixSelectionsList->addItem( "sform", "" );
     m_matrixSelectionsList->addItem( "qform", "" );
@@ -155,7 +155,7 @@ void WMData::properties()
     WPropertyBase::PropertyChangeNotifierType propertyCallback = boost::bind( &WMData::propertyChanged, this, boost::placeholders::_1 );
 }
 
-void WMData::propertyChanged( boost::shared_ptr< WPropertyBase > property )
+void WMData::propertyChanged( std::shared_ptr< WPropertyBase > property )
 {
     if( m_isTexture )
     {
@@ -175,7 +175,7 @@ void WMData::propertyChanged( boost::shared_ptr< WPropertyBase > property )
             }
             else
             {
-                m_output->updateData( boost::shared_ptr< WDataSet >() );
+                m_output->updateData( std::shared_ptr< WDataSet >() );
             }
         }
     }
@@ -218,11 +218,11 @@ void WMData::moduleMain()
     }
 
     // remove dataset from datahandler
-    updateColorMap(  boost::shared_ptr< WDataSet >() );
+    updateColorMap(  std::shared_ptr< WDataSet >() );
 }
 
 // TODO(wiebel): move this to some central place.
-std::string WMData::getDataTypeString( boost::shared_ptr< WDataSetSingle > dss )
+std::string WMData::getDataTypeString( std::shared_ptr< WDataSetSingle > dss )
 {
     std::string result;
     switch( ( *dss ).getValueSet()->getDataType() )
@@ -312,26 +312,26 @@ namespace
 void WMData::matrixUpdate()
 {
     // incase that m_dataSet is not a WDataSetSingle e.g. WDataSetFibers, the cast might be NULL
-    if( boost::dynamic_pointer_cast< WDataSetSingle >( m_dataSet ) )
+    if( std::dynamic_pointer_cast< WDataSetSingle >( m_dataSet ) )
     {
         debugLog() << "Matrix mode update.";
 
         // a new grid
-        boost::shared_ptr< WGrid > newGrid;
-        boost::shared_ptr< WGridRegular3D > oldGrid = boost::dynamic_pointer_cast< WGridRegular3D >( m_dataSetAsSingle->getGrid() );
+        std::shared_ptr< WGrid > newGrid;
+        std::shared_ptr< WGridRegular3D > oldGrid = std::dynamic_pointer_cast< WGridRegular3D >( m_dataSetAsSingle->getGrid() );
 
         switch( m_matrixSelection->get( true ).getItemIndexOfSelected( 0 ) )
         {
         case 0:
-            newGrid = boost::shared_ptr< WGrid >( new WGridRegular3D( oldGrid->getNbCoordsX(), oldGrid->getNbCoordsY(), oldGrid->getNbCoordsZ(),
+            newGrid = std::shared_ptr< WGrid >( new WGridRegular3D( oldGrid->getNbCoordsX(), oldGrid->getNbCoordsY(), oldGrid->getNbCoordsZ(),
                                                                       WGridTransformOrtho( m_transformNoMatrix ) ) );
             break;
         case 1:
-            newGrid = boost::shared_ptr< WGrid >( new WGridRegular3D( oldGrid->getNbCoordsX(), oldGrid->getNbCoordsY(), oldGrid->getNbCoordsZ(),
+            newGrid = std::shared_ptr< WGrid >( new WGridRegular3D( oldGrid->getNbCoordsX(), oldGrid->getNbCoordsY(), oldGrid->getNbCoordsZ(),
                                                                       WGridTransformOrtho( m_transformSForm ) ) );
             break;
         case 2:
-            newGrid = boost::shared_ptr< WGrid >( new WGridRegular3D( oldGrid->getNbCoordsX(), oldGrid->getNbCoordsY(), oldGrid->getNbCoordsZ(),
+            newGrid = std::shared_ptr< WGrid >( new WGridRegular3D( oldGrid->getNbCoordsX(), oldGrid->getNbCoordsY(), oldGrid->getNbCoordsZ(),
                                                                       WGridTransformOrtho( m_transformQForm ) ) );
             break;
         }
@@ -344,7 +344,7 @@ void WMData::matrixUpdate()
         {
             m_dataSet->getTexture()->copyPropertiesExceptTransformation( m_dataSetAsSingle->getTexture() );
         }
-        m_dataSetAsSingle = boost::dynamic_pointer_cast< WDataSetSingle >( m_dataSet );
+        m_dataSetAsSingle = std::dynamic_pointer_cast< WDataSetSingle >( m_dataSet );
 
         // Remove all old props
         if( m_oldDataSet )
@@ -369,9 +369,9 @@ void WMData::matrixUpdate()
     m_output->updateData( m_dataSet ); // need to update output connector also in case of non WDataSetSingle, as this hasnt been done before
 }
 
-boost::shared_ptr< WProperties > WMData::getTransformationProperties() const
+std::shared_ptr< WProperties > WMData::getTransformationProperties() const
 {
-    boost::shared_ptr< WProperties > result( new WProperties( "Transformations", "Availabe transformation matrices for data-set " ) );
+    std::shared_ptr< WProperties > result( new WProperties( "Transformations", "Availabe transformation matrices for data-set " ) );
     WPropGroup transformation = result->addPropertyGroup( "Transformation",
                                                           "The transformation of this grid." );
     WPropMatrix4X4 noMatrixTransformation = result->addProperty( "No matrix transformation",
@@ -386,7 +386,7 @@ boost::shared_ptr< WProperties > WMData::getTransformationProperties() const
     return result;
 }
 
-void WMData::updateColorMap( boost::shared_ptr< WDataSet > dataSet )
+void WMData::updateColorMap( std::shared_ptr< WDataSet > dataSet )
 {
     // remove dataset from datahandler
     if( m_oldColormap )
@@ -417,7 +417,7 @@ void WMData::updateColorMap( boost::shared_ptr< WDataSet > dataSet )
 void WMData::cleanUp()
 {
     // remove dataset from datahandler
-    updateColorMap(  boost::shared_ptr< WDataSet >() );
+    updateColorMap(  std::shared_ptr< WDataSet >() );
 
     // remove props
     if( m_oldDataSet )
@@ -447,7 +447,7 @@ void WMData::load()
     }
     std::string fileName = inputFile->getFilename().string();
 
-    boost::shared_ptr< WProgress > progress1( new WProgress( "Loading" ) );
+    std::shared_ptr< WProgress > progress1( new WProgress( "Loading" ) );
     m_progress->addSubProgress( progress1 );
 
     m_transformNoMatrix.makeIdentity();
@@ -484,7 +484,7 @@ void WMData::load()
 
         m_isTexture = m_dataSet->isTexture();
 
-        boost::shared_ptr< WDataSetSingle > dss = boost::dynamic_pointer_cast< WDataSetSingle >( m_dataSet );
+        std::shared_ptr< WDataSetSingle > dss = std::dynamic_pointer_cast< WDataSetSingle >( m_dataSet );
         if( dss )
         {
             m_dataType->set( getDataTypeString( dss ) );
@@ -503,7 +503,7 @@ void WMData::load()
                         break;
                     case W_DT_FLOAT:
                     case W_DT_DOUBLE:
-                        if( boost::dynamic_pointer_cast< WDataSetVector >( m_dataSet ) )
+                        if( std::dynamic_pointer_cast< WDataSetVector >( m_dataSet ) )
                         {
                             m_dataSet->getTexture()->colormap()->set(
                                 m_dataSet->getTexture()->colormap()->get().newSelector( WItemSelector::IndexList( 1, 6 ) )
@@ -538,15 +538,15 @@ void WMData::load()
 #ifdef WEEP_ENABLED
     else if( suffix == ".cnt" ) // NOLINT: An else should appear after closing } in previous line
     {
-        boost::shared_ptr< WPagerEEG > pager( new WPagerEEGLibeep( fileName ) );
+        std::shared_ptr< WPagerEEG > pager( new WPagerEEGLibeep( fileName ) );
 
         std::string elcFileName = fileName;
         elcFileName.resize( elcFileName.size() - 3 ); // drop suffix
         elcFileName += "elc"; // add new suffix
         WReaderELC elcReader( elcFileName );
-        boost::shared_ptr< WEEGPositionsLibrary > eegPositionsLibrary = elcReader.read();
+        std::shared_ptr< WEEGPositionsLibrary > eegPositionsLibrary = elcReader.read();
 
-        m_dataSet = boost::shared_ptr< WEEG2 >( new WEEG2( pager, eegPositionsLibrary ) );
+        m_dataSet = std::shared_ptr< WEEG2 >( new WEEG2( pager, eegPositionsLibrary ) );
     }
 #endif
     else if( suffix == ".fib" ) // NOLINT: An else should appear after closing } in previous line
@@ -588,7 +588,7 @@ void WMData::load()
     m_active->getCondition()->subscribeSignal( boost::bind( &WMData::propertyChanged, this, m_active ) );
 
     // notify
-    m_dataSetAsSingle = boost::dynamic_pointer_cast< WDataSetSingle >( m_dataSet );
+    m_dataSetAsSingle = std::dynamic_pointer_cast< WDataSetSingle >( m_dataSet );
 
     // Update matrix
     matrixUpdate();

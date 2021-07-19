@@ -105,7 +105,7 @@ WQtColormapper::WQtColormapper( QWidget* parent )
     setWidget( panel );
 
     // get the proper subscriptions to the colormapper signals.
-    boost::shared_ptr< WGEColormapping > p = WGEColormapping::instance();
+    std::shared_ptr< WGEColormapping > p = WGEColormapping::instance();
     m_registerConnection = p->subscribeSignal( WGEColormapping::Registered,
             static_cast< WGEColormapping::TextureRegisterHandler >( boost::bind( &WQtColormapper::pushUpdateEvent, this ) ) );
     m_deregisterConnection = p->subscribeSignal( WGEColormapping::Deregistered,
@@ -271,7 +271,7 @@ bool WQtColormapper::event( QEvent* event )
 
 void WQtColormapper::update()
 {
-    boost::shared_ptr< WGEColormapping > cm = WGEColormapping::instance();
+    std::shared_ptr< WGEColormapping > cm = WGEColormapping::instance();
 
     WGEColormapping::TextureContainerType::ReadTicket r = cm->getReadTicket();
 
@@ -312,7 +312,7 @@ void WQtColormapper::handleTextureClicked()
 
 void WQtColormapper::moveItemDown()
 {
-    boost::shared_ptr< WGEColormapping > cm = WGEColormapping::instance();
+    std::shared_ptr< WGEColormapping > cm = WGEColormapping::instance();
     WQtTextureListItem* item = dynamic_cast< WQtTextureListItem* >( m_textureListWidget->item( m_textureListWidget->currentIndex().row() ) );
     if( item )
     {
@@ -322,7 +322,7 @@ void WQtColormapper::moveItemDown()
 
 void WQtColormapper::moveItemUp()
 {
-    boost::shared_ptr< WGEColormapping > cm = WGEColormapping::instance();
+    std::shared_ptr< WGEColormapping > cm = WGEColormapping::instance();
     WQtTextureListItem* item = dynamic_cast< WQtTextureListItem* >( m_textureListWidget->item( m_textureListWidget->currentIndex().row() ) );
     if( item )
     {
@@ -332,7 +332,7 @@ void WQtColormapper::moveItemUp()
 
 void WQtColormapper::moveItemBottom()
 {
-    boost::shared_ptr< WGEColormapping > cm = WGEColormapping::instance();
+    std::shared_ptr< WGEColormapping > cm = WGEColormapping::instance();
     WQtTextureListItem* item = dynamic_cast< WQtTextureListItem* >( m_textureListWidget->item( m_textureListWidget->currentIndex().row() ) );
     if( item )
     {
@@ -342,7 +342,7 @@ void WQtColormapper::moveItemBottom()
 
 void WQtColormapper::moveItemTop()
 {
-    boost::shared_ptr< WGEColormapping > cm = WGEColormapping::instance();
+    std::shared_ptr< WGEColormapping > cm = WGEColormapping::instance();
     WQtTextureListItem* item = dynamic_cast< WQtTextureListItem* >( m_textureListWidget->item( m_textureListWidget->currentIndex().row() ) );
     if( item )
     {
@@ -350,7 +350,7 @@ void WQtColormapper::moveItemTop()
     }
 }
 
-void WQtColormapper::selectTexture( boost::shared_ptr< WDataSet > dataSet )
+void WQtColormapper::selectTexture( std::shared_ptr< WDataSet > dataSet )
 {
     // simply check each item against the texture in the specified dataset
     for( int i = 0; i < m_textureListWidget->count(); ++i )
@@ -370,7 +370,7 @@ void WQtColormapper::rowsMoved( const QModelIndex& sourceParent, int sourceStart
     WAssert( sourceParent == destinationParent, "Source and target parent are not the same. This should not be the case." );
 
     // just utilize WGEColormapper for this:
-    boost::shared_ptr< WGEColormapping > cm = WGEColormapping::instance();
+    std::shared_ptr< WGEColormapping > cm = WGEColormapping::instance();
     WQtTextureListItem* item = dynamic_cast< WQtTextureListItem* >( m_textureListWidget->item( m_textureListWidget->currentIndex().row() ) );
     if( item )
     {

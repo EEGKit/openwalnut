@@ -82,7 +82,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -250,14 +250,14 @@ private:
     /**
      * Input connector for a fiber dataset.
      */
-    boost::shared_ptr< WModuleInputData< const WDataSetFibers > > m_fiberInput;
+    std::shared_ptr< WModuleInputData< const WDataSetFibers > > m_fiberInput;
 
-    boost::shared_ptr< const WDataSetFibers > m_dataSet; //!< pointer to dataSet to be able to access it throughout the whole module.
+    std::shared_ptr< const WDataSetFibers > m_dataSet; //!< pointer to dataSet to be able to access it throughout the whole module.
 
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * the currently selected cluster
@@ -332,7 +332,7 @@ private:
     /**
      * Point to a fiber selector, which is an adapater between the roi manager and the this module
      */
-    boost::shared_ptr< WFiberSelector>m_fiberSelector;
+    std::shared_ptr< WFiberSelector>m_fiberSelector;
 
     /**
      * stores pointer to the fiber drawer

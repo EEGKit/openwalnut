@@ -43,7 +43,7 @@ public:
     /**
      * shared_ptr that points to itself 
      */
-    typedef boost::shared_ptr< WVisualizationPropertyHandler > SPtr;
+    typedef std::shared_ptr< WVisualizationPropertyHandler > SPtr;
 
     /**
      * constructor

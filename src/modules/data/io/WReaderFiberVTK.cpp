@@ -51,9 +51,9 @@ WReaderFiberVTK::~WReaderFiberVTK() throw()
 {
 }
 
-boost::shared_ptr< WDataSetFibers > WReaderFiberVTK::read()
+std::shared_ptr< WDataSetFibers > WReaderFiberVTK::read()
 {
-    m_ifs = boost::shared_ptr< std::ifstream >( new std::ifstream() );
+    m_ifs = std::shared_ptr< std::ifstream >( new std::ifstream() );
     m_ifs->open( m_fname.c_str(), std::ifstream::in | std::ifstream::binary );
     if( !m_ifs || m_ifs->bad() )
     {
@@ -64,7 +64,7 @@ boost::shared_ptr< WDataSetFibers > WReaderFiberVTK::read()
     readLines();
     readValues();
 
-    boost::shared_ptr< WDataSetFibers > fibers( new WDataSetFibers( m_points, m_fiberStartIndices,
+    std::shared_ptr< WDataSetFibers > fibers( new WDataSetFibers( m_points, m_fiberStartIndices,
           m_fiberLengths, m_pointFiberMapping, m_fiberParameters ) );
 
     fibers->setFilename( m_fname );
@@ -123,13 +123,13 @@ void WReaderFiberVTK::readPoints()
 
     switchByteOrderOfArray( pointData, 3 * numPoints ); // all 4 bytes of each float are in wrong order we need to reorder them
 
-    m_points = boost::shared_ptr< std::vector< float > >( new std::vector< float >( pointData, pointData + 3 * numPoints ) );
+    m_points = std::shared_ptr< std::vector< float > >( new std::vector< float >( pointData, pointData + 3 * numPoints ) );
 
     WAssert( m_points->size() % 3 == 0, "Number of floats for coordinates not dividable by three." );
     delete[] pointData;
 
     // since we know here the size of the vector we may allocate it right here
-    m_pointFiberMapping = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t > );
+    m_pointFiberMapping = std::shared_ptr< std::vector< size_t > >( new std::vector< size_t > );
     m_pointFiberMapping->reserve( numPoints );
 
     line = getLine( "also eat the remaining newline after points declaration" );
@@ -153,8 +153,8 @@ void WReaderFiberVTK::readLines()
 
     switchByteOrderOfArray( lineData, linesSize );
 
-    m_fiberStartIndices = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t > );
-    m_fiberLengths = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t > );
+    m_fiberStartIndices = std::shared_ptr< std::vector< size_t > >( new std::vector< size_t > );
+    m_fiberLengths = std::shared_ptr< std::vector< size_t > >( new std::vector< size_t > );
     m_fiberStartIndices->reserve( numLines );
     m_fiberLengths->reserve( numLines );
 

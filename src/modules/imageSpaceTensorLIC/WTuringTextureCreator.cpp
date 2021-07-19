@@ -41,7 +41,7 @@ WTuringTextureCreator::WTuringTextureCreator( std::size_t numThreads )
 
     for( std::size_t k = 0; k < numThreads; ++k )
     {
-        m_threads.push_back( boost::shared_ptr< TextureThread >( new TextureThread( k, numThreads ) ) );
+        m_threads.push_back( std::shared_ptr< TextureThread >( new TextureThread( k, numThreads ) ) );
     }
 }
 

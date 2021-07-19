@@ -56,7 +56,7 @@ public:
      *
      * \return the dataset loaded.
      */
-    virtual boost::shared_ptr< WDataSet > load();
+    virtual std::shared_ptr< WDataSet > load();
 
 protected:
 private:

@@ -202,7 +202,7 @@ int main( int argc, char** argv )
 
     // initialize UI
     // NOTE: we need a shared_ptr here since WUI uses enable_shared_from_this.
-    boost::shared_ptr< WScriptUI > ui( new WScriptUI( argc, argv, optionsMap ) );
+    std::shared_ptr< WScriptUI > ui( new WScriptUI( argc, argv, optionsMap ) );
     int result = ui->run();
 
     std::cout << "Closed OpenWalnut smoothly. Goodbye!" << std::endl;

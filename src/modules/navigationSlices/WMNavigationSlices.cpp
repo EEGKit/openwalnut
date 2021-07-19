@@ -62,9 +62,9 @@ WMNavigationSlices::~WMNavigationSlices()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMNavigationSlices::factory() const
+std::shared_ptr< WModule > WMNavigationSlices::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMNavigationSlices() );
+    return std::shared_ptr< WModule >( new WMNavigationSlices() );
 }
 
 const char** WMNavigationSlices::getXPMIcon() const
@@ -303,8 +303,8 @@ WMNavigationSlices::PickCallback::PickCallback( osg::ref_ptr< osg::Node > node, 
     m_pickUniform( new osg::Uniform( "u_picked", 0.0f ) ),
     m_dir( negateDirection ? -1.0 : 1.0 )
 {
-    boost::shared_ptr< WGraphicsEngine > ge = WGraphicsEngine::getGraphicsEngine();
-    boost::shared_ptr< WGEViewer > viewer = ge->getViewerByName( "Main View" );
+    std::shared_ptr< WGraphicsEngine > ge = WGraphicsEngine::getGraphicsEngine();
+    std::shared_ptr< WGEViewer > viewer = ge->getViewerByName( "Main View" );
     m_camera = viewer->getCamera();
     m_pickConnection = viewer->getPickHandler()->getPickSignal()->connect( boost::bind( &WMNavigationSlices::PickCallback::pick,
                                                                                         this,
@@ -367,7 +367,7 @@ void WMNavigationSlices::moduleMain()
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_output );
 
     // add for side-views
-    boost::shared_ptr< WGEViewer > viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Axial View" );
+    std::shared_ptr< WGEViewer > viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Axial View" );
     if( viewer )
     {
         viewer->getScene()->insert( m_axialOutput );

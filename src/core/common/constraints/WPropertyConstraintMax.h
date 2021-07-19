@@ -55,7 +55,7 @@ public:
      *
      * \return true if value <= m_max
      */
-    virtual bool accept( boost::shared_ptr< WPropertyVariable< T > > property, const T& value );
+    virtual bool accept( std::shared_ptr< WPropertyVariable< T > > property, const T& value );
 
     /**
      * Returns the current max value.
@@ -76,7 +76,7 @@ public:
      *
      * \return the constraint.
      */
-    virtual boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > clone();
+    virtual std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > clone();
 
 private:
     /**
@@ -97,7 +97,7 @@ WPropertyConstraintMax< T >::~WPropertyConstraintMax()
 }
 
 template < typename T >
-bool WPropertyConstraintMax< T >::accept( boost::shared_ptr< WPropertyVariable< T > > /* property */, const T& value )
+bool WPropertyConstraintMax< T >::accept( std::shared_ptr< WPropertyVariable< T > > /* property */, const T& value )
 {
     return value <= m_max;
 }
@@ -115,9 +115,9 @@ PROPERTYCONSTRAINT_TYPE WPropertyConstraintMax< T >::getType()
 }
 
 template < typename T >
-boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > WPropertyConstraintMax< T >::clone()
+std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > WPropertyConstraintMax< T >::clone()
 {
-    return boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint >( new WPropertyConstraintMax< T >( *this ) );
+    return std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint >( new WPropertyConstraintMax< T >( *this ) );
 }
 
 #endif  // WPROPERTYCONSTRAINTMAX_H

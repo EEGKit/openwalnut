@@ -54,7 +54,7 @@ public:
      *
      * \param active the flag denoting the node to be activated ( if flag == true ) or turned off.
      */
-    explicit WGEManagedGroupNode( boost::shared_ptr< WBoolFlag > active );
+    explicit WGEManagedGroupNode( std::shared_ptr< WBoolFlag > active );
 
 protected:
     /**

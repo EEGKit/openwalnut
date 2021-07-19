@@ -55,7 +55,7 @@ public:
      * \param name The name of this connector.
      * \param description Short description of this connector.
      */
-    WModuleOutputConnector( boost::shared_ptr< WModule > module, std::string name="", std::string description="" );
+    WModuleOutputConnector( std::shared_ptr< WModule > module, std::string name="", std::string description="" );
 
     /**
      * Destructor.
@@ -81,7 +81,7 @@ public:
      *
      * \return true if compatible.
      */
-    virtual bool connectable( boost::shared_ptr<WModuleConnector> con );
+    virtual bool connectable( std::shared_ptr<WModuleConnector> con );
 
     /**
      * Checks whether the specified connector is connectable to this one, but ignores compatibility the type to be transferred.
@@ -90,21 +90,21 @@ public:
      *
      * \return true if compatible.
      */
-    virtual bool lazyConnectable( boost::shared_ptr<WModuleConnector> con );
+    virtual bool lazyConnectable( std::shared_ptr<WModuleConnector> con );
 
     /**
      * Returns the prototype of the WTransferable used in this connector.
      *
      * \return the prototype of the transfered type.
      */
-    virtual boost::shared_ptr< WPrototyped > getTransferPrototype() = 0;
+    virtual std::shared_ptr< WPrototyped > getTransferPrototype() = 0;
 
     /**
      * Gives back the currently set data as WTransferable.
      *
      * \return the data. If no data has been set: a NULL pointer is returned.
      */
-    virtual const boost::shared_ptr< WTransferable > getRawData() const = 0;
+    virtual const std::shared_ptr< WTransferable > getRawData() const = 0;
 
     /**
      * Returns true if this instance is an WModuleInputConnector.
@@ -123,7 +123,7 @@ public:
 protected:
     // If you want to add additional signals an output connector should subscribe FROM an input connector, overwrite
     // connectSignals
-    // virtual void connectSignals( boost::shared_ptr<WModuleConnector> con );
+    // virtual void connectSignals( std::shared_ptr<WModuleConnector> con );
 
     /**
      * Propagates the signal "DATA_CHANGED" to all connected items.

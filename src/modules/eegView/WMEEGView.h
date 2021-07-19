@@ -68,7 +68,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Gets the name of this module.
@@ -107,14 +107,14 @@ protected:
      * Sets the m_dataChanged flag.
      */
     virtual void notifyConnectionEstablished(
-        boost::shared_ptr< WModuleConnector > /*here*/, boost::shared_ptr< WModuleConnector > /*there*/ );
+        std::shared_ptr< WModuleConnector > /*here*/, std::shared_ptr< WModuleConnector > /*there*/ );
 
     /**
      * Gets called when the data on one input connector changed.
      * Sets the m_dataChanged flag.
      */
     virtual void notifyDataChange(
-        boost::shared_ptr< WModuleConnector > /*input*/, boost::shared_ptr< WModuleConnector > /*output*/ );
+        std::shared_ptr< WModuleConnector > /*input*/, std::shared_ptr< WModuleConnector > /*output*/ );
 
     /**
      * Entry point after loading the module. Runs in separate thread.
@@ -130,17 +130,17 @@ private:
     /**
      * Input connector for a EEG dataset
      */
-    boost::shared_ptr< WModuleInputData< WEEG2 > > m_eeg_input;
+    std::shared_ptr< WModuleInputData< WEEG2 > > m_eeg_input;
 
     /**
      * Input connector for dipoles of EEG data
      */
-    boost::shared_ptr< WModuleInputData< WDataSetDipoles > > m_dipoles_input;
+    std::shared_ptr< WModuleInputData< WDataSetDipoles > > m_dipoles_input;
 
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * Group for parameters that are normally adjusted using mouse actions.
@@ -232,22 +232,22 @@ private:
     /**
      * event marking a special time position as WFlag
      */
-    boost::shared_ptr< WFlag< boost::shared_ptr< WEEGEvent > > > m_event;
+    std::shared_ptr< WFlag< std::shared_ptr< WEEGEvent > > > m_event;
 
     /**
      * Pointer to the loaded EEG dataset
      */
-    boost::shared_ptr< WEEG2 > m_eeg;
+    std::shared_ptr< WEEG2 > m_eeg;
 
     /**
      * Pointer to the loaded dipoles dataset
      */
-    boost::shared_ptr< WDataSetDipoles > m_dipoles;
+    std::shared_ptr< WDataSetDipoles > m_dipoles;
 
     /**
      * Custom widget which is used by this module to display its data.
      */
-    boost::shared_ptr< WUIViewWidget > m_widget;
+    std::shared_ptr< WUIViewWidget > m_widget;
 
     /**
      * GUI event handler used for interactive changing of many properties
@@ -319,7 +319,7 @@ private:
     /**
      * calculates a source position at a given time position
      */
-    boost::shared_ptr< WEEGSourceCalculator > m_sourceCalculator;
+    std::shared_ptr< WEEGSourceCalculator > m_sourceCalculator;
 
     /**
      * Prepare textures for colormapping EEG signal

@@ -43,7 +43,7 @@ public:
     /**
      * A shared_ptr to this class.
      */
-    typedef boost::shared_ptr< WFiberActionRemoveVertex > SPtr;
+    typedef std::shared_ptr< WFiberActionRemoveVertex > SPtr;
 
     /**
      * Creates this action.

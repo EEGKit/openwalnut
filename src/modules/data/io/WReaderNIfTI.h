@@ -62,7 +62,7 @@ public:
      *
      * \return the dataset loaded.
      */
-    virtual boost::shared_ptr< WDataSet > load( DataSetType dataSetType = W_DATASET_NONE  );
+    virtual std::shared_ptr< WDataSet > load( DataSetType dataSetType = W_DATASET_NONE  );
 
     /**
      * Returns a standard transformation.
@@ -89,12 +89,12 @@ protected:
     /**
      * Shorthand type for a vector of gradients.
      */
-    typedef boost::shared_ptr< std::vector< WVector3d > > GradVec;
+    typedef std::shared_ptr< std::vector< WVector3d > > GradVec;
 
     /** Shorthand type for a vector of bvalues. The comopents are typically given as floats, as partical b-values start
      * at 0 and are at maximum around 17000 (see: https://dx.doi.org/10.1002/mrm.20642).
      */
-    typedef boost::shared_ptr< std::vector< float > > BValues;
+    typedef std::shared_ptr< std::vector< float > > BValues;
 
     /**
      * Reads the additional bval file if available. The file format should be (ASCII file):
@@ -165,7 +165,7 @@ private:
      *
      * \return the copy
      */
-    template < typename T > boost::shared_ptr< std::vector< T > > copyArray( const T* dataArray, const size_t countVoxels, const size_t vDim );
+    template < typename T > std::shared_ptr< std::vector< T > > copyArray( const T* dataArray, const size_t countVoxels, const size_t vDim );
 
     /**
      * This function converts a 4x4 matrix from the NIfTI libs into the format

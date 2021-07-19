@@ -43,9 +43,9 @@ WMWriteCSV::~WMWriteCSV()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMWriteCSV::factory() const
+std::shared_ptr< WModule > WMWriteCSV::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMWriteCSV() );
+    return std::shared_ptr< WModule >( new WMWriteCSV() );
 }
 
 const char** WMWriteCSV::getXPMIcon() const
@@ -114,8 +114,8 @@ void WMWriteCSV::properties()
 
 void WMWriteCSV::propertyCallback()
 {
-    boost::shared_ptr< WDataSetCSV > csvdataSet = m_CSVInput->getData();
-    boost::shared_ptr< WDataSetFibers > fibersdataSet = m_fibersInput->getData();
+    std::shared_ptr< WDataSetCSV > csvdataSet = m_CSVInput->getData();
+    std::shared_ptr< WDataSetFibers > fibersdataSet = m_fibersInput->getData();
 
     if( !csvdataSet )
     {

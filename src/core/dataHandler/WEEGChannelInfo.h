@@ -56,8 +56,8 @@ public:
      *                         electrodes
      */
     WEEGChannelInfo( std::size_t channelID,
-                     boost::shared_ptr< WPagerEEG > pager,
-                     boost::shared_ptr< WEEGPositionsLibrary > positionsLibrary );
+                     std::shared_ptr< WPagerEEG > pager,
+                     std::shared_ptr< WEEGPositionsLibrary > positionsLibrary );
 
     /**
      * Get the unit used by the recording of the channel.

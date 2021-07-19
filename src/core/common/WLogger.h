@@ -248,7 +248,7 @@ namespace wlog
          */
         WStreamedLogger& operator=( const WStreamedLogger& rhs ) = delete;
 
-        boost::shared_ptr< Buffer > m_buffer; //!< Collects the message parts.
+        std::shared_ptr< Buffer > m_buffer; //!< Collects the message parts.
     };
 
     inline WStreamedLogger::WStreamedLogger( const std::string& source, LogLevel level )

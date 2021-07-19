@@ -26,7 +26,7 @@
 
 #include "WModuleReadyEvent.h"
 
-WModuleReadyEvent::WModuleReadyEvent( boost::shared_ptr< WModule > module )
+WModuleReadyEvent::WModuleReadyEvent( std::shared_ptr< WModule > module )
     : QEvent( static_cast< QEvent::Type >( WQT_READY_EVENT ) ),
     m_module( module )
 {
@@ -38,7 +38,7 @@ WModuleReadyEvent::~WModuleReadyEvent()
     // cleanup
 }
 
-boost::shared_ptr< WModule > WModuleReadyEvent::getModule()
+std::shared_ptr< WModule > WModuleReadyEvent::getModule()
 {
     return m_module;
 }

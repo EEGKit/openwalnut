@@ -25,6 +25,8 @@
 #ifndef WSHAREDOBJECTTICKET_H
 #define WSHAREDOBJECTTICKET_H
 
+#include <shared_mutex>
+
 #include <boost/shared_ptr.hpp>
 
 #include "WCondition.h"
@@ -65,7 +67,7 @@ public:
      */
     void suppressUnlockCondition()
     {
-        m_condition = boost::shared_ptr< WCondition >();
+        m_condition = std::shared_ptr< WCondition >();
     }
 
 protected:
@@ -76,7 +78,7 @@ protected:
      * \param mutex the mutex used to lock
      * \param condition a condition that should be fired upon unlock. Can be NULL.
      */
-    WSharedObjectTicket( Data& data, boost::shared_ptr< boost::shared_mutex > mutex, boost::shared_ptr< WCondition > condition ): // NOLINT
+    WSharedObjectTicket( Data& data, std::shared_ptr< std::shared_mutex > mutex, std::shared_ptr< WCondition > condition ): // NOLINT
         m_data( data ),
         m_mutex( mutex ),
         m_condition( condition )
@@ -91,12 +93,12 @@ protected:
     /**
      * The mutex used for locking.
      */
-    boost::shared_ptr< boost::shared_mutex > m_mutex;
+    std::shared_ptr< std::shared_mutex > m_mutex;
 
     /**
      * A condition which gets notified after unlocking. Especially useful to notify waiting threads about a change in the object.
      */
-    boost::shared_ptr< WCondition > m_condition;
+    std::shared_ptr< WCondition > m_condition;
 
     /**
      * Unlocks the mutex.

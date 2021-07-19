@@ -24,7 +24,7 @@
 
 #include "WRasterParameterization.h"
 
-WRasterParameterization::WRasterParameterization( boost::shared_ptr< WGridRegular3D > grid ):
+WRasterParameterization::WRasterParameterization( std::shared_ptr< WGridRegular3D > grid ):
     m_grid( grid )
 {
     // initialize members

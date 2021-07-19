@@ -35,13 +35,13 @@
 #include "WDataSetSphericalHarmonics.h"
 
 // prototype instance as singleton
-boost::shared_ptr< WPrototyped > WDataSetSphericalHarmonics::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WDataSetSphericalHarmonics::m_prototype = std::shared_ptr< WPrototyped >();
 
-WDataSetSphericalHarmonics::WDataSetSphericalHarmonics( boost::shared_ptr< WValueSetBase > newValueSet,
-                                                        boost::shared_ptr< WGrid > newGrid ) :
+WDataSetSphericalHarmonics::WDataSetSphericalHarmonics( std::shared_ptr< WValueSetBase > newValueSet,
+                                                        std::shared_ptr< WGrid > newGrid ) :
     WDataSetSingle( newValueSet, newGrid ), m_valueSet( newValueSet )
 {
-    m_gridRegular3D = boost::dynamic_pointer_cast< WGridRegular3D >( newGrid );
+    m_gridRegular3D = std::dynamic_pointer_cast< WGridRegular3D >( newGrid );
     WAssert( newValueSet, "No value set given." );
     WAssert( newGrid, "No grid given." );
 }
@@ -55,17 +55,17 @@ WDataSetSphericalHarmonics::~WDataSetSphericalHarmonics()
 {
 }
 
-WDataSetSingle::SPtr WDataSetSphericalHarmonics::clone( boost::shared_ptr< WValueSetBase > newValueSet, boost::shared_ptr< WGrid > newGrid ) const
+WDataSetSingle::SPtr WDataSetSphericalHarmonics::clone( std::shared_ptr< WValueSetBase > newValueSet, std::shared_ptr< WGrid > newGrid ) const
 {
     return WDataSetSingle::SPtr( new WDataSetSphericalHarmonics( newValueSet, newGrid ) );
 }
 
-WDataSetSingle::SPtr WDataSetSphericalHarmonics::clone( boost::shared_ptr< WValueSetBase > newValueSet ) const
+WDataSetSingle::SPtr WDataSetSphericalHarmonics::clone( std::shared_ptr< WValueSetBase > newValueSet ) const
 {
     return WDataSetSingle::SPtr( new WDataSetSphericalHarmonics( newValueSet, getGrid() ) );
 }
 
-WDataSetSingle::SPtr WDataSetSphericalHarmonics::clone( boost::shared_ptr< WGrid > newGrid ) const
+WDataSetSingle::SPtr WDataSetSphericalHarmonics::clone( std::shared_ptr< WGrid > newGrid ) const
 {
     return WDataSetSingle::SPtr( new WDataSetSphericalHarmonics( getValueSet(), newGrid ) );
 }
@@ -75,11 +75,11 @@ WDataSetSingle::SPtr WDataSetSphericalHarmonics::clone() const
     return WDataSetSingle::SPtr( new WDataSetSphericalHarmonics( getValueSet(), getGrid() ) );
 }
 
-boost::shared_ptr< WPrototyped > WDataSetSphericalHarmonics::getPrototype()
+std::shared_ptr< WPrototyped > WDataSetSphericalHarmonics::getPrototype()
 {
     if( !m_prototype )
     {
-        m_prototype = boost::shared_ptr< WPrototyped >( new WDataSetSphericalHarmonics() );
+        m_prototype = std::shared_ptr< WPrototyped >( new WDataSetSphericalHarmonics() );
     }
 
     return m_prototype;

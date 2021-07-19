@@ -50,7 +50,7 @@ W_LOADABLE_MODULE( WMArbitraryROIs )
 
 WMArbitraryROIs::WMArbitraryROIs():
     WModule(),
-    m_recompute( boost::shared_ptr< WCondition >( new WCondition() ) ),
+    m_recompute( std::shared_ptr< WCondition >( new WCondition() ) ),
     m_dataSet(),
     m_moduleNode( new WGEGroupNode() ),
     m_showSelector( true )
@@ -62,10 +62,10 @@ WMArbitraryROIs::~WMArbitraryROIs()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMArbitraryROIs::factory() const
+std::shared_ptr< WModule > WMArbitraryROIs::factory() const
 {
     // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WMArbitraryROIs() );
+    return std::shared_ptr< WModule >( new WMArbitraryROIs() );
 }
 
 const char** WMArbitraryROIs::getXPMIcon() const
@@ -89,7 +89,7 @@ const std::string WMArbitraryROIs::getDescription() const
 void WMArbitraryROIs::connectors()
 {
     // initialize connectors
-    m_input = boost::shared_ptr< WModuleInputData < WDataSetScalar > >(
+    m_input = std::shared_ptr< WModuleInputData < WDataSetScalar > >(
         new WModuleInputData< WDataSetScalar >( shared_from_this(), "in", "Dataset to cut ROI from." ) );
     // add it to the list of connectors. Please note, that a connector NOT added via addConnector will not work as expected.
     addConnector( m_input );
@@ -100,7 +100,7 @@ void WMArbitraryROIs::connectors()
 
 void WMArbitraryROIs::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_finalizeTrigger = m_properties->addProperty( "Finalize", "Finalize and add to ROI manager", WPVBaseTypes::PV_TRIGGER_READY, m_propCondition  );
     m_threshold = m_properties->addProperty( "Threshold", "", 1.0, m_propCondition );
@@ -200,38 +200,38 @@ void WMArbitraryROIs::createCutDataset()
         return;
     }
 
-    boost::shared_ptr< WValueSetBase > newValueSet;
+    std::shared_ptr< WValueSetBase > newValueSet;
 
-    boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
+    std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
 
     size_t order = ( *m_dataSet ).getValueSet()->order();
     size_t vDim = ( *m_dataSet ).getValueSet()->dimension();
 
     float threshold = m_threshold->get();
-    boost::shared_ptr< std::vector< float > > data( new std::vector< float >() );
+    std::shared_ptr< std::vector< float > > data( new std::vector< float >() );
 
     switch( ( *m_dataSet ).getValueSet()->getDataType() )
     {
         case W_DT_UNSIGNED_CHAR:
         {
-            boost::shared_ptr< WValueSet< unsigned char > > vals;
-            vals =  boost::dynamic_pointer_cast< WValueSet< unsigned char > >( ( *m_dataSet ).getValueSet() );
+            std::shared_ptr< WValueSet< unsigned char > > vals;
+            vals =  std::dynamic_pointer_cast< WValueSet< unsigned char > >( ( *m_dataSet ).getValueSet() );
             WAssert( vals, "Data type and data type indicator must fit." );
             data = cutArea( ( *m_dataSet ).getGrid(), vals );
             break;
         }
         case W_DT_INT16:
         {
-            boost::shared_ptr< WValueSet< int16_t > > vals;
-            vals =  boost::dynamic_pointer_cast< WValueSet< int16_t > >( ( *m_dataSet ).getValueSet() );
+            std::shared_ptr< WValueSet< int16_t > > vals;
+            vals =  std::dynamic_pointer_cast< WValueSet< int16_t > >( ( *m_dataSet ).getValueSet() );
             WAssert( vals, "Data type and data type indicator must fit." );
             data = cutArea( ( *m_dataSet ).getGrid(), vals );
             break;
         }
         case W_DT_SIGNED_INT:
         {
-            boost::shared_ptr< WValueSet< int32_t > > vals;
-            vals =  boost::dynamic_pointer_cast< WValueSet< int32_t > >( ( *m_dataSet ).getValueSet() );
+            std::shared_ptr< WValueSet< int32_t > > vals;
+            vals =  std::dynamic_pointer_cast< WValueSet< int32_t > >( ( *m_dataSet ).getValueSet() );
             WAssert( vals, "Data type and data type indicator must fit." );
             cutArea( ( *m_dataSet ).getGrid(), vals );
             data = cutArea( ( *m_dataSet ).getGrid(), vals );
@@ -239,16 +239,16 @@ void WMArbitraryROIs::createCutDataset()
         }
         case W_DT_FLOAT:
         {
-            boost::shared_ptr< WValueSet< float > > vals;
-            vals =  boost::dynamic_pointer_cast< WValueSet< float > >( ( *m_dataSet ).getValueSet() );
+            std::shared_ptr< WValueSet< float > > vals;
+            vals =  std::dynamic_pointer_cast< WValueSet< float > >( ( *m_dataSet ).getValueSet() );
             WAssert( vals, "Data type and data type indicator must fit." );
             data = cutArea( ( *m_dataSet ).getGrid(), vals );
             break;
         }
         case W_DT_DOUBLE:
         {
-            boost::shared_ptr< WValueSet< double > > vals;
-            vals =  boost::dynamic_pointer_cast< WValueSet< double > >( ( *m_dataSet ).getValueSet() );
+            std::shared_ptr< WValueSet< double > > vals;
+            vals =  std::dynamic_pointer_cast< WValueSet< double > >( ( *m_dataSet ).getValueSet() );
             WAssert( vals, "Data type and data type indicator must fit." );
             data = cutArea( ( *m_dataSet ).getGrid(), vals );
             break;
@@ -256,7 +256,7 @@ void WMArbitraryROIs::createCutDataset()
         default:
             WAssert( false, "Unknown data type in ArbitraryROIs module" );
     }
-    m_newValueSet = boost::shared_ptr< WValueSet< float > >( new WValueSet< float >( order, vDim, data, W_DT_FLOAT ) );
+    m_newValueSet = std::shared_ptr< WValueSet< float > >( new WValueSet< float >( order, vDim, data, W_DT_FLOAT ) );
     WMarchingLegoAlgorithm mlAlgo;
     m_triMesh = mlAlgo.generateSurface( grid->getNbCoordsX(), grid->getNbCoordsY(), grid->getNbCoordsZ(),
                                         grid->getTransformationMatrix(),
@@ -265,9 +265,9 @@ void WMArbitraryROIs::createCutDataset()
 }
 
 template< typename T >
-boost::shared_ptr< std::vector< float > > WMArbitraryROIs::cutArea( boost::shared_ptr< WGrid > inGrid, boost::shared_ptr< WValueSet< T > > vals )
+std::shared_ptr< std::vector< float > > WMArbitraryROIs::cutArea( std::shared_ptr< WGrid > inGrid, std::shared_ptr< WValueSet< T > > vals )
 {
-    boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( inGrid );
+    std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( inGrid );
 
     size_t nx = grid->getNbCoordsX();
     size_t ny = grid->getNbCoordsY();
@@ -284,7 +284,7 @@ boost::shared_ptr< std::vector< float > > WMArbitraryROIs::cutArea( boost::share
     size_t yMax = static_cast<size_t>( m_selectionROI->getMaxPos()[1] / dy );
     size_t zMax = static_cast<size_t>( m_selectionROI->getMaxPos()[2] / dz );
 
-    boost::shared_ptr< std::vector< float > > newVals( new std::vector< float >( nx * ny * nz, 0 ) );
+    std::shared_ptr< std::vector< float > > newVals( new std::vector< float >( nx * ny * nz, 0 ) );
 
     size_t x, y, z;
     for( z = 0; z < nz; ++z )
@@ -368,7 +368,7 @@ void WMArbitraryROIs::finalizeROI()
         return;
     }
 
-    boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
+    std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
     osg::ref_ptr< WROI > newROI = osg::ref_ptr< WROI >( new WROIArbitrary(  grid->getNbCoordsX(), grid->getNbCoordsY(), grid->getNbCoordsZ(),
                                                                             grid->getTransformationMatrix(),
                                                                             *m_newValueSet->rawDataVectorPointer(),

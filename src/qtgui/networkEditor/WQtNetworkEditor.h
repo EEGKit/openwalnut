@@ -72,7 +72,7 @@ public:
      * \param module a WModule
      * \return WQtNetworkItem belongs to the WModule
      */
-    WQtNetworkItem* findItemByModule( boost::shared_ptr< WModule > module );
+    WQtNetworkItem* findItemByModule( std::shared_ptr< WModule > module );
 
     /**
      * Connect SIGNALS with SLOTS

@@ -96,7 +96,7 @@ public:
      * \param dataset The input dataset.
      * \param func The function to be evaluated per voxel.
      */
-    WThreadedPerVoxelOperation( boost::shared_ptr< WDataSetSingle const > dataset, FunctionType func );
+    WThreadedPerVoxelOperation( std::shared_ptr< WDataSetSingle const > dataset, FunctionType func );
 
     /**
      * Destructor.
@@ -109,21 +109,21 @@ public:
      * \param input The input dataset.
      * \param voxelNum The voxel number to operate on.
      */
-    virtual void compute( boost::shared_ptr< ValueSetType const > input, std::size_t voxelNum );
+    virtual void compute( std::shared_ptr< ValueSetType const > input, std::size_t voxelNum );
 
     /**
      * Get the output dataset.
      *
      * \return The oupput dataset.
      */
-    boost::shared_ptr< WDataSetSingle > getResult();
+    std::shared_ptr< WDataSetSingle > getResult();
 
 protected:
     using BaseType::m_input;
 
 private:
     //! a threadsafe vector (container)
-    typedef boost::shared_ptr< std::vector< Output_T > > OutputVectorType;
+    typedef std::shared_ptr< std::vector< Output_T > > OutputVectorType;
 
     //! stores the output of the per-voxel-operation
     OutputVectorType m_output;
@@ -132,15 +132,15 @@ private:
     FunctionType m_func;
 
     //! store the grid
-    boost::shared_ptr< WGrid > m_grid;
+    std::shared_ptr< WGrid > m_grid;
 };
 
 template< typename Value_T, std::size_t numValues, typename Output_T, std::size_t numOutputs >
 WThreadedPerVoxelOperation< Value_T, numValues, Output_T, numOutputs >::WThreadedPerVoxelOperation(
-                                                        boost::shared_ptr< WDataSetSingle const > dataset,
+                                                        std::shared_ptr< WDataSetSingle const > dataset,
                                                         FunctionType func )
-    : BaseType( ( dataset ? boost::dynamic_pointer_cast< ValueSetType >( dataset->getValueSet() )
-                          : boost::shared_ptr< ValueSetType >() ) ) // NOLINT
+    : BaseType( ( dataset ? std::dynamic_pointer_cast< ValueSetType >( dataset->getValueSet() )
+                          : std::shared_ptr< ValueSetType >() ) ) // NOLINT
 {
     if( !dataset )
     {
@@ -186,7 +186,7 @@ WThreadedPerVoxelOperation< Value_T, numValues, Output_T, numOutputs >::~WThread
 }
 
 template< typename Value_T, std::size_t numValues, typename Output_T, std::size_t numOutputs >
-void WThreadedPerVoxelOperation< Value_T, numValues, Output_T, numOutputs >::compute( boost::shared_ptr< ValueSetType const > input,
+void WThreadedPerVoxelOperation< Value_T, numValues, Output_T, numOutputs >::compute( std::shared_ptr< ValueSetType const > input,
                                                                std::size_t voxelNum )
 {
     TransmitType t = input->getSubArray( voxelNum * numValues, numValues );
@@ -198,19 +198,19 @@ void WThreadedPerVoxelOperation< Value_T, numValues, Output_T, numOutputs >::com
 }
 
 template< typename Value_T, std::size_t numValues, typename Output_T, std::size_t numOutputs >
-boost::shared_ptr< WDataSetSingle > WThreadedPerVoxelOperation< Value_T, numValues, Output_T, numOutputs >::getResult()
+std::shared_ptr< WDataSetSingle > WThreadedPerVoxelOperation< Value_T, numValues, Output_T, numOutputs >::getResult()
 {
-    boost::shared_ptr< OutValueSetType > values;
+    std::shared_ptr< OutValueSetType > values;
     switch( numOutputs )
     {
     case 1:
-        values = boost::shared_ptr< OutValueSetType >( new OutValueSetType( 0, 1, m_output,
+        values = std::shared_ptr< OutValueSetType >( new OutValueSetType( 0, 1, m_output,
                                                                             DataType< Output_T >::type ) );
-        return boost::shared_ptr< WDataSetScalar >( new WDataSetScalar( values, m_grid ) );
+        return std::shared_ptr< WDataSetScalar >( new WDataSetScalar( values, m_grid ) );
     default:
-        values = boost::shared_ptr< OutValueSetType >( new OutValueSetType( 1, numOutputs, m_output,
+        values = std::shared_ptr< OutValueSetType >( new OutValueSetType( 1, numOutputs, m_output,
                                                                             DataType< Output_T >::type ) );
-        return boost::shared_ptr< WDataSetSingle >( new WDataSetSingle( values, m_grid ) );
+        return std::shared_ptr< WDataSetSingle >( new WDataSetSingle( values, m_grid ) );
     }
 }
 

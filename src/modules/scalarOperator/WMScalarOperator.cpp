@@ -60,9 +60,9 @@ WMScalarOperator::~WMScalarOperator()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMScalarOperator::factory() const
+std::shared_ptr< WModule > WMScalarOperator::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMScalarOperator() );
+    return std::shared_ptr< WModule >( new WMScalarOperator() );
 }
 
 const char** WMScalarOperator::getXPMIcon() const
@@ -93,10 +93,10 @@ void WMScalarOperator::connectors()
 
 void WMScalarOperator::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     // create a list of operations here
-    m_operations = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_operations = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_operations->addItem( "A + B", "Add A to B." );          // NOTE: you can add XPM images here.
     m_operations->addItem( "A - B", "Subtract B from A." );
     m_operations->addItem( "A * B", "Scale A by B." );
@@ -347,7 +347,7 @@ inline T opScaleByA( T v, T /* l */, T u )
  * \tparam VSetAType The integral type of the first valueset.
  */
 template< typename VSetAType >
-class VisitorVSetB: public boost::static_visitor< boost::shared_ptr< WValueSetBase > >
+class VisitorVSetB: public boost::static_visitor< std::shared_ptr< WValueSetBase > >
 {
 public:
     /**
@@ -417,10 +417,10 @@ public:
         }
 
         // create result value set
-        boost::shared_ptr< WValueSet< ResultT > > result = boost::shared_ptr< WValueSet< ResultT > >(
+        std::shared_ptr< WValueSet< ResultT > > result = std::shared_ptr< WValueSet< ResultT > >(
             new WValueSet< ResultT >( order,
                                       dim,
-                                      boost::shared_ptr< std::vector< ResultT > >( new std::vector< ResultT >( data ) ),
+                                      std::shared_ptr< std::vector< ResultT > >( new std::vector< ResultT >( data ) ),
                                       type )
         );
         return result;
@@ -441,7 +441,7 @@ public:
  * Visitor for discriminating the type of the first valueset. It simply creates a new instance of VisitorVSetB with the proper integral type of
  * the first value set.
  */
-class VisitorVSetA: public boost::static_visitor< boost::shared_ptr< WValueSetBase > >
+class VisitorVSetA: public boost::static_visitor< std::shared_ptr< WValueSetBase > >
 {
 public:
     /**
@@ -487,7 +487,7 @@ public:
 /**
  * Visitor for discriminating the type of the first valueset. It should be used for operations on ONE valueset.
  */
-class VisitorVSetSingleArgument: public boost::static_visitor< boost::shared_ptr< WValueSetBase > >
+class VisitorVSetSingleArgument: public boost::static_visitor< std::shared_ptr< WValueSetBase > >
 {
 public:
     /**
@@ -552,10 +552,10 @@ public:
         }
 
         // create result value set
-        boost::shared_ptr< WValueSet< ResultT > > result = boost::shared_ptr< WValueSet< ResultT > >(
+        std::shared_ptr< WValueSet< ResultT > > result = std::shared_ptr< WValueSet< ResultT > >(
             new WValueSet< ResultT >( order,
                                       dim,
-                                      boost::shared_ptr< std::vector< ResultT > >( new std::vector< ResultT >( data ) ),
+                                      std::shared_ptr< std::vector< ResultT > >( new std::vector< ResultT >( data ) ),
                                       type )
         );
         return result;
@@ -619,8 +619,8 @@ void WMScalarOperator::moduleMain()
         // has the data changed?
         if( m_opSelection->changed() || propsChanged || m_inputA->handledUpdate() || m_inputB->handledUpdate() )
         {
-            boost::shared_ptr< WDataSetScalar > dataSetA = m_inputA->getData();
-            boost::shared_ptr< WDataSetScalar > dataSetB = m_inputB->getData();
+            std::shared_ptr< WDataSetScalar > dataSetA = m_inputA->getData();
+            std::shared_ptr< WDataSetScalar > dataSetB = m_inputB->getData();
             if( !dataSetA )
             {
                 // reset output if input was reset/disconnected
@@ -630,10 +630,10 @@ void WMScalarOperator::moduleMain()
             }
 
             // the first value-set is always needed -> grab it
-            boost::shared_ptr< WValueSetBase > valueSetA = dataSetA->getValueSet();
+            std::shared_ptr< WValueSetBase > valueSetA = dataSetA->getValueSet();
 
              // use a custom progress combiner
-            boost::shared_ptr< WProgress > prog = boost::shared_ptr< WProgress >(
+            std::shared_ptr< WProgress > prog = std::shared_ptr< WProgress >(
                 new WProgress( "Applying operator on data" ) );
             m_progress->addSubProgress( prog );
 
@@ -644,7 +644,7 @@ void WMScalarOperator::moduleMain()
             WItemSelector s = m_opSelection->get( true );
 
             // this keeps the result
-            boost::shared_ptr< WValueSetBase > newValueSet;
+            std::shared_ptr< WValueSetBase > newValueSet;
 
             // single operand operation?
             if( ( s == 5 ) || ( s == 6 ) || ( s == 7 ) || ( s == 8 ) )
@@ -658,7 +658,7 @@ void WMScalarOperator::moduleMain()
                 // valid data?
                 if( dataSetB )
                 {
-                    boost::shared_ptr< WValueSetBase > valueSetB = dataSetB->getValueSet();
+                    std::shared_ptr< WValueSetBase > valueSetB = dataSetB->getValueSet();
 
                     // both value sets need to be the same
                     bool match = ( valueSetA->dimension() == valueSetB->dimension() ) &&
@@ -673,7 +673,7 @@ void WMScalarOperator::moduleMain()
                     newValueSet = valueSetA->applyFunction( visitor );
 
                     // Create the new dataset and export it
-                    m_output->updateData( boost::shared_ptr<WDataSetScalar>( new WDataSetScalar( newValueSet, m_inputA->getData()->getGrid() ) ) );
+                    m_output->updateData( std::shared_ptr<WDataSetScalar>( new WDataSetScalar( newValueSet, m_inputA->getData()->getGrid() ) ) );
                 }
                 else
                 {
@@ -692,7 +692,7 @@ void WMScalarOperator::moduleMain()
             // Create the new dataset and export it
             if( newValueSet )
             {
-                m_output->updateData( boost::shared_ptr<WDataSetScalar>( new WDataSetScalar( newValueSet, dataSetA->getGrid() ) ) );
+                m_output->updateData( std::shared_ptr<WDataSetScalar>( new WDataSetScalar( newValueSet, dataSetA->getGrid() ) ) );
             }
 
             // done

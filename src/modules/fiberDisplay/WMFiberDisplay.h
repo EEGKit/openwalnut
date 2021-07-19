@@ -76,7 +76,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
 protected:
     /**
@@ -115,12 +115,12 @@ private:
     /**
      * The fiber dataset which is going to be filtered.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetFibers > > m_fiberInput;
+    std::shared_ptr< WModuleInputData< WDataSetFibers > > m_fiberInput;
 
     /**
      * An optional fiber clustering can be specified to filter in m_fiberInput.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetFiberClustering > > m_fiberClusteringInput;
+    std::shared_ptr< WModuleInputData< WDataSetFiberClustering > > m_fiberClusteringInput;
 
     /**
      * The current fiber data
@@ -135,7 +135,7 @@ private:
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * The properties of the fiber dataset.
@@ -289,7 +289,7 @@ private:
      * \param fibGeode the geode with the fibers as tube strip or lines
      * \param endCapGeode the end cap sprites. Not used if not in tube mode.
      */
-    void createFiberGeode( boost::shared_ptr< WDataSetFibers > fibers, osg::ref_ptr< osg::Geode > fibGeode,
+    void createFiberGeode( std::shared_ptr< WDataSetFibers > fibers, osg::ref_ptr< osg::Geode > fibGeode,
                                                                                          osg::ref_ptr< osg::Geode > endCapGeode );
 
     /**
@@ -307,7 +307,7 @@ private:
     /**
      * Point to a fiber selector, which is an adapter between the ROI manager and the this module
      */
-    boost::shared_ptr< WFiberSelector > m_fiberSelector;
+    std::shared_ptr< WFiberSelector > m_fiberSelector;
 
     /**
      * Is true when received a change signal from m_fiberSelector

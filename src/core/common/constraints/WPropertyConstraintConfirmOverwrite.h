@@ -53,7 +53,7 @@ public:
      *
      * \return true if the file/path is a directory
      */
-    virtual bool accept( boost::shared_ptr< WPropertyVariable< T > > property, const T& value );
+    virtual bool accept( std::shared_ptr< WPropertyVariable< T > > property, const T& value );
 
     /**
      * Allows simple identification of the real constraint type.
@@ -67,7 +67,7 @@ public:
      *
      * \return the constraint.
      */
-    virtual boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > clone();
+    virtual std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > clone();
 
 private:
 };
@@ -83,7 +83,7 @@ WPropertyConstraintConfirmOverwrite< T >::~WPropertyConstraintConfirmOverwrite()
 }
 
 template < typename T >
-bool WPropertyConstraintConfirmOverwrite< T >::accept( boost::shared_ptr< WPropertyVariable< T > > /* property */, const T& /* value */ )
+bool WPropertyConstraintConfirmOverwrite< T >::accept( std::shared_ptr< WPropertyVariable< T > > /* property */, const T& /* value */ )
 {
     return true;
 }
@@ -95,9 +95,9 @@ PROPERTYCONSTRAINT_TYPE WPropertyConstraintConfirmOverwrite< T >::getType()
 }
 
 template < typename T >
-boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > WPropertyConstraintConfirmOverwrite< T >::clone()
+std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > WPropertyConstraintConfirmOverwrite< T >::clone()
 {
-    return boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint >( new WPropertyConstraintConfirmOverwrite< T >( *this ) );
+    return std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint >( new WPropertyConstraintConfirmOverwrite< T >( *this ) );
 }
 
 

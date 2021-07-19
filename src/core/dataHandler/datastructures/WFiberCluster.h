@@ -26,6 +26,7 @@
 #define WFIBERCLUSTER_H
 
 #include <list>
+#include <shared_mutex>
 #include <string>
 #include <vector>
 
@@ -47,12 +48,12 @@ public:
     /**
      * Shared pointer abbreviation.
      */
-    typedef boost::shared_ptr< WFiberCluster > SPtr;
+    typedef std::shared_ptr< WFiberCluster > SPtr;
 
     /**
      * Const shared pointer abbreviation.
      */
-    typedef boost::shared_ptr< const WFiberCluster > ConstSPtr;
+    typedef std::shared_ptr< const WFiberCluster > ConstSPtr;
 
     /**
      * This is the list of indices of fibers.
@@ -251,16 +252,16 @@ public:
         m_memberIndices = other.m_memberIndices;
         m_fibs = other.m_fibs;
         m_color = other.m_color;
-        m_centerLineCreationLock = new boost::shared_mutex();
-        m_longestLineCreationLock = new boost::shared_mutex();
+        m_centerLineCreationLock = new std::shared_mutex();
+        m_longestLineCreationLock = new std::shared_mutex();
         // copy them only if they exist
         if( other.m_centerLine )
         {
-            m_centerLine = boost::shared_ptr< WFiber >( new WFiber( *other.m_centerLine.get() ) );
+            m_centerLine = std::shared_ptr< WFiber >( new WFiber( *other.m_centerLine.get() ) );
         }
         if( other.m_longestLine )
         {
-            m_longestLine = boost::shared_ptr< WFiber >( new WFiber( *other.m_longestLine.get() ) );
+            m_longestLine = std::shared_ptr< WFiber >( new WFiber( *other.m_longestLine.get() ) );
         }
         return *this;
     }
@@ -270,8 +271,8 @@ public:
     // information. Since we don't have the possibility of multiple
     // InputConnectors we must agglomerate those into one object. Please remove this.
     // \cond Suppress_Doxygen
-    void setDataSetReference( boost::shared_ptr< const WDataSetFiberVector > fibs );
-    boost::shared_ptr< const WDataSetFiberVector > getDataSetReference() const;
+    void setDataSetReference( std::shared_ptr< const WDataSetFiberVector > fibs );
+    std::shared_ptr< const WDataSetFiberVector > getDataSetReference() const;
     // \endcond
 
     /**
@@ -279,21 +280,21 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
     /**
      * Returns the center line of this cluster. The centerline gets calculated during the first call of this method.
      *
      * \return Reference to the center line
      */
-    boost::shared_ptr< WFiber > getCenterLine() const;
+    std::shared_ptr< WFiber > getCenterLine() const;
 
     /**
      * Returns the center line of this cluster. The longest line gets calculated during the first call if this method.
      *
      * \return Reference to the longest line
      */
-    boost::shared_ptr< WFiber > getLongestLine() const;
+    std::shared_ptr< WFiber > getLongestLine() const;
 
     /**
      * Makes the hard work to compute the center line.
@@ -316,7 +317,7 @@ protected:
     /**
      * Prototype for this dataset
      */
-    static boost::shared_ptr< WPrototyped > m_prototype;
+    static std::shared_ptr< WPrototyped > m_prototype;
 
     /**
      * Alings all fibers within the given dataset to be in one main direction. But Alignment only may swap the ordering of the fibers
@@ -324,7 +325,7 @@ protected:
      *
      * \param fibs The dataset
      */
-    void unifyDirection( boost::shared_ptr< WDataSetFiberVector > fibs ) const;
+    void unifyDirection( std::shared_ptr< WDataSetFiberVector > fibs ) const;
 
 private:
     /**
@@ -349,7 +350,7 @@ private:
     /**
      * Reference to the real fibers of the brain this cluster belongs to.
      */
-    boost::shared_ptr< const WDataSetFiberVector > m_fibs;
+    std::shared_ptr< const WDataSetFiberVector > m_fibs;
 
     /**
      * Color which is used to paint the members of this cluster.
@@ -369,26 +370,26 @@ private:
     /**
      * Lock the modification in the m_centerLine mutable. The lock is stored as pointer to avoid copy construction problems.
      */
-    boost::shared_mutex* m_centerLineCreationLock;
+    std::shared_mutex* m_centerLineCreationLock;
 
     /**
      * Lock the modification in the m_longestLine mutable. The lock is stored as pointer to avoid copy construction problems.
      */
-    boost::shared_mutex* m_longestLineCreationLock;
+    std::shared_mutex* m_longestLineCreationLock;
 
     /**
      * Average fiber for this cluster representing the main direction and curvature of this cluster.
      *
      * \note This member is mutable as it needs to be modified during a const getter.
      */
-    mutable boost::shared_ptr< WFiber > m_centerLine;
+    mutable std::shared_ptr< WFiber > m_centerLine;
 
     /**
      * The longest fiber in the dataset.
      *
      * \note This member is mutable as it needs to be modified during a const getter.
      */
-    mutable boost::shared_ptr< WFiber > m_longestLine;
+    mutable std::shared_ptr< WFiber > m_longestLine;
 };
 
 inline bool WFiberCluster::empty() const

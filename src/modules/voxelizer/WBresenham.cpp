@@ -24,6 +24,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <shared_mutex>
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
@@ -36,7 +37,7 @@
 #include "core/dataHandler/WGridRegular3D.h"
 #include "WBresenham.h"
 
-WBresenham::WBresenham( boost::shared_ptr< WGridRegular3D > grid, bool antialiased )
+WBresenham::WBresenham( std::shared_ptr< WGridRegular3D > grid, bool antialiased )
     : WRasterAlgorithm( grid ),
       m_antialiased( antialiased )
 {
@@ -49,7 +50,7 @@ WBresenham::~WBresenham()
 void WBresenham::raster( const WLine& line )
 {
     // lock the parameterization list for reading
-    boost::shared_lock< boost::shared_mutex > lock =  boost::shared_lock< boost::shared_mutex >( m_parameterizationsLock );
+    boost::shared_lock< std::shared_mutex > lock =  boost::shared_lock< std::shared_mutex >( m_parameterizationsLock );
 
     newLine( line );
 

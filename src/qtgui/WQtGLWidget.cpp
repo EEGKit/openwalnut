@@ -137,7 +137,7 @@ void WQtGLWidget::cleanUp()
     {
         m_Viewer->setClosed( true );
         WKernel::getRunningKernel()->getGraphicsEngine()->closeViewer( m_Viewer );
-        m_Viewer = boost::shared_ptr<WGEViewer>();
+        m_Viewer = std::shared_ptr<WGEViewer>();
     }
 }
 
@@ -194,7 +194,7 @@ WQtGLWidget::CameraManipulators WQtGLWidget::getCameraManipulators()
     return m_CurrentManipulator;
 }
 
-boost::shared_ptr< WGEViewer > WQtGLWidget::getViewer() const
+std::shared_ptr< WGEViewer > WQtGLWidget::getViewer() const
 {
     return m_Viewer;
 }

@@ -51,7 +51,7 @@ public:
     /**
      * A shared_ptr to this class.
      */
-    typedef boost::shared_ptr< WFiberHandler > SPtr;
+    typedef std::shared_ptr< WFiberHandler > SPtr;
 
     /**
      * Type of selectable items.
@@ -71,7 +71,7 @@ public:
     /**
      * Shared pointer to fibers-vector
      */
-    typedef boost::shared_ptr< PCFiberList > PCFiberListSPtr;
+    typedef std::shared_ptr< PCFiberList > PCFiberListSPtr;
 
     /**
      * Creates the list of fibers.
@@ -252,7 +252,7 @@ private:
     /**
      * The list of possible fibers, which can be selected.
      */
-    boost::shared_ptr< WItemSelection > m_possibleFiberSelections;
+    std::shared_ptr< WItemSelection > m_possibleFiberSelections;
 
     /**
      * Represents the current active fiber selection property.
@@ -297,7 +297,7 @@ private:
     /**
      * Vector for the visibility of the fibers.
      */
-    boost::shared_ptr< std::vector< char > > m_hidden;
+    std::shared_ptr< std::vector< char > > m_hidden;
 };
 
 #endif  // WFIBERHANDLER_H

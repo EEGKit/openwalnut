@@ -58,7 +58,7 @@ public:
      * \param targetModule      the module/prototype to use for connecting the module with
      * \param targetConnector   the input connector of the prototype to connect with srcConnector.
      */
-    WApplyCombiner( boost::shared_ptr< WModuleContainer > target,
+    WApplyCombiner( std::shared_ptr< WModuleContainer > target,
                     WModule::SPtr srcModule, std::string srcConnector,
                     WModule::SPtr targetModule, std::string targetConnector );
 
@@ -134,7 +134,7 @@ public:
                 if( ( *outIter )->connectable( *inIter ) &&  ( *inIter )->connectable( *outIter ) )
                 {
                     // create a apply-prototype combiner
-                    lComp.push_back( boost::shared_ptr< WApplyCombiner >(
+                    lComp.push_back( std::shared_ptr< WApplyCombiner >(
                         new T( module1, ( *outIter )->getName(), module2, ( *inIter )->getName() ) )
                     );
 

@@ -43,7 +43,7 @@ public:
      * \param grid the grid used for the new dataset.
      * \param centerline the centerline of the cluster
      */
-    WCenterlineParameterization( boost::shared_ptr< WGridRegular3D > grid, boost::shared_ptr< WFiber > centerline );
+    WCenterlineParameterization( std::shared_ptr< WGridRegular3D > grid, std::shared_ptr< WFiber > centerline );
 
     /**
      * Destructor.
@@ -69,7 +69,7 @@ public:
      *
      * \return the dataset.
      */
-    virtual boost::shared_ptr< WDataSetScalar > getDataSet();
+    virtual std::shared_ptr< WDataSetScalar > getDataSet();
 
     /**
      * Gets called for each new line getting rasterized. Here, it is used to reset the internal length integrator
@@ -110,7 +110,7 @@ protected:
     /**
      * The centerline of the cluster
      */
-    boost::shared_ptr< WFiber > m_centerline;
+    std::shared_ptr< WFiber > m_centerline;
 
     /**
      * The current start parameter for the current segment.

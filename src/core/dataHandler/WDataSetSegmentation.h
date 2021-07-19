@@ -51,7 +51,7 @@ public:
      * \param segmentation the value set to use
      * \param grid the grid which maps world space to the value set
      */
-    WDataSetSegmentation( boost::shared_ptr< WValueSetBase > segmentation, boost::shared_ptr< WGrid > grid );
+    WDataSetSegmentation( std::shared_ptr< WValueSetBase > segmentation, std::shared_ptr< WGrid > grid );
 
     /**
      * Constructs an instance out of three WDataSetScalar.
@@ -60,9 +60,9 @@ public:
      * \param grayMatter the value set to use
      * \param cerebrospinalFluid the value set to use
      */
-    WDataSetSegmentation( boost::shared_ptr< WDataSetScalar > whiteMatter,
-                          boost::shared_ptr< WDataSetScalar > grayMatter,
-                          boost::shared_ptr< WDataSetScalar > cerebrospinalFluid );
+    WDataSetSegmentation( std::shared_ptr< WDataSetScalar > whiteMatter,
+                          std::shared_ptr< WDataSetScalar > grayMatter,
+                          std::shared_ptr< WDataSetScalar > cerebrospinalFluid );
     /**
      * Construct an empty and unusable instance. This is useful for prototypes.
      */
@@ -129,7 +129,7 @@ public:
      *
      * \return the clone
      */
-    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WValueSetBase > newValueSet, boost::shared_ptr< WGrid > newGrid ) const;
+    virtual WDataSetSingle::SPtr clone( std::shared_ptr< WValueSetBase > newValueSet, std::shared_ptr< WGrid > newGrid ) const;
 
     /**
      * Creates a copy (clone) of this instance but allows one to change the valueset. Unlike copy construction, this is a very useful function if you
@@ -139,7 +139,7 @@ public:
      *
      * \return the clone
      */
-    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WValueSetBase > newValueSet ) const;
+    virtual WDataSetSingle::SPtr clone( std::shared_ptr< WValueSetBase > newValueSet ) const;
 
     /**
      * Creates a copy (clone) of this instance but allows one to change the grid. Unlike copy construction, this is a very useful function if you
@@ -149,7 +149,7 @@ public:
      *
      * \return the clone
      */
-    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WGrid > newGrid ) const;
+    virtual WDataSetSingle::SPtr clone( std::shared_ptr< WGrid > newGrid ) const;
 
     /**
      * Creates a copy (clone) of this instance. Unlike copy construction, this is a very useful function if you
@@ -164,7 +164,7 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
     /**
      * Enumerator for the three different classification types.
@@ -184,7 +184,7 @@ protected:
     /**
      * The prototype as singleton.
      */
-    static boost::shared_ptr< WPrototyped > m_prototype;
+    static std::shared_ptr< WPrototyped > m_prototype;
 
 private:
     /**
@@ -196,9 +196,9 @@ private:
      *
      * \return The probabilities in one value set.
      */
-    static boost::shared_ptr< WValueSetBase > convert( boost::shared_ptr< WDataSetScalar > whiteMatter,
-                                                       boost::shared_ptr< WDataSetScalar > grayMatter,
-                                                       boost::shared_ptr< WDataSetScalar > cerebrospinalFluid );
+    static std::shared_ptr< WValueSetBase > convert( std::shared_ptr< WDataSetScalar > whiteMatter,
+                                                       std::shared_ptr< WDataSetScalar > grayMatter,
+                                                       std::shared_ptr< WDataSetScalar > cerebrospinalFluid );
 
     /**
      * This helper function copies the content of several WDataSetScalars to one std::vector.
@@ -207,11 +207,11 @@ private:
      *
      * \return The WDataSetScalars merged to a std::vector.
      */
-    template< typename T > static std::vector< T > copyDataSetsToArray( const std::vector< boost::shared_ptr< WDataSetScalar > > &dataSets );
+    template< typename T > static std::vector< T > copyDataSetsToArray( const std::vector< std::shared_ptr< WDataSetScalar > > &dataSets );
 };
 
 template< typename T > std::vector< T >
-WDataSetSegmentation::copyDataSetsToArray( const std::vector< boost::shared_ptr< WDataSetScalar > > &dataSets )
+WDataSetSegmentation::copyDataSetsToArray( const std::vector< std::shared_ptr< WDataSetScalar > > &dataSets )
 {
     const size_t voxelDim = dataSets.size();
     size_t countVoxels = 0;
@@ -221,11 +221,11 @@ WDataSetSegmentation::copyDataSetsToArray( const std::vector< boost::shared_ptr<
 
     // loop over images
     size_t dimIndex = 0;
-    for( std::vector< boost::shared_ptr< WDataSetScalar > >::const_iterator it = dataSets.begin(); it != dataSets.end(); it++ )
+    for( std::vector< std::shared_ptr< WDataSetScalar > >::const_iterator it = dataSets.begin(); it != dataSets.end(); it++ )
     {
       for( size_t voxelNumber = 0; voxelNumber < countVoxels; voxelNumber++ )
       {
-        data[ voxelNumber * voxelDim + dimIndex ] =  ( boost::static_pointer_cast< WDataSetSingle > ( *it ) )->getSingleRawValue< T >( voxelNumber );
+        data[ voxelNumber * voxelDim + dimIndex ] =  ( std::static_pointer_cast< WDataSetSingle > ( *it ) )->getSingleRawValue< T >( voxelNumber );
       }
       dimIndex++;
     }
@@ -235,8 +235,8 @@ WDataSetSegmentation::copyDataSetsToArray( const std::vector< boost::shared_ptr<
 
 // template < typename T > T WDataSetSegmentation::getValueAt( int x, int y, int z )
 // {
-//     boost::shared_ptr< WValueSet< T > > vs = boost::dynamic_pointer_cast< WValueSet< T > >( m_valueSet );
-//     boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( m_grid );
+//     std::shared_ptr< WValueSet< T > > vs = std::dynamic_pointer_cast< WValueSet< T > >( m_valueSet );
+//     std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( m_grid );
 //
 //     size_t id = x + y * grid->getNbCoordsX() + z * grid->getNbCoordsX() * grid->getNbCoordsY();
 //

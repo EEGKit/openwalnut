@@ -41,14 +41,14 @@ class WUIGridWidget: public WUIWidgetBase
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WUIGridWidget >.
+     * Convenience typedef for a std::shared_ptr< WUIGridWidget >.
      */
-    typedef boost::shared_ptr< WUIGridWidget > SPtr;
+    typedef std::shared_ptr< WUIGridWidget > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WUIGridWidget >.
+     * Convenience typedef for a std::shared_ptr< const WUIGridWidget >.
      */
-    typedef boost::shared_ptr< const WUIGridWidget > ConstSPtr;
+    typedef std::shared_ptr< const WUIGridWidget > ConstSPtr;
 
     /**
      * Destructor.

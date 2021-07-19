@@ -37,7 +37,7 @@ WCondition::~WCondition()
 void WCondition::wait() const
 {
     // since Boost 1.54, we need to explicitly lock the mutex prior to wait.
-    boost::unique_lock<boost::shared_mutex> lock( m_mutex );
+    std::unique_lock<std::shared_mutex> lock( m_mutex );
     m_condition.wait( m_mutex );
 }
 

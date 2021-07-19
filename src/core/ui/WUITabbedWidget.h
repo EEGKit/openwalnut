@@ -41,14 +41,14 @@ class WUITabbedWidget: public WUIWidgetBase
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WUITabbedWidget >.
+     * Convenience typedef for a std::shared_ptr< WUITabbedWidget >.
      */
-    typedef boost::shared_ptr< WUITabbedWidget > SPtr;
+    typedef std::shared_ptr< WUITabbedWidget > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WUITabbedWidget >.
+     * Convenience typedef for a std::shared_ptr< const WUITabbedWidget >.
      */
-    typedef boost::shared_ptr< const WUITabbedWidget > ConstSPtr;
+    typedef std::shared_ptr< const WUITabbedWidget > ConstSPtr;
 
     /**
      * Destructor.

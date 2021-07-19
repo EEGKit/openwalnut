@@ -26,7 +26,7 @@
 
 #include "WModuleDisconnectEvent.h"
 
-WModuleDisconnectEvent::WModuleDisconnectEvent( boost::shared_ptr<WModuleConnector> in, boost::shared_ptr<WModuleConnector> out )
+WModuleDisconnectEvent::WModuleDisconnectEvent( std::shared_ptr<WModuleConnector> in, std::shared_ptr<WModuleConnector> out )
     : QEvent( static_cast< QEvent::Type >( WQT_MODULE_DISCONNECT_EVENT ) ),
     m_in( in ),
     m_out( out )
@@ -39,12 +39,12 @@ WModuleDisconnectEvent::~WModuleDisconnectEvent()
     // cleanup
 }
 
-boost::shared_ptr< WModuleConnector > WModuleDisconnectEvent::getInput() const
+std::shared_ptr< WModuleConnector > WModuleDisconnectEvent::getInput() const
 {
     return m_in;
 }
 
-boost::shared_ptr< WModuleConnector > WModuleDisconnectEvent::getOutput() const
+std::shared_ptr< WModuleConnector > WModuleDisconnectEvent::getOutput() const
 {
     return m_out;
 }

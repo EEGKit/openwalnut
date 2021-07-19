@@ -111,7 +111,7 @@ std::size_t WPagerEEGLibeep::getNumberOfSamples( std::size_t segmentID ) const
     return m_nbSamples;
 }
 
-boost::shared_ptr< WEEGValueMatrix > WPagerEEGLibeep::getValues( std::size_t segmentID, std::size_t start, std::size_t length ) const
+std::shared_ptr< WEEGValueMatrix > WPagerEEGLibeep::getValues( std::size_t segmentID, std::size_t start, std::size_t length ) const
 {
     if( segmentID != 0 )
     {
@@ -145,7 +145,7 @@ boost::shared_ptr< WEEGValueMatrix > WPagerEEGLibeep::getValues( std::size_t seg
         throw WDHIOFailure( stream.str() );
     }
 
-    boost::shared_ptr< WEEGValueMatrix > values( new WEEGValueMatrix( m_nbChannels, std::vector< double >( length ) ) );
+    std::shared_ptr< WEEGValueMatrix > values( new WEEGValueMatrix( m_nbChannels, std::vector< double >( length ) ) );
     for( size_t channelID = 0; channelID < m_nbChannels; ++channelID )
     {
         for( size_t sampleID = 0; sampleID < length; ++sampleID )

@@ -53,8 +53,8 @@
 
 #include "WModuleConnector.h"
 
-WModuleConnector::WModuleConnector( boost::shared_ptr< WModule > module, std::string name, std::string description ):
-    boost::enable_shared_from_this<WModuleConnector>(),
+WModuleConnector::WModuleConnector( std::shared_ptr< WModule > module, std::string name, std::string description ):
+    std::enable_shared_from_this<WModuleConnector>(),
     m_module( module ),
     m_moduleName( module->getName() ),
     m_dataChangedCondition( new WCondition() ),
@@ -86,14 +86,14 @@ WModuleConnector::~WModuleConnector()
     signal_ConnectionClosed.disconnect_all_slots();
 }
 
-bool WModuleConnector::isConnectedTo( boost::shared_ptr<WModuleConnector> con )
+bool WModuleConnector::isConnectedTo( std::shared_ptr<WModuleConnector> con )
 {
-    boost::shared_lock<boost::shared_mutex> slock;
-    slock = boost::shared_lock<boost::shared_mutex>( m_connectionListLock );
+    boost::shared_lock<std::shared_mutex> slock;
+    slock = boost::shared_lock<std::shared_mutex>( m_connectionListLock );
     int c1 = m_connected.count( con );
     slock.unlock();
 
-    slock = boost::shared_lock<boost::shared_mutex>( con->m_connectionListLock );
+    slock = boost::shared_lock<std::shared_mutex>( con->m_connectionListLock );
     int c2 = con->m_connected.count( shared_from_this() );
     slock.unlock();
 
@@ -110,19 +110,19 @@ bool WModuleConnector::isConnectedTo( boost::shared_ptr<WModuleConnector> con )
 
 unsigned int WModuleConnector::isConnected()
 {
-    boost::shared_lock<boost::shared_mutex> slock = boost::shared_lock<boost::shared_mutex>( m_connectionListLock );
+    boost::shared_lock<std::shared_mutex> slock = boost::shared_lock<std::shared_mutex>( m_connectionListLock );
     int count = m_connected.size();
     slock.unlock();
     return count;
 }
 
-void WModuleConnector::connect( boost::shared_ptr<WModuleConnector> con, bool force )
+void WModuleConnector::connect( std::shared_ptr<WModuleConnector> con, bool force )
 {
-    boost::shared_ptr< WModule > module = m_module.lock();    // it is "unlocked" at the end of this function as "module" looses its scope
+    std::shared_ptr< WModule > module = m_module.lock();    // it is "unlocked" at the end of this function as "module" looses its scope
     std::string containerName = "Unknown";
     if( module )
     {
-        boost::shared_ptr< WModuleContainer > container;
+        std::shared_ptr< WModuleContainer > container;
         container = module->getAssociatedContainer();
         containerName = container.get() ? container->getName() : "Unknown";
     }
@@ -159,13 +159,13 @@ void WModuleConnector::connect( boost::shared_ptr<WModuleConnector> con, bool fo
         return;
     }
 
-    boost::unique_lock<boost::shared_mutex> lock;
-    boost::unique_lock<boost::shared_mutex> lockRemote;
+    std::unique_lock<std::shared_mutex> lock;
+    std::unique_lock<std::shared_mutex> lockRemote;
     try
     {
         // get locks
-        lock = boost::unique_lock<boost::shared_mutex>( m_connectionListLock );
-        lockRemote = boost::unique_lock<boost::shared_mutex>( con->m_connectionListLock );
+        lock = std::unique_lock<std::shared_mutex>( m_connectionListLock );
+        lockRemote = std::unique_lock<std::shared_mutex>( con->m_connectionListLock );
 
         // is the input connected already?
         if( ( isInputConnector() && m_connected.size() ) || ( con->isInputConnector() && con->m_connected.size() ) )
@@ -227,14 +227,14 @@ void WModuleConnector::connect( boost::shared_ptr<WModuleConnector> con, bool fo
     con->signal_ConnectionEstablished( con, shared_from_this() );
 }
 
-void WModuleConnector::connectSignals( boost::shared_ptr<WModuleConnector> /*con*/ )
+void WModuleConnector::connectSignals( std::shared_ptr<WModuleConnector> /*con*/ )
 {
     // Add extra signal- connections here that are COMMON to ALL connectors.
     // NOTE: connection established and connection closed are not signals to connect, since you can not send an connection closed
     // signal to somebody with whom you are not connected anymore ;-).
 }
 
-void WModuleConnector::disconnectSignals( boost::shared_ptr<WModuleConnector> /*con*/ )
+void WModuleConnector::disconnectSignals( std::shared_ptr<WModuleConnector> /*con*/ )
 {
     // The base module does not subscribe to any signal -> no disconnection needed here
 }
@@ -259,7 +259,7 @@ boost::signals2::connection WModuleConnector::subscribeSignal( MODULE_CONNECTOR_
 const t_GenericSignalHandlerType WModuleConnector::getSignalHandler( MODULE_CONNECTOR_SIGNAL signal )
 {
     // the module instance knows that
-    boost::shared_ptr< WModule > module = m_module.lock();    // it is "unlocked" at the end of this function as "module" looses its scope
+    std::shared_ptr< WModule > module = m_module.lock();    // it is "unlocked" at the end of this function as "module" looses its scope
     if( !module )
     {
         throw WModuleConnectorModuleLockFailed();
@@ -267,18 +267,18 @@ const t_GenericSignalHandlerType WModuleConnector::getSignalHandler( MODULE_CONN
     return module->getSignalHandler( signal );
 }
 
-boost::shared_ptr< WModule > WModuleConnector::getModule() const
+std::shared_ptr< WModule > WModuleConnector::getModule() const
 {
     return m_module.lock();    // it is "unlocked" at the end of this function as "module" looses its scope
 }
 
-void WModuleConnector::disconnect( boost::shared_ptr<WModuleConnector> con, bool removeFromOwnList )
+void WModuleConnector::disconnect( std::shared_ptr<WModuleConnector> con, bool removeFromOwnList )
 {
-    boost::shared_ptr< WModule > module = m_module.lock();    // it is "unlocked" at the end of this function as "module" looses its scope
+    std::shared_ptr< WModule > module = m_module.lock();    // it is "unlocked" at the end of this function as "module" looses its scope
     std::string containerName = "Unknown";
     if( module )
     {
-        boost::shared_ptr< WModuleContainer > container;
+        std::shared_ptr< WModuleContainer > container;
         container = module->getAssociatedContainer();
         containerName = container.get() ? container->getName() : "Unknown";
     }
@@ -294,7 +294,7 @@ void WModuleConnector::disconnect( boost::shared_ptr<WModuleConnector> con, bool
                                          "ModuleContainer (" + containerName + ")", LL_INFO );
 
     // write lock
-    boost::unique_lock<boost::shared_mutex> lock;
+    std::unique_lock<std::shared_mutex> lock;
     try
     {
         // disconnect all signals
@@ -304,14 +304,14 @@ void WModuleConnector::disconnect( boost::shared_ptr<WModuleConnector> con, bool
         // remove from list
         if( removeFromOwnList )
         {
-            lock = boost::unique_lock<boost::shared_mutex>( m_connectionListLock );
+            lock = std::unique_lock<std::shared_mutex>( m_connectionListLock );
             // since we use shared pointers, erasing the item should be enough
             m_connected.erase( con );
             lock.unlock();
         }
 
         // remove me from his list
-        lock = boost::unique_lock<boost::shared_mutex>( con->m_connectionListLock );
+        lock = std::unique_lock<std::shared_mutex>( con->m_connectionListLock );
         con->m_connected.erase( shared_from_this() );
         lock.unlock();
 
@@ -344,10 +344,10 @@ void WModuleConnector::disconnectAll()
     // remove from list
 
     // acquire read lock
-    boost::shared_lock<boost::shared_mutex> rlock( m_connectionListLock );
+    boost::shared_lock<std::shared_mutex> rlock( m_connectionListLock );
 
     // each connector needs to be notified and disconnected properly
-    for( std::set<boost::shared_ptr<WModuleConnector> >::iterator listIter = m_connected.begin(); listIter != m_connected.end();
+    for( std::set<std::shared_ptr<WModuleConnector> >::iterator listIter = m_connected.begin(); listIter != m_connected.end();
          ++listIter )
     {
         disconnect( *listIter, false );
@@ -355,7 +355,7 @@ void WModuleConnector::disconnectAll()
     rlock.unlock();
 
     // lock it for writing
-    boost::unique_lock<boost::shared_mutex> lock( m_connectionListLock );
+    std::unique_lock<std::shared_mutex> lock( m_connectionListLock );
     m_connected.clear();
     lock.unlock();
 }
@@ -393,40 +393,40 @@ WCombinerTypes::WOneToOneCombiners WModuleConnector::getPossibleDisconnections()
     WCombinerTypes::WOneToOneCombiners l;
 
     // acquire read lock
-    boost::shared_lock<boost::shared_mutex> rlock( m_connectionListLock );
+    boost::shared_lock<std::shared_mutex> rlock( m_connectionListLock );
 
     // for each connector
-    for( std::set<boost::shared_ptr<WModuleConnector> >::iterator listIter = m_connected.begin(); listIter != m_connected.end(); ++listIter )
+    for( std::set<std::shared_ptr<WModuleConnector> >::iterator listIter = m_connected.begin(); listIter != m_connected.end(); ++listIter )
     {
         // simply create the combiner
-        l.push_back( boost::shared_ptr< WDisconnectCombiner >( new WDisconnectCombiner( shared_from_this(), ( *listIter ) ) ) );
+        l.push_back( std::shared_ptr< WDisconnectCombiner >( new WDisconnectCombiner( shared_from_this(), ( *listIter ) ) ) );
     }
     rlock.unlock();
 
     return l;
 }
 
-void WModuleConnector::notifyConnectionEstablished( boost::shared_ptr<WModuleConnector> /*here*/, boost::shared_ptr<WModuleConnector> /*there*/ )
+void WModuleConnector::notifyConnectionEstablished( std::shared_ptr<WModuleConnector> /*here*/, std::shared_ptr<WModuleConnector> /*there*/ )
 {
     // by default: do nothing.
 }
 
-void WModuleConnector::notifyConnectionClosed( boost::shared_ptr<WModuleConnector> /*here*/, boost::shared_ptr<WModuleConnector> /*there*/ )
+void WModuleConnector::notifyConnectionClosed( std::shared_ptr<WModuleConnector> /*here*/, std::shared_ptr<WModuleConnector> /*there*/ )
 {
     // do nothing by default
 }
 
-boost::shared_ptr< WModuleInputConnector > WModuleConnector::toInputConnector()
+std::shared_ptr< WModuleInputConnector > WModuleConnector::toInputConnector()
 {
-    return boost::dynamic_pointer_cast< WModuleInputConnector >( shared_from_this() );
+    return std::dynamic_pointer_cast< WModuleInputConnector >( shared_from_this() );
 }
 
-boost::shared_ptr< WModuleOutputConnector > WModuleConnector::toOutputConnector()
+std::shared_ptr< WModuleOutputConnector > WModuleConnector::toOutputConnector()
 {
-    return boost::dynamic_pointer_cast< WModuleOutputConnector >( shared_from_this() );
+    return std::dynamic_pointer_cast< WModuleOutputConnector >( shared_from_this() );
 }
 
-boost::shared_ptr< WCondition > WModuleConnector::getDataChangedCondition()
+std::shared_ptr< WCondition > WModuleConnector::getDataChangedCondition()
 {
     return m_dataChangedCondition;
 }

@@ -31,14 +31,14 @@
 
 
 /**
- * represents a boost::shared_ptr to a vector containing a vector of floats.
+ * represents a std::shared_ptr to a vector containing a vector of floats.
  */
-typedef boost::shared_ptr< std::vector< float > > SPFloatVector;
+typedef std::shared_ptr< std::vector< float > > SPFloatVector;
 
 /**
- * represents a boost::shared_ptr to a vector containing a vector of size_t.
+ * represents a std::shared_ptr to a vector containing a vector of size_t.
  */
-typedef boost::shared_ptr< std::vector< size_t > > SPSizeVector;
+typedef std::shared_ptr< std::vector< size_t > > SPSizeVector;
 
 /**
  * Holds the vectors that store the data for the points and fibers.
@@ -49,7 +49,7 @@ public:
     /**
      * A shared_ptr to this class.
      */
-    typedef boost::shared_ptr< WConverterVectors > SPtr;
+    typedef std::shared_ptr< WConverterVectors > SPtr;
 
     /**
      * Initializes the vectors as empty vectors.

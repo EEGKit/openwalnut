@@ -82,7 +82,7 @@ public:
      *
      * \return The prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -118,9 +118,9 @@ protected:
      * an error has occured. Since parameterization is optional, the second dataset will only be generated when a parameterization
      * algo has been selected first.
      */
-    boost::array< boost::shared_ptr< WDataSetScalar >, 2 > generateDatasets(
-            boost::shared_ptr< const WDataSetFibers > tracts,
-            boost::shared_ptr< const WFiberCluster > cluster ) const;
+    boost::array< std::shared_ptr< WDataSetScalar >, 2 > generateDatasets(
+            std::shared_ptr< const WDataSetFibers > tracts,
+            std::shared_ptr< const WFiberCluster > cluster ) const;
 
     /**
      * Removes or inserts geode for the center line of the current cluster into this modules group node.
@@ -135,7 +135,7 @@ protected:
      *
      * \return OSG node with the voxels as cuboids.
      */
-    osg::ref_ptr< osg::Node > genDataSetGeode( boost::shared_ptr< WDataSetScalar > dataset ) const;
+    osg::ref_ptr< osg::Node > genDataSetGeode( std::shared_ptr< WDataSetScalar > dataset ) const;
 
     /**
      * Performs rasterization with the given algorithm on either all tracts or only a subset if given.
@@ -144,8 +144,8 @@ protected:
      * \param tracts Dataset of tracts.
      * \param cluster A subset of tracts.
      */
-    void raster( boost::shared_ptr< WRasterAlgorithm > algo, boost::shared_ptr< const WDataSetFibers > tracts,
-        boost::shared_ptr< const WFiberCluster > cluster ) const;
+    void raster( std::shared_ptr< WRasterAlgorithm > algo, std::shared_ptr< const WDataSetFibers > tracts,
+        std::shared_ptr< const WFiberCluster > cluster ) const;
 
     /**
      * Creates two vertices describing the bounding box of a cluster.
@@ -164,8 +164,8 @@ protected:
      *
      * \return A WGridRegular3D reference wherein the voxels may be marked.
      */
-    boost::shared_ptr< WGridRegular3D > constructGrid( boost::shared_ptr< const WDataSetFibers > tracts,
-            boost::shared_ptr< const WFiberCluster > cluster ) const;
+    std::shared_ptr< WGridRegular3D > constructGrid( std::shared_ptr< const WDataSetFibers > tracts,
+            std::shared_ptr< const WFiberCluster > cluster ) const;
 
     /**
      * Finds and returns a copy of the longest line (in term of \#points) in the dataset, or in a subset of it specified by the
@@ -179,8 +179,8 @@ protected:
      *
      * \return A reference of a copy of the longest line.
      */
-    boost::shared_ptr< WFiber > longestLine( boost::shared_ptr< const WDataSetFibers > tracts,
-            boost::shared_ptr< const WFiberCluster > cluster = boost::shared_ptr< const WFiberCluster >() ) const;
+    std::shared_ptr< WFiber > longestLine( std::shared_ptr< const WDataSetFibers > tracts,
+            std::shared_ptr< const WFiberCluster > cluster = std::shared_ptr< const WFiberCluster >() ) const;
 
     /**
      * Finds and returns a copy of the center line in the dataset, or in a subset of it specified by the given cluster. If the
@@ -194,35 +194,35 @@ protected:
      *
      * \return A reference of a copy of the center line.
      */
-    boost::shared_ptr< WFiber > centerLine( boost::shared_ptr< const WDataSetFibers > tracts,
-            boost::shared_ptr< const WFiberCluster > cluster = boost::shared_ptr< const WFiberCluster >() ) const;
+    std::shared_ptr< WFiber > centerLine( std::shared_ptr< const WDataSetFibers > tracts,
+            std::shared_ptr< const WFiberCluster > cluster = std::shared_ptr< const WFiberCluster >() ) const;
 
 private:
     /**
      * Input connector for a fiber dataset.
      */
-    boost::shared_ptr< WModuleInputData< const WDataSetFibers > > m_tractIC;
+    std::shared_ptr< WModuleInputData< const WDataSetFibers > > m_tractIC;
 
     /**
      * Input connector for an optional selection of some fibers in the fiber dataset via a cluster.
      */
-    boost::shared_ptr< WModuleInputData< const WFiberCluster > > m_clusterIC;
+    std::shared_ptr< WModuleInputData< const WFiberCluster > > m_clusterIC;
 
     /**
      * Output connector for a voxelized cluster.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetScalar > > m_voxelizedOC;
+    std::shared_ptr< WModuleOutputData< WDataSetScalar > > m_voxelizedOC;
 
     /**
      * Output providing parameterization to other algorithms. It provides a scalar field which gets filled with the parameterization of the
      * fibers, i.e. current integrated length.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetScalar > > m_paramOC;
+    std::shared_ptr< WModuleOutputData< WDataSetScalar > > m_paramOC;
 
     /**
      * Reference to the fiber dataset.
      */
-    boost::shared_ptr< const WDataSetFibers > m_tracts;
+    std::shared_ptr< const WDataSetFibers > m_tracts;
 
     /**
      * OSG root node for this module
@@ -232,7 +232,7 @@ private:
     /**
      * module is performing an expensive update
      */
-    boost::shared_ptr< WCondition > m_fullUpdate;
+    std::shared_ptr< WCondition > m_fullUpdate;
 
     WPropBool m_antialiased; //!< Enable/disable anti-aliased rasterization of voxels
     WPropBool m_renderingActive; //!< Enable/disable rendering of voxels.
@@ -252,7 +252,7 @@ private:
     /**
      * The available parameterization algorithms.
      */
-    boost::shared_ptr< WItemSelection > m_paramAlgoSelections;
+    std::shared_ptr< WItemSelection > m_paramAlgoSelections;
 
     /**
      * The actually selected parameterization algorithm.

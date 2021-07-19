@@ -88,13 +88,13 @@ int WScriptUI::run()
     //----------------------------
 
     // start the kernel
-    boost::shared_ptr< WKernel > kernel( WKernel::instance( WGraphicsEngine::getGraphicsEngine(), shared_from_this() ) );
+    std::shared_ptr< WKernel > kernel( WKernel::instance( WGraphicsEngine::getGraphicsEngine(), shared_from_this() ) );
     kernel->run();
 
     //--------------------------------
     // choose interpreter to use
     //--------------------------------
-    boost::shared_ptr< WScriptInterpreter > scriptInterpreter;
+    std::shared_ptr< WScriptInterpreter > scriptInterpreter;
     bool executeScriptFile = false;
 
     // first check if a script file is to be executed
