@@ -134,7 +134,7 @@ public:
 
     /**
      *
-     * \return boost::shared_ptr< WOnscreenSelection > The WOnscreenSelection of this module.
+     * \return shared_ptr< WOnscreenSelection > The WOnscreenSelection of this module.
      */
     std::shared_ptr< WOnscreenSelection > getOnscreenSelection();
 

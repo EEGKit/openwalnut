@@ -94,7 +94,7 @@ public:
     /**
      * Get the viewer which is used
      *
-     * \return the viewer as boost::shard_ptr
+     * \return the viewer as shared_ptr
      */
     virtual std::shared_ptr< WGEViewer > getViewer() const;
 
