@@ -33,6 +33,7 @@
 
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
+#include "core/graphicsEngine/onscreenSelection/WOnscreenSelection.h"
 #include "core/kernel/WKernel.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleContainer.h"
@@ -131,6 +132,12 @@ public:
      */
     boost::shared_ptr< WFiberHandler > getFiberHandler();
 
+    /**
+     * 
+     * \return boost::shared_ptr< WOnscreenSelection > The WOnscreenSelection of this module.
+     */
+    boost::shared_ptr< WOnscreenSelection > getOnscreenSelection();
+
 protected:
     /**
      * Entry point after loading the module. Runs in separate thread.
@@ -201,6 +208,14 @@ private:
     void toggleActivationOfModule( WModule::SPtr mod );
 
     /**
+     * The end callback of m_onscreenSelection.
+     * \param type  The type of the selection.
+     * \param x     The x position of the selection.
+     * \param y     The y position of the selection.
+     */
+    void selectionEnd( WOnscreenSelection::WSelectionType type, float x, float y );
+
+    /**
      * The WMPointRenderer associated with this module.
      */
     WModule::SPtr m_pointRenderer;
@@ -234,6 +249,11 @@ private:
      * The internal pointOutput to pass data to the WMPointRenderer
      */
     boost::shared_ptr< WModuleOutputData< WDataSetPoints > > m_pointOutput;
+
+    /**
+     * Enables possibility for multiselection of points.
+     */
+    boost::shared_ptr< WOnscreenSelection > m_onscreenSelection;
 };
 
 #endif  // WMPOINTCONNECTOR_H

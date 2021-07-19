@@ -75,6 +75,16 @@ varying float v_worldScale;
  */
 varying vec4 v_clusterColor;
 
+/**
+ * The color coming from the geometry shader
+ */
+varying vec4 v_colorOut;
+
+/**
+ * The coordinates of the texture
+ */
+varying vec4 v_texCoord;
+
 /////////////////////////////////////////////////////////////////////////////
 // Variables
 /////////////////////////////////////////////////////////////////////////////
@@ -89,7 +99,7 @@ varying vec4 v_clusterColor;
 void main()
 {
     // it should be round
-    float c = ( gl_TexCoord[0].x * gl_TexCoord[0].x ) + ( gl_TexCoord[0].y * gl_TexCoord[0].y );
+    float c = ( v_texCoord.x * v_texCoord.x ) + ( v_texCoord.y * v_texCoord.y );
     // clip everything outside the sphere
     float outside = 1.0 - step( 1.0, c );
 
@@ -103,16 +113,16 @@ void main()
 #endif
 
     // calculate some kind of "round" depth value
-    // NOTE: gl_TexCoord[0].w is 0.0 if the front of the cap is seen
-    vec3 v = v_vertex.xyz + ( 1.0 - gl_TexCoord[0].w ) * ( normal ) * ( 1.0 - c );
+    // NOTE: v_texCoord.w is 0.0 if the front of the cap is seen
+    vec3 v = v_vertex.xyz + ( 1.0 - v_texCoord.w ) * ( normal ) * ( 1.0 - c );
     // apply standard projection:
     vec4 vProj = gl_ProjectionMatrix * vec4( v.xyz, 1.0 );
     float depth = ( 0.5 * vProj.z / vProj.w ) + 0.5;
 
-    float w = gl_TexCoord[0].w * ( 1.0 - abs( gl_TexCoord[0].x ) ) + ( 1.0 - gl_TexCoord[0].w );
+    float w = v_texCoord.w * ( 1.0 - abs( v_texCoord.x ) ) + ( 1.0 - v_texCoord.w );
 
     // apply colormapping to the input color
-    vec4 finalColor = gl_Color;
+    vec4 finalColor = v_colorOut;
 
     // use secondary color only if bitfield filtering is active
 #ifdef BITFIELD_ENABLED
@@ -120,7 +130,7 @@ void main()
     // finalColor = mix( v_clusterColor, gl_Color, u_roiFilterColorOverride );
     // FIXME_ somehow, the secondary color array does not arrive at the vertex shader although it is bound. We make endcaps transparent in the
     // case
-    finalColor = mix( vec4( 0.0 ), gl_Color, u_roiFilterColorOverride );
+    finalColor = mix( vec4( 0.0 ), v_colorOut, u_roiFilterColorOverride );
 #endif
 #endif
 
