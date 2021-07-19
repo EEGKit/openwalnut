@@ -70,7 +70,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Return an icon for this module.
@@ -109,7 +109,7 @@ private:
      * \param i The number of the image to be extracted.
      * \return A pointer to extracted image as a scalar dataset or an invalid pointer, if no ith image exists.
      */
-    boost::shared_ptr< WDataSetScalar > extract( std::size_t i ) const;
+    std::shared_ptr< WDataSetScalar > extract( std::size_t i ) const;
 
     /**
      * Create a name for the extracted image.
@@ -145,7 +145,7 @@ private:
     /**
      * A list of color map selection types
      */
-    boost::shared_ptr< WItemSelection > m_colorMapSelectionsList;
+    std::shared_ptr< WItemSelection > m_colorMapSelectionsList;
 
     /**
      * Selection property for color map
@@ -166,27 +166,27 @@ private:
     /**
      * An input connector that accepts order 1 datasets.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;
 
     /**
      * An output connector for the output scalar dataset.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output;
+    std::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output;
 
     /**
      * This is a pointer to the dataset the module is currently working on.
      */
-    boost::shared_ptr< WDataSetSingle > m_dataSet;
+    std::shared_ptr< WDataSetSingle > m_dataSet;
 
     /**
      * This is a pointer to the current output.
      */
-    boost::shared_ptr< WDataSetScalar > m_outData;
+    std::shared_ptr< WDataSetScalar > m_outData;
 
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 };
 
 #endif  // WMIMAGEEXTRACTOR_H

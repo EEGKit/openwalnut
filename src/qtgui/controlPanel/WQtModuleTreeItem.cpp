@@ -26,7 +26,7 @@
 
 #include "WQtModuleTreeItem.h"
 
-WQtModuleTreeItem::WQtModuleTreeItem( QTreeWidgetItem * parent, boost::shared_ptr< WModule > module ) :
+WQtModuleTreeItem::WQtModuleTreeItem( QTreeWidgetItem * parent, std::shared_ptr< WModule > module ) :
     WQtTreeItem( parent, MODULE, module )
 {
 }

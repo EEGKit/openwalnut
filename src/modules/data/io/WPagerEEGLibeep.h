@@ -65,7 +65,7 @@ public:
 
     virtual std::size_t getNumberOfSamples( std::size_t segmentID ) const;
 
-    virtual boost::shared_ptr< WEEGValueMatrix > getValues( std::size_t segmentID, std::size_t start, std::size_t length ) const;
+    virtual std::shared_ptr< WEEGValueMatrix > getValues( std::size_t segmentID, std::size_t start, std::size_t length ) const;
 
     virtual double getSamplingRate() const;
 

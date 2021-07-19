@@ -47,7 +47,7 @@ class WDataSet;
  *
  * \ingroup ui
  */
-class WUI: public boost::enable_shared_from_this< WUI >
+class WUI: public std::enable_shared_from_this< WUI >
 {
 public:
     /**

@@ -43,9 +43,9 @@ WMWriteTracts::~WMWriteTracts()
 {
 }
 
-boost::shared_ptr< WModule > WMWriteTracts::factory() const
+std::shared_ptr< WModule > WMWriteTracts::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMWriteTracts() );
+    return std::shared_ptr< WModule >( new WMWriteTracts() );
 }
 
 const char** WMWriteTracts::getXPMIcon() const
@@ -77,7 +77,7 @@ void WMWriteTracts::properties()
     WPropertyHelper::PC_NOTEMPTY::addTo( m_savePath );
     m_run      = m_properties->addProperty( "Save", "Start saving", WPVBaseTypes::PV_TRIGGER_READY );
 
-    m_fileTypeSelectionsList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_fileTypeSelectionsList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_fileTypeSelectionsList->addItem( "VTK fib", "Stores the fibers in the VTK line format." );
     m_fileTypeSelectionsList->addItem( "json", "" );
     m_fileTypeSelectionsList->addItem( "json2", "" );
@@ -170,7 +170,7 @@ void WMWriteTracts::moduleMain()
 
 bool WMWriteTracts::saveJson() const
 {
-    boost::shared_ptr< const WDataSetFibers > ds = m_tractIC->getData();
+    std::shared_ptr< const WDataSetFibers > ds = m_tractIC->getData();
 
     if( !ds )
     {
@@ -204,7 +204,7 @@ bool WMWriteTracts::saveJson() const
     dataFile << ( "{\n" );
 
     dataFile << ( "    \"vertices\" : [" );
-    boost::shared_ptr<std::vector<float> > verts = ds->getVertices();
+    std::shared_ptr<std::vector<float> > verts = ds->getVertices();
     float fValue;
     for( size_t i = 0; i < ( verts->size() - 1 ) / 3; ++i )
     {
@@ -223,7 +223,7 @@ bool WMWriteTracts::saveJson() const
     dataFile << fValue << "],\n";
 
     dataFile << ( "    \"normals\" : [" );
-    boost::shared_ptr<std::vector<float> > tangents = ds->getTangents();
+    std::shared_ptr<std::vector<float> > tangents = ds->getTangents();
     for( size_t i = 0; i < tangents->size() - 1; ++i )
     {
         fValue = tangents->at( i );
@@ -233,7 +233,7 @@ bool WMWriteTracts::saveJson() const
     dataFile << fValue << "],\n";
 
     dataFile << ( "    \"colors\" : [" );
-    boost::shared_ptr< std::vector< float > > colors = ds->getColorScheme( "Global Color" )->getColor();
+    std::shared_ptr< std::vector< float > > colors = ds->getColorScheme( "Global Color" )->getColor();
     for( size_t i = 0; i < colors->size() - 3; i += 3 )
     {
         fValue = colors->at( i );
@@ -252,7 +252,7 @@ bool WMWriteTracts::saveJson() const
 
     int iValue;
     dataFile << ( "    \"indices\" : [" );
-    boost::shared_ptr<std::vector<size_t> > lengths = ds->getLineLengths();
+    std::shared_ptr<std::vector<size_t> > lengths = ds->getLineLengths();
     for( size_t i = 0; i < lengths->size() - 1; ++i )
     {
         iValue = lengths->at( i );
@@ -270,7 +270,7 @@ bool WMWriteTracts::saveJson() const
 
 bool WMWriteTracts::saveJson2() const
 {
-    boost::shared_ptr< const WDataSetFibers > ds = m_tractIC->getData();
+    std::shared_ptr< const WDataSetFibers > ds = m_tractIC->getData();
 
     if( !ds )
     {
@@ -307,13 +307,13 @@ bool WMWriteTracts::saveJson2() const
     std::vector<float> nColors;
     std::vector<size_t> nIndices;
 
-    boost::shared_ptr<std::vector<size_t> > starts = ds->getLineStartIndexes();
-    boost::shared_ptr<std::vector<size_t> > lengths = ds->getLineLengths();
+    std::shared_ptr<std::vector<size_t> > starts = ds->getLineStartIndexes();
+    std::shared_ptr<std::vector<size_t> > lengths = ds->getLineLengths();
 
 
-    boost::shared_ptr<std::vector<float> > verts = ds->getVertices();
-    boost::shared_ptr<std::vector<float> > tangents = ds->getTangents();
-    boost::shared_ptr< std::vector< float > > colors = ds->getColorScheme( "Global Color" )->getColor();
+    std::shared_ptr<std::vector<float> > verts = ds->getVertices();
+    std::shared_ptr<std::vector<float> > tangents = ds->getTangents();
+    std::shared_ptr< std::vector< float > > colors = ds->getColorScheme( "Global Color" )->getColor();
 
     for( size_t k = 0; k < lengths->size(); ++k )
     {
@@ -399,7 +399,7 @@ bool WMWriteTracts::saveJson2() const
 
 bool WMWriteTracts::saveJsonTriangles() const
 {
-    boost::shared_ptr< const WDataSetFibers > ds = m_tractIC->getData();
+    std::shared_ptr< const WDataSetFibers > ds = m_tractIC->getData();
 
     if( !ds )
     {
@@ -432,7 +432,7 @@ bool WMWriteTracts::saveJsonTriangles() const
     dataFile << ( "{\n" );
 
     dataFile << ( "    \"vertices\" : [" );
-    boost::shared_ptr<std::vector<float> > verts = ds->getVertices();
+    std::shared_ptr<std::vector<float> > verts = ds->getVertices();
     float fValue0;
     float fValue1;
     float fValue2;
@@ -453,8 +453,8 @@ bool WMWriteTracts::saveJsonTriangles() const
     dataFile << fValue0 << "," << fValue1 << "," << fValue2 << "],\n";
 
     dataFile << ( "    \"indices\" : [" );
-    boost::shared_ptr<std::vector<size_t> > starts = ds->getLineStartIndexes();
-    boost::shared_ptr<std::vector<size_t> > lengths = ds->getLineLengths();
+    std::shared_ptr<std::vector<size_t> > starts = ds->getLineStartIndexes();
+    std::shared_ptr<std::vector<size_t> > lengths = ds->getLineLengths();
 
     int counter = 0;
     for( size_t i = 0; i < lengths->size(); ++i )
@@ -473,7 +473,7 @@ bool WMWriteTracts::saveJsonTriangles() const
     return true;
 }
 
-bool WMWriteTracts::savePOVRay( boost::shared_ptr< const WDataSetFibers > fibers ) const
+bool WMWriteTracts::savePOVRay( std::shared_ptr< const WDataSetFibers > fibers ) const
 {
     // open file
     boost::filesystem::path meshFile( m_savePath->get() );
@@ -523,7 +523,7 @@ bool WMWriteTracts::savePOVRay( boost::shared_ptr< const WDataSetFibers > fibers
     size_t currentStart = 0;
     size_t increment = m_povraySaveOnlyNth->get();
 
-    boost::shared_ptr< WProgress > progress1( new WProgress( "Converting fibers", fibStart->size() / increment ) );
+    std::shared_ptr< WProgress > progress1( new WProgress( "Converting fibers", fibStart->size() / increment ) );
     m_progress->addSubProgress( progress1 );
     for( size_t fidx = 0; fidx < fibStart->size(); fidx += increment )
     {

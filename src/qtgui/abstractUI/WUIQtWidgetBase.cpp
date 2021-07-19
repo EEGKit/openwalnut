@@ -48,7 +48,7 @@ WUIQtWidgetBase::~WUIQtWidgetBase()
     }
 }
 
-void WUIQtWidgetBase::realize( boost::shared_ptr< WCondition > abortCondition )
+void WUIQtWidgetBase::realize( std::shared_ptr< WCondition > abortCondition )
 {
     WConditionSet conditionSet;
     conditionSet.setResetable( true, false );

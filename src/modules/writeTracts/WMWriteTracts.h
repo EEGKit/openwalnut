@@ -72,7 +72,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -126,17 +126,17 @@ private:
      *
      * \return true if successful.
      */
-    bool savePOVRay( boost::shared_ptr< const WDataSetFibers > fibers ) const;
+    bool savePOVRay( std::shared_ptr< const WDataSetFibers > fibers ) const;
 
     /**
      * Input connector for writing the tracts out of a WFiberCluster to a file.
      */
-    boost::shared_ptr< WModuleInputData< const WFiberCluster > > m_clusterIC;
+    std::shared_ptr< WModuleInputData< const WFiberCluster > > m_clusterIC;
 
     /**
      * Input connector for writing directly tracts to a file.
      */
-    boost::shared_ptr< WModuleInputData< const WDataSetFibers > > m_tractIC;
+    std::shared_ptr< WModuleInputData< const WDataSetFibers > > m_tractIC;
 
     WPropTrigger m_run; //!< Button to start saving
     WPropFilename m_savePath; //!< Path where tracts should be stored
@@ -144,7 +144,7 @@ private:
     /**
      * A list of file type selection types
      */
-    boost::shared_ptr< WItemSelection > m_fileTypeSelectionsList;
+    std::shared_ptr< WItemSelection > m_fileTypeSelectionsList;
 
     /**
      * Selection property for file types

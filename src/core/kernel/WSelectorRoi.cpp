@@ -31,20 +31,20 @@
 #include "WSelectorRoi.h"
 
 
-WSelectorRoi::WSelectorRoi( osg::ref_ptr< WROI > roi, boost::shared_ptr< const WDataSetFibers > fibers, boost::shared_ptr< WKdTree> kdTree ) :
+WSelectorRoi::WSelectorRoi( osg::ref_ptr< WROI > roi, std::shared_ptr< const WDataSetFibers > fibers, std::shared_ptr< WKdTree> kdTree ) :
     m_roi( roi ),
     m_fibers( fibers ),
     m_kdTree( kdTree ),
     m_size( fibers->size() ),
     m_dirty( true )
 {
-    m_bitField = boost::shared_ptr< std::vector<bool> >( new std::vector<bool>( m_size, false ) );
+    m_bitField = std::shared_ptr< std::vector<bool> >( new std::vector<bool>( m_size, false ) );
 
     m_currentArray = m_fibers->getVertices();
     m_currentReverse = m_fibers->getVerticesReverse();
 
     m_changeRoiSignal
-        = boost::shared_ptr< boost::function< void() > >( new boost::function< void() >( boost::bind( &WSelectorRoi::setDirty, this ) ) );
+        = std::shared_ptr< boost::function< void() > >( new boost::function< void() >( boost::bind( &WSelectorRoi::setDirty, this ) ) );
     m_roi->addROIChangeNotifier( m_changeRoiSignal );
 }
 
@@ -60,7 +60,7 @@ void WSelectorRoi::setDirty()
 
 void WSelectorRoi::recalculate()
 {
-    m_workerBitfield = boost::shared_ptr< std::vector< bool > >( new std::vector< bool >( m_size, false ) );
+    m_workerBitfield = std::shared_ptr< std::vector< bool > >( new std::vector< bool >( m_size, false ) );
 
     if( osg::dynamic_pointer_cast<WROIBox>( m_roi ).get() )
     {

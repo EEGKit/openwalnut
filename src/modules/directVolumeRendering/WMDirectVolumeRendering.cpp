@@ -65,9 +65,9 @@ WMDirectVolumeRendering::~WMDirectVolumeRendering()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMDirectVolumeRendering::factory() const
+std::shared_ptr< WModule > WMDirectVolumeRendering::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMDirectVolumeRendering() );
+    return std::shared_ptr< WModule >( new WMDirectVolumeRendering() );
 }
 
 const char** WMDirectVolumeRendering::getXPMIcon() const
@@ -106,7 +106,7 @@ void WMDirectVolumeRendering::connectors()
 void WMDirectVolumeRendering::properties()
 {
     // Initialize the properties
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_samples     = m_properties->addProperty( "Sample count", "The number of samples to walk along the ray during raycasting. A low value "
             "may cause artifacts whilst a high value slows down rendering.", 256 );
@@ -114,7 +114,7 @@ void WMDirectVolumeRendering::properties()
     m_samples->setMax( 5000 );
 
     // illumination model
-    m_localIlluminationSelections = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_localIlluminationSelections = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_localIlluminationSelections->addItem( "No Local Illumination", "Volume Renderer only uses the classified voxel color." );
     m_localIlluminationSelections->addItem( "Blinn-Phong", "Blinn-Phong lighting is used for shading each classified voxel." );
     m_localIlluminationAlgo = m_properties->addProperty( "Local illumination model", "The illumination algorithm to use.",
@@ -243,7 +243,7 @@ void WMDirectVolumeRendering::moduleMain()
 
         // was there an update?
         bool dataUpdated = m_input->updated() || m_gradients->updated();
-        boost::shared_ptr< WDataSetScalar > dataSet = m_input->getData();
+        std::shared_ptr< WDataSetScalar > dataSet = m_input->getData();
         bool dataValid   = ( dataSet != NULL );
         bool propUpdated = m_localIlluminationAlgo->changed() || m_stochasticJitterEnabled->changed() ||  m_opacityCorrectionEnabled->changed() ||
             m_maximumIntensityProjectionEnabled->changed() || m_depthProjectionEnabled->changed();
@@ -267,7 +267,7 @@ void WMDirectVolumeRendering::moduleMain()
             rootNode->clear();
 
             // First, grab the grid
-            boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( dataSet->getGrid() );
+            std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( dataSet->getGrid() );
             if( !grid )
             {
                 errorLog() << "The dataset does not provide a regular grid. Ignoring dataset.";
@@ -302,7 +302,7 @@ void WMDirectVolumeRendering::moduleMain()
             illuminationAlgoDefines->activateOption( m_localIlluminationAlgo->get( true ).getItemIndexOfSelected( 0 ) );
 
             // if there is a gradient field available -> apply as texture too
-            boost::shared_ptr< WDataSetVector > gradients = m_gradients->getData();
+            std::shared_ptr< WDataSetVector > gradients = m_gradients->getData();
             if( gradients )
             {
                 debugLog() << "Uploading specified gradient field.";
@@ -432,7 +432,7 @@ void WMDirectVolumeRendering::moduleMain()
         if( ( updateTF || propUpdated || m_transferFunction->updated() ) && dataValid && cube )
         {
             updateTF = false;
-            boost::shared_ptr< WDataSetSingle > dataSet = m_transferFunction->getData();
+            std::shared_ptr< WDataSetSingle > dataSet = m_transferFunction->getData();
             if( !dataSet )
             {
                 debugLog() << "no data set?";
@@ -440,9 +440,9 @@ void WMDirectVolumeRendering::moduleMain()
             else
             {
                 WAssert( dataSet, "data set" );
-                boost::shared_ptr< WValueSetBase > valueSet = dataSet->getValueSet();
+                std::shared_ptr< WValueSetBase > valueSet = dataSet->getValueSet();
                 WAssert( valueSet, "value set" );
-                boost::shared_ptr< WValueSet< unsigned char > > cvalueSet( boost::dynamic_pointer_cast<WValueSet< unsigned char> >( valueSet ) );
+                std::shared_ptr< WValueSet< unsigned char > > cvalueSet( std::dynamic_pointer_cast<WValueSet< unsigned char> >( valueSet ) );
                 if( !cvalueSet )
                 {
                     debugLog() << "invalid type";

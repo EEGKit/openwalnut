@@ -220,7 +220,7 @@ void WMainWindow::setupGUI()
     //network Editor
     m_networkEditor = NULL;
     m_networkEditor = new WQtNetworkEditor( this );
-    m_networkEditor->setFeatures( QDockWidget::AllDockWidgetFeatures );
+    m_networkEditor->setFeatures( QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable );
 
     // strangely, the QGraphics* objects do not properly forward drag/drop events. We need to explicitly handle them.
     connect( m_networkEditor->getView(), SIGNAL( dragDrop( QDropEvent* ) ),
@@ -228,7 +228,7 @@ void WMainWindow::setupGUI()
 
     // the control panel instance is needed for the menu
     m_controlPanel = new WQtControlPanel( this );
-    m_controlPanel->setFeatures( QDockWidget::AllDockWidgetFeatures );
+    m_controlPanel->setFeatures( QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable );
     m_controlPanel->addSubject( "Default Subject" );
 
     // add all docks
@@ -394,26 +394,26 @@ void WMainWindow::setupGUI()
     {
         if( showNavWidgets->get() )
         {
-            m_navAxial = boost::shared_ptr< WQtNavGLWidget >( new WQtNavGLWidget( "Axial View", "Axial View", this, "Axial Slice",
+            m_navAxial = std::shared_ptr< WQtNavGLWidget >( new WQtNavGLWidget( "Axial View", "Axial View", this, "Axial Slice",
                                                                                   m_mainGLWidget ) );
-            m_navAxial->setFeatures( QDockWidget::AllDockWidgetFeatures );
+            m_navAxial->setFeatures( QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable );
             m_navAxial->setSliderProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropAxialPos() );
             m_navAxial->getGLWidget()->setCameraManipulator( WQtGLWidget::NO_OP );
 
             addDockWidget( Qt::LeftDockWidgetArea, m_navAxial.get(), Qt::Vertical );
 
-            m_navCoronal = boost::shared_ptr< WQtNavGLWidget >( new WQtNavGLWidget( "Coronal View", "Coronal View", this, "Coronal Slice",
+            m_navCoronal = std::shared_ptr< WQtNavGLWidget >( new WQtNavGLWidget( "Coronal View", "Coronal View", this, "Coronal Slice",
                                                                                     m_mainGLWidget ) );
-            m_navCoronal->setFeatures( QDockWidget::AllDockWidgetFeatures );
+            m_navCoronal->setFeatures( QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable );
             m_navCoronal->setSliderProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropCoronalPos() );
             m_navCoronal->getGLWidget()->setCameraManipulator( WQtGLWidget::NO_OP );
 
             addDockWidget( Qt::LeftDockWidgetArea, m_navCoronal.get(), Qt::Vertical );
 
             m_navSagittal =
-                boost::shared_ptr< WQtNavGLWidget >( new WQtNavGLWidget( "Sagittal View", "Sagittal View", this, "Sagittal Slice",
+                std::shared_ptr< WQtNavGLWidget >( new WQtNavGLWidget( "Sagittal View", "Sagittal View", this, "Sagittal Slice",
                                                                          m_mainGLWidget ) );
-            m_navSagittal->setFeatures( QDockWidget::AllDockWidgetFeatures );
+            m_navSagittal->setFeatures( QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable );
             m_navSagittal->setSliderProperty( WKernel::getRunningKernel()->getSelectionManager()->getPropSagittalPos() );
             m_navSagittal->getGLWidget()->setCameraManipulator( WQtGLWidget::NO_OP );
 
@@ -425,13 +425,13 @@ void WMainWindow::setupGUI()
     {
         if( showVRWidgets->get() )
         {
-            m_widgetLeftEye = boost::shared_ptr< WQtGLDockWidget >( new WQtGLDockWidget( "Left Eye View", "Left Eye View",
+            m_widgetLeftEye = std::shared_ptr< WQtGLDockWidget >( new WQtGLDockWidget( "Left Eye View", "Left Eye View",
                                                                     this, WGECamera::ProjectionMode::PERSPECTIVE, m_mainGLWidget ) );
             m_widgetLeftEye->getGLWidget()->setCameraManipulator( WQtGLWidget::CameraManipulators::TRACKBALL );
 
             addDockWidget( Qt::LeftDockWidgetArea, m_widgetLeftEye.get(), Qt::Vertical );
 
-            m_widgetRightEye = boost::shared_ptr< WQtGLDockWidget >( new WQtGLDockWidget( "Right Eye View", "Right Eye View",
+            m_widgetRightEye = std::shared_ptr< WQtGLDockWidget >( new WQtGLDockWidget( "Right Eye View", "Right Eye View",
                                                                     this, WGECamera::ProjectionMode::PERSPECTIVE, m_mainGLWidget ) );
             m_widgetRightEye->getGLWidget()->setCameraManipulator( WQtGLWidget::CameraManipulators::TRACKBALL );
 
@@ -507,7 +507,7 @@ void WMainWindow::setupGUI()
     m_mainGLDock->setVisible( true );
 }
 
-void WMainWindow::autoAdd( boost::shared_ptr< WModule > module, std::string proto, bool onlyOnce )
+void WMainWindow::autoAdd( std::shared_ptr< WModule > module, std::string proto, bool onlyOnce )
 {
     // if only one module should be added, and there already is one --- skip.
     if( onlyOnce && !WKernel::getRunningKernel()->getRootContainer()->getModules( proto ).empty() )
@@ -523,12 +523,12 @@ void WMainWindow::autoAdd( boost::shared_ptr< WModule > module, std::string prot
     }
 }
 
-void WMainWindow::moduleSpecificCleanup( boost::shared_ptr< WModule > /* module */ )
+void WMainWindow::moduleSpecificCleanup( std::shared_ptr< WModule > /* module */ )
 {
     // called for each removed module. Use this to undo modifications done due to added modules (moduleSpecificSetup)
 }
 
-void WMainWindow::moduleSpecificSetup( boost::shared_ptr< WModule > /* module */ )
+void WMainWindow::moduleSpecificSetup( std::shared_ptr< WModule > /* module */ )
 {
     // Add all special handlings here. This method is called whenever a module is marked "ready". You can set up the gui for special modules,
     // load certain modules for datasets and so on.
@@ -543,7 +543,7 @@ void WMainWindow::moduleSpecificSetup( boost::shared_ptr< WModule > /* module */
 
         // data modules contain an member denoting the real data type. Currently we only have one data module and a not very modulated data
         // structures.
-        boost::shared_ptr< WDataModule > dataModule = boost::static_pointer_cast< WDataModule >( module );
+        std::shared_ptr< WDataModule > dataModule = std::static_pointer_cast< WDataModule >( module );
 
         // grab data and identify type
         if( dataModule->getDataSet()->isA< WDataSetSingle >() && dataModule->getDataSet()->isTexture() )
@@ -622,7 +622,7 @@ WQtNetworkEditor* WMainWindow::getNetworkEditor()
     return m_networkEditor;
 }
 
-bool WMainWindow::projectSave( const std::vector< boost::shared_ptr< WProjectFileIO > >& writer )
+bool WMainWindow::projectSave( const std::vector< std::shared_ptr< WProjectFileIO > >& writer )
 {
     QString lastPath = WQtGui::getSettings().value( "LastProjectSavePath", "" ).toString();
     QString selected = QFileDialog::getSaveFileName( this, "Save Project as", lastPath,
@@ -646,7 +646,7 @@ bool WMainWindow::projectSave( const std::vector< boost::shared_ptr< WProjectFil
         filename += ".owp";
     }
 
-    boost::shared_ptr< WProjectFile > proj = boost::shared_ptr< WProjectFile >(
+    std::shared_ptr< WProjectFile > proj = std::shared_ptr< WProjectFile >(
             new WProjectFile( filename )
     );
 
@@ -675,28 +675,28 @@ bool WMainWindow::projectSave( const std::vector< boost::shared_ptr< WProjectFil
 
 bool WMainWindow::projectSaveAll()
 {
-    std::vector< boost::shared_ptr< WProjectFileIO > > w;
+    std::vector< std::shared_ptr< WProjectFileIO > > w;
     // an empty list equals "all"
     return projectSave( w );
 }
 
 bool WMainWindow::projectSaveCameraOnly()
 {
-    std::vector< boost::shared_ptr< WProjectFileIO > > w;
+    std::vector< std::shared_ptr< WProjectFileIO > > w;
     w.push_back( WProjectFile::getCameraWriter() );
     return projectSave( w );
 }
 
 bool WMainWindow::projectSaveROIOnly()
 {
-    std::vector< boost::shared_ptr< WProjectFileIO > > w;
+    std::vector< std::shared_ptr< WProjectFileIO > > w;
     w.push_back( WProjectFile::getROIWriter() );
     return projectSave( w );
 }
 
 bool WMainWindow::projectSaveModuleOnly()
 {
-    std::vector< boost::shared_ptr< WProjectFileIO > > w;
+    std::vector< std::shared_ptr< WProjectFileIO > > w;
     w.push_back( WProjectFile::getModuleWriter() );
     return projectSave( w );
 }
@@ -721,7 +721,7 @@ QString collectFilters()
         for( std::vector< WDataModuleInputFilter::ConstSPtr >::const_iterator filterIter = filters.begin(); filterIter != filters.end();
                 ++filterIter )
         {
-            WDataModuleInputFilterFile::ConstSPtr ff = boost::dynamic_pointer_cast< const WDataModuleInputFilterFile >( *filterIter );
+            WDataModuleInputFilterFile::ConstSPtr ff = std::dynamic_pointer_cast< const WDataModuleInputFilterFile >( *filterIter );
             if( ff )
             {
                 QString description = QString::fromStdString( ff->getDescription() );
@@ -791,7 +791,7 @@ void WMainWindow::openLoadDialog()
         else
         {
             // this is not a project. So we assume it is a data file or script
-            boost::shared_ptr< WScriptInterpreter > scriptInterpreter =
+            std::shared_ptr< WScriptInterpreter > scriptInterpreter =
                     WKernel::getRunningKernel()->getScriptEngine()->getInterpreterByFileExtension( suffix );
 
             if( scriptInterpreter )

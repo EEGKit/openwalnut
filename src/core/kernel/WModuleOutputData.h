@@ -50,17 +50,17 @@ public:
     /**
      * Pointer to this. For convenience.
      */
-    typedef boost::shared_ptr< WModuleOutputData< T > > PtrType;
+    typedef std::shared_ptr< WModuleOutputData< T > > PtrType;
 
     /**
      * Pointer to this. For convenience.
      */
-    typedef boost::shared_ptr< WModuleOutputData< T > > SPtr;
+    typedef std::shared_ptr< WModuleOutputData< T > > SPtr;
 
     /**
      * Pointer to this. For convenience.
      */
-    typedef boost::shared_ptr< const WModuleOutputData< T > > ConstSPtr;
+    typedef std::shared_ptr< const WModuleOutputData< T > > ConstSPtr;
 
     /**
      * Reference to this type.
@@ -86,7 +86,7 @@ public:
      *
      * \return the pointer to the created connector.
      */
-    static PtrType create( boost::shared_ptr< WModule > module, std::string name = "", std::string description = "" );
+    static PtrType create( std::shared_ptr< WModule > module, std::string name = "", std::string description = "" );
 
     /**
      * Convenience method to create a new instance of this out data connector with proper type and add it to the list of connectors of the
@@ -98,7 +98,7 @@ public:
      *
      * \return the pointer to the created connector.
      */
-    static PtrType createAndAdd( boost::shared_ptr< WModule > module, std::string name = "", std::string description = "" );
+    static PtrType createAndAdd( std::shared_ptr< WModule > module, std::string name = "", std::string description = "" );
 
     /**
      * Constructor.
@@ -107,10 +107,10 @@ public:
      * \param name The name of this connector.
      * \param description Short description of this connector.
      */
-    WModuleOutputData( boost::shared_ptr< WModule > module, std::string name = "", std::string description = "" )
+    WModuleOutputData( std::shared_ptr< WModule > module, std::string name = "", std::string description = "" )
         :WModuleOutputConnector( module, name, description )
     {
-        m_data = boost::shared_ptr< T >();
+        m_data = std::shared_ptr< T >();
     };
 
     /**
@@ -125,7 +125,7 @@ public:
      *
      * \param data the data do send
      */
-    virtual void updateData( boost::shared_ptr< T > data )
+    virtual void updateData( std::shared_ptr< T > data )
     {
         m_data = data;
 
@@ -138,7 +138,7 @@ public:
      */
     virtual void reset()
     {
-        updateData( boost::shared_ptr< T >() );
+        updateData( std::shared_ptr< T >() );
     }
 
     /**
@@ -155,7 +155,7 @@ public:
      *
      * \return the data. If no data has been set: a NULL pointer is returned.
      */
-    virtual const boost::shared_ptr< WTransferable > getRawData() const
+    virtual const std::shared_ptr< WTransferable > getRawData() const
     {
         return m_data;
     };
@@ -165,7 +165,7 @@ public:
      *
      * \return the data. If no data has been set: a NULL pointer is returned.
      */
-    const boost::shared_ptr< T > getData() const
+    const std::shared_ptr< T > getData() const
     {
         return m_data;
     };
@@ -177,7 +177,7 @@ public:
      *
      * \return true if compatible.
      */
-    virtual bool connectable( boost::shared_ptr<WModuleConnector> con )
+    virtual bool connectable( std::shared_ptr<WModuleConnector> con )
     {
         // since WModuleInputData::connectable already does all the type checking, we simply forward the call
         return WModuleOutputConnector::connectable( con );
@@ -188,10 +188,10 @@ public:
      *
      * \return the prototype of the transfered type.
      */
-    virtual boost::shared_ptr< WPrototyped > getTransferPrototype()
+    virtual std::shared_ptr< WPrototyped > getTransferPrototype()
     {
         // get prototype or the data pointer currently set
-        return ( m_data == boost::shared_ptr< T >() ) ? T::getPrototype() : boost::static_pointer_cast< WPrototyped >( m_data );
+        return ( m_data == std::shared_ptr< T >() ) ? T::getPrototype() : std::static_pointer_cast< WPrototyped >( m_data );
     };
 
 protected:
@@ -200,12 +200,12 @@ protected:
      *
      * \note If you modify this or its contents, consider triggering an update. See \ref updateData() for details.
      */
-    boost::shared_ptr< T > m_data;
+    std::shared_ptr< T > m_data;
 private:
 };
 
 template < typename T >
-typename WModuleOutputData< T >::PtrType WModuleOutputData< T >::create( boost::shared_ptr< WModule > module, std::string name,
+typename WModuleOutputData< T >::PtrType WModuleOutputData< T >::create( std::shared_ptr< WModule > module, std::string name,
                                                                                                               std::string description )
 {
     typedef typename WModuleOutputData< T >::PtrType PTR;
@@ -214,7 +214,7 @@ typename WModuleOutputData< T >::PtrType WModuleOutputData< T >::create( boost::
 }
 
 template < typename T >
-typename WModuleOutputData< T >::PtrType WModuleOutputData< T >::createAndAdd( boost::shared_ptr< WModule > module, std::string name,
+typename WModuleOutputData< T >::PtrType WModuleOutputData< T >::createAndAdd( std::shared_ptr< WModule > module, std::string name,
                                                                                                                     std::string description )
 {
     typename WModuleOutputData< T >::PtrType c = create( module, name, description );

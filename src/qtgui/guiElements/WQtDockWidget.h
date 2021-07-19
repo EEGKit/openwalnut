@@ -51,13 +51,13 @@ class WQtDockWidget: public QDockWidget
     Q_OBJECT
 public:
     /**
-     * Construct dock widget.
+     * Construct dock widget with title.
      *
      * \param title the title of the widget
      * \param parent the parent widget
      * \param flags optional window flags
      */
-    WQtDockWidget( const QString& title, QWidget* parent = 0, Qt::WindowFlags flags = 0 );
+    WQtDockWidget( const QString& title, QWidget* parent = 0, Qt::WindowFlags flags = Qt::WindowFlags() );
 
     /**
      * Construct dock widget.
@@ -65,7 +65,7 @@ public:
      * \param parent the parent widget
      * \param flags optional window flags
      */
-    WQtDockWidget( QWidget* parent = 0, Qt::WindowFlags flags = 0 );
+    WQtDockWidget( QWidget* parent = 0, Qt::WindowFlags flags = Qt::WindowFlags() );
 
     /**
      * Destructor.
@@ -196,4 +196,3 @@ private:
 };
 
 #endif  // WQTDOCKWIDGET_H
-

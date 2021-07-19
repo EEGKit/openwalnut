@@ -392,10 +392,10 @@ public:
         mesh.addTriangle( 16, 23, 24 ); // 14
         mesh.addTriangle( 17, 23, 24 ); // 15
 
-        boost::shared_ptr< std::list< boost::shared_ptr< WTriangleMesh > > > components = tm_utils::componentDecomposition( mesh );
+        std::shared_ptr< std::list< std::shared_ptr< WTriangleMesh > > > components = tm_utils::componentDecomposition( mesh );
         TS_ASSERT_EQUALS( components->size(), 7 );
 
-        std::list< boost::shared_ptr< WTriangleMesh > >::const_iterator cit = components->begin();
+        std::list< std::shared_ptr< WTriangleMesh > >::const_iterator cit = components->begin();
         WTriangleMesh expected( 3, 1 );
         expected.addVertex( WPosition( 1, 0, 0 ) );
         expected.addVertex( WPosition( 0, 1, 0 ) );
@@ -438,7 +438,7 @@ public:
     void testComponentDecompositionOnEmptyMesh( void )
     {
         WTriangleMesh mesh( 0, 0 );
-        boost::shared_ptr< std::list< boost::shared_ptr< WTriangleMesh > > > result = tm_utils::componentDecomposition( mesh );
+        std::shared_ptr< std::list< std::shared_ptr< WTriangleMesh > > > result = tm_utils::componentDecomposition( mesh );
         TS_ASSERT( result->empty() );
     }
 };

@@ -93,7 +93,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
 protected:
     /**
@@ -124,17 +124,17 @@ private:
     void writeAnnotation(); //!< writes a freesurfer annotation file (NOT WORKING)
 #endif
 
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_coordInput;     //!< An input connector that accepts order 1 datasets.
-    boost::shared_ptr< WModuleInputData< WTriangleMesh > > m_meshInput1;     //!< An input connector for the reference mesh
-    boost::shared_ptr< WModuleInputData< WTriangleMesh > > m_meshInput2;     //!< An input connector for the mesh
-    boost::shared_ptr< WModuleInputData< WDataSetVector > > m_colorInput;     //!< This is a pointer to the color input dataset.
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_coordInput;     //!< An input connector that accepts order 1 datasets.
+    std::shared_ptr< WModuleInputData< WTriangleMesh > > m_meshInput1;     //!< An input connector for the reference mesh
+    std::shared_ptr< WModuleInputData< WTriangleMesh > > m_meshInput2;     //!< An input connector for the mesh
+    std::shared_ptr< WModuleInputData< WDataSetVector > > m_colorInput;     //!< This is a pointer to the color input dataset.
 
-    boost::shared_ptr< WDataSetScalar > m_coordinateVector;     //!< This is a pointer to the coord vector.
-    boost::shared_ptr< WDataSetVector > m_colorVector;    //!< This is a pointer to the color vector.
-    boost::shared_ptr< WModuleOutputData< WTriangleMesh > > m_meshOutput;  //!< Output connector provided by this module.
+    std::shared_ptr< WDataSetScalar > m_coordinateVector;     //!< This is a pointer to the coord vector.
+    std::shared_ptr< WDataSetVector > m_colorVector;    //!< This is a pointer to the color vector.
+    std::shared_ptr< WModuleOutputData< WTriangleMesh > > m_meshOutput;  //!< Output connector provided by this module.
 
-    boost::shared_ptr< WTriangleMesh > m_referenceMesh; //!< A pointer to the currently processed tri mesh
-    boost::shared_ptr< WTriangleMesh > m_outMesh; //!< A pointer to the currently processed tri mesh
+    std::shared_ptr< WTriangleMesh > m_referenceMesh; //!< A pointer to the currently processed tri mesh
+    std::shared_ptr< WTriangleMesh > m_outMesh; //!< A pointer to the currently processed tri mesh
     std::vector<size_t>m_refs; //!< a vector holding the cluster id corresponding to each vertex
 
     unsigned int m_datasetSizeX; //!< Size of the dataset (X)
@@ -142,7 +142,7 @@ private:
     unsigned int m_datasetSizeZ; //!< Size of the dataset (Z)
     bool m_blankOutMesh; //!< if set mesh colors must be initialized
 
-    boost::shared_ptr< WCondition > m_propCondition;    //!< A condition used to notify about changes in several properties.
+    std::shared_ptr< WCondition > m_propCondition;    //!< A condition used to notify about changes in several properties.
     WPropColor  m_propNonActiveColor; //!< color for the non labeled texture voxels
     WPropColor  m_propHoleColor; //!< color for the non labeled texture voxels
     WPropBool   m_monochrome; //!< if used all labels will have m_propNonActiveColor

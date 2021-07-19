@@ -40,14 +40,14 @@ class WUIPropertyGroupWidget: public WUIWidgetBase
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WUIPropertyGroupWidget >.
+     * Convenience typedef for a std::shared_ptr< WUIPropertyGroupWidget >.
      */
-    typedef boost::shared_ptr< WUIPropertyGroupWidget > SPtr;
+    typedef std::shared_ptr< WUIPropertyGroupWidget > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WUIPropertyGroupWidget >.
+     * Convenience typedef for a std::shared_ptr< const WUIPropertyGroupWidget >.
      */
-    typedef boost::shared_ptr< const WUIPropertyGroupWidget > ConstSPtr;
+    typedef std::shared_ptr< const WUIPropertyGroupWidget > ConstSPtr;
 
     /**
      * Destructor.

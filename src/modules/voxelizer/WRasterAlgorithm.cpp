@@ -22,6 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
+#include <shared_mutex>
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
@@ -32,7 +33,7 @@
 #include "core/dataHandler/WGridRegular3D.h"
 #include "WRasterAlgorithm.h"
 
-WRasterAlgorithm::WRasterAlgorithm( boost::shared_ptr< WGridRegular3D > grid )
+WRasterAlgorithm::WRasterAlgorithm( std::shared_ptr< WGridRegular3D > grid )
     : m_grid( grid ),
       m_values( grid->size(), 0.0 )
 {
@@ -45,19 +46,19 @@ WRasterAlgorithm::~WRasterAlgorithm()
 {
 }
 
-boost::shared_ptr< WDataSetScalar > WRasterAlgorithm::generateDataSet() const
+std::shared_ptr< WDataSetScalar > WRasterAlgorithm::generateDataSet() const
 {
-    boost::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 0,
+    std::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 0,
                                                                                 1,
-                                                                                boost::shared_ptr< std::vector< double > >(
+                                                                                std::shared_ptr< std::vector< double > >(
                                                                                     new std::vector< double >( m_values ) ),
                                                                                 W_DT_DOUBLE ) );
-    return boost::shared_ptr< WDataSetScalar >( new WDataSetScalar( valueSet, m_grid ) );
+    return std::shared_ptr< WDataSetScalar >( new WDataSetScalar( valueSet, m_grid ) );
 }
 
-void WRasterAlgorithm::addParameterizationAlgorithm( boost::shared_ptr< WRasterParameterization > algorithm )
+void WRasterAlgorithm::addParameterizationAlgorithm( std::shared_ptr< WRasterParameterization > algorithm )
 {
-    boost::unique_lock< boost::shared_mutex > lock =  boost::unique_lock< boost::shared_mutex >( m_parameterizationsLock );
+    std::unique_lock< std::shared_mutex > lock =  std::unique_lock< std::shared_mutex >( m_parameterizationsLock );
     m_parameterizations.push_back( algorithm );
     lock.unlock();
 }
@@ -94,7 +95,7 @@ void WRasterAlgorithm::parameterizeVoxel( const WVector3i& voxel, size_t voxelId
 void WRasterAlgorithm::finished()
 {
     // lock the parameterization list for reading
-    boost::shared_lock< boost::shared_mutex > lock =  boost::shared_lock< boost::shared_mutex >( m_parameterizationsLock );
+    boost::shared_lock< std::shared_mutex > lock =  boost::shared_lock< std::shared_mutex >( m_parameterizationsLock );
 
     // NOTE: the list already is locked (in raster method, hopefully)
     for( size_t i = 0; i < m_parameterizations.size(); ++i )

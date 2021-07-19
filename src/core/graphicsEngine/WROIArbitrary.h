@@ -64,7 +64,7 @@ public:
     WROIArbitrary( size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
                    const WMatrix< double >& mat,
                    const std::vector< float >& vals,
-                   boost::shared_ptr< WTriangleMesh > triMesh,
+                   std::shared_ptr< WTriangleMesh > triMesh,
                    float threshold,
                    float maxThreshold,
                    WColor color );
@@ -149,7 +149,7 @@ private:
 
     const std::vector< float > m_vals; //!< The data at the vertices.
 
-    boost::shared_ptr< WTriangleMesh > m_triMesh; //!< This triangle mesh is provided as output through the connector.
+    std::shared_ptr< WTriangleMesh > m_triMesh; //!< This triangle mesh is provided as output through the connector.
 
     WPropDouble m_threshold; //!< the threshold
 

@@ -75,10 +75,10 @@ WMTemplateShaders::~WMTemplateShaders()
 {
 }
 
-boost::shared_ptr< WModule > WMTemplateShaders::factory() const
+std::shared_ptr< WModule > WMTemplateShaders::factory() const
 {
     // NOTE: Refer to WMTemplate.cpp if you do not understand these commands.
-    return boost::shared_ptr< WModule >( new WMTemplateShaders() );
+    return std::shared_ptr< WModule >( new WMTemplateShaders() );
 }
 
 const std::string WMTemplateShaders::getName() const
@@ -105,7 +105,7 @@ void WMTemplateShaders::properties()
 {
     // NOTE: Refer to WMTemplate.cpp if you do not understand these commands.
 
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     // We create some preferences here to use in our shader later:
     m_sphereScaler = m_properties->addProperty( "Sphere Scale", "Scale the spheres.", 1.0 );
@@ -417,7 +417,7 @@ void WMTemplateShaders::moduleMain()
     //  * - u_noiseSizeZ: depth of the texture in pixels
     // Besides these, you will also get the uniforms for the properties in WGETexture::getProperties(). Awesome isn't it? This is especially
     // useful when loading textures from data:
-    // boost::shared_ptr< WDataSetVector > gradients = ....;
+    // std::shared_ptr< WDataSetVector > gradients = ....;
     // osg::ref_ptr< WDataTexture3D > gradTexture3D = gradients->getTexture();
     // wge::bindTexture( cube, gradTexture3D, 2, "u_gradients" );
     //

@@ -38,13 +38,13 @@
 #include "WDendrogram.h"
 
 // init _static_ member variable and provide a linker reference to it
-boost::shared_ptr< WPrototyped > WDendrogram::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WDendrogram::m_prototype = std::shared_ptr< WPrototyped >();
 
-boost::shared_ptr< WPrototyped > WDendrogram::getPrototype()
+std::shared_ptr< WPrototyped > WDendrogram::getPrototype()
 {
     if( !m_prototype )
     {
-         m_prototype = boost::shared_ptr< WPrototyped >( new WDendrogram() );
+         m_prototype = std::shared_ptr< WPrototyped >( new WDendrogram() );
     }
     return m_prototype;
 }

@@ -45,14 +45,14 @@ class WDataSetFiberClustering: public WTransferable
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WDataSetFiberClustering >.
+     * Convenience typedef for a std::shared_ptr< WDataSetFiberClustering >.
      */
-    typedef boost::shared_ptr< WDataSetFiberClustering > SPtr;
+    typedef std::shared_ptr< WDataSetFiberClustering > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WDataSetFiberClustering >.
+     * Convenience typedef for a std::shared_ptr< const WDataSetFiberClustering >.
      */
-    typedef boost::shared_ptr< const WDataSetFiberClustering > ConstSPtr;
+    typedef std::shared_ptr< const WDataSetFiberClustering > ConstSPtr;
 
     /**
      * The type of the cluster map
@@ -96,7 +96,7 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
     /**
      * Sets the cluster at the given ID. If there is a cluster at this ID, it is replaced.
@@ -183,7 +183,7 @@ protected:
     /**
      * Prototype for this dataset
      */
-    static boost::shared_ptr< WPrototyped > m_prototype;
+    static std::shared_ptr< WPrototyped > m_prototype;
 private:
     /**
      * The map between ID and cluster.

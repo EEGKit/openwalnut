@@ -78,7 +78,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -129,17 +129,17 @@ private:
 	 */
     void saveSlicesRGB();
 
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_datasetInputScalar;  //!< Input connector required by this module.
-    boost::shared_ptr< WModuleInputData< WDataSetVector > > m_datasetInputVector;  //!< Input connector required by this module.
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_datasetInputScalar;  //!< Input connector required by this module.
+    std::shared_ptr< WModuleInputData< WDataSetVector > > m_datasetInputVector;  //!< Input connector required by this module.
 
-    boost::shared_ptr< WModuleInputData< WTriangleMesh > > m_meshInput; //!< Input connector for a mesh
-    boost::shared_ptr< WModuleOutputData< WTriangleMesh > > m_meshOutput;  //!< Input connector required by this module.
+    std::shared_ptr< WModuleInputData< WTriangleMesh > > m_meshInput; //!< Input connector for a mesh
+    std::shared_ptr< WModuleOutputData< WTriangleMesh > > m_meshOutput;  //!< Input connector required by this module.
 
-    boost::shared_ptr< WTriangleMesh > m_triMesh; //!< A pointer to the currently processed tri mesh
-    boost::shared_ptr< WDataSetScalar > m_datasetScalar; //!< A pointer to the currently processed dataset
-    boost::shared_ptr< WDataSetVector > m_datasetVector; //!< A pointer to the currently processed dataset
+    std::shared_ptr< WTriangleMesh > m_triMesh; //!< A pointer to the currently processed tri mesh
+    std::shared_ptr< WDataSetScalar > m_datasetScalar; //!< A pointer to the currently processed dataset
+    std::shared_ptr< WDataSetVector > m_datasetVector; //!< A pointer to the currently processed dataset
 
-    boost::shared_ptr< WCondition > m_propCondition;  //!< A condition used to notify about changes in several properties.
+    std::shared_ptr< WCondition > m_propCondition;  //!< A condition used to notify about changes in several properties.
 
     WPropTrigger  m_propTriggerSaveGray; //!< This property triggers the actual writing,
     WPropTrigger  m_propTriggerSaveRGB; //!< This property triggers the actual writing,
@@ -152,7 +152,7 @@ private:
     /**
      * A list of file type selection types
      */
-    boost::shared_ptr< WItemSelection > m_fileTypeSelectionsList;
+    std::shared_ptr< WItemSelection > m_fileTypeSelectionsList;
 
     /**
      * Selection property for file types

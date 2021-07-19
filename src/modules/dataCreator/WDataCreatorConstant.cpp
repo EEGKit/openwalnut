@@ -55,7 +55,7 @@ WValueSetBase::SPtr WDataCreatorConstant::operator()( WProgress::SPtr progress,
     ValueType val = m_value->get( true );
 
     // create some memory for the data
-    boost::shared_ptr< std::vector< ValueType > > data( new std::vector< ValueType > );
+    std::shared_ptr< std::vector< ValueType > > data( new std::vector< ValueType > );
     // for scalar data we need only as much space as we have voxels
     size_t valuesPerVoxel = ValueSetType::getRequiredRawSizePerVoxel( order, dimension );
     data->resize( valuesPerVoxel * grid->size() );

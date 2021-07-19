@@ -46,12 +46,12 @@ public:
     /**
      * shared_ptr abbreviation
      */
-    typedef boost::shared_ptr< WDataSetScalar > SPtr;
+    typedef std::shared_ptr< WDataSetScalar > SPtr;
 
     /**
      * const shared_ptr abbreviation
      */
-    typedef boost::shared_ptr< const WDataSetScalar > ConstSPtr;
+    typedef std::shared_ptr< const WDataSetScalar > ConstSPtr;
 
     /**
      * Constructs an instance out of an appropriate value set and a grid.
@@ -60,8 +60,8 @@ public:
      * \param newValueSet the scalar value set to use
      * \param newGrid the grid which maps world space to the value set
      */
-    WDataSetScalar( boost::shared_ptr< WValueSetBase > newValueSet,
-                    boost::shared_ptr< WGrid > newGrid );
+    WDataSetScalar( std::shared_ptr< WValueSetBase > newValueSet,
+                    std::shared_ptr< WGrid > newGrid );
 
     /**
      * Construct an empty and unusable instance. This is needed for the prototype mechanism.
@@ -82,7 +82,7 @@ public:
      *
      * \return the clone
      */
-    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WValueSetBase > newValueSet, boost::shared_ptr< WGrid > newGrid ) const;
+    virtual WDataSetSingle::SPtr clone( std::shared_ptr< WValueSetBase > newValueSet, std::shared_ptr< WGrid > newGrid ) const;
 
     /**
      * Creates a copy (clone) of this instance but allows one to change the valueset. Unlike copy construction, this is a very useful function if you
@@ -92,7 +92,7 @@ public:
      *
      * \return the clone
      */
-    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WValueSetBase > newValueSet ) const;
+    virtual WDataSetSingle::SPtr clone( std::shared_ptr< WValueSetBase > newValueSet ) const;
 
     /**
      * Creates a copy (clone) of this instance but allows one to change the grid. Unlike copy construction, this is a very useful function if you
@@ -102,7 +102,7 @@ public:
      *
      * \return the clone
      */
-    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WGrid > newGrid ) const;
+    virtual WDataSetSingle::SPtr clone( std::shared_ptr< WGrid > newGrid ) const;
 
     /**
      * Creates a copy (clone) of this instance. Unlike copy construction, this is a very useful function if you
@@ -149,7 +149,7 @@ public:
      *
      * \return the histogram.
      */
-    boost::shared_ptr< const WValueSetHistogram > getHistogram( size_t buckets = 1000 );
+    std::shared_ptr< const WValueSetHistogram > getHistogram( size_t buckets = 1000 );
 
     /**
      * Interpolate the value for the valueset at the given position.
@@ -196,7 +196,7 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
     using WDataSetSingle::getSingleRawValue;
 
@@ -204,13 +204,13 @@ protected:
     /**
      * The prototype as singleton.
      */
-    static boost::shared_ptr< WPrototyped > m_prototype;
+    static std::shared_ptr< WPrototyped > m_prototype;
 
 private:
     /**
      * The histograms for later use. Each histogram for a requested bucket count gets cached.
      **/
-    std::map< size_t, boost::shared_ptr< WValueSetHistogram > > m_histograms;
+    std::map< size_t, std::shared_ptr< WValueSetHistogram > > m_histograms;
 
     /**
      * The lock used for securely creating m_histogram on demand.
@@ -220,8 +220,8 @@ private:
 
 template< typename T > T WDataSetScalar::getValueAt( int x, int y, int z ) const
 {
-    boost::shared_ptr< WValueSet< T > > vs = boost::dynamic_pointer_cast< WValueSet< T > >( m_valueSet );
-    boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( m_grid );
+    std::shared_ptr< WValueSet< T > > vs = std::dynamic_pointer_cast< WValueSet< T > >( m_valueSet );
+    std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( m_grid );
 
     size_t id = x + y * grid->getNbCoordsX() + z * grid->getNbCoordsX() * grid->getNbCoordsY();
 

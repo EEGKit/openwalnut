@@ -43,9 +43,9 @@ WMWriteCSV::~WMWriteCSV()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMWriteCSV::factory() const
+std::shared_ptr< WModule > WMWriteCSV::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMWriteCSV() );
+    return std::shared_ptr< WModule >( new WMWriteCSV() );
 }
 
 const char** WMWriteCSV::getXPMIcon() const
@@ -114,8 +114,8 @@ void WMWriteCSV::properties()
 
 void WMWriteCSV::propertyCallback()
 {
-    boost::shared_ptr< WDataSetCSV > csvdataSet = m_CSVInput->getData();
-    boost::shared_ptr< WDataSetFibers > fibersdataSet = m_fibersInput->getData();
+    std::shared_ptr< WDataSetCSV > csvdataSet = m_CSVInput->getData();
+    std::shared_ptr< WDataSetFibers > fibersdataSet = m_fibersInput->getData();
 
     if( !csvdataSet )
     {
@@ -130,15 +130,15 @@ void WMWriteCSV::propertyCallback()
     writeToFile();
 }
 
-std::list< std::tuple < float, float, float, int > > WMWriteCSV::getListOfInternalVertex( WDataSetFibers::SPtr fibers )
+std::list< std::tuple < float, float, float, size_t > > WMWriteCSV::getListOfInternalVertex( WDataSetFibers::SPtr fibers )
 {
-    std::list< std::tuple < float, float, float, int > > listOfInternalVertex;
+    std::list< std::tuple < float, float, float, size_t > > listOfInternalVertex;
 
     WDataSetFibers::VertexArray vertices = fibers->getVertices();
     WDataSetFibers::IndexArray verticesReverse = fibers->getVerticesReverse();
 
-    int vertexCounter = 0;
-    int reverseCounter = 0;
+    size_t vertexCounter = 0;
+    size_t reverseCounter = 0;
 
     float vertexX;
     float vertexY;
@@ -204,13 +204,13 @@ bool WMWriteCSV::contains( std::string sourceString, float num )
     return sourceString.find( ss.str() ) != std::string::npos;
 }
 
-size_t WMWriteCSV::createStartCounter( std::list< std::tuple < float, float, float, int > > listOfInternalVertex )
+size_t WMWriteCSV::createStartCounter( std::list< std::tuple < float, float, float, size_t > > listOfInternalVertex )
 {
     size_t eventIDcounter = 0;
 
     for( auto element = listOfInternalVertex.begin(); element != listOfInternalVertex.end(); element++  )
     {
-        int selectedVertexIndex = std::get< 3 >( *element );
+        size_t selectedVertexIndex = std::get< 3 >( *element );
 
         if( eventIDcounter < selectedVertexIndex )
         {
@@ -223,7 +223,7 @@ size_t WMWriteCSV::createStartCounter( std::list< std::tuple < float, float, flo
 void WMWriteCSV::writeToFile()
 {
     WDataSetCSV::SeperatedRowSPtr csvContent = m_CSVInput->getData()->getRawDataSet();
-    std::list< std::tuple < float, float, float, int > > listOfInternalVertex = getListOfInternalVertex( m_fibersInput->getData() );
+    std::list< std::tuple < float, float, float, size_t > > listOfInternalVertex = getListOfInternalVertex( m_fibersInput->getData() );
     std::ofstream newCSVFile( getPathToSave() );
 
     if( !newCSVFile.is_open() )
@@ -262,7 +262,7 @@ void WMWriteCSV::writeToFile()
                 continue;
             }
 
-            int selectedVertexIndex = std::get< 3 >( *element );
+            size_t selectedVertexIndex = std::get< 3 >( *element );
             newCSVFile << rowAsString << "," << selectedVertexIndex << std::endl;
 
             isMatch = true;

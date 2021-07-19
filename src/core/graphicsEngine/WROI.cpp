@@ -40,7 +40,7 @@ WROI::~WROI()
 
 void WROI::properties()
 {
-    m_properties = boost::shared_ptr< WProperties >( new WProperties( "Properties", "This ROI's properties" ) );
+    m_properties = std::shared_ptr< WProperties >( new WProperties( "Properties", "This ROI's properties" ) );
 
     m_name = m_properties->addProperty( "Name", "The name of this ROI.", std::string( "ROI" ) );
     m_active = m_properties->addProperty( "Active", "Enable or disable the ROI.", true, boost::bind( &WROI::propertyChanged, this ) );
@@ -88,7 +88,7 @@ void WROI::propertyChanged()
     setDirty();
 }
 
-boost::shared_ptr<WProperties> WROI::getProperties()
+std::shared_ptr<WProperties> WROI::getProperties()
 {
     return m_properties;
 }
@@ -138,26 +138,26 @@ void WROI::unhide()
 
 void WROI::signalRoiChange()
 {
-    for( std::list< boost::shared_ptr< boost::function< void() > > >::iterator iter = m_changeNotifiers.begin();
+    for( std::list< std::shared_ptr< boost::function< void() > > >::iterator iter = m_changeNotifiers.begin();
                 iter != m_changeNotifiers.end(); ++iter )
     {
         ( **iter )();
     }
 }
 
-void WROI::addROIChangeNotifier( boost::shared_ptr< boost::function< void() > > notifier )
+void WROI::addROIChangeNotifier( std::shared_ptr< boost::function< void() > > notifier )
 {
-    boost::unique_lock< boost::shared_mutex > lock;
-    lock = boost::unique_lock< boost::shared_mutex >( m_associatedNotifiersLock );
+    std::unique_lock< std::shared_mutex > lock;
+    lock = std::unique_lock< std::shared_mutex >( m_associatedNotifiersLock );
     m_changeNotifiers.push_back( notifier );
     lock.unlock();
 }
 
-void WROI::removeROIChangeNotifier( boost::shared_ptr< boost::function< void() > > notifier )
+void WROI::removeROIChangeNotifier( std::shared_ptr< boost::function< void() > > notifier )
 {
-    boost::unique_lock< boost::shared_mutex > lock;
-    lock = boost::unique_lock< boost::shared_mutex >( m_associatedNotifiersLock );
-    std::list<  boost::shared_ptr< boost::function< void() > > >::iterator it;
+    std::unique_lock< std::shared_mutex > lock;
+    lock = std::unique_lock< std::shared_mutex >( m_associatedNotifiersLock );
+    std::list<  std::shared_ptr< boost::function< void() > > >::iterator it;
     it = std::find( m_changeNotifiers.begin(), m_changeNotifiers.end(), notifier );
     if( it != m_changeNotifiers.end() )
     {

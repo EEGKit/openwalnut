@@ -78,7 +78,7 @@ public:
      *
      * \return Reference to the dataset.
      */
-    virtual boost::shared_ptr< WDataSet > read();
+    virtual std::shared_ptr< WDataSet > read();
 
 protected:
     /**
@@ -93,14 +93,14 @@ protected:
      *
      * \return The constructed grid or an invalid pointer if any problem occurred.
      */
-    boost::shared_ptr< WGridRegular3D > readStructuredPoints();
+    std::shared_ptr< WGridRegular3D > readStructuredPoints();
 
     /**
      * Read VTK Domain specification and create a matching grid.
      *
      * \return The constructed grid or an invalid pointer if any problem occurred.
      */
-    boost::shared_ptr< WGridRegular3D > readRectilinearGrid();
+    std::shared_ptr< WGridRegular3D > readRectilinearGrid();
 
     /**
      * Read domain information for structured points.
@@ -109,7 +109,7 @@ protected:
      *
      * \return The value set containing the values read from the file or an invalid pointer if anything went wrong.
      */
-    boost::shared_ptr< WValueSetBase > readData( boost::shared_ptr< WGridRegular3D > const& grid );
+    std::shared_ptr< WValueSetBase > readData( std::shared_ptr< WGridRegular3D > const& grid );
 
     /**
      * Read VTK SCALARS field
@@ -122,7 +122,7 @@ protected:
      *
      * \return The resulting value set.
      */
-    boost::shared_ptr< WValueSetBase > readScalars( size_t nbScalars, const std::string & name );
+    std::shared_ptr< WValueSetBase > readScalars( size_t nbScalars, const std::string & name );
 
     /**
      * Read VTK SCALARS field
@@ -135,7 +135,7 @@ protected:
      *
      * \return The resulting value set.
      */
-    boost::shared_ptr< WValueSetBase > readVectors( size_t nbVectors, const std::string & name );
+    std::shared_ptr< WValueSetBase > readVectors( size_t nbVectors, const std::string & name );
 
     /**
      * Read HARDI data from the file.
@@ -145,7 +145,7 @@ protected:
      *
      * \return The data read as a value set of floats.
      */
-    boost::shared_ptr< WValueSetBase > readHARDI( std::size_t nbPoints, std::size_t nbGradients, const std::string& /*name*/ );
+    std::shared_ptr< WValueSetBase > readHARDI( std::size_t nbPoints, std::size_t nbGradients, const std::string& /*name*/ );
 
     /**
      * Read VTK TENSORS field
@@ -158,11 +158,11 @@ protected:
      *
      * \return The resulting value set.
      */
-    boost::shared_ptr< WValueSetBase > readTensors( size_t nbTensors, const std::string & name );
+    std::shared_ptr< WValueSetBase > readTensors( size_t nbTensors, const std::string & name );
 
     std::vector< std::string > m_header; //!< VTK header of the read file
 
-    boost::shared_ptr< std::ifstream > m_ifs; //!< Pointer to the input file stream reader.
+    std::shared_ptr< std::ifstream > m_ifs; //!< Pointer to the input file stream reader.
 
 private:
     //! The types of domains supported so far.
@@ -229,7 +229,7 @@ private:
      *
      * \return A pointer to a vector of gradients.
      */
-    boost::shared_ptr< std::vector< WVector3d > > readGradients();
+    std::shared_ptr< std::vector< WVector3d > > readGradients();
 
     /**
      * Try to cast from the given string to the template value T. If the cast fails a
@@ -245,12 +245,12 @@ private:
     /**
      * reference to the currently loading data set
      */
-    boost::shared_ptr< WDataSet > m_newDataSet;
+    std::shared_ptr< WDataSet > m_newDataSet;
 
     /**
      * reference to the currently loading grid
      */
-    boost::shared_ptr< WGridRegular3D > m_newGrid;
+    std::shared_ptr< WGridRegular3D > m_newGrid;
 
     /**
      * internal flag whether we read ascii or binary

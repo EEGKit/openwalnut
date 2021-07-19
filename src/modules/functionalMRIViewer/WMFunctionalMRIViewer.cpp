@@ -44,10 +44,10 @@ WMFunctionalMRIViewer::~WMFunctionalMRIViewer()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMFunctionalMRIViewer::factory() const
+std::shared_ptr< WModule > WMFunctionalMRIViewer::factory() const
 {
     // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WMFunctionalMRIViewer() );
+    return std::shared_ptr< WModule >( new WMFunctionalMRIViewer() );
 }
 
 const char** WMFunctionalMRIViewer::getXPMIcon() const
@@ -66,12 +66,12 @@ const std::string WMFunctionalMRIViewer::getDescription() const
 
 void WMFunctionalMRIViewer::connectors()
 {
-    m_input = boost::shared_ptr< WModuleInputData< WDataSetTimeSeries > >(
+    m_input = std::shared_ptr< WModuleInputData< WDataSetTimeSeries > >(
                             new WModuleInputData< WDataSetTimeSeries >( shared_from_this(),
                                 "in", "A time series." )
             );
 
-    m_output = boost::shared_ptr< WModuleOutputData< WDataSetScalar > >(
+    m_output = std::shared_ptr< WModuleOutputData< WDataSetScalar > >(
                             new WModuleOutputData< WDataSetScalar >( shared_from_this(),
                                 "out", "The selected time slice." ) );
 
@@ -83,7 +83,7 @@ void WMFunctionalMRIViewer::connectors()
 
 void WMFunctionalMRIViewer::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_time = m_properties->addProperty( "Time", "The current time.", 0.0, m_propCondition );
     m_time->setMax( 1.0 );
@@ -106,7 +106,7 @@ void WMFunctionalMRIViewer::moduleMain()
         debugLog() << "Waiting.";
         m_moduleState.wait();
 
-        boost::shared_ptr< WDataSetTimeSeries > inData = m_input->getData();
+        std::shared_ptr< WDataSetTimeSeries > inData = m_input->getData();
         bool dataChanged = ( m_dataSet != inData );
         if( ( dataChanged && inData ) || ( m_dataSet && m_time->changed() ) )
         {
@@ -126,9 +126,9 @@ void WMFunctionalMRIViewer::moduleMain()
 
             std::stringstream s;
             s << m_dataSet->getFilename() << "_time" << time;
-            boost::shared_ptr< WDataSetScalar const > ds = m_dataSet->calcDataSetAtTime( time, s.str() );
+            std::shared_ptr< WDataSetScalar const > ds = m_dataSet->calcDataSetAtTime( time, s.str() );
             // get rid of the const
-            m_dataSetAtTime = boost::shared_ptr< WDataSetScalar >( new WDataSetScalar( ds->getValueSet(), ds->getGrid() ) );
+            m_dataSetAtTime = std::shared_ptr< WDataSetScalar >( new WDataSetScalar( ds->getValueSet(), ds->getGrid() ) );
 
             if( m_dataSetAtTime )
             {

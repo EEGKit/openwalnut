@@ -43,14 +43,14 @@ class WDataSetSphericalHarmonics : public WDataSetSingle // NOLINT
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr
+     * Convenience typedef for a std::shared_ptr
      */
-    typedef boost::shared_ptr< WDataSetSphericalHarmonics > SPtr;
+    typedef std::shared_ptr< WDataSetSphericalHarmonics > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr; const
+     * Convenience typedef for a std::shared_ptr; const
      */
-    typedef boost::shared_ptr< const WDataSetSphericalHarmonics > ConstSPtr;
+    typedef std::shared_ptr< const WDataSetSphericalHarmonics > ConstSPtr;
 
     /**
      * Constructs an instance out of an appropriate value set and a grid.
@@ -58,8 +58,8 @@ public:
      * \param newValueSet the value set with the spherical harmonics coefficients to use
      * \param newGrid the grid which maps world space to the value set
      */
-    WDataSetSphericalHarmonics( boost::shared_ptr< WValueSetBase > newValueSet,
-                                boost::shared_ptr< WGrid > newGrid );
+    WDataSetSphericalHarmonics( std::shared_ptr< WValueSetBase > newValueSet,
+                                std::shared_ptr< WGrid > newGrid );
 
     /**
      * Construct an empty and unusable instance. This is needed for the prototype mechanism.
@@ -80,7 +80,7 @@ public:
      *
      * \return the clone
      */
-    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WValueSetBase > newValueSet, boost::shared_ptr< WGrid > newGrid ) const;
+    virtual WDataSetSingle::SPtr clone( std::shared_ptr< WValueSetBase > newValueSet, std::shared_ptr< WGrid > newGrid ) const;
 
     /**
      * Creates a copy (clone) of this instance but allows one to change the valueset. Unlike copy construction, this is a very useful function if you
@@ -90,7 +90,7 @@ public:
      *
      * \return the clone
      */
-    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WValueSetBase > newValueSet ) const;
+    virtual WDataSetSingle::SPtr clone( std::shared_ptr< WValueSetBase > newValueSet ) const;
 
     /**
      * Creates a copy (clone) of this instance but allows one to change the grid. Unlike copy construction, this is a very useful function if you
@@ -100,7 +100,7 @@ public:
      *
      * \return the clone
      */
-    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WGrid > newGrid ) const;
+    virtual WDataSetSingle::SPtr clone( std::shared_ptr< WGrid > newGrid ) const;
 
     /**
      * Creates a copy (clone) of this instance. Unlike copy construction, this is a very useful function if you
@@ -115,7 +115,7 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
     /**
      * Interpolates the field of spherical harmonics at the given position
@@ -161,18 +161,18 @@ protected:
     /**
      * The prototype as singleton.
      */
-    static boost::shared_ptr< WPrototyped > m_prototype;
+    static std::shared_ptr< WPrototyped > m_prototype;
 
 private:
     /**
      * The regular 3d grid of the data set.
      */
-    boost::shared_ptr< WGridRegular3D > m_gridRegular3D;
+    std::shared_ptr< WGridRegular3D > m_gridRegular3D;
 
     /**
      * The valueset of the data set
      */
-    boost::shared_ptr< WValueSetBase > m_valueSet;
+    std::shared_ptr< WValueSetBase > m_valueSet;
 };
 
 #endif  // WDATASETSPHERICALHARMONICS_H

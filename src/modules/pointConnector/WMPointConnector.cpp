@@ -49,9 +49,9 @@ WMPointConnector::~WMPointConnector()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMPointConnector::factory() const
+std::shared_ptr< WModule > WMPointConnector::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMPointConnector() );
+    return std::shared_ptr< WModule >( new WMPointConnector() );
 }
 
 const char** WMPointConnector::getXPMIcon() const
@@ -87,6 +87,10 @@ void WMPointConnector::properties()
 
 void WMPointConnector::moduleMain()
 {
+    m_onscreenSelection = std::shared_ptr< WOnscreenSelection >( new WOnscreenSelection() );
+    m_onscreenSelection->setOnend( boost::bind( &WMPointConnector::selectionEnd, this,
+                                   boost::placeholders::_1, boost::placeholders::_2, boost::placeholders::_3 ) );
+
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_pointInput->getDataChangedCondition() );
 
@@ -171,7 +175,7 @@ void WMPointConnector::handleInput()
         return;
     }
 
-    boost::shared_ptr< WValueSet< int > > eventIDs = boost::dynamic_pointer_cast< WValueSet< int > >( points->getValueSet() );
+    std::shared_ptr< WValueSet< size_t > > eventIDs = std::dynamic_pointer_cast< WValueSet< size_t > >( points->getValueSet() );
 
     m_connectorData->clear();
 
@@ -186,7 +190,7 @@ void WMPointConnector::handleInput()
 
         if( eventIDs )
         {
-            int eventID = eventIDs->getScalar( pointIdx );
+            size_t eventID = eventIDs->getScalar( pointIdx );
 
             while( fibers->size() <= eventID )
             {
@@ -377,11 +381,11 @@ void WMPointConnector::updateOutput()
         return;
     }
 
-    boost::shared_ptr< std::vector< float > > vertices = boost::shared_ptr< std::vector< float > >( new std::vector< float >() );
-    boost::shared_ptr< std::vector< float > > colors = boost::shared_ptr< std::vector< float > >( new std::vector< float >() );
-    boost::shared_ptr< std::vector< size_t > > lineStartIndexes = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
-    boost::shared_ptr< std::vector< size_t > > lineLength = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
-    boost::shared_ptr< std::vector< size_t > > verticesReverse = boost::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
+    std::shared_ptr< std::vector< float > > vertices = std::shared_ptr< std::vector< float > >( new std::vector< float >() );
+    std::shared_ptr< std::vector< float > > colors = std::shared_ptr< std::vector< float > >( new std::vector< float >() );
+    std::shared_ptr< std::vector< size_t > > lineStartIndexes = std::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
+    std::shared_ptr< std::vector< size_t > > lineLength = std::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
+    std::shared_ptr< std::vector< size_t > > verticesReverse = std::shared_ptr< std::vector< size_t > >( new std::vector< size_t >() );
 
     for( size_t idx = 0; idx < m_fiberHandler->getFibers()->size(); idx++ )
     {
@@ -449,4 +453,38 @@ WConnectorData::SPtr WMPointConnector::getConnectorData()
 WFiberHandler::SPtr WMPointConnector::getFiberHandler()
 {
     return m_fiberHandler;
+}
+
+void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float, float )
+{
+    for( size_t idx = 0; idx < m_connectorData->getVertices()->size(); idx++ )
+    {
+        osg::Vec3 vertex = m_connectorData->getVertices()->at( idx );
+        if( m_onscreenSelection->isSelected( vertex.x(), vertex.y(), vertex.z() ) )
+        {
+            if( m_onscreenSelection->getClickType() )
+            {
+                if( !m_fiberHandler->getFiberOfPoint( vertex ) )
+                {
+                    m_connectorData->deselectPoint();
+                    m_connectorData->selectPoint( idx );
+                    m_fiberHandler->addVertexToFiber( vertex, m_fiberHandler->getSelectedFiber() );
+                }
+            }
+            else
+            {
+                m_connectorData->deselectPoint();
+                m_fiberHandler->removeVertexFromFiber( m_connectorData->getVertices()->at( idx ), m_fiberHandler->getSelectedFiber() );
+                m_fiberHandler->selectLastPoint();
+            }
+        }
+    }
+
+    updatePoints();
+    updateOutput();
+}
+
+std::shared_ptr< WOnscreenSelection > WMPointConnector::getOnscreenSelection()
+{
+    return m_onscreenSelection;
 }

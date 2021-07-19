@@ -44,7 +44,7 @@ public:
      *
      * \param grid the grid to use for parameterization.
      */
-    explicit WRasterParameterization( boost::shared_ptr< WGridRegular3D > grid );
+    explicit WRasterParameterization( std::shared_ptr< WGridRegular3D > grid );
 
     /**
      * Destructor.
@@ -70,7 +70,7 @@ public:
      *
      * \return the dataset.
      */
-    virtual boost::shared_ptr< WDataSetScalar > getDataSet() = 0;
+    virtual std::shared_ptr< WDataSetScalar > getDataSet() = 0;
 
     /**
      * Gets called for each new line getting rasterized.
@@ -96,7 +96,7 @@ protected:
     /**
      * The grid, which needs to be used for the created dataset and to which the parameterizeVoxel method is relating to.
      */
-    boost::shared_ptr< WGridRegular3D > m_grid;
+    std::shared_ptr< WGridRegular3D > m_grid;
 
 private:
 };

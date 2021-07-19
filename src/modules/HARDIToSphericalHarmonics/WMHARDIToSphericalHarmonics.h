@@ -84,7 +84,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -115,7 +115,7 @@ protected:
     virtual void properties();
 
 private:
-    boost::shared_ptr< WItemSelection > m_reconstructionTypes; //!< A list of the selectable reconstruction types.
+    std::shared_ptr< WItemSelection > m_reconstructionTypes; //!< A list of the selectable reconstruction types.
     WPropSelection m_reconstructionTypeProp; //!< To choose the reconstruction type.
 
     WPropInt m_order; //!< Property holding the order of the spherical harmonics
@@ -147,27 +147,27 @@ private:
     /**
      * This is a pointer to the dataset the module is currently working on.
      */
-    boost::shared_ptr< WDataSetRawHARDI > m_dataSet;
+    std::shared_ptr< WDataSetRawHARDI > m_dataSet;
 
     /**
      * Input connector required by this module. The HARDI measurements.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetRawHARDI > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSetRawHARDI > > m_input;
 
     /**
      * Output connector provided by this module. The calculated spherical harmonics.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetSphericalHarmonics > > m_output;
+    std::shared_ptr< WModuleOutputData< WDataSetSphericalHarmonics > > m_output;
 
     /**
      * The reprojection error for each measurement.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetRawHARDI > > m_outputResiduals;
+    std::shared_ptr< WModuleOutputData< WDataSetRawHARDI > > m_outputResiduals;
 
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * This class is derived from PropertyConstraint and ensures that only even values are valid.
@@ -182,14 +182,14 @@ private:
          *
          * \return true if the new value is OK.
          */
-        virtual bool accept( boost::shared_ptr< WPropertyVariable< WPVBaseTypes::PV_INT > >  property, const WPVBaseTypes::PV_INT& value );
+        virtual bool accept( std::shared_ptr< WPropertyVariable< WPVBaseTypes::PV_INT > >  property, const WPVBaseTypes::PV_INT& value );
 
         /**
          * Method to clone the constraint and create a new one with the correct dynamic type.
          *
          * \return the constraint.
          */
-        virtual boost::shared_ptr< WPropertyVariable< WPVBaseTypes::PV_INT >::PropertyConstraint > clone();
+        virtual std::shared_ptr< WPropertyVariable< WPVBaseTypes::PV_INT >::PropertyConstraint > clone();
     };
 
     /**
@@ -203,8 +203,8 @@ private:
     class HARDICalculation;
 };
 
-class WMHARDIToSphericalHarmonics::HARDICalculation : public boost::static_visitor< std::pair< boost::shared_ptr< WDataSetSphericalHarmonics >,
-                                                                                               boost::shared_ptr< WDataSetRawHARDI > > >
+class WMHARDIToSphericalHarmonics::HARDICalculation : public boost::static_visitor< std::pair< std::shared_ptr< WDataSetSphericalHarmonics >,
+                                                                                               std::shared_ptr< WDataSetRawHARDI > > >
 {
 public:
     /**
@@ -216,7 +216,7 @@ public:
      * \param gradients The gradients of the hardi data.
      */
     HARDICalculation( WSphericalHarmonicsCoefficientsThread<>::ThreadParameter threadParams, bool multiThreaded,
-                      boost::shared_ptr< WGrid > grid, std::vector< WVector3d > const& gradients );
+                      std::shared_ptr< WGrid > grid, std::vector< WVector3d > const& gradients );
 
     /**
      * Destructor.
@@ -241,7 +241,7 @@ private:
     bool m_multiThreaded;
 
     //! The grid of the data.
-    boost::shared_ptr< WGrid > m_grid;
+    std::shared_ptr< WGrid > m_grid;
 
     //! The gradients of the hardi data.
     std::vector< WVector3d > const& m_gradients;
@@ -258,7 +258,7 @@ WMHARDIToSphericalHarmonics::HARDICalculation::operator() ( WValueSet< T > const
     WSphericalHarmonicsCoefficientsThread<>::ThreadParameter parameter = m_parameter;
 
     // data vector stores spherical harmonics coefficients
-    parameter.m_data = boost::shared_ptr< std::vector< double > >( new std::vector< double >( voxelCount * dimension ) );
+    parameter.m_data = std::shared_ptr< std::vector< double > >( new std::vector< double >( voxelCount * dimension ) );
 
     const unsigned int threadCount = m_multiThreaded ?
                                      ( boost::thread::hardware_concurrency() == 0 ? 1 : boost::thread::hardware_concurrency() ) : 1;
@@ -266,7 +266,7 @@ WMHARDIToSphericalHarmonics::HARDICalculation::operator() ( WValueSet< T > const
     // data vector to store reprojection residuals
     if( parameter.m_doResidualCalculation )
     {
-        parameter.m_dataResiduals = boost::shared_ptr< std::vector< double > >(
+        parameter.m_dataResiduals = std::shared_ptr< std::vector< double > >(
                         new std::vector< double >( parameter.m_valueSet->size() * parameter.m_validIndices.size() ) );
     }
 
@@ -296,19 +296,19 @@ WMHARDIToSphericalHarmonics::HARDICalculation::operator() ( WValueSet< T > const
     result_type result;
 
     // create final output data
-    boost::shared_ptr< WValueSet< double > > sphericalHarmonicsData
-            = boost::shared_ptr< WValueSet< double > >( new WValueSet< double >( 1, dimension, parameter.m_data, W_DT_DOUBLE ) );
+    std::shared_ptr< WValueSet< double > > sphericalHarmonicsData
+            = std::shared_ptr< WValueSet< double > >( new WValueSet< double >( 1, dimension, parameter.m_data, W_DT_DOUBLE ) );
 
-    result.first = boost::shared_ptr< WDataSetSphericalHarmonics >(
+    result.first = std::shared_ptr< WDataSetSphericalHarmonics >(
                         new WDataSetSphericalHarmonics( sphericalHarmonicsData, m_grid ) );
 
     if( parameter.m_doResidualCalculation )
     {
-        boost::shared_ptr< WValueSet< double > > residualsData = boost::shared_ptr< WValueSet< double > >(
+        std::shared_ptr< WValueSet< double > > residualsData = std::shared_ptr< WValueSet< double > >(
                 new WValueSet< double >( 1, parameter.m_validIndices.size(), parameter.m_dataResiduals, W_DT_DOUBLE ) );
 
-        result.second = boost::shared_ptr< WDataSetRawHARDI >( new WDataSetRawHARDI( residualsData, m_grid,
-                                                                                     boost::shared_ptr< std::vector< WVector3d > >(
+        result.second = std::shared_ptr< WDataSetRawHARDI >( new WDataSetRawHARDI( residualsData, m_grid,
+                                                                                     std::shared_ptr< std::vector< WVector3d > >(
                                                                                          new std::vector< WVector3d >( m_gradients ) ) ) );
     }
 

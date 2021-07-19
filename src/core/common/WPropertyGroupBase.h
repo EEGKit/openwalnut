@@ -54,7 +54,7 @@ public:
     /**
      * For shortening: a type defining a shared vector of WSubject pointers.
      */
-    typedef std::vector< boost::shared_ptr< WPropertyBase > > PropertyContainerType;
+    typedef std::vector< std::shared_ptr< WPropertyBase > > PropertyContainerType;
 
     /**
      * The alias for a shared container.
@@ -72,14 +72,14 @@ public:
     typedef PropertyContainerType::iterator PropertyIterator;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< WPropertyGroupBase >.
+     * Convenience typedef for a std::shared_ptr< WPropertyGroupBase >.
      */
-    typedef boost::shared_ptr< WPropertyGroupBase > SPtr;
+    typedef std::shared_ptr< WPropertyGroupBase > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WPropertyGroupBase >.
+     * Convenience typedef for a std::shared_ptr< const WPropertyGroupBase >.
      */
-    typedef boost::shared_ptr< const WPropertyGroupBase > ConstSPtr;
+    typedef std::shared_ptr< const WPropertyGroupBase > ConstSPtr;
 
     /**
      * The separator used to separate groups and subgroups
@@ -137,7 +137,7 @@ public:
      *
      * \return a WProperty object
      */
-    virtual boost::shared_ptr< WPropertyBase > getProperty( std::string name );
+    virtual std::shared_ptr< WPropertyBase > getProperty( std::string name );
 
     /**
      * Returns a read ticket for read-access to the list of properties.
@@ -163,7 +163,7 @@ public:
      *
      * \return the property or NULL if not found.
      */
-    virtual boost::shared_ptr< WPropertyBase > findProperty( std::string name ) const;
+    virtual std::shared_ptr< WPropertyBase > findProperty( std::string name ) const;
 
     /**
      * The visitor type used to visit properties as strings. The first parameter is the name, including the path of the property, relative to
@@ -207,7 +207,7 @@ protected:
     *
     * \return the property if found, else NULL.
     */
-    virtual boost::shared_ptr< WPropertyBase > findProperty( const WPropertyGroupBase* const props, std::string name ) const;
+    virtual std::shared_ptr< WPropertyBase > findProperty( const WPropertyGroupBase* const props, std::string name ) const;
 
     /**
      * The set of proerties. This uses the operators ==,<,> WProperty to determine equalness.
@@ -222,7 +222,7 @@ protected:
      *
      * \return Are the names of the two properties equal?
      */
-    bool propNamePredicate( boost::shared_ptr< WPropertyBase > prop1, boost::shared_ptr< WPropertyBase > prop2 ) const;
+    bool propNamePredicate( std::shared_ptr< WPropertyBase > prop1, std::shared_ptr< WPropertyBase > prop2 ) const;
 
     /**
      * Insert the specified property into the list. This method is protected. It is a convenience method for deriving classes to add properties

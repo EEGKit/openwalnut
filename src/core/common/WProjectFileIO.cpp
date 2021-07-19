@@ -80,7 +80,7 @@ void WProjectFileIO::addWarning( std::string description )
     m_warnings.push_back( description );
 }
 
-void WProjectFileIO::printProperties( std::ostream& output, boost::shared_ptr< WProperties > props, std::string indent, //NOLINT
+void WProjectFileIO::printProperties( std::ostream& output, std::shared_ptr< WProperties > props, std::string indent, //NOLINT
                                       std::string prefix, unsigned int index, std::string indexPrefix )
 {
     // lock, unlocked if l looses focus

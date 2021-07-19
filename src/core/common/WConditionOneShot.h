@@ -25,6 +25,8 @@
 #ifndef WCONDITIONONESHOT_H
 #define WCONDITIONONESHOT_H
 
+#include <shared_mutex>
+
 #include <boost/thread.hpp>
 
 #include "WCondition.h"
@@ -65,7 +67,7 @@ protected:
     /**
      * Locked as long the condition was not fired.
      */
-    boost::unique_lock<boost::shared_mutex> m_lock;
+    std::unique_lock<std::shared_mutex> m_lock;
 
 private:
 };

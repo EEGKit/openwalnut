@@ -78,7 +78,7 @@ public:
      *
      * \return A new instance of this module.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -178,7 +178,7 @@ private:
      *
      * \return The direction to follow.
      */
-    WVector3d getEigenDirection( boost::shared_ptr< WDataSetSingle const > ds,
+    WVector3d getEigenDirection( std::shared_ptr< WDataSetSingle const > ds,
                                         wtracking::WTrackingUtility::JobType const& j );
 
     /**
@@ -211,37 +211,37 @@ private:
     void resetProgress( std::size_t todo );
 
     //! A condition for property changes.
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     //! A pointer to the input tensor dataset.
-    boost::shared_ptr< WDataSetSingle > m_dataSet;
+    std::shared_ptr< WDataSetSingle > m_dataSet;
 
     //! The output dataset. Stores all fibers extracted from the input tensor field.
-    boost::shared_ptr< WDataSetFibers > m_fiberSet;
+    std::shared_ptr< WDataSetFibers > m_fiberSet;
 
     //! The output Connector.
-    boost::shared_ptr< WModuleOutputData< WDataSetFibers > > m_output;
+    std::shared_ptr< WModuleOutputData< WDataSetFibers > > m_output;
 
     //! The input Connector.
-    boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;
 
     //! Stores eigenvectors and fractional anisotropy of the input dataset.
-    boost::shared_ptr< WDataSetSingle > m_eigenField;
+    std::shared_ptr< WDataSetSingle > m_eigenField;
 
     //! the functor used for the calculation of the eigenvectors
-    boost::shared_ptr< TPVOFloat > m_eigenOperationFloat;
+    std::shared_ptr< TPVOFloat > m_eigenOperationFloat;
 
     //! the functor used for the calculation of the eigenvectors
-    boost::shared_ptr< TPVODouble > m_eigenOperationDouble;
+    std::shared_ptr< TPVODouble > m_eigenOperationDouble;
 
     //! the object that keeps track of the current progress
-    boost::shared_ptr< WProgress > m_currentProgress;
+    std::shared_ptr< WProgress > m_currentProgress;
 
     //! The threadpool for the eigenvector and fa computations.
-    boost::shared_ptr< WThreadedFunctionBase > m_eigenPool;
+    std::shared_ptr< WThreadedFunctionBase > m_eigenPool;
 
     //! The threadpool for the tracking
-    boost::shared_ptr< TrackingFuncType > m_trackingPool;
+    std::shared_ptr< TrackingFuncType > m_trackingPool;
 
     //! The fiber accumulator
     WFiberAccumulator m_fiberAccu;

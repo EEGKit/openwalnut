@@ -36,7 +36,7 @@
 #include "WTransferFunction.h"
 
 WPropertyBase::WPropertyBase( std::string name, std::string description ):
-    boost::enable_shared_from_this< WPropertyBase >(),
+    std::enable_shared_from_this< WPropertyBase >(),
     m_name( name ),
     m_description( description ),
     m_hidden( false ),
@@ -53,7 +53,7 @@ WPropertyBase::WPropertyBase( std::string name, std::string description ):
 }
 
 WPropertyBase::WPropertyBase( const WPropertyBase& from ):
-    boost::enable_shared_from_this< WPropertyBase >(),
+    std::enable_shared_from_this< WPropertyBase >(),
     m_name( from.m_name ),
     m_description( from.m_description ),
     m_hidden( from.m_hidden ),
@@ -115,76 +115,76 @@ void WPropertyBase::setHidden( bool hidden )
 
 WPropInt WPropertyBase::toPropInt()
 {
-    return boost::dynamic_pointer_cast< WPVInt >( shared_from_this() );
+    return std::dynamic_pointer_cast< WPVInt >( shared_from_this() );
 }
 
 WPropDouble WPropertyBase::toPropDouble()
 {
-    return boost::dynamic_pointer_cast< WPVDouble >( shared_from_this() );
+    return std::dynamic_pointer_cast< WPVDouble >( shared_from_this() );
 }
 
 WPropBool WPropertyBase::toPropBool()
 {
-    return boost::dynamic_pointer_cast< WPVBool >( shared_from_this() );
+    return std::dynamic_pointer_cast< WPVBool >( shared_from_this() );
 }
 
 WPropString WPropertyBase::toPropString()
 {
-    return boost::dynamic_pointer_cast< WPVString >( shared_from_this() );
+    return std::dynamic_pointer_cast< WPVString >( shared_from_this() );
 }
 
 WPropFilename WPropertyBase::toPropFilename()
 {
-    return boost::dynamic_pointer_cast< WPVFilename >( shared_from_this() );
+    return std::dynamic_pointer_cast< WPVFilename >( shared_from_this() );
 }
 
 WPropSelection WPropertyBase::toPropSelection()
 {
-    return boost::dynamic_pointer_cast< WPVSelection >( shared_from_this() );
+    return std::dynamic_pointer_cast< WPVSelection >( shared_from_this() );
 }
 
 WPropColor WPropertyBase::toPropColor()
 {
-    return boost::dynamic_pointer_cast< WPVColor >( shared_from_this() );
+    return std::dynamic_pointer_cast< WPVColor >( shared_from_this() );
 }
 
 WPropPosition WPropertyBase::toPropPosition()
 {
-    return boost::dynamic_pointer_cast< WPVPosition >( shared_from_this() );
+    return std::dynamic_pointer_cast< WPVPosition >( shared_from_this() );
 }
 
 WPropGroup WPropertyBase::toPropGroup()
 {
-    return boost::dynamic_pointer_cast< WPVGroup >( shared_from_this() );
+    return std::dynamic_pointer_cast< WPVGroup >( shared_from_this() );
 }
 
 WPropertyGroupBase::SPtr WPropertyBase::toPropGroupBase()
 {
-    return boost::dynamic_pointer_cast< WPropertyGroupBase >( shared_from_this() );
+    return std::dynamic_pointer_cast< WPropertyGroupBase >( shared_from_this() );
 }
 
 WPropMatrix4X4 WPropertyBase::toPropMatrix4X4()
 {
-    return boost::dynamic_pointer_cast< WPVMatrix4X4 >( shared_from_this() );
+    return std::dynamic_pointer_cast< WPVMatrix4X4 >( shared_from_this() );
 }
 
 WPropTrigger WPropertyBase::toPropTrigger()
 {
-    return boost::dynamic_pointer_cast< WPVTrigger >( shared_from_this() );
+    return std::dynamic_pointer_cast< WPVTrigger >( shared_from_this() );
 }
 
 WPropTransferFunction WPropertyBase::toPropTransferFunction()
 {
-    return boost::dynamic_pointer_cast< WPVTransferFunction >( shared_from_this() );
+    return std::dynamic_pointer_cast< WPVTransferFunction >( shared_from_this() );
 }
 
-boost::shared_ptr< WCondition > WPropertyBase::getUpdateCondition() const
+std::shared_ptr< WCondition > WPropertyBase::getUpdateCondition() const
 {
     return m_updateCondition;
 }
 
 WPropInterval WPropertyBase::toPropInterval()
 {
-    return boost::dynamic_pointer_cast< WPVInterval >( shared_from_this() );
+    return std::dynamic_pointer_cast< WPVInterval >( shared_from_this() );
 }
 

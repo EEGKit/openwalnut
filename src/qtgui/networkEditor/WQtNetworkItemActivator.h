@@ -45,7 +45,7 @@ public:
      *
      * \param module The module whose state is represented by this indicator.
      */
-    explicit WQtNetworkItemActivator( boost::shared_ptr< WModule > module );
+    explicit WQtNetworkItemActivator( std::shared_ptr< WModule > module );
 
     /**
      * Destructor
@@ -82,7 +82,7 @@ protected:
      */
     void mousePressEvent( QGraphicsSceneMouseEvent *mouseEvent );
 
-    boost::shared_ptr< WModule > m_module; //!< the module
+    std::shared_ptr< WModule > m_module; //!< the module
 
     QColor m_activeColor; //!< color used for active indicator
     QColor m_inactiveColor; //!< color used for inactive indicator

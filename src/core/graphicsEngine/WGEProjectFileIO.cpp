@@ -201,7 +201,7 @@ void WGEProjectFileIO::done()
     for( CameraList::const_iterator iter = m_cameras.begin(); iter != m_cameras.end(); ++iter )
     {
         // does the corresponding view exists?
-        boost::shared_ptr< WGEViewer > view = WGraphicsEngine::getGraphicsEngine()->getViewerByName( ( *iter ).second );
+        std::shared_ptr< WGEViewer > view = WGraphicsEngine::getGraphicsEngine()->getViewerByName( ( *iter ).second );
         if( !view )
         {
             wlog::warn( "Project Loader" ) << "Project file contained a camera \"" << ( *iter ).second << "\" but the corresponding view does " <<

@@ -51,12 +51,12 @@ public:
     /**
      * The property status
      */
-    boost::shared_ptr< WPropertyStatus > m_propertyStatus = nullptr;
+    std::shared_ptr< WPropertyStatus > m_propertyStatus = nullptr;
 
     /**
      * the property group
      */
-    boost::shared_ptr< WProperties > m_properties = nullptr;
+    std::shared_ptr< WProperties > m_properties = nullptr;
 
     /**
      * The color bar
@@ -69,9 +69,9 @@ public:
     void setUp()
     {
         WReaderCSV csvReader( W_FIXTURE_PATH + "../data/CSVs/valid.csv" );
-        boost::shared_ptr< WDataSetCSV > csvDataSet = csvReader.read();
+        std::shared_ptr< WDataSetCSV > csvDataSet = csvReader.read();
         m_protonData = WProtonData::SPtr( new WProtonData( csvDataSet->getHeader(), csvDataSet->getData() ) );
-        m_propertyStatus = boost::shared_ptr< WPropertyStatus >( new WPropertyStatus() );
+        m_propertyStatus = std::shared_ptr< WPropertyStatus >( new WPropertyStatus() );
 
         m_propertyStatus->setColumnPropertyHandler( WColumnPropertyHandler::SPtr( new WColumnPropertyHandler( m_protonData, m_properties, NULL ) ) );
 

@@ -28,17 +28,17 @@
 #include "WDataSetHistogram1D.h"
 
 // prototype instance as singleton
-boost::shared_ptr< WPrototyped > WDataSetHistogram1D::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WDataSetHistogram1D::m_prototype = std::shared_ptr< WPrototyped >();
 
-WDataSetHistogram1D::WDataSetHistogram1D( boost::shared_ptr< WHistogramBasic const > const& histo )
+WDataSetHistogram1D::WDataSetHistogram1D( std::shared_ptr< WHistogramBasic const > const& histo )
     : WDataSet(),
       m_histogram( new WHistogramBasic( *histo ) ),
       m_colors()
 {
 }
 
-WDataSetHistogram1D::WDataSetHistogram1D( boost::shared_ptr< WHistogramBasic const > const& histo,
-                                          boost::shared_ptr< std::vector< WColor > const > const& colors )
+WDataSetHistogram1D::WDataSetHistogram1D( std::shared_ptr< WHistogramBasic const > const& histo,
+                                          std::shared_ptr< std::vector< WColor > const > const& colors )
     : WDataSet(),
       m_histogram( new WHistogramBasic( *histo ) ),
       m_colors( colors )
@@ -65,17 +65,17 @@ std::string const WDataSetHistogram1D::getDescription() const
     return "A dataset that contains some 1D histogram.";
 }
 
-boost::shared_ptr< WPrototyped > WDataSetHistogram1D::getPrototype()
+std::shared_ptr< WPrototyped > WDataSetHistogram1D::getPrototype()
 {
     if( !m_prototype )
     {
-        m_prototype = boost::shared_ptr< WPrototyped >( new WDataSetHistogram1D() );
+        m_prototype = std::shared_ptr< WPrototyped >( new WDataSetHistogram1D() );
     }
 
     return m_prototype;
 }
 
-boost::shared_ptr< WHistogramBasic const > const& WDataSetHistogram1D::getHistogram() const
+std::shared_ptr< WHistogramBasic const > const& WDataSetHistogram1D::getHistogram() const
 {
     return m_histogram;
 }

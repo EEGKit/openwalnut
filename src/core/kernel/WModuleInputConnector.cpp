@@ -30,7 +30,7 @@
 
 #include "WModuleInputConnector.h"
 
-WModuleInputConnector::WModuleInputConnector( boost::shared_ptr< WModule > module, std::string name, std::string description ):
+WModuleInputConnector::WModuleInputConnector( std::shared_ptr< WModule > module, std::string name, std::string description ):
     WModuleConnector( module, name, description ),
     m_updated( false )
 {
@@ -50,7 +50,7 @@ WModuleInputConnector::~WModuleInputConnector()
     signal_ConnectionClosed.disconnect_all_slots();
 }
 
-bool WModuleInputConnector::connectable( boost::shared_ptr<WModuleConnector> con )
+bool WModuleInputConnector::connectable( std::shared_ptr<WModuleConnector> con )
 {
     // output connectors are just allowed to get connected with input connectors
     if( dynamic_cast<WModuleOutputConnector*>( con.get() ) )   // NOLINT - since we really need them here
@@ -60,7 +60,7 @@ bool WModuleInputConnector::connectable( boost::shared_ptr<WModuleConnector> con
     return false;
 }
 
-bool WModuleInputConnector::lazyConnectable( boost::shared_ptr<WModuleConnector> con )
+bool WModuleInputConnector::lazyConnectable( std::shared_ptr<WModuleConnector> con )
 {
     // output connectors are just allowed to get connected with input connectors
     if( dynamic_cast<WModuleOutputConnector*>( con.get() ) )   // NOLINT - since we really need them here
@@ -70,7 +70,7 @@ bool WModuleInputConnector::lazyConnectable( boost::shared_ptr<WModuleConnector>
     return false;
 }
 
-void WModuleInputConnector::connectSignals( boost::shared_ptr<WModuleConnector> con )
+void WModuleInputConnector::connectSignals( std::shared_ptr<WModuleConnector> con )
 {
     WModuleConnector::connectSignals( con );
 
@@ -82,7 +82,7 @@ void WModuleInputConnector::connectSignals( boost::shared_ptr<WModuleConnector> 
     );
 }
 
-void WModuleInputConnector::disconnectSignals( boost::shared_ptr<WModuleConnector> con )
+void WModuleInputConnector::disconnectSignals( std::shared_ptr<WModuleConnector> con )
 {
     m_DataChangedConnection.disconnect();
 
@@ -102,8 +102,8 @@ boost::signals2::connection WModuleInputConnector::subscribeSignal( MODULE_CONNE
     }
 }
 
-void WModuleInputConnector::notifyDataChange( boost::shared_ptr<WModuleConnector> /*input*/,
-                                              boost::shared_ptr<WModuleConnector> output )
+void WModuleInputConnector::notifyDataChange( std::shared_ptr<WModuleConnector> /*input*/,
+                                              std::shared_ptr<WModuleConnector> output )
 {
     setUpdated();
 
@@ -113,7 +113,7 @@ void WModuleInputConnector::notifyDataChange( boost::shared_ptr<WModuleConnector
     m_dataChangedCondition->notify();
 }
 
-void WModuleInputConnector::notifyConnectionEstablished( boost::shared_ptr<WModuleConnector> here, boost::shared_ptr<WModuleConnector> there )
+void WModuleInputConnector::notifyConnectionEstablished( std::shared_ptr<WModuleConnector> here, std::shared_ptr<WModuleConnector> there )
 {
     // since the output connector is not able to fill the parameter "input" we need to forward this message and fill it with the
     // proper information
@@ -136,19 +136,19 @@ bool WModuleInputConnector::isOutputConnector() const
 
 bool WModuleInputConnector::updated()
 {
-    boost::lock_guard<boost::shared_mutex> lock( m_updatedLock );
+    boost::lock_guard<std::shared_mutex> lock( m_updatedLock );
     return m_updated;
 }
 
 void WModuleInputConnector::setUpdated()
 {
-    boost::lock_guard<boost::shared_mutex> lock( m_updatedLock );
+    boost::lock_guard<std::shared_mutex> lock( m_updatedLock );
     m_updated = true;
 }
 
 bool WModuleInputConnector::handledUpdate()
 {
-    boost::lock_guard<boost::shared_mutex> lock( m_updatedLock );
+    boost::lock_guard<std::shared_mutex> lock( m_updatedLock );
     bool old = m_updated;
     m_updated = false;
     return old;

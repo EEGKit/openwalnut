@@ -74,7 +74,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
 protected:
     /**
@@ -99,22 +99,22 @@ private:
      * \param grid the grid to places the slices in
      * \param mesh the mesh to use if not NULL and m_useSlices is false
      */
-    void initOSG( boost::shared_ptr< WGridRegular3D > grid, boost::shared_ptr< WTriangleMesh > mesh );
+    void initOSG( std::shared_ptr< WGridRegular3D > grid, std::shared_ptr< WTriangleMesh > mesh );
 
     /**
      * The input connector containing the vector field.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetVector > > m_vectorsIn;
+    std::shared_ptr< WModuleInputData< WDataSetVector > > m_vectorsIn;
 
     /**
      * The input connector containing the scalar field whose derived field is used for LIC.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_scalarIn;
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_scalarIn;
 
     /**
      * The input containing the surface on which the LIC should be applied on
      */
-    boost::shared_ptr< WModuleInputData< WTriangleMesh > > m_meshIn;
+    std::shared_ptr< WModuleInputData< WTriangleMesh > > m_meshIn;
 
     /**
      * A property allowing the user to select whether the slices or the mesh should be used
@@ -124,12 +124,12 @@ private:
     /**
      * A list of items that can be selected using m_geometrySelection.
      */
-    boost::shared_ptr< WItemSelection > m_geometrySelections;
+    std::shared_ptr< WItemSelection > m_geometrySelections;
 
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * The Geode containing all the slices and the mesh

@@ -33,7 +33,7 @@
 // Add your modules here. If you miss this step, OpenWalnut will not be able to load your modules.
 extern "C" void WLoadModule( WModuleList& m ) // NOLINT
 {
-    m.push_back( boost::shared_ptr< WModule >( new WMHierchClustDisplay ) );
-    m.push_back( boost::shared_ptr< WModule >( new WMPartition2Mesh ) );
+    m.push_back( std::shared_ptr< WModule >( new WMHierchClustDisplay ) );
+    m.push_back( std::shared_ptr< WModule >( new WMPartition2Mesh ) );
 }
 

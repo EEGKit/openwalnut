@@ -47,9 +47,9 @@ WMAnisotropicFiltering::~WMAnisotropicFiltering()
 {
 }
 
-boost::shared_ptr< WModule > WMAnisotropicFiltering::factory() const
+std::shared_ptr< WModule > WMAnisotropicFiltering::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMAnisotropicFiltering() );
+    return std::shared_ptr< WModule >( new WMAnisotropicFiltering() );
 }
 
 const std::string WMAnisotropicFiltering::getName() const
@@ -69,11 +69,11 @@ const char** WMAnisotropicFiltering::getXPMIcon() const
 
 void WMAnisotropicFiltering::connectors()
 {
-    m_input = boost::shared_ptr< WModuleInputData < WDataSetSingle  > >(
+    m_input = std::shared_ptr< WModuleInputData < WDataSetSingle  > >(
         new WModuleInputData< WDataSetSingle >( shared_from_this(), "in", "The input dataset." ) );
     addConnector( m_input );
 
-    m_output = boost::shared_ptr< WModuleOutputData < WDataSetSingle  > >(
+    m_output = std::shared_ptr< WModuleOutputData < WDataSetSingle  > >(
         new WModuleOutputData< WDataSetSingle >( shared_from_this(), "out", "The extracted image." ) );
     addConnector( m_output );
 
@@ -82,7 +82,7 @@ void WMAnisotropicFiltering::connectors()
 
 void WMAnisotropicFiltering::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_iterations = m_properties->addProperty( "#Iterations", "Number of iterations.", 10, m_propCondition );
     m_iterations->setMax( 1000 );
@@ -119,7 +119,7 @@ void WMAnisotropicFiltering::moduleMain()
             break;
         }
 
-        boost::shared_ptr< WDataSetSingle > newDataSet = m_input->getData();
+        std::shared_ptr< WDataSetSingle > newDataSet = m_input->getData();
         bool dataChanged = ( m_dataSet != newDataSet );
         bool dataValid   = ( newDataSet != NULL );
 
@@ -155,8 +155,8 @@ void WMAnisotropicFiltering::calcSmoothedImages( int iterations )
     std::size_t numImages = m_dataSet->getValueSet()->rawSize() / m_dataSet->getGrid()->size();
     infoLog() << "Images: " << numImages;
 
-    boost::shared_ptr< std::vector< double > > smoothed( new std::vector< double >( m_dataSet->getValueSet()->rawSize() ) );
-    boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
+    std::shared_ptr< std::vector< double > > smoothed( new std::vector< double >( m_dataSet->getValueSet()->rawSize() ) );
+    std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
 
     // fill in data from dataset
     copyData( smoothed, grid );
@@ -167,7 +167,7 @@ void WMAnisotropicFiltering::calcSmoothedImages( int iterations )
     // the diffusion coeff
     std::vector< double > coeff( m_dataSet->getGrid()->size() );
 
-    boost::shared_ptr< WProgress > prog( new WProgress( "Smoothing images", numImages ) );
+    std::shared_ptr< WProgress > prog( new WProgress( "Smoothing images", numImages ) );
     m_progress->addSubProgress( prog );
 
     for( std::size_t k = 0; k < numImages; ++k )
@@ -201,24 +201,24 @@ void WMAnisotropicFiltering::calcSmoothedImages( int iterations )
     prog->finish();
 
     // create dataset and update connector
-    boost::shared_ptr< WValueSet< double > > vs( new WValueSet< double >(
+    std::shared_ptr< WValueSet< double > > vs( new WValueSet< double >(
                                                     m_dataSet->getValueSet()->order(),
                                                     m_dataSet->getValueSet()->dimension(),
                                                     smoothed,
                                                     W_DT_DOUBLE ) );
-    boost::shared_ptr< WDataSetSingle > ds = m_dataSet->clone( vs );
+    std::shared_ptr< WDataSetSingle > ds = m_dataSet->clone( vs );
 
     m_output->updateData( ds );
 }
 
-std::size_t WMAnisotropicFiltering::coordsToIndex( boost::shared_ptr< WGridRegular3D > const& grid,
+std::size_t WMAnisotropicFiltering::coordsToIndex( std::shared_ptr< WGridRegular3D > const& grid,
                                                    std::size_t x, std::size_t y, std::size_t z )
 {
     return x + y * grid->getNbCoordsX() + z * grid->getNbCoordsX() * grid->getNbCoordsY();
 }
 
-void WMAnisotropicFiltering::copyData( boost::shared_ptr< std::vector< double > >& smoothed,  // NOLINT non-const ref
-                                       boost::shared_ptr< WGridRegular3D > const& /* grid */ )
+void WMAnisotropicFiltering::copyData( std::shared_ptr< std::vector< double > >& smoothed,  // NOLINT non-const ref
+                                       std::shared_ptr< WGridRegular3D > const& /* grid */ )
 {
     for( std::size_t k = 0; k < m_dataSet->getValueSet()->rawSize(); ++k )
     {
@@ -227,8 +227,8 @@ void WMAnisotropicFiltering::copyData( boost::shared_ptr< std::vector< double > 
 }
 
 void WMAnisotropicFiltering::calcDeriv( std::vector< double >& deriv,  // NOLINT non-const ref
-                                        boost::shared_ptr< std::vector< double > > const& smoothed,
-                                        boost::shared_ptr< WGridRegular3D > const& grid, std::size_t image, std::size_t numImages )
+                                        std::shared_ptr< std::vector< double > > const& smoothed,
+                                        std::shared_ptr< WGridRegular3D > const& grid, std::size_t image, std::size_t numImages )
 {
     std::size_t s[] = { grid->getNbCoordsX(), grid->getNbCoordsY(), grid->getNbCoordsZ() };
     double d[] = { fabs( grid->getOffsetX() ), fabs( grid->getOffsetY() ), fabs( grid->getOffsetZ() ) };
@@ -257,7 +257,7 @@ void WMAnisotropicFiltering::calcDeriv( std::vector< double >& deriv,  // NOLINT
 
 void WMAnisotropicFiltering::calcCoeff( std::vector< double >& coeff,  // NOLINT non-const ref
                                         std::vector< double > const& deriv,
-                                        boost::shared_ptr< WGridRegular3D > const& grid )
+                                        std::shared_ptr< WGridRegular3D > const& grid )
 {
     for( std::size_t x = 0; x < grid->getNbCoordsX(); ++x )
     {
@@ -279,8 +279,8 @@ void WMAnisotropicFiltering::calcCoeff( std::vector< double >& coeff,  // NOLINT
 }
 
 void WMAnisotropicFiltering::diffusion( std::vector< double > const& deriv, std::vector< double > const& coeff,
-                                        boost::shared_ptr< std::vector< double > >& smoothed,  // NOLINT non-const ref
-                                        boost::shared_ptr< WGridRegular3D > const& grid, std::size_t image, std::size_t numImages )
+                                        std::shared_ptr< std::vector< double > >& smoothed,  // NOLINT non-const ref
+                                        std::shared_ptr< WGridRegular3D > const& grid, std::size_t image, std::size_t numImages )
 {
     std::size_t s[] = { grid->getNbCoordsX(), grid->getNbCoordsY(), grid->getNbCoordsZ() };
     double d[] = { fabs( grid->getOffsetX() ), fabs( grid->getOffsetY() ), fabs( grid->getOffsetZ() ) };

@@ -25,6 +25,7 @@
 #ifndef WMISOSURFACE_H
 #define WMISOSURFACE_H
 
+#include <shared_mutex>
 #include <string>
 
 #include <osg/Node>
@@ -81,7 +82,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -123,7 +124,7 @@ private:
      */
     void generateSurfacePre( double isoValue );
 
-    boost::shared_mutex m_updateLock; //!< Lock to prevent concurrent threads trying to update the osg node
+    std::shared_mutex m_updateLock; //!< Lock to prevent concurrent threads trying to update the osg node
 
     WPropInt m_nbTriangles; //!< Info-property showing the number of triangles in the mesh.
     WPropInt m_nbVertices; //!< Info-property showing the number of vertices in the mesh.
@@ -138,19 +139,19 @@ private:
     /**
      * This condition denotes whether we need to recompute the surface
      */
-    boost::shared_ptr< WCondition > m_recompute;
+    std::shared_ptr< WCondition > m_recompute;
 
 
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_input;  //!< Input connector required by this module.
-    boost::shared_ptr< WModuleOutputData< WTriangleMesh > > m_output;  //!< Input connector required by this module.
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_input;  //!< Input connector required by this module.
+    std::shared_ptr< WModuleOutputData< WTriangleMesh > > m_output;  //!< Input connector required by this module.
 
-    boost::shared_ptr< WTriangleMesh > m_triMesh; //!< This triangle mesh is provided as output through the connector.
+    std::shared_ptr< WTriangleMesh > m_triMesh; //!< This triangle mesh is provided as output through the connector.
 
     static const unsigned int m_edgeTable[256];  //!< Lookup table for edges used in the construction of the isosurface.
     static const int m_triTable[256][16];  //!< Lookup table for triangles used in the construction of the isosurface.
 
-    boost::shared_ptr< const WDataSetScalar > m_dataSet; //!< pointer to dataSet to be able to access it throughout the whole module.
-    boost::shared_ptr< WGridRegular3D > m_grid; //!< pointer to grid, because we need to access the grid for the dimensions of the texture.
+    std::shared_ptr< const WDataSetScalar > m_dataSet; //!< pointer to dataSet to be able to access it throughout the whole module.
+    std::shared_ptr< WGridRegular3D > m_grid; //!< pointer to grid, because we need to access the grid for the dimensions of the texture.
 
     bool m_firstDataProcessed; //!< Indicates if we already processed the first arrived data. This helps us to reset the isovalue only the first time.
 

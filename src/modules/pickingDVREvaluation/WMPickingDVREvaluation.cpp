@@ -53,9 +53,9 @@ WMPickingDVREvaluation::~WMPickingDVREvaluation()
 {
 }
 
-boost::shared_ptr< WModule > WMPickingDVREvaluation::factory() const
+std::shared_ptr< WModule > WMPickingDVREvaluation::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMPickingDVREvaluation() );
+    return std::shared_ptr< WModule >( new WMPickingDVREvaluation() );
 }
 
 const std::string WMPickingDVREvaluation::getName() const
@@ -81,7 +81,7 @@ void WMPickingDVREvaluation::connectors()
 
 void WMPickingDVREvaluation::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
     m_viewDirection =  m_properties->addProperty( "Viewing direction",
                                                   "Viewing and thus projection direction for DVR. "
                                                   "If [0,0,0], a multi-directional sampling will be performed.",
@@ -97,7 +97,7 @@ void WMPickingDVREvaluation::properties()
                        m_propCondition );
 
     {
-        m_pickingCriteriaList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+        m_pickingCriteriaList = std::shared_ptr< WItemSelection >( new WItemSelection() );
         m_pickingCriteriaList->addItem( WMPICKINGDVR_FIRST_HIT, WMPICKINGDVR_FIRST_HIT );
         //m_pickingCriteriaList->addItem( WMPICKINGDVR_THRESHOLD, WMPICKINGDVR_THRESHOLD );
         m_pickingCriteriaList->addItem( WMPICKINGDVR_MOST_CONTRIBUTING, WMPICKINGDVR_MOST_CONTRIBUTING );
@@ -115,7 +115,7 @@ void WMPickingDVREvaluation::properties()
     }
 
     {
-        m_impFuncList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+        m_impFuncList = std::shared_ptr< WItemSelection >( new WItemSelection() );
         m_impFuncList->addItem( "Uniform (=1)" );
         m_impFuncList->addItem( "Opacity ([0,1])" );
         m_impFuncList->addItem( "Intensity" );
@@ -272,12 +272,12 @@ WPosition WMPickingDVREvaluation::intersectBoundingBoxWithRay( const WBoundingBo
     return result;
 }
 
-double sampleTFOpacity( boost::shared_ptr< WDataSetSingle > transferFunctionData,
-                 boost::shared_ptr< WDataSetScalar > scalarData,
+double sampleTFOpacity( std::shared_ptr< WDataSetSingle > transferFunctionData,
+                 std::shared_ptr< WDataSetScalar > scalarData,
                  double value )
 {
     //Get Transferfunction Values
-    boost::shared_ptr< WValueSetBase > transferFunctionValues = transferFunctionData->getValueSet();
+    std::shared_ptr< WValueSetBase > transferFunctionValues = transferFunctionData->getValueSet();
 
     double max  = scalarData->getMax();
     double min  = scalarData->getMin();
@@ -425,7 +425,7 @@ void WMPickingDVREvaluation::moduleMain()
 
         WDataSet::SPtr dataSet = m_scalarData->getData();
 
-        WDataSetSingle::SPtr dsSingle = boost::dynamic_pointer_cast< WDataSetSingle >( dataSet );
+        WDataSetSingle::SPtr dsSingle = std::dynamic_pointer_cast< WDataSetSingle >( dataSet );
         if( !dsSingle )
         {
             errorLog() << "[Invalid data set]";
@@ -450,7 +450,7 @@ void WMPickingDVREvaluation::moduleMain()
 
         // Is this a data set with a regular grid?
         WGridRegular3D::SPtr regGrid;
-        regGrid = boost::dynamic_pointer_cast< WGridRegular3D >( dsSingle->getGrid() );
+        regGrid = std::dynamic_pointer_cast< WGridRegular3D >( dsSingle->getGrid() );
         if( !regGrid )
         {
             errorLog() << "[Invalid data set]";
@@ -485,7 +485,7 @@ void WMPickingDVREvaluation::moduleMain()
             viewingDirections.push_back( m_viewDirection->get( true ) );
         }
 
-        boost::shared_ptr< WProgress > progress( new WProgress( "Sampling",  m_samplesEval->get( true ) * viewingDirections.size() ) );
+        std::shared_ptr< WProgress > progress( new WProgress( "Sampling",  m_samplesEval->get( true ) * viewingDirections.size() ) );
         m_progress->addSubProgress( progress );
 
 

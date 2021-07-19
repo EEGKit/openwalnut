@@ -39,7 +39,7 @@ public:
     /**
      * A shared_ptr to this class.
      */
-    typedef boost::shared_ptr< WConverterIndexes > SPtr;
+    typedef std::shared_ptr< WConverterIndexes > SPtr;
 
     /**
      * Empty constructor for class creation.

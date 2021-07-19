@@ -71,7 +71,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
 protected:
     /**
@@ -96,8 +96,8 @@ protected:
 
 
 private:
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_original;  //!< Connector providing original input data.
-    boost::shared_ptr< WModuleOutputData< WDataSetScalar > > m_resampled; //!< Connector yielding resampled data.
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_original;  //!< Connector providing original input data.
+    std::shared_ptr< WModuleOutputData< WDataSetScalar > > m_resampled; //!< Connector yielding resampled data.
 
     size_t resampleStepSize; //!< Use every resampleStepSize-th value in each coordinate direction
 
@@ -106,7 +106,7 @@ private:
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 };
 
 #endif  // WMRESAMPLEREGULAR_H

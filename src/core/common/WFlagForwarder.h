@@ -58,7 +58,7 @@ public:
      *
      * \param source the property to be used as reference. All other properties will be synced with this one.
      */
-    explicit WFlagForwarder( boost::shared_ptr< WFlag< T > > source );
+    explicit WFlagForwarder( std::shared_ptr< WFlag< T > > source );
 
     /**
      * Destructor.
@@ -71,13 +71,13 @@ public:
      *
      * \param to the property to sync with source.
      */
-    void forward( boost::shared_ptr< WFlag< T > > to );
+    void forward( std::shared_ptr< WFlag< T > > to );
 
 protected:
     /**
      * The source property to which all other properties are synced to.
      */
-    boost::shared_ptr< WFlag< T > > m_source;
+    std::shared_ptr< WFlag< T > > m_source;
 
     /**
      * The signal fired by m_source upon value change
@@ -112,7 +112,7 @@ private:
 };
 
 template < typename T >
-WFlagForwarder< T >::WFlagForwarder( boost::shared_ptr< WFlag< T > > source ):
+WFlagForwarder< T >::WFlagForwarder( std::shared_ptr< WFlag< T > > source ):
     m_source( source )
 {
     // connect the source's change signal
@@ -128,7 +128,7 @@ WFlagForwarder< T >::~WFlagForwarder()
 }
 
 template < typename T >
-void WFlagForwarder< T >::forward( boost::shared_ptr< WFlag< T > >  to )
+void WFlagForwarder< T >::forward( std::shared_ptr< WFlag< T > >  to )
 {
     to->set( m_source->get() );
 

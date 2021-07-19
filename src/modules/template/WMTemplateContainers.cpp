@@ -61,11 +61,11 @@ WMTemplateContainers::~WMTemplateContainers()
 {
 }
 
-boost::shared_ptr< WModule > WMTemplateContainers::factory() const
+std::shared_ptr< WModule > WMTemplateContainers::factory() const
 {
     // NOTE: Refer to WMTemplate.cpp if you do not understand these commands.
     // Same as in standard modules. Create your instance.
-    return boost::shared_ptr< WModule >( new WMTemplateContainers() );
+    return std::shared_ptr< WModule >( new WMTemplateContainers() );
 }
 
 void WMTemplateContainers::connectors()

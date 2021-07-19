@@ -38,7 +38,7 @@ public:
     /**
      * Function variables for updating the data 
      */
-    typedef boost::shared_ptr< WEventIDLimitationPropertyHandler > SPtr;
+    typedef std::shared_ptr< WEventIDLimitationPropertyHandler > SPtr;
 
     /**
      * shared_ptr that points to itself 

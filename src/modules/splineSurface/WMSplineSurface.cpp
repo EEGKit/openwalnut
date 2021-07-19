@@ -61,7 +61,7 @@
 W_LOADABLE_MODULE( WMSplineSurface )
 
 WMSplineSurface::WMSplineSurface() :
-    WModule(), m_recompute( boost::shared_ptr< WCondition >( new WCondition() ) ),
+    WModule(), m_recompute( std::shared_ptr< WCondition >( new WCondition() ) ),
             m_moduleNode( new WGEGroupNode() ), m_surfaceGeode( 0 )
 {
     // WARNING: initializing connectors inside the constructor will lead to an exception.
@@ -74,9 +74,9 @@ WMSplineSurface::~WMSplineSurface()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMSplineSurface::factory() const
+std::shared_ptr< WModule > WMSplineSurface::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMSplineSurface() );
+    return std::shared_ptr< WModule >( new WMSplineSurface() );
 }
 
 const char** WMSplineSurface::getXPMIcon() const
@@ -158,10 +158,10 @@ void WMSplineSurface::connectors()
     // TODO(someone): This connector should be used as soon as the module gets more functionality.
     // The surface will aligned to these tracts.
     typedef WModuleInputData< const WFiberCluster > InputType; // just an alias
-    m_input = boost::shared_ptr< InputType >( new InputType( shared_from_this(), "Tracts", "A cluster of tracts." ) );
+    m_input = std::shared_ptr< InputType >( new InputType( shared_from_this(), "Tracts", "A cluster of tracts." ) );
     addConnector( m_input );
 
-    m_output = boost::shared_ptr< WModuleOutputData< WTriangleMesh > >( new WModuleOutputData< WTriangleMesh > ( shared_from_this(), "out",
+    m_output = std::shared_ptr< WModuleOutputData< WTriangleMesh > >( new WModuleOutputData< WTriangleMesh > ( shared_from_this(), "out",
             "The mesh representing the spline surface." ) );
 
     addConnector( m_output );

@@ -43,7 +43,7 @@ public:
      *
      * \param module the module that got associated.
      */
-    explicit WModuleAssocEvent( boost::shared_ptr< WModule > module );
+    explicit WModuleAssocEvent( std::shared_ptr< WModule > module );
 
     /**
      * Destructor.
@@ -55,13 +55,13 @@ public:
      *
      * \return the module.
      */
-    boost::shared_ptr< WModule > getModule();
+    std::shared_ptr< WModule > getModule();
 
 protected:
     /**
      * The module that got associated.
      */
-    boost::shared_ptr< WModule > m_module;
+    std::shared_ptr< WModule > m_module;
 private:
 };
 

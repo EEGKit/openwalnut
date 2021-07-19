@@ -131,7 +131,7 @@ void WPropertyColorWidget::setColor( const QColor& bgColor )
     // if this is a info property -> set background of label and some text
     m_asText.setText( QString::fromStdString( m_colorProperty->getAsString() ) );
     QPalette pal = QPalette();
-    pal.setColor( QPalette::Background, toQColor( m_colorProperty->get() ) );
+    pal.setColor( QPalette::Window, toQColor( m_colorProperty->get() ) );
     m_asText.setAutoFillBackground( true );
     m_asText.setPalette( pal );
 }

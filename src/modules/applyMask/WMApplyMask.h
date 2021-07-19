@@ -77,7 +77,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -108,14 +108,14 @@ private:
      * \param valSet the values which are set to zero if the mask is zero
      * \param type The enumeration representing of the data type of contained in the value set.
      */
-    template< typename T > void applyMask( boost::shared_ptr< WValueSet< T > > valSet, dataType type );
+    template< typename T > void applyMask( std::shared_ptr< WValueSet< T > > valSet, dataType type );
 
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_dataInput;  //!< Input connector for getting the data.
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_maskInput;  //!< Input connector for getting the mask.
-    boost::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output; //!< The only output of this mask module.
-    boost::shared_ptr< WDataSetScalar > m_dataSet; //!< Pointer providing access to the data set in the whole module.
-    boost::shared_ptr< WDataSetScalar > m_dataSetOut; //!< Pointer providing access to the resulting data set in the whole module.
-    boost::shared_ptr< WDataSetScalar > m_mask; //!< Pointer providing access to the mask in the whole module.
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_dataInput;  //!< Input connector for getting the data.
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_maskInput;  //!< Input connector for getting the mask.
+    std::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output; //!< The only output of this mask module.
+    std::shared_ptr< WDataSetScalar > m_dataSet; //!< Pointer providing access to the data set in the whole module.
+    std::shared_ptr< WDataSetScalar > m_dataSetOut; //!< Pointer providing access to the resulting data set in the whole module.
+    std::shared_ptr< WDataSetScalar > m_mask; //!< Pointer providing access to the mask in the whole module.
 };
 
 #endif  // WMAPPLYMASK_H

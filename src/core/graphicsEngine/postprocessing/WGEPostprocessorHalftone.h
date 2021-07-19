@@ -36,14 +36,14 @@ class WGEPostprocessorHalftone: public WGEPostprocessor
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WGEPostprocessorHalftone >.
+     * Convenience typedef for a std::shared_ptr< WGEPostprocessorHalftone >.
      */
-    typedef boost::shared_ptr< WGEPostprocessorHalftone > SPtr;
+    typedef std::shared_ptr< WGEPostprocessorHalftone > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WGEPostprocessorHalftone >.
+     * Convenience typedef for a std::shared_ptr< const WGEPostprocessorHalftone >.
      */
-    typedef boost::shared_ptr< const WGEPostprocessorHalftone > ConstSPtr;
+    typedef std::shared_ptr< const WGEPostprocessorHalftone > ConstSPtr;
 
     /**
      * Default constructor.

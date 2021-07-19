@@ -43,7 +43,7 @@ WThreadedFunctionStatus WThreadedFunctionBase::status()
     return m_status.getReadTicket()->get();
 }
 
-boost::shared_ptr< WCondition > WThreadedFunctionBase::getThreadsDoneCondition()
+std::shared_ptr< WCondition > WThreadedFunctionBase::getThreadsDoneCondition()
 {
     return m_doneCondition;
 }

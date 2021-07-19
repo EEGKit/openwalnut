@@ -74,7 +74,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr<WModule> factory() const;
+    virtual std::shared_ptr<WModule> factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -188,7 +188,7 @@ private:
     };
 
     //! A condition for property updates.
-    boost::shared_ptr<WCondition> m_propCondition;
+    std::shared_ptr<WCondition> m_propCondition;
 
     /**
      * A feature toggle for submitting frames to OpenVR SDK

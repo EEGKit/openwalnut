@@ -90,7 +90,7 @@ WQtRoiHeaderTreeItem::~WQtRoiHeaderTreeItem()
 {
 }
 
-WQtBranchTreeItem* WQtRoiHeaderTreeItem::addBranch( boost::shared_ptr< WRMBranch> branch )
+WQtBranchTreeItem* WQtRoiHeaderTreeItem::addBranch( std::shared_ptr< WRMBranch> branch )
 {
     WQtBranchTreeItem* rti = new WQtBranchTreeItem( this, branch );
     return rti;

@@ -43,14 +43,14 @@ class WInterval
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WInterval >.
+     * Convenience typedef for a std::shared_ptr< WInterval >.
      */
-    typedef boost::shared_ptr< WInterval< T > > SPtr;
+    typedef std::shared_ptr< WInterval< T > > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WInterval >.
+     * Convenience typedef for a std::shared_ptr< const WInterval >.
      */
-    typedef boost::shared_ptr< const WInterval< T > > ConstSPtr;
+    typedef std::shared_ptr< const WInterval< T > > ConstSPtr;
 
     /**
      * Type used to store the information

@@ -44,14 +44,14 @@ class WModuleMetaInformation
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WModuleMetaInformation >.
+     * Convenience typedef for a std::shared_ptr< WModuleMetaInformation >.
      */
-    typedef boost::shared_ptr< WModuleMetaInformation > SPtr;
+    typedef std::shared_ptr< WModuleMetaInformation > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WModuleMetaInformation >.
+     * Convenience typedef for a std::shared_ptr< const WModuleMetaInformation >.
      */
-    typedef boost::shared_ptr< const WModuleMetaInformation > ConstSPtr;
+    typedef std::shared_ptr< const WModuleMetaInformation > ConstSPtr;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // these are some structs to simply handling of the meta file structures
@@ -133,7 +133,7 @@ public:
      *
      * \param module The module to load the meta file for.
      */
-    explicit WModuleMetaInformation( boost::shared_ptr< WModule > module );
+    explicit WModuleMetaInformation( std::shared_ptr< WModule > module );
 
     /**
      * Destructor. Cleans internal list.

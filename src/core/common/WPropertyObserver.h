@@ -47,12 +47,12 @@ public:
     /**
      * Convenience type for a set of property instances.
      */
-    typedef std::map< std::string, boost::shared_ptr< WPropertyBase > > PropertyNameMap;
+    typedef std::map< std::string, std::shared_ptr< WPropertyBase > > PropertyNameMap;
 
     /**
      * Convenience type for a shared pointer on property observers.
      */
-    typedef boost::shared_ptr< WPropertyObserver > SPtr;
+    typedef std::shared_ptr< WPropertyObserver > SPtr;
 
     /**
      * Default constructor.
@@ -72,7 +72,7 @@ public:
      * \param properties the group whose children should be watched.
      * \param names list of names. If specified, only these properties are observed.
      */
-    void observe( boost::shared_ptr< WProperties > properties, std::set< std::string > names = std::set< std::string >() );
+    void observe( std::shared_ptr< WProperties > properties, std::set< std::string > names = std::set< std::string >() );
 
     /**
      * Is true if one observed property fired. This is reset by the \ref handled method.
@@ -93,7 +93,7 @@ public:
      *
      * \return the new instance.
      */
-    static boost::shared_ptr< WPropertyObserver > create();
+    static std::shared_ptr< WPropertyObserver > create();
 
 protected:
 private:
@@ -127,12 +127,12 @@ private:
      *
      * \param property the property that fired.
      */
-    void propertyUpdated( boost::shared_ptr< WPropertyBase > property );
+    void propertyUpdated( std::shared_ptr< WPropertyBase > property );
 
     /**
      * Type for shared container with signal connections.
      */
-    typedef WSharedAssociativeContainer< std::map< boost::shared_ptr< WPropertyBase >, boost::signals2::connection > > Subscriptions;
+    typedef WSharedAssociativeContainer< std::map< std::shared_ptr< WPropertyBase >, boost::signals2::connection > > Subscriptions;
 
     /**
      * The subscription to each property which was subscribed.
@@ -147,7 +147,7 @@ private:
     /**
      * The properties handled by this observer.
      */
-    boost::shared_ptr< WProperties > m_properties;
+    std::shared_ptr< WProperties > m_properties;
 
     /**
      * The names of the properties which shall be observed if they are or become available.

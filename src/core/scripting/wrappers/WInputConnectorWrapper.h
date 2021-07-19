@@ -44,7 +44,7 @@ public:
      *
      * \param conn The input connector.
      */
-    explicit WInputConnectorWrapper( boost::shared_ptr< WModuleInputConnector > conn );
+    explicit WInputConnectorWrapper( std::shared_ptr< WModuleInputConnector > conn );
 
     /**
      * Connect this input connector to an output connector.
@@ -65,7 +65,7 @@ public:
 
 private:
     //! The actual input connector.
-    boost::shared_ptr< WModuleInputConnector > m_conn;
+    std::shared_ptr< WModuleInputConnector > m_conn;
 };
 
 #endif  // WINPUTCONNECTORWRAPPER_H

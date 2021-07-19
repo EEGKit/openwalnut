@@ -40,7 +40,7 @@ public:
      */
     void testInstantiationWithValidCsv()
     {
-        //boost::shared_ptr< WDataSetCSV > csvDataSet = boost::shared_ptr< new WDataSetCSV() >
+        //std::shared_ptr< WDataSetCSV > csvDataSet = std::shared_ptr< new WDataSetCSV() >
         //WReaderCSV csvDataSet( "");
     }
 };

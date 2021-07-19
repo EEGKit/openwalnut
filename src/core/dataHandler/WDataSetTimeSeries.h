@@ -57,7 +57,7 @@ class WDataSetTimeSeries : public WDataSet
     typedef WDataSetTimeSeries This;
 
     //! a time slice
-    typedef std::pair< boost::shared_ptr< WDataSetScalar const >, float > TimeSlice;
+    typedef std::pair< std::shared_ptr< WDataSetScalar const >, float > TimeSlice;
 
 public:
     /**
@@ -79,7 +79,7 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
     /**
      * Construct time series from multiple 3D datasets. They do not have to be sorted by time.
@@ -87,7 +87,7 @@ public:
      * \param datasets A list of datasets to add.
      * \param times A list of times for the datasets.
      */
-    WDataSetTimeSeries( std::vector< boost::shared_ptr< WDataSetScalar const > > datasets, std::vector< float > times );
+    WDataSetTimeSeries( std::vector< std::shared_ptr< WDataSetScalar const > > datasets, std::vector< float > times );
 
     /**
      * Destructor.
@@ -138,7 +138,7 @@ public:
      * \param time The time.
      * \return A pointer to the appropriate dataset or a NULL-pointer.
      */
-    boost::shared_ptr< WDataSetScalar const > getDataSetPtrAtTimeSlice( float time ) const;
+    std::shared_ptr< WDataSetScalar const > getDataSetPtrAtTimeSlice( float time ) const;
 
     /**
      * Calculates a new dataset with values interpolated between the two nearest
@@ -149,7 +149,7 @@ public:
      * \param name The name of the new dataset.
      * \return A new interpolated dataset.
      */
-    boost::shared_ptr< WDataSetScalar const > calcDataSetAtTime( float time, std::string const& name ) const;
+    std::shared_ptr< WDataSetScalar const > calcDataSetAtTime( float time, std::string const& name ) const;
 
     /**
      * Interpolate a value for a single point in space and time.
@@ -204,7 +204,7 @@ private:
      * \return A valueset with linearly interpolated values.
      */
     template< typename Data_T >
-    boost::shared_ptr< WValueSetBase > calcInterpolatedValueSet( float lb, float ub, float time ) const;
+    std::shared_ptr< WValueSetBase > calcInterpolatedValueSet( float lb, float ub, float time ) const;
 
     /**
      * Standard constructor.
@@ -249,7 +249,7 @@ private:
     std::vector< TimeSlice > m_dataSets;
 
     //! The prototype as singleton.
-    static boost::shared_ptr< WPrototyped > m_prototype;
+    static std::shared_ptr< WPrototyped > m_prototype;
 
     //! the smallest value
     double m_minValue;
@@ -274,12 +274,12 @@ Data_T WDataSetTimeSeries::interpolate( WVector3d const& pos, float time, bool* 
     float ub = getUBTimeSlice( time );
     if( lb == time || ub == time )
     {
-        boost::shared_ptr< WDataSetScalar const > ds = getDataSetPtrAtTimeSlice( time );
+        std::shared_ptr< WDataSetScalar const > ds = getDataSetPtrAtTimeSlice( time );
         return static_cast< Data_T >( const_cast< WDataSetScalar& >( *ds ).interpolate( pos, success ) );
     }
     WAssert( lb != -inf && ub != inf, "" );
-    boost::shared_ptr< WDataSetScalar const > f = getDataSetPtrAtTimeSlice( lb );
-    boost::shared_ptr< WDataSetScalar const > g = getDataSetPtrAtTimeSlice( ub );
+    std::shared_ptr< WDataSetScalar const > f = getDataSetPtrAtTimeSlice( lb );
+    std::shared_ptr< WDataSetScalar const > g = getDataSetPtrAtTimeSlice( ub );
     WAssert( f && g, "" );
     float ml = ( ub - time ) / ( ub - lb );
     float mu = ( time - lb ) / ( ub - lb );
@@ -288,24 +288,24 @@ Data_T WDataSetTimeSeries::interpolate( WVector3d const& pos, float time, bool* 
 }
 
 template< typename Data_T >
-boost::shared_ptr< WValueSetBase > WDataSetTimeSeries::calcInterpolatedValueSet( float lb, float ub, float time ) const
+std::shared_ptr< WValueSetBase > WDataSetTimeSeries::calcInterpolatedValueSet( float lb, float ub, float time ) const
 {
     static const float inf = std::numeric_limits< float >::infinity();
     WAssert( lb != -inf && ub != inf, "" );
-    boost::shared_ptr< WDataSetScalar const > f = getDataSetPtrAtTimeSlice( lb );
-    boost::shared_ptr< WDataSetScalar const > g = getDataSetPtrAtTimeSlice( ub );
+    std::shared_ptr< WDataSetScalar const > f = getDataSetPtrAtTimeSlice( lb );
+    std::shared_ptr< WDataSetScalar const > g = getDataSetPtrAtTimeSlice( ub );
     WAssert( f && g, "" );
-    boost::shared_ptr< WValueSet< Data_T > > vf = boost::dynamic_pointer_cast< WValueSet< Data_T > >( f->getValueSet() );
-    boost::shared_ptr< WValueSet< Data_T > > vg = boost::dynamic_pointer_cast< WValueSet< Data_T > >( g->getValueSet() );
+    std::shared_ptr< WValueSet< Data_T > > vf = std::dynamic_pointer_cast< WValueSet< Data_T > >( f->getValueSet() );
+    std::shared_ptr< WValueSet< Data_T > > vg = std::dynamic_pointer_cast< WValueSet< Data_T > >( g->getValueSet() );
     WAssert( vf && vg, "" );
-    boost::shared_ptr< std::vector< Data_T > > values( new std::vector< Data_T >( vf->size() ) );
+    std::shared_ptr< std::vector< Data_T > > values( new std::vector< Data_T >( vf->size() ) );
     float ml = ( ub - time ) / ( ub - lb );
     float mu = ( time - lb ) / ( ub - lb );
     for( std::size_t k = 0; k < values->size(); ++k )
     {
         ( *values )[ k ] = ml * vf->getScalar( k ) + mu * vg->getScalar( k );
     }
-    return boost::shared_ptr< WValueSetBase >( new WValueSet< Data_T >( 0, 1, values, DataType< Data_T >::type ) );
+    return std::shared_ptr< WValueSetBase >( new WValueSet< Data_T >( 0, 1, values, DataType< Data_T >::type ) );
 }
 
 float WDataSetTimeSeries::getMinTime() const

@@ -42,9 +42,9 @@ class WDataSetFiberVector : public WMixinVector< WFiber >, public WDataSet // NO
 {
 public:
     /**
-     * Short hand for a boost::shared_ptr on such classes.
+     * Short hand for a std::shared_ptr on such classes.
      */
-    typedef boost::shared_ptr< WDataSetFiberVector > SPtr;
+    typedef std::shared_ptr< WDataSetFiberVector > SPtr;
 
     /**
      * Default constructor for creating an empty fiber vector.
@@ -56,14 +56,14 @@ public:
      *
      * \param fibs Fiber vector to store in this data set
      */
-    explicit WDataSetFiberVector( boost::shared_ptr< std::vector< WFiber > > fibs );
+    explicit WDataSetFiberVector( std::shared_ptr< std::vector< WFiber > > fibs );
 
     /**
      * Convert a WDataSetFibers into a fiber vector dataset.
      *
      * \param fiberDS Dataset which has to be converted
      */
-    explicit WDataSetFiberVector( boost::shared_ptr< const WDataSetFibers > fiberDS );
+    explicit WDataSetFiberVector( std::shared_ptr< const WDataSetFibers > fiberDS );
 
     /**
      * Copy constructor for fibers
@@ -99,7 +99,7 @@ public:
      *
      * \return A reference to the new generate WDataSetFiberVector
      */
-    boost::shared_ptr< WDataSetFiberVector > generateDataSetOutOfUsedFibers( const std::vector< bool > &unused ) const;
+    std::shared_ptr< WDataSetFiberVector > generateDataSetOutOfUsedFibers( const std::vector< bool > &unused ) const;
 
     /**
      * Determines whether this dataset can be used as a texture.
@@ -127,28 +127,28 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
     /**
      * Convert this dataset into WDataSetFibers format for other purposes if needed. (e.g. display)
      *
      * \return Reference to the dataset in WDataSetFibers format
      */
-    boost::shared_ptr< WDataSetFibers > toWDataSetFibers() const;
+    std::shared_ptr< WDataSetFibers > toWDataSetFibers() const;
 
 protected:
     /**
      * The prototype as singleton.
      */
-    static boost::shared_ptr< WPrototyped > m_prototype;
+    static std::shared_ptr< WPrototyped > m_prototype;
 };
 
-boost::shared_ptr< WFiber > centerLine( boost::shared_ptr< const WDataSetFibers > tracts );
+std::shared_ptr< WFiber > centerLine( std::shared_ptr< const WDataSetFibers > tracts );
 
-boost::shared_ptr< WFiber > longestLine( boost::shared_ptr< const WDataSetFibers > tracts );
+std::shared_ptr< WFiber > longestLine( std::shared_ptr< const WDataSetFibers > tracts );
 
-boost::shared_ptr< WFiber > centerLine( boost::shared_ptr< const WDataSetFiberVector > tracts );
+std::shared_ptr< WFiber > centerLine( std::shared_ptr< const WDataSetFiberVector > tracts );
 
-boost::shared_ptr< WFiber > longestLine( boost::shared_ptr< const WDataSetFiberVector > tracts );
+std::shared_ptr< WFiber > longestLine( std::shared_ptr< const WDataSetFiberVector > tracts );
 
 #endif  // WDATASETFIBERVECTOR_H

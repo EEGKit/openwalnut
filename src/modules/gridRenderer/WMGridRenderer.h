@@ -80,7 +80,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -105,7 +105,7 @@ protected:
     virtual void properties();
 
 private:
-    boost::shared_ptr< WModuleInputData< WDataSet > > m_input;  //!< Input connector required by this module.
+    std::shared_ptr< WModuleInputData< WDataSet > > m_input;  //!< Input connector required by this module.
 
     WItemSelection::SPtr m_possibleModes; //!< the modes available.
 
@@ -119,10 +119,12 @@ private:
 
     WPropInt m_gridLineWidth; //!< the width of the grid lines
 
+    std::shared_ptr< WProperties > currentDataInfoProperties; //!< Kept reference to current data infos as properties
+
     /**
      * This condition denotes whether we need to recompute the surface
      */
-    boost::shared_ptr< WCondition > m_recompute;
+    std::shared_ptr< WCondition > m_recompute;
 
     /**
      * The node actually drawing the grid.

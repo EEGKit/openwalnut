@@ -44,12 +44,12 @@ public:
     /**
      * Shared pointer for this class.
      */
-    typedef boost::shared_ptr< WGEShaderPreprocessor > SPtr;
+    typedef std::shared_ptr< WGEShaderPreprocessor > SPtr;
 
     /**
      * A const shared pointer for this class.
      */
-    typedef boost::shared_ptr< const WGEShaderPreprocessor > ConstSPtr;
+    typedef std::shared_ptr< const WGEShaderPreprocessor > ConstSPtr;
 
     /**
      * Default constructor.

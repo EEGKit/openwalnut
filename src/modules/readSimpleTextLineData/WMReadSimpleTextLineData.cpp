@@ -53,9 +53,9 @@ WMReadSimpleTextLineData::~WMReadSimpleTextLineData()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMReadSimpleTextLineData::factory() const
+std::shared_ptr< WModule > WMReadSimpleTextLineData::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMReadSimpleTextLineData() );
+    return std::shared_ptr< WModule >( new WMReadSimpleTextLineData() );
 }
 
 const std::string WMReadSimpleTextLineData::getName() const
@@ -164,7 +164,7 @@ void WMReadSimpleTextLineData::load()
         return;
     }
 
-    boost::shared_ptr< WProgress > progress1( new WProgress( "Loading" ) );
+    std::shared_ptr< WProgress > progress1( new WProgress( "Loading" ) );
     m_progress->addSubProgress( progress1 );
 
 
@@ -264,7 +264,7 @@ void WMReadSimpleTextLineData::load()
         }
 
         // Create and copy
-        boost::shared_ptr< WDataSetFibers::LineParemeterArray::element_type > vec(
+        std::shared_ptr< WDataSetFibers::LineParemeterArray::element_type > vec(
             new WDataSetFibers::LineParemeterArray::element_type( realSize ) );
         std::copy( ( *i ).second.begin(), ( *i ).second.end(), vec->begin() );
         lAttribs.push_back( vec );
@@ -283,7 +283,7 @@ void WMReadSimpleTextLineData::load()
         }
 
         // Create and do NOT copy -> why? The vertex attributes need to be "de-indexed" below. So only create the target vector and go on.
-        boost::shared_ptr< WDataSetFibers::VertexParemeterArray::element_type > vec(
+        std::shared_ptr< WDataSetFibers::VertexParemeterArray::element_type > vec(
             new WDataSetFibers::VertexParemeterArray::element_type() );
         pAttribIdxMap[ pAttribs.size() ] = ( *i ).first;
         pAttribs.push_back( vec );

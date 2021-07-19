@@ -53,10 +53,10 @@ WMDatasetProfile::~WMDatasetProfile()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMDatasetProfile::factory() const
+std::shared_ptr< WModule > WMDatasetProfile::factory() const
 {
     // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WMDatasetProfile() );
+    return std::shared_ptr< WModule >( new WMDatasetProfile() );
 }
 
 const char** WMDatasetProfile::getXPMIcon() const
@@ -76,7 +76,7 @@ const std::string WMDatasetProfile::getDescription() const
 void WMDatasetProfile::connectors()
 {
     // the input dataset is just used as source for resolurtion and transformation matrix
-    m_input = boost::shared_ptr< WModuleInputData < WDataSetScalar  > >(
+    m_input = std::shared_ptr< WModuleInputData < WDataSetScalar  > >(
         new WModuleInputData< WDataSetScalar >( shared_from_this(), "in", "The input dataset." ) );
     addConnector( m_input );
 
@@ -85,9 +85,9 @@ void WMDatasetProfile::connectors()
 
 void WMDatasetProfile::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
-    m_snapSelectionsList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_snapSelectionsList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_snapSelectionsList->addItem( "Free", "No snapping." );
     m_snapSelectionsList->addItem( "Axial slice", "Snap to axial slice." );
     m_snapSelectionsList->addItem( "Coronal slice", "Snap to coronal slice." );
@@ -152,7 +152,7 @@ void WMDatasetProfile::moduleMain()
             break;
         }
 
-        boost::shared_ptr< WDataSetScalar > newDataSet = m_input->getData();
+        std::shared_ptr< WDataSetScalar > newDataSet = m_input->getData();
         bool dataChanged = ( m_dataSet != newDataSet );
         bool dataValid = ( newDataSet != NULL );
 
@@ -161,7 +161,7 @@ void WMDatasetProfile::moduleMain()
             if( dataChanged )
             {
                 m_dataSet = newDataSet;
-                m_grid = boost::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
+                m_grid = std::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
             }
         }
 
@@ -274,7 +274,7 @@ void WMDatasetProfile::init()
     m_rootNode->insert( m_lineGeode );
 
     m_changeRoiSignal
-            = boost::shared_ptr< boost::function< void() > >( new boost::function< void() >( boost::bind( &WMDatasetProfile::setDirty, this ) ) );
+            = std::shared_ptr< boost::function< void() > >( new boost::function< void() >( boost::bind( &WMDatasetProfile::setDirty, this ) ) );
 
     WPosition center = WKernel::getRunningKernel()->getSelectionManager()->getCrosshair()->getPosition();
 

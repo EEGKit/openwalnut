@@ -48,12 +48,12 @@ public:
     /**
      * represents a pointer to the Content
      */
-    typedef boost::shared_ptr< std::vector< std::vector< std::string > > > ContentSPtr;
+    typedef std::shared_ptr< std::vector< std::vector< std::string > > > ContentSPtr;
 
     /**
      * represents a pointer to a vector of csv-raw-row as string
      */
-    typedef boost::shared_ptr< std::vector< std:: string > > SeperatedRowSPtr;
+    typedef std::shared_ptr< std::vector< std:: string > > SeperatedRowSPtr;
 
     /**
      * represents an element within WDataSetCSV object.
@@ -63,7 +63,7 @@ public:
     /**
      * represents a shared pointer to a ContentElem object.
      */
-    typedef boost::shared_ptr< std::vector< std::string > > ContentElemSPtr;
+    typedef std::shared_ptr< std::vector< std::string > > ContentElemSPtr;
 
     /**
      * Construct WDataSetCSV object

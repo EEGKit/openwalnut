@@ -77,7 +77,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
 protected:
     /**
@@ -105,7 +105,7 @@ private:
     /**
      * Needed for recreating the geometry, incase when resolution changes.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * The viewing and thus projection direction.
@@ -130,7 +130,7 @@ private:
     /**
      * Possible criteria
      */
-    boost::shared_ptr< WItemSelection > m_pickingCriteriaList;
+    std::shared_ptr< WItemSelection > m_pickingCriteriaList;
 
     /**
      * Current importance function
@@ -140,21 +140,21 @@ private:
     /**
      * Possible importance functions
      */
-    boost::shared_ptr< WItemSelection > m_impFuncList;
+    std::shared_ptr< WItemSelection > m_impFuncList;
 
     /**
      * Input connector for scalar data.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_scalarData;
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_scalarData;
 
     /**
      * The transfer function as an input data set
      */
-    boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_transferFunction;
+    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_transferFunction;
 
     WBoundingBox m_bbox; //!< Bounding box of the treated data set.
-    boost::shared_ptr< WDataSetScalar > m_scalarDataSet; //!< Input data as WDataSetScalar.
-    boost::shared_ptr< WDataSetSingle > m_transferFunctionData; //!< Transfer function as WDataSetSingle.
+    std::shared_ptr< WDataSetScalar > m_scalarDataSet; //!< Input data as WDataSetScalar.
+    std::shared_ptr< WDataSetSingle > m_transferFunctionData; //!< Transfer function as WDataSetSingle.
 
     /**
      * Get position where a given ray intersects a given axis-aligned bounding box.

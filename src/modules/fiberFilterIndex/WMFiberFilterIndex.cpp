@@ -44,9 +44,9 @@ WMFiberFilterIndex::~WMFiberFilterIndex()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMFiberFilterIndex::factory() const
+std::shared_ptr< WModule > WMFiberFilterIndex::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMFiberFilterIndex() );
+    return std::shared_ptr< WModule >( new WMFiberFilterIndex() );
 }
 
 const std::string WMFiberFilterIndex::getName() const
@@ -72,7 +72,7 @@ void WMFiberFilterIndex::connectors()
 
 void WMFiberFilterIndex::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
     m_indexProp = m_properties->addProperty( "Index", "Select the fiber with this index.", 0, m_propCondition );
     m_indexProp->setMin( 0 );
     m_indexProp->setMax( 1 );
@@ -102,7 +102,7 @@ void WMFiberFilterIndex::moduleMain()
         }
 
         // Remember the above criteria. We now need to check if the data is valid. After a connect-update, it might be NULL.
-        boost::shared_ptr< WDataSetFibers > dataSet = m_input->getData();
+        std::shared_ptr< WDataSetFibers > dataSet = m_input->getData();
         bool dataValid = ( dataSet != NULL );
         bool dataChanged = dataSet != m_fibers;
 
@@ -130,13 +130,13 @@ void WMFiberFilterIndex::moduleMain()
 void WMFiberFilterIndex::updateOutput()
 {
     // target memory
-    boost::shared_ptr< std::vector< float > >   vertices( new std::vector< float >() );
-    boost::shared_ptr< std::vector< size_t > >  lineStartIndexes( new std::vector< size_t >() );
-    boost::shared_ptr< std::vector< size_t > >  lineLengths( new std::vector< size_t >() );
-    boost::shared_ptr< std::vector< size_t > >  verticesReverse( new std::vector< size_t >() );
+    std::shared_ptr< std::vector< float > >   vertices( new std::vector< float >() );
+    std::shared_ptr< std::vector< size_t > >  lineStartIndexes( new std::vector< size_t >() );
+    std::shared_ptr< std::vector< size_t > >  lineLengths( new std::vector< size_t >() );
+    std::shared_ptr< std::vector< size_t > >  verticesReverse( new std::vector< size_t >() );
     WDataSetFibers::VertexParemeterArray        vertexParameter;
 
-    boost::shared_ptr< WProgress > progress1( new WProgress( "Filtering" ) );
+    std::shared_ptr< WProgress > progress1( new WProgress( "Filtering" ) );
     m_progress->addSubProgress( progress1 );
 
     size_t idx = m_indexProp->get( true );
@@ -191,7 +191,7 @@ void WMFiberFilterIndex::updateOutput()
     verticesReverse->resize( len, 0 );
 
     // Update output and finish
-    boost::shared_ptr< WDataSetFibers> newOutput( new WDataSetFibers( vertices, lineStartIndexes, lineLengths, verticesReverse, vertexParameter ) );
+    std::shared_ptr< WDataSetFibers> newOutput( new WDataSetFibers( vertices, lineStartIndexes, lineLengths, verticesReverse, vertexParameter ) );
     m_output->updateData( newOutput );
 
     progress1->finish();

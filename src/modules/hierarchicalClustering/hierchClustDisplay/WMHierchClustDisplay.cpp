@@ -118,10 +118,10 @@ WMHierchClustDisplay::~WMHierchClustDisplay()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMHierchClustDisplay::factory() const
+std::shared_ptr< WModule > WMHierchClustDisplay::factory() const
 {
     // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WMHierchClustDisplay() );
+    return std::shared_ptr< WModule >( new WMHierchClustDisplay() );
 }
 
 const std::string WMHierchClustDisplay::getName() const
@@ -140,15 +140,15 @@ const std::string WMHierchClustDisplay::getDescription() const
 void WMHierchClustDisplay::connectors()
 {
     // the input dataset is just used as source for resolurtion and transformation matrix
-    m_input = boost::shared_ptr< WModuleInputData < WDataSetSingle  > >(
+    m_input = std::shared_ptr< WModuleInputData < WDataSetSingle  > >(
                 new WModuleInputData< WDataSetSingle >( shared_from_this(), "in", "The input dataset." ) );
     addConnector( m_input );
 
-    m_output = boost::shared_ptr< WModuleOutputData < WDataSetVector > >(
+    m_output = std::shared_ptr< WModuleOutputData < WDataSetVector > >(
                 new WModuleOutputData< WDataSetVector >( shared_from_this(), "colors out", "The extracted image." ) );
     addConnector( m_output );
 
-    m_output2 = boost::shared_ptr< WModuleOutputData < WDataSetScalar  > >(
+    m_output2 = std::shared_ptr< WModuleOutputData < WDataSetScalar  > >(
                 new WModuleOutputData< WDataSetScalar >( shared_from_this(), "coords out", "The coordinate vector." ) );
     addConnector( m_output2 );
 
@@ -157,7 +157,7 @@ void WMHierchClustDisplay::connectors()
 
 void WMHierchClustDisplay::properties()
 {
-    m_propTriggerChange = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propTriggerChange = std::shared_ptr< WCondition >( new WCondition() );
 
     // Info properties
     m_groupInfoSelected = m_infoProperties->addPropertyGroup( "Selected cluster", "" ); //NOLINT
@@ -192,7 +192,7 @@ void WMHierchClustDisplay::properties()
 
     m_propDendroZoomIn = m_groupDendrogram->addProperty( "Zoom in", "Press!", WPVBaseTypes::PV_TRIGGER_READY, m_propTriggerChange );
     m_propDendroZoomOut = m_groupDendrogram->addProperty( "Zoom out", "Press!", WPVBaseTypes::PV_TRIGGER_READY, m_propTriggerChange );
-    m_propDendroSideList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_propDendroSideList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_propDendroSideList->addItem( "Fill", "" );
     m_propDendroSideList->addItem( "Left", "" );
     m_propDendroSideList->addItem( "Right", "" );
@@ -220,7 +220,7 @@ void WMHierchClustDisplay::properties()
                                                          0,
                                                          m_propTriggerChange );
     m_propSourceCluster->setMin( 0 );
-    m_propPartitionSelectionList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_propPartitionSelectionList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_propPartitionSelectionList->addItem( "Classic: Horizontal", "Use horizonztal cut" );
     m_propPartitionSelectionList->addItem( "Classic: Hierarch value", "Cut by hierarchical value" );
     m_propPartitionSelectionList->addItem( "Search: min Cluster size diff", "Search for the partition with minimal cluster size difference" );
@@ -237,7 +237,7 @@ void WMHierchClustDisplay::properties()
                                                            m_propPartitionSelectionList->getSelectorFirst(), m_propTriggerChange );
     WPropertyHelper::PC_SELECTONLYONE::addTo( m_propPartitionSelector );
 
-    m_propConditionSelectionsList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_propConditionSelectionsList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_propConditionSelectionsList->addItem( "Cluster #", "find partition with # clusters" );
     m_propConditionSelectionsList->addItem( "Cut level", "find partition thresholding the method-related absolute value" );
     m_propConditionSelectionsList->addItem( "Cut level (%)", "find partition thresholding the method-related relative value to its maximum" );
@@ -279,7 +279,7 @@ void WMHierchClustDisplay::properties()
                                                                 "Selected cluster colors",
                                                                 WColor( 1.0, 1.0, 1.0, 1.0 ),
                                                                 m_propTriggerChange );
-    m_propColorSchemeList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_propColorSchemeList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_propColorSchemeList->addItem( "Custom", "Use custom color values, default is hierarchical tree coloring, can be modified" );
     m_propColorSchemeList->addItem( "Partition", "Disregard custom value and assign color values to selected partition" );
     m_propColorSchemeSelector= m_groupVisualization->addProperty( "Color Scheme",
@@ -287,7 +287,7 @@ void WMHierchClustDisplay::properties()
                                                                   m_propColorSchemeList->getSelectorFirst(),
                                                                   m_propTriggerChange );
     WPropertyHelper::PC_SELECTONLYONE::addTo( m_propColorSchemeSelector );
-    m_propColorActionList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_propColorActionList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_propColorActionList->addItem( "Shuffle partition", "" );
     m_propColorActionList->addItem( "Redo: Size", "" );
     m_propColorActionList->addItem( "Redo: Hierch.Dist", "" );
@@ -305,7 +305,7 @@ void WMHierchClustDisplay::properties()
                                                           "Shows the an info label per selected cluster",
                                                           false,
                                                           m_propTriggerChange );
-    m_propLabelList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_propLabelList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_propLabelList->addItem( "Node-ID", "" );
     m_propLabelList->addItem( "Size", "" );
     m_propLabelList->addItem( "Distance", "" );
@@ -326,7 +326,7 @@ void WMHierchClustDisplay::properties()
 
     // Group Tree Processing
     m_groupTreeProcess = m_properties->addPropertyGroup( "Tree Processing", "Grouping the different tree processing methods" ); //NOLINT
-    m_propProcessSelectionsList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_propProcessSelectionsList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_propProcessSelectionsList->addItem( "Prune by size ratio",
                                           "Clusters smaller than SafeSize that join clusters bigger than SizeRatio times its size will be pruned" );
     m_propProcessSelectionsList->addItem( "Prune by joining size",
@@ -606,7 +606,7 @@ void WMHierchClustDisplay::initTreeData()
 {
     infoLog() << "Init tree data...";
 
-    boost::shared_ptr< WProgress > progressInitTreeData = boost::shared_ptr< WProgress >( new WProgress( "Initializing tree data..." ) );
+    std::shared_ptr< WProgress > progressInitTreeData = std::shared_ptr< WProgress >( new WProgress( "Initializing tree data..." ) );
     m_progress->addSubProgress( progressInitTreeData );
 
     // change to nifti coordinates if necessary
@@ -812,7 +812,7 @@ void WMHierchClustDisplay::initializeColorsSize()
 void WMHierchClustDisplay::initTexture()
 {
     infoLog() << "Init texture";
-    boost::shared_ptr< WProgress > progressInitTexture = boost::shared_ptr< WProgress >( new WProgress( "Initializing output texture..." ) );
+    std::shared_ptr< WProgress > progressInitTexture = std::shared_ptr< WProgress >( new WProgress( "Initializing output texture..." ) );
     m_progress->addSubProgress( progressInitTexture );
 
     osg::ref_ptr< osg::Image > ima = new osg::Image;
@@ -877,7 +877,7 @@ void WMHierchClustDisplay::moduleMain()
         {
             break;
         }
-        boost::shared_ptr< WDataSetSingle > newDataSet = m_input->getData();
+        std::shared_ptr< WDataSetSingle > newDataSet = m_input->getData();
         bool dataChanged = ( m_anatomy != newDataSet );
         bool dataValid   = ( newDataSet != NULL );
         if( dataValid )
@@ -885,7 +885,7 @@ void WMHierchClustDisplay::moduleMain()
             if( dataChanged )
             {
                 m_anatomy = newDataSet;
-                m_grid = boost::dynamic_pointer_cast< WGridRegular3D >( m_anatomy->getGrid() );
+                m_grid = std::dynamic_pointer_cast< WGridRegular3D >( m_anatomy->getGrid() );
                 break;
             }
         }
@@ -948,7 +948,7 @@ void WMHierchClustDisplay::moduleMain()
         {
             infoLog() << "Loading tree file";
 
-            boost::shared_ptr< WProgress > progressLoadTree = boost::shared_ptr< WProgress >( new WProgress( "Loading tree from file..." ) );
+            std::shared_ptr< WProgress > progressLoadTree = std::shared_ptr< WProgress >( new WProgress( "Loading tree from file..." ) );
             m_progress->addSubProgress( progressLoadTree );
 
             boost::filesystem::path fileName = m_propReadFilename->get();
@@ -1354,7 +1354,7 @@ void WMHierchClustDisplay::moduleMain()
         // if processing has been triggered
         if( m_propDoProcessing->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
         {
-            boost::shared_ptr< WProgress > progressProcessing = boost::shared_ptr< WProgress >( new WProgress( "Processing tree..." ) );
+            std::shared_ptr< WProgress > progressProcessing = std::shared_ptr< WProgress >( new WProgress( "Processing tree..." ) );
             m_progress->addSubProgress( progressProcessing );
 
             std::pair<size_t, size_t> prunedElements( 0, 0 );
@@ -1476,7 +1476,7 @@ void WMHierchClustDisplay::renderCubeMesh()
         return;
     }
 
-    boost::shared_ptr< WProgress > progressRenderCubes = boost::shared_ptr< WProgress >( new WProgress( "Rendering seed voxels..." ) );
+    std::shared_ptr< WProgress > progressRenderCubes = std::shared_ptr< WProgress >( new WProgress( "Rendering seed voxels..." ) );
     m_progress->addSubProgress( progressRenderCubes );
 
     {
@@ -1692,7 +1692,7 @@ void WMHierchClustDisplay::updateWidgets()
         return;
     }
 
-    boost::shared_ptr< WProgress > progressUpdateWidgets = boost::shared_ptr< WProgress >( new WProgress( "Updating widgets..." ) );
+    std::shared_ptr< WProgress > progressUpdateWidgets = std::shared_ptr< WProgress >( new WProgress( "Updating widgets..." ) );
     m_progress->addSubProgress( progressUpdateWidgets );
 
     int usedXoffset( 0 );
@@ -1926,7 +1926,7 @@ void WMHierchClustDisplay::colorBranchCustom( const size_t &thisNode, const WCol
 
 void WMHierchClustDisplay::updateSelection( const std::vector< WColor > &preloadedColors )
 {
-    boost::shared_ptr< WProgress > progressUpdateSelection = boost::shared_ptr< WProgress >( new WProgress( "Updating selection..." ) );
+    std::shared_ptr< WProgress > progressUpdateSelection = std::shared_ptr< WProgress >( new WProgress( "Updating selection..." ) );
     m_progress->addSubProgress( progressUpdateSelection );
 
     // get a color for each of the clusters currently selected
@@ -2001,7 +2001,7 @@ void WMHierchClustDisplay::updateColors()
 
 
     // recolor clusters for shown tree
-    boost::shared_ptr< WProgress > progressUpdateColors = boost::shared_ptr< WProgress >( new WProgress( "Updating colors..." ) );
+    std::shared_ptr< WProgress > progressUpdateColors = std::shared_ptr< WProgress >( new WProgress( "Updating colors..." ) );
     m_progress->addSubProgress( progressUpdateColors );
 
 
@@ -2128,20 +2128,20 @@ void WMHierchClustDisplay::updateColors()
     WAssert( m_anatomy->getValueSet(), "" );
     WAssert( m_anatomy->getGrid(), "" );
 
-    boost::shared_ptr< std::vector< unsigned char > >ptr( new std::vector< unsigned char >( m_textureLabels.size() * 3 ) );
+    std::shared_ptr< std::vector< unsigned char > >ptr( new std::vector< unsigned char >( m_textureLabels.size() * 3 ) );
 
     for( size_t i = 0; i < m_textureLabels.size()*3; ++i )
     {
         ptr->at( i ) = data[i];
     }
 
-    boost::shared_ptr< WValueSet< unsigned char > > vs =
-        boost::shared_ptr< WValueSet< unsigned char > >( new WValueSet< unsigned char >( 1, 3, ptr, W_DT_UINT8 ) );
+    std::shared_ptr< WValueSet< unsigned char > > vs =
+        std::shared_ptr< WValueSet< unsigned char > >( new WValueSet< unsigned char >( 1, 3, ptr, W_DT_UINT8 ) );
 
-    boost::shared_ptr< WGridRegular3D> grid =
-                boost::shared_ptr< WGridRegular3D>( new WGridRegular3D(
+    std::shared_ptr< WGridRegular3D> grid =
+                std::shared_ptr< WGridRegular3D>( new WGridRegular3D(
                                                   m_grid->getNbCoordsX(), m_grid->getNbCoordsY(), m_grid->getNbCoordsZ(), m_grid->getTransform() ) );
-    m_outData = boost::shared_ptr< WDataSetVector >( new WDataSetVector( vs, grid ) );
+    m_outData = std::shared_ptr< WDataSetVector >( new WDataSetVector( vs, grid ) );
     m_output->updateData( m_outData );
 
     m_treeDirty = true;
@@ -2157,10 +2157,10 @@ void WMHierchClustDisplay::updateColors()
 void WMHierchClustDisplay::updateOutput2()
 {
     //update coordinates output
-    boost::shared_ptr< WProgress > progressUpdateOutput2 = boost::shared_ptr< WProgress >( new WProgress( "Updating Output 2 ( coordinates )..." ) );
+    std::shared_ptr< WProgress > progressUpdateOutput2 = std::shared_ptr< WProgress >( new WProgress( "Updating Output 2 ( coordinates )..." ) );
     m_progress->addSubProgress( progressUpdateOutput2 );
 
-    boost::shared_ptr< std::vector< int > >coordPtr( new std::vector< int >() );
+    std::shared_ptr< std::vector< int > >coordPtr( new std::vector< int >() );
     std::vector<WHcoord> coordinates( m_tree.getRoi() );
     for( std::vector<WHcoord>::iterator coordIter( coordinates.begin() ); coordIter != coordinates.end(); ++coordIter )
     {
@@ -2178,11 +2178,11 @@ void WMHierchClustDisplay::updateOutput2()
             coordPtr->push_back( discardedIter->m_z );
         }
     }
-    boost::shared_ptr< WValueSet< int > > vs = boost::shared_ptr< WValueSet< int > >( new WValueSet< int >( 0, 1, coordPtr, W_DT_INT16 ) );
-    boost::shared_ptr< WGridRegular3D> grid = boost::shared_ptr< WGridRegular3D>(
+    std::shared_ptr< WValueSet< int > > vs = std::shared_ptr< WValueSet< int > >( new WValueSet< int >( 0, 1, coordPtr, W_DT_INT16 ) );
+    std::shared_ptr< WGridRegular3D> grid = std::shared_ptr< WGridRegular3D>(
                 new WGridRegular3D( coordPtr->size(), 1, 1, m_grid->getTransform() ) );
 
-    m_outData2 = boost::shared_ptr< WDataSetScalar >( new WDataSetScalar( vs, grid ) );
+    m_outData2 = std::shared_ptr< WDataSetScalar >( new WDataSetScalar( vs, grid ) );
     m_output2->updateData( m_outData2 );
 
     progressUpdateOutput2->finish();
@@ -2222,7 +2222,7 @@ void WMHierchClustDisplay::writePartition()
 
 void WMHierchClustDisplay::clusterSelection()
 {
-    boost::shared_ptr< WProgress > progressPartition = boost::shared_ptr< WProgress >( new WProgress( "Finding partition..." ) );
+    std::shared_ptr< WProgress > progressPartition = std::shared_ptr< WProgress >( new WProgress( "Finding partition..." ) );
     m_progress->addSubProgress( progressPartition );
 
     std::vector<nodeID_t> partition;

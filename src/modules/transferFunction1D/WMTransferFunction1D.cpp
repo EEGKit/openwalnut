@@ -49,9 +49,9 @@ WMTransferFunction1D::~WMTransferFunction1D()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMTransferFunction1D::factory() const
+std::shared_ptr< WModule > WMTransferFunction1D::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMTransferFunction1D() );
+    return std::shared_ptr< WModule >( new WMTransferFunction1D() );
 }
 
 const char** WMTransferFunction1D::getXPMIcon() const
@@ -84,7 +84,7 @@ void WMTransferFunction1D::connectors()
 
 void WMTransferFunction1D::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
     WTransferFunction tf;
     tf.addAlpha( 0.0, 0.0 );
     tf.addColor( 0.0, WColor( 0.0, 0.0, 1.0, 1.0 ) );
@@ -140,7 +140,7 @@ void WMTransferFunction1D::moduleMain()
         debugLog() << "Current transfer function " << tf.numAlphas() << " alphas.";
         if( m_input->updated() || m_binSize->changed() )
         {
-            boost::shared_ptr< WDataSetSingle > dataSet= m_input->getData();
+            std::shared_ptr< WDataSetSingle > dataSet= m_input->getData();
             bool dataValid = ( dataSet != NULL );
             if( !dataValid )
             {
@@ -151,7 +151,7 @@ void WMTransferFunction1D::moduleMain()
             {
                 int binsize = m_binSize->get( true );
 
-                boost::shared_ptr< WValueSetBase > values = dataSet->getValueSet();
+                std::shared_ptr< WValueSetBase > values = dataSet->getValueSet();
                 WValueSetHistogram histogram( values, 0, 255, binsize );
 
                 // because of the current semantics of WTransferFunction,
@@ -174,17 +174,17 @@ void WMTransferFunction1D::moduleMain()
             // debugLog() << "resampling transfer function";
             unsigned int resolution = m_resolution->get( true );
             // debugLog() << "new resolution: " << resolution;
-            boost::shared_ptr< std::vector<unsigned char> > data( new std::vector<unsigned char>( resolution * 4 ) );
+            std::shared_ptr< std::vector<unsigned char> > data( new std::vector<unsigned char>( resolution * 4 ) );
 
             // FIXME: get transfer function and publish the function
             tf.setOpacityScale( m_opacityScale->get( true ) );
             tf.sample1DTransferFunction(  &( *data )[ 0 ], resolution, 0.0, 1.0 );
 
-            boost::shared_ptr< WValueSetBase > newValueSet( new WValueSet<unsigned char>( 1, 4, data, W_DT_UNSIGNED_CHAR ) );
+            std::shared_ptr< WValueSetBase > newValueSet( new WValueSet<unsigned char>( 1, 4, data, W_DT_UNSIGNED_CHAR ) );
 
             WGridTransformOrtho transform;
-            boost::shared_ptr< WGridRegular3D > newGrid( new WGridRegular3D( resolution, 1, 1, transform ) );
-            boost::shared_ptr< WDataSetSingle > newData( new WDataSetSingle( newValueSet, newGrid ) );
+            std::shared_ptr< WGridRegular3D > newGrid( new WGridRegular3D( resolution, 1, 1, transform ) );
+            std::shared_ptr< WDataSetSingle > newData( new WDataSetSingle( newValueSet, newGrid ) );
             m_output->updateData( newData );
         }
     }

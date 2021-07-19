@@ -63,9 +63,9 @@ WMButterfly::~WMButterfly()
 {
 }
 
-boost::shared_ptr<WModule> WMButterfly::factory() const
+std::shared_ptr<WModule> WMButterfly::factory() const
 {
-    return boost::shared_ptr<WModule>(new WMButterfly());
+    return std::shared_ptr<WModule>(new WMButterfly());
 }
 
 const char** WMButterfly::getXPMIcon() const
@@ -89,7 +89,7 @@ void WMButterfly::connectors()
 {
     m_input = WModuleInputData< WTriangleMesh >::createAndAdd( shared_from_this(),
                                                                "input mesh", "The mesh to display" );
-    m_output = boost::shared_ptr<WModuleOutputData<WTriangleMesh> >(
+    m_output = std::shared_ptr<WModuleOutputData<WTriangleMesh> >(
         new WModuleOutputData<WTriangleMesh>( shared_from_this(),
                                               "output mesh",
                                               "The loaded mesh." ) );
@@ -279,7 +279,7 @@ void WMButterfly::moduleMain()
         {
             m_minSubdividedLineLength->setMax( getMaxLineLength( m_mesh ) );
 
-            boost::shared_ptr< WTriangleMesh > interpolatedMesh = m_butterfly->getSubdividedMesh( m_mesh );
+            std::shared_ptr< WTriangleMesh > interpolatedMesh = m_butterfly->getSubdividedMesh( m_mesh );
             m_output->updateData( interpolatedMesh );
 
             if  ( m_oldInterpolatedMesh && m_oldInterpolatedMesh != m_mesh )
@@ -298,7 +298,7 @@ void WMButterfly::moduleMain()
             break;
 
         // save data behind connectors since it might change during processing
-        boost::shared_ptr< WTriangleMesh > meshData = m_input->getData();
+        std::shared_ptr< WTriangleMesh > meshData = m_input->getData();
 
         if( !meshData )
             continue;
@@ -309,7 +309,7 @@ void WMButterfly::moduleMain()
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_rootNode );
 }
 
-float WMButterfly::getMaxLineLength( boost::shared_ptr< WTriangleMesh > inputMesh )
+float WMButterfly::getMaxLineLength( std::shared_ptr< WTriangleMesh > inputMesh )
 {
     float maxLineLength = 0.0f;
     for  ( size_t triID = 0; triID < inputMesh->triangleSize(); triID++ )

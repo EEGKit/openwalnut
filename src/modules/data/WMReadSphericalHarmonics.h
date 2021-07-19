@@ -70,7 +70,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -101,10 +101,10 @@ protected:
 
 
 private:
-    boost::shared_ptr< WModuleOutputData< WDataSetSphericalHarmonics > > m_output; //!< Ouput connector provided by this module.
+    std::shared_ptr< WModuleOutputData< WDataSetSphericalHarmonics > > m_output; //!< Ouput connector provided by this module.
 
-    boost::shared_ptr< WDataSetSphericalHarmonics > m_data; //!< This triangle mesh is provided as output through the connector.
-    boost::shared_ptr< WCondition > m_propCondition;  //!< A condition used to notify about changes in several properties.
+    std::shared_ptr< WDataSetSphericalHarmonics > m_data; //!< This triangle mesh is provided as output through the connector.
+    std::shared_ptr< WCondition > m_propCondition;  //!< A condition used to notify about changes in several properties.
     WPropTrigger m_readTriggerProp; //!< This property triggers the actual reading,
     WPropFilename m_dataFile; //!< The data will be read from this file.
 };

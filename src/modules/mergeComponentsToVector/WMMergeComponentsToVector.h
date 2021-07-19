@@ -71,7 +71,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
 protected:
     /**
@@ -93,27 +93,27 @@ private:
     /**
      * An input connector used to get datasets from other modules. The connection management between connectors must not be handled by the module.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_scalarInX;
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_scalarInX;
 
     /**
      * An input connector used to get datasets from other modules. The connection management between connectors must not be handled by the module.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_scalarInY;
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_scalarInY;
 
     /**
      * An input connector used to get datasets from other modules. The connection management between connectors must not be handled by the module.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_scalarInZ;
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_scalarInZ;
 
     /**
      * The output connector used to provide the calculated data to other modules.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetVector > > m_vectorOut;
+    std::shared_ptr< WModuleOutputData< WDataSetVector > > m_vectorOut;
 
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 };
 
 #endif  // WMMERGECOMPONENTSTOVECTOR_H

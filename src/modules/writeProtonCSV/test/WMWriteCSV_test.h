@@ -45,17 +45,12 @@ public:
     /**
      * A shared_ptr for a float vector
      */
-    typedef boost::shared_ptr< std::vector< float > > SPFloatVector;
+    typedef std::shared_ptr< std::vector< float > > SPFloatVector;
 
     /**
      * A shared_ptr for a size_t vector
      */
-    typedef boost::shared_ptr< std::vector< size_t > > SPSizeVector;
-
-    /**
-     * A shared_ptr for an int vector
-     */
-    typedef boost::shared_ptr< std::vector< int > > SPIntVector;
+    typedef std::shared_ptr< std::vector< size_t > > SPSizeVector;
 
     /**
      * test for converting a fiber to a tuple of vectors and ids
@@ -63,24 +58,24 @@ public:
     void testgetListOfInternalVertex()
     {
         WMWriteCSV writerCSV;
-        std::tuple < WDataSetFibers::SPtr, std::vector< std::tuple < float, float, float, int > > >
+        std::tuple < WDataSetFibers::SPtr, std::vector< std::tuple < float, float, float, size_t > > >
                                                                                           samples = createSampleFibers();
         WDataSetFibers::SPtr fibers = std::get< 0 >( samples );
-        std::vector< std::tuple < float, float, float, int > > referenceList = std::get< 1 >( samples );
-        std::list< std::tuple < float, float, float, int > > testList = writerCSV.getListOfInternalVertex( fibers );
+        std::vector< std::tuple < float, float, float, size_t > > referenceList = std::get< 1 >( samples );
+        std::list< std::tuple < float, float, float, size_t > > testList = writerCSV.getListOfInternalVertex( fibers );
 
         TS_ASSERT_EQUALS( referenceList.size(), testList.size() );
 
         size_t referenceListCounter = 0;
         for( auto element = testList.begin(); element != testList.end(); element++  )
         {
-            std::tuple < float, float, float, int > refTuple = referenceList.at( referenceListCounter++ );
+            std::tuple < float, float, float, size_t > refTuple = referenceList.at( referenceListCounter++ );
 
             osg::Vec3 refVector( std::get< 0 >( refTuple ), std::get< 1 >( refTuple ), std::get< 2 >( refTuple ) );
-            int refIndex = std::get< 3 >( refTuple );
+            size_t refIndex = std::get< 3 >( refTuple );
 
             osg::Vec3 testVector( std::get< 0 >( *element ), std::get< 1 >( *element ), std::get< 2 >( *element ) );
-            int testIndex = std::get< 3 >( *element );
+            size_t testIndex = std::get< 3 >( *element );
 
             TS_ASSERT_EQUALS( refVector.x(), testVector.x() );
             TS_ASSERT_EQUALS( refVector.y(), testVector.y() );
@@ -147,26 +142,26 @@ public:
     {
         WMWriteCSV writerCSV;
 
-        std::list< std::tuple < float, float, float, int > > listOfInternalVertex;
+        std::list< std::tuple < float, float, float, size_t > > listOfInternalVertex;
 
-        int refCounter = 0;
+        size_t refCounter = 0;
         for( refCounter = 0; refCounter < 100; refCounter++ )
         {
-            listOfInternalVertex.push_back( std::tuple < float, float, float, int >( 0.0, 0.0, 0.0, refCounter ) );
+            listOfInternalVertex.push_back( std::tuple < float, float, float, size_t >( 0.0, 0.0, 0.0, refCounter ) );
         }
 
         TS_ASSERT_EQUALS( writerCSV.createStartCounter( listOfInternalVertex ), refCounter );
 
         listOfInternalVertex.clear();
 
-        listOfInternalVertex.push_back( std::tuple < float, float, float, int >( 0.0, 0.0, 0.0, 13 ) );
-        listOfInternalVertex.push_back( std::tuple < float, float, float, int >( 0.0, 0.0, 0.0, 214 ) );
-        listOfInternalVertex.push_back( std::tuple < float, float, float, int >( 0.0, 0.0, 0.0, 44 ) );
-        listOfInternalVertex.push_back( std::tuple < float, float, float, int >( 0.0, 0.0, 0.0, 23 ) );
-        listOfInternalVertex.push_back( std::tuple < float, float, float, int >( 0.0, 0.0, 0.0, 64 ) );
-        listOfInternalVertex.push_back( std::tuple < float, float, float, int >( 0.0, 0.0, 0.0, 223 ) );
-        listOfInternalVertex.push_back( std::tuple < float, float, float, int >( 0.0, 0.0, 0.0, 132 ) );
-        listOfInternalVertex.push_back( std::tuple < float, float, float, int >( 0.0, 0.0, 0.0, 322 ) );
+        listOfInternalVertex.push_back( std::tuple < float, float, float, size_t >( 0.0, 0.0, 0.0, 13 ) );
+        listOfInternalVertex.push_back( std::tuple < float, float, float, size_t >( 0.0, 0.0, 0.0, 214 ) );
+        listOfInternalVertex.push_back( std::tuple < float, float, float, size_t >( 0.0, 0.0, 0.0, 44 ) );
+        listOfInternalVertex.push_back( std::tuple < float, float, float, size_t >( 0.0, 0.0, 0.0, 23 ) );
+        listOfInternalVertex.push_back( std::tuple < float, float, float, size_t >( 0.0, 0.0, 0.0, 64 ) );
+        listOfInternalVertex.push_back( std::tuple < float, float, float, size_t >( 0.0, 0.0, 0.0, 223 ) );
+        listOfInternalVertex.push_back( std::tuple < float, float, float, size_t >( 0.0, 0.0, 0.0, 132 ) );
+        listOfInternalVertex.push_back( std::tuple < float, float, float, size_t >( 0.0, 0.0, 0.0, 322 ) );
 
         TS_ASSERT_EQUALS( writerCSV.createStartCounter( listOfInternalVertex ), 323 );
     }
@@ -174,17 +169,17 @@ public:
 private:
     /**
      * helpermethod that generates a fiber example
-     * \return std::tuple < WDataSetFibers::SPtr, std::vector< std::tuple < osg::Vec3, int > > > The fibers
+     * \return std::tuple < WDataSetFibers::SPtr, std::vector< std::tuple < osg::Vec3, size_t > > > The fibers
      */
-    std::tuple < WDataSetFibers::SPtr, std::vector< std::tuple < float, float, float, int > > > createSampleFibers()
+    std::tuple < WDataSetFibers::SPtr, std::vector< std::tuple < float, float, float, size_t > > > createSampleFibers()
     {
-        std::vector< std::tuple < float, float, float, int > > referenceList;
+        std::vector< std::tuple < float, float, float, size_t > > referenceList;
 
         SPFloatVector vertices = SPFloatVector( new std::vector< float >() );
         SPSizeVector fiberStartIndexes = SPSizeVector( new std::vector< size_t >() );
         SPSizeVector fiberLengths = SPSizeVector( new std::vector< size_t >() );
         SPSizeVector verticesReverse = SPSizeVector( new std::vector< size_t >() );
-        SPIntVector eventIDs = SPIntVector( new std::vector< int >() );
+        SPSizeVector eventIDs = SPSizeVector( new std::vector< size_t >() );
 
         size_t eventIDCounter = 0;
         size_t counter = 0;
@@ -204,15 +199,15 @@ private:
 
             eventIDs->push_back( eventIDCounter );
 
-            std::tuple < float, float, float, int  > tupleTemp( vertexCounter, vertexCounter, vertexCounter, eventIDCounter );
+            std::tuple < float, float, float, size_t  > tupleTemp( vertexCounter, vertexCounter, vertexCounter, eventIDCounter );
 
             referenceList.push_back( tupleTemp );
             counter++;
         }
 
-        int fiberLength = 0;
-        int fiberStartIndex = 0;
-        int reversePos = 0;
+        size_t fiberLength = 0;
+        size_t fiberStartIndex = 0;
+        size_t reversePos = 0;
         size_t currentEventID = eventIDs->at( 0 );
 
         fiberStartIndexes->push_back( fiberStartIndex );
@@ -236,14 +231,14 @@ private:
         }
         fiberStartIndexes->push_back( fiberLength );
 
-        WDataSetFibers::SPtr fibers = boost::shared_ptr< WDataSetFibers >( new WDataSetFibers(
+        WDataSetFibers::SPtr fibers = std::shared_ptr< WDataSetFibers >( new WDataSetFibers(
                 vertices,
                 fiberStartIndexes,
                 fiberLengths,
                 verticesReverse
         ) );
 
-        std::tuple < WDataSetFibers::SPtr, std::vector< std::tuple < float, float, float, int  > > >
+        std::tuple < WDataSetFibers::SPtr, std::vector< std::tuple < float, float, float, size_t  > > >
                                                                                           returnTuple( fibers, referenceList );
         return returnTuple;
     }

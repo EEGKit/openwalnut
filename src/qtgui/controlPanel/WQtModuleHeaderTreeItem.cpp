@@ -37,7 +37,7 @@ WQtModuleHeaderTreeItem::~WQtModuleHeaderTreeItem()
 {
 }
 
-WQtModuleTreeItem* WQtModuleHeaderTreeItem::addModuleItem( boost::shared_ptr< WModule > module )
+WQtModuleTreeItem* WQtModuleHeaderTreeItem::addModuleItem( std::shared_ptr< WModule > module )
 {
     WQtModuleTreeItem* ds = new WQtModuleTreeItem( this, module );
 

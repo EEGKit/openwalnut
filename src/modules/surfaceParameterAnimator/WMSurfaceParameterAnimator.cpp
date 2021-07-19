@@ -60,9 +60,9 @@ WMSurfaceParameterAnimator::~WMSurfaceParameterAnimator()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMSurfaceParameterAnimator::factory() const
+std::shared_ptr< WModule > WMSurfaceParameterAnimator::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMSurfaceParameterAnimator() );
+    return std::shared_ptr< WModule >( new WMSurfaceParameterAnimator() );
 }
 
 const char** WMSurfaceParameterAnimator::getXPMIcon() const
@@ -85,7 +85,7 @@ const std::string WMSurfaceParameterAnimator::getDescription() const
 void WMSurfaceParameterAnimator::connectors()
 {
     // needs one input: the scalar dataset
-    m_input = boost::shared_ptr< WModuleInputData < WDataSetSingle  > >(
+    m_input = std::shared_ptr< WModuleInputData < WDataSetSingle  > >(
         new WModuleInputData< WDataSetSingle >( shared_from_this(), "in", "The scalar dataset shown whose surface gets used for animation." )
     );
 
@@ -93,7 +93,7 @@ void WMSurfaceParameterAnimator::connectors()
     addConnector( m_input );
 
     // and the fiber directions inside the volume
-    m_tracesInput = boost::shared_ptr< WModuleInputData < WDataSetSingle  > >(
+    m_tracesInput = std::shared_ptr< WModuleInputData < WDataSetSingle  > >(
         new WModuleInputData< WDataSetSingle >( shared_from_this(), "traces", "The voxelized fiber traces for each voxel in the input \"in\"." )
     );
 
@@ -107,7 +107,7 @@ void WMSurfaceParameterAnimator::connectors()
 void WMSurfaceParameterAnimator::properties()
 {
     // Initialize the properties
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_isoValue      = m_properties->addProperty( "Isovalue",         "The Isovalue used whenever the Isosurface Mode is turned on.",
                                                                       50 );
@@ -229,8 +229,8 @@ void WMSurfaceParameterAnimator::moduleMain()
         }
 
         // has the data changed?
-        boost::shared_ptr< WDataSetSingle > newDataSet = m_input->getData();
-        boost::shared_ptr< WDataSetSingle > newTracesDataSet = m_tracesInput->getData();
+        std::shared_ptr< WDataSetSingle > newDataSet = m_input->getData();
+        std::shared_ptr< WDataSetSingle > newTracesDataSet = m_tracesInput->getData();
 
         bool dataChanged = ( m_dataSet != newDataSet ) || ( m_tracesDataSet != newTracesDataSet );
         bool dataValid =   ( newDataSet && newTracesDataSet );
@@ -257,7 +257,7 @@ void WMSurfaceParameterAnimator::moduleMain()
             debugLog() << "Data changed. Uploading new data as texture.";
 
             // First, grab the grid
-            boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
+            std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
             if( !grid )
             {
                 errorLog() << "The dataset does not provide a regular grid. Ignoring dataset.";

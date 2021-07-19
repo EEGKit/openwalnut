@@ -50,27 +50,27 @@ public:
     /**
      * Shared pointer to a WModule.
      */
-    typedef boost::shared_ptr< WModuleFactory > SPtr;
+    typedef std::shared_ptr< WModuleFactory > SPtr;
 
     /**
      * Shared pointer to a const WModule.
      */
-    typedef boost::shared_ptr< const WModuleFactory > ConstSPtr;
+    typedef std::shared_ptr< const WModuleFactory > ConstSPtr;
 
     /**
      * For shortening: a type defining a shared set of WModule pointers.
      */
-    typedef std::set< boost::shared_ptr< WModule > > PrototypeContainerType;
+    typedef std::set< std::shared_ptr< WModule > > PrototypeContainerType;
 
     /**
      * Const iterator for the prototype set.
      */
-    typedef std::set< boost::shared_ptr< WModule > >::const_iterator PrototypeContainerConstIteratorType;
+    typedef std::set< std::shared_ptr< WModule > >::const_iterator PrototypeContainerConstIteratorType;
 
     /**
      * Iterator for the prototype set.
      */
-    typedef std::set< boost::shared_ptr< WModule > >::iterator PrototypeContainerIteratorType;
+    typedef std::set< std::shared_ptr< WModule > >::iterator PrototypeContainerIteratorType;
 
     /**
      * The alias for a shared container.
@@ -96,7 +96,7 @@ public:
      *
      * \return the module created using the prototype.
      */
-    boost::shared_ptr< WModule > create( boost::shared_ptr< WModule > prototype, std::string uuid = "" );
+    std::shared_ptr< WModule > create( std::shared_ptr< WModule > prototype, std::string uuid = "" );
 
     /**
      * Create a new and initialized module using the specified prototype. This might fail if the prototype with this name cannot be found. Please
@@ -108,7 +108,7 @@ public:
      *
      * \return the module created using the prototype.
      */
-    boost::shared_ptr< WModule > create( std::string prototype, std::string uuid = "" );
+    std::shared_ptr< WModule > create( std::string prototype, std::string uuid = "" );
 
     /**
      * Returns instance of the module factory to use to create modules.
@@ -122,7 +122,7 @@ public:
      *
      * \return the running module loader.
      */
-    static boost::shared_ptr< WModuleLoader > getModuleLoader();
+    static std::shared_ptr< WModuleLoader > getModuleLoader();
 
     /**
      * Searches a prototype by name. It returns the prototype, or a NULL pointer if it is not found. The difference to
@@ -133,7 +133,7 @@ public:
      *
      * \return the prototype if it exists, or NULL if not.
      */
-    const boost::shared_ptr< WModule > isPrototypeAvailable( std::string name );
+    const std::shared_ptr< WModule > isPrototypeAvailable( std::string name );
 
     /**
      * Finds a prototype using the specified name.
@@ -143,7 +143,7 @@ public:
      *
      * \return the prototype whose name is equal to the specified one.
      */
-    const boost::shared_ptr< WModule > getPrototypeByName( std::string name );
+    const std::shared_ptr< WModule > getPrototypeByName( std::string name );
 
     /**
      * Finds a prototype using an instance of a module. This uses the type_info to find a proper prototype.
@@ -153,7 +153,7 @@ public:
      * \return the prototype.
      * \throw WPrototypeUnknown if prototype can not be found.
      */
-    const boost::shared_ptr< WModule > getPrototypeByInstance( boost::shared_ptr< WModule > instance );
+    const std::shared_ptr< WModule > getPrototypeByInstance( std::shared_ptr< WModule > instance );
 
     /**
      * Finds a prototype using an type.
@@ -179,7 +179,7 @@ public:
      * \return true if the dynamic_cast is successful
      */
     template <typename T>
-    static bool isA( boost::shared_ptr< WModule > module );
+    static bool isA( std::shared_ptr< WModule > module );
 
     /**
      * Returns a set of module combiners with module combinations compatible with the specified one.
@@ -193,7 +193,7 @@ public:
      * \return set of compatible combiners.
      */
     WCombinerTypes::WCompatiblesList getCompatiblePrototypes(
-            boost::shared_ptr< WModule > module = boost::shared_ptr< WModule >()
+            std::shared_ptr< WModule > module = std::shared_ptr< WModule >()
     );
 
     /**
@@ -209,7 +209,7 @@ public:
      *
      * \param module the module to initialize.
      */
-    static void initializeModule( boost::shared_ptr< WModule > module );
+    static void initializeModule( std::shared_ptr< WModule > module );
 
     /**
      * Checks whether the specified module is a prototype or an instantiated module.
@@ -218,7 +218,7 @@ public:
      *
      * \return true if it is a prototype
      */
-    static bool isPrototype( boost::shared_ptr< WModule > module );
+    static bool isPrototype( std::shared_ptr< WModule > module );
 
     /**
      * Find a module instance by UUID.
@@ -237,7 +237,7 @@ public:
      * \return the list of module prototypes.
      */
     template< typename ModuleType >
-    std::vector< boost::shared_ptr< ModuleType > > getPrototypesByType() const;
+    std::vector< std::shared_ptr< ModuleType > > getPrototypesByType() const;
 
     /**
      * Query a list of WDataModule prototypes depending on given input.
@@ -266,7 +266,7 @@ protected:
      *
      * \return true if it is a prototype
      */
-    bool checkPrototype( boost::shared_ptr< WModule > module, PrototypeSharedContainerType::ReadTicket ticket );
+    bool checkPrototype( std::shared_ptr< WModule > module, PrototypeSharedContainerType::ReadTicket ticket );
 
 private:
     /**
@@ -277,12 +277,12 @@ private:
     /**
      * Singleton instance of WModuleFactory.
      */
-    static boost::shared_ptr< WModuleFactory > m_instance;
+    static std::shared_ptr< WModuleFactory > m_instance;
 
     /**
      * Mapping between a UUID and a module.
      */
-    typedef std::map< std::string, boost::weak_ptr< WModule > > UuidModuleMap;
+    typedef std::map< std::string, std::weak_ptr< WModule > > UuidModuleMap;
 
     /**
      * Keep track of uuids of each created module. This is needed to find module pointers using uuid.
@@ -291,16 +291,16 @@ private:
 };
 
 template <typename T>
-bool WModuleFactory::isA( boost::shared_ptr< WModule > module )
+bool WModuleFactory::isA( std::shared_ptr< WModule > module )
 {
     // NOTE: this is RTTI. Everybody says: do not use it. We ignore them.
     return ( dynamic_cast< T* >( module.get() ) );  // NOLINT
 }
 
 template< typename ModuleType >
-std::vector< boost::shared_ptr< ModuleType > > WModuleFactory::getPrototypesByType() const
+std::vector< std::shared_ptr< ModuleType > > WModuleFactory::getPrototypesByType() const
 {
-    std::vector< boost::shared_ptr< ModuleType > > results;
+    std::vector< std::shared_ptr< ModuleType > > results;
 
     // for this a read lock is sufficient, gets unlocked if it looses scope
     PrototypeSharedContainerType::ReadTicket l = m_prototypes.getReadTicket();
@@ -309,7 +309,7 @@ std::vector< boost::shared_ptr< ModuleType > > WModuleFactory::getPrototypesByTy
     for( PrototypeContainerConstIteratorType listIter = l->get().begin(); listIter != l->get().end();
          ++listIter )
     {
-        boost::shared_ptr< ModuleType > asTargetType = boost::dynamic_pointer_cast< ModuleType >( *listIter );
+        std::shared_ptr< ModuleType > asTargetType = std::dynamic_pointer_cast< ModuleType >( *listIter );
 
         if( asTargetType )
         {

@@ -98,8 +98,8 @@ public:
     void testConstructor()
     {
         TS_ASSERT_THROWS_NOTHING(
-            WProtonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
-                          boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+            WProtonData( std::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+                          std::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
         );
     }
 
@@ -108,8 +108,8 @@ public:
      */
     void testSetCSVHeaderEmpty()
     {
-        WProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
-                                 boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+        WProtonData protonData( std::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+                                 std::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
 
         WDataSetCSV::ContentSPtr tmpEmptyHeader = WDataSetCSV::ContentSPtr( new WDataSetCSV::Content() );
         TS_ASSERT_THROWS_EQUALS(
@@ -125,8 +125,8 @@ public:
      */
     void testSetCSVHeaderNull()
     {
-        WProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
-                                 boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+        WProtonData protonData( std::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+                                 std::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
 
         WDataSetCSV::ContentSPtr tmpHeaderNullptr = nullptr;
         TS_ASSERT_THROWS_EQUALS(
@@ -142,8 +142,8 @@ public:
      */
     void testSetCSVDataNull()
     {
-        WProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
-                                 boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+        WProtonData protonData( std::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+                                 std::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
 
         WDataSetCSV::ContentSPtr tmpDataNullptr = nullptr;
         TS_ASSERT_THROWS_EQUALS(
@@ -159,8 +159,8 @@ public:
      */
     void testSetterGetterStateIndex()
     {
-        WProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
-                                boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+        WProtonData protonData( std::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+                                std::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
 
         std::tuple< std::string, int > refData1( "test 1", 0 );
         std::tuple< std::string, int > refData2( "test 2", 1 );
@@ -183,8 +183,8 @@ public:
      */
     void testIsColumnAvailable()
     {
-        WProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
-                                boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+        WProtonData protonData( std::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+                                std::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
 
         std::tuple< std::string, int > refData1( "test 1", 0 );
         std::tuple< std::string, int > refData2( "test 2", 1 );
@@ -219,8 +219,8 @@ public:
     */
     void testGetColumnIndex()
     {
-        WProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
-                                boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+        WProtonData protonData( std::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+                                std::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
 
         std::vector< std::string > header = sampleColumnNames.at( 0 );
 
@@ -239,8 +239,8 @@ public:
     */
     void testDetermineColumnTypeByString()
     {
-        WProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
-                                boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+        WProtonData protonData( std::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+                                std::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
 
         std::vector< std::string > testIntList
         {
@@ -286,8 +286,8 @@ public:
     */
     void testDetectColumnTypesFromCsvData()
     {
-        WProtonData protonData( boost::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
-                                boost::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
+        WProtonData protonData( std::make_shared< WDataSetCSV::Content >( sampleColumnNames ),
+                                std::make_shared< WDataSetCSV::Content >( sampleDataRows ) );
 
         std::vector< std::string > refColumnTypes
         {

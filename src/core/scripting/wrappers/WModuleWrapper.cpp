@@ -29,7 +29,7 @@
 
 #include "WModuleWrapper.h"
 
-WModuleWrapper::WModuleWrapper( boost::shared_ptr< WModule > module )
+WModuleWrapper::WModuleWrapper( std::shared_ptr< WModule > module )
     : m_module( module )
 {
 }
@@ -48,7 +48,7 @@ std::string WModuleWrapper::getDescription() const
     return m_module->getDescription();
 }
 
-boost::shared_ptr< WModule > WModuleWrapper::getModulePtr()
+std::shared_ptr< WModule > WModuleWrapper::getModulePtr()
 {
     return m_module;
 }

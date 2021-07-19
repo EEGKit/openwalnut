@@ -63,7 +63,7 @@ WPropertyObserver::PropertyNameMap WPropertyObserver::handled()
     return ret;
 }
 
-void WPropertyObserver::observe( boost::shared_ptr< WProperties > properties, std::set< std::string > names )
+void WPropertyObserver::observe( std::shared_ptr< WProperties > properties, std::set< std::string > names )
 {
     // something to do?
     if( m_properties == properties )
@@ -127,7 +127,7 @@ void WPropertyObserver::updateSubscriptions()
     }
 }
 
-void WPropertyObserver::propertyUpdated( boost::shared_ptr< WPropertyBase > property )
+void WPropertyObserver::propertyUpdated( std::shared_ptr< WPropertyBase > property )
 {
     // lock m_lastUpdated
     LastUpdated::WriteTicket l = m_lastUpdated.getWriteTicket();
@@ -136,8 +136,8 @@ void WPropertyObserver::propertyUpdated( boost::shared_ptr< WPropertyBase > prop
     notify();
 }
 
-boost::shared_ptr< WPropertyObserver > WPropertyObserver::create()
+std::shared_ptr< WPropertyObserver > WPropertyObserver::create()
 {
-    return boost::shared_ptr< WPropertyObserver >( new WPropertyObserver() );
+    return std::shared_ptr< WPropertyObserver >( new WPropertyObserver() );
 }
 

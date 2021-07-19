@@ -44,7 +44,7 @@ public:
      *
      * \param group The group.
      */
-    explicit WPropertyGroupWrapper( boost::shared_ptr< WPropertyGroup > group );
+    explicit WPropertyGroupWrapper( std::shared_ptr< WPropertyGroup > group );
 
     /**
      * Return the name of the property group.
@@ -78,7 +78,7 @@ public:
 
 private:
     //! The property group.
-    boost::shared_ptr< WPropertyGroup > m_group;
+    std::shared_ptr< WPropertyGroup > m_group;
 };
 
 #endif  // WPROPERTYGROUPWRAPPER_H

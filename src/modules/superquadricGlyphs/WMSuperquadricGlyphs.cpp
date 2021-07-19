@@ -56,10 +56,10 @@ WMSuperquadricGlyphs::~WMSuperquadricGlyphs()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMSuperquadricGlyphs::factory() const
+std::shared_ptr< WModule > WMSuperquadricGlyphs::factory() const
 {
     // create prototype
-    return boost::shared_ptr< WModule >( new WMSuperquadricGlyphs() );
+    return std::shared_ptr< WModule >( new WMSuperquadricGlyphs() );
 }
 
 const char** WMSuperquadricGlyphs::getXPMIcon() const
@@ -80,7 +80,7 @@ const std::string WMSuperquadricGlyphs::getDescription() const
 void WMSuperquadricGlyphs::connectors()
 {
     // The input second order tensor dataset
-    m_input = boost::shared_ptr< WModuleInputData< WDataSetDTI > >( new WModuleInputData< WDataSetDTI >( shared_from_this(),
+    m_input = std::shared_ptr< WModuleInputData< WDataSetDTI > >( new WModuleInputData< WDataSetDTI >( shared_from_this(),
         "tensor input", "An input set of 2nd-order tensors on a regular 3D-grid." )
     );
     addConnector( m_input );
@@ -92,7 +92,7 @@ void WMSuperquadricGlyphs::connectors()
 void WMSuperquadricGlyphs::properties()
 {
     // The condition fires on property updates
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     // The slice positions. These get update externally
     m_xPos           = m_properties->addProperty( "Sagittal position", "Slice X position.", 0, m_propCondition );
@@ -438,7 +438,7 @@ void WMSuperquadricGlyphs::moduleMain()
         // Collect changes
 
         // has the data changes? And even more important: is it valid?
-        boost::shared_ptr< WDataSetDTI > newDataSet = m_input->getData();
+        std::shared_ptr< WDataSetDTI > newDataSet = m_input->getData();
         bool dataChanged = ( m_dataSet != newDataSet );
         bool dataValid   = ( newDataSet != NULL );
 
@@ -461,12 +461,12 @@ void WMSuperquadricGlyphs::moduleMain()
             initialTensorUpload = true;
 
             // also provide progress information
-            boost::shared_ptr< WProgress > progress1( new WProgress( "Building Glyph Geometry" ) );
+            std::shared_ptr< WProgress > progress1( new WProgress( "Building Glyph Geometry" ) );
             m_progress->addSubProgress( progress1 );
 
             // get pointers for the new data
             m_dataSet = newDataSet;
-            m_dataSetGrid = boost::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
+            m_dataSetGrid = std::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
             WAssert( m_dataSetGrid, "Dataset does not have a regular 3D grid." );
             m_maxX = m_dataSetGrid->getNbCoordsX();
             m_maxY = m_dataSetGrid->getNbCoordsY();
@@ -494,7 +494,7 @@ void WMSuperquadricGlyphs::moduleMain()
         if( dataValid && ( m_xPos->changed() || initialTensorUpload ) )
         {
             // also provide progress information
-            boost::shared_ptr< WProgress > progress1( new WProgress( "Building Glyph Geometry" ) );
+            std::shared_ptr< WProgress > progress1( new WProgress( "Building Glyph Geometry" ) );
             m_progress->addSubProgress( progress1 );
 
             // grab some mem
@@ -525,7 +525,7 @@ void WMSuperquadricGlyphs::moduleMain()
         if( dataValid && ( m_yPos->changed() || initialTensorUpload ) )
         {
             // also provide progress information
-            boost::shared_ptr< WProgress > progress1( new WProgress( "Building Glyph Geometry" ) );
+            std::shared_ptr< WProgress > progress1( new WProgress( "Building Glyph Geometry" ) );
             m_progress->addSubProgress( progress1 );
 
             // grab some mem
@@ -556,7 +556,7 @@ void WMSuperquadricGlyphs::moduleMain()
         if( dataValid && ( m_zPos->changed() || initialTensorUpload ) )
         {
             // also provide progress information
-            boost::shared_ptr< WProgress > progress1( new WProgress( "Building Glyph Geometry" ) );
+            std::shared_ptr< WProgress > progress1( new WProgress( "Building Glyph Geometry" ) );
             m_progress->addSubProgress( progress1 );
 
             // grab some mem

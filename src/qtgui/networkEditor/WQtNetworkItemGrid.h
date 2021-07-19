@@ -58,14 +58,14 @@ class WQtNetworkItemGrid: public QGraphicsObject
     Q_OBJECT
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WQtNetworkItemGrid >.
+     * Convenience typedef for a std::shared_ptr< WQtNetworkItemGrid >.
      */
-    typedef boost::shared_ptr< WQtNetworkItemGrid > SPtr;
+    typedef std::shared_ptr< WQtNetworkItemGrid > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WQtNetworkItemGrid >.
+     * Convenience typedef for a std::shared_ptr< const WQtNetworkItemGrid >.
      */
-    typedef boost::shared_ptr< const WQtNetworkItemGrid > ConstSPtr;
+    typedef std::shared_ptr< const WQtNetworkItemGrid > ConstSPtr;
 
     /**
      * Default constructor.

@@ -82,7 +82,7 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
 
     /**
@@ -131,7 +131,7 @@ public:
     const std::vector< double >& getHeights() const;
 
 protected:
-    static boost::shared_ptr< WPrototyped > m_prototype; //!< The prototype as singleton.
+    static std::shared_ptr< WPrototyped > m_prototype; //!< The prototype as singleton.
 
 private:
     /**

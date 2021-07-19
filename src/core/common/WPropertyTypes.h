@@ -232,67 +232,67 @@ typedef WPropertyVariable< WPVBaseTypes::PV_INTERVAL > WPVInterval;
 /**
  * Alias for int32_t property variables.
  */
-typedef boost::shared_ptr< WPVInt > WPropInt;
+typedef std::shared_ptr< WPVInt > WPropInt;
 
 /**
  * Alias for int32_t property variables.
  */
-typedef boost::shared_ptr< WPVDouble > WPropDouble;
+typedef std::shared_ptr< WPVDouble > WPropDouble;
 
 /**
  * Alias for bool property variables.
  */
-typedef boost::shared_ptr< WPVBool > WPropBool;
+typedef std::shared_ptr< WPVBool > WPropBool;
 
 /**
  * Alias for string property variables.
  */
-typedef boost::shared_ptr< WPVString > WPropString;
+typedef std::shared_ptr< WPVString > WPropString;
 
 /**
  * Alias for filename property variables.
  */
-typedef boost::shared_ptr< WPVFilename > WPropFilename;
+typedef std::shared_ptr< WPVFilename > WPropFilename;
 
 /**
  * Alias for string list property variables.
  */
-typedef boost::shared_ptr< WPVSelection > WPropSelection;
+typedef std::shared_ptr< WPVSelection > WPropSelection;
 
 /**
  * Alias for position property variables.
  */
-typedef boost::shared_ptr< WPVPosition > WPropPosition;
+typedef std::shared_ptr< WPVPosition > WPropPosition;
 
 /**
  * Alias for color property variables.
  */
-typedef boost::shared_ptr< WPVColor > WPropColor;
+typedef std::shared_ptr< WPVColor > WPropColor;
 
 /**
  * Alias for the group properties.
  */
-typedef boost::shared_ptr< WPVGroup > WPropGroup;
+typedef std::shared_ptr< WPVGroup > WPropGroup;
 
 /**
  * Alias for the trigger properties.
  */
-typedef boost::shared_ptr< WPVTrigger > WPropTrigger;
+typedef std::shared_ptr< WPVTrigger > WPropTrigger;
 
 /**
  * Alias for the 4x4 matrix properties.
  */
-typedef boost::shared_ptr< WPVMatrix4X4 > WPropMatrix4X4;
+typedef std::shared_ptr< WPVMatrix4X4 > WPropMatrix4X4;
 
 /**
  * Alias for the transfer function properties
  */
-typedef boost::shared_ptr< WPVTransferFunction > WPropTransferFunction;
+typedef std::shared_ptr< WPVTransferFunction > WPropTransferFunction;
 
 /**
  * Alias for the interval properties
  */
-typedef boost::shared_ptr< WPVInterval > WPropInterval;
+typedef std::shared_ptr< WPVInterval > WPropInterval;
 
 /**
  * This namespace contains several helper classes which translate their template type to an enum.

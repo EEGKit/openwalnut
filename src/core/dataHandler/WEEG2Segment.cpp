@@ -36,7 +36,7 @@
 #include "exceptions/WDHException.h"
 #include "io/WPagerEEG.h"
 
-WEEG2Segment::WEEG2Segment( std::size_t segmentID, boost::shared_ptr< WPagerEEG > pager )
+WEEG2Segment::WEEG2Segment( std::size_t segmentID, std::shared_ptr< WPagerEEG > pager )
     : m_segmentID( segmentID ),
       m_pager( pager )
 {
@@ -64,7 +64,7 @@ std::size_t WEEG2Segment::getNumberOfSamples() const
     return m_nbSamples;
 }
 
-boost::shared_ptr< WEEGValueMatrix > WEEG2Segment::getValues( std::size_t start, std::size_t length ) const
+std::shared_ptr< WEEGValueMatrix > WEEG2Segment::getValues( std::size_t start, std::size_t length ) const
 {
     // No test whether start and length are valid - this should be done only
     // one time by the pager.

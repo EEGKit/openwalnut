@@ -51,9 +51,9 @@ WMDataCreatorFibers::~WMDataCreatorFibers()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMDataCreatorFibers::factory() const
+std::shared_ptr< WModule > WMDataCreatorFibers::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMDataCreatorFibers() );
+    return std::shared_ptr< WModule >( new WMDataCreatorFibers() );
 }
 
 const char** WMDataCreatorFibers::getXPMIcon() const
@@ -82,7 +82,7 @@ void WMDataCreatorFibers::connectors()
 
 void WMDataCreatorFibers::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     // grid transform information
     m_origin = m_properties->addProperty( "Origin", "Coordinate of the origin (voxel 0,0,0).", WPosition( 0.0, 0.0, 0.0 ), m_propCondition );

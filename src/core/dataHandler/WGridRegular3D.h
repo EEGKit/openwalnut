@@ -73,14 +73,14 @@ public:
     typedef WMatrixFixed< T, 3, 1 > Vector3Type;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< WGridRegular3DTemplate >.
+     * Convenience typedef for a std::shared_ptr< WGridRegular3DTemplate >.
      */
-    typedef boost::shared_ptr< WGridRegular3DTemplate > SPtr;
+    typedef std::shared_ptr< WGridRegular3DTemplate > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WGridRegular3DTemplate >.
+     * Convenience typedef for a std::shared_ptr< const WGridRegular3DTemplate >.
      */
-    typedef boost::shared_ptr< const WGridRegular3DTemplate > ConstSPtr;
+    typedef std::shared_ptr< const WGridRegular3DTemplate > ConstSPtr;
 
     /**
      * Convenience typedef for a boost::array< size_t, 8 >. Return type of getCellVertexIds.
@@ -413,7 +413,7 @@ public:
      * voxel. If you need voxels at grid positions fill this function with
      * voxel center positions aka grid points.
      */
-    boost::shared_ptr< std::vector< Vector3Type > > getVoxelVertices( const Vector3Type& point,
+    std::shared_ptr< std::vector< Vector3Type > > getVoxelVertices( const Vector3Type& point,
                                                                       const T margin = 0.0 ) const;
 
     /**
@@ -864,9 +864,9 @@ inline typename WGridRegular3DTemplate< T >::CellVertexArray WGridRegular3DTempl
 }
 
 template< typename T >
-boost::shared_ptr< std::vector< typename WGridRegular3DTemplate< T >::Vector3Type > > WGridRegular3DTemplate< T >::getVoxelVertices( const WGridRegular3DTemplate< T >::Vector3Type& point, const T margin ) const // NOLINT -- too long line
+std::shared_ptr< std::vector< typename WGridRegular3DTemplate< T >::Vector3Type > > WGridRegular3DTemplate< T >::getVoxelVertices( const WGridRegular3DTemplate< T >::Vector3Type& point, const T margin ) const // NOLINT -- too long line
 {
-    typedef boost::shared_ptr< std::vector< Vector3Type > > ReturnType;
+    typedef std::shared_ptr< std::vector< Vector3Type > > ReturnType;
     ReturnType result = ReturnType( new std::vector< Vector3Type > );
     result->reserve( 8 );
     T halfMarginX = getOffsetX() / 2.0 - std::abs( margin );
@@ -1297,7 +1297,7 @@ bool WGridRegular3DTemplate< T >::operator==( const WGridRegular3DTemplate< T >&
  * \return Array of number of samples per axis.
  */
 template< typename T >
-inline boost::array< T, 3 > getOffsets( boost::shared_ptr< const WGridRegular3DTemplate< T > > grid )
+inline boost::array< T, 3 > getOffsets( std::shared_ptr< const WGridRegular3DTemplate< T > > grid )
 {
     boost::array< T, 3 > result = { { grid->getOffsetX(), grid->getOffsetY(), grid->getOffsetZ() } }; // NOLINT curly braces
     return result;
@@ -1311,7 +1311,7 @@ inline boost::array< T, 3 > getOffsets( boost::shared_ptr< const WGridRegular3DT
  * \return Array of number of samples per axis.
  */
 template< typename T >
-inline boost::array< unsigned int, 3 > getNbCoords( boost::shared_ptr< const WGridRegular3DTemplate< T > > grid )
+inline boost::array< unsigned int, 3 > getNbCoords( std::shared_ptr< const WGridRegular3DTemplate< T > > grid )
 {
     boost::array< unsigned int, 3 > result = { { grid->getNbCoordsX(), grid->getNbCoordsY(), grid->getNbCoordsZ() } }; // NOLINT curly braces
     return result;
@@ -1325,7 +1325,7 @@ inline boost::array< unsigned int, 3 > getNbCoords( boost::shared_ptr< const WGr
  * \return The direction of each axis as array
  */
 template< typename T >
-inline boost::array< typename WGridRegular3DTemplate< T >::Vector3Type, 3 > getDirections( boost::shared_ptr< const WGridRegular3DTemplate< T > > grid ) // NOLINT -- too long line
+inline boost::array< typename WGridRegular3DTemplate< T >::Vector3Type, 3 > getDirections( std::shared_ptr< const WGridRegular3DTemplate< T > > grid ) // NOLINT -- too long line
 {
     boost::array< typename WGridRegular3DTemplate< T >::Vector3Type, 3 > result = { { grid->getDirectionX(), grid->getDirectionY(), grid->getDirectionZ() } }; // NOLINT curly braces
     return result;
@@ -1339,7 +1339,7 @@ inline boost::array< typename WGridRegular3DTemplate< T >::Vector3Type, 3 > getD
  * \return The direction of each axis as array
  */
 template< typename T >
-inline boost::array< typename WGridRegular3DTemplate< T >::Vector3Type, 3 > getUnitDirections( boost::shared_ptr< const WGridRegular3DTemplate< T > > grid ) // NOLINT -- too long line
+inline boost::array< typename WGridRegular3DTemplate< T >::Vector3Type, 3 > getUnitDirections( std::shared_ptr< const WGridRegular3DTemplate< T > > grid ) // NOLINT -- too long line
 {
     boost::array< typename WGridRegular3DTemplate< T >::Vector3Type, 3 > result = { { grid->getUnitDirectionX(), grid->getUnitDirectionY(), grid->getUnitDirectionZ() } }; // NOLINT curly braces
     return result;

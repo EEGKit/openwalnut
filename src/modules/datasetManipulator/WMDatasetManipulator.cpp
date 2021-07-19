@@ -50,19 +50,19 @@ WMDatasetManipulator::WMDatasetManipulator():
     WModule(),
     m_strategy( "Manipulators", "Select one of the manipulators.", NULL, "Manipulator", "A list of all available manipulators" )
 {
-    m_strategy.addStrategy( boost::shared_ptr< WObjectNDIP< WManipulatorInterface > >( new WManipulatorTranslation() ) );
-    m_strategy.addStrategy( boost::shared_ptr< WObjectNDIP< WManipulatorInterface > >( new WManipulatorRotation() ) );
-    m_strategy.addStrategy( boost::shared_ptr< WObjectNDIP< WManipulatorInterface > >( new WManipulatorScaling() ) );
-    m_strategy.addStrategy( boost::shared_ptr< WObjectNDIP< WManipulatorInterface > >( new WManipulatorNormalize( &m_data ) ) );
+    m_strategy.addStrategy( std::shared_ptr< WObjectNDIP< WManipulatorInterface > >( new WManipulatorTranslation() ) );
+    m_strategy.addStrategy( std::shared_ptr< WObjectNDIP< WManipulatorInterface > >( new WManipulatorRotation() ) );
+    m_strategy.addStrategy( std::shared_ptr< WObjectNDIP< WManipulatorInterface > >( new WManipulatorScaling() ) );
+    m_strategy.addStrategy( std::shared_ptr< WObjectNDIP< WManipulatorInterface > >( new WManipulatorNormalize( &m_data ) ) );
 }
 
 WMDatasetManipulator::~WMDatasetManipulator()
 {
 }
 
-boost::shared_ptr< WModule > WMDatasetManipulator::factory() const
+std::shared_ptr< WModule > WMDatasetManipulator::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMDatasetManipulator() );
+    return std::shared_ptr< WModule >( new WMDatasetManipulator() );
 }
 
 char const** WMDatasetManipulator::getXPMIcon() const
@@ -82,11 +82,11 @@ std::string const WMDatasetManipulator::getDescription() const
 
 void WMDatasetManipulator::connectors()
 {
-    m_input = boost::shared_ptr< WModuleInputData< WDataSet > >(
+    m_input = std::shared_ptr< WModuleInputData< WDataSet > >(
         new WModuleInputData< WDataSet >( shared_from_this(), "in", "The input dataset." ) );
     addConnector( m_input );
 
-    m_output = boost::shared_ptr< WModuleOutputData < WDataSet  > >(
+    m_output = std::shared_ptr< WModuleOutputData < WDataSet  > >(
         new WModuleOutputData< WDataSet >( shared_from_this(), "out", "The transformed dataset." ) );
     addConnector( m_output );
 
@@ -95,7 +95,7 @@ void WMDatasetManipulator::connectors()
 
 void WMDatasetManipulator::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition );
 
     m_resetTrigger = m_properties->addProperty( "Reset", "Reset transformation.", WPVBaseTypes::PV_TRIGGER_READY, m_propCondition );
     m_applyTrigger = m_properties->addProperty( "Apply", "Apply transformation.", WPVBaseTypes::PV_TRIGGER_READY, m_propCondition );
@@ -134,7 +134,7 @@ void WMDatasetManipulator::moduleMain()
         {
             WMatrixFixed< double, 4, 4 > mat = m_strategy()->getTransformationMatrix();
 
-            boost::shared_ptr< WDataSet > data = transformData( mat * m_currentMat );
+            std::shared_ptr< WDataSet > data = transformData( mat * m_currentMat );
 
             m_output->updateData( data );
         }
@@ -158,7 +158,7 @@ void WMDatasetManipulator::moduleMain()
             {
                 WMatrixFixed< double, 4, 4 > mat = m_strategy()->getTransformationMatrix();
                 m_currentMat = mat * m_currentMat;
-                boost::shared_ptr< WDataSet > data = transformData( m_currentMat );
+                std::shared_ptr< WDataSet > data = transformData( m_currentMat );
 
                 m_output->updateData( data );
                 m_strategy()->reset();
@@ -167,15 +167,15 @@ void WMDatasetManipulator::moduleMain()
     }
 }
 
-boost::shared_ptr< WDataSet > WMDatasetManipulator::transformData( WMatrixFixed< double, 4, 4 > const& mat )
+std::shared_ptr< WDataSet > WMDatasetManipulator::transformData( WMatrixFixed< double, 4, 4 > const& mat )
 {
-    boost::shared_ptr< WDataSetSingle > asSingle = boost::dynamic_pointer_cast< WDataSetSingle >( m_data );
+    std::shared_ptr< WDataSetSingle > asSingle = std::dynamic_pointer_cast< WDataSetSingle >( m_data );
     if( asSingle )
     {
-        boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( asSingle->getGrid() );
+        std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( asSingle->getGrid() );
         if( !grid )
         {
-            return boost::shared_ptr< WDataSet >();
+            return std::shared_ptr< WDataSet >();
         }
 
         WMatrixFixed< double, 4, 4 > m = grid->getTransformationMatrix();
@@ -183,18 +183,18 @@ boost::shared_ptr< WDataSet > WMDatasetManipulator::transformData( WMatrixFixed<
 
         WMatrix< double > z( m );
         WGridTransformOrtho tr( z );
-        boost::shared_ptr< WGrid > newGrid( new WGridRegular3D( grid->getNbCoordsX(), grid->getNbCoordsY(), grid->getNbCoordsZ(), tr ) );
+        std::shared_ptr< WGrid > newGrid( new WGridRegular3D( grid->getNbCoordsX(), grid->getNbCoordsY(), grid->getNbCoordsZ(), tr ) );
 
         return asSingle->clone( newGrid );
     }
 
-    boost::shared_ptr< WDataSetFibers > asFibers = boost::dynamic_pointer_cast< WDataSetFibers >( m_data );
+    std::shared_ptr< WDataSetFibers > asFibers = std::dynamic_pointer_cast< WDataSetFibers >( m_data );
     if( asFibers )
     {
         debugLog() << "Got fibers!";
 
-        boost::shared_ptr< std::vector< float > > vertices = asFibers->getVertices();
-        boost::shared_ptr< std::vector< float > > newVertices( new std::vector< float >( vertices->size() ) );
+        std::shared_ptr< std::vector< float > > vertices = asFibers->getVertices();
+        std::shared_ptr< std::vector< float > > newVertices( new std::vector< float >( vertices->size() ) );
 
         for( std::size_t k = 0; k < vertices->size() / 3; ++k )
         {
@@ -205,15 +205,15 @@ boost::shared_ptr< WDataSet > WMDatasetManipulator::transformData( WMatrixFixed<
             ( *newVertices )[ 3 * k + 2 ] = w[ 2 ] / w[ 3 ];
         }
 
-        boost::shared_ptr< WDataSetFibers > data( new WDataSetFibers( newVertices, asFibers->getLineStartIndexes(),
+        std::shared_ptr< WDataSetFibers > data( new WDataSetFibers( newVertices, asFibers->getLineStartIndexes(),
                                                     asFibers->getLineLengths(), asFibers->getVerticesReverse() ) );
         return data;
     }
 
-    boost::shared_ptr< WDataSetPoints > asPoints = boost::dynamic_pointer_cast< WDataSetPoints >( m_data );
+    std::shared_ptr< WDataSetPoints > asPoints = std::dynamic_pointer_cast< WDataSetPoints >( m_data );
     if( asPoints )
     {
-        boost::shared_ptr< std::vector< float > > p( new std::vector< float >( asPoints->getVertices()->size() ) );
+        std::shared_ptr< std::vector< float > > p( new std::vector< float >( asPoints->getVertices()->size() ) );
 
         for( std::size_t k = 0; k < asPoints->getVertices()->size(); k += 3 )
         {
@@ -228,18 +228,18 @@ boost::shared_ptr< WDataSet > WMDatasetManipulator::transformData( WMatrixFixed<
             p->operator[] ( k + 2 ) = vec[ 2 ];
         }
 
-        return boost::shared_ptr< WDataSetPoints >( new WDataSetPoints( p, asPoints->getColors() ) );
+        return std::shared_ptr< WDataSetPoints >( new WDataSetPoints( p, asPoints->getColors() ) );
     }
 
-    return boost::shared_ptr< WDataSet >();
+    return std::shared_ptr< WDataSet >();
 }
 
 void WMDatasetManipulator::initMatrix()
 {
-    boost::shared_ptr< WDataSetSingle > asSingle = boost::dynamic_pointer_cast< WDataSetSingle >( m_data );
+    std::shared_ptr< WDataSetSingle > asSingle = std::dynamic_pointer_cast< WDataSetSingle >( m_data );
     if( asSingle )
     {
-        boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( asSingle->getGrid() );
+        std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( asSingle->getGrid() );
         if( !grid )
         {
             m_currentMat = WMatrixFixed< double, 4, 4 >::identity();
@@ -247,11 +247,11 @@ void WMDatasetManipulator::initMatrix()
 
         m_currentMat = grid->getTransformationMatrix();
     }
-    else if( boost::dynamic_pointer_cast< WDataSetFibers >( m_data ) )
+    else if( std::dynamic_pointer_cast< WDataSetFibers >( m_data ) )
     {
         m_currentMat = WMatrixFixed< double, 4, 4 >::identity();
     }
-    else if( boost::dynamic_pointer_cast< WDataSetPoints >( m_data ) )
+    else if( std::dynamic_pointer_cast< WDataSetPoints >( m_data ) )
     {
         m_currentMat = WMatrixFixed< double, 4, 4 >::identity();
     }

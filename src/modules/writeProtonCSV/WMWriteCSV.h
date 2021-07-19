@@ -75,7 +75,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -116,7 +116,7 @@ private:
      * \param fibers selected points as fibers from Point-Connector
      * \return list of internal vertex with id 
      */
-    std::list< std::tuple < float, float, float, int > > getListOfInternalVertex( WDataSetFibers::SPtr fibers );
+    std::list< std::tuple < float, float, float, size_t > > getListOfInternalVertex( WDataSetFibers::SPtr fibers );
 
     /**
      * Helpermethod: Returns the path from Filedialog 
@@ -145,15 +145,15 @@ private:
      * \param listOfInternalVertex get selected EventIDs
      * \return next free EventID 
      */
-    size_t createStartCounter( std::list< std::tuple < float, float, float, int > > listOfInternalVertex );
+    size_t createStartCounter( std::list< std::tuple < float, float, float, size_t > > listOfInternalVertex );
 
     /**
      * The filename property -> where to write the csv file
      */
     WPropFilename m_filename;
 
-    boost::shared_ptr< WModuleInputData< WDataSetCSV > > m_CSVInput;  //!< Input connector required by this module.
-    boost::shared_ptr< WModuleInputData< WDataSetFibers > > m_fibersInput;  //!< Input connector required by this module.
+    std::shared_ptr< WModuleInputData< WDataSetCSV > > m_CSVInput;  //!< Input connector required by this module.
+    std::shared_ptr< WModuleInputData< WDataSetFibers > > m_fibersInput;  //!< Input connector required by this module.
 };
 
 

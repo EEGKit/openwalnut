@@ -28,6 +28,7 @@
 #include <list>
 #include <map>
 #include <set>
+#include <shared_mutex>
 #include <string>
 #include <utility>
 #include <vector>
@@ -64,12 +65,12 @@ public:
     /**
      * A vector of modules
      */
-    typedef std::vector< boost::shared_ptr< WModule > > ModuleVectorType;
+    typedef std::vector< std::shared_ptr< WModule > > ModuleVectorType;
 
     /**
      * For shortening: a type defining a shared vector of WModule pointers.
      */
-    typedef std::set< boost::shared_ptr< WModule > > ModuleContainerType;
+    typedef std::set< std::shared_ptr< WModule > > ModuleContainerType;
 
     /**
      * The alias for a shared container.
@@ -109,7 +110,7 @@ public:
      * \param run true when the module should be run automatically after adding it.
      * \throw WModuleUninitialized thrown whenever someone wants to add a module not yet initialized.
      */
-    virtual void add( boost::shared_ptr< WModule > module, bool run = true );
+    virtual void add( std::shared_ptr< WModule > module, bool run = true );
 
     /**
      * Convenience method to create a module instance with a given name and automatically add it to the container.
@@ -128,7 +129,7 @@ public:
      *
      * \param module the module to remove.
      */
-    virtual void remove( boost::shared_ptr< WModule > module );
+    virtual void remove( std::shared_ptr< WModule > module );
 
     /**
      * Removes all modules from this container. It uses a relatively laborious iterative approach
@@ -192,7 +193,7 @@ public:
      * \return the newly created module connected with the one specified in applyOn. If the prototype could not be found and tryOnly was set to
      *         true it will return NULL.
      */
-    virtual boost::shared_ptr< WModule > applyModule( boost::shared_ptr< WModule > applyOn, std::string what, bool tryOnly = false );
+    virtual std::shared_ptr< WModule > applyModule( std::shared_ptr< WModule > applyOn, std::string what, bool tryOnly = false );
 
     /**
      * Function combines two modules. This runs synchronously. It might take some time to finish since combination of modules is
@@ -203,7 +204,7 @@ public:
      *
      * \return the newly created module connected with the one specified in applyOn.
      */
-    virtual boost::shared_ptr< WModule > applyModule( boost::shared_ptr< WModule > applyOn, boost::shared_ptr< WModule > prototype );
+    virtual std::shared_ptr< WModule > applyModule( std::shared_ptr< WModule > applyOn, std::shared_ptr< WModule > prototype );
 
     /**
      * Load specified datasets. It immediately returns and starts another thread, which actually loads the data.
@@ -238,14 +239,14 @@ public:
      *
      * \param thread the thread to add
      */
-    void addPendingThread( boost::shared_ptr< WThreadedRunner > thread );
+    void addPendingThread( std::shared_ptr< WThreadedRunner > thread );
 
     /**
      * The specified thread has finished and does not longer depend upon this container instance.
      *
      * \param thread the thread.
      */
-    void finishedPendingThread( boost::shared_ptr< WThreadedRunner > thread );
+    void finishedPendingThread( std::shared_ptr< WThreadedRunner > thread );
 
     /**
      * Sets a flag denoting whether the container (which also is a module) should be marked as "crashed" if a nested module crashes.
@@ -260,12 +261,12 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Simple type for WDataModule pointer lists.
      */
-    typedef std::set< boost::shared_ptr< WDataModule > > DataModuleListType;
+    typedef std::set< std::shared_ptr< WDataModule > > DataModuleListType;
 
     /**
      * Returns a vector of pointers to the loaded data modules in the container.
@@ -301,7 +302,7 @@ public:
      *
      * \return the possible combinations of connectors.
      */
-    WCombinerTypes::WCompatiblesList getPossibleConnections( boost::shared_ptr< WModule > module );
+    WCombinerTypes::WCompatiblesList getPossibleConnections( std::shared_ptr< WModule > module );
 
 protected:
     /**
@@ -328,7 +329,7 @@ protected:
     /**
      * Lock for error notifiers set.
      */
-    boost::shared_mutex m_errorNotifiersLock;
+    std::shared_mutex m_errorNotifiersLock;
 
     /**
      * The error notifiers connected to added modules by default.
@@ -338,7 +339,7 @@ protected:
     /**
      * Lock for ready notifiers set.
      */
-    boost::shared_mutex m_readyNotifiersLock;
+    std::shared_mutex m_readyNotifiersLock;
 
     /**
      * The ready notifiers connected to added modules by default.
@@ -348,7 +349,7 @@ protected:
     /**
      * Lock for associated notifiers set.
      */
-    boost::shared_mutex m_associatedNotifiersLock;
+    std::shared_mutex m_associatedNotifiersLock;
 
     /**
      * The notifiers connected to added modules by default and fired whenever the module got associated.
@@ -358,7 +359,7 @@ protected:
     /**
      * Lock for remove-notifiers set.
      */
-    boost::shared_mutex m_removedNotifiersLock;
+    std::shared_mutex m_removedNotifiersLock;
 
     /**
      * The notifiers connected to added modules by default and fired whenever the module got removed again.
@@ -368,7 +369,7 @@ protected:
     /**
      * Lock for connector-notifiers set.
      */
-    boost::shared_mutex m_connectorNotifiersLock;
+    std::shared_mutex m_connectorNotifiersLock;
 
     /**
      * The notifiers connected to added modules by default and fired whenever the module connectors got connected.
@@ -383,12 +384,12 @@ protected:
     /**
      * Set of all threads that currently depend upon this container.
      */
-    std::set< boost::shared_ptr< WThreadedRunner > > m_pendingThreads;
+    std::set< std::shared_ptr< WThreadedRunner > > m_pendingThreads;
 
     /**
      * Lock for m_pendingThreads.
      */
-    boost::shared_mutex m_pendingThreadsLock;
+    std::shared_mutex m_pendingThreadsLock;
 
     /**
      * This method is called whenever a module inside the container crashes. By default, this method does nothing but forwarding the using
@@ -397,7 +398,7 @@ protected:
      * \param module the module that has crashed.
      * \param exception the exception.
      */
-    virtual void moduleError( boost::shared_ptr< WModule > module, const WException& exception );
+    virtual void moduleError( std::shared_ptr< WModule > module, const WException& exception );
 
     /**
      * This flag denotes whether the whole container should be marked as crashed if one of the contained modules crashes. By default, this is
@@ -412,12 +413,12 @@ private:
     /**
      * A type for mapping a module to all its subscriptions
      */
-    typedef std::pair< boost::shared_ptr< WModule >, boost::signals2::connection > ModuleSubscription;
+    typedef std::pair< std::shared_ptr< WModule >, boost::signals2::connection > ModuleSubscription;
 
     /**
      * For shortening: a type defining a shared vector of subscriptions a module made to a notifier during add().
      */
-    typedef std::multimap< boost::shared_ptr< WModule >, boost::signals2::connection > ModuleSubscriptionsType;
+    typedef std::multimap< std::shared_ptr< WModule >, boost::signals2::connection > ModuleSubscriptionsType;
 
     /**
      * The alias for a shared container.

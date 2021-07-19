@@ -59,9 +59,9 @@ WMVectorScale::~WMVectorScale()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMVectorScale::factory() const
+std::shared_ptr< WModule > WMVectorScale::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMVectorScale() );
+    return std::shared_ptr< WModule >( new WMVectorScale() );
 }
 
 const std::string WMVectorScale::getName() const
@@ -87,7 +87,7 @@ void WMVectorScale::connectors()
 
 void WMVectorScale::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
     WModule::properties();
 }
 
@@ -98,7 +98,7 @@ void WMVectorScale::properties()
  * \tparam VSetAType The integral type of the first valueset.
  */
 template< typename VSetAType >
-class VisitorVSetB: public boost::static_visitor< boost::shared_ptr< WValueSetBase > >
+class VisitorVSetB: public boost::static_visitor< std::shared_ptr< WValueSetBase > >
 {
 public:
     /**
@@ -147,10 +147,10 @@ public:
         }
 
         // create result value set
-        boost::shared_ptr< WValueSet< ResultT > > result = boost::shared_ptr< WValueSet< ResultT > >(
+        std::shared_ptr< WValueSet< ResultT > > result = std::shared_ptr< WValueSet< ResultT > >(
             new WValueSet< ResultT >( 1,
                                       3,
-                                      boost::shared_ptr< std::vector< ResultT > >( new std::vector< ResultT >( data ) ),
+                                      std::shared_ptr< std::vector< ResultT > >( new std::vector< ResultT >( data ) ),
                                       type )
         );
         return result;
@@ -166,7 +166,7 @@ public:
  * Visitor for discriminating the type of the first valueset. It simply creates a new instance of VisitorVSetB with the proper integral type of
  * the first value set.
  */
-class VisitorVSetA: public boost::static_visitor< boost::shared_ptr< WValueSetBase > >
+class VisitorVSetA: public boost::static_visitor< std::shared_ptr< WValueSetBase > >
 {
 public:
     /**
@@ -230,8 +230,8 @@ void WMVectorScale::moduleMain()
         // has the data changed?
         if( m_inputA->handledUpdate() || m_inputB->handledUpdate() )
         {
-            boost::shared_ptr< WDataSetVector > dataSetA = m_inputA->getData();
-            boost::shared_ptr< WDataSetScalar > dataSetB = m_inputB->getData();
+            std::shared_ptr< WDataSetVector > dataSetA = m_inputA->getData();
+            std::shared_ptr< WDataSetScalar > dataSetB = m_inputB->getData();
             if( !dataSetA || !dataSetB )
             {
                 // reset output if input was reset/disconnected
@@ -241,11 +241,11 @@ void WMVectorScale::moduleMain()
             }
 
             // the first value-set is always needed -> grab it
-            boost::shared_ptr< WValueSetBase > valueSetA = dataSetA->getValueSet();
-            boost::shared_ptr< WValueSetBase > valueSetB = dataSetB->getValueSet();
+            std::shared_ptr< WValueSetBase > valueSetA = dataSetA->getValueSet();
+            std::shared_ptr< WValueSetBase > valueSetB = dataSetB->getValueSet();
 
              // use a custom progress combiner
-            boost::shared_ptr< WProgress > prog = boost::shared_ptr< WProgress >(
+            std::shared_ptr< WProgress > prog = std::shared_ptr< WProgress >(
                 new WProgress( "Applying operator on data" ) );
             m_progress->addSubProgress( prog );
 
@@ -261,12 +261,12 @@ void WMVectorScale::moduleMain()
             }
 
             // this keeps the result
-            boost::shared_ptr< WValueSetBase > newValueSet;
+            std::shared_ptr< WValueSetBase > newValueSet;
             VisitorVSetA visitor( valueSetB.get() );    // the visitor cascades to the second value set
             newValueSet = valueSetA->applyFunction( visitor );
 
             // Create the new dataset and export it
-            m_output->updateData( boost::shared_ptr<WDataSetVector>( new WDataSetVector( newValueSet, m_inputA->getData()->getGrid() ) ) );
+            m_output->updateData( std::shared_ptr<WDataSetVector>( new WDataSetVector( newValueSet, m_inputA->getData()->getGrid() ) ) );
 
             // done
             prog->finish();

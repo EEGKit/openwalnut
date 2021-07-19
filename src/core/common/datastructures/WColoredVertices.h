@@ -75,7 +75,7 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
     /**
      * Reference to the data.
@@ -92,7 +92,7 @@ public:
     void setData( const std::map< size_t, WColor >& data );
 
 protected:
-    static boost::shared_ptr< WPrototyped > m_prototype; //!< The prototype as singleton.
+    static std::shared_ptr< WPrototyped > m_prototype; //!< The prototype as singleton.
 
 private:
     std::map< size_t, WColor > m_data; //!< stores the vertex ids and colors

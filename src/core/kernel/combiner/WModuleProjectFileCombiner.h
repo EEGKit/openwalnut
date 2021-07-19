@@ -53,7 +53,7 @@ public:
      *
      * \param target the target container where to add the modules to.
      */
-    explicit WModuleProjectFileCombiner( boost::shared_ptr< WModuleContainer > target );
+    explicit WModuleProjectFileCombiner( std::shared_ptr< WModuleContainer > target );
 
     /**
      * Creates an empty combiner. This constructor automatically uses the kernel's root container as target container.
@@ -117,7 +117,7 @@ public:
      *
      * \return the module, or NULL if ID is not known.
      */
-    virtual boost::shared_ptr< WModule > mapToModule( unsigned int id ) const;
+    virtual std::shared_ptr< WModule > mapToModule( unsigned int id ) const;
 
     /**
      * Map a given module to project file ID. This method must not be used by WModuleProjectFileCombiner, as it builds this mapping. All other
@@ -127,23 +127,23 @@ public:
      *
      * \return the ID, or numeric_limits< unisigned int >::max() if module not known.
      */
-    virtual unsigned int mapFromModule( boost::shared_ptr< WModule > module ) const;
+    virtual unsigned int mapFromModule( std::shared_ptr< WModule > module ) const;
 
 protected:
     /**
      * The module ID type. A pair of ID and pointer to module.
      */
-    typedef std::pair< unsigned int, boost::shared_ptr< WModule > > ModuleID;
+    typedef std::pair< unsigned int, std::shared_ptr< WModule > > ModuleID;
 
     /**
      * Map between ID and Module
      */
-    typedef std::map< unsigned int, boost::shared_ptr< WModule > > ModuleIDMap;
+    typedef std::map< unsigned int, std::shared_ptr< WModule > > ModuleIDMap;
 
     /**
      * All Modules.
      */
-    std::map< unsigned int, boost::shared_ptr< WModule > > m_modules;
+    std::map< unsigned int, std::shared_ptr< WModule > > m_modules;
 
     /**
      * A connector is described by ID and name.

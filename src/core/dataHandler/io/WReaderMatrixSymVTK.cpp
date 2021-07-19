@@ -43,7 +43,7 @@ WReaderMatrixSymVTK::WReaderMatrixSymVTK( std::string fname )
 {
 }
 
-void WReaderMatrixSymVTK::readTable( boost::shared_ptr< std::vector< double > > table ) const
+void WReaderMatrixSymVTK::readTable( std::shared_ptr< std::vector< double > > table ) const
 {
     WAssert( table->size() == 0, "Non-zero size indicates an error, since the vector will be filled IN HERE." );
 

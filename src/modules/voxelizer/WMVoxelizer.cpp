@@ -78,9 +78,9 @@ WMVoxelizer::~WMVoxelizer()
 {
 }
 
-boost::shared_ptr< WModule > WMVoxelizer::factory() const
+std::shared_ptr< WModule > WMVoxelizer::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMVoxelizer() );
+    return std::shared_ptr< WModule >( new WMVoxelizer() );
 }
 
 const char** WMVoxelizer::getXPMIcon() const
@@ -90,11 +90,14 @@ const char** WMVoxelizer::getXPMIcon() const
 
 void WMVoxelizer::properties()
 {
-    m_antialiased     = m_properties->addProperty( "Antialiasing", "Enable/Disable antialiased drawing of voxels.", true, m_fullUpdate );
+    m_antialiased     = m_properties->addProperty( "Antialiasing", "Enable/disable antialiased rasterization of voxels.", true, m_fullUpdate );
     m_voxelsPerUnit   = m_properties->addProperty( "Voxels per Unit", "Specified the number of voxels per unit in the coordinate system. This "
-                                                                       "is useful to increase the resolution of the grid", 1, m_fullUpdate );
+                                                                       "is useful to increase the resolution of the grid", 1.0, m_fullUpdate );
+
+    m_renderingActive = m_properties->addProperty( "Rendering", "Enable/disable rendering of voxels.", false, m_fullUpdate );
+
     // for selecting the parameterization method
-    m_paramAlgoSelections = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_paramAlgoSelections = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_paramAlgoSelections->addItem( "No Parameterization", "Disable parameterization." );          // NOTE: you can add XPM images here.
     m_paramAlgoSelections->addItem( "By Longest Line", "Use the longest line and parameterize the bundle along it." );
     m_paramAlgoSelections->addItem( "By Centerline", "Use the centerline and parameterize the bundle along it." );
@@ -105,7 +108,7 @@ void WMVoxelizer::properties()
     WPropertyHelper::PC_NOTEMPTY::addTo( m_parameterAlgo );
 
     // for selecting the rasterization method
-    boost::shared_ptr< WItemSelection > rasterAlgos( new WItemSelection() );
+    std::shared_ptr< WItemSelection > rasterAlgos( new WItemSelection() );
     rasterAlgos->addItem( "Bresenham", "Voxelization with 3D Bresenham" );
     m_rasterAlgo = m_properties->addProperty( "Rasterization", "Which method for rasterizing the tracts", rasterAlgos->getSelectorFirst(),
             m_fullUpdate );
@@ -178,7 +181,7 @@ void WMVoxelizer::moduleMain()
 
         infoLog() << "Start voxelization with: " << numTracts << " tracts";
 
-        boost::array< boost::shared_ptr< WDataSetScalar >, 2 > result = generateDatasets( m_tractIC->getData(), m_clusterIC->getData() );
+        boost::array< std::shared_ptr< WDataSetScalar >, 2 > result = generateDatasets( m_tractIC->getData(), m_clusterIC->getData() );
 
         if( !result.empty() )
         {
@@ -189,7 +192,10 @@ void WMVoxelizer::moduleMain()
             }
 
             m_rootNode->clear();
-            m_rootNode->insert( genDataSetGeode( result[0] ) );
+            if( m_renderingActive->get() )
+            {
+                m_rootNode->insert( genDataSetGeode( result[0] ) );
+            }
         }
 
         infoLog() << "Finished.";
@@ -202,8 +208,8 @@ void WMVoxelizer::moduleMain()
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( postNode );
 }
 
-boost::shared_ptr< WGridRegular3D > WMVoxelizer::constructGrid( boost::shared_ptr< const WDataSetFibers > tracts,
-        boost::shared_ptr< const WFiberCluster > cluster ) const
+std::shared_ptr< WGridRegular3D > WMVoxelizer::constructGrid( std::shared_ptr< const WDataSetFibers > tracts,
+        std::shared_ptr< const WFiberCluster > cluster ) const
 {
     WBoundingBox bb;
     if( cluster )
@@ -215,7 +221,7 @@ boost::shared_ptr< WGridRegular3D > WMVoxelizer::constructGrid( boost::shared_pt
         bb = tracts->getBoundingBox();
     }
 
-    int32_t nbVoxelsPerUnit = m_voxelsPerUnit->get( true );
+    float nbVoxelsPerUnit = m_voxelsPerUnit->get( true );
 
     // TODO(math): remove hardcoded meta grid here.
     // the "+1" in the following three statements is because there may be some more voxels
@@ -233,7 +239,7 @@ boost::shared_ptr< WGridRegular3D > WMVoxelizer::constructGrid( boost::shared_pt
 
     WGridTransformOrtho transform( mat );
 
-    boost::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( nbVoxelsPerUnit * nbPosX,
+    std::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( nbVoxelsPerUnit * nbPosX,
                                                                   nbVoxelsPerUnit * nbPosY,
                                                                   nbVoxelsPerUnit * nbPosZ,
                                                                   transform ) );
@@ -241,24 +247,24 @@ boost::shared_ptr< WGridRegular3D > WMVoxelizer::constructGrid( boost::shared_pt
     return grid;
 }
 
-boost::array< boost::shared_ptr< WDataSetScalar >, 2 > WMVoxelizer::generateDatasets(
-        boost::shared_ptr< const WDataSetFibers > tracts,
-        boost::shared_ptr< const WFiberCluster > cluster ) const
+boost::array< std::shared_ptr< WDataSetScalar >, 2 > WMVoxelizer::generateDatasets(
+        std::shared_ptr< const WDataSetFibers > tracts,
+        std::shared_ptr< const WFiberCluster > cluster ) const
 {
-    boost::array< boost::shared_ptr< WDataSetScalar >, 2 > result; // unusable instances
+    boost::array< std::shared_ptr< WDataSetScalar >, 2 > result; // unusable instances
 
     if( !tracts ) // mean while input connector has changed => abort
     {
         return result;
     }
 
-    boost::shared_ptr< WGridRegular3D > grid = constructGrid( tracts, cluster );
+    std::shared_ptr< WGridRegular3D > grid = constructGrid( tracts, cluster );
 
-    boost::shared_ptr< WRasterAlgorithm > rasterAlgo;
+    std::shared_ptr< WRasterAlgorithm > rasterAlgo;
     std::string rasterName = m_rasterAlgo->get().at( 0 )->getName();
     if( rasterName == "Bresenham" )
     {
-        rasterAlgo = boost::shared_ptr< WBresenham >( new WBresenham( grid, m_antialiased->get() ) );
+        rasterAlgo = std::shared_ptr< WBresenham >( new WBresenham( grid, m_antialiased->get() ) );
     }
     else
     {
@@ -267,19 +273,19 @@ boost::array< boost::shared_ptr< WDataSetScalar >, 2 > WMVoxelizer::generateData
     }
 
     // decide which param algo to use:
-    boost::shared_ptr< WRasterParameterization > paramAlgo;
+    std::shared_ptr< WRasterParameterization > paramAlgo;
     std::string paramName = m_parameterAlgo->get( true ).at( 0 )->getName();
     if( paramName == "By Longest Line" )
     {
-        paramAlgo = boost::shared_ptr< WRasterParameterization >( new WCenterlineParameterization( grid, longestLine( tracts, cluster ) ) );
+        paramAlgo = std::shared_ptr< WRasterParameterization >( new WCenterlineParameterization( grid, longestLine( tracts, cluster ) ) );
     }
     else if( paramName == "By Centerline" )
     {
-        paramAlgo = boost::shared_ptr< WRasterParameterization >( new WCenterlineParameterization( grid, centerLine( tracts, cluster ) ) );
+        paramAlgo = std::shared_ptr< WRasterParameterization >( new WCenterlineParameterization( grid, centerLine( tracts, cluster ) ) );
     }
     else if( paramName == "By Integration" )
     {
-        paramAlgo = boost::shared_ptr< WRasterParameterization >( new WIntegrationParameterization( grid ) );
+        paramAlgo = std::shared_ptr< WRasterParameterization >( new WIntegrationParameterization( grid ) );
     }
     debugLog() << paramName << " as parameterization method selected.";
 
@@ -300,8 +306,8 @@ boost::array< boost::shared_ptr< WDataSetScalar >, 2 > WMVoxelizer::generateData
     return result;
 }
 
-boost::shared_ptr< WFiber > WMVoxelizer::longestLine( boost::shared_ptr< const WDataSetFibers > tracts,
-        boost::shared_ptr< const WFiberCluster > cluster ) const
+std::shared_ptr< WFiber > WMVoxelizer::longestLine( std::shared_ptr< const WDataSetFibers > tracts,
+        std::shared_ptr< const WFiberCluster > cluster ) const
 {
     if( cluster )
     {
@@ -310,8 +316,8 @@ boost::shared_ptr< WFiber > WMVoxelizer::longestLine( boost::shared_ptr< const W
     return longestLine( tracts );
 }
 
-boost::shared_ptr< WFiber > WMVoxelizer::centerLine( boost::shared_ptr< const WDataSetFibers > tracts,
-        boost::shared_ptr< const WFiberCluster > cluster ) const
+std::shared_ptr< WFiber > WMVoxelizer::centerLine( std::shared_ptr< const WDataSetFibers > tracts,
+        std::shared_ptr< const WFiberCluster > cluster ) const
 {
     if( cluster )
     {
@@ -320,14 +326,14 @@ boost::shared_ptr< WFiber > WMVoxelizer::centerLine( boost::shared_ptr< const WD
     return centerLine( tracts );
 }
 
-void WMVoxelizer::raster( boost::shared_ptr< WRasterAlgorithm > algo, boost::shared_ptr< const WDataSetFibers > tracts,
-        boost::shared_ptr< const WFiberCluster > cluster ) const
+void WMVoxelizer::raster( std::shared_ptr< WRasterAlgorithm > algo, std::shared_ptr< const WDataSetFibers > tracts,
+        std::shared_ptr< const WFiberCluster > cluster ) const
 {
     // for each tract apply a call to algo->raster( tract );
 
     if( cluster )
     {
-        boost::shared_ptr< const WDataSetFiberVector > clusterTracts = cluster->getDataSetReference();
+        std::shared_ptr< const WDataSetFiberVector > clusterTracts = cluster->getDataSetReference();
         const std::list< size_t >& tractIDs = cluster->getIndices();
         std::list< size_t >::const_iterator cit = tractIDs.begin();
         for( cit = tractIDs.begin(); cit != tractIDs.end(); ++cit )
@@ -337,7 +343,7 @@ void WMVoxelizer::raster( boost::shared_ptr< WRasterAlgorithm > algo, boost::sha
     }
     else
     {
-        boost::shared_ptr< WDataSetFiberVector > allTracts( new WDataSetFiberVector( tracts ) );
+        std::shared_ptr< WDataSetFiberVector > allTracts( new WDataSetFiberVector( tracts ) );
         for( WDataSetFiberVector::const_iterator cit = allTracts->begin(); cit != allTracts->end(); ++cit )
         {
             algo->raster( *cit );
@@ -347,10 +353,10 @@ void WMVoxelizer::raster( boost::shared_ptr< WRasterAlgorithm > algo, boost::sha
     algo->finished();
 }
 
-osg::ref_ptr< osg::Node > WMVoxelizer::genDataSetGeode( boost::shared_ptr< WDataSetScalar > dataset ) const
+osg::ref_ptr< osg::Node > WMVoxelizer::genDataSetGeode( std::shared_ptr< WDataSetScalar > dataset ) const
 {
     // set the scaling of the dataset. We assume a unit cube per voxel. But this might not be true:
-    WGridRegular3D::SPtr grid = boost::dynamic_pointer_cast< WGridRegular3D >( dataset->getGrid() );
+    WGridRegular3D::SPtr grid = std::dynamic_pointer_cast< WGridRegular3D >( dataset->getGrid() );
     if( !grid )
     {
         errorLog() << "The dataset grid is not regular.";
@@ -361,7 +367,7 @@ osg::ref_ptr< osg::Node > WMVoxelizer::genDataSetGeode( boost::shared_ptr< WData
     // add cubes to this geode
     osg::ref_ptr< osg::Geode > geode( new osg::Geode );
 
-    boost::shared_ptr< WValueSet< double > > valueset = boost::dynamic_pointer_cast< WValueSet< double > >( dataset->getValueSet() );
+    std::shared_ptr< WValueSet< double > > valueset = std::dynamic_pointer_cast< WValueSet< double > >( dataset->getValueSet() );
     if( !valueset )
     {
         errorLog() << "The dataset does not contain a double valueset";

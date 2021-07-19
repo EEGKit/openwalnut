@@ -39,14 +39,14 @@ class WGEPostprocessorGauss: public WGEPostprocessor
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WGEPostprocessorGauss >.
+     * Convenience typedef for a std::shared_ptr< WGEPostprocessorGauss >.
      */
-    typedef boost::shared_ptr< WGEPostprocessorGauss > SPtr;
+    typedef std::shared_ptr< WGEPostprocessorGauss > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WGEPostprocessorGauss >.
+     * Convenience typedef for a std::shared_ptr< const WGEPostprocessorGauss >.
      */
-    typedef boost::shared_ptr< const WGEPostprocessorGauss > ConstSPtr;
+    typedef std::shared_ptr< const WGEPostprocessorGauss > ConstSPtr;
 
     /**
      * Default constructor.

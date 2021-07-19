@@ -33,7 +33,7 @@ WGEShaderPropertyDefineOptions< WPropSelection >::SPtr WGEShaderPropertyDefineOp
            std::vector< WGEShaderPropertyDefineOptionsTools::NameDescriptionDefineTuple > defines )
 {
     // the item selection:
-    boost::shared_ptr< WItemSelection > selection( new WItemSelection() );
+    std::shared_ptr< WItemSelection > selection( new WItemSelection() );
     std::vector< std::string > definesOnly;
 
     // add to the properties possible selection items list and option list

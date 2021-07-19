@@ -46,14 +46,14 @@ class WDataSetSingle : public WDataSet // NOLINT
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr
+     * Convenience typedef for a std::shared_ptr
      */
-    typedef boost::shared_ptr< WDataSetSingle > SPtr;
+    typedef std::shared_ptr< WDataSetSingle > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr; const
+     * Convenience typedef for a std::shared_ptr; const
      */
-    typedef boost::shared_ptr< const WDataSetSingle > ConstSPtr;
+    typedef std::shared_ptr< const WDataSetSingle > ConstSPtr;
 
     /**
      * Constructs an instance out of a value set and a grid.
@@ -61,8 +61,8 @@ public:
      * \param newValueSet the value set to use
      * \param newGrid the grid which maps world space to the value set
      */
-    WDataSetSingle( boost::shared_ptr< WValueSetBase > newValueSet,
-                    boost::shared_ptr< WGrid > newGrid );
+    WDataSetSingle( std::shared_ptr< WValueSetBase > newValueSet,
+                    std::shared_ptr< WGrid > newGrid );
 
     /**
      * Construct an empty and unusable instance. This is useful for prototypes.
@@ -83,7 +83,7 @@ public:
      *
      * \return the clone
      */
-    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WValueSetBase > newValueSet, boost::shared_ptr< WGrid > newGrid ) const;
+    virtual WDataSetSingle::SPtr clone( std::shared_ptr< WValueSetBase > newValueSet, std::shared_ptr< WGrid > newGrid ) const;
 
     /**
      * Creates a copy (clone) of this instance but allows one to change the valueset. Unlike copy construction, this is a very useful function if you
@@ -93,7 +93,7 @@ public:
      *
      * \return the clone
      */
-    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WValueSetBase > newValueSet ) const;
+    virtual WDataSetSingle::SPtr clone( std::shared_ptr< WValueSetBase > newValueSet ) const;
 
     /**
      * Creates a copy (clone) of this instance but allows one to change the grid. Unlike copy construction, this is a very useful function if you
@@ -103,7 +103,7 @@ public:
      *
      * \return the clone
      */
-    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WGrid > newGrid ) const;
+    virtual WDataSetSingle::SPtr clone( std::shared_ptr< WGrid > newGrid ) const;
 
     /**
      * Creates a copy (clone) of this instance. Unlike copy construction, this is a very useful function if you
@@ -116,12 +116,12 @@ public:
     /**
      * \return Reference to its WValueSet
      */
-    boost::shared_ptr< WValueSetBase > getValueSet() const;
+    std::shared_ptr< WValueSetBase > getValueSet() const;
 
     /**
      * \return Reference to its WGrid
      */
-    boost::shared_ptr< WGrid > getGrid() const;
+    std::shared_ptr< WGrid > getGrid() const;
 
     /**
      * Get the scalar value stored at id-th position of the array of the value set. This is the id-th grid position \b only for scalar data sets.
@@ -197,23 +197,23 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
 protected:
     /**
      * The prototype as singleton.
      */
-    static boost::shared_ptr< WPrototyped > m_prototype;
+    static std::shared_ptr< WPrototyped > m_prototype;
 
     /**
      * Stores the reference of the WGrid of this DataSetSingle instance.
      */
-    boost::shared_ptr< WGrid > m_grid;
+    std::shared_ptr< WGrid > m_grid;
 
     /**
      * Stores the reference of the WValueSet of this DataSetSingle instance.
      */
-    boost::shared_ptr< WValueSetBase > m_valueSet;
+    std::shared_ptr< WValueSetBase > m_valueSet;
 
 private:
     /**
@@ -229,7 +229,7 @@ template< typename T > OW_API_DEPRECATED T WDataSetSingle::getValueAt( size_t id
 
 template< typename T > T WDataSetSingle::getSingleRawValue( size_t id )
 {
-    boost::shared_ptr< WValueSet< T > > vs = boost::dynamic_pointer_cast< WValueSet< T > >( m_valueSet );
+    std::shared_ptr< WValueSet< T > > vs = std::dynamic_pointer_cast< WValueSet< T > >( m_valueSet );
     return vs->getScalar( id );
 }
 #endif  // WDATASETSINGLE_H

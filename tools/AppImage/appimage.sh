@@ -29,7 +29,7 @@ BUILD_DIR=AppImageBuild
 Build()
 {
     echo "* Creating build folder"
-    mkdir $BUILD_DIR
+    mkdir -p $BUILD_DIR
     cd $BUILD_DIR
 
     echo "* Configure build system"
@@ -63,21 +63,19 @@ Package()
     
     echo "* Copy AppRun"
     cp ../AppRun ./AppDir/AppRun
-
-    echo "* Download Packager"
-    wget -N https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-    wget -N https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
-
-    chmod +x linuxdeploy*.AppImage
     
+    echo "* Downloading appimagetool"
+    wget https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage
+    chmod +x appimagetool-x86_64.AppImage
+
     echo "* Packaging"
     export LD_LIBRARY_PATH="$(pwd)/AppDir/usr/lib/${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-    ARCH=x86_64 ./linuxdeploy-x86_64.AppImage \
-                                --appdir AppDir \
-                                -d openwalnut.desktop \
-                                -i ../../../artwork/Icons/openwalnut_128x128.png \
-                                --plugin qt \
-                                --output appimage
+    ARCH=x86_64 linuxdeploy \
+                --appdir AppDir \
+                -d openwalnut.desktop \
+                -i ../../../artwork/Icons/openwalnut_128x128.png \
+                --plugin qt
+    ARCH=x86_64 ./appimagetool-x86_64.AppImage --appimage-extract-and-run ./AppDir
     cd ..
 }
 
@@ -100,6 +98,7 @@ UsageExit()
         echo "  COMMANDS:"
         echo "    clean: removes created build sub-directories"
         echo "    build: does the building and packaging."
+        echo "    package: only packages"
         echo ""
         exit 2
 }
@@ -111,6 +110,9 @@ case "$1" in
         ;;
     build)
         BuildAll || exit $?
+        ;;
+    package)
+        Package || exit $?
         ;;
     *)
         UsageExit

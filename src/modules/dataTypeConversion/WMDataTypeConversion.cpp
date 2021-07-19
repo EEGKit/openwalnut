@@ -57,9 +57,9 @@ WMDataTypeConversion::~WMDataTypeConversion()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMDataTypeConversion::factory() const
+std::shared_ptr< WModule > WMDataTypeConversion::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMDataTypeConversion() );
+    return std::shared_ptr< WModule >( new WMDataTypeConversion() );
 }
 
 const char** WMDataTypeConversion::getXPMIcon() const
@@ -83,7 +83,7 @@ const std::string WMDataTypeConversion::getDescription() const
  * Visitor for discriminating the type of the first valueset.
  */
 template< class TargetType >
-class VisitorVSet: public boost::static_visitor< boost::shared_ptr< WValueSetBase > >
+class VisitorVSet: public boost::static_visitor< std::shared_ptr< WValueSetBase > >
 {
 public:
     /**
@@ -105,13 +105,13 @@ public:
     template < typename T >
     result_type operator()( const WValueSet< T >* const& vals ) const             // NOLINT
     {
-        boost::shared_ptr< std::vector< TargetType > > newVals( new std::vector< TargetType >( vals->size() ) );
+        std::shared_ptr< std::vector< TargetType > > newVals( new std::vector< TargetType >( vals->size() ) );
         for( size_t i = 0; i < newVals->size(); ++i )
         {
             ( *newVals )[i] = static_cast< TargetType >( vals->getScalar( i ) );
         }
 
-        boost::shared_ptr< WValueSet< TargetType > > valueSet(
+        std::shared_ptr< WValueSet< TargetType > > valueSet(
             new WValueSet< TargetType >( 0, 1, newVals, DataType< TargetType >::type )
         );
 
@@ -146,7 +146,7 @@ void WMDataTypeConversion::moduleMain()
         }
 
         std::string dataTypeName = m_dataTypeSelection->get().at( 0 )->getName();
-        boost::shared_ptr< WValueSetBase > valueSet;
+        std::shared_ptr< WValueSetBase > valueSet;
 
         // different types
         if( dataTypeName == "UINT8" )
@@ -210,7 +210,7 @@ void WMDataTypeConversion::moduleMain()
         }
 
         // we have the valueset -> create dataset
-        m_dataSet = boost::shared_ptr<WDataSetScalar>( new WDataSetScalar( valueSet, m_dataSet->getGrid() ) );
+        m_dataSet = std::shared_ptr<WDataSetScalar>( new WDataSetScalar( valueSet, m_dataSet->getGrid() ) );
         m_output->updateData( m_dataSet );
     }
 }
@@ -218,7 +218,7 @@ void WMDataTypeConversion::moduleMain()
 void WMDataTypeConversion::connectors()
 {
     // initialize connectors
-    m_input = boost::shared_ptr<WModuleInputData<WDataSetSingle> >(
+    m_input = std::shared_ptr<WModuleInputData<WDataSetSingle> >(
             new WModuleInputData<WDataSetSingle> ( shared_from_this(), "in",
                     "The dataset whose values' type should be converted." ) );
 
@@ -226,7 +226,7 @@ void WMDataTypeConversion::connectors()
     addConnector( m_input );
 
     // initialize connectors
-    m_output = boost::shared_ptr<WModuleOutputData<WDataSetSingle> >(
+    m_output = std::shared_ptr<WModuleOutputData<WDataSetSingle> >(
             new WModuleOutputData<WDataSetSingle> ( shared_from_this(), "out",
                     "The converted dataset." ) );
 
@@ -239,9 +239,9 @@ void WMDataTypeConversion::connectors()
 
 void WMDataTypeConversion::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
-    m_dataTypeSelectionsList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_dataTypeSelectionsList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_dataTypeSelectionsList->addItem( "DOUBLE", "" );
     m_dataTypeSelectionsList->addItem( "FLOAT128", "" );
     m_dataTypeSelectionsList->addItem( "FLOAT", "" );

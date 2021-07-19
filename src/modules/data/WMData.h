@@ -75,7 +75,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -128,7 +128,7 @@ protected:
     /**
      * A list of color map selection types
      */
-    boost::shared_ptr< WItemSelection > m_matrixSelectionsList;
+    std::shared_ptr< WItemSelection > m_matrixSelectionsList;
 
     /**
      * Selection property for color map
@@ -142,7 +142,7 @@ protected:
      *
      * \param property the property that has been changed
      */
-    void propertyChanged( boost::shared_ptr< WPropertyBase > property );
+    void propertyChanged( std::shared_ptr< WPropertyBase > property );
 
     // in case of a nifti file, there may be several transforms specified in the file
     //! a standard transform (should be an identity transform)
@@ -179,10 +179,10 @@ private:
      *
      * \return info property group with the three availabe transformation matrixes
      */
-    boost::shared_ptr< WProperties > getTransformationProperties() const;
+    std::shared_ptr< WProperties > getTransformationProperties() const;
 
     //! a condition for the matrix selection
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * Get a string for the datatype of the given dataset.
@@ -191,17 +191,17 @@ private:
      *
      * \return the type name of the specified dataset
      */
-    std::string getDataTypeString( boost::shared_ptr< WDataSetSingle > dss );
+    std::string getDataTypeString( std::shared_ptr< WDataSetSingle > dss );
 
     /**
      * The associated dataset.
      */
-    boost::shared_ptr< WDataSet > m_dataSet;
+    std::shared_ptr< WDataSet > m_dataSet;
 
     /**
      * The only output of this data module.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSet > > m_output;
+    std::shared_ptr< WModuleOutputData< WDataSet > > m_output;
 
     /**
      * As single. Can be NULL.
@@ -216,14 +216,14 @@ private:
     /**
      * Keep track of the old dataset
      */
-    boost::shared_ptr< WDataSet > m_oldDataSet;
+    std::shared_ptr< WDataSet > m_oldDataSet;
 
     /**
      * Add the colormapping.
      *
      * \param dataSet the dataset to add
      */
-    void updateColorMap( boost::shared_ptr< WDataSet > dataSet );
+    void updateColorMap( std::shared_ptr< WDataSet > dataSet );
 
     /**
      * Update matrix.

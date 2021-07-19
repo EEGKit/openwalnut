@@ -81,10 +81,10 @@ WMClusterDisplay::~WMClusterDisplay()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMClusterDisplay::factory() const
+std::shared_ptr< WModule > WMClusterDisplay::factory() const
 {
     // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WMClusterDisplay() );
+    return std::shared_ptr< WModule >( new WMClusterDisplay() );
 }
 
 const char** WMClusterDisplay::getXPMIcon() const
@@ -106,7 +106,7 @@ const std::string WMClusterDisplay::getDescription() const
 
 void WMClusterDisplay::connectors()
 {
-    using boost::shared_ptr;
+    using std::shared_ptr;
     typedef WModuleInputData< const WDataSetFibers > FiberInputData;  // just an alias
 
     m_fiberInput = shared_ptr< FiberInputData >( new FiberInputData( shared_from_this(), "fiberInput", "A loaded fiber dataset." ) );
@@ -326,7 +326,7 @@ void WMClusterDisplay::initWidgets()
 void WMClusterDisplay::properties()
 {
     // Initialize the properties
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_propSelectedCluster = m_properties->addProperty( "Selected Cluster", "", 0, m_propCondition );
     m_propSelectedCluster->setMin( 0 );
@@ -438,7 +438,7 @@ void WMClusterDisplay::moduleMain()
         }
     }
 
-    m_fiberSelector = boost::shared_ptr<WFiberSelector>( new WFiberSelector( m_dataSet ) );
+    m_fiberSelector = std::shared_ptr<WFiberSelector>( new WFiberSelector( m_dataSet ) );
     m_tree.setRoiBitField( m_fiberSelector->getBitfield() );
 
     m_propTreeFile->setHidden( true );
@@ -969,9 +969,9 @@ void WMClusterDisplay::colorClusters( size_t current )
 
 void WMClusterDisplay::setColor( std::vector<size_t> clusters, WColor color )
 {
-    boost::shared_ptr< std::vector< float > >colorField = m_dataSet->getColorScheme( "Custom Color" )->getColor();
-    boost::shared_ptr< std::vector< size_t > > starts   = m_fiberSelector->getStarts();
-    boost::shared_ptr< std::vector< size_t > > lengths  = m_fiberSelector->getLengths();
+    std::shared_ptr< std::vector< float > >colorField = m_dataSet->getColorScheme( "Custom Color" )->getColor();
+    std::shared_ptr< std::vector< size_t > > starts   = m_fiberSelector->getStarts();
+    std::shared_ptr< std::vector< size_t > > lengths  = m_fiberSelector->getLengths();
 
     for( size_t i = 0; i < clusters.size(); ++i )
     {

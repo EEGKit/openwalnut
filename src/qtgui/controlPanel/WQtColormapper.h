@@ -68,7 +68,7 @@ public:
      *
      * \param dataSet this data set will be selected after calling this method
      */
-    void selectTexture( boost::shared_ptr< WDataSet > dataSet );
+    void selectTexture( std::shared_ptr< WDataSet > dataSet );
 
 signals:
     /**

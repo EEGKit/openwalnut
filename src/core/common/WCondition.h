@@ -25,6 +25,8 @@
 #ifndef WCONDITION_H
 #define WCONDITION_H
 
+#include <shared_mutex>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 #include <boost/signals2/signal.hpp>
@@ -43,12 +45,12 @@ public:
     /**
      * Shared pointer type for WCondition.
      */
-    typedef boost::shared_ptr< WCondition > SPtr;
+    typedef std::shared_ptr< WCondition > SPtr;
 
     /**
      * Const shared pointer type for WCondition.
      */
-    typedef boost::shared_ptr< const WCondition > ConstSPtr;
+    typedef std::shared_ptr< const WCondition > ConstSPtr;
 
     /**
      * Default constructor.
@@ -103,7 +105,7 @@ protected:
     /**
      * The mutex used for the condition.
      */
-    mutable boost::shared_mutex m_mutex;
+    mutable std::shared_mutex m_mutex;
 
 private:
 };

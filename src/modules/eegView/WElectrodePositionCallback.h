@@ -59,7 +59,7 @@ public:
      */
     WElectrodePositionCallback( std::size_t channelID,
                                 WPropDouble colorSensitivity,
-                                boost::shared_ptr< WFlag< boost::shared_ptr< WEEGEvent > > > event,
+                                std::shared_ptr< WFlag< std::shared_ptr< WEEGEvent > > > event,
                                 osg::ref_ptr< const osgSim::ScalarsToColors > colorMap );
 
     /**
@@ -99,7 +99,7 @@ private:
     /**
      * event marking a special time position as WFlag
      */
-    boost::shared_ptr< WFlag< boost::shared_ptr< WEEGEvent > > > m_event;
+    std::shared_ptr< WFlag< std::shared_ptr< WEEGEvent > > > m_event;
 
     /**
      * the ScalarsToColors object mapping the potentials at the electrodes

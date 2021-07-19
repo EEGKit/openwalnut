@@ -52,9 +52,9 @@ WMDiffTensorScalars::~WMDiffTensorScalars()
 {
 }
 
-boost::shared_ptr< WModule > WMDiffTensorScalars::factory() const
+std::shared_ptr< WModule > WMDiffTensorScalars::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMDiffTensorScalars() );
+    return std::shared_ptr< WModule >( new WMDiffTensorScalars() );
 }
 
 void WMDiffTensorScalars::connectors()
@@ -99,9 +99,9 @@ void WMDiffTensorScalars::moduleMain()
 
         m_moduleState.wait();
 
-        boost::shared_ptr< WModuleOutputConnector > evalConnector = m_eigenSystem->getOutputConnector( "evalsOutput" );
+        std::shared_ptr< WModuleOutputConnector > evalConnector = m_eigenSystem->getOutputConnector( "evalsOutput" );
         typedef WModuleOutputData< WDataSetVector > OCType;
-        boost::shared_ptr< OCType > evalsOC = boost::dynamic_pointer_cast< OCType >( evalConnector );
+        std::shared_ptr< OCType > evalsOC = std::dynamic_pointer_cast< OCType >( evalConnector );
         if( evalsOC )
         {
             m_evals = evalsOC->getData();

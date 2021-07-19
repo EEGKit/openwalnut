@@ -108,7 +108,7 @@ class WWorkerThreadTest : public CxxTest::TestSuite
 
     private:
         //! the input data
-        boost::shared_ptr< int const > m_input;
+        std::shared_ptr< int const > m_input;
 
         //! the result
         WSharedObject< int > m_result;
@@ -140,7 +140,7 @@ public:
     {
         m_stopped = false;
 
-        boost::shared_ptr< FuncType > func( new FuncType( 6 ) );
+        std::shared_ptr< FuncType > func( new FuncType( 6 ) );
         WWorkerThread< FuncType > w( func, 0, 1 );
         w.subscribeStopSignal( boost::bind( &WWorkerThreadTest::stopTestDone, this ) );
 
@@ -159,7 +159,7 @@ public:
     {
         m_stopped = false;
 
-        boost::shared_ptr< FuncType > func( new FuncType( 100000000 ) );
+        std::shared_ptr< FuncType > func( new FuncType( 100000000 ) );
         WWorkerThread< FuncType > w( func, 0, 1 );
         w.subscribeStopSignal( boost::bind( &WWorkerThreadTest::stopTestDone, this ) );
 
@@ -176,7 +176,7 @@ public:
      */
     void testMultipleThreads()
     {
-        boost::shared_ptr< FuncType > func( new FuncType( 5 ) );
+        std::shared_ptr< FuncType > func( new FuncType( 5 ) );
         WWorkerThread< FuncType > w0( func, 0, 3 );
         WWorkerThread< FuncType > w1( func, 1, 3 );
         WWorkerThread< FuncType > w2( func, 2, 3 );
@@ -201,7 +201,7 @@ public:
      */
     void testNoFunction()
     {
-        boost::shared_ptr< FuncType > func;
+        std::shared_ptr< FuncType > func;
         TS_ASSERT_THROWS( WWorkerThread< FuncType > w( func, 0, 1 ), const WException& );
     }
 
@@ -210,7 +210,7 @@ public:
      */
     void testThreadId()
     {
-        boost::shared_ptr< FuncType > func( new FuncType( 5 ) );
+        std::shared_ptr< FuncType > func( new FuncType( 5 ) );
         TS_ASSERT_THROWS( WWorkerThread< FuncType > w( func, 1, 0 ), const WException& );
     }
 // restore WASSERT_AS_CASSERT flag
@@ -226,7 +226,7 @@ public:
     {
         m_exceptionHandled = false;
 
-        boost::shared_ptr< ExceptionalFuncType > func( new ExceptionalFuncType );
+        std::shared_ptr< ExceptionalFuncType > func( new ExceptionalFuncType );
         WWorkerThread< ExceptionalFuncType > w( func, 0, 1 );
         w.subscribeExceptionSignal( boost::bind( &WWorkerThreadTest::handleException, this, boost::placeholders::_1 ) );
 

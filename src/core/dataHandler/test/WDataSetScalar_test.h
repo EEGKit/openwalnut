@@ -55,13 +55,13 @@ public:
     void testInterpolate( void )
     {
         // create dummies, since they are needed in almost every test
-        boost::shared_ptr< WGrid > grid( new WGridRegular3D( 5, 3, 3 ) );
-        boost::shared_ptr< std::vector< double > > data( new std::vector< double >( grid->size() ) );
+        std::shared_ptr< WGrid > grid( new WGridRegular3D( 5, 3, 3 ) );
+        std::shared_ptr< std::vector< double > > data( new std::vector< double >( grid->size() ) );
         for( size_t i = 0; i < grid->size(); ++i )
         {
             ( *data )[i] = i;
         }
-        boost::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 0, 1, data, W_DT_DOUBLE ) );
+        std::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 0, 1, data, W_DT_DOUBLE ) );
         WDataSetScalar ds( valueSet, grid );
 
         bool success = false;
@@ -104,13 +104,13 @@ public:
 
         WGridTransformOrtho v( mat );
 
-        boost::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( 5, 3, 3, v ) );
-        boost::shared_ptr< std::vector< double > > data( new std::vector< double >( grid->size() ) );
+        std::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( 5, 3, 3, v ) );
+        std::shared_ptr< std::vector< double > > data( new std::vector< double >( grid->size() ) );
         for( size_t i = 0; i < grid->size(); ++i )
         {
             ( *data )[i] = i;
         }
-        boost::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 0, 1, data, W_DT_DOUBLE ) );
+        std::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 0, 1, data, W_DT_DOUBLE ) );
         WDataSetScalar ds( valueSet, grid );
 
         bool success = false;
@@ -162,15 +162,15 @@ public:
         boost::random::uniform_real_distribution<> prndz( 0.0, ( sz - 1.000000001 ) * mat( 2, 2 ) );
 
         WGridTransformOrtho v( mat );
-        boost::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( sx, sy, sz, v ) );
-        boost::shared_ptr< std::vector< double > > data( new std::vector< double >( grid->size() ) );
+        std::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( sx, sy, sz, v ) );
+        std::shared_ptr< std::vector< double > > data( new std::vector< double >( grid->size() ) );
 
         for( std::size_t k = 0; k < grid->size(); ++k )
         {
             data->at( k ) = drnd( rng );
         }
 
-        boost::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 0, 1, data, W_DT_DOUBLE ) );
+        std::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 0, 1, data, W_DT_DOUBLE ) );
         WDataSetScalar ds( valueSet, grid );
 
         for( std::size_t k = 0; k < 1000; ++k )
@@ -182,8 +182,8 @@ public:
             m( 2, 3 ) = drnd( rng );
 
             WGridTransformOrtho t( m );
-            boost::shared_ptr< WGridRegular3D > tGrid( new WGridRegular3D( sx, sy, sz, t ) );
-            boost::shared_ptr< WValueSet< double > > tValueSet( new WValueSet< double >( 0, 1, data, W_DT_DOUBLE ) );
+            std::shared_ptr< WGridRegular3D > tGrid( new WGridRegular3D( sx, sy, sz, t ) );
+            std::shared_ptr< WValueSet< double > > tValueSet( new WValueSet< double >( 0, 1, data, W_DT_DOUBLE ) );
             WDataSetScalar tds( tValueSet, tGrid );
 
             // test random positions in the dataset

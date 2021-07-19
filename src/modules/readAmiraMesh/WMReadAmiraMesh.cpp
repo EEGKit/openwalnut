@@ -49,9 +49,9 @@ WMReadAmiraMesh::~WMReadAmiraMesh()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMReadAmiraMesh::factory() const
+std::shared_ptr< WModule > WMReadAmiraMesh::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMReadAmiraMesh() );
+    return std::shared_ptr< WModule >( new WMReadAmiraMesh() );
 }
 
 const char** WMReadAmiraMesh::getXPMIcon() const
@@ -70,7 +70,7 @@ const std::string WMReadAmiraMesh::getDescription() const
 
 void WMReadAmiraMesh::connectors()
 {
-    m_output = boost::shared_ptr< WModuleOutputData< WDataSetFibers > >( new WModuleOutputData< WDataSetFibers >(
+    m_output = std::shared_ptr< WModuleOutputData< WDataSetFibers > >( new WModuleOutputData< WDataSetFibers >(
                 shared_from_this(), "out", "A loaded dataset." ) );
 
     addConnector( m_output );
@@ -80,7 +80,7 @@ void WMReadAmiraMesh::connectors()
 
 void WMReadAmiraMesh::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
     m_dataFile = m_properties->addProperty( "Filename", "", WPathHelper::getAppPath(), m_propCondition );
 
     WModule::properties();
@@ -114,7 +114,7 @@ void WMReadAmiraMesh::moduleMain()
 
 void WMReadAmiraMesh::prepareResult()
 {
-    boost::shared_ptr< std::vector< WFiber > > fibs( new std::vector< WFiber > );
+    std::shared_ptr< std::vector< WFiber > > fibs( new std::vector< WFiber > );
     size_t globalPointId = 0;
     for( size_t edgeId = 0; edgeId < m_edges.size(); ++edgeId )
     {
@@ -128,7 +128,7 @@ void WMReadAmiraMesh::prepareResult()
         fibs->push_back( WFiber( fiberPoints ) );
     }
     WDataSetFiberVector fibersVector( fibs );
-    m_graph = boost::shared_ptr< WDataSetFibers >( fibersVector.toWDataSetFibers() );
+    m_graph = std::shared_ptr< WDataSetFibers >( fibersVector.toWDataSetFibers() );
     m_output->updateData( m_graph );
 }
 

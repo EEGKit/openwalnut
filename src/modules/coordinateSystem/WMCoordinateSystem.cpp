@@ -57,9 +57,9 @@ WMCoordinateSystem::~WMCoordinateSystem()
 {
 }
 
-boost::shared_ptr< WModule > WMCoordinateSystem::factory() const
+std::shared_ptr< WModule > WMCoordinateSystem::factory() const
 {
-    return boost::shared_ptr< WMCoordinateSystem >( new WMCoordinateSystem() );
+    return std::shared_ptr< WMCoordinateSystem >( new WMCoordinateSystem() );
 }
 
 const char** WMCoordinateSystem::getXPMIcon() const
@@ -70,7 +70,7 @@ const char** WMCoordinateSystem::getXPMIcon() const
 void WMCoordinateSystem::connectors()
 {
     // initialize connectors
-    m_input = boost::shared_ptr< WModuleInputData< WDataSetScalar > >( new WModuleInputData< WDataSetScalar > ( shared_from_this(), "in",
+    m_input = std::shared_ptr< WModuleInputData< WDataSetScalar > >( new WModuleInputData< WDataSetScalar > ( shared_from_this(), "in",
             "Dataset to create atlas surfaces from." ) );
     // add it to the list of connectors. Please note, that a connector NOT added via addConnector will not work as expected.
     addConnector( m_input );
@@ -133,7 +133,7 @@ void WMCoordinateSystem::properties()
     m_showCoronal = m_properties->addProperty( "Show rulers on coronal", "", false, propertyCallback );
     m_showSagittal = m_properties->addProperty( "Show rulers on sagittal", "", false, propertyCallback );
 
-    m_possibleSelections = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_possibleSelections = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_possibleSelections->addItem( "World", "" ); // NOTE: you can add XPM images here.
     m_possibleSelections->addItem( "Canonical", "" );
     m_possibleSelections->addItem( "Talairach", "" );
@@ -263,7 +263,7 @@ void WMCoordinateSystem::updateCallback()
     // *******************************************************************************************************
     //    osg::ref_ptr<osg::Drawable> old = osg::ref_ptr<osg::Drawable>( m_boxNode->getDrawable( 0 ) );
     //    m_boxNode->replaceDrawable( old, createGeometryNode() );
-    boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
+    std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
 
     double xOff = grid->getOffsetX();
     double yOff = grid->getOffsetY();
@@ -308,14 +308,14 @@ void WMCoordinateSystem::updateCallback()
 void WMCoordinateSystem::findBoundingBox()
 {
     // get bounding from dataset
-    boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
+    std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
 
     double xOff = grid->getOffsetX();
     double yOff = grid->getOffsetY();
     double zOff = grid->getOffsetZ();
 
     WVector3d offset( xOff, yOff, zOff );
-    m_coordConverter = boost::shared_ptr< WCoordConverter >( new WCoordConverter( grid->getTransformationMatrix(), grid->getOrigin(), offset ) );
+    m_coordConverter = std::shared_ptr< WCoordConverter >( new WCoordConverter( grid->getTransformationMatrix(), grid->getOrigin(), offset ) );
 
     WItemSelector s = m_csSelection->get( true );
     m_coordConverter->setCoordinateSystemMode( static_cast< coordinateSystemMode > ( s.getItemIndexOfSelected( 0 ) ) );
@@ -469,8 +469,8 @@ void WMCoordinateSystem::initTalairachConverter()
     WVector3d ac_c( m_coordConverter->w2c( m_ac->get() ) );
     WVector3d pc_c( m_coordConverter->w2c( m_pc->get() ) );
     WVector3d ihp_c( m_coordConverter->w2c( m_ihp->get() ) );
-    boost::shared_ptr< WTalairachConverter > talairachConverter =
-        boost::shared_ptr< WTalairachConverter >( new WTalairachConverter( ac_c, pc_c, ihp_c ) );
+    std::shared_ptr< WTalairachConverter > talairachConverter =
+        std::shared_ptr< WTalairachConverter >( new WTalairachConverter( ac_c, pc_c, ihp_c ) );
 
     WVector3d flt_c( m_coordConverter->w2c( m_flt->get() ) );
     WVector3d brb_c( m_coordConverter->w2c( m_brb->get() ) );
@@ -603,7 +603,7 @@ void WMCoordinateSystem::addSagittalGrid( float position )
             break;
         case CS_TALAIRACH:
         {
-            boost::shared_ptr< WTalairachConverter > tc = m_coordConverter->getTalairachConverter();
+            std::shared_ptr< WTalairachConverter > tc = m_coordConverter->getTalairachConverter();
 
             for( int i = -110; i < 81; i += 10 )
             {
@@ -684,7 +684,7 @@ void WMCoordinateSystem::addCoronalGrid( float position )
             break;
         case CS_TALAIRACH:
         {
-            boost::shared_ptr< WTalairachConverter > tc = m_coordConverter->getTalairachConverter();
+            std::shared_ptr< WTalairachConverter > tc = m_coordConverter->getTalairachConverter();
 
             for( int i = -80; i < 81; i += 10 )
             {
@@ -765,7 +765,7 @@ void WMCoordinateSystem::addAxialGrid( float position )
             break;
         case CS_TALAIRACH:
         {
-            boost::shared_ptr< WTalairachConverter > tc = m_coordConverter->getTalairachConverter();
+            std::shared_ptr< WTalairachConverter > tc = m_coordConverter->getTalairachConverter();
 
             for( int i = -80; i < 81; i += 10 )
             {

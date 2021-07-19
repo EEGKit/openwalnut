@@ -46,12 +46,12 @@ public:
     /**
      * Pointer to this. For convenience.
      */
-    typedef boost::shared_ptr< WModuleInputForwardData< T > > SPtr;
+    typedef std::shared_ptr< WModuleInputForwardData< T > > SPtr;
 
     /**
      * Pointer to this. For convenience.
      */
-    typedef boost::shared_ptr< const WModuleInputForwardData< T > > ConstSPtr;
+    typedef std::shared_ptr< const WModuleInputForwardData< T > > ConstSPtr;
 
     /**
      * Pointer to this. For convenience.
@@ -80,11 +80,11 @@ public:
      * \param name The name of this connector.
      * \param description Short description of this connector.
      */
-    WModuleInputForwardData( boost::shared_ptr< WModule > module, std::string name="", std::string description="" )
+    WModuleInputForwardData( std::shared_ptr< WModule > module, std::string name="", std::string description="" )
         :WModuleInputData< T >( module, name, description )
     {
         // initialize the output data connector
-        m_out = boost::shared_ptr< WModuleOutputData< T > >( new WModuleOutputData< T >( module, "[FWD]" + name, description ) );
+        m_out = std::shared_ptr< WModuleOutputData< T > >( new WModuleOutputData< T >( module, "[FWD]" + name, description ) );
     };
 
     /**
@@ -99,7 +99,7 @@ public:
      *
      * \param to the input connector to forward data to.
      */
-    virtual void forward( boost::shared_ptr< WModuleConnector > to )
+    virtual void forward( std::shared_ptr< WModuleConnector > to )
     {
         m_out->connect( to );
     }
@@ -109,7 +109,7 @@ public:
      *
      * \param to the input connector to be removed from forwarding list.
      */
-    virtual void unforward( boost::shared_ptr< WModuleConnector > to )
+    virtual void unforward( std::shared_ptr< WModuleConnector > to )
     {
         m_out->disconnect( to );
     }
@@ -123,7 +123,7 @@ public:
      *
      * \return The pointer to the created forward connector.
      */
-    static PtrType create( boost::shared_ptr< WModule > module, std::string name = "", std::string description = "" );
+    static PtrType create( std::shared_ptr< WModule > module, std::string name = "", std::string description = "" );
 
     /**
      * Convenience method to create a new instance of this in forward data connector with proper
@@ -135,13 +135,13 @@ public:
      *
      * \return The pointer to the created forward connector.
      */
-    static PtrType createAndAdd( boost::shared_ptr< WModule > module, std::string name = "", std::string description = "" );
+    static PtrType createAndAdd( std::shared_ptr< WModule > module, std::string name = "", std::string description = "" );
 
 protected:
     /**
      * The output connector which collects data and distributes it to all connectors connected using the forwardTo() method.
      */
-    boost::shared_ptr< WModuleOutputData< T > > m_out;
+    std::shared_ptr< WModuleOutputData< T > > m_out;
 
     /**
      * Gets called whenever a connected output updates its data. This method uses this callback to update the m_out connector to
@@ -150,7 +150,7 @@ protected:
      * \param input     the input connector receiving the change
      * \param output    the output connector sending the change
      */
-    virtual void notifyDataChange( boost::shared_ptr<WModuleConnector> input, boost::shared_ptr<WModuleConnector> output )
+    virtual void notifyDataChange( std::shared_ptr<WModuleConnector> input, std::shared_ptr<WModuleConnector> output )
     {
         m_out->updateData( WModuleInputData< T >::getData() );
 
@@ -164,7 +164,7 @@ protected:
      * \param here the connector of THIS module getting disconnected.
      * \param there the connector of the other module getting disconnected.
      */
-    virtual void notifyConnectionClosed( boost::shared_ptr<WModuleConnector> here, boost::shared_ptr<WModuleConnector> there )
+    virtual void notifyConnectionClosed( std::shared_ptr<WModuleConnector> here, std::shared_ptr<WModuleConnector> there )
     {
         m_out->reset();
 
@@ -176,7 +176,7 @@ private:
 };
 
 template < typename T >
-inline typename WModuleInputForwardData< T >::PtrType WModuleInputForwardData< T >::create( boost::shared_ptr< WModule > module,
+inline typename WModuleInputForwardData< T >::PtrType WModuleInputForwardData< T >::create( std::shared_ptr< WModule > module,
                                                                                             std::string name,
                                                                                             std::string description )
 {
@@ -184,7 +184,7 @@ inline typename WModuleInputForwardData< T >::PtrType WModuleInputForwardData< T
 }
 
 template < typename T >
-inline typename WModuleInputForwardData< T >::PtrType WModuleInputForwardData< T >::createAndAdd( boost::shared_ptr< WModule > module,
+inline typename WModuleInputForwardData< T >::PtrType WModuleInputForwardData< T >::createAndAdd( std::shared_ptr< WModule > module,
                                                                                                   std::string name,
                                                                                                   std::string description )
 {

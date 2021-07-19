@@ -103,7 +103,7 @@ public:
      *
      * \return Reference to the set of indices all beloning to a set of maximal size.
      */
-    boost::shared_ptr< std::set< size_t > > getMaxSet();
+    std::shared_ptr< std::set< size_t > > getMaxSet();
 
     /**
      * Merges two components (iow: makes a union) where the given elements are

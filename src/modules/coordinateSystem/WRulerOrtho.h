@@ -58,7 +58,7 @@ public:
      * \param mode
      * \param showNumbers
      */
-    WRulerOrtho( boost::shared_ptr<WCoordConverter>coordConverter, osg::Vec3 origin, scaleMode mode, bool showNumbers = true );
+    WRulerOrtho( std::shared_ptr<WCoordConverter>coordConverter, osg::Vec3 origin, scaleMode mode, bool showNumbers = true );
 
     /**
      * destructor
@@ -68,7 +68,7 @@ public:
 
 protected:
 private:
-    boost::shared_ptr<WCoordConverter>m_coordConverter; //!< stores pointer to a coordinate converter
+    std::shared_ptr<WCoordConverter>m_coordConverter; //!< stores pointer to a coordinate converter
 
     /**
      * Origin of the ruler, it will be drawn in the positive direction

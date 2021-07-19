@@ -26,7 +26,7 @@
 
 #include "WModuleRemovedEvent.h"
 
-WModuleRemovedEvent::WModuleRemovedEvent( boost::shared_ptr< WModule > module )
+WModuleRemovedEvent::WModuleRemovedEvent( std::shared_ptr< WModule > module )
     : QEvent( static_cast< QEvent::Type >( WQT_MODULE_REMOVE_EVENT ) ),
     m_module( module )
 {
@@ -38,7 +38,7 @@ WModuleRemovedEvent::~WModuleRemovedEvent()
     // cleanup
 }
 
-boost::shared_ptr< WModule > WModuleRemovedEvent::getModule()
+std::shared_ptr< WModule > WModuleRemovedEvent::getModule()
 {
     return m_module;
 }

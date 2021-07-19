@@ -29,7 +29,7 @@ WScaleToolButton::WScaleToolButton( size_t length, QWidget *parent /*= NULL */ )
     m_additionalWidth( 0 ),
     m_minLength( length )
 {
-    setMinimumWidth( fontMetrics().width( m_orgText.left( m_minLength ) + tr( ".." ) ) + m_additionalWidth );
+    setMinimumWidth( fontMetrics().horizontalAdvance( m_orgText.left( m_minLength ) + tr( ".." ) ) + m_additionalWidth );
     setSizePolicy( QSizePolicy::MinimumExpanding, QSizePolicy::Maximum );
 }
 
@@ -40,7 +40,7 @@ WScaleToolButton::WScaleToolButton( const QString &text, size_t length, QWidget 
     m_minLength( length )
 {
     setText( text );
-    setMinimumWidth( fontMetrics().width( m_orgText.left( m_minLength ) + tr( ".." ) ) + m_additionalWidth );
+    setMinimumWidth( fontMetrics().horizontalAdvance( m_orgText.left( m_minLength ) + tr( ".." ) ) + m_additionalWidth );
     setSizePolicy( QSizePolicy::MinimumExpanding, QSizePolicy::Maximum );
 }
 
@@ -51,20 +51,20 @@ void WScaleToolButton::resizeEvent( QResizeEvent* /*event*/ )
 
 QSize WScaleToolButton::sizeHint() const
 {
-    return QSize( fontMetrics().width( m_orgText ) + m_additionalWidth,
+    return QSize( fontMetrics().horizontalAdvance( m_orgText ) + m_additionalWidth,
                   QToolButton::sizeHint().height() );
 }
 
 QSize WScaleToolButton::minimumSizeHint() const
 {
-    return QSize( fontMetrics().width( m_orgText.left( m_minLength ) + tr( ".." ) ) + m_additionalWidth,
+    return QSize( fontMetrics().horizontalAdvance( m_orgText.left( m_minLength ) + tr( ".." ) ) + m_additionalWidth,
                   QToolButton::minimumSizeHint().height() );
 }
 
 void WScaleToolButton::setText( const QString &text )
 {
     m_orgText = text;
-    setMinimumWidth( fontMetrics().width( m_orgText.left( m_minLength ) + tr( ".." ) ) + m_additionalWidth );
+    setMinimumWidth( fontMetrics().horizontalAdvance( m_orgText.left( m_minLength ) + tr( ".." ) ) + m_additionalWidth );
     fitTextToSize();
 }
 
@@ -72,10 +72,10 @@ void WScaleToolButton::fitTextToSize()
 {
     int newwidth = width();
     QFontMetrics fn = fontMetrics();
-    if( newwidth < fn.width( m_orgText ) )
+    if( newwidth < fn.horizontalAdvance( m_orgText ) )
     {
         QString useText = m_orgText.left( m_orgText.length() - 1 );
-        while( fn.width( useText + tr( ".." ) ) > newwidth || useText.length() == 0 )
+        while( fn.horizontalAdvance( useText + tr( ".." ) ) > newwidth || useText.length() == 0 )
         {
             useText = useText.left( useText.length() - 1 );
         }

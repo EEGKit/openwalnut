@@ -39,7 +39,7 @@ WWriterDendrogram::WWriterDendrogram( const boost::filesystem::path& path, bool 
 {
 }
 
-void WWriterDendrogram::write( boost::shared_ptr< const WDendrogram > dendrogram ) const
+void WWriterDendrogram::write( std::shared_ptr< const WDendrogram > dendrogram ) const
 {
     std::ofstream file( m_fname.c_str() );
     file << dendrogram->toString();

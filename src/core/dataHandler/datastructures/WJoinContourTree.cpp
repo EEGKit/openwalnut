@@ -39,7 +39,7 @@ WJoinContourTree::WJoinContourTree()
 {
 }
 
-WJoinContourTree::WJoinContourTree( boost::shared_ptr< WDataSetSingle > dataset )
+WJoinContourTree::WJoinContourTree( std::shared_ptr< WDataSetSingle > dataset )
     : WTransferable(),
       m_elementIndices( dataset->getValueSet()->size() ),
       m_joinTree( dataset->getValueSet()->size() ),
@@ -49,12 +49,12 @@ WJoinContourTree::WJoinContourTree( boost::shared_ptr< WDataSetSingle > dataset 
     {
         throw WNotImplemented( std::string( "ATM there is only support for scalar fields" ) );
     }
-    m_valueSet = boost::dynamic_pointer_cast< WValueSet< double > >( dataset->getValueSet() );
+    m_valueSet = std::dynamic_pointer_cast< WValueSet< double > >( dataset->getValueSet() );
     if( !m_valueSet )
     {
         throw WNotImplemented( std::string( "ATM there is only support for scalar fields with doubles as scalars" ) );
     }
-    m_grid = boost::dynamic_pointer_cast< WGridRegular3D >( dataset->getGrid() );
+    m_grid = std::dynamic_pointer_cast< WGridRegular3D >( dataset->getGrid() );
     if( !m_grid )
     {
         throw WNotImplemented( std::string( "Only WGridRegular3D is supported, despite that its not a simplicial mesh!" ) );
@@ -98,9 +98,9 @@ void WJoinContourTree::buildJoinTree()
     }
 }
 
-boost::shared_ptr< std::set< size_t > > WJoinContourTree::getVolumeVoxelsEnclosedByIsoSurface( const double isoValue ) const
+std::shared_ptr< std::set< size_t > > WJoinContourTree::getVolumeVoxelsEnclosedByIsoSurface( const double isoValue ) const
 {
-    boost::shared_ptr< std::vector< size_t > > result( new std::vector< size_t >( m_elementIndices ) );
+    std::shared_ptr< std::vector< size_t > > result( new std::vector< size_t >( m_elementIndices ) );
     WUnionFind uf( m_elementIndices.size() );
 
     // using string_utils::operator<<;
@@ -127,7 +127,7 @@ boost::shared_ptr< std::set< size_t > > WJoinContourTree::getVolumeVoxelsEnclose
     return uf.getMaxSet();
 }
 
-WJoinContourTree::IndirectCompare::IndirectCompare( boost::shared_ptr< WValueSet< double > > valueSet )
+WJoinContourTree::IndirectCompare::IndirectCompare( std::shared_ptr< WValueSet< double > > valueSet )
     : m_valueSet( valueSet )
 {
 }
@@ -139,13 +139,13 @@ bool WJoinContourTree::IndirectCompare::operator()( size_t i, size_t j )
 
 // make the class beeing a WTransferrable:
 // ---------------------------------------
-boost::shared_ptr< WPrototyped > WJoinContourTree::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WJoinContourTree::m_prototype = std::shared_ptr< WPrototyped >();
 
-boost::shared_ptr< WPrototyped > WJoinContourTree::getPrototype()
+std::shared_ptr< WPrototyped > WJoinContourTree::getPrototype()
 {
     if( !m_prototype )
     {
-        m_prototype = boost::shared_ptr< WPrototyped >( new WJoinContourTree() );
+        m_prototype = std::shared_ptr< WPrototyped >( new WJoinContourTree() );
     }
     return m_prototype;
 }

@@ -40,12 +40,12 @@ public:
     /**
      * Convenience typedef for a shared_ptr
      */
-    typedef boost::shared_ptr< WGEAnimationFrameTimer > SPtr;
+    typedef std::shared_ptr< WGEAnimationFrameTimer > SPtr;
 
     /**
      * Convenience typedef for a const shared_ptr.
      */
-    typedef boost::shared_ptr< const WGEAnimationFrameTimer > ConstSPtr;
+    typedef std::shared_ptr< const WGEAnimationFrameTimer > ConstSPtr;
 
     /**
      * Constructs a frame based animation timer. The specified number of frames is used to convert the number of frames to a time.

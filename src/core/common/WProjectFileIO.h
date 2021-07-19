@@ -49,12 +49,12 @@ public:
     /**
      * Abbreviation for a shared pointer.
      */
-    typedef boost::shared_ptr< WProjectFileIO > SPtr;
+    typedef std::shared_ptr< WProjectFileIO > SPtr;
 
     /**
      * Abbreviation for const shared pointer.
      */
-    typedef boost::shared_ptr< const WProjectFileIO > ConstSPtr;
+    typedef std::shared_ptr< const WProjectFileIO > ConstSPtr;
 
     /**
      * Default constructor.
@@ -180,7 +180,7 @@ protected:
      * \param index     the ID to use
      * \param indexPrefix use this to add a prefix to the index
      */
-    void printProperties( std::ostream& output, boost::shared_ptr< WProperties > props, std::string indent, //NOLINT ( non-const ref )
+    void printProperties( std::ostream& output, std::shared_ptr< WProperties > props, std::string indent, //NOLINT ( non-const ref )
                           std::string prefix, unsigned int index, std::string indexPrefix = "" );
 
 

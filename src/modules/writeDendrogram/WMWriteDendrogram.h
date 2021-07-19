@@ -70,7 +70,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -98,7 +98,7 @@ private:
     /**
      * Input connector for writing the Dendrogram.
      */
-    boost::shared_ptr< WModuleInputData< const WDendrogram > > m_dendrogramIC;
+    std::shared_ptr< WModuleInputData< const WDendrogram > > m_dendrogramIC;
 
     WPropTrigger m_run; //!< Button to start saving
     WPropFilename m_savePath; //!< Path where Dendrogram should be stored

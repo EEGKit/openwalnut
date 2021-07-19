@@ -81,7 +81,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -129,17 +129,17 @@ private:
     /**
      * An input connector used to get datasets from other modules. The connection management between connectors must not be handled by the module.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;
 
     /**
      * The output connector used to provide the calculated data to other modules.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetSingle > > m_output;
+    std::shared_ptr< WModuleOutputData< WDataSetSingle > > m_output;
 
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * To group properties, use WPropGroup.
@@ -276,7 +276,7 @@ private:
     /**
      * A list of items that can be selected using m_aSingleSelection or m_aMultiSelection.
      */
-    boost::shared_ptr< WItemSelection > m_possibleSelections;
+    std::shared_ptr< WItemSelection > m_possibleSelections;
 
     /**
      * You should typedef the item type you use. This shortens some code later. We encapsulate a string into an item.
@@ -286,7 +286,7 @@ private:
     /**
      * A list of items that can be selected using m_aSingleSelectionUsingTypes property.
      */
-    boost::shared_ptr< WItemSelection > m_possibleSelectionsUsingTypes;
+    std::shared_ptr< WItemSelection > m_possibleSelectionsUsingTypes;
 
     /**
      * A Property used to show the callback mechanism avoiding the thread wake up on change.
@@ -405,14 +405,14 @@ private:
          *
          * \return true if the new value is OK.
          */
-        virtual bool accept( boost::shared_ptr< WPropertyVariable< WPVBaseTypes::PV_STRING > >  property, const WPVBaseTypes::PV_STRING& value );
+        virtual bool accept( std::shared_ptr< WPropertyVariable< WPVBaseTypes::PV_STRING > >  property, const WPVBaseTypes::PV_STRING& value );
 
         /**
          * Method to clone the constraint and create a new one with the correct dynamic type.
          *
          * \return the constraint.
          */
-        virtual boost::shared_ptr< WPropertyVariable< WPVBaseTypes::PV_STRING >::PropertyConstraint > clone();
+        virtual std::shared_ptr< WPropertyVariable< WPVBaseTypes::PV_STRING >::PropertyConstraint > clone();
     };
 };
 

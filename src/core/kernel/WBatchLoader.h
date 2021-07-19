@@ -42,18 +42,18 @@ class WModuleContainer;
  * Class for loading many datasets. It runs in a separate thread.
  */
 class WBatchLoader: public WThreadedRunner,
-                    public boost::enable_shared_from_this< WBatchLoader >
+                    public std::enable_shared_from_this< WBatchLoader >
 {
 public:
     /**
      * Shared ptr abbreviation
      */
-    typedef boost::shared_ptr< WBatchLoader > SPtr;
+    typedef std::shared_ptr< WBatchLoader > SPtr;
 
     /**
      * Const shared ptr abbreviation
      */
-    typedef boost::shared_ptr< const WBatchLoader > ConstSPtr;
+    typedef std::shared_ptr< const WBatchLoader > ConstSPtr;
 
     /**
      * The type is used to store the list of data modules
@@ -67,7 +67,7 @@ public:
      * \param filenames the files to load.
      * \param targetContainer the container to which the data modules should be added.
      */
-    WBatchLoader( std::vector< std::string > filenames, boost::shared_ptr< WModuleContainer > targetContainer );
+    WBatchLoader( std::vector< std::string > filenames, std::shared_ptr< WModuleContainer > targetContainer );
 
     /**
      * Destructor.
@@ -118,7 +118,7 @@ protected:
     /**
      * The container which later will contain the loaded datasets.
      */
-    boost::shared_ptr< WModuleContainer > m_targetContainer;
+    std::shared_ptr< WModuleContainer > m_targetContainer;
 
     /**
      * The list of modules that have been added.

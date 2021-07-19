@@ -40,7 +40,7 @@ WGEPostprocessor::WGEPostprocessor( std::string name, std::string description ):
     WPrototyped(),
     m_resultTextures(),
     m_depthTexture(),
-    m_properties( boost::shared_ptr< WProperties >( new WProperties( "Settings for " + name, "Post-processing properties" ) ) ),
+    m_properties( std::shared_ptr< WProperties >( new WProperties( "Settings for " + name, "Post-processing properties" ) ) ),
     m_name( name ),
     m_description( description )
 {

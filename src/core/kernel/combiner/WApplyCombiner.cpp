@@ -28,7 +28,7 @@
 
 #include "WApplyCombiner.h"
 
-WApplyCombiner::WApplyCombiner( boost::shared_ptr< WModuleContainer > target,
+WApplyCombiner::WApplyCombiner( std::shared_ptr< WModuleContainer > target,
                                 WModule::SPtr srcModule, std::string srcConnector,
                                 WModule::SPtr targetModule, std::string targetConnector ):
     WModuleOneToOneCombiner( target, srcModule, srcConnector, targetModule, targetConnector )
@@ -54,8 +54,8 @@ WApplyCombiner::~WApplyCombiner()
 void WApplyCombiner::apply()
 {
     // create the modules from the prototypes if needed
-    boost::shared_ptr< WModule > srcModule = m_srcModule;
-    boost::shared_ptr< WModule > targetModule = m_targetModule;
+    std::shared_ptr< WModule > srcModule = m_srcModule;
+    std::shared_ptr< WModule > targetModule = m_targetModule;
 
     // create module instance if src is a prototype
     if( srcModule && WModuleFactory::isPrototype( srcModule ) )

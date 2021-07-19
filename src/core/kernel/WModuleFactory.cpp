@@ -38,7 +38,7 @@
 #include "WModuleFactory.h"
 
 // factory instance as singleton
-boost::shared_ptr< WModuleFactory > WModuleFactory::m_instance = boost::shared_ptr< WModuleFactory >();
+std::shared_ptr< WModuleFactory > WModuleFactory::m_instance = std::shared_ptr< WModuleFactory >();
 
 WModuleFactory::WModuleFactory():
     m_prototypes(),
@@ -52,7 +52,7 @@ WModuleFactory::~WModuleFactory()
     // cleanup
 }
 
-boost::shared_ptr< WModuleLoader > WModuleFactory::getModuleLoader()
+std::shared_ptr< WModuleLoader > WModuleFactory::getModuleLoader()
 {
     return WModuleFactory::getModuleFactory()->m_moduleLoader;
 }
@@ -95,24 +95,24 @@ void WModuleFactory::load()
     WLogger::getLogger()->addLogMessage( "Loading Modules Done", "ModuleFactory", LL_INFO );
 }
 
-bool WModuleFactory::isPrototype( boost::shared_ptr< WModule > module )
+bool WModuleFactory::isPrototype( std::shared_ptr< WModule > module )
 {
     // for this a read lock is sufficient, gets unlocked if it looses scope
     PrototypeSharedContainerType::ReadTicket l = getModuleFactory()->m_prototypes.getReadTicket();
     return getModuleFactory()->checkPrototype( module, l );
 }
 
-bool WModuleFactory::checkPrototype( boost::shared_ptr< WModule > module, PrototypeSharedContainerType::ReadTicket ticket )
+bool WModuleFactory::checkPrototype( std::shared_ptr< WModule > module, PrototypeSharedContainerType::ReadTicket ticket )
 {
     return ( ticket->get().count( module ) != 0 );
 }
 
-boost::shared_ptr< WModule > WModuleFactory::create( std::string prototype, std::string uuid )
+std::shared_ptr< WModule > WModuleFactory::create( std::string prototype, std::string uuid )
 {
     return create( getPrototypeByName( prototype ), uuid );
 }
 
-boost::shared_ptr< WModule > WModuleFactory::create( boost::shared_ptr< WModule > prototype, std::string uuid )
+std::shared_ptr< WModule > WModuleFactory::create( std::shared_ptr< WModule > prototype, std::string uuid )
 {
     wlog::debug( "ModuleFactory" ) << "Creating new instance of prototype \"" << prototype->getName() << "\".";
 
@@ -129,7 +129,7 @@ boost::shared_ptr< WModule > WModuleFactory::create( boost::shared_ptr< WModule 
     l.reset();
 
     // call prototypes factory function
-    boost::shared_ptr< WModule > clone = boost::shared_ptr< WModule >( prototype->factory() );
+    std::shared_ptr< WModule > clone = std::shared_ptr< WModule >( prototype->factory() );
     // set uuid and keep track of it
     clone->setUUID( uuid );
     m_uuidModuleMap.insert( UuidModuleMap::value_type( clone->getUUID(), clone ) );
@@ -141,30 +141,30 @@ boost::shared_ptr< WModule > WModuleFactory::create( boost::shared_ptr< WModule 
     return clone;
 }
 
-void WModuleFactory::initializeModule( boost::shared_ptr< WModule > module )
+void WModuleFactory::initializeModule( std::shared_ptr< WModule > module )
 {
     module->initialize();
 }
 
-boost::shared_ptr< WModuleFactory > WModuleFactory::getModuleFactory()
+std::shared_ptr< WModuleFactory > WModuleFactory::getModuleFactory()
 {
     if( !m_instance )
     {
-        m_instance = boost::shared_ptr< WModuleFactory >( new WModuleFactory() );
+        m_instance = std::shared_ptr< WModuleFactory >( new WModuleFactory() );
     }
 
     return m_instance;
 }
 
 
-const boost::shared_ptr< WModule > WModuleFactory::isPrototypeAvailable( std::string name )
+const std::shared_ptr< WModule > WModuleFactory::isPrototypeAvailable( std::string name )
 {
     // for this a read lock is sufficient, gets unlocked if it looses scope
     PrototypeSharedContainerType::ReadTicket l = m_prototypes.getReadTicket();
 
     // find first and only prototype (ensured during load())
-    boost::shared_ptr< WModule > ret = boost::shared_ptr< WModule >();
-    for( std::set< boost::shared_ptr< WModule > >::const_iterator listIter = l->get().begin(); listIter != l->get().end();
+    std::shared_ptr< WModule > ret = std::shared_ptr< WModule >();
+    for( std::set< std::shared_ptr< WModule > >::const_iterator listIter = l->get().begin(); listIter != l->get().end();
             ++listIter )
     {
         if( ( *listIter )->getName() == name )
@@ -177,12 +177,12 @@ const boost::shared_ptr< WModule > WModuleFactory::isPrototypeAvailable( std::st
     return ret;
 }
 
-const boost::shared_ptr< WModule > WModuleFactory::getPrototypeByName( std::string name )
+const std::shared_ptr< WModule > WModuleFactory::getPrototypeByName( std::string name )
 {
-    boost::shared_ptr< WModule > ret = isPrototypeAvailable( name );
+    std::shared_ptr< WModule > ret = isPrototypeAvailable( name );
 
     // if not found -> throw
-    if( ret == boost::shared_ptr< WModule >() )
+    if( ret == std::shared_ptr< WModule >() )
     {
         throw WPrototypeUnknown( std::string( "Could not find prototype \"" + name + "\"." ) );
     }
@@ -190,7 +190,7 @@ const boost::shared_ptr< WModule > WModuleFactory::getPrototypeByName( std::stri
     return ret;
 }
 
-const boost::shared_ptr< WModule > WModuleFactory::getPrototypeByInstance( boost::shared_ptr< WModule > instance )
+const std::shared_ptr< WModule > WModuleFactory::getPrototypeByInstance( std::shared_ptr< WModule > instance )
 {
     return getPrototypeByName( instance->getName() );
 }
@@ -203,7 +203,7 @@ std::vector< WModule::ConstSPtr > WModuleFactory::getPrototypesByType( MODULE_TY
     PrototypeSharedContainerType::ReadTicket l = m_prototypes.getReadTicket();
 
     // find first and only prototype (ensured during load())
-    for( std::set< boost::shared_ptr< WModule > >::const_iterator listIter = l->get().begin(); listIter != l->get().end();
+    for( std::set< std::shared_ptr< WModule > >::const_iterator listIter = l->get().begin(); listIter != l->get().end();
             ++listIter )
     {
         if( ( *listIter )->getType() == type )
@@ -220,7 +220,7 @@ WModuleFactory::PrototypeSharedContainerType::ReadTicket WModuleFactory::getProt
     return m_prototypes.getReadTicket();
 }
 
-WCombinerTypes::WCompatiblesList WModuleFactory::getCompatiblePrototypes( boost::shared_ptr< WModule > module )
+WCombinerTypes::WCompatiblesList WModuleFactory::getCompatiblePrototypes( std::shared_ptr< WModule > module )
 {
     WCombinerTypes::WCompatiblesList compatibles;
 
@@ -250,7 +250,7 @@ WCombinerTypes::WCompatiblesList WModuleFactory::getCompatiblePrototypes( boost:
                 WCombinerTypes::WOneToOneCombiners lComp;
 
                 // NOTE: it is OK here to use the variable module even if it is NULL as the combiner in this case only adds the specified module
-                lComp.push_back( boost::shared_ptr< WApplyCombiner >( new WApplyCombiner( module, "", *listIter, "" ) ) );
+                lComp.push_back( std::shared_ptr< WApplyCombiner >( new WApplyCombiner( module, "", *listIter, "" ) ) );
 
                 // add this list
                 compatibles.push_back( WCombinerTypes::WCompatiblesGroup( ( *listIter ), lComp ) );
@@ -299,7 +299,7 @@ WCombinerTypes::WCompatiblesList WModuleFactory::getAllPrototypes()
         WCombinerTypes::WOneToOneCombiners lComp;
 
         // NOTE: it is OK here to use the variable module even if it is NULL as the combiner in this case only adds the specified module
-        lComp.push_back( boost::shared_ptr< WApplyCombiner >( new WApplyCombiner( *listIter ) ) );
+        lComp.push_back( std::shared_ptr< WApplyCombiner >( new WApplyCombiner( *listIter ) ) );
 
         // add this list
         compatibles.push_back( WCombinerTypes::WCompatiblesGroup( ( *listIter ), lComp ) );
@@ -325,7 +325,7 @@ WModule::SPtr WModuleFactory::findByUUID( std::string uuid )
     if( it != r->get().end() )
     {
         // found. Return locked weak_ptr.
-        boost::weak_ptr< WModule > m = ( *it ).second;
+        std::weak_ptr< WModule > m = ( *it ).second;
         return m.lock();
     }
     else

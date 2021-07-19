@@ -53,7 +53,7 @@ public:
      * \param module The represented module
      * \param type the type used for the treeitem. Used to identify the items.
      */
-    WQtTreeItem( QTreeWidgetItem* parent, WTreeItemType type, boost::shared_ptr< WModule > module );
+    WQtTreeItem( QTreeWidgetItem* parent, WTreeItemType type, std::shared_ptr< WModule > module );
 
     /**
      * Destructor.
@@ -136,7 +136,7 @@ protected:
     /**
      * Updates this item in regular intervals.
      */
-    boost::shared_ptr< QTimer > m_updateTimer;
+    std::shared_ptr< QTimer > m_updateTimer;
 
     /**
      * Name of the tree item.
@@ -172,7 +172,7 @@ private:
     /**
      * The module represented by this tree item.
      */
-    boost::shared_ptr< WModule > m_module;
+    std::shared_ptr< WModule > m_module;
 
     /**
      * Called when the name property changes.
@@ -189,7 +189,7 @@ private:
      *
      * \param connector the connector that was updated.
      */
-    void slotDataChanged( boost::shared_ptr< WModuleConnector > connector );
+    void slotDataChanged( std::shared_ptr< WModuleConnector > connector );
 };
 
 #endif  // WQTTREEITEM_H

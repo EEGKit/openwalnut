@@ -43,7 +43,7 @@ public:
      *
      * \param connector the related WModuleInputConnector
      */
-    explicit WQtNetworkInputPort( boost::shared_ptr<WModuleInputConnector> connector );
+    explicit WQtNetworkInputPort( std::shared_ptr<WModuleInputConnector> connector );
 
     /**
      * Destructor
@@ -68,9 +68,9 @@ public:
      * Returns the WModuleInputConnecter that belongs to this object.
      * \return a WModuleInputConnector
      */
-    boost::shared_ptr<WModuleInputConnector> getConnector();
+    std::shared_ptr<WModuleInputConnector> getConnector();
 
 private:
-    boost::shared_ptr<WModuleInputConnector> m_connector; //!< the related WModuleInputConnector
+    std::shared_ptr<WModuleInputConnector> m_connector; //!< the related WModuleInputConnector
 };
 #endif  // WQTNETWORKINPUTPORT_H

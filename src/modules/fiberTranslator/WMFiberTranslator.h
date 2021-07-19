@@ -68,7 +68,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -104,7 +104,7 @@ private:
      * \param dir The chosen directory.
      * \return The fiber dataset.
      */
-    boost::shared_ptr< WDataSetFibers > mergeFibers( boost::filesystem::path dir );
+    std::shared_ptr< WDataSetFibers > mergeFibers( boost::filesystem::path dir );
 
     /**
      * Merge the fibers from given directory.
@@ -112,7 +112,7 @@ private:
      * \param dir The chosen directory.
      * \return The fiber dataset.
      */
-    boost::shared_ptr< WDataSetFibers > mergeFibersNrrd( boost::filesystem::path dir );
+    std::shared_ptr< WDataSetFibers > mergeFibersNrrd( boost::filesystem::path dir );
 
     /**
      * Load fibers from an ExploreDTI .txt file.
@@ -120,10 +120,10 @@ private:
      * \param file The chosen txt file.
      * \return The fiber dataset.
      */
-    boost::shared_ptr< WDataSetFibers > loadExploreDTIFibers( boost::filesystem::path file );
+    std::shared_ptr< WDataSetFibers > loadExploreDTIFibers( boost::filesystem::path file );
 
     //! The output connector.
-    boost::shared_ptr< WModuleOutputData< WDataSetFibers > > m_output;
+    std::shared_ptr< WModuleOutputData< WDataSetFibers > > m_output;
 
     //! A property for choosing the directory that contains the fiber text files.
     WPropFilename m_propInputDirectory;
@@ -132,7 +132,7 @@ private:
     WPropFilename m_propInputFile;
 
     //! A condition for property updates.
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 };
 
 #endif  // WMFIBERTRANSLATOR_H

@@ -50,13 +50,13 @@ WEEGViewHandler::WEEGViewHandler( WPropInt labelsWidth,
                                   WPropDouble ySpacing,
                                   WPropDouble ySensitivity,
                                   WPropDouble colorSensitivity,
-                                  boost::shared_ptr< WFlag< boost::shared_ptr< WEEGEvent > > > event,
+                                  std::shared_ptr< WFlag< std::shared_ptr< WEEGEvent > > > event,
                                   osg::ref_ptr< WGEGroupNode > eventParentNode,
-                                  boost::shared_ptr< WEEG2 > eeg,
+                                  std::shared_ptr< WEEG2 > eeg,
                                   std::size_t segmentID,
                                   WPropBool snapToDipole,
                                   WPropBool proofOfConcept,
-                                  boost::shared_ptr< WDataSetDipoles > dipoles )
+                                  std::shared_ptr< WDataSetDipoles > dipoles )
     : m_labelsWidth( labelsWidth ),
       m_timePos( timePos ),
       m_timeRange( timeRange ),
@@ -234,7 +234,7 @@ bool WEEGViewHandler::markEvent( float x )
     {
         try
         {
-            boost::shared_ptr< WEEGEvent > event( new WEEGEvent(
+            std::shared_ptr< WEEGEvent > event( new WEEGEvent(
                     m_timePos->get() + ( x - labelsWidth ) * m_timeRange->get() / m_graphWidth->get(),
                     m_yPos->get(),
                     m_eeg,

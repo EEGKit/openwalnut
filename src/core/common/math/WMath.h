@@ -102,7 +102,7 @@ bool testIntersectTriangle( const WPosition& p1, const WPosition& p2, const WPos
 bool intersectPlaneSegment( const WPlane& p,
         const WPosition& p1,
         const WPosition& p2,
-        boost::shared_ptr< WPosition > pointOfIntersection );
+        std::shared_ptr< WPosition > pointOfIntersection );
 
 /**
  * Checks a line (consecutive line segments) on intersection with a plane
@@ -115,7 +115,7 @@ bool intersectPlaneSegment( const WPlane& p,
  *
  * \return True if an intersection was detected, false otherwise.
  */
-bool intersectPlaneLineNearCP( const WPlane& p, const WLine& l, boost::shared_ptr< WPosition > cutPoint );
+bool intersectPlaneLineNearCP( const WPlane& p, const WLine& l, std::shared_ptr< WPosition > cutPoint );
 
 /**
  * Computes the signum for the given value.

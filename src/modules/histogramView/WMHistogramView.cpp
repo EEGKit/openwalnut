@@ -30,7 +30,7 @@
 
 #include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 #include <osg/Drawable>
 #include <osg/Geode>
@@ -62,9 +62,9 @@ WMHistogramView::~WMHistogramView()
 {
 }
 
-boost::shared_ptr< WModule > WMHistogramView::factory() const
+std::shared_ptr< WModule > WMHistogramView::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMHistogramView() );
+    return std::shared_ptr< WModule >( new WMHistogramView() );
 }
 
 const char** WMHistogramView::getXPMIcon() const
@@ -83,7 +83,7 @@ const std::string WMHistogramView::getDescription() const
 
 void WMHistogramView::connectors()
 {
-    m_input = boost::shared_ptr< WModuleInputData< WDataSetHistogram1D > >(
+    m_input = std::shared_ptr< WModuleInputData< WDataSetHistogram1D > >(
                                  new WModuleInputData< WDataSetHistogram1D >(
                                      shared_from_this(), "Histogram input",
                                     "A histogram to show in the histogram viewer." ) );
@@ -94,9 +94,9 @@ void WMHistogramView::connectors()
 
 void WMHistogramView::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
-    boost::shared_ptr< WItemSelection > selections( new WItemSelection() );
+    std::shared_ptr< WItemSelection > selections( new WItemSelection() );
 
     // add the possible histogram styles and
     // corresponding geometry generation functions

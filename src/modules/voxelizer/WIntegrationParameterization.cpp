@@ -28,7 +28,7 @@
 
 #include "WIntegrationParameterization.h"
 
-WIntegrationParameterization::WIntegrationParameterization( boost::shared_ptr< WGridRegular3D > grid ):
+WIntegrationParameterization::WIntegrationParameterization( std::shared_ptr< WGridRegular3D > grid ):
     WRasterParameterization( grid ),
     m_lengthValues( grid->size(), 0.0 ),
     m_curLength( 0.0 )
@@ -41,19 +41,19 @@ WIntegrationParameterization::~WIntegrationParameterization()
     // cleanup
 }
 
-boost::shared_ptr< WDataSetScalar > WIntegrationParameterization::getDataSet()
+std::shared_ptr< WDataSetScalar > WIntegrationParameterization::getDataSet()
 {
-    boost::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 0,
+    std::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 0,
                                                                                 1,
-                                                                                boost::shared_ptr< std::vector< double > >(
+                                                                                std::shared_ptr< std::vector< double > >(
                                                                                     new std::vector< double >( m_lengthValues ) ),
                                                                                 W_DT_DOUBLE ) );
-    return boost::shared_ptr< WDataSetScalar >( new WDataSetScalar( valueSet, m_grid ) );
+    return std::shared_ptr< WDataSetScalar >( new WDataSetScalar( valueSet, m_grid ) );
 }
 
 namespace wip //WIntegrationParameterization
 {
-    size_t index( int x, int y, int z, boost::shared_ptr< WGridRegular3D > grid )
+    size_t index( int x, int y, int z, std::shared_ptr< WGridRegular3D > grid )
     {
         // check validity of voxel
         x = x < 0 ? 0 : x;

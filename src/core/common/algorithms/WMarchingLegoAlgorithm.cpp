@@ -287,11 +287,11 @@ size_t WMarchingLegoAlgorithm::getVertexID( size_t nX, size_t nY, size_t nZ )
     return nZ * ( m_nCellsY + 1 ) * ( m_nCellsX + 1 ) + nY * ( m_nCellsX + 1 ) + nX;
 }
 
-boost::shared_ptr<WTriangleMesh> WMarchingLegoAlgorithm::genSurfaceOneValue( size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
+std::shared_ptr<WTriangleMesh> WMarchingLegoAlgorithm::genSurfaceOneValue( size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
                                                                                                  const WMatrix< double >& mat,
                                                                                                  const std::vector< size_t >* vals,
                                                                                                  size_t isoValue,
-                                                                                                 boost::shared_ptr< WProgressCombiner > mainProgress )
+                                                                                                 std::shared_ptr< WProgressCombiner > mainProgress )
 {
     WAssert( vals, "No value set provided." );
 
@@ -309,10 +309,10 @@ boost::shared_ptr<WTriangleMesh> WMarchingLegoAlgorithm::genSurfaceOneValue( siz
 
     size_t nPointsInSlice = nX * nY;
 
-    boost::shared_ptr< WProgress > progress;
+    std::shared_ptr< WProgress > progress;
     if( mainProgress )
     {
-        progress = boost::shared_ptr< WProgress >( new WProgress( "Marching Legos", m_nCellsZ ) );
+        progress = std::shared_ptr< WProgress >( new WProgress( "Marching Legos", m_nCellsZ ) );
         mainProgress->addSubProgress( progress );
     }
 
@@ -393,7 +393,7 @@ boost::shared_ptr<WTriangleMesh> WMarchingLegoAlgorithm::genSurfaceOneValue( siz
         }
     }
     unsigned int nextID = 0;
-    boost::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( m_idToVertices.size(), m_trivecTriangles.size() ) );
+    std::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( m_idToVertices.size(), m_trivecTriangles.size() ) );
 
     // Rename vertices.
     ID2WMLPointXYZId::iterator mapIterator = m_idToVertices.begin();

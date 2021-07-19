@@ -202,7 +202,7 @@ public:
                 dataArray[i] = 1.1 * i;
             }
         }
-        boost::shared_ptr< std::vector< double > > vec = reader1.copyArray( dataArray, nbVoxels, vDim );
+        std::shared_ptr< std::vector< double > > vec = reader1.copyArray( dataArray, nbVoxels, vDim );
 
         TS_ASSERT_EQUALS( vec->size(), nbVoxels * vDim );
 

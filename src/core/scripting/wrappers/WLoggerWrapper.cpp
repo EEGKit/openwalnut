@@ -55,7 +55,7 @@ void WLoggerWrapper::removeFileStreamNumber( size_t i )
 
 bool WLoggerWrapper::addFileStream( std::string filename )
 {
-    boost::shared_ptr< std::ofstream > fileStream( new std::ofstream( filename.c_str() ) );
+    std::shared_ptr< std::ofstream > fileStream( new std::ofstream( filename.c_str() ) );
     if( !fileStream )
     {
         return false;

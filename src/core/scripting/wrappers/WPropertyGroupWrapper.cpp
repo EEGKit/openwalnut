@@ -26,7 +26,7 @@
 
 #include "WPropertyGroupWrapper.h"
 
-WPropertyGroupWrapper::WPropertyGroupWrapper( boost::shared_ptr< WPropertyGroup > group )
+WPropertyGroupWrapper::WPropertyGroupWrapper( std::shared_ptr< WPropertyGroup > group )
     : m_group( group )
 {
 }

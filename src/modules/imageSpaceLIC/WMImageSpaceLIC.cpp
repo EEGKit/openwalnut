@@ -67,9 +67,9 @@ WMImageSpaceLIC::~WMImageSpaceLIC()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMImageSpaceLIC::factory() const
+std::shared_ptr< WModule > WMImageSpaceLIC::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMImageSpaceLIC() );
+    return std::shared_ptr< WModule >( new WMImageSpaceLIC() );
 }
 
 const std::string WMImageSpaceLIC::getName() const
@@ -101,7 +101,7 @@ void WMImageSpaceLIC::connectors()
 
 void WMImageSpaceLIC::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_geometryGroup   = m_properties->addPropertyGroup( "Geometry",  "Selection of used geometry to apply LIC to." );
 
@@ -179,7 +179,7 @@ void WMImageSpaceLIC::properties()
     WModule::properties();
 }
 
-void WMImageSpaceLIC::initOSG( boost::shared_ptr< WGridRegular3D > grid, boost::shared_ptr< WTriangleMesh > mesh )
+void WMImageSpaceLIC::initOSG( std::shared_ptr< WGridRegular3D > grid, std::shared_ptr< WTriangleMesh > mesh )
 {
     // remove the old slices
     m_output->clear();
@@ -435,9 +435,9 @@ void WMImageSpaceLIC::moduleMain()
         // To query whether an input was updated, simply ask the input:
         bool dataUpdated = m_vectorsIn->handledUpdate() || m_scalarIn->handledUpdate() || m_meshIn->handledUpdate();
         bool propertyUpdated = m_useSlices->changed();
-        boost::shared_ptr< WDataSetVector > dataSetVec = m_vectorsIn->getData();
-        boost::shared_ptr< WDataSetScalar > dataSetScal = m_scalarIn->getData();
-        boost::shared_ptr< WTriangleMesh > mesh = m_meshIn->getData();
+        std::shared_ptr< WDataSetVector > dataSetVec = m_vectorsIn->getData();
+        std::shared_ptr< WDataSetScalar > dataSetScal = m_scalarIn->getData();
+        std::shared_ptr< WTriangleMesh > mesh = m_meshIn->getData();
 
         bool dataValid = ( dataSetVec || dataSetScal );
 
@@ -456,13 +456,13 @@ void WMImageSpaceLIC::moduleMain()
         }
 
         // prefer vector dataset if existing
-        boost::shared_ptr< WGridRegular3D > grid;
+        std::shared_ptr< WGridRegular3D > grid;
         if( dataSetVec )
         {
             debugLog() << "Using vector data";
 
             // get grid and prepare OSG
-            grid = boost::dynamic_pointer_cast< WGridRegular3D >( dataSetVec->getGrid() );
+            grid = std::dynamic_pointer_cast< WGridRegular3D >( dataSetVec->getGrid() );
             m_xPos->setMax( grid->getNbCoordsX() - 1 );
             m_yPos->setMax( grid->getNbCoordsY() - 1 );
             m_zPos->setMax( grid->getNbCoordsZ() - 1 );
@@ -477,7 +477,7 @@ void WMImageSpaceLIC::moduleMain()
             debugLog() << "Using scalar data";
 
             // get grid and prepare OSG
-            grid = boost::dynamic_pointer_cast< WGridRegular3D >( dataSetScal->getGrid() );
+            grid = std::dynamic_pointer_cast< WGridRegular3D >( dataSetScal->getGrid() );
             m_xPos->setMax( grid->getNbCoordsX() - 1 );
             m_yPos->setMax( grid->getNbCoordsY() - 1 );
             m_zPos->setMax( grid->getNbCoordsZ() - 1 );

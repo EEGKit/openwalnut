@@ -137,7 +137,7 @@ void WQtGLWidget::cleanUp()
     {
         m_Viewer->setClosed( true );
         WKernel::getRunningKernel()->getGraphicsEngine()->closeViewer( m_Viewer );
-        m_Viewer = boost::shared_ptr<WGEViewer>();
+        m_Viewer = std::shared_ptr<WGEViewer>();
     }
 }
 
@@ -194,7 +194,7 @@ WQtGLWidget::CameraManipulators WQtGLWidget::getCameraManipulators()
     return m_CurrentManipulator;
 }
 
-boost::shared_ptr< WGEViewer > WQtGLWidget::getViewer() const
+std::shared_ptr< WGEViewer > WQtGLWidget::getViewer() const
 {
     return m_Viewer;
 }
@@ -237,7 +237,7 @@ int WQtGLWidget::translateButton( QMouseEvent* event )
     {
         case( Qt::LeftButton ):
             return 1;
-        case( Qt::MidButton ):
+        case( Qt::MiddleButton ):
             return 2;
         case( Qt::RightButton ):
             return 3;
@@ -357,16 +357,9 @@ void WQtGLWidget::wheelEvent( QWheelEvent* event )
     if( m_Viewer )
     {
         int x, y;
-        if( event->orientation() == Qt::Vertical )
-        {
-            x = 0;
-            y = event->delta();
-        }
-        else
-        {
-            x = event->delta();
-            y = 0;
-        }
+        x = event->angleDelta().x();
+        y = event->angleDelta().y();
+
         m_Viewer->mouseEvent( WGEViewer::MOUSESCROLL, x, y, 0 );
     }
 }

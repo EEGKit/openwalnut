@@ -73,7 +73,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -126,9 +126,9 @@ private:
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
-    boost::shared_ptr< WModuleOutputData< WDataSetVector > > m_output; //!< The only output of this module.
+    std::shared_ptr< WModuleOutputData< WDataSetVector > > m_output; //!< The only output of this module.
 
 
     WPropInt m_nbVoxelsX; //!< number of voxels in x direction

@@ -53,7 +53,7 @@ class WLoggerWrapper
         std::string m_filename;
 
         //! The actual stream.
-        boost::shared_ptr< std::ofstream > m_fileStream;
+        std::shared_ptr< std::ofstream > m_fileStream;
 
         //! The logstream instance.
         WLogStream::SharedPtr m_WLogStream;

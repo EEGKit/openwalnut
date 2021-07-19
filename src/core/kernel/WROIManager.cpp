@@ -33,7 +33,7 @@
 
 WROIManager::WROIManager()
 {
-    m_properties = boost::shared_ptr< WProperties >( new WProperties( "Properties", "Module's properties" ) );
+    m_properties = std::shared_ptr< WProperties >( new WProperties( "Properties", "Module's properties" ) );
     m_dirty = m_properties->addProperty( "dirty", "dirty flag", true );
 }
 
@@ -41,12 +41,12 @@ WROIManager::~WROIManager()
 {
 }
 
-void WROIManager::addRoi( osg::ref_ptr< WROI > newRoi, boost::shared_ptr< WRMBranch > toBranch )
+void WROIManager::addRoi( osg::ref_ptr< WROI > newRoi, std::shared_ptr< WRMBranch > toBranch )
 {
     // add roi to branch
     toBranch->addRoi( newRoi );
 
-    for( std::list< boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > >::iterator iter = m_addNotifiers.begin();
+    for( std::list< std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > >::iterator iter = m_addNotifiers.begin();
             iter != m_addNotifiers.end(); ++iter )
     {
         ( **iter )( newRoi );
@@ -58,10 +58,10 @@ void WROIManager::addRoi( osg::ref_ptr< WROI > newRoi )
     addRoi( newRoi, addBranch() );
 }
 
-boost::shared_ptr< WRMBranch > WROIManager::addBranch()
+std::shared_ptr< WRMBranch > WROIManager::addBranch()
 {
     // create new branch
-    boost::shared_ptr< WRMBranch > newBranch( new WRMBranch( shared_from_this() ) );
+    std::shared_ptr< WRMBranch > newBranch( new WRMBranch( shared_from_this() ) );
     // add branch to list
     m_branches.push_back( newBranch );
 
@@ -72,8 +72,8 @@ boost::shared_ptr< WRMBranch > WROIManager::addBranch()
 void WROIManager::addRoi( osg::ref_ptr< WROI > newRoi, osg::ref_ptr< WROI > parentRoi )
 {
     // find branch
-    boost::shared_ptr< WRMBranch > branch;
-    for( std::list< boost::shared_ptr< WRMBranch > >::iterator iter = m_branches.begin(); iter != m_branches.end(); ++iter )
+    std::shared_ptr< WRMBranch > branch;
+    for( std::list< std::shared_ptr< WRMBranch > >::iterator iter = m_branches.begin(); iter != m_branches.end(); ++iter )
     {
         if( ( *iter ).get()->contains( parentRoi ) )
         {
@@ -83,7 +83,7 @@ void WROIManager::addRoi( osg::ref_ptr< WROI > newRoi, osg::ref_ptr< WROI > pare
     // add roi to branch
     branch->addRoi( newRoi );
 
-    for( std::list< boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > >::iterator iter = m_addNotifiers.begin();
+    for( std::list< std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > >::iterator iter = m_addNotifiers.begin();
             iter != m_addNotifiers.end(); ++iter )
     {
         ( **iter )( newRoi );
@@ -94,13 +94,13 @@ void WROIManager::removeRoi( osg::ref_ptr< WROI > roi )
 {
     WGraphicsEngine::getGraphicsEngine()->getScene()->remove( roi );
 
-    for( std::list< boost::shared_ptr< WRMBranch > >::iterator iter = m_branches.begin(); iter != m_branches.end(); ++iter )
+    for( std::list< std::shared_ptr< WRMBranch > >::iterator iter = m_branches.begin(); iter != m_branches.end(); ++iter )
     {
         ( *iter )->removeRoi( roi );
 
         if( ( *iter )->empty() )
         {
-            for( std::list< boost::shared_ptr< boost::function< void( boost::shared_ptr< WRMBranch > ) > > >::iterator iter2
+            for( std::list< std::shared_ptr< boost::function< void( std::shared_ptr< WRMBranch > ) > > >::iterator iter2
                       = m_removeBranchNotifiers.begin();
                   iter2 != m_removeBranchNotifiers.end();
                   ++iter2 )
@@ -113,7 +113,7 @@ void WROIManager::removeRoi( osg::ref_ptr< WROI > roi )
     }
     setDirty();
 
-    for( std::list< boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > >::iterator iter
+    for( std::list< std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > >::iterator iter
               = m_removeNotifiers.begin();
           iter != m_removeNotifiers.end();
           ++iter )
@@ -124,7 +124,7 @@ void WROIManager::removeRoi( osg::ref_ptr< WROI > roi )
 
 void WROIManager::removeBranch( osg::ref_ptr< WROI > roi )
 {
-    for( std::list< boost::shared_ptr< WRMBranch > >::iterator iter = m_branches.begin(); iter != m_branches.end(); ++iter )
+    for( std::list< std::shared_ptr< WRMBranch > >::iterator iter = m_branches.begin(); iter != m_branches.end(); ++iter )
     {
         if( roi == ( *iter )->getFirstRoi() )
         {
@@ -133,7 +133,7 @@ void WROIManager::removeBranch( osg::ref_ptr< WROI > roi )
 
         if( ( *iter )->empty() )
         {
-            for( std::list< boost::shared_ptr< boost::function< void( boost::shared_ptr< WRMBranch > ) > > >::iterator iter2
+            for( std::list< std::shared_ptr< boost::function< void( std::shared_ptr< WRMBranch > ) > > >::iterator iter2
                       = m_removeBranchNotifiers.begin();
                   iter2 != m_removeBranchNotifiers.end();
                   ++iter2 )
@@ -147,11 +147,11 @@ void WROIManager::removeBranch( osg::ref_ptr< WROI > roi )
     setDirty();
 }
 
-boost::shared_ptr< WRMBranch> WROIManager::getBranch( osg::ref_ptr< WROI > roi )
+std::shared_ptr< WRMBranch> WROIManager::getBranch( osg::ref_ptr< WROI > roi )
 {
-    boost::shared_ptr< WRMBranch> branch;
+    std::shared_ptr< WRMBranch> branch;
 
-    for( std::list< boost::shared_ptr< WRMBranch > >::iterator iter = m_branches.begin(); iter != m_branches.end(); ++iter )
+    for( std::list< std::shared_ptr< WRMBranch > >::iterator iter = m_branches.begin(); iter != m_branches.end(); ++iter )
     {
         if( ( *iter )->contains( roi ) )
         {
@@ -167,19 +167,19 @@ void WROIManager::setDirty()
 }
 
 /// @cond Supress doxygen because it produces warning here becuase it does not correctly understand the C++ code.
-void WROIManager::addAddNotifier( boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > notifier )
+void WROIManager::addAddNotifier( std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > notifier )
 {
-    boost::unique_lock< boost::shared_mutex > lock;
-    lock = boost::unique_lock< boost::shared_mutex >( m_associatedNotifiersLock );
+    std::unique_lock< std::shared_mutex > lock;
+    lock = std::unique_lock< std::shared_mutex >( m_associatedNotifiersLock );
     m_addNotifiers.push_back( notifier );
     lock.unlock();
 }
 
-void WROIManager::removeAddNotifier( boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > notifier )
+void WROIManager::removeAddNotifier( std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > notifier )
 {
-    boost::unique_lock< boost::shared_mutex > lock;
-    lock = boost::unique_lock< boost::shared_mutex >( m_associatedNotifiersLock );
-    std::list<  boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > >::iterator it;
+    std::unique_lock< std::shared_mutex > lock;
+    lock = std::unique_lock< std::shared_mutex >( m_associatedNotifiersLock );
+    std::list<  std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > >::iterator it;
     it = std::find( m_addNotifiers.begin(), m_addNotifiers.end(), notifier );
     if( it != m_addNotifiers.end() )
     {
@@ -188,19 +188,19 @@ void WROIManager::removeAddNotifier( boost::shared_ptr< boost::function< void( o
     lock.unlock();
 }
 
-void WROIManager::addRemoveNotifier( boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > notifier )
+void WROIManager::addRemoveNotifier( std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > notifier )
 {
-    boost::unique_lock< boost::shared_mutex > lock;
-    lock = boost::unique_lock< boost::shared_mutex >( m_associatedNotifiersLock );
+    std::unique_lock< std::shared_mutex > lock;
+    lock = std::unique_lock< std::shared_mutex >( m_associatedNotifiersLock );
     m_removeNotifiers.push_back( notifier );
     lock.unlock();
 }
 
-void WROIManager::removeRemoveNotifier( boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > notifier )
+void WROIManager::removeRemoveNotifier( std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > notifier )
 {
-    boost::unique_lock< boost::shared_mutex > lock;
-    lock = boost::unique_lock< boost::shared_mutex >( m_associatedNotifiersLock );
-    std::list<  boost::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > >::iterator it;
+    std::unique_lock< std::shared_mutex > lock;
+    lock = std::unique_lock< std::shared_mutex >( m_associatedNotifiersLock );
+    std::list<  std::shared_ptr< boost::function< void( osg::ref_ptr< WROI > ) > > >::iterator it;
     it = std::find( m_removeNotifiers.begin(), m_removeNotifiers.end(), notifier );
     if( it != m_removeNotifiers.end() )
     {
@@ -209,19 +209,19 @@ void WROIManager::removeRemoveNotifier( boost::shared_ptr< boost::function< void
     lock.unlock();
 }
 
-void WROIManager::addRemoveBranchNotifier(  boost::shared_ptr< boost::function< void( boost::shared_ptr< WRMBranch > ) > > notifier )
+void WROIManager::addRemoveBranchNotifier(  std::shared_ptr< boost::function< void( std::shared_ptr< WRMBranch > ) > > notifier )
 {
-    boost::unique_lock< boost::shared_mutex > lock;
-    lock = boost::unique_lock< boost::shared_mutex >( m_associatedNotifiersLock );
+    std::unique_lock< std::shared_mutex > lock;
+    lock = std::unique_lock< std::shared_mutex >( m_associatedNotifiersLock );
     m_removeBranchNotifiers.push_back( notifier );
     lock.unlock();
 }
 
-void WROIManager::removeRemoveBranchNotifier(  boost::shared_ptr< boost::function< void( boost::shared_ptr< WRMBranch > ) > > notifier )
+void WROIManager::removeRemoveBranchNotifier(  std::shared_ptr< boost::function< void( std::shared_ptr< WRMBranch > ) > > notifier )
 {
-    boost::unique_lock< boost::shared_mutex > lock;
-    lock = boost::unique_lock< boost::shared_mutex >( m_associatedNotifiersLock );
-    std::list<  boost::shared_ptr< boost::function< void( boost::shared_ptr< WRMBranch > ) > > >::iterator it;
+    std::unique_lock< std::shared_mutex > lock;
+    lock = std::unique_lock< std::shared_mutex >( m_associatedNotifiersLock );
+    std::list<  std::shared_ptr< boost::function< void( std::shared_ptr< WRMBranch > ) > > >::iterator it;
     it = std::find( m_removeBranchNotifiers.begin(), m_removeBranchNotifiers.end(), notifier );
     if( it != m_removeBranchNotifiers.end() )
     {
@@ -245,7 +245,7 @@ WROIManager::ROIs WROIManager::getRois() const
 {
     ROIs returnVec;
 
-    for( std::list< boost::shared_ptr< WRMBranch > >::const_iterator iter = m_branches.begin(); iter != m_branches.end(); ++iter )
+    for( std::list< std::shared_ptr< WRMBranch > >::const_iterator iter = m_branches.begin(); iter != m_branches.end(); ++iter )
     {
         ( *iter )->getRois( returnVec );
     }
@@ -258,7 +258,7 @@ WROIManager::Branches WROIManager::getBranches() const
     Branches returnVec;
 
     // copy
-    for( std::list< boost::shared_ptr< WRMBranch > >::const_iterator iter = m_branches.begin(); iter != m_branches.end(); ++iter )
+    for( std::list< std::shared_ptr< WRMBranch > >::const_iterator iter = m_branches.begin(); iter != m_branches.end(); ++iter )
     {
         returnVec.push_back( *iter );
     }

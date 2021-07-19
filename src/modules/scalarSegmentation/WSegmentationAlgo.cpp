@@ -37,7 +37,7 @@ WSegmentationAlgo::~WSegmentationAlgo()
 {
 }
 
-boost::shared_ptr< WCondition > WSegmentationAlgo::getCondition()
+std::shared_ptr< WCondition > WSegmentationAlgo::getCondition()
 {
     return m_propCondition;
 }

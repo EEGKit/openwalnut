@@ -89,7 +89,7 @@ public:
      *
      * \return Set of positions on the plane
      */
-    boost::shared_ptr< std::set< WPosition > > samplePoints( const WGridRegular3D& grid, double stepWidth );
+    std::shared_ptr< std::set< WPosition > > samplePoints( const WGridRegular3D& grid, double stepWidth );
 
 
     /**
@@ -153,7 +153,7 @@ public:
      *
      * \return Set of positions on the plane
      */
-    boost::shared_ptr< std::set< WPosition > > samplePoints( double stepWidth, size_t numX, size_t numY ) const;
+    std::shared_ptr< std::set< WPosition > > samplePoints( double stepWidth, size_t numX, size_t numY ) const;
 
 protected:
     WVector3d m_normal; //!< Direction of the plane

@@ -25,6 +25,8 @@
 #ifndef WSHAREDOBJECT_H
 #define WSHAREDOBJECT_H
 
+#include <shared_mutex>
+
 #include <boost/thread.hpp>
 
 #include "WCondition.h"
@@ -59,22 +61,22 @@ public:
     /**
      * Type for read tickets.
      */
-    typedef boost::shared_ptr< WSharedObjectTicketRead< T > > ReadTicket;
+    typedef std::shared_ptr< WSharedObjectTicketRead< T > > ReadTicket;
 
     /**
      * Type for write tickets.
      */
-    typedef boost::shared_ptr< WSharedObjectTicketWrite< T > > WriteTicket;
+    typedef std::shared_ptr< WSharedObjectTicketWrite< T > > WriteTicket;
 
     /**
      * Shared pointer abbreviation.
      */
-    typedef boost::shared_ptr< WSharedObject< T > > SPtr;
+    typedef std::shared_ptr< WSharedObject< T > > SPtr;
 
     /**
      * Const shared ptr abbreviation.
      */
-    typedef boost::shared_ptr< WSharedObject< T > > ConstSPtr;
+    typedef std::shared_ptr< WSharedObject< T > > ConstSPtr;
 
     /**
      * Returns a ticket to get read access to the contained data. After the ticket is freed, the read lock vanishes.
@@ -97,7 +99,7 @@ public:
      *
      * \return the condition
      */
-    boost::shared_ptr< WCondition > getChangeCondition() const;
+    std::shared_ptr< WCondition > getChangeCondition() const;
 
 protected:
     /**
@@ -110,19 +112,19 @@ protected:
      * The lock to ensure thread safe access. This member is mutable as the \ref getReadTicket and \ref getWriteTicket functions are const but need a
      * non-const reference to m_lock.
      */
-    mutable boost::shared_ptr< boost::shared_mutex > m_lock;
+    mutable std::shared_ptr< std::shared_mutex > m_lock;
 
     /**
      * This condition set fires whenever the contained object changes. This corresponds to the Observable pattern.
      */
-    boost::shared_ptr< WCondition > m_changeCondition;
+    std::shared_ptr< WCondition > m_changeCondition;
 
 private:
 };
 
 template < typename T >
 WSharedObject< T >::WSharedObject():
-    m_lock( new boost::shared_mutex ),
+    m_lock( new std::shared_mutex ),
     m_changeCondition( new WCondition() )
 {
     // init members
@@ -135,7 +137,7 @@ WSharedObject< T >::~WSharedObject()
 }
 
 template < typename T >
-boost::shared_ptr< WCondition > WSharedObject< T >::getChangeCondition() const
+std::shared_ptr< WCondition > WSharedObject< T >::getChangeCondition() const
 {
     return m_changeCondition;
 }
@@ -143,8 +145,8 @@ boost::shared_ptr< WCondition > WSharedObject< T >::getChangeCondition() const
 template < typename T >
 typename WSharedObject< T >::ReadTicket WSharedObject< T >::getReadTicket() const
 {
-    return boost::shared_ptr< WSharedObjectTicketRead< T > >(
-            new WSharedObjectTicketRead< T >( m_object, m_lock, boost::shared_ptr< WCondition >() )
+    return std::shared_ptr< WSharedObjectTicketRead< T > >(
+            new WSharedObjectTicketRead< T >( m_object, m_lock, std::shared_ptr< WCondition >() )
     );
 }
 
@@ -153,13 +155,13 @@ typename WSharedObject< T >::WriteTicket WSharedObject< T >::getWriteTicket( boo
 {
     if( suppressNotify )
     {
-        return boost::shared_ptr< WSharedObjectTicketWrite< T > >(
-                new WSharedObjectTicketWrite< T >( m_object, m_lock, boost::shared_ptr< WCondition >() )
+        return std::shared_ptr< WSharedObjectTicketWrite< T > >(
+                new WSharedObjectTicketWrite< T >( m_object, m_lock, std::shared_ptr< WCondition >() )
         );
     }
     else
     {
-        return boost::shared_ptr< WSharedObjectTicketWrite< T > >(
+        return std::shared_ptr< WSharedObjectTicketWrite< T > >(
                 new WSharedObjectTicketWrite< T >( m_object, m_lock, m_changeCondition )
         );
     }

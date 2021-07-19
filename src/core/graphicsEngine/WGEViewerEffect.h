@@ -43,12 +43,12 @@ class WGEViewerEffect: public WObjectNDIP< WGECamera >
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WGEViewerEffect >.
+     * Convenience typedef for a std::shared_ptr< WGEViewerEffect >.
      */
     typedef osg::ref_ptr< WGEViewerEffect > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WGEViewerEffect >.
+     * Convenience typedef for a std::shared_ptr< const WGEViewerEffect >.
      */
     typedef osg::ref_ptr< const WGEViewerEffect > ConstSPtr;
 

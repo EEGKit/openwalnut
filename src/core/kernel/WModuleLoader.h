@@ -46,12 +46,12 @@ public:
     /**
      * Shared pointer abbreviation.
      */
-    typedef boost::shared_ptr< WModuleLoader > SPtr;
+    typedef std::shared_ptr< WModuleLoader > SPtr;
 
     /**
      * Const pointer abbreviation.
      */
-    typedef boost::shared_ptr< const WModuleLoader > ConstSPtr;
+    typedef std::shared_ptr< const WModuleLoader > ConstSPtr;
 
     /**
      * Constructor. It does not load any files. Use load to do this.
@@ -69,7 +69,7 @@ public:
      *
      * \param ticket A write ticket to a shared container.
      */
-    void load( WSharedAssociativeContainer< std::set< boost::shared_ptr< WModule > > >::WriteTicket ticket );
+    void load( WSharedAssociativeContainer< std::set< std::shared_ptr< WModule > > >::WriteTicket ticket );
 
     /**
      * Returns the prefix of a shared module library filename.
@@ -88,7 +88,7 @@ private:
     /**
      * All the loaded shared libraries. Get freed on destruction. So do NOT free this instance while the libs are used.
      */
-    std::vector< boost::shared_ptr< WSharedLib > > m_libs;
+    std::vector< std::shared_ptr< WSharedLib > > m_libs;
 
     /**
      * Load the module prototypes from the shared libraries from the specified directory. It traverses the subdirectories and searches there.
@@ -98,7 +98,7 @@ private:
      * \param dir the directory to load
      * \param level the traversion level
      */
-    void load( WSharedAssociativeContainer< std::set< boost::shared_ptr< WModule > > >::WriteTicket ticket, boost::filesystem::path dir,
+    void load( WSharedAssociativeContainer< std::set< std::shared_ptr< WModule > > >::WriteTicket ticket, boost::filesystem::path dir,
                unsigned int level = 0 );
 
     /**
@@ -112,7 +112,7 @@ private:
          * \param lib the lib to keep
          * \param path the lib path
          */
-        PostponedLoad( boost::shared_ptr< WSharedLib > lib, boost::filesystem::path path ):
+        PostponedLoad( std::shared_ptr< WSharedLib > lib, boost::filesystem::path path ):
             m_lib( lib ),
             m_path( path )
         {
@@ -121,7 +121,7 @@ private:
         /**
          * The library. Need to keep this to avoid freeing the lib beforehand.
          */
-        boost::shared_ptr< WSharedLib > m_lib;
+        std::shared_ptr< WSharedLib > m_lib;
 
         /**
          * The path of the resources.

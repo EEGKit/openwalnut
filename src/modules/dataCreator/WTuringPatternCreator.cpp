@@ -31,7 +31,7 @@
 
 #include "WTuringPatternCreator.h"
 
-WTuringPatternCreator::WTuringPatternCreator( boost::shared_ptr< WProgress > const progress, std::size_t numThreads )
+WTuringPatternCreator::WTuringPatternCreator( std::shared_ptr< WProgress > const progress, std::size_t numThreads )
     : m_numThreads( numThreads ),
       m_numIterations( 100 ),
       m_spotIrregularity( 0.1 ),
@@ -66,7 +66,7 @@ void WTuringPatternCreator::setSpotSize( float size )
     m_spotSize = size;
 }
 
-boost::shared_ptr< std::vector< float > > WTuringPatternCreator::create( std::size_t sizeX, std::size_t sizeY, std::size_t sizeZ )
+std::shared_ptr< std::vector< float > > WTuringPatternCreator::create( std::size_t sizeX, std::size_t sizeY, std::size_t sizeZ )
 {
     // some constants, maybe change to parameters
     float const spotFactor = ( 0.02f + 0.58f * ( 1.0f - m_spotSize ) ) / 15.0f;
@@ -74,7 +74,7 @@ boost::shared_ptr< std::vector< float > > WTuringPatternCreator::create( std::si
     float const d2 = 0.03125f;
     float const speed = 1.0f;
 
-    boost::shared_ptr< std::vector< float > > concentration1( new std::vector< float >( sizeX * sizeY * sizeZ, 4.0f ) );
+    std::shared_ptr< std::vector< float > > concentration1( new std::vector< float >( sizeX * sizeY * sizeZ, 4.0f ) );
     std::vector< float > concentration2( sizeX * sizeY * sizeZ, 4.0f );
     std::vector< float > delta1( sizeX * sizeY * sizeZ, 0.0f );
     std::vector< float > delta2( sizeX * sizeY * sizeZ, 0.0f );
@@ -94,21 +94,21 @@ boost::shared_ptr< std::vector< float > > WTuringPatternCreator::create( std::si
     }
 
     // The threads will notify this condition when they are all done with their calculations for one iteration.
-    boost::shared_ptr< WConditionSet > continueCondition( new WConditionSet() );
+    std::shared_ptr< WConditionSet > continueCondition( new WConditionSet() );
     continueCondition->setResetable( true, true );
 
     // We notify this condition to wake all threads and make them calculate for the next iteration.
-    boost::shared_ptr< WConditionSet > waitCondition( new WConditionSet() );
+    std::shared_ptr< WConditionSet > waitCondition( new WConditionSet() );
     continueCondition->setResetable( true, true );
 
     // The threads use this counter to find out whether all of them have finished for the current iteration.
     WCounter counter;
 
-    std::vector< boost::shared_ptr< PatternThread > > threads;
+    std::vector< std::shared_ptr< PatternThread > > threads;
 
     for( std::size_t k = 0; k < m_numThreads; ++k )
     {
-        threads.push_back( boost::shared_ptr< PatternThread >( new PatternThread( k, m_numThreads, continueCondition, waitCondition, &counter ) ) );
+        threads.push_back( std::shared_ptr< PatternThread >( new PatternThread( k, m_numThreads, continueCondition, waitCondition, &counter ) ) );
         threads[ k ]->setDomainSize( sizeX, sizeY, sizeZ );
         threads[ k ]->setSpotFactor( spotFactor );
         threads[ k ]->setDiffusionConstants( d1, d2 );
@@ -156,8 +156,8 @@ boost::shared_ptr< std::vector< float > > WTuringPatternCreator::create( std::si
 }
 
 WTuringPatternCreator::PatternThread::PatternThread( std::size_t id, std::size_t max,
-                                                     boost::shared_ptr< WCondition > const mainThreadContinueCondition,
-                                                     boost::shared_ptr< WCondition > const waitForMainThreadCondition,
+                                                     std::shared_ptr< WCondition > const mainThreadContinueCondition,
+                                                     std::shared_ptr< WCondition > const waitForMainThreadCondition,
                                                      WCounter* const counter )
     : WThreadedRunner(),
       m_id( id ),

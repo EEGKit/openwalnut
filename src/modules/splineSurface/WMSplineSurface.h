@@ -79,7 +79,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -131,12 +131,12 @@ private:
     /**
      * This condition denotes whether we need to recompute the surface
      */
-    boost::shared_ptr< WCondition > m_recompute;
+    std::shared_ptr< WCondition > m_recompute;
 
-    boost::shared_ptr< WModuleInputData< const WFiberCluster > > m_input; //!< Input connector for a fiber cluster
-    boost::shared_ptr< WModuleOutputData< WTriangleMesh > > m_output; //!< Input connector required by this module.
+    std::shared_ptr< WModuleInputData< const WFiberCluster > > m_input; //!< Input connector for a fiber cluster
+    std::shared_ptr< WModuleOutputData< WTriangleMesh > > m_output; //!< Input connector required by this module.
 
-    boost::shared_ptr< WTriangleMesh > m_triMesh; //!< This triangle mesh is provided as output through the connector.
+    std::shared_ptr< WTriangleMesh > m_triMesh; //!< This triangle mesh is provided as output through the connector.
 
     osg::ref_ptr< WGEGroupNode > m_moduleNode; //!< Pointer to the modules group node. We need it to be able to update it when callback is invoked.
 

@@ -169,4 +169,3 @@ float getModelViewScale()
 }
 
 #endif // WGETRANSFORMATIONTOOLS_GLSL
-

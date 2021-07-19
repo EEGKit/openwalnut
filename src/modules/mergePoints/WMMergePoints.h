@@ -68,7 +68,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -96,22 +96,22 @@ private:
     /**
      * The input data.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetPoints > > m_pointsInput1;
+    std::shared_ptr< WModuleInputData< WDataSetPoints > > m_pointsInput1;
 
     /**
      * The input data.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetPoints > > m_pointsInput2;
+    std::shared_ptr< WModuleInputData< WDataSetPoints > > m_pointsInput2;
 
     /**
      * The output connector used to provide the calculated point data to other modules.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetPoints > > m_pointsOutput;
+    std::shared_ptr< WModuleOutputData< WDataSetPoints > > m_pointsOutput;
 
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 };
 
 #endif  // WMMERGEPOINTS_H

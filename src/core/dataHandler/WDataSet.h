@@ -48,18 +48,18 @@ class WDataSetVector;
  * steps) respectively.
  * \ingroup dataHandler
  */
-class WDataSet: public WTransferable, public boost::enable_shared_from_this< WDataSet > // NOLINT
+class WDataSet: public WTransferable, public std::enable_shared_from_this< WDataSet > // NOLINT
 {
 public:
     /**
      * Shared pointer abbreviation to a instance of this class.
      */
-    typedef boost::shared_ptr< WDataSet > SPtr;
+    typedef std::shared_ptr< WDataSet > SPtr;
 
     /**
      * Shared pointer abbreviation to a const instance of this class.
      */
-    typedef boost::shared_ptr< const WDataSet > ConstSPtr;
+    typedef std::shared_ptr< const WDataSet > ConstSPtr;
 
     /**
      * This constructor should be used if a dataSet does not stem from a file.
@@ -118,7 +118,7 @@ public:
      *
      * \return Returns a nonempty shared_ptr to it if it is a vector dataset, otherwise the pointer is empty!
      */
-    virtual boost::shared_ptr< WDataSetVector > isVectorDataSet();
+    virtual std::shared_ptr< WDataSetVector > isVectorDataSet();
 
     /**
      * Returns the texture- representation of the dataset. May throw an exception if no texture is available.
@@ -147,7 +147,7 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
     /**
      * Return a pointer to the properties object of the dataset. Add all the modifiable settings here. This allows the user to modify several
@@ -155,32 +155,32 @@ public:
      *
      * \return the properties.
      */
-    boost::shared_ptr< WProperties > getProperties() const;
+    std::shared_ptr< WProperties > getProperties() const;
 
     /**
      * Return a pointer to the information properties object of the dataset. The dataset intends these properties to not be modified.
      *
      * \return the properties.
      */
-    boost::shared_ptr< WProperties > getInformationProperties() const;
+    std::shared_ptr< WProperties > getInformationProperties() const;
 
 protected:
     /**
      * The prototype as singleton.
      */
-    static boost::shared_ptr< WPrototyped > m_prototype;
+    static std::shared_ptr< WPrototyped > m_prototype;
 
     /**
      * The property object for the dataset.
      */
-    boost::shared_ptr< WProperties > m_properties;
+    std::shared_ptr< WProperties > m_properties;
 
     /**
      * The property object for the dataset containing only props whose purpose is "PV_PURPOSE_INFORMNATION". It is useful to define some property
      * to only be of informational nature. The GUI does not modify them. As it is a WProperties instance, you can use it the same way as
      * m_properties.
      */
-    boost::shared_ptr< WProperties > m_infoProperties;
+    std::shared_ptr< WProperties > m_infoProperties;
 
 private:
     /**

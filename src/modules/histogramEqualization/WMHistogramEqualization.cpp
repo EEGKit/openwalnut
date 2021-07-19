@@ -46,9 +46,9 @@ WMHistogramEqualization::~WMHistogramEqualization()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMHistogramEqualization::factory() const
+std::shared_ptr< WModule > WMHistogramEqualization::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMHistogramEqualization() );
+    return std::shared_ptr< WModule >( new WMHistogramEqualization() );
 }
 
 const char** WMHistogramEqualization::getXPMIcon() const
@@ -69,14 +69,14 @@ const std::string WMHistogramEqualization::getDescription() const
 void WMHistogramEqualization::connectors()
 {
     // the dataset to process. Only accept scalar data.
-    m_input = boost::shared_ptr< WModuleInputData < WDataSetScalar  > >(
+    m_input = std::shared_ptr< WModuleInputData < WDataSetScalar  > >(
         new WModuleInputData< WDataSetScalar >( shared_from_this(),
                                                                "in", "The dataset whose histogram gets equalized." )
         );
     addConnector( m_input );
 
     // the output containing the equalized data.
-    m_output = boost::shared_ptr< WModuleOutputData < WDataSetScalar  > >(
+    m_output = std::shared_ptr< WModuleOutputData < WDataSetScalar  > >(
         new WModuleOutputData< WDataSetScalar >( shared_from_this(),
                                                                "out", "The dataset which has a linear cumulative histogram." )
         );
@@ -88,7 +88,7 @@ void WMHistogramEqualization::connectors()
 
 void WMHistogramEqualization::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     // clamping related stuff
     m_clamping = m_properties->addPropertyGroup( "Clamping",  "Clamping values in the dataset." );
@@ -148,18 +148,18 @@ void WMHistogramEqualization::moduleMain()
         bool dataUpdated = m_input->updated();
 
         // Remember the above criteria. We now need to check if the data is valid. After a connect-update, it might be NULL.
-        boost::shared_ptr< WDataSetScalar > dataSet = m_input->getData();
+        std::shared_ptr< WDataSetScalar > dataSet = m_input->getData();
         if( !dataSet )
         {
             debugLog() << "Resetting output.";
             m_output->reset();
             continue;
         }
-        boost::shared_ptr< WValueSetBase > valueSet = dataSet->getValueSet();
+        std::shared_ptr< WValueSetBase > valueSet = dataSet->getValueSet();
         dataUpdated = dataUpdated && dataSet;
 
         // prepare progress indicators
-        boost::shared_ptr< WProgress > progress( new WProgress( "Processing", 4 ) );
+        std::shared_ptr< WProgress > progress( new WProgress( "Processing", 4 ) );
         m_progress->addSubProgress( progress );
 
         // The data is valid and we received an update. The data is not NULL but may be the same as in previous loops.
@@ -168,7 +168,7 @@ void WMHistogramEqualization::moduleMain()
         debugLog() << "Calculating histogram with resolution " << histRes;
 
         // Grab the histogram whose modus (interval with most of the action) is used as interval for histogram equalization
-        boost::shared_ptr< const WValueSetHistogram > hist = dataSet->getHistogram( histRes );
+        std::shared_ptr< const WValueSetHistogram > hist = dataSet->getHistogram( histRes );
         ++*progress;
 
         // find interval borders and remove first and last p%
@@ -216,7 +216,7 @@ void WMHistogramEqualization::moduleMain()
                           " resulting in new interval [" << lower << ", " << upper <<").";
 
             // with this new interval, extract a new histogram and use it for equalization
-            hist = boost::shared_ptr< const WValueSetHistogram >( new WValueSetHistogram( valueSet, lower, upper, cdfHistRes ) );
+            hist = std::shared_ptr< const WValueSetHistogram >( new WValueSetHistogram( valueSet, lower, upper, cdfHistRes ) );
         }
 
         // the new data
@@ -275,11 +275,11 @@ void WMHistogramEqualization::moduleMain()
         debugLog() << "Updating output";
 
         // construct
-        boost::shared_ptr< WDataSetScalar > d = boost::shared_ptr< WDataSetScalar >(
-            new WDataSetScalar( boost::shared_ptr< WValueSetBase >(
+        std::shared_ptr< WDataSetScalar > d = std::shared_ptr< WDataSetScalar >(
+            new WDataSetScalar( std::shared_ptr< WValueSetBase >(
                                     new WValueSet< double >( 0,
                                                              1,
-                                                             boost::shared_ptr< std::vector< double > >(
+                                                             std::shared_ptr< std::vector< double > >(
                                                                  new std::vector< double >( newData ) ),
                                                              W_DT_DOUBLE ) ), dataSet->getGrid() )
         );

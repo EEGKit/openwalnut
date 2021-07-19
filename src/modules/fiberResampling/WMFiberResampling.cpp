@@ -56,9 +56,9 @@ WMFiberResampling::~WMFiberResampling()
 {
 }
 
-boost::shared_ptr< WModule > WMFiberResampling::factory() const
+std::shared_ptr< WModule > WMFiberResampling::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMFiberResampling() );
+    return std::shared_ptr< WModule >( new WMFiberResampling() );
 }
 
 const char** WMFiberResampling::getXPMIcon() const

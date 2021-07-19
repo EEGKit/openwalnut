@@ -42,9 +42,9 @@ WMVectorAlign::~WMVectorAlign()
 {
 }
 
-boost::shared_ptr< WModule > WMVectorAlign::factory() const
+std::shared_ptr< WModule > WMVectorAlign::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMVectorAlign() );
+    return std::shared_ptr< WModule >( new WMVectorAlign() );
 }
 
 const char** WMVectorAlign::getXPMIcon() const
@@ -82,7 +82,7 @@ void WMVectorAlign::requirements()
 
 namespace
 {
-    boost::shared_ptr< WDataSetVector > alignVectors( boost::shared_ptr< WDataSetVector > vectors )
+    std::shared_ptr< WDataSetVector > alignVectors( std::shared_ptr< WDataSetVector > vectors )
     {
         size_t numVecs = vectors->getValueSet()->size();
         std::vector< WVector3d > newData;
@@ -92,13 +92,13 @@ namespace
             newData.push_back( vectors->getVectorAt( i ) );
         }
 
-        boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( vectors->getGrid() );
+        std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( vectors->getGrid() );
         if( !grid )
         {
             return vectors;
         }
 
-        boost::shared_ptr< std::vector< double > > data( new std::vector< double > );
+        std::shared_ptr< std::vector< double > > data( new std::vector< double > );
 
         for( size_t i = 0; i < numVecs; ++i  )
         {
@@ -120,8 +120,8 @@ namespace
             data->push_back( newData[i][1] );
             data->push_back( newData[i][2] );
         }
-        boost::shared_ptr< WValueSet< double > > values( new WValueSet< double >( 1, 3, data, W_DT_DOUBLE ) );
-        return boost::shared_ptr< WDataSetVector >( new WDataSetVector( values, grid ) );
+        std::shared_ptr< WValueSet< double > > values( new WValueSet< double >( 1, 3, data, W_DT_DOUBLE ) );
+        return std::shared_ptr< WDataSetVector >( new WDataSetVector( values, grid ) );
     }
 }
 
@@ -146,7 +146,7 @@ void WMVectorAlign::moduleMain()
         }
 
         // save data behind connectors since it might change during processing
-        boost::shared_ptr< WDataSetVector > vectors = m_vectorIC->getData();
+        std::shared_ptr< WDataSetVector > vectors = m_vectorIC->getData();
 
         if( !vectors ) // if data valid
         {

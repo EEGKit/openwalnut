@@ -74,7 +74,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
 protected:
     /**
@@ -201,17 +201,17 @@ private:
      */
     void updateCurveRendering();
 
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_scalarIC; //!< Input connector for scalar data.
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_scalarIC; //!< Input connector for scalar data.
 
-    boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_transferFunction; //!< The transfer function as an input data set
+    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_transferFunction; //!< The transfer function as an input data set
 
-    boost::shared_ptr< WModuleInputData< WSinglePosition > > m_externalScreenPos; //!< External screen position for picking instead of by clicking.
+    std::shared_ptr< WModuleInputData< WSinglePosition > > m_externalScreenPos; //!< External screen position for picking instead of by clicking.
 
     osg::ref_ptr< WGEManagedGroupNode > m_rootNode; //!< All other geodes or OSG nodes of this module will be attached on this node.
 
     osg::ref_ptr< osg::Geode > m_geode; //!< The geometry rendered by this module.
 
-    boost::shared_ptr< WCondition > m_propCondition; //!< Needed for recreating the geometry, incase when resolution changes.
+    std::shared_ptr< WCondition > m_propCondition; //!< Needed for recreating the geometry, incase when resolution changes.
 
     WPropBool m_triggerCalculation; //!< Trigger Property, will be triggered by the pickhandle
 
@@ -219,7 +219,7 @@ private:
 
     WPropSelection m_selectionType; //!< Property determining what type of structure will be selected
 
-    boost::shared_ptr< WItemSelection > m_selectionTypesList; //!< List of selection types for \ref m_selectionType
+    std::shared_ptr< WItemSelection > m_selectionTypesList; //!< List of selection types for \ref m_selectionType
 
     WPropColor m_lineColor; //!< Color of line/s indicating selected position/s
 
@@ -239,11 +239,11 @@ private:
 
     WPropSelection m_pickingCriteriaCur; //!< Current picking method
 
-    boost::shared_ptr< WItemSelection > m_pickingCriteriaList; //!< Possible picking criteria for \ref m_pickingCriteriaCur
+    std::shared_ptr< WItemSelection > m_pickingCriteriaList; //!< Possible picking criteria for \ref m_pickingCriteriaCur
 
     WPropSelection m_wysiwypPositionType; //!< Selecting the type of position obtained by WYSIWYP
 
-    boost::shared_ptr< WItemSelection > m_wysiwypPositionTypesList; //!< Possible position types for WYSIWYP
+    std::shared_ptr< WItemSelection > m_wysiwypPositionTypesList; //!< Possible position types for WYSIWYP
 
     osg::Vec3f m_posStart; //!< Intersection position start
 

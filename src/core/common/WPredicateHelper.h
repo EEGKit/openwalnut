@@ -105,7 +105,7 @@ namespace WPredicateHelper
      * very common tool in OpenWalnut.
      */
     template< typename T >
-    class Name< boost::shared_ptr< T > >
+    class Name< std::shared_ptr< T > >
     {
     public:
         /**
@@ -125,7 +125,7 @@ namespace WPredicateHelper
          *
          * \return true if m_checked == inst.getName()
          */
-        bool operator()( const boost::shared_ptr< T >& inst )
+        bool operator()( const std::shared_ptr< T >& inst )
         {
             return inst->getName() == m_check;
         };

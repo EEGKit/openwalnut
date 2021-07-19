@@ -42,7 +42,7 @@ WFiberHandler::WFiberHandler( WMPointConnector* pointConnector )
     m_pointConnector = pointConnector;
     m_actionHandler = WActionHandler::SPtr( new WActionHandler() );
     m_fibers = PCFiberListSPtr( new PCFiberList() );
-    m_hidden = boost::shared_ptr< std::vector< char > >( new std::vector< char >() );
+    m_hidden = std::shared_ptr< std::vector< char > >( new std::vector< char >() );
 
     m_selectedFiber = 0;
     m_fiberCount = 1;
@@ -162,11 +162,19 @@ void WFiberHandler::createProperties( WPropertyGroup::SPtr properties )
     m_removeFiber = fiberGroup->addProperty( "Remove track", "Remove Track", WPVBaseTypes::PV_TRIGGER_READY, notifier );
     m_toggleFiber = fiberGroup->addProperty( "Toggle track", "Toggle Track", WPVBaseTypes::PV_TRIGGER_READY, notifier );
 
+    WItemSelection::SPtr selections = WItemSelection::SPtr( new WItemSelection() );
+    selections->addItem( ItemType::create( "Brush", "Brush", "", NULL ) );
+    selections->addItem( ItemType::create( "Line Loop", "Line Loop", "", NULL ) );
+    selections->addItem( ItemType::create( "Box", "Box", "", NULL ) );
+    m_selectionType = fiberGroup->addProperty( "Selection Type", "The type of the selection", selections->getSelectorFirst(), notifier );
+    WPropertyHelper::PC_SELECTONLYONE::addTo( m_selectionType );
+    WPropertyHelper::PC_NOTEMPTY::addTo( m_selectionType );
+
     m_undoTrigger = undoGroup->addProperty( "Undo", "Undo Changes", WPVBaseTypes::PV_TRIGGER_READY, notifier );
     m_redoTrigger = undoGroup->addProperty( "Redo", "Redo Changes", WPVBaseTypes::PV_TRIGGER_READY, notifier );
 }
 
-static bool sortComparator( boost::shared_ptr< WItemSelectionItem > a, boost::shared_ptr< WItemSelectionItem > b )
+static bool sortComparator( std::shared_ptr< WItemSelectionItem > a, std::shared_ptr< WItemSelectionItem > b )
 {
     return a->getName().compare( b->getName() ) < 0;
 }
@@ -343,6 +351,11 @@ void WFiberHandler::updateProperty( WPropertyBase::SPtr property )
     else if( property == m_fiberSelection )
     {
         selectFiber( m_fiberSelection->get().getItemIndexOfSelected( 0 ) );
+    }
+    else if( property == m_selectionType )
+    {
+        m_pointConnector->getOnscreenSelection()->setSelectionType(
+            static_cast< WOnscreenSelection::WSelectionType >( m_selectionType->get().getItemIndexOfSelected( 0 ) ) );
     }
 }
 

@@ -56,9 +56,9 @@ WMTransferFunctionColorBar::~WMTransferFunctionColorBar()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMTransferFunctionColorBar::factory() const
+std::shared_ptr< WModule > WMTransferFunctionColorBar::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMTransferFunctionColorBar() );
+    return std::shared_ptr< WModule >( new WMTransferFunctionColorBar() );
 }
 
 const char** WMTransferFunctionColorBar::getXPMIcon() const
@@ -86,7 +86,7 @@ void WMTransferFunctionColorBar::connectors()
 
 void WMTransferFunctionColorBar::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     WPropGroup colorBarGroup = m_properties->addPropertyGroup( "Colorbar", "The colorbar with several properties." );
     m_colorBarBorder = colorBarGroup->addProperty( "Show Border", "If true, a thin white border is shown around the colorbar.", true );
@@ -152,7 +152,7 @@ void WMTransferFunctionColorBar::moduleMain()
             WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_barProjection );
             colormapShader->deactivate( m_colorBar );
 
-            boost::shared_ptr< WDataSetSingle > dataSet = m_input->getData();
+            std::shared_ptr< WDataSetSingle > dataSet = m_input->getData();
 
             // add a colorbar
             if( dataSet )
@@ -177,9 +177,9 @@ void WMTransferFunctionColorBar::moduleMain()
 
                 // create the texture for color lookup
                 WAssert( dataSet, "data set" );
-                boost::shared_ptr< WValueSetBase > valueSet = dataSet->getValueSet();
+                std::shared_ptr< WValueSetBase > valueSet = dataSet->getValueSet();
                 WAssert( valueSet, "value set" );
-                boost::shared_ptr< WValueSet< unsigned char > > cvalueSet( boost::dynamic_pointer_cast<WValueSet< unsigned char> >( valueSet ) );
+                std::shared_ptr< WValueSet< unsigned char > > cvalueSet( std::dynamic_pointer_cast<WValueSet< unsigned char> >( valueSet ) );
                 if( !cvalueSet )
                 {
                     debugLog() << "invalid type";

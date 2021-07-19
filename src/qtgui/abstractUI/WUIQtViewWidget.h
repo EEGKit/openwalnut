@@ -49,14 +49,14 @@ class WUIQtViewWidget: public WUIViewWidget,
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WUIQtViewWidget >.
+     * Convenience typedef for a std::shared_ptr< WUIQtViewWidget >.
      */
-    typedef boost::shared_ptr< WUIQtViewWidget > SPtr;
+    typedef std::shared_ptr< WUIQtViewWidget > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WUIQtViewWidget >.
+     * Convenience typedef for a std::shared_ptr< const WUIQtViewWidget >.
      */
-    typedef boost::shared_ptr< const WUIQtViewWidget > ConstSPtr;
+    typedef std::shared_ptr< const WUIQtViewWidget > ConstSPtr;
 
     /**
      * Default constructor.
@@ -94,9 +94,9 @@ public:
     /**
      * Get the viewer which is used
      *
-     * \return the viewer as boost::shard_ptr
+     * \return the viewer as shared_ptr
      */
-    virtual boost::shared_ptr< WGEViewer > getViewer() const;
+    virtual std::shared_ptr< WGEViewer > getViewer() const;
 
     /**
      * Returns the height of the viewport of the camera.

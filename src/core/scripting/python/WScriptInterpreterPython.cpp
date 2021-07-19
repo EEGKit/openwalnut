@@ -39,7 +39,7 @@
 
 #ifdef PYTHON_FOUND
 
-WScriptInterpreterPython::WScriptInterpreterPython( boost::shared_ptr< WModuleContainer > const& rootContainer )
+WScriptInterpreterPython::WScriptInterpreterPython( std::shared_ptr< WModuleContainer > const& rootContainer )
     : WScriptInterpreter(),
       m_rootContainer( rootContainer ),
       m_argc( 0 ),
@@ -82,7 +82,7 @@ WScriptInterpreterPython::~WScriptInterpreterPython()
 
 void WScriptInterpreterPython::initBindings()
 {
-    boost::unique_lock< boost::mutex > lock( m_mutex );
+    std::unique_lock< boost::mutex > lock( m_mutex );
 
     m_pyMainNamespace[ "WColor" ] = pb::class_< WColorWrapper >( "WColor", pb::init< float, float, float, float >() )
                                     .add_property( "r", &WColorWrapper::getR, &WColorWrapper::setR )
@@ -162,7 +162,7 @@ void WScriptInterpreterPython::initBindings()
 
 void WScriptInterpreterPython::setParameters( std::vector< std::string > const& params )
 {
-    boost::unique_lock< boost::mutex > lock( m_mutex );
+    std::unique_lock< boost::mutex > lock( m_mutex );
 
     if( params.size() == 0 )
     {
@@ -192,7 +192,7 @@ void WScriptInterpreterPython::setParameters( std::vector< std::string > const& 
 
 void WScriptInterpreterPython::execute( std::string const& line )
 {
-    boost::unique_lock< boost::mutex > lock( m_mutex );
+    std::unique_lock< boost::mutex > lock( m_mutex );
 
     try
     {
@@ -291,7 +291,7 @@ void WScriptInterpreterPython::ScriptThread::threadMain()
 
         std::size_t numScripts = 0;
         {
-            boost::unique_lock< boost::mutex > lock( m_queueMutex );
+            std::unique_lock< boost::mutex > lock( m_queueMutex );
             numScripts = m_scriptQueue.size();
         }
 
@@ -301,7 +301,7 @@ void WScriptInterpreterPython::ScriptThread::threadMain()
 
             // only getting the script content must be locked
             {
-                boost::unique_lock< boost::mutex > lock( m_queueMutex );
+                std::unique_lock< boost::mutex > lock( m_queueMutex );
                 script = m_scriptQueue.front();
                 m_scriptQueue.pop();
             }
@@ -314,7 +314,7 @@ void WScriptInterpreterPython::ScriptThread::threadMain()
                 wlog::info( "WScriptInterpreterPython::ScriptThread" ) << "Done executing script.";
             }
             {
-                boost::unique_lock< boost::mutex > lock( m_queueMutex );
+                std::unique_lock< boost::mutex > lock( m_queueMutex );
                 numScripts = m_scriptQueue.size();
             }
         }
@@ -325,7 +325,7 @@ void WScriptInterpreterPython::ScriptThread::addToExecuteQueue( std::string cons
 {
     wlog::info( "WScriptInterpreterPython::ScriptThread" ) << "Queueing script for asyncronous execution.";
 
-    boost::unique_lock< boost::mutex > lock( m_queueMutex );
+    std::unique_lock< boost::mutex > lock( m_queueMutex );
     m_scriptQueue.push( script );
     m_condition->notify();
 }

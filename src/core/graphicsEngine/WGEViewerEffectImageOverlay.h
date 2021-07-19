@@ -42,12 +42,12 @@ class WGEViewerEffectImageOverlay: public WGEViewerEffect
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WGEViewerEffectImageOverlay >.
+     * Convenience typedef for a std::shared_ptr< WGEViewerEffectImageOverlay >.
      */
     typedef osg::ref_ptr< WGEViewerEffectImageOverlay > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WGEViewerEffectImageOverlay >.
+     * Convenience typedef for a std::shared_ptr< const WGEViewerEffectImageOverlay >.
      */
     typedef osg::ref_ptr< const WGEViewerEffectImageOverlay > ConstSPtr;
 
@@ -67,14 +67,14 @@ public:
      *
      * \param viewer the viewer in which the effect is used.
      */
-    void setReferenceViewer( boost::shared_ptr< WGEViewer > viewer );
+    void setReferenceViewer( std::shared_ptr< WGEViewer > viewer );
 
     /**
      * Query current reference viewer.
      *
      * \return the reference viewer or NULL if none has been set.
      */
-    const boost::shared_ptr< WGEViewer > getReferenceViewer() const;
+    const std::shared_ptr< WGEViewer > getReferenceViewer() const;
 
 protected:
     /**
@@ -100,7 +100,7 @@ protected:
     /**
      * The viewer used to query the current reference cam.
      */
-    boost::shared_ptr< WGEViewer > m_viewer;
+    std::shared_ptr< WGEViewer > m_viewer;
 
     /**
      * The filename to load.

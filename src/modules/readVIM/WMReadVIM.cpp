@@ -49,9 +49,9 @@ WMReadVIM::~WMReadVIM()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMReadVIM::factory() const
+std::shared_ptr< WModule > WMReadVIM::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMReadVIM() );
+    return std::shared_ptr< WModule >( new WMReadVIM() );
 }
 
 const std::string WMReadVIM::getName() const
@@ -139,7 +139,7 @@ void WMReadVIM::load()
         return;
     }
 
-    boost::shared_ptr< WProgress > progress1( new WProgress( "Loading" ) );
+    std::shared_ptr< WProgress > progress1( new WProgress( "Loading" ) );
     m_progress->addSubProgress( progress1 );
 
     // target memory
@@ -185,7 +185,7 @@ void WMReadVIM::load()
     infoLog() << "Loaded " << numPoints << " points from file. Done.";
 
     // finally provide output data
-    boost::shared_ptr< WDataSetPoints> newOutput( new WDataSetPoints( vertices, colors, bb ) );
+    std::shared_ptr< WDataSetPoints> newOutput( new WDataSetPoints( vertices, colors, bb ) );
     m_output->updateData( newOutput );
 
     // done. close file and report finish

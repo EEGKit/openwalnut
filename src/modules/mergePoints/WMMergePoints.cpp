@@ -45,9 +45,9 @@ WMMergePoints::~WMMergePoints()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMMergePoints::factory() const
+std::shared_ptr< WModule > WMMergePoints::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMMergePoints() );
+    return std::shared_ptr< WModule >( new WMMergePoints() );
 }
 
 const char** WMMergePoints::getXPMIcon() const
@@ -77,7 +77,7 @@ void WMMergePoints::connectors()
 
 void WMMergePoints::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     // call WModule's initialization
     WModule::properties();
@@ -143,8 +143,8 @@ void WMMergePoints::moduleMain()
 
         // To query whether an input was updated, simply ask the input:
         bool dataUpdated = m_pointsInput1->handledUpdate() || m_pointsInput2->handledUpdate();
-        boost::shared_ptr< WDataSetPoints > dataSet1 = m_pointsInput1->getData();
-        boost::shared_ptr< WDataSetPoints > dataSet2 = m_pointsInput2->getData();
+        std::shared_ptr< WDataSetPoints > dataSet1 = m_pointsInput1->getData();
+        std::shared_ptr< WDataSetPoints > dataSet2 = m_pointsInput2->getData();
         bool dataValid = ( dataSet1 && dataSet2 );
 
         // reset everything if input was disconnected/invalid

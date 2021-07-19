@@ -53,9 +53,9 @@ WMFiberSelection::~WMFiberSelection()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMFiberSelection::factory() const
+std::shared_ptr< WModule > WMFiberSelection::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMFiberSelection() );
+    return std::shared_ptr< WModule >( new WMFiberSelection() );
 }
 
 const char** WMFiberSelection::getXPMIcon() const
@@ -81,7 +81,7 @@ const std::string WMFiberSelection::getDescription() const
 void WMFiberSelection::connectors()
 {
     // The input fiber dataset
-    m_fiberInput = boost::shared_ptr< WModuleInputData < WDataSetFibers > >(
+    m_fiberInput = std::shared_ptr< WModuleInputData < WDataSetFibers > >(
         new WModuleInputData< WDataSetFibers >( shared_from_this(), "fibers", "The fiber dataset to select fibers from" )
     );
 
@@ -89,7 +89,7 @@ void WMFiberSelection::connectors()
     addConnector( m_fiberInput );
 
     // The first VOI dataset
-    m_voi1Input = boost::shared_ptr< WModuleInputData < WDataSetSingle > >(
+    m_voi1Input = std::shared_ptr< WModuleInputData < WDataSetSingle > >(
         new WModuleInputData< WDataSetSingle >( shared_from_this(), "VOI1", "The first volume of interest." )
     );
 
@@ -97,7 +97,7 @@ void WMFiberSelection::connectors()
     addConnector( m_voi1Input );
 
     // The second VOI dataset
-    m_voi2Input = boost::shared_ptr< WModuleInputData < WDataSetSingle > >(
+    m_voi2Input = std::shared_ptr< WModuleInputData < WDataSetSingle > >(
         new WModuleInputData< WDataSetSingle >( shared_from_this(), "VOI2", "The second volume of interest." )
     );
 
@@ -105,7 +105,7 @@ void WMFiberSelection::connectors()
     addConnector( m_voi2Input );
 
     // the selected fibers go to this output
-    m_fiberOutput = boost::shared_ptr< WModuleOutputData < WDataSetFibers > >(
+    m_fiberOutput = std::shared_ptr< WModuleOutputData < WDataSetFibers > >(
         new WModuleOutputData< WDataSetFibers >( shared_from_this(),
                                         "out", "The fiber dataset only containing fibers which got through both volume of interest." )
     );
@@ -114,7 +114,7 @@ void WMFiberSelection::connectors()
     addConnector( m_fiberOutput );
 
     // the selected fibers (as clusters) go to this output
-    m_clusterOutput = boost::shared_ptr< WModuleOutputData < WFiberCluster > >(
+    m_clusterOutput = std::shared_ptr< WModuleOutputData < WFiberCluster > >(
         new WModuleOutputData< WFiberCluster >( shared_from_this(),
                                         "cluster", "The cluster dataset only containing fibers which got through both volume of interest." )
     );
@@ -129,7 +129,7 @@ void WMFiberSelection::connectors()
 void WMFiberSelection::properties()
 {
     // used to notify about changed properties
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     // the threshold for testing whether a fiber vertex is inside a volume of interest.
     m_voi1Threshold = m_properties->addProperty( "VOI1 threshold", "The threshold uses for determining whether a fiber is inside the first VOI"
@@ -187,9 +187,9 @@ void WMFiberSelection::moduleMain()
             break;
         }
 
-        boost::shared_ptr< WDataSetFibers > newFibers = m_fiberInput->getData();
-        boost::shared_ptr< WDataSetSingle > newVoi1 = m_voi1Input->getData();
-        boost::shared_ptr< WDataSetSingle > newVoi2 = m_voi2Input->getData();
+        std::shared_ptr< WDataSetFibers > newFibers = m_fiberInput->getData();
+        std::shared_ptr< WDataSetSingle > newVoi1 = m_voi1Input->getData();
+        std::shared_ptr< WDataSetSingle > newVoi2 = m_voi2Input->getData();
 
         bool dataChanged = ( m_fibers != newFibers ) || ( m_voi1 != newVoi1 ) ||( m_voi2 != newVoi2 );
         bool dataValid =   ( newFibers && newVoi1 && newVoi2 );
@@ -226,20 +226,20 @@ void WMFiberSelection::moduleMain()
             bool   preferShortestPath = m_preferShortestPath->get( true );
 
             // get the fiber definitions
-            boost::shared_ptr< std::vector< size_t > > fibStart = m_fibers->getLineStartIndexes();
-            boost::shared_ptr< std::vector< size_t > > fibLen   = m_fibers->getLineLengths();
-            boost::shared_ptr< std::vector< float > >  fibVerts = m_fibers->getVertices();
+            std::shared_ptr< std::vector< size_t > > fibStart = m_fibers->getLineStartIndexes();
+            std::shared_ptr< std::vector< size_t > > fibLen   = m_fibers->getLineLengths();
+            std::shared_ptr< std::vector< float > >  fibVerts = m_fibers->getVertices();
 
             // currently, both grids need to be the same
             // the grid of voi1 and voi2 is needed here
-            boost::shared_ptr< WGridRegular3D > grid1 = boost::dynamic_pointer_cast< WGridRegular3D >( m_voi1->getGrid() );
-            boost::shared_ptr< WGridRegular3D > grid2 = boost::dynamic_pointer_cast< WGridRegular3D >( m_voi2->getGrid() );
+            std::shared_ptr< WGridRegular3D > grid1 = std::dynamic_pointer_cast< WGridRegular3D >( m_voi1->getGrid() );
+            std::shared_ptr< WGridRegular3D > grid2 = std::dynamic_pointer_cast< WGridRegular3D >( m_voi2->getGrid() );
 
             // the list of fibers
             std::vector< boost::tuple< size_t, size_t, size_t > > matches;  // a match contains the fiber ID, the start vertex ID and the stop ID
 
             // progress indication
-            boost::shared_ptr< WProgress > progress1( new WProgress( "Checking fibers against ", fibStart->size() ) );
+            std::shared_ptr< WProgress > progress1( new WProgress( "Checking fibers against ", fibStart->size() ) );
             m_progress->addSubProgress( progress1 );
 
             // there are several scenarios possible, how the VOIs can be. They can intersect each other, one being inside the other or they might
@@ -350,17 +350,17 @@ void WMFiberSelection::moduleMain()
 
             // combine it to a new fiber dataset
             // the required arrays:
-            boost::shared_ptr< std::vector< float > >  newFibVerts( new std::vector< float >() );
-            boost::shared_ptr< std::vector< size_t > > newFibStart( new std::vector< size_t >() );
-            boost::shared_ptr< std::vector< size_t > > newFibLen( new std::vector< size_t >() );
-            boost::shared_ptr< std::vector< size_t > > newFibVertsRev( new std::vector< size_t >() );
+            std::shared_ptr< std::vector< float > >  newFibVerts( new std::vector< float >() );
+            std::shared_ptr< std::vector< size_t > > newFibStart( new std::vector< size_t >() );
+            std::shared_ptr< std::vector< size_t > > newFibLen( new std::vector< size_t >() );
+            std::shared_ptr< std::vector< size_t > > newFibVertsRev( new std::vector< size_t >() );
 
-            progress1 = boost::shared_ptr< WProgress >( new WProgress( "Creating Output Dataset.", matches.size() ) );
+            progress1 = std::shared_ptr< WProgress >( new WProgress( "Creating Output Dataset.", matches.size() ) );
             m_progress->addSubProgress( progress1 );
             debugLog() << "Creating new Fiber Dataset and Cluster.";
 
             // the cluster which gets iteratively build
-            boost::shared_ptr< WFiberCluster > newFiberCluster( new WFiberCluster() );
+            std::shared_ptr< WFiberCluster > newFiberCluster( new WFiberCluster() );
 
             // add each match to the above arrays
             size_t curVertIdx = 0;  // the current index in the vertex array
@@ -414,14 +414,14 @@ void WMFiberSelection::moduleMain()
             progress1->finish();
 
             // create the new dataset
-            boost::shared_ptr< WDataSetFibers > newFibers( new WDataSetFibers( newFibVerts, newFibStart, newFibLen, newFibVertsRev ) );
+            std::shared_ptr< WDataSetFibers > newFibers( new WDataSetFibers( newFibVerts, newFibStart, newFibLen, newFibVertsRev ) );
 
             // create a WDataSetFiberVector which is needed for the WFiberCluster
-            progress1 = boost::shared_ptr< WProgress >( new WProgress( "Creating Output Vector Dataset." ) );
+            progress1 = std::shared_ptr< WProgress >( new WProgress( "Creating Output Vector Dataset." ) );
             m_progress->addSubProgress( progress1 );
             debugLog() << "Creating Fiber Vector Dataset.";
 
-            boost::shared_ptr< WDataSetFiberVector > newFiberVector( new WDataSetFiberVector( newFibers )
+            std::shared_ptr< WDataSetFiberVector > newFiberVector( new WDataSetFiberVector( newFibers )
             );
             newFiberCluster->setDataSetReference( newFiberVector );
             newFiberCluster->generateCenterLine();

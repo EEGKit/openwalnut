@@ -26,9 +26,10 @@
 #define WMODULECONNECTOR_H
 
 #include <set>
+#include <shared_mutex>
 #include <string>
 
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/signals2/connection.hpp>
 #include <boost/signals2/signal.hpp>
@@ -47,7 +48,7 @@ class WModuleOutputConnector;
  * Base class for modelling connections between kernel modules. It contains several pure virtual member functions and can
  * therefore not instantiated directly.
  */
-class  WModuleConnector: public boost::enable_shared_from_this<WModuleConnector>
+class  WModuleConnector: public std::enable_shared_from_this<WModuleConnector>
 {
     friend class WModuleConnectorTest; //!< Access for test class.
     friend class WModuleProjectFileCombiner; //!< Access for creating a module graph automatically.
@@ -56,12 +57,12 @@ public:
     /**
      * Shared pointer to this class.
      */
-    typedef boost::shared_ptr< WModuleConnector > SPtr;
+    typedef std::shared_ptr< WModuleConnector > SPtr;
 
     /**
      * Const shared pointer to this class.
      */
-    typedef boost::shared_ptr< const WModuleConnector > ConstSPtr;
+    typedef std::shared_ptr< const WModuleConnector > ConstSPtr;
 
     /**
      * Constructor.
@@ -70,7 +71,7 @@ public:
      * \param name The name of this connector.
      * \param description Short description of this connector.
      */
-    WModuleConnector( boost::shared_ptr< WModule > module, std::string name="", std::string description="" );
+    WModuleConnector( std::shared_ptr< WModule > module, std::string name="", std::string description="" );
 
     /**
      * Destructor.
@@ -82,7 +83,7 @@ public:
      *
      * \return the module owning the connector.
      */
-    boost::shared_ptr< WModule > getModule() const;
+    std::shared_ptr< WModule > getModule() const;
 
     /**
      * Disconnects this connector if connected. If it is not connected: nothing happens.
@@ -90,7 +91,7 @@ public:
      * \param con the connector to disconnect.
      * \param removeFromOwnList if true the specified connection is also removed from the own connection list. If false it won't.
      */
-    virtual void disconnect( boost::shared_ptr<WModuleConnector> con, bool removeFromOwnList = true );
+    virtual void disconnect( std::shared_ptr<WModuleConnector> con, bool removeFromOwnList = true );
 
     /**
      * Disconnects ALL connected connectors.
@@ -106,7 +107,7 @@ public:
      *
      * \exception WModuleConnectionFailed if connection can not be established.
      */
-    virtual void connect( boost::shared_ptr<WModuleConnector> con, bool force = false );
+    virtual void connect( std::shared_ptr<WModuleConnector> con, bool force = false );
 
     /**
      * Checks whether this connector is connected to the given one. If there is the strange case where one connector is connected
@@ -118,7 +119,7 @@ public:
      *
      * \throw WModuleConnectionInvalid thrown if one connector thinks it is connected but the other one not.
      */
-    bool isConnectedTo( boost::shared_ptr<WModuleConnector> con );
+    bool isConnectedTo( std::shared_ptr<WModuleConnector> con );
 
     /**
      * Gets the count of connections currently established.
@@ -182,7 +183,7 @@ public:
      *
      * \return true if compatible.
      */
-    virtual bool connectable( boost::shared_ptr<WModuleConnector> con ) = 0;
+    virtual bool connectable( std::shared_ptr<WModuleConnector> con ) = 0;
 
     /**
      * Checks whether the specified connector is connectable to this one, but ignores compatibility the type to be transferred. If you implement your
@@ -192,7 +193,7 @@ public:
      *
      * \return true if compatible.
      */
-    virtual bool lazyConnectable( boost::shared_ptr<WModuleConnector> con ) = 0;
+    virtual bool lazyConnectable( std::shared_ptr<WModuleConnector> con ) = 0;
 
     /**
      * Returns a list of possible disconnections for this connector. Please be aware that the connections might change during the life-time of
@@ -207,14 +208,14 @@ public:
      *
      * \return this as  input connector
      */
-    boost::shared_ptr< WModuleInputConnector > toInputConnector();
+    std::shared_ptr< WModuleInputConnector > toInputConnector();
 
     /**
      * Tries to convert this instance to an output connector.
      *
      * \return this as output connector
      */
-    boost::shared_ptr< WModuleOutputConnector > toOutputConnector();
+    std::shared_ptr< WModuleOutputConnector > toOutputConnector();
 
     /**
      * Returns true if this instance is an WModuleInputConnector.
@@ -235,19 +236,19 @@ public:
      *
      * \return the condition
      */
-    boost::shared_ptr< WCondition > getDataChangedCondition();
+    std::shared_ptr< WCondition > getDataChangedCondition();
 
 protected:
     /**
      * List of connectors connected to this connector.
      */
-    std::set<boost::shared_ptr<WModuleConnector> > m_connected;
+    std::set<std::shared_ptr<WModuleConnector> > m_connected;
 
     /**
      * Lock for avoiding concurrent write to m_Connected (multiple reader, single writer lock). The read lock can be acquired using
-     * the boost::shared_lock<boost::shared_mutex> lock( m_ConnectionListLock );.
+     * the boost::shared_lock<std::shared_mutex> lock( m_ConnectionListLock );.
      */
-    boost::shared_mutex m_connectionListLock;
+    std::shared_mutex m_connectionListLock;
 
     /**
      * Connect additional signals.
@@ -255,14 +256,14 @@ protected:
      * \param con the connector that requests connection.
      *
      */
-    virtual void connectSignals( boost::shared_ptr<WModuleConnector> con );
+    virtual void connectSignals( std::shared_ptr<WModuleConnector> con );
 
     /**
      * Disconnect all signals subscribed by this connector from "con".
      *
      * \param con the connector that gets disconnected.
      */
-    virtual void disconnectSignals( boost::shared_ptr<WModuleConnector> con );
+    virtual void disconnectSignals( std::shared_ptr<WModuleConnector> con );
 
     /**
      * Gives the signal handler function responsible for a given signal. Modules defining own signal handlers should overwrite
@@ -278,7 +279,7 @@ protected:
     /**
      * The Module this connector belongs to
      */
-    boost::weak_ptr< WModule > m_module;
+    std::weak_ptr< WModule > m_module;
 
     /**
      * The name of the module owning this connector.
@@ -291,7 +292,7 @@ protected:
      * \param here the connector of THIS module that got connected to "there"
      * \param there the connector that has been connected with the connector "here" of this module.
      */
-    virtual void notifyConnectionEstablished( boost::shared_ptr<WModuleConnector> here, boost::shared_ptr<WModuleConnector> there );
+    virtual void notifyConnectionEstablished( std::shared_ptr<WModuleConnector> here, std::shared_ptr<WModuleConnector> there );
 
     /**
      * Gets called whenever a connection between a remote and local connector gets closed.
@@ -299,7 +300,7 @@ protected:
      * \param here the connector of THIS module getting disconnected.
      * \param there the connector of the other module getting disconnected.
      */
-    virtual void notifyConnectionClosed( boost::shared_ptr<WModuleConnector> here, boost::shared_ptr<WModuleConnector> there );
+    virtual void notifyConnectionClosed( std::shared_ptr<WModuleConnector> here, std::shared_ptr<WModuleConnector> there );
 
     /**
      * Signal emitted whenever connection has been established.
@@ -314,7 +315,7 @@ protected:
     /**
      * Condition fired whenever data changes. Proper calling is made in subclasses.
      */
-    boost::shared_ptr< WCondition > m_dataChangedCondition;
+    std::shared_ptr< WCondition > m_dataChangedCondition;
 
 private:
     /**

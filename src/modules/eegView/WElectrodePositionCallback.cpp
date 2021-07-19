@@ -40,7 +40,7 @@
 
 WElectrodePositionCallback::WElectrodePositionCallback( std::size_t channelID,
         WPropDouble colorSensitivity,
-        boost::shared_ptr< WFlag< boost::shared_ptr< WEEGEvent > > > event,
+        std::shared_ptr< WFlag< std::shared_ptr< WEEGEvent > > > event,
         osg::ref_ptr< const osgSim::ScalarsToColors > colorMap )
     : m_channelID( channelID ),
       m_currentColorSensitivity( 0.0 ),
@@ -54,7 +54,7 @@ WElectrodePositionCallback::WElectrodePositionCallback( std::size_t channelID,
 void WElectrodePositionCallback::update( osg::NodeVisitor* /*nv*/, osg::Drawable* drawable )
 {
     const double colorSensitivity = m_colorSensitivity->get();
-    boost::shared_ptr< WEEGEvent > event = m_event->get();
+    std::shared_ptr< WEEGEvent > event = m_event->get();
     const double time = event->getTime();
     if( colorSensitivity != m_currentColorSensitivity || time != m_currentTime )
     {

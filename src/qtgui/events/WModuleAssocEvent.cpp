@@ -26,7 +26,7 @@
 
 #include "WModuleAssocEvent.h"
 
-WModuleAssocEvent::WModuleAssocEvent( boost::shared_ptr< WModule > module )
+WModuleAssocEvent::WModuleAssocEvent( std::shared_ptr< WModule > module )
     : QEvent( static_cast< QEvent::Type >( WQT_ASSOC_EVENT ) ),
     m_module( module )
 {
@@ -38,7 +38,7 @@ WModuleAssocEvent::~WModuleAssocEvent()
     // cleanup
 }
 
-boost::shared_ptr< WModule > WModuleAssocEvent::getModule()
+std::shared_ptr< WModule > WModuleAssocEvent::getModule()
 {
     return m_module;
 }

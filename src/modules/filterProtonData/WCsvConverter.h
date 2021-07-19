@@ -64,43 +64,43 @@ public:
      * \param propertyStatus The status of the properties.
      * \param colorBar Reference to the transfer function color bar module
      */
-    WCsvConverter( WProtonData::SPtr protonData, boost::shared_ptr< WPropertyStatus > propertyStatus, WModule::SPtr colorBar );
+    WCsvConverter( WProtonData::SPtr protonData, std::shared_ptr< WPropertyStatus > propertyStatus, WModule::SPtr colorBar );
 
     /**
-     * represents a boost::shared_ptr to a vector containing a vector of floats.
+     * represents a std::shared_ptr to a vector containing a vector of floats.
      */
-    typedef boost::shared_ptr< std::vector< float > > SPFloatVector;
+    typedef std::shared_ptr< std::vector< float > > SPFloatVector;
 
     /**
-     * represents a boost::shared_ptr to a vector containing a vector of size_t.
+     * represents a std::shared_ptr to a vector containing a vector of size_t.
      */
-    typedef boost::shared_ptr< std::vector< size_t > > SPSizeVector;
+    typedef std::shared_ptr< std::vector< size_t > > SPSizeVector;
 
     /**
      * Getter
      *
      * \return shared_ptr of generated fibers from the CSV file 
      */
-    boost::shared_ptr< WDataSetFibers > getFibers();
+    std::shared_ptr< WDataSetFibers > getFibers();
 
     /**
      * Getter
      *
      * \return shared_ptr of generated Points from the CSV file 
      */
-    boost::shared_ptr< WDataSetPoints > getPoints();
+    std::shared_ptr< WDataSetPoints > getPoints();
 
     /**
      * Getter
      * \return shared_ptr of generated transfer function
      */
-    boost::shared_ptr< WDataSetSingle > getTransferFunction();
+    std::shared_ptr< WDataSetSingle > getTransferFunction();
 
     /**
      * Getter
      * \return shared_ptr of generated selected event ID
      */
-    boost::shared_ptr< WDataSetPoints > getPointsAndIDs();
+    std::shared_ptr< WDataSetPoints > getPointsAndIDs();
 
 private:
     /**
@@ -116,22 +116,22 @@ private:
     /**
      * Stores information for the fiber display
      */
-    boost::shared_ptr< WDataSetFibers > m_fibers;
+    std::shared_ptr< WDataSetFibers > m_fibers;
 
     /**
      * Stores information for the point renderer
      */
-    boost::shared_ptr< WDataSetPoints > m_points;
+    std::shared_ptr< WDataSetPoints > m_points;
 
     /**
      * Stores information for the point Conncetor
      */
-    boost::shared_ptr< WDataSetPoints > m_selectedEventIDs;
+    std::shared_ptr< WDataSetPoints > m_selectedEventIDs;
 
     /**
      * Stores the currently mapped transfer function
      */
-    boost::shared_ptr< WDataSetSingle > m_transferFunction;
+    std::shared_ptr< WDataSetSingle > m_transferFunction;
 
     /**
      * Stores points for point and fiber renderer
@@ -152,7 +152,7 @@ private:
      * Computes gradient vector from transfer function specified in visualization properties.
      * \return shared_ptr of mapped gradim_plainColorent from transfer function in RGBA format
      */
-    boost::shared_ptr< std::vector<unsigned char> > sampleTransferFunction();
+    std::shared_ptr< std::vector<unsigned char> > sampleTransferFunction();
 
     /**
      * Normalize energy deposition values to use as RGB values
@@ -231,7 +231,7 @@ private:
      * Creates output for transfer function
      * \param data shared_ptr of mapped gradient from transfer function in RGBA format
      */
-    void setTransferFunction( boost::shared_ptr< std::vector<unsigned char> > data );
+    void setTransferFunction( std::shared_ptr< std::vector<unsigned char> > data );
 
     /**
      * the cast value from string to float

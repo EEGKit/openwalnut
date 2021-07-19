@@ -36,14 +36,14 @@ class WGEPostprocessorCelShading: public WGEPostprocessor
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WGEPostprocessorCelShading >.
+     * Convenience typedef for a std::shared_ptr< WGEPostprocessorCelShading >.
      */
-    typedef boost::shared_ptr< WGEPostprocessorCelShading > SPtr;
+    typedef std::shared_ptr< WGEPostprocessorCelShading > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WGEPostprocessorCelShading >.
+     * Convenience typedef for a std::shared_ptr< const WGEPostprocessorCelShading >.
      */
-    typedef boost::shared_ptr< const WGEPostprocessorCelShading > ConstSPtr;
+    typedef std::shared_ptr< const WGEPostprocessorCelShading > ConstSPtr;
 
     /**
      * Default constructor.

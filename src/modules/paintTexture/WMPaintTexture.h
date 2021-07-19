@@ -77,7 +77,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -156,7 +156,7 @@ private:
     /**
      * A list of pencil sizes and shapes
      */
-    boost::shared_ptr< WItemSelection > m_pencilSelectionsList;
+    std::shared_ptr< WItemSelection > m_pencilSelectionsList;
 
     /**
      * Selection property for pencil size and shape
@@ -171,7 +171,7 @@ private:
     /**
      * A list of color map selection types
      */
-    boost::shared_ptr< WItemSelection > m_colorMapSelectionsList;
+    std::shared_ptr< WItemSelection > m_colorMapSelectionsList;
 
     /**
      * Selection property for color map
@@ -191,27 +191,27 @@ private:
     /**
      * An input connector that accepts order 1 datasets.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;
 
     /**
      * An output connector for the output scalar dsataset.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output;
+    std::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output;
 
     /**
      * This is a pointer to the dataset the module is currently working on.
      */
-    boost::shared_ptr< WDataSetSingle > m_dataSet;
+    std::shared_ptr< WDataSetSingle > m_dataSet;
 
     /**
      * Point to the out dataset once it is invalid. Used to deregister from the datahandler
      */
-    boost::shared_ptr< WDataSetScalar > m_outDataOld;
+    std::shared_ptr< WDataSetScalar > m_outDataOld;
 
     /**
      * This is a pointer to the current output.
      */
-    boost::shared_ptr< WDataSetScalar > m_outData;
+    std::shared_ptr< WDataSetScalar > m_outData;
 
     /**
      * stores a pointer to the texture we paint in
@@ -221,12 +221,12 @@ private:
     /**
      * stores a pointer to the grid we use;
      */
-    boost::shared_ptr< WGridRegular3D > m_grid;
+    std::shared_ptr< WGridRegular3D > m_grid;
 
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * copies the input dataset into the paint texture, this allows one to continue work

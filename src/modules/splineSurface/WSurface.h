@@ -78,7 +78,7 @@ public:
      * getter
      * \return the triangle mesh representing the surface
      */
-    boost::shared_ptr< WTriangleMesh > getTriangleMesh();
+    std::shared_ptr< WTriangleMesh > getTriangleMesh();
 
 private:
     /**
@@ -99,7 +99,7 @@ private:
      */
     void getSplineSurfaceDeBoorPoints( std::vector< WVector3d > &givenPoints, std::vector< WVector3d > &deBoorPoints, int numRows, int numCols ); // NOLINT
 
-    boost::shared_ptr< WTriangleMesh > m_tMesh; //!< Triangle mesh of the surface
+    std::shared_ptr< WTriangleMesh > m_tMesh; //!< Triangle mesh of the surface
 
     double m_radius; //!< param for the algo
     double m_mu; //!< parameter of local shepard with franke-little-weights

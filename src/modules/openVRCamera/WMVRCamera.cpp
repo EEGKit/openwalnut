@@ -72,9 +72,9 @@ WMVRCamera::~WMVRCamera()
     // removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMVRCamera::factory() const
+std::shared_ptr< WModule > WMVRCamera::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMVRCamera() );
+    return std::shared_ptr< WModule >( new WMVRCamera() );
 }
 
 const char** WMVRCamera::getXPMIcon() const
@@ -102,7 +102,7 @@ void WMVRCamera::connectors()
 void WMVRCamera::properties()
 {
     // NOTE: Refer to WMTemplate.cpp if you do not understand these commands.
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_vrOn = m_properties->addProperty( "Submit Frames", "Toggle submitting frames to OpenVR",
                                                     false );
@@ -212,8 +212,8 @@ void WMVRCamera::moduleMain()
     m_rootnode->setNodeMask( vrNodeMask );
 
     // get side-views
-    boost::shared_ptr< WGEViewer > leftEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" );
-    boost::shared_ptr< WGEViewer > rightEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" );
+    std::shared_ptr< WGEViewer > leftEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" );
+    std::shared_ptr< WGEViewer > rightEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" );
     leftEyeView->setScene( m_leftEyeNode );
     rightEyeView->setScene( m_rightEyeNode );
     leftEyeView->reset();

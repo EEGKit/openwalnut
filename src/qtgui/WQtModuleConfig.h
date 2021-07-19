@@ -50,7 +50,7 @@ public:
      * \param parent parent widget
      * \param f window flags
      */
-    WQtModuleConfig( QWidget* parent = 0, Qt::WindowFlags f = 0 );
+    WQtModuleConfig( QWidget* parent = 0, Qt::WindowFlags f = Qt::WindowFlags() );
 
     /**
      * Destructor.
@@ -205,4 +205,3 @@ private slots:
 };
 
 #endif  // WQTMODULECONFIG_H
-

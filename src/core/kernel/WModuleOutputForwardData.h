@@ -43,12 +43,12 @@ public:
     /**
      * Pointer to this. For convenience.
      */
-    typedef boost::shared_ptr< WModuleOutputForwardData< T > > SPtr;
+    typedef std::shared_ptr< WModuleOutputForwardData< T > > SPtr;
 
     /**
      * Pointer to this. For convenience.
      */
-    typedef boost::shared_ptr< const WModuleOutputForwardData< T > > ConstSPtr;
+    typedef std::shared_ptr< const WModuleOutputForwardData< T > > ConstSPtr;
 
     /**
      * Pointer to this. For convenience.
@@ -79,7 +79,7 @@ public:
      *
      * \return the pointer to the created connector.
      */
-    static PtrType create( boost::shared_ptr< WModule > module, std::string name = "", std::string description = "" );
+    static PtrType create( std::shared_ptr< WModule > module, std::string name = "", std::string description = "" );
 
     /**
      * Convenience method to create a new instance of this out data connector with proper type and add it to the list of connectors of the
@@ -91,7 +91,7 @@ public:
      *
      * \return the pointer to the created connector.
      */
-    static PtrType createAndAdd( boost::shared_ptr< WModule > module, std::string name = "", std::string description = "" );
+    static PtrType createAndAdd( std::shared_ptr< WModule > module, std::string name = "", std::string description = "" );
 
     /**
      * Constructor. This creates a new output data connector which is able to forward data changes <b>FROM</b> other output data connectors.
@@ -100,11 +100,11 @@ public:
      * \param name The name of this connector.
      * \param description Short description of this connector.
      */
-    WModuleOutputForwardData( boost::shared_ptr< WModule > module, std::string name="", std::string description="" )
+    WModuleOutputForwardData( std::shared_ptr< WModule > module, std::string name="", std::string description="" )
         :WModuleOutputData< T >( module, name, description )
     {
         // initialize the output data connector
-        m_in = boost::shared_ptr< WModuleInputData< T > >( new WModuleInputData< T >( module, "[FWD]" + name, description ) );
+        m_in = std::shared_ptr< WModuleInputData< T > >( new WModuleInputData< T >( module, "[FWD]" + name, description ) );
 
         // subscribe both signals
         m_in->subscribeSignal( CONNECTION_ESTABLISHED, boost::bind( &WModuleOutputForwardData::inputNotifyDataChange,
@@ -129,7 +129,7 @@ public:
      *
      * \param from the output connector whose data should be forwarded.
      */
-    virtual void forward( boost::shared_ptr< WModuleConnector > from )
+    virtual void forward( std::shared_ptr< WModuleConnector > from )
     {
         m_in->connect( from );
     }
@@ -139,7 +139,7 @@ public:
      *
      * \param from the output connector to be removed from forwarding list.
      */
-    virtual void unforward( boost::shared_ptr< WModuleConnector > from )
+    virtual void unforward( std::shared_ptr< WModuleConnector > from )
     {
         m_in->disconnect( from );
     }
@@ -148,13 +148,13 @@ protected:
     /**
      * The output connector which collects data and distributes it to all connectors connected using the forwardTo() method.
      */
-    boost::shared_ptr< WModuleInputData< T > > m_in;
+    std::shared_ptr< WModuleInputData< T > > m_in;
 
     /**
      * Gets called whenever a connected output updates its data. In detail: it is a callback for m_in and waits simply forwards
      * new data to this output instance.
      */
-    virtual void inputNotifyDataChange( boost::shared_ptr<WModuleConnector> /*input*/, boost::shared_ptr<WModuleConnector> /*output*/ )
+    virtual void inputNotifyDataChange( std::shared_ptr<WModuleConnector> /*input*/, std::shared_ptr<WModuleConnector> /*output*/ )
     {
         // if the input changes its data-> forward the change to this output instance
         WModuleOutputData< T >::updateData( m_in->getData() );
@@ -164,7 +164,7 @@ private:
 };
 
 template < typename T >
-typename WModuleOutputForwardData< T >::PtrType WModuleOutputForwardData< T >::create( boost::shared_ptr< WModule > module, std::string name,
+typename WModuleOutputForwardData< T >::PtrType WModuleOutputForwardData< T >::create( std::shared_ptr< WModule > module, std::string name,
                                                                                                               std::string description )
 {
     typedef typename WModuleOutputForwardData< T >::PtrType PTR;
@@ -173,7 +173,7 @@ typename WModuleOutputForwardData< T >::PtrType WModuleOutputForwardData< T >::c
 }
 
 template < typename T >
-typename WModuleOutputForwardData< T >::PtrType WModuleOutputForwardData< T >::createAndAdd( boost::shared_ptr< WModule > module, std::string name,
+typename WModuleOutputForwardData< T >::PtrType WModuleOutputForwardData< T >::createAndAdd( std::shared_ptr< WModule > module, std::string name,
                                                                                                                     std::string description )
 {
     typename WModuleOutputForwardData< T >::PtrType c = create( module, name, description );

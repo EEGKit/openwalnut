@@ -46,8 +46,8 @@ public:
     {
         WLogger::startup();
 
-        boost::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( 3, 3, 3 ) );
-        m_algo = boost::shared_ptr< WBresenham >( new WBresenham( grid, false ) );
+        std::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( 3, 3, 3 ) );
+        m_algo = std::shared_ptr< WBresenham >( new WBresenham( grid, false ) );
     }
 
     /**
@@ -118,8 +118,8 @@ public:
         mat( 2, 3 ) = -2.0;
 
         WGridTransformOrtho trans( mat );
-        boost::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( 3, 3, 3, trans ) );
-        m_algo = boost::shared_ptr< WBresenham >( new WBresenham( grid, false ) );
+        std::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( 3, 3, 3, trans ) );
+        m_algo = std::shared_ptr< WBresenham >( new WBresenham( grid, false ) );
 
         WLine l;
         l.push_back( WPosition( -1.7, -1.7, -1.7 ) );
@@ -188,7 +188,7 @@ public:
         TS_ASSERT_EQUALS( m_algo->m_values, expected );
     }
 private:
-    boost::shared_ptr< WBresenham > m_algo; //!< test instace of the WBresenham algo
+    std::shared_ptr< WBresenham > m_algo; //!< test instace of the WBresenham algo
 };
 
 #endif  // WBRESENHAM_TEST_H

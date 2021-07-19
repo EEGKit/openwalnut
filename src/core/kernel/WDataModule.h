@@ -49,14 +49,14 @@ class WDataModule: public WModule
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WDataModule >.
+     * Convenience typedef for a std::shared_ptr< WDataModule >.
      */
-    typedef boost::shared_ptr< WDataModule > SPtr;
+    typedef std::shared_ptr< WDataModule > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WDataModule >.
+     * Convenience typedef for a std::shared_ptr< const WDataModule >.
      */
-    typedef boost::shared_ptr< const WDataModule > ConstSPtr;
+    typedef std::shared_ptr< const WDataModule > ConstSPtr;
 
     /**
      * Default constructor.
@@ -130,7 +130,7 @@ public:
      * \tparam InputType get the input in this type
      */
     template< typename InputType >
-    boost::shared_ptr< InputType > getInputAs() const;
+    std::shared_ptr< InputType > getInputAs() const;
 
     /**
      * Return the condition that gets triggered upon input change. This will get fired every time setInput was called, but before
@@ -168,13 +168,13 @@ private:
 };
 
 template< typename InputType >
-boost::shared_ptr< InputType > WDataModule::getInputAs() const
+std::shared_ptr< InputType > WDataModule::getInputAs() const
 {
     if( getInput() )
     {
-        return boost::dynamic_pointer_cast< InputType >( getInput() );
+        return std::dynamic_pointer_cast< InputType >( getInput() );
     }
-    return boost::shared_ptr< InputType >();
+    return std::shared_ptr< InputType >();
 }
 
 #endif  // WDATAMODULE_H

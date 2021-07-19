@@ -28,10 +28,10 @@
 
 #include "WScriptEngine.h"
 
-WScriptEngine::WScriptEngine( boost::shared_ptr<WModuleContainer> const& rootContainer )
+WScriptEngine::WScriptEngine( std::shared_ptr<WModuleContainer> const& rootContainer )
 {
 #ifdef PYTHON_FOUND // this is defined in the CMake scripts
-    m_interpreters.push_back( boost::shared_ptr< WScriptInterpreter >( new WScriptInterpreterPython( rootContainer ) ) );
+    m_interpreters.push_back( std::shared_ptr< WScriptInterpreter >( new WScriptInterpreterPython( rootContainer ) ) );
 #else
     ( void ) rootContainer; // avoid compiler warning: unused parameter ‘rootContainer’
 #endif
@@ -45,7 +45,7 @@ WScriptEngine::~WScriptEngine()
 {
 }
 
-boost::shared_ptr< WScriptInterpreter > WScriptEngine::getInterpreterByFileExtension( std::string const& ext )
+std::shared_ptr< WScriptInterpreter > WScriptEngine::getInterpreterByFileExtension( std::string const& ext )
 {
     for( std::size_t k = 0; k < m_interpreters.size(); ++k )
     {
@@ -54,10 +54,10 @@ boost::shared_ptr< WScriptInterpreter > WScriptEngine::getInterpreterByFileExten
             return m_interpreters[ k ];
         }
     }
-    return boost::shared_ptr< WScriptInterpreter >();
+    return std::shared_ptr< WScriptInterpreter >();
 }
 
-boost::shared_ptr< WScriptInterpreter > WScriptEngine::getInterpreter( std::string const& name )
+std::shared_ptr< WScriptInterpreter > WScriptEngine::getInterpreter( std::string const& name )
 {
     for( std::size_t k = 0; k < m_interpreters.size(); ++k )
     {
@@ -66,7 +66,7 @@ boost::shared_ptr< WScriptInterpreter > WScriptEngine::getInterpreter( std::stri
             return m_interpreters[ k ];
         }
     }
-    return boost::shared_ptr< WScriptInterpreter >();
+    return std::shared_ptr< WScriptInterpreter >();
 }
 
 std::size_t WScriptEngine::getNumInterpreters() const
@@ -74,11 +74,11 @@ std::size_t WScriptEngine::getNumInterpreters() const
     return m_interpreters.size();
 }
 
-boost::shared_ptr< WScriptInterpreter > WScriptEngine::getInterpreter( std::size_t index )
+std::shared_ptr< WScriptInterpreter > WScriptEngine::getInterpreter( std::size_t index )
 {
     if( index < m_interpreters.size() )
     {
         return m_interpreters[ index ];
     }
-    return boost::shared_ptr< WScriptInterpreter >();
+    return std::shared_ptr< WScriptInterpreter >();
 }

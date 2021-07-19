@@ -47,12 +47,12 @@ public:
     /**
      * Abbreviation to a shared_ptr to this type
      */
-    typedef boost::shared_ptr< WThreadedRunner > SPtr;
+    typedef std::shared_ptr< WThreadedRunner > SPtr;
 
     /**
      * Abbreviation to a const shared_ptr to this type
      */
-    typedef boost::shared_ptr< const WThreadedRunner > ConstSPtr;
+    typedef std::shared_ptr< const WThreadedRunner > ConstSPtr;
 
     /**
      * Type used for simple thread functions.

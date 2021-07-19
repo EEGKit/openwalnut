@@ -47,7 +47,7 @@ WTriangleMesh::SPtr WMeshReaderOBJ::operator()( WProgressCombiner::SPtr parentPr
     std::string fileName = file.string();
     WAssert( !fileName.empty(), "No filename specified." );
 
-    boost::shared_ptr< WProgress > progress( new WProgress( "Read Mesh" ) );
+    std::shared_ptr< WProgress > progress( new WProgress( "Read Mesh" ) );
     parentProgress->addSubProgress( progress );
 
     std::ifstream ifs;

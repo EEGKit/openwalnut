@@ -36,14 +36,14 @@ class WGEPostprocessorEdgeEnhance: public WGEPostprocessor
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WGEPostprocessorEdgeEnhance >.
+     * Convenience typedef for a std::shared_ptr< WGEPostprocessorEdgeEnhance >.
      */
-    typedef boost::shared_ptr< WGEPostprocessorEdgeEnhance > SPtr;
+    typedef std::shared_ptr< WGEPostprocessorEdgeEnhance > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WGEPostprocessorEdgeEnhance >.
+     * Convenience typedef for a std::shared_ptr< const WGEPostprocessorEdgeEnhance >.
      */
-    typedef boost::shared_ptr< const WGEPostprocessorEdgeEnhance > ConstSPtr;
+    typedef std::shared_ptr< const WGEPostprocessorEdgeEnhance > ConstSPtr;
 
     /**
      * Default constructor.

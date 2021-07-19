@@ -53,10 +53,10 @@ WMPointRenderer::~WMPointRenderer()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMPointRenderer::factory() const
+std::shared_ptr< WModule > WMPointRenderer::factory() const
 {
     // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WMPointRenderer() );
+    return std::shared_ptr< WModule >( new WMPointRenderer() );
 }
 
 const char** WMPointRenderer::getXPMIcon() const
@@ -87,7 +87,7 @@ void WMPointRenderer::connectors()
 void WMPointRenderer::properties()
 {
     // some properties need to trigger an update
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     // setup all the properties. See header file for their meaning and purpose.
     m_size = m_properties->addProperty( "Point size", "The size of the points.", 1.0 );
@@ -168,7 +168,7 @@ void WMPointRenderer::moduleMain()
             continue;
         }
 
-        boost::shared_ptr< WValueSet< float > > valueSet = boost::dynamic_pointer_cast< WValueSet< float > >( points->getValueSet() );
+        std::shared_ptr< WValueSet< float > > valueSet = std::dynamic_pointer_cast< WValueSet< float > >( points->getValueSet() );
 
         m_useAttribute->set( valueSet ? true : false );
 

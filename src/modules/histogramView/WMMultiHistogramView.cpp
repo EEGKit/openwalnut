@@ -30,7 +30,7 @@
 
 #include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 #include <osg/Drawable>
 #include <osg/Geode>
@@ -65,9 +65,9 @@ WMMultiHistogramView::~WMMultiHistogramView()
 {
 }
 
-boost::shared_ptr< WModule > WMMultiHistogramView::factory() const
+std::shared_ptr< WModule > WMMultiHistogramView::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMMultiHistogramView() );
+    return std::shared_ptr< WModule >( new WMMultiHistogramView() );
 }
 
 const char** WMMultiHistogramView::getXPMIcon() const
@@ -90,7 +90,7 @@ void WMMultiHistogramView::connectors()
 
     for( std::size_t k = 0; k < m_input.size(); ++k )
     {
-        m_input[ k ] = boost::shared_ptr< WModuleInputData< WDataSetSingle > >(
+        m_input[ k ] = std::shared_ptr< WModuleInputData< WDataSetSingle > >(
                                       new WModuleInputData< WDataSetSingle >(
                                             shared_from_this(),
                                             std::string( "Input dataset #" ) + string_utils::toString( k ),
@@ -103,13 +103,13 @@ void WMMultiHistogramView::connectors()
 
 void WMMultiHistogramView::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_histoBins = m_properties->addProperty( "Histogram bins", "Number of bins for the histogram.", 100, m_propCondition );
     m_histoBins->setMin( 1 );
     m_histoBins->setMax( 2000 );
 
-    boost::shared_ptr< WItemSelection > selections( new WItemSelection() );
+    std::shared_ptr< WItemSelection > selections( new WItemSelection() );
 
     // add the possible histogram styles and
     // corresponding geometry generation functions
@@ -341,7 +341,7 @@ void WMMultiHistogramView::redraw()
 
 void WMMultiHistogramView::calculateHistograms()
 {
-    m_histograms = std::vector< boost::shared_ptr< WHistogramBasic > >( m_data.size() );
+    m_histograms = std::vector< std::shared_ptr< WHistogramBasic > >( m_data.size() );
     int histoBins = m_histoBins->get( true );
 
     // get the maximum and minimum of all datasets
@@ -367,7 +367,7 @@ void WMMultiHistogramView::calculateHistograms()
     for( std::size_t k = 0; k < m_data.size(); ++k )
     {
         // create new histogram
-        m_histograms[ k ] = boost::shared_ptr< WHistogramBasic >( new WHistogramBasic( min, max, histoBins ) );
+        m_histograms[ k ] = std::shared_ptr< WHistogramBasic >( new WHistogramBasic( min, max, histoBins ) );
 
         if( m_data[ k ] )
         {

@@ -26,7 +26,7 @@
 
 #include "WModuleConnectEvent.h"
 
-WModuleConnectEvent::WModuleConnectEvent( boost::shared_ptr<WModuleConnector> in, boost::shared_ptr<WModuleConnector> out )
+WModuleConnectEvent::WModuleConnectEvent( std::shared_ptr<WModuleConnector> in, std::shared_ptr<WModuleConnector> out )
     : QEvent( static_cast< QEvent::Type >( WQT_MODULE_CONNECT_EVENT ) ),
     m_in( in ),
     m_out( out )
@@ -39,12 +39,12 @@ WModuleConnectEvent::~WModuleConnectEvent()
     // cleanup
 }
 
-boost::shared_ptr< WModuleConnector > WModuleConnectEvent::getInput() const
+std::shared_ptr< WModuleConnector > WModuleConnectEvent::getInput() const
 {
     return m_in;
 }
 
-boost::shared_ptr< WModuleConnector > WModuleConnectEvent::getOutput() const
+std::shared_ptr< WModuleConnector > WModuleConnectEvent::getOutput() const
 {
     return m_out;
 }
