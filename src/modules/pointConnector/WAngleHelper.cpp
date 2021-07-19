@@ -100,9 +100,9 @@ static WAngleHelper::DJOut dijkstra( std::vector< WAngleHelper::DJLine > lines, 
     while( Q.size() > 0 )
     {
         std::sort( Q.begin(), Q.end(),
-            [&dist]( WPosition a, WPosition b )
+            [dist]( WPosition a, WPosition b )
             {
-                return dist[a] < dist[b];
+                return dist.at( a ) < dist.at( b );
             }
         );
         WPosition u = Q.at( 0 );
@@ -124,9 +124,9 @@ static WAngleHelper::DJOut dijkstra( std::vector< WAngleHelper::DJLine > lines, 
             WPosition v = std::get< 1 >( l );
 
             auto old = std::find_if( lines.begin(), lines.end(),
-                [&prev, u]( WAngleHelper::DJLine line )
+                [prev, u]( WAngleHelper::DJLine line )
                 {
-                    return std::get< 0 >( line ) == prev[u] && std::get< 1 >( line ) == u;
+                    return prev.find( u ) != prev.end() && std::get< 0 >( line ) == prev.at( u ) && std::get< 1 >( line ) == u;
                 }
             );
 
@@ -141,6 +141,11 @@ static WAngleHelper::DJOut dijkstra( std::vector< WAngleHelper::DJLine > lines, 
                 prev[v] = u;
             }
         }
+    }
+
+    for( auto it = prev.begin(); it != prev.end(); it++ )
+    {
+        std::cout << it->first << " => " << it->second << std::endl;
     }
 
     return std::make_pair( prev, dist );
@@ -243,14 +248,14 @@ std::vector< WPosition > WAngleHelper::findSmoothestPath( std::vector< WPosition
             std::vector< WPosition > pos;
             if( oldFib != nullptr )
             {
-                pos.push_back( WPosition( oldFib->x(), oldFib->y(), oldFib->z() ) );
+                pos.push_back( WPosition( *oldFib ) );
             }
             while( posIter < positions.end() && posIter->z() < fibIter->z() )
             {
                 pos.push_back( *posIter );
                 posIter++;
             }
-            pos.push_back( WPosition( fibIter->x(), fibIter->y(), fibIter->z() ) );
+            pos.push_back( WPosition( *fibIter ) );
             pos = findSmoothestPath( pos );
             out.insert( out.end(), pos.begin(), pos.end() );
         }
@@ -267,7 +272,7 @@ std::vector< WPosition > WAngleHelper::findSmoothestPath( std::vector< WPosition
         std::vector< WPosition > pos;
         if( oldFib != nullptr )
         {
-            pos.push_back( WPosition( oldFib->x(), oldFib->y(), oldFib->z() ) );
+            pos.push_back( WPosition( *oldFib ) );
         }
         while( posIter != positions.end() )
         {

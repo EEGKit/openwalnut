@@ -458,36 +458,43 @@ WFiberHandler::SPtr WMPointConnector::getFiberHandler()
 
 void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float, float )
 {
-    std::vector<WPosition> positions;
+    std::vector< WPosition > positions;
     for( size_t idx = 0; idx < m_connectorData->getVertices()->size(); idx++ )
     {
         osg::Vec3 vertex = m_connectorData->getVertices()->at( idx );
-        positions.push_back( WPosition( vertex.x(), vertex.y(), vertex.z() ) );
+        positions.push_back( WPosition( vertex ) );
     }
 
     positions = m_onscreenSelection->isSelected( positions );
-    positions = WAngleHelper::findSmoothestPath( positions, m_fiberHandler->getFibers()->at( m_fiberHandler->getSelectedFiber() ) );
 
-    for( size_t idx = 0; idx < positions.size(); idx++ )
+    if( !m_onscreenSelection->getClickType() )
     {
-        WPosition vertex = positions.at( idx );
-        if( m_onscreenSelection->isSelected( vertex.x(), vertex.y(), vertex.z() ) )
+        for( auto vertex = positions.begin(); vertex != positions.end(); vertex++ )
         {
-            if( m_onscreenSelection->getClickType() )
+            m_connectorData->deselectPoint();
+            m_fiberHandler->removeVertexFromFiber( *vertex, m_fiberHandler->getSelectedFiber() );
+            m_fiberHandler->selectLastPoint();
+        }
+    }
+    else
+    {
+        for( auto vertex = positions.begin(); vertex != positions.end(); )
+        {
+            if( m_fiberHandler->getFiberOfPoint( *vertex ) )
             {
-                if( !m_fiberHandler->getFiberOfPoint( vertex ) )
-                {
-                    m_connectorData->deselectPoint();
-                    m_connectorData->selectPoint( idx );
-                    m_fiberHandler->addVertexToFiber( vertex, m_fiberHandler->getSelectedFiber() );
-                }
+                positions.erase( vertex );
             }
             else
             {
-                m_connectorData->deselectPoint();
-                m_fiberHandler->removeVertexFromFiber( m_connectorData->getVertices()->at( idx ), m_fiberHandler->getSelectedFiber() );
-                m_fiberHandler->selectLastPoint();
+                vertex++;
             }
+        }
+        positions = WAngleHelper::findSmoothestPath( positions, m_fiberHandler->getFibers()->at( m_fiberHandler->getSelectedFiber() ) );
+        for( auto vertex = positions.begin(); vertex != positions.end(); vertex++ )
+        {
+            m_connectorData->deselectPoint();
+            m_connectorData->selectPoint( *vertex );
+            m_fiberHandler->addVertexToFiber( *vertex, m_fiberHandler->getSelectedFiber() );
         }
     }
 
