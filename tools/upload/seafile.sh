@@ -28,7 +28,7 @@ DOC_UPLOAD="https://seafile.rlp.net/ajax/u/d/4f71896e2f744c8796fb/upload/?r=b7d1
 APP_UPLOAD="https://seafile.rlp.net/ajax/u/d/39a0552b276f4f0797da/upload/?r=b7d1e764-0c95-4b94-aa00-c8c67c869a9a"
 UPLOAD_REGEX="\\{\"url\": \"([^\"]*)\"\\}"
 GIT_COMMIT=$(git rev-parse --short HEAD)
-GIT_BRANCH=$(git name-rev $GIT_COMMIT | egrep -o '([^\/ ]+$)')
+GIT_BRANCH="$CI_COMMIT_REF_NAME"
 DATE=$(date '+%Y-%m-%d_%H-%M')
 
 DOC_NAME="doc_${GIT_BRANCH}_${DATE}_${GIT_COMMIT}.tar.gz"
