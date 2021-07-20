@@ -28,14 +28,11 @@ DOC_UPLOAD="https://seafile.rlp.net/ajax/u/d/4f71896e2f744c8796fb/upload/?r=b7d1
 APP_UPLOAD="https://seafile.rlp.net/ajax/u/d/39a0552b276f4f0797da/upload/?r=b7d1e764-0c95-4b94-aa00-c8c67c869a9a"
 UPLOAD_REGEX="\\{\"url\": \"([^\"]*)\"\\}"
 GIT_COMMIT=$(git rev-parse --short HEAD)
-GIT_BRANCH="$CI_COMMIT_REF_NAME"
+GIT_BRANCH="$CI_COMMIT_REF_SLUG"
 DATE=$(date '+%Y-%m-%d_%H-%M')
 
 DOC_NAME="doc_${GIT_BRANCH}_${DATE}_${GIT_COMMIT}.tar.gz"
 APP_NAME="OpenWalnut_${GIT_BRANCH}_${DATE}_${GIT_COMMIT}.AppImage"
-
-DOC_NAME=${DOC_NAME/\//\_}
-APP_NAME=${APP_NAME/\//\_}
 
 uploadDoc() {
     echo "TAR DOC"
