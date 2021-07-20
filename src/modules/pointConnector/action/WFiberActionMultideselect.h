@@ -25,6 +25,8 @@
 #ifndef WFIBERACTIONMULTIDESELECT_H
 #define WFIBERACTIONMULTIDESELECT_H
 
+#include <vector>
+
 #include <boost/shared_ptr.hpp>
 #include <osg/Geode>
 

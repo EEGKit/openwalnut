@@ -22,6 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
+#include <vector>
+
 #include "../WConnectorData.h"
 #include "WFiberActionMultideselect.h"
 
