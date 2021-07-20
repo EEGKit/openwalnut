@@ -210,6 +210,10 @@ std::vector< WPosition > WAngleHelper::findSmoothestPath( std::vector< WPosition
 
 std::vector< WPosition > WAngleHelper::findSmoothestPath( std::vector< WPosition > positions, WFiberHandler::PCFiber fiber )
 {
+    if( positions.empty() )
+    {
+        return std::vector< WPosition >();
+    }
     std::sort( positions.begin(), positions.end(), compareWPosition );
 
     if( fiber.empty() )

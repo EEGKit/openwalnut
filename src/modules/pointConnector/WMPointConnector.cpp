@@ -469,15 +469,34 @@ void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float, 
     }
 
     positions = m_onscreenSelection->isSelected( positions );
+    if( positions.empty() )
+    {
+        return;
+    }
 
     if( !m_onscreenSelection->getClickType() )
     {
-        for( auto vertex = positions.begin(); vertex != positions.end(); vertex++ )
+        size_t idx = 0;
+        size_t fibIdx = m_fiberHandler->getSelectedFiber();
+        for( auto vertex = positions.begin(); vertex != positions.end(); )
         {
-            m_connectorData->deselectPoint();
-            m_fiberHandler->removeVertexFromFiber( *vertex, m_fiberHandler->getSelectedFiber() );
-            m_fiberHandler->selectLastPoint();
+            if( m_fiberHandler->getFiberOfPoint( *vertex, &idx ) && idx == fibIdx )
+            {
+                vertex++;
+            }
+            else
+            {
+                positions.erase( vertex );
+            }
         }
+
+        if( positions.empty() )
+        {
+            return;
+        }
+        m_connectorData->deselectPoint();
+        m_fiberHandler->removeVerticesFromFiber( std::vector< osg::Vec3 >( positions.begin(), positions.end() ), fibIdx );
+        m_fiberHandler->selectLastPoint();
     }
     else
     {
@@ -496,12 +515,14 @@ void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float, 
         {
             positions = WAngleHelper::findSmoothestPath( positions, m_fiberHandler->getFibers()->at( m_fiberHandler->getSelectedFiber() ) );
         }
-        for( auto vertex = positions.begin(); vertex != positions.end(); vertex++ )
+
+        if( positions.empty() )
         {
-            m_connectorData->deselectPoint();
-            m_connectorData->selectPoint( *vertex );
-            m_fiberHandler->addVertexToFiber( *vertex, m_fiberHandler->getSelectedFiber() );
+            return;
         }
+        m_connectorData->deselectPoint();
+        m_fiberHandler->addVerticesToFiber( std::vector< osg::Vec3 >( positions.begin(), positions.end() ), m_fiberHandler->getSelectedFiber() );
+        m_fiberHandler->selectLastPoint();
     }
 
     updatePoints();
