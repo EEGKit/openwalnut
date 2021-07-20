@@ -254,6 +254,11 @@ private:
      * Enables possibility for multiselection of points.
      */
     boost::shared_ptr< WOnscreenSelection > m_onscreenSelection;
+
+    /**
+     * Bool property to enable the adjusted dijkstra.
+     */
+    WPropBool m_enableDijkstra;
 };
 
 #endif  // WMPOINTCONNECTOR_H

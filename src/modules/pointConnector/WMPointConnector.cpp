@@ -83,6 +83,9 @@ void WMPointConnector::connectors()
 void WMPointConnector::properties()
 {
     m_fiberHandler->createProperties( m_properties );
+
+    m_enableDijkstra = m_properties->addProperty( "Enable Dijkstra ", "Enable adjusted Dijkstra", true );
+
     WModule::properties();
 }
 
@@ -489,7 +492,10 @@ void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float, 
                 vertex++;
             }
         }
-        positions = WAngleHelper::findSmoothestPath( positions, m_fiberHandler->getFibers()->at( m_fiberHandler->getSelectedFiber() ) );
+        if( m_enableDijkstra->get() )
+        {
+            positions = WAngleHelper::findSmoothestPath( positions, m_fiberHandler->getFibers()->at( m_fiberHandler->getSelectedFiber() ) );
+        }
         for( auto vertex = positions.begin(); vertex != positions.end(); vertex++ )
         {
             m_connectorData->deselectPoint();
