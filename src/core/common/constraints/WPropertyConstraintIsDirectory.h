@@ -53,7 +53,7 @@ public:
      *
      * \return true if the file/path is a directory
      */
-    virtual bool accept( boost::shared_ptr< WPropertyVariable< T > > property, const T& value );
+    virtual bool accept( std::shared_ptr< WPropertyVariable< T > > property, const T& value );
 
     /**
      * Allows simple identification of the real constraint type.
@@ -67,7 +67,7 @@ public:
      *
      * \return the constraint.
      */
-    virtual boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > clone();
+    virtual std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > clone();
 
 private:
 };
@@ -83,7 +83,7 @@ WPropertyConstraintIsDirectory< T >::~WPropertyConstraintIsDirectory()
 }
 
 template < typename T >
-bool WPropertyConstraintIsDirectory< T >::accept( boost::shared_ptr< WPropertyVariable< T > > /* property */, const T& value )
+bool WPropertyConstraintIsDirectory< T >::accept( std::shared_ptr< WPropertyVariable< T > > /* property */, const T& value )
 {
     return boost::filesystem::is_directory( value );
 }
@@ -95,9 +95,9 @@ PROPERTYCONSTRAINT_TYPE WPropertyConstraintIsDirectory< T >::getType()
 }
 
 template < typename T >
-boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > WPropertyConstraintIsDirectory< T >::clone()
+std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > WPropertyConstraintIsDirectory< T >::clone()
 {
-    return boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint >( new WPropertyConstraintIsDirectory< T >( *this ) );
+    return std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint >( new WPropertyConstraintIsDirectory< T >( *this ) );
 }
 
 

@@ -30,7 +30,7 @@
 
 #include "WCenterlineParameterization.h"
 
-WCenterlineParameterization::WCenterlineParameterization( boost::shared_ptr< WGridRegular3D > grid, boost::shared_ptr< WFiber > centerline ):
+WCenterlineParameterization::WCenterlineParameterization( std::shared_ptr< WGridRegular3D > grid, std::shared_ptr< WFiber > centerline ):
     WRasterParameterization( grid ),
     m_paramValues( grid->size(), 0.0 ),
     m_paramFinalValues( grid->size(), 0.0 ),
@@ -47,19 +47,19 @@ WCenterlineParameterization::~WCenterlineParameterization()
     // cleanup
 }
 
-boost::shared_ptr< WDataSetScalar > WCenterlineParameterization::getDataSet()
+std::shared_ptr< WDataSetScalar > WCenterlineParameterization::getDataSet()
 {
-    boost::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 0,
+    std::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 0,
                                                                                 1,
-                                                                                boost::shared_ptr< std::vector< double > >(
+                                                                                std::shared_ptr< std::vector< double > >(
                                                                                     new std::vector< double >( m_paramFinalValues ) ),
                                                                                 W_DT_DOUBLE ) );
-    return boost::shared_ptr< WDataSetScalar >( new WDataSetScalar( valueSet, m_grid ) );
+    return std::shared_ptr< WDataSetScalar >( new WDataSetScalar( valueSet, m_grid ) );
 }
 
 namespace wcp // WCenterlineParameterization
 {
-    size_t index( int x, int y, int z, boost::shared_ptr< WGridRegular3D > grid )
+    size_t index( int x, int y, int z, std::shared_ptr< WGridRegular3D > grid )
     {
         // check validity of voxel
         x = x < 0 ? 0 : x;
@@ -84,7 +84,7 @@ namespace wcp // WCenterlineParameterization
     }
     Neighbourhood;
 
-    Neighbourhood neighbourhood( int x, int y, int z, boost::shared_ptr< WGridRegular3D > grid )
+    Neighbourhood neighbourhood( int x, int y, int z, std::shared_ptr< WGridRegular3D > grid )
     {
         Neighbourhood n;
         n.indices[0]  = index( x,   y,   z,   grid );

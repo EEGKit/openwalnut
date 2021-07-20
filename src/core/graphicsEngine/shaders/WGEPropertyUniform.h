@@ -37,7 +37,7 @@
  * Class implementing a uniform which can be controlled by a property instance. This is mainly a convenience class for
  * WGEPropertyUniformCallback (which is used here).
  *
- * \tparam the class used as controlling mechanism. The class needs to be a boost::shared_ptr to a type supporting get() method: T->get()
+ * \tparam the class used as controlling mechanism. The class needs to be a std::shared_ptr to a type supporting get() method: T->get()
  * returns the value (bool, int, double, WPosition supported). For other types specialize the template.
  */
 template< typename T >

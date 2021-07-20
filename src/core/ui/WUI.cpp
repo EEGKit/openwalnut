@@ -27,7 +27,7 @@
 #include "WUI.h"
 
 WUI::WUI( int argc, char** argv )
-    : boost::enable_shared_from_this< WUI >(),
+    : std::enable_shared_from_this< WUI >(),
       m_isInitialized( new WConditionOneShot(), false ),
       m_argc( argc ),
       m_argv( argv )

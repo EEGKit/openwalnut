@@ -77,7 +77,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
 protected:
     /**
@@ -112,7 +112,7 @@ private:
     /**
      * Input connector for writing directly tracts to a file.
      */
-    boost::shared_ptr< WModuleInputData< const WDataSetFibers > > m_tractConnector;
+    std::shared_ptr< WModuleInputData< const WDataSetFibers > > m_tractConnector;
 
     WPropTrigger m_run; //!< Button to start saving
 };

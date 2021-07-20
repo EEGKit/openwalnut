@@ -74,7 +74,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -139,17 +139,17 @@ private:
     /**
      * An input connector used to get datasets from other modules. The connection management between connectors must not be handled by the module.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetVector > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSetVector > > m_input;
 
     /**
      * This is a pointer to the dataset the module is currently working on.
      */
-    boost::shared_ptr< WDataSetVector > m_dataSet;
+    std::shared_ptr< WDataSetVector > m_dataSet;
 
     /**
      * list of positions to plot vectors on, this will come from a selection tool class
      */
-    boost::shared_ptr< std::vector< WPosition > > m_positions;
+    std::shared_ptr< std::vector< WPosition > > m_positions;
 
     WPropBool     m_projectOnSlice; //!< projects the vectors on the slice.
 
@@ -180,13 +180,13 @@ private:
 template< typename ValueType >
 osg::ref_ptr<osg::Geometry> WMVectorPlot::buildPlotSlices()
 {
-    boost::shared_ptr< WProgress > progress( new WProgress( "Vector Plot", 4 ) );
+    std::shared_ptr< WProgress > progress( new WProgress( "Vector Plot", 4 ) );
     m_progress->addSubProgress( progress );
 
     WPosition current = WKernel::getRunningKernel()->getSelectionManager()->getCrosshair()->getPosition();
 
-    boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
-    boost::shared_ptr< WValueSet< ValueType > > vals = boost::dynamic_pointer_cast< WValueSet< ValueType > >( m_dataSet->getValueSet() );
+    std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
+    std::shared_ptr< WValueSet< ValueType > > vals = std::dynamic_pointer_cast< WValueSet< ValueType > >( m_dataSet->getValueSet() );
 
     int maxX = grid->getNbCoordsX() - 1;
     int maxY = grid->getNbCoordsY() - 1;

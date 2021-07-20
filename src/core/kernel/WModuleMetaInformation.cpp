@@ -40,7 +40,7 @@ WModuleMetaInformation::WModuleMetaInformation( std::string name ):
     // initialize members
 }
 
-WModuleMetaInformation::WModuleMetaInformation( boost::shared_ptr< WModule > module ):
+WModuleMetaInformation::WModuleMetaInformation( std::shared_ptr< WModule > module ):
     m_name( module->getName() ),
     m_description( module->getDescription() ),
     m_loaded( false ),

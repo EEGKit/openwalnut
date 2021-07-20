@@ -68,7 +68,7 @@ public:
      *
      * The returned shared_ptr is the sole owner of the WDataSetFibers.
      */
-    boost::shared_ptr< WDataSetFibers > buildDataSet();
+    std::shared_ptr< WDataSetFibers > buildDataSet();
 
     /**
      * Clears all data.
@@ -86,25 +86,25 @@ private:
      * One of the vectors needed to construct a WDataSetFibers.
      * Stores the points in a vector of floats.
      */
-    boost::shared_ptr< std::vector< float > > m_points;
+    std::shared_ptr< std::vector< float > > m_points;
 
     /**
      * One of the vectors needed to construct a WDataSetFibers.
      * Stores the starting indices (refering to the points vector) of the fibers.
      */
-    boost::shared_ptr< std::vector< size_t > > m_fiberIndices;
+    std::shared_ptr< std::vector< size_t > > m_fiberIndices;
 
     /**
      * One of the vectors needed to construct a WDataSetFibers.
      * Stores the length of the fibers.
      */
-    boost::shared_ptr< std::vector< size_t > > m_fiberLengths;
+    std::shared_ptr< std::vector< size_t > > m_fiberLengths;
 
     /**
      * One of the vectors needed to construct a WDataSetFibers.
      * Stores information about what fiber a point in the points vector refers to.
      */
-    boost::shared_ptr< std::vector< size_t > > m_pointToFiber;
+    std::shared_ptr< std::vector< size_t > > m_pointToFiber;
 };
 
 #endif  // WFIBERACCUMULATOR_H

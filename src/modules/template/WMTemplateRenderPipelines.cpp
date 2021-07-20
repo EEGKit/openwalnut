@@ -61,10 +61,10 @@ WMTemplateRenderPipelines::~WMTemplateRenderPipelines()
 {
 }
 
-boost::shared_ptr< WModule > WMTemplateRenderPipelines::factory() const
+std::shared_ptr< WModule > WMTemplateRenderPipelines::factory() const
 {
     // NOTE: Refer to WMTemplate.cpp if you do not understand these commands.
-    return boost::shared_ptr< WModule >( new WMTemplateRenderPipelines() );
+    return std::shared_ptr< WModule >( new WMTemplateRenderPipelines() );
 }
 
 const std::string WMTemplateRenderPipelines::getName() const
@@ -91,7 +91,7 @@ void WMTemplateRenderPipelines::properties()
 {
     // NOTE: Refer to WMTemplate.cpp if you do not understand these commands.
 
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     // show hud?
     m_showHUD       = m_properties->addProperty( "Show HUD", "Check to enable the debugging texture HUD.", true );

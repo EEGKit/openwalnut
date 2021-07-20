@@ -55,7 +55,7 @@ public:
      *
      * \return true if value >= m_min
      */
-    virtual bool accept( boost::shared_ptr< WPropertyVariable< T > > property, const T& value );
+    virtual bool accept( std::shared_ptr< WPropertyVariable< T > > property, const T& value );
 
     /**
      * Returns the current min value.
@@ -76,7 +76,7 @@ public:
      *
      * \return the constraint.
      */
-    virtual boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > clone();
+    virtual std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > clone();
 
 private:
     /**
@@ -97,7 +97,7 @@ WPropertyConstraintMin< T >::~WPropertyConstraintMin()
 }
 
 template < typename T >
-bool WPropertyConstraintMin< T >::accept( boost::shared_ptr< WPropertyVariable< T > > /* property */, const T& value )
+bool WPropertyConstraintMin< T >::accept( std::shared_ptr< WPropertyVariable< T > > /* property */, const T& value )
 {
     return value >= m_min;
 }
@@ -115,9 +115,9 @@ PROPERTYCONSTRAINT_TYPE WPropertyConstraintMin< T >::getType()
 }
 
 template < typename T >
-boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > WPropertyConstraintMin< T >::clone()
+std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint > WPropertyConstraintMin< T >::clone()
 {
-    return boost::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint >( new WPropertyConstraintMin< T >( *this ) );
+    return std::shared_ptr< typename WPropertyVariable< T >::PropertyConstraint >( new WPropertyConstraintMin< T >( *this ) );
 }
 
 #endif  // WPROPERTYCONSTRAINTMIN_H

@@ -44,7 +44,7 @@
 #include "WQtTreeItem.h"
 #include "WTreeItemTypes.h"
 
-WQtTreeItem::WQtTreeItem( QTreeWidgetItem * parent, WTreeItemType type, boost::shared_ptr< WModule > module ) :
+WQtTreeItem::WQtTreeItem( QTreeWidgetItem * parent, WTreeItemType type, std::shared_ptr< WModule > module ) :
     QTreeWidgetItem( parent, type ),
     m_deleteInProgress( false ),
     m_needPostDeleteEvent( true ),
@@ -66,7 +66,7 @@ WQtTreeItem::WQtTreeItem( QTreeWidgetItem * parent, WTreeItemType type, boost::s
 
     // grab the runtime name property
     // replace the name by the filename
-    boost::shared_ptr< WPropertyBase > p = module->getProperties()->findProperty( "Name" );
+    std::shared_ptr< WPropertyBase > p = module->getProperties()->findProperty( "Name" );
 
     // always ensure that findProperty really found something
     if( p )
@@ -81,7 +81,7 @@ WQtTreeItem::WQtTreeItem( QTreeWidgetItem * parent, WTreeItemType type, boost::s
         m_nameProp->getUpdateCondition()->subscribeSignal( boost::bind( &WQtTreeItem::nameChanged, this ) );
     }
 
-    m_updateTimer = boost::shared_ptr< QTimer >( new QTimer() );
+    m_updateTimer = std::shared_ptr< QTimer >( new QTimer() );
     connect( m_updateTimer.get(), SIGNAL( timeout() ), this, SLOT( update() ) );
     m_updateTimer->start( 500 );
 
@@ -105,7 +105,7 @@ WQtTreeItem::~WQtTreeItem()
     }
 }
 
-boost::shared_ptr< WModule > WQtTreeItem::getModule()
+std::shared_ptr< WModule > WQtTreeItem::getModule()
 {
     return m_module;
 }
@@ -161,7 +161,7 @@ std::string WQtTreeItem::createTooltip( WModule::SPtr module )
     return tooltip;
 }
 
-void WQtTreeItem::slotDataChanged( boost::shared_ptr<WModuleConnector> connector )
+void WQtTreeItem::slotDataChanged( std::shared_ptr<WModuleConnector> connector )
 {
     // post event
     QCoreApplication::postEvent( WQtGui::getMainWindow()->getControlPanel(), new WModuleConnectorEvent( m_module, connector ) );
@@ -174,7 +174,7 @@ void WQtTreeItem::update()
 
 void WQtTreeItem::updateState()
 {
-    boost::shared_ptr< WProgressCombiner> p = m_module->getRootProgressCombiner();
+    std::shared_ptr< WProgressCombiner> p = m_module->getRootProgressCombiner();
 
     // update the progress combiners internal state
     p->update();

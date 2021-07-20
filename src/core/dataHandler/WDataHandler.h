@@ -58,7 +58,7 @@ public:
     /**
      * For shortening: a type defining a shared vector of WSubject pointers.
      */
-    typedef std::vector< boost::shared_ptr< WSubject > > SubjectContainerType;
+    typedef std::vector< std::shared_ptr< WSubject > > SubjectContainerType;
 
     /**
      * The alias for a shared container.
@@ -90,21 +90,21 @@ public:
      *
      * \return the instance.
      */
-    static boost::shared_ptr< WDataHandler > getDataHandler();
+    static std::shared_ptr< WDataHandler > getDataHandler();
 
     /**
      * Insert a new subject referenced by a pointer.
      *
      * \param subject a pointer to the subject that will be added
      */
-    void addSubject( boost::shared_ptr< WSubject > subject );
+    void addSubject( std::shared_ptr< WSubject > subject );
 
     /**
      * Removes the specified subject if it is in the set.
      *
      * \param subject the subject to remove.
      */
-    void removeSubject( boost::shared_ptr< WSubject > subject );
+    void removeSubject( std::shared_ptr< WSubject > subject );
 
     /**
      * Remove all subjects.
@@ -122,7 +122,7 @@ public:
      *
      * \throw WNoSuchSubject in case the subject can't be found.
      */
-    boost::shared_ptr< WSubject > getSubjectByID( size_t subjectID );
+    std::shared_ptr< WSubject > getSubjectByID( size_t subjectID );
 
     /**
      * Gets the subject with the ID SUBJECT_UNKNOWN.
@@ -131,7 +131,7 @@ public:
      *
      * \return  the subject.
      */
-    static boost::shared_ptr< WSubject > getDefaultSubject();
+    static std::shared_ptr< WSubject > getDefaultSubject();
 
     /**
      * Returns read-access to the list of subjects.
@@ -151,7 +151,7 @@ private:
     /**
      * Singleton instance of WDataHandler.
      */
-    static boost::shared_ptr< WDataHandler > m_instance;
+    static std::shared_ptr< WDataHandler > m_instance;
 };
 
 /**

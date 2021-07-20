@@ -38,7 +38,7 @@
 #include "WEEGSourceCalculator.h"
 
 
-WEEGSourceCalculator::WEEGSourceCalculator( const boost::shared_ptr< const WEEG2 > eeg )
+WEEGSourceCalculator::WEEGSourceCalculator( const std::shared_ptr< const WEEG2 > eeg )
     : m_eeg( eeg ),
       m_numPositions( 0 )
 {
@@ -61,7 +61,7 @@ WEEGSourceCalculator::WEEGSourceCalculator( const boost::shared_ptr< const WEEG2
     }
 }
 
-WPosition WEEGSourceCalculator::calculate( const boost::shared_ptr< const WEEGEvent > event ) const
+WPosition WEEGSourceCalculator::calculate( const std::shared_ptr< const WEEGEvent > event ) const
 {
     const std::vector< double >& values = event->getValues();
     WAssert( values.size() == m_hasPosition.size(), "Event and loaded EEG dataset have to have the same number of channels" );

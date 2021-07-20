@@ -55,10 +55,10 @@ WReaderClustering::~WReaderClustering() throw()
 }
 
 
-boost::shared_ptr< WDataSetHierarchicalClustering > WReaderClustering::read()
+std::shared_ptr< WDataSetHierarchicalClustering > WReaderClustering::read()
 {
     //Read file to line list
-    boost::shared_ptr< std::ifstream > ifs( new std::ifstream() );
+    std::shared_ptr< std::ifstream > ifs( new std::ifstream() );
     ifs->open( m_fname.c_str(), std::ifstream::in | std::ifstream::binary );
     if( !ifs || ifs->bad() )
     {

@@ -27,6 +27,7 @@
 
 #include <algorithm>
 #include <list>
+#include <shared_mutex>
 #include <string>
 #include <vector>
 
@@ -41,24 +42,24 @@ class WROIManager;
 /**
  * implements a branch in the tree like structure for rois
  */
-class  WRMBranch : public boost::enable_shared_from_this< WRMBranch >
+class  WRMBranch : public std::enable_shared_from_this< WRMBranch >
 {
 public:
     /**
      * Convenience type for a shared pointer of this type
      */
-    typedef boost::shared_ptr< WRMBranch > SPtr;
+    typedef std::shared_ptr< WRMBranch > SPtr;
 
     /**
      * Convenience type for a const shared pointer of this type
      */
-    typedef boost::shared_ptr< const WRMBranch > ConstSPtr;
+    typedef std::shared_ptr< const WRMBranch > ConstSPtr;
 
     /**
      * construtor
      * \param roiManager
      */
-    explicit WRMBranch( boost::shared_ptr< WROIManager > roiManager );
+    explicit WRMBranch( std::shared_ptr< WROIManager > roiManager );
 
     /**
      * destructor
@@ -152,14 +153,14 @@ public:
      *
      * \return the roi manager
      */
-    boost::shared_ptr< WROIManager > getRoiManager();
+    std::shared_ptr< WROIManager > getRoiManager();
 
     /**
      * returns the properties object.
      *
      * \return the properties of this branch
      */
-    boost::shared_ptr< WProperties > getProperties();
+    std::shared_ptr< WProperties > getProperties();
 
     /**
      * getter for the NOT flag
@@ -185,14 +186,14 @@ public:
      *
      * \param notifier  the notifier function
      */
-    void addChangeNotifier( boost::shared_ptr< boost::function< void() > > notifier );
+    void addChangeNotifier( std::shared_ptr< boost::function< void() > > notifier );
 
     /**
      * Remove a specified notifier from the list of default notifiers which get connected to each branch
      *
      * \param notifier  the notifier function
      */
-    void removeChangeNotifier( boost::shared_ptr< boost::function< void() > > notifier );
+    void removeChangeNotifier( std::shared_ptr< boost::function< void() > > notifier );
 
     /**
      * Resorts the ROIs using the specified comparator from its begin to its end.
@@ -216,14 +217,14 @@ protected:
      */
     void propertyChanged();
 private:
-    boost::shared_ptr< WROIManager > m_roiManager; //!< stores a pointer to the roi manager
+    std::shared_ptr< WROIManager > m_roiManager; //!< stores a pointer to the roi manager
 
     std::vector< osg::ref_ptr< WROI > > m_rois; //!< list of rois in this this branch,
                                                   // first in the list is the main roi
     /**
      * the property object for the module
      */
-    boost::shared_ptr< WProperties > m_properties;
+    std::shared_ptr< WProperties > m_properties;
 
     WPropBool m_dirty; //!< dirty flag to indicate if anything has changed within the branch
 
@@ -245,14 +246,14 @@ private:
     /**
      * The notifiers connected to added rois by default.
      */
-    std::list< boost::shared_ptr< boost::function< void() > > > m_changeNotifiers;
+    std::list< std::shared_ptr< boost::function< void() > > > m_changeNotifiers;
 
-    boost::shared_ptr< boost::function< void() > > m_changeRoiSignal; //!< Signal that can be used to update the ROImanager branch
+    std::shared_ptr< boost::function< void() > > m_changeRoiSignal; //!< Signal that can be used to update the ROImanager branch
 
     /**
      * Lock for associated notifiers set.
      */
-    boost::shared_mutex m_associatedNotifiersLock;
+    std::shared_mutex m_associatedNotifiersLock;
 };
 
 inline bool WRMBranch::empty()

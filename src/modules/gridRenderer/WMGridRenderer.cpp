@@ -55,7 +55,7 @@ W_LOADABLE_MODULE( WMGridRenderer )
 
 WMGridRenderer::WMGridRenderer():
     WModule(),
-    m_recompute( boost::shared_ptr< WCondition >( new WCondition() ) )
+    m_recompute( std::shared_ptr< WCondition >( new WCondition() ) )
 {
     // WARNING: initializing connectors inside the constructor will lead to an exception.
     // Implement WModule::initializeConnectors instead.
@@ -67,9 +67,9 @@ WMGridRenderer::~WMGridRenderer()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMGridRenderer::factory() const
+std::shared_ptr< WModule > WMGridRenderer::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMGridRenderer() );
+    return std::shared_ptr< WModule >( new WMGridRenderer() );
 }
 
 const char** WMGridRenderer::getXPMIcon() const
@@ -131,14 +131,14 @@ void WMGridRenderer::moduleMain()
         WGridRegular3D::SPtr regGrid;
 
         // is this a DS with a regular grid?
-        WDataSetSingle::SPtr dsSingle = boost::dynamic_pointer_cast< WDataSetSingle >( dataSet );
+        WDataSetSingle::SPtr dsSingle = std::dynamic_pointer_cast< WDataSetSingle >( dataSet );
         if( dsSingle )
         {
-            regGrid = boost::dynamic_pointer_cast< WGridRegular3D >( dsSingle->getGrid() );
+            regGrid = std::dynamic_pointer_cast< WGridRegular3D >( dsSingle->getGrid() );
         }
 
         // is this a fiber dataset?
-        WDataSetFibers::SPtr dsFibers = boost::dynamic_pointer_cast< WDataSetFibers >( dataSet );
+        WDataSetFibers::SPtr dsFibers = std::dynamic_pointer_cast< WDataSetFibers >( dataSet );
         if( dsFibers )
         {
             debugLog() << "Fiber Data.";
@@ -151,7 +151,7 @@ void WMGridRenderer::moduleMain()
         }
 
         // is this a point dataset?
-        WDataSetPoints::SPtr dsPoints = boost::dynamic_pointer_cast< WDataSetPoints >( dataSet );
+        WDataSetPoints::SPtr dsPoints = std::dynamic_pointer_cast< WDataSetPoints >( dataSet );
         if( dsPoints )
         {
             debugLog() << "Points Data.";
@@ -200,7 +200,7 @@ void WMGridRenderer::moduleMain()
 void WMGridRenderer::connectors()
 {
     // initialize connectors
-    m_input = boost::shared_ptr< WModuleInputData < WDataSet  > >(
+    m_input = std::shared_ptr< WModuleInputData < WDataSet  > >(
         new WModuleInputData< WDataSet >( shared_from_this(),
                                                                "in", "The dataset to show" )
         );

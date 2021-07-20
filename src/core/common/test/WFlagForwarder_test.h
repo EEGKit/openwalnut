@@ -43,9 +43,9 @@ public:
     void testPropagation( void )
     {
         // create some flags
-        boost::shared_ptr< WFlag< int > > flagSource( new WFlag< int >( new WConditionOneShot(), 5 ) );
-        boost::shared_ptr< WFlag< int > > flagTarget1( new WFlag< int >( new WConditionOneShot(), 10 ) );
-        boost::shared_ptr< WFlag< int > > flagTarget2( new WFlag< int >( new WConditionOneShot(), 15 ) );
+        std::shared_ptr< WFlag< int > > flagSource( new WFlag< int >( new WConditionOneShot(), 5 ) );
+        std::shared_ptr< WFlag< int > > flagTarget1( new WFlag< int >( new WConditionOneShot(), 10 ) );
+        std::shared_ptr< WFlag< int > > flagTarget2( new WFlag< int >( new WConditionOneShot(), 15 ) );
 
         // create the forwarder
         WFlagForwarder< int >* f = new WFlagForwarder< int >( flagSource );

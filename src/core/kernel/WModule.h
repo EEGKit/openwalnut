@@ -70,7 +70,7 @@ template < typename T > class WModuleOutputData;
  */
 class  WModule: public WThreadedRunner,
                                public WPrototyped,
-                               public boost::enable_shared_from_this< WModule >
+                               public std::enable_shared_from_this< WModule >
 {
 friend class WModuleConnector;  //!< requires access to notify members
 template< typename T > friend class WModuleInputData;  //!< requires access for convenience functions to automatically add a created connector
@@ -95,22 +95,22 @@ public:
     /**
      * The type for the list of input connectors.
      */
-    typedef std::vector< boost::shared_ptr< WModuleInputConnector > > InputConnectorList;
+    typedef std::vector< std::shared_ptr< WModuleInputConnector > > InputConnectorList;
 
     /**
      * The type for the list of output connectors.
      */
-    typedef std::vector< boost::shared_ptr< WModuleOutputConnector > > OutputConnectorList;
+    typedef std::vector< std::shared_ptr< WModuleOutputConnector > > OutputConnectorList;
 
     /**
      * Shared pointer to a WModule.
      */
-    typedef boost::shared_ptr< WModule > SPtr;
+    typedef std::shared_ptr< WModule > SPtr;
 
     /**
      * Shared pointer to a const WModule.
      */
-    typedef boost::shared_ptr< const WModule > ConstSPtr;
+    typedef std::shared_ptr< const WModule > ConstSPtr;
 
     /**
      * Gives back input connectors.
@@ -127,7 +127,7 @@ public:
      * \return the connector.
      * \throw WModuleConnectorNotFound thrown whenever the module does not provide the specified connector.
      */
-    boost::shared_ptr< WModuleInputConnector > getInputConnector( std::string name );
+    std::shared_ptr< WModuleInputConnector > getInputConnector( std::string name );
 
     /**
      * Finds the named connector for the module. This is similar to getInputConnector but it does not throw an exception if the connector could
@@ -137,7 +137,7 @@ public:
      *
      * \return the connector or NULL if not found
      */
-    boost::shared_ptr< WModuleInputConnector > findInputConnector( std::string name );
+    std::shared_ptr< WModuleInputConnector > findInputConnector( std::string name );
 
     /**
      * Gives back output connectors.
@@ -154,7 +154,7 @@ public:
      * \return the connector.
      * \throw WModuleConnectorNotFound thrown whenever the module does not provide the specified connector.
      */
-    boost::shared_ptr< WModuleOutputConnector > getOutputConnector( std::string name );
+    std::shared_ptr< WModuleOutputConnector > getOutputConnector( std::string name );
 
     /**
      * Finds the named connector for the module. This is similar to getOutputConnector but it does not throw an exception if the connector could
@@ -164,7 +164,7 @@ public:
      *
      * \return the connector or NULL if not found.
      */
-    boost::shared_ptr< WModuleOutputConnector > findOutputConnector( std::string name );
+    std::shared_ptr< WModuleOutputConnector > findOutputConnector( std::string name );
 
     /**
      * Finds the named connector for the module. This searches for inputs and outputs.
@@ -174,7 +174,7 @@ public:
      * \return the connector.
      * \throw WModuleConnectorNotFound thrown whenever the module does not provide the specified connector.
      */
-    boost::shared_ptr< WModuleConnector > getConnector( std::string name );
+    std::shared_ptr< WModuleConnector > getConnector( std::string name );
 
     /**
      * Finds the named connector for the module. This searches for inputs and outputs. This is similar to getConnector but it does not throw an
@@ -184,21 +184,21 @@ public:
      *
      * \return the connector or NULL if not found.
      */
-    boost::shared_ptr< WModuleConnector > findConnector( std::string name );
+    std::shared_ptr< WModuleConnector > findConnector( std::string name );
 
     /**
      * Return a pointer to the properties object of the module.
      *
      * \return the properties.
      */
-    boost::shared_ptr< WProperties > getProperties() const;
+    std::shared_ptr< WProperties > getProperties() const;
 
     /**
      * Return a pointer to the information properties object of the module. The module intends these properties to not be modified.
      *
      * \return the properties.
      */
-    boost::shared_ptr< WProperties > getInformationProperties() const;
+    std::shared_ptr< WProperties > getInformationProperties() const;
 
     /**
      * Determines whether the module instance is properly initialized.
@@ -278,7 +278,7 @@ public:
      *
      * \return the container.
     */
-    boost::shared_ptr< WModuleContainer > getAssociatedContainer() const;
+    std::shared_ptr< WModuleContainer > getAssociatedContainer() const;
 
     /**
      * Due to the prototype design pattern used to build modules, this method returns a new instance of this module. NOTE: it
@@ -286,7 +286,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const = 0;
+    virtual std::shared_ptr< WModule > factory() const = 0;
 
     // Tell the compiler that we really want to use the base's subscribeSignal.
     using WThreadedRunner::subscribeSignal;
@@ -322,7 +322,7 @@ public:
      *
      * \return the progress combiner for this module.
      */
-    virtual boost::shared_ptr< WProgressCombiner > getRootProgressCombiner();
+    virtual std::shared_ptr< WProgressCombiner > getRootProgressCombiner();
 
     /**
      * Get the icon for this module in XPM format.
@@ -452,7 +452,7 @@ protected:
       *
       * \param container the container to associate with.
       */
-    void setAssociatedContainer( boost::shared_ptr< WModuleContainer > container );
+    void setAssociatedContainer( std::shared_ptr< WModuleContainer > container );
 
     // **************************************************************************************************************************
     //
@@ -507,14 +507,14 @@ protected:
      *
      * \param con the connector.
      */
-    void addConnector( boost::shared_ptr<WModuleInputConnector> con );
+    void addConnector( std::shared_ptr<WModuleInputConnector> con );
 
     /**
      * Adds the specified connector to the list of outputs.
      *
      * \param con the connector.
      */
-    void addConnector( boost::shared_ptr<WModuleOutputConnector> con );
+    void addConnector( std::shared_ptr<WModuleOutputConnector> con );
 
     /**
      * Removes all connectors properly. It disconnects the connectors and cleans the connectors list.
@@ -550,15 +550,15 @@ protected:
      * \param here the connector of THIS module that got connected to "there"
      * \param there the connector that has been connected with the connector "here" of this module.
      */
-    virtual void notifyConnectionEstablished( boost::shared_ptr<WModuleConnector> here,
-                                              boost::shared_ptr<WModuleConnector> there );
+    virtual void notifyConnectionEstablished( std::shared_ptr<WModuleConnector> here,
+                                              std::shared_ptr<WModuleConnector> there );
     /**
      * Gets called whenever a connection between a remote and local connector gets closed.
      *
      * \param here the connector of THIS module getting disconnected.
      * \param there the connector of the other module getting disconnected.
      */
-    virtual void notifyConnectionClosed( boost::shared_ptr<WModuleConnector> here, boost::shared_ptr<WModuleConnector> there );
+    virtual void notifyConnectionClosed( std::shared_ptr<WModuleConnector> here, std::shared_ptr<WModuleConnector> there );
 
     /**
      * Gets called when the data on one input connector changed.
@@ -566,8 +566,8 @@ protected:
      * \param input the input connector receiving the change.
      * \param output the output connector sending the change notification.
      */
-    virtual void notifyDataChange( boost::shared_ptr<WModuleConnector> input,
-                                   boost::shared_ptr<WModuleConnector> output );
+    virtual void notifyDataChange( std::shared_ptr<WModuleConnector> input,
+                                   std::shared_ptr<WModuleConnector> output );
 
     /**
      * Call this whenever your module is ready and can react on property changes.
@@ -639,19 +639,19 @@ protected:
     /**
      * The property object for the module.
      */
-    boost::shared_ptr< WProperties > m_properties;
+    std::shared_ptr< WProperties > m_properties;
 
     /**
      * The property object for the module containing only module whose purpose is "PV_PURPOSE_INFORMNATION". It is useful to define some property
      * to only be of informational nature. The GUI does not modify them. As it is a WProperties instance, you can use it the same way as
      * m_properties.
      */
-    boost::shared_ptr< WProperties > m_infoProperties;
+    std::shared_ptr< WProperties > m_infoProperties;
 
     /**
      * Progress indicator used as parent for all progress' of this module.
      */
-    boost::shared_ptr< WProgressCombiner > m_progress;
+    std::shared_ptr< WProgressCombiner > m_progress;
 
     /**
      * True if everything is initialized and ready to be used.
@@ -697,7 +697,7 @@ protected:
     /**
      * Progress indicator for the "ready" state.
      */
-    boost::shared_ptr< WProgress > m_readyProgress;
+    std::shared_ptr< WProgress > m_readyProgress;
 
     /**
      * The internal state of the module. This is, by default, simply the exit flag from WThreadedRunner.
@@ -707,7 +707,7 @@ protected:
     /**
      * The container this module belongs to.
      */
-    boost::shared_ptr< WModuleContainer > m_container;
+    std::shared_ptr< WModuleContainer > m_container;
 
     /**
      * Set of input connectors associated with this module.
@@ -759,12 +759,12 @@ private:
      /**
      * Lock for m_inputConnectors.
      */
-    // boost::shared_mutex m_inputConnectorsLock;
+    // std::shared_mutex m_inputConnectorsLock;
 
     /**
      * Lock for m_outputConnectors.
      */
-    // boost::shared_mutex m_outputConnectorsLock;
+    // std::shared_mutex m_outputConnectorsLock;
 
     /**
      * Module meta information. Set by the factory creating the module instance.
@@ -797,7 +797,7 @@ private:
 /**
  * Simply a list of modules. The type is used by the following macros and typedefs
  */
-typedef std::vector< boost::shared_ptr< WModule > > WModuleList;
+typedef std::vector< std::shared_ptr< WModule > > WModuleList;
 
 /**
  * The signature used for the module loading entry point
@@ -817,7 +817,7 @@ typedef void ( *W_LOADABLE_REGISTERARBITRARY_SIGNATURE )( const boost::filesyste
  *       pointer causes segmentation faults during load.
  */
 #define W_LOADABLE_MODULE( MODULECLASS ) \
-extern "C"                       void WLoadModule( WModuleList& m ) { m.push_back( boost::shared_ptr< WModule >( new MODULECLASS ) ); }  // NOLINT
+extern "C"                       void WLoadModule( WModuleList& m ) { m.push_back( std::shared_ptr< WModule >( new MODULECLASS ) ); }  // NOLINT
 
 /**
  * The corresponding symbol name.

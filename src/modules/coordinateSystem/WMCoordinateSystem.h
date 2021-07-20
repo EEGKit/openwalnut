@@ -86,7 +86,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -125,15 +125,15 @@ private:
     WPropTrigger m_ihpTrigger; //!< button to reset the ihp point;
 
     WPropSelection m_csSelection; //!< selection for coordinate system mode
-    boost::shared_ptr< WItemSelection > m_possibleSelections;  //!< selection for coordinate system mode
+    std::shared_ptr< WItemSelection > m_possibleSelections;  //!< selection for coordinate system mode
 
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_input;  //!< Input connector required by this module.
-    boost::shared_ptr< const WDataSetScalar > m_dataSet; //!< pointer to dataSet to be able to access it throughout the whole module.
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_input;  //!< Input connector required by this module.
+    std::shared_ptr< const WDataSetScalar > m_dataSet; //!< pointer to dataSet to be able to access it throughout the whole module.
 
     /**
      * the root node for this module
@@ -149,7 +149,7 @@ private:
 
     float m_drawOffset; //!< offset from slices to draw geometry on
 
-    boost::shared_ptr< WCoordConverter > m_coordConverter; //!< stores pointer
+    std::shared_ptr< WCoordConverter > m_coordConverter; //!< stores pointer
 
     int m_viewAngle; //!< stores the last view angle
 
@@ -206,7 +206,7 @@ private:
     /**
      * the shader object for this module
      */
-    // boost::shared_ptr< WGEShader >m_shader;
+    // std::shared_ptr< WGEShader >m_shader;
 
     /**
      * update function, called with each update pass of the osg render loop

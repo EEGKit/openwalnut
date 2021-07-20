@@ -27,7 +27,7 @@
 #include "WDataSetFiberClustering.h"
 
 // The prototype as singleton. Created during first getPrototype() call
-boost::shared_ptr< WPrototyped > WDataSetFiberClustering::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WDataSetFiberClustering::m_prototype = std::shared_ptr< WPrototyped >();
 
 WDataSetFiberClustering::WDataSetFiberClustering()
 {
@@ -45,11 +45,11 @@ WDataSetFiberClustering::~WDataSetFiberClustering()
     // cleanup
 }
 
-boost::shared_ptr< WPrototyped > WDataSetFiberClustering::getPrototype()
+std::shared_ptr< WPrototyped > WDataSetFiberClustering::getPrototype()
 {
     if( !m_prototype )
     {
-        m_prototype = boost::shared_ptr< WPrototyped >( new WDataSetFiberClustering() );
+        m_prototype = std::shared_ptr< WPrototyped >( new WDataSetFiberClustering() );
     }
     return m_prototype;
 }

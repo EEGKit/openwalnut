@@ -53,7 +53,7 @@
 #include "WGraphicsEngine.h"
 
 // graphics engine instance as singleton
-boost::shared_ptr< WGraphicsEngine > WGraphicsEngine::m_instance = boost::shared_ptr< WGraphicsEngine >();
+std::shared_ptr< WGraphicsEngine > WGraphicsEngine::m_instance = std::shared_ptr< WGraphicsEngine >();
 
 WGraphicsEngine::WGraphicsEngine():
     WThreadedRunner()
@@ -93,11 +93,11 @@ bool WGraphicsEngine::isMultiThreadedViews() const
     return false;
 }
 
-boost::shared_ptr< WGraphicsEngine > WGraphicsEngine::getGraphicsEngine()
+std::shared_ptr< WGraphicsEngine > WGraphicsEngine::getGraphicsEngine()
 {
     if( !m_instance )
     {
-        m_instance = boost::shared_ptr< WGraphicsEngine >( new WGraphicsEngine() );
+        m_instance = std::shared_ptr< WGraphicsEngine >( new WGraphicsEngine() );
     }
 
     return m_instance;
@@ -108,17 +108,17 @@ osg::ref_ptr<WGEScene> WGraphicsEngine::getScene()
     return m_rootNode;
 }
 
-boost::shared_ptr<WGEViewer> WGraphicsEngine::createViewer( std::string name, osg::ref_ptr<osg::Referenced> wdata, int x, int y,
+std::shared_ptr<WGEViewer> WGraphicsEngine::createViewer( std::string name, osg::ref_ptr<osg::Referenced> wdata, int x, int y,
                                                             int width, int height, WGECamera::ProjectionMode projectionMode,
                                                             WColor bgColor )
 {
-    boost::shared_ptr<WGEViewer> viewer = boost::shared_ptr<WGEViewer>(
+    std::shared_ptr<WGEViewer> viewer = std::shared_ptr<WGEViewer>(
         new WGEViewer( name, wdata, x, y, width, height, projectionMode ) );
     viewer->setBgColor( bgColor );
     viewer->setScene( getScene() );
 
     // store it in viewer list
-    boost::unique_lock< boost::shared_mutex > lock( m_viewersLock );
+    std::unique_lock< std::shared_mutex > lock( m_viewersLock );
     bool insertSucceeded = m_viewers.insert( make_pair( name, viewer ) ).second;
     if( !insertSucceeded ) // if false, viewer with same name already exists
     {
@@ -131,9 +131,9 @@ boost::shared_ptr<WGEViewer> WGraphicsEngine::createViewer( std::string name, os
     return viewer;
 }
 
-void WGraphicsEngine::closeViewer( boost::shared_ptr< WGEViewer > viewer )
+void WGraphicsEngine::closeViewer( std::shared_ptr< WGEViewer > viewer )
 {
-    boost::unique_lock< boost::shared_mutex > lock( m_viewersLock );
+    std::unique_lock< std::shared_mutex > lock( m_viewersLock );
 
     // close and erase
     viewer->close();
@@ -149,7 +149,7 @@ void WGraphicsEngine::closeViewer( boost::shared_ptr< WGEViewer > viewer )
 
 void WGraphicsEngine::closeViewer( const std::string name )
 {
-    boost::unique_lock< boost::shared_mutex > lock( m_viewersLock );
+    std::unique_lock< std::shared_mutex > lock( m_viewersLock );
     if( m_viewers.count( name ) > 0 )
     {
         m_viewers[name]->close();
@@ -164,20 +164,20 @@ void WGraphicsEngine::closeViewer( const std::string name )
     }
 }
 
-boost::shared_ptr< WGEViewer > WGraphicsEngine::getViewerByName( std::string name )
+std::shared_ptr< WGEViewer > WGraphicsEngine::getViewerByName( std::string name )
 {
-    boost::shared_lock< boost::shared_mutex > lock( m_viewersLock );
-    boost::shared_ptr< WGEViewer > out = m_viewers.count( name ) > 0 ?
+    boost::shared_lock< std::shared_mutex > lock( m_viewersLock );
+    std::shared_ptr< WGEViewer > out = m_viewers.count( name ) > 0 ?
         m_viewers[name] :
-        boost::shared_ptr< WGEViewer >();
+        std::shared_ptr< WGEViewer >();
     lock.unlock();
     return out;
 }
 
-boost::shared_ptr< WGEViewer > WGraphicsEngine::getViewer()
+std::shared_ptr< WGEViewer > WGraphicsEngine::getViewer()
 {
-    boost::shared_lock< boost::shared_mutex > lock( m_viewersLock );
-    boost::shared_ptr< WGEViewer > result = m_viewers[ "Main View" ];
+    boost::shared_lock< std::shared_mutex > lock( m_viewersLock );
+    std::shared_ptr< WGEViewer > result = m_viewers[ "Main View" ];
     lock.unlock();
     return result;
 }
@@ -214,7 +214,7 @@ void WGraphicsEngine::applyViewerListUpdates()
     // any new or removed views?
     if( m_viewersUpdate )
     {
-        boost::unique_lock< boost::shared_mutex > lock( m_viewersLock );
+        std::unique_lock< std::shared_mutex > lock( m_viewersLock );
 
         // add all views
         for( std::vector< WGEViewer::SPtr >::iterator it = m_addViewers.begin(); it != m_addViewers.end(); ++it )

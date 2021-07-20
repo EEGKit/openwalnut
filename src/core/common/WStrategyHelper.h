@@ -50,8 +50,8 @@
  *
  * The type in StrategyType needs to comply to the following rules:
  * <ul>
- *  <li> provide a typedef SPtr, representing the pointer type of this class. Usually, this is a boost::shared_ptr
- *  <li> provide a typedef ConstSPtr, representing the pointer type of this class. Usually, this is a boost::shared_ptr< const >
+ *  <li> provide a typedef SPtr, representing the pointer type of this class. Usually, this is a std::shared_ptr
+ *  <li> provide a typedef ConstSPtr, representing the pointer type of this class. Usually, this is a std::shared_ptr< const >
  *  <li> provide a method std::string getName() const
  *  <li> provide a method std::string getDescription() const
  *  <li> provide a method const char** getXPMIcon() const
@@ -69,14 +69,14 @@ class WStrategyHelper
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WStrategyHelper >.
+     * Convenience typedef for a std::shared_ptr< WStrategyHelper >.
      */
-    typedef boost::shared_ptr< WStrategyHelper > SPtr;
+    typedef std::shared_ptr< WStrategyHelper > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WStrategyHelper >.
+     * Convenience typedef for a std::shared_ptr< const WStrategyHelper >.
      */
-    typedef boost::shared_ptr< const WStrategyHelper > ConstSPtr;
+    typedef std::shared_ptr< const WStrategyHelper > ConstSPtr;
 
     /**
      * Constructs an empty strategy selector. Use one of the addStrategy methods to register strategies.

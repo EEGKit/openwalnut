@@ -25,6 +25,7 @@
 #ifndef WMODULEINPUTCONNECTOR_H
 #define WMODULEINPUTCONNECTOR_H
 
+#include <shared_mutex>
 #include <string>
 
 #include <boost/thread/locks.hpp>
@@ -49,7 +50,7 @@ public:
      * \param name The name of this connector.
      * \param description Short description of this connector.
      */
-    WModuleInputConnector( boost::shared_ptr< WModule > module, std::string name="", std::string description="" );
+    WModuleInputConnector( std::shared_ptr< WModule > module, std::string name="", std::string description="" );
 
     /**
      * Destructor.
@@ -63,7 +64,7 @@ public:
      *
      * \return true if compatible.
      */
-    virtual bool connectable( boost::shared_ptr<WModuleConnector> con );
+    virtual bool connectable( std::shared_ptr<WModuleConnector> con );
 
     /**
      * Checks whether the specified connector is connectable to this one, but ignores compatibility the type to be transferred.
@@ -72,7 +73,7 @@ public:
      *
      * \return true if compatible.
      */
-    virtual bool lazyConnectable( boost::shared_ptr<WModuleConnector> con );
+    virtual bool lazyConnectable( std::shared_ptr<WModuleConnector> con );
 
     /**
      * Connects (subscribes) a specified notify function with a signal this module instance is offering.
@@ -121,14 +122,14 @@ protected:
      * \param con the connector that requests connection.
      *
      */
-    virtual void connectSignals( boost::shared_ptr<WModuleConnector> con );
+    virtual void connectSignals( std::shared_ptr<WModuleConnector> con );
 
     /**
      * Disconnect all signals subscribed by this connector from "con".
      *
      * \param con the connector that gets disconnected.
      */
-    virtual void disconnectSignals( boost::shared_ptr<WModuleConnector> con );
+    virtual void disconnectSignals( std::shared_ptr<WModuleConnector> con );
 
     /**
      * Gets called when the data on this input connector changed.
@@ -136,7 +137,7 @@ protected:
      * \param input the input connector receiving the change.
      * \param output the output connector sending the change notification.
      */
-    virtual void notifyDataChange( boost::shared_ptr<WModuleConnector> input, boost::shared_ptr<WModuleConnector> output );
+    virtual void notifyDataChange( std::shared_ptr<WModuleConnector> input, std::shared_ptr<WModuleConnector> output );
 
     /**
      * Gets called whenever a connector gets connected to the specified input.
@@ -144,7 +145,7 @@ protected:
      * \param here the connector of THIS module that got connected to "there"
      * \param there the connector that has been connected with the connector "here" of this module.
      */
-    virtual void notifyConnectionEstablished( boost::shared_ptr<WModuleConnector> here, boost::shared_ptr<WModuleConnector> there );
+    virtual void notifyConnectionEstablished( std::shared_ptr<WModuleConnector> here, std::shared_ptr<WModuleConnector> there );
 
     /**
      * Sets the update flag (use updated() to query it)to true. This is normally called by the notifyDataChange callback.
@@ -167,7 +168,7 @@ private:
     /**
      * This lock protects the m_updated flag.
      */
-    boost::shared_mutex m_updatedLock;
+    std::shared_mutex m_updatedLock;
 
     /**
      * A flag denoting that an update was received. It does not denote a real change in the value!

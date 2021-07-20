@@ -29,7 +29,7 @@
 
 #include "WPropertyWrapper.h"
 
-WPropertyWrapper::WPropertyWrapper( boost::shared_ptr< WPropertyBase > prop )
+WPropertyWrapper::WPropertyWrapper( std::shared_ptr< WPropertyBase > prop )
     : m_prop( prop )
 {
 }

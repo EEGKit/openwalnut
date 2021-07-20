@@ -71,7 +71,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -110,7 +110,7 @@ private:
      *
      * \return The read data as scalar data set.
      */
-    boost::shared_ptr< WDataSetScalar > readData( std::string fileName );
+    std::shared_ptr< WDataSetScalar > readData( std::string fileName );
 
     /**
      * Helper function to read data of the given data type.
@@ -119,9 +119,9 @@ private:
      *
      * \return A vector containing the scalar data values.
      */
-    template< class T >  boost::shared_ptr< std::vector< T > > readDataTyped( std::string fileName );
+    template< class T >  std::shared_ptr< std::vector< T > > readDataTyped( std::string fileName );
 
-    boost::shared_ptr< WCondition > m_propCondition;  //!< A condition used to notify about changes in several properties.
+    std::shared_ptr< WCondition > m_propCondition;  //!< A condition used to notify about changes in several properties.
     WPropFilename m_dataFile; //!< The data will be read from this file.
     WPropInt m_X; //!< Samples in X direction
     WPropInt m_Y; //!< Samples in Y direction
@@ -131,24 +131,24 @@ private:
     WPropDouble m_yScale; //!< Scaling in Y direction
     WPropDouble m_zScale; //!< Scaling in Z direction
 
-    boost::shared_ptr< WItemSelection > m_dataTypeSelectionsList; //!< A list of file type selection types
+    std::shared_ptr< WItemSelection > m_dataTypeSelectionsList; //!< A list of file type selection types
     WPropSelection m_dataTypeSelection; //!< Selection property for file types
 
-    boost::shared_ptr< WDataSetScalar > m_dataSet; //!< This data set is provided as output through the connector.
-    boost::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output;  //!< Output connector provided by this module.
+    std::shared_ptr< WDataSetScalar > m_dataSet; //!< This data set is provided as output through the connector.
+    std::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output;  //!< Output connector provided by this module.
 };
 
 
 
 template< class T >
-boost::shared_ptr< std::vector< T > > WMReadRawData::readDataTyped( std::string fileName )
+std::shared_ptr< std::vector< T > > WMReadRawData::readDataTyped( std::string fileName )
 {
     size_t numX = m_X->get();
     size_t numY = m_Y->get();
     size_t numZ = m_Z->get();
     size_t numVoxels = numX * numY * numZ;
-    boost::shared_ptr< std::vector< T > > values;
-    values = boost::shared_ptr< std::vector< T > >( new std::vector< T >( numVoxels ) );
+    std::shared_ptr< std::vector< T > > values;
+    values = std::shared_ptr< std::vector< T > >( new std::vector< T >( numVoxels ) );
 
     std::ifstream ifs;
     ifs.open( fileName.c_str(), std::ifstream::in|std::ios::binary );

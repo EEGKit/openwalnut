@@ -239,14 +239,14 @@ public:
      *
      * \return the properties.
      */
-    boost::shared_ptr< WProperties > getProperties() const;
+    std::shared_ptr< WProperties > getProperties() const;
 
     /**
      * Return a pointer to the information properties object of the dataset. The dataset intends these properties to not be modified.
      *
      * \return the properties.
      */
-    boost::shared_ptr< WProperties > getInformationProperties() const;
+    std::shared_ptr< WProperties > getInformationProperties() const;
 
     /**
      * Applies some custom uniforms to the specified state-set which directly relate to this texture
@@ -348,19 +348,19 @@ private:
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * The property object for the dataset.
      */
-    boost::shared_ptr< WProperties > m_properties;
+    std::shared_ptr< WProperties > m_properties;
 
     /**
      * The property object for the dataset containing only props whose purpose is "PV_PURPOSE_INFORMNATION". It is useful to define some property
      * to only be of informational nature. The GUI does not modify them. As it is a WProperties instance, you can use it the same way as
      * m_properties.
      */
-    boost::shared_ptr< WProperties > m_infoProperties;
+    std::shared_ptr< WProperties > m_infoProperties;
 
     /**
      * If true, the texture gets created. This is used to create texture on demand.
@@ -390,7 +390,7 @@ private:
     /**
      * A list of color map selection types
      */
-    boost::shared_ptr< WItemSelection > m_colorMapSelectionsList;
+    std::shared_ptr< WItemSelection > m_colorMapSelectionsList;
 
     /**
      * Selection property for color map
@@ -469,9 +469,9 @@ typedef WGETexture< osg::Texture3D > WGETexture3D;
 template < typename TextureType >
 WGETexture< TextureType >::WGETexture( double scale, double min ):
     TextureType(),
-    m_propCondition( boost::shared_ptr< WCondition >( new WCondition() ) ),
-    m_properties( boost::shared_ptr< WProperties >( new WProperties( "Texture Properties", "Properties of a texture." ) ) ),
-    m_infoProperties( boost::shared_ptr< WProperties >( new WProperties( "Texture Info Properties", "Texture's information properties." ) ) ),
+    m_propCondition( std::shared_ptr< WCondition >( new WCondition() ) ),
+    m_properties( std::shared_ptr< WProperties >( new WProperties( "Texture Properties", "Properties of a texture." ) ) ),
+    m_infoProperties( std::shared_ptr< WProperties >( new WProperties( "Texture Info Properties", "Texture's information properties." ) ) ),
     m_needCreate( true )
 {
     setupProperties( scale, min );
@@ -480,9 +480,9 @@ WGETexture< TextureType >::WGETexture( double scale, double min ):
 template < typename TextureType >
 WGETexture< TextureType >::WGETexture( osg::Image* image, double scale, double min ):
     TextureType( image ),
-    m_propCondition( boost::shared_ptr< WCondition >( new WCondition() ) ),
-    m_properties( boost::shared_ptr< WProperties >( new WProperties( "Texture Properties", "Properties of a texture." ) ) ),
-    m_infoProperties( boost::shared_ptr< WProperties >( new WProperties( "Texture Info Properties", "Texture's information properties." ) ) ),
+    m_propCondition( std::shared_ptr< WCondition >( new WCondition() ) ),
+    m_properties( std::shared_ptr< WProperties >( new WProperties( "Texture Properties", "Properties of a texture." ) ) ),
+    m_infoProperties( std::shared_ptr< WProperties >( new WProperties( "Texture Info Properties", "Texture's information properties." ) ) ),
     m_needCreate( true )
 {
     setupProperties( scale, min );
@@ -492,9 +492,9 @@ WGETexture< TextureType >::WGETexture( osg::Image* image, double scale, double m
 template < typename TextureType >
 WGETexture< TextureType >::WGETexture( WGEImage::SPtr image, double scale, double min ):
     TextureType( image->getAsOSGImage() ),
-    m_propCondition( boost::shared_ptr< WCondition >( new WCondition() ) ),
-    m_properties( boost::shared_ptr< WProperties >( new WProperties( "Texture Properties", "Properties of a texture." ) ) ),
-    m_infoProperties( boost::shared_ptr< WProperties >( new WProperties( "Texture Info Properties", "Texture's information properties." ) ) ),
+    m_propCondition( std::shared_ptr< WCondition >( new WCondition() ) ),
+    m_properties( std::shared_ptr< WProperties >( new WProperties( "Texture Properties", "Properties of a texture." ) ) ),
+    m_infoProperties( std::shared_ptr< WProperties >( new WProperties( "Texture Info Properties", "Texture's information properties." ) ) ),
     m_needCreate( true )
 {
     setupProperties( scale, min );
@@ -554,7 +554,7 @@ void WGETexture< TextureType >::setupProperties( double scale, double min )
 
     m_interpolation = m_properties->addProperty( "Interpolate", "Interpolation of the volume data.", true, m_propCondition );
 
-    m_colorMapSelectionsList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_colorMapSelectionsList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_colorMapSelectionsList->addItem( "Grayscale", "" );
     m_colorMapSelectionsList->addItem( "Rainbow", "" );
     m_colorMapSelectionsList->addItem( "Hot iron", "" );
@@ -590,13 +590,13 @@ WGETexture< TextureType >::~WGETexture()
 }
 
 template < typename TextureType >
-boost::shared_ptr< WProperties > WGETexture< TextureType >::getProperties() const
+std::shared_ptr< WProperties > WGETexture< TextureType >::getProperties() const
 {
     return m_properties;
 }
 
 template < typename TextureType >
-boost::shared_ptr< WProperties > WGETexture< TextureType >::getInformationProperties() const
+std::shared_ptr< WProperties > WGETexture< TextureType >::getInformationProperties() const
 {
     return m_infoProperties;
 }

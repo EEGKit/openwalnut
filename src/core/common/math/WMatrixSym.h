@@ -55,7 +55,7 @@ public:
     /**
      * Shorthand for shared pointers.
      */
-    typedef boost::shared_ptr< WMatrixSym < T > > SPtr;
+    typedef std::shared_ptr< WMatrixSym < T > > SPtr;
 
     /**
      * Generates new symmetric matrix.

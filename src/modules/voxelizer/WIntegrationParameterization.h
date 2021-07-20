@@ -42,7 +42,7 @@ public:
      *
      * \param grid the grid used for the new dataset.
      */
-    explicit WIntegrationParameterization( boost::shared_ptr< WGridRegular3D > grid );
+    explicit WIntegrationParameterization( std::shared_ptr< WGridRegular3D > grid );
 
     /**
      * Destructor.
@@ -68,7 +68,7 @@ public:
      *
      * \return the dataset.
      */
-    virtual boost::shared_ptr< WDataSetScalar > getDataSet();
+    virtual std::shared_ptr< WDataSetScalar > getDataSet();
 
     /**
      * Gets called for each new line getting rasterized. Here, it is used to reset the internal length integrator

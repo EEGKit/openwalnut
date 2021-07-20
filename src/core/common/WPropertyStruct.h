@@ -206,14 +206,14 @@ public:
     typedef WPropertyStruct< BOOST_PP_ENUM_PARAMS( 10, T ) > WPropertyStructType;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< WPropertyStructType >
+     * Convenience typedef for a std::shared_ptr< WPropertyStructType >
      */
-    typedef typename boost::shared_ptr< WPropertyStructType > SPtr;
+    typedef typename std::shared_ptr< WPropertyStructType > SPtr;
 
     /**
-     * Convenience typedef for a  boost::shared_ptr< const WPropertyStructType >
+     * Convenience typedef for a  std::shared_ptr< const WPropertyStructType >
      */
-    typedef typename boost::shared_ptr< const WPropertyStructType > ConstSPtr;
+    typedef typename std::shared_ptr< const WPropertyStructType > ConstSPtr;
 
     /**
      * The boost mpl vector for all the types specified.
@@ -278,7 +278,7 @@ public:
     typename boost::mpl::at< TypeVector, boost::mpl::size_t< N > >::type getProperty()
     {
         typedef typename boost::mpl::at< TypeVector, boost::mpl::size_t< N > >::type::element_type TargetType;
-        return boost::dynamic_pointer_cast< TargetType >( getProperty( N ) );
+        return std::dynamic_pointer_cast< TargetType >( getProperty( N ) );
     }
 
     /**
@@ -292,7 +292,7 @@ public:
     typename boost::mpl::at< TypeVector, boost::mpl::size_t< N > >::type::element_type::ConstSPtr getProperty() const
     {
         typedef typename boost::mpl::at< TypeVector, boost::mpl::size_t< N > >::type::element_type TargetType;
-        return boost::dynamic_pointer_cast< const TargetType >( getProperty( N ) );
+        return std::dynamic_pointer_cast< const TargetType >( getProperty( N ) );
     }
 
     /**
@@ -425,10 +425,10 @@ public:
      *
      * \return true if the value has been accepted.
      */
-    virtual bool set( boost::shared_ptr< WPropertyBase > value, bool recommendedOnly = false )
+    virtual bool set( std::shared_ptr< WPropertyBase > value, bool recommendedOnly = false )
     {
         // is this the same type as we are?
-        typename WPropertyStructType::SPtr v = boost::dynamic_pointer_cast< WPropertyStructType >( value );
+        typename WPropertyStructType::SPtr v = std::dynamic_pointer_cast< WPropertyStructType >( value );
         if( !v )
         {
             // it is not a WPropertyStruct with the same type

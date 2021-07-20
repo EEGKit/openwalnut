@@ -53,7 +53,7 @@ public:
      *
      * \param dendrogram The dendrogram to save
      */
-    void write( boost::shared_ptr< const WDendrogram > dendrogram ) const;
+    void write( std::shared_ptr< const WDendrogram > dendrogram ) const;
 
 protected:
 private:

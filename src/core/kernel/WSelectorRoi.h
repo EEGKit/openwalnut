@@ -45,7 +45,7 @@ public:
      * \param fibers the fiber dataset to work on
      * \param kdTree kd tree for fast intersection checks
      */
-    WSelectorRoi( osg::ref_ptr< WROI > roi, boost::shared_ptr< const WDataSetFibers > fibers, boost::shared_ptr< WKdTree> kdTree );
+    WSelectorRoi( osg::ref_ptr< WROI > roi, std::shared_ptr< const WDataSetFibers > fibers, std::shared_ptr< WKdTree> kdTree );
 
     /**
      * destructor
@@ -56,7 +56,7 @@ public:
      * getter
      * \return the bitfield for this ROI
      */
-    boost::shared_ptr< std::vector<bool> >getBitField();
+    std::shared_ptr< std::vector<bool> >getBitField();
 
     /**
      * getter
@@ -103,12 +103,12 @@ private:
     /**
      * Pointer to the fiber data set
      */
-    boost::shared_ptr< const WDataSetFibers > m_fibers;
+    std::shared_ptr< const WDataSetFibers > m_fibers;
 
     /**
      * Stores a pointer to the kdTree used for fiber selection
      */
-    boost::shared_ptr< WKdTree > m_kdTree;
+    std::shared_ptr< WKdTree > m_kdTree;
 
     /**
      * size of the fiber dataset, stored for convinience
@@ -123,32 +123,32 @@ private:
     /**
      * the bitfield that is given to the outside world
      */
-    boost::shared_ptr< std::vector<bool> >m_bitField;
+    std::shared_ptr< std::vector<bool> >m_bitField;
 
     /**
      * the bitfield we work on
      */
-    boost::shared_ptr< std::vector<bool> >m_workerBitfield;
+    std::shared_ptr< std::vector<bool> >m_workerBitfield;
 
     /**
      * pointer to the array that is used for updating
      * this is used for the recurse update function, to reduce the amount of function parameters
      */
-    boost::shared_ptr< std::vector< float > > m_currentArray;
+    std::shared_ptr< std::vector< float > > m_currentArray;
 
     /**
      * pointer to the reverse array that is used for updating
      * this is used for the recurse update function, to reduce the amount of function parameters
      */
-    boost::shared_ptr< std::vector< size_t > > m_currentReverse;
+    std::shared_ptr< std::vector< size_t > > m_currentReverse;
 
     std::vector<float> m_boxMin; //!< lower boundary of the box, used for boxtest
     std::vector<float> m_boxMax; //!< upper boundary of the box, used for boxtest
 
-    boost::shared_ptr< boost::function< void() > > m_changeRoiSignal; //!< Signal that can be used to update the selector ROI
+    std::shared_ptr< boost::function< void() > > m_changeRoiSignal; //!< Signal that can be used to update the selector ROI
 };
 
-inline boost::shared_ptr< std::vector<bool> > WSelectorRoi::getBitField()
+inline std::shared_ptr< std::vector<bool> > WSelectorRoi::getBitField()
 {
     if( m_dirty )
     {

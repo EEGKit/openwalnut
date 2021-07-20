@@ -36,7 +36,7 @@ WConditionSet::WConditionSet():
 WConditionSet::~WConditionSet()
 {
     // get write lock
-    boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_conditionSetLock );
+    std::unique_lock<std::shared_mutex> lock = std::unique_lock<std::shared_mutex>( m_conditionSetLock );
 
     // clean conditions list
     // NOTE: we need to disconnect here.
@@ -49,10 +49,10 @@ WConditionSet::~WConditionSet()
     lock.unlock();
 }
 
-void WConditionSet::add( boost::shared_ptr< WCondition > condition )
+void WConditionSet::add( std::shared_ptr< WCondition > condition )
 {
     // get write lock
-    boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_conditionSetLock );
+    std::unique_lock<std::shared_mutex> lock = std::unique_lock<std::shared_mutex>( m_conditionSetLock );
 
     if( !m_conditionSet.count( condition ) )
     {
@@ -64,10 +64,10 @@ void WConditionSet::add( boost::shared_ptr< WCondition > condition )
     lock.unlock();
 }
 
-void WConditionSet::remove( boost::shared_ptr< WCondition > condition )
+void WConditionSet::remove( std::shared_ptr< WCondition > condition )
 {
     // get write lock
-    boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_conditionSetLock );
+    std::unique_lock<std::shared_mutex> lock = std::unique_lock<std::shared_mutex>( m_conditionSetLock );
 
     // get the element
     ConditionConnectionMap::iterator it = m_conditionSet.find( condition );

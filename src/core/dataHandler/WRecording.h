@@ -64,7 +64,7 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
     /**
      * Maximum number of channels for a certain modality.
@@ -91,7 +91,7 @@ protected:
     /**
      * The prototype as singleton.
      */
-    static boost::shared_ptr< WPrototyped > m_prototype;
+    static std::shared_ptr< WPrototyped > m_prototype;
 
 private:
 };

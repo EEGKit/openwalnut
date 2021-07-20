@@ -46,8 +46,8 @@ public:
     {
         WLogger::startup();
 
-        boost::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( 3, 3, 3 ) );
-        m_algo = boost::shared_ptr< WBresenhamDBL >( new WBresenhamDBL( grid, false ) );
+        std::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( 3, 3, 3 ) );
+        m_algo = std::shared_ptr< WBresenhamDBL >( new WBresenhamDBL( grid, false ) );
     }
 
     /**
@@ -114,8 +114,8 @@ public:
 //     */
 //    void testRasteringIn3rdQuadrant( void )
 //    {
-//        boost::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( 3, 3, 3, -2, -2, -2, 1, 1, 1 ) );
-//        m_algo = boost::shared_ptr< WBresenhamDBL >( new WBresenhamDBL( grid, false ) );
+//        std::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( 3, 3, 3, -2, -2, -2, 1, 1, 1 ) );
+//        m_algo = std::shared_ptr< WBresenhamDBL >( new WBresenhamDBL( grid, false ) );
 //
 //        WLine l;
 //        l.push_back( WPosition( -1.7, -1.7, -1.7 ) );
@@ -183,7 +183,7 @@ public:
     }
 
 private:
-    boost::shared_ptr< WBresenhamDBL > m_algo; //!< test instace of the WBresenham algo
+    std::shared_ptr< WBresenhamDBL > m_algo; //!< test instace of the WBresenham algo
 };
 
 #endif  // WBRESENHAMDBL_TEST_H

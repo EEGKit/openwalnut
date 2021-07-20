@@ -47,7 +47,7 @@ public:
      *
      * \param flag the bool property which controls activation.
      */
-    explicit WGENodeMaskCallback( boost::shared_ptr< WBoolFlag > flag );
+    explicit WGENodeMaskCallback( std::shared_ptr< WBoolFlag > flag );
 
     /**
      * Destructor.
@@ -67,7 +67,7 @@ private:
     /**
      * The flag controlling the node mask
      */
-     boost::shared_ptr< WBoolFlag > m_flag;
+     std::shared_ptr< WBoolFlag > m_flag;
 
     /**
      * The subscription to the change signal of m_flag.

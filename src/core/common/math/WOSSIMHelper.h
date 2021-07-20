@@ -43,7 +43,7 @@
     class WOSSIMHelper
     {
     public:
-      static boost::shared_ptr< NEWMAT::Matrix > OWMatrixToOSSIMMatrix( const WMatrix< double > &input );
+      static std::shared_ptr< NEWMAT::Matrix > OWMatrixToOSSIMMatrix( const WMatrix< double > &input );
       static WMatrix< double > OSSIMMatrixToOWMatrix( const NEWMAT::Matrix& input );
       static WMatrix< double > OSSIMDiagonalMatrixToOWMatrix( const NEWMAT::DiagonalMatrix& input );
       static WValue< double > OSSIMDiagonalMatrixToOWVector( const NEWMAT::DiagonalMatrix& input );

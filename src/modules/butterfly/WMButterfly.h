@@ -82,7 +82,7 @@ WMButterfly();
      * should never be initialized or modified in some other way. A simple new instance is required.
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -117,20 +117,20 @@ private:
      * \param inputMesh Triangle mesh to analyze.
      * \return The biggest distance of all vertex neighbour relationships.
      */
-    float getMaxLineLength( boost::shared_ptr< WTriangleMesh > inputMesh );
+    float getMaxLineLength( std::shared_ptr< WTriangleMesh > inputMesh );
 
     /**
      * Input connector for scalar data.
      */
-    boost::shared_ptr< WModuleInputData< WTriangleMesh > > m_input;
-    boost::shared_ptr< WModuleOutputData< WTriangleMesh > > m_output;  //!< Output connector provided by this module.
+    std::shared_ptr< WModuleInputData< WTriangleMesh > > m_input;
+    std::shared_ptr< WModuleOutputData< WTriangleMesh > > m_output;  //!< Output connector provided by this module.
 
     /**
      * Holder for the current triangle mesh that grants that there's always a valid data output at
      * the end. The old data is deleted after the new one is applied. Deleting a triangle mesh that
      * is attached at the output connector makes some plugins crash.
      */
-    boost::shared_ptr< WTriangleMesh > m_oldInterpolatedMesh;
+    std::shared_ptr< WTriangleMesh > m_oldInterpolatedMesh;
 
     /**
      * The OSG root node for this module. All other geodes or OSG nodes will be attached on this single node.
@@ -140,7 +140,7 @@ private:
     /**
      * Needed for recreating the geometry, incase when resolution changes.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * The general Butterfly Subdivision setting w that affects the subdivision. See the algorithm
@@ -254,7 +254,7 @@ private:
     /**
      * Triangle mesh which will be assigned to the Butterfly subdivision instance.
      */
-    boost::shared_ptr< WTriangleMesh > m_mesh;
+    std::shared_ptr< WTriangleMesh > m_mesh;
 
     /**
      * Butterfly subdivision instance.

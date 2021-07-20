@@ -45,8 +45,8 @@ public:
     void testInstantiation( void )
     {
         double a[2] = { 0.0, 3.1415 };
-        const boost::shared_ptr< std::vector< double > > v =
-            boost::shared_ptr< std::vector< double > >(
+        const std::shared_ptr< std::vector< double > > v =
+            std::shared_ptr< std::vector< double > >(
                 new std::vector< double >( a, a + sizeof( a ) / sizeof( double ) ) );
         TS_ASSERT_THROWS_NOTHING( WValueSet< double > valueSet( 0, 1, v, W_DT_DOUBLE ) );
     }
@@ -57,8 +57,8 @@ public:
     void testGetNumberOfValues( void )
     {
         int a[4] = { 0, -5, 1, 2 };
-        const boost::shared_ptr< std::vector< int8_t > > v =
-            boost::shared_ptr< std::vector< int8_t > >(
+        const std::shared_ptr< std::vector< int8_t > > v =
+            std::shared_ptr< std::vector< int8_t > >(
                 new std::vector< int8_t >( a, a + sizeof( a ) / sizeof( int ) ) );
         WValueSet< int8_t > first( 0, 1, v, W_DT_INT8 );
         TS_ASSERT_EQUALS( first.size(), 4 );
@@ -75,8 +75,8 @@ public:
     void testRawSize( void )
     {
         int8_t a[4] = { 0, -5, 1, 2 };
-        const boost::shared_ptr< std::vector< int8_t > > v =
-            boost::shared_ptr< std::vector< int8_t > >(
+        const std::shared_ptr< std::vector< int8_t > > v =
+            std::shared_ptr< std::vector< int8_t > >(
                 new std::vector< int8_t >( a, a + sizeof( a ) / sizeof( int8_t ) ) );
         WValueSet< int8_t > first( 0, 1, v, W_DT_INT8 );
         TS_ASSERT_EQUALS( first.rawSize(), 4 );
@@ -90,8 +90,8 @@ public:
     void testGetScalar( void )
     {
         int8_t a[4] = { 0, -5, 1, 2 };
-        const boost::shared_ptr< std::vector< int8_t > > v =
-            boost::shared_ptr< std::vector< int8_t > >(
+        const std::shared_ptr< std::vector< int8_t > > v =
+            std::shared_ptr< std::vector< int8_t > >(
                 new std::vector< int8_t >( a, a + sizeof( a ) / sizeof( int8_t ) ) );
         WValueSet< int8_t > set( 0, 1, v, W_DT_INT8 );
         TS_ASSERT_EQUALS( set.getScalar( 0 ), a[0] );
@@ -106,8 +106,8 @@ public:
     void testReadOnlyRawAccess( void )
     {
         double a[2] = { 0.0, 3.1415 };
-        const boost::shared_ptr< std::vector< double > > v =
-            boost::shared_ptr< std::vector< double > >(
+        const std::shared_ptr< std::vector< double > > v =
+            std::shared_ptr< std::vector< double > >(
                 new std::vector< double >( a, a + sizeof( a ) / sizeof( double ) ) );
         WValueSet< double > valueSet( 0, 1, v, W_DT_DOUBLE );
         const double * const b = valueSet.rawData();
@@ -123,8 +123,8 @@ public:
         int8_t a[6] = { 1, 2, 3, 4, 5, 6 };
         std::size_t dim = 2;
 
-        const boost::shared_ptr< std::vector< int8_t > > v =
-            boost::shared_ptr< std::vector< int8_t > >(
+        const std::shared_ptr< std::vector< int8_t > > v =
+            std::shared_ptr< std::vector< int8_t > >(
                 new std::vector< int8_t >( a, a + sizeof( a ) / sizeof( int8_t ) ) );
         WValueSet< int8_t > set( 1, dim, v, W_DT_INT8 );
 
@@ -152,8 +152,8 @@ public:
     void testSubArrayInstantiation()
     {
         int8_t a[4] = { 0, -5, 1, 2 };
-        const boost::shared_ptr< std::vector< int8_t > > v =
-            boost::shared_ptr< std::vector< int8_t > >(
+        const std::shared_ptr< std::vector< int8_t > > v =
+            std::shared_ptr< std::vector< int8_t > >(
                 new  std::vector< int8_t >( a, a + sizeof( a ) / sizeof( int8_t ) ) );
         WValueSet< int8_t > set( 1, 2, v, W_DT_INT8 );
         TS_ASSERT_THROWS_NOTHING( set.getSubArray( 0, 2 ) );
@@ -169,8 +169,8 @@ public:
     void testSubArrayAccess()
     {
         int8_t a[ 8 ] = { 0, -5, 1, 2, -27, 6, 29, 8 };
-        const boost::shared_ptr< std::vector< int8_t > > v =
-            boost::shared_ptr< std::vector< int8_t > >(
+        const std::shared_ptr< std::vector< int8_t > > v =
+            std::shared_ptr< std::vector< int8_t > >(
                 new std::vector< int8_t >( a, a + sizeof( a ) / sizeof( int8_t ) ) );
         WValueSet< int8_t > set( 1, 2, v, W_DT_INT8 );
 

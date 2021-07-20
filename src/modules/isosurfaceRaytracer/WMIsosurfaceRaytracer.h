@@ -75,7 +75,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -108,12 +108,12 @@ private:
     /**
      * An input connector used to get datasets from other modules. The connection management between connectors must not be handled by the module.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetScalar > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_input;
 
     /**
      * The gradient field input
      */
-    boost::shared_ptr< WModuleInputData< WDataSetVector > > m_gradients;
+    std::shared_ptr< WModuleInputData< WDataSetVector > > m_gradients;
 
     /**
      * The Isovalue used in the case m_isoSurface is true.
@@ -173,7 +173,7 @@ private:
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * the DVR shader.

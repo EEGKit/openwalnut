@@ -53,7 +53,7 @@ bool WUIQtWidgetFactory::implementsUI() const
 
 WUIQtWidgetBase::SPtr WUIQtWidgetFactory::getAsQtWidgetBase( WUIWidgetBase::SPtr widget )
 {
-    WUIQtWidgetBase::SPtr w = boost::dynamic_pointer_cast< WUIQtWidgetBase >( widget );
+    WUIQtWidgetBase::SPtr w = std::dynamic_pointer_cast< WUIQtWidgetBase >( widget );
     return w;
 }
 
@@ -85,7 +85,7 @@ WUIPropertyGroupWidget::SPtr WUIQtWidgetFactory::createPropertyGroupWidgetImpl( 
 WUIViewWidget::SPtr WUIQtWidgetFactory::createViewWidgetImpl(
     std::string title,
     WGECamera::ProjectionMode projectionMode,
-    boost::shared_ptr< WCondition > abortCondition,
+    std::shared_ptr< WCondition > abortCondition,
     WUIWidgetBase::SPtr parent ) const
 {
     WUIQtViewWidget::SPtr widget( new WUIQtViewWidget( title, projectionMode, m_mainWindow, getAsQtWidgetBase( parent ) ) );

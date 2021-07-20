@@ -46,7 +46,7 @@ WTriangleMesh::SPtr WMeshReaderFiberNavigator::operator()( WProgressCombiner::SP
     std::string fileName = file.string();
     WAssert( !fileName.empty(), "No filename specified." );
 
-    boost::shared_ptr< WProgress > progress( new WProgress( "Read Mesh", 3 ) );
+    std::shared_ptr< WProgress > progress( new WProgress( "Read Mesh", 3 ) );
     parentProgress->addSubProgress( progress );
 
     std::ifstream ifs;
@@ -75,7 +75,7 @@ WTriangleMesh::SPtr WMeshReaderFiberNavigator::operator()( WProgressCombiner::SP
             {
                 WLogger::getLogger()->addLogMessage( "Invalid number of points: " + tokens.at( 1 ), "Read Mesh", LL_ERROR );
                 progress->finish();
-                return boost::shared_ptr< WTriangleMesh >();
+                return std::shared_ptr< WTriangleMesh >();
             }
         }
     }
@@ -99,7 +99,7 @@ WTriangleMesh::SPtr WMeshReaderFiberNavigator::operator()( WProgressCombiner::SP
         {
             WLogger::getLogger()->addLogMessage( "Invalid vertex position", "Read Mesh", LL_ERROR );
             progress->finish();
-            return boost::shared_ptr< WTriangleMesh >();
+            return std::shared_ptr< WTriangleMesh >();
         }
     }
     WLogger::getLogger()->addLogMessage( "Finished reading vertex info", "Read Mesh", LL_DEBUG );
@@ -119,12 +119,12 @@ WTriangleMesh::SPtr WMeshReaderFiberNavigator::operator()( WProgressCombiner::SP
         {
             WLogger::getLogger()->addLogMessage( "Invalid number of cells: " + tokens.at( 1 ), "Read Mesh", LL_ERROR );
             progress->finish();
-            return boost::shared_ptr< WTriangleMesh >();
+            return std::shared_ptr< WTriangleMesh >();
         }
     }
 
 
-    boost::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( numPoints, numCells ) );
+    std::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( numPoints, numCells ) );
     for( unsigned int i = 0; i < numPoints; ++i )
     {
         triMesh->addVertex( points[i] );
@@ -147,7 +147,7 @@ WTriangleMesh::SPtr WMeshReaderFiberNavigator::operator()( WProgressCombiner::SP
         {
             WLogger::getLogger()->addLogMessage( "Invalid triangle ID", "Read Mesh", LL_ERROR );
             progress->finish();
-            return boost::shared_ptr< WTriangleMesh >();
+            return std::shared_ptr< WTriangleMesh >();
         }
     }
     WLogger::getLogger()->addLogMessage( "Finished reading polygon info", "Read Mesh", LL_DEBUG );

@@ -54,9 +54,9 @@ WMDistanceMap::~WMDistanceMap()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMDistanceMap::factory() const
+std::shared_ptr< WModule > WMDistanceMap::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMDistanceMap() );
+    return std::shared_ptr< WModule >( new WMDistanceMap() );
 }
 
 const char** WMDistanceMap::getXPMIcon() const
@@ -107,8 +107,8 @@ void WMDistanceMap::moduleMain()
 
         // found some data
         debugLog() << "Data changed. Updating ...";
-        boost::shared_ptr< WValueSet< float > > distanceMapValueSet = createOffset( m_dataSet );
-        m_distanceMapDataSet = boost::shared_ptr< WDataSetScalar >( new WDataSetScalar( distanceMapValueSet, m_dataSet->getGrid() ) );
+        std::shared_ptr< WValueSet< float > > distanceMapValueSet = createOffset( m_dataSet );
+        m_distanceMapDataSet = std::shared_ptr< WDataSetScalar >( new WDataSetScalar( distanceMapValueSet, m_dataSet->getGrid() ) );
 
         WLogger::getLogger()->addLogMessage( "Done!", "Distance Map", LL_INFO );
 
@@ -121,7 +121,7 @@ void WMDistanceMap::connectors()
 {
     // initialize connectors
 
-    m_input = boost::shared_ptr<WModuleInputData< WDataSetScalar > >(
+    m_input = std::shared_ptr<WModuleInputData< WDataSetScalar > >(
         new WModuleInputData< WDataSetScalar >( shared_from_this(),
                                                                "in", "Dataset to compute distance map for." )
         );
@@ -129,7 +129,7 @@ void WMDistanceMap::connectors()
     // add it to the list of connectors. Please note, that a connector NOT added via addConnector will not work as expected.
     addConnector( m_input );
 
-    m_output = boost::shared_ptr<WModuleOutputData< WDataSetScalar > >(
+    m_output = std::shared_ptr<WModuleOutputData< WDataSetScalar > >(
         new WModuleOutputData< WDataSetScalar >( shared_from_this(),
                                                                "out", "Distance map for the input data set." )
         );
@@ -146,24 +146,24 @@ void WMDistanceMap::properties()
     WModule::properties();
 }
 
-template< typename T > boost::shared_ptr< WValueSet< float > > makeFloatValueSetHelper( boost::shared_ptr< WValueSet< T > > inSet )
+template< typename T > std::shared_ptr< WValueSet< float > > makeFloatValueSetHelper( std::shared_ptr< WValueSet< T > > inSet )
 {
     WAssert( inSet->dimension() == 1, "Works only for scalar data." );
     WAssert( inSet->order() == 0, "Works only for scalar data." );
 
-    boost::shared_ptr< std::vector< float > > data( new std::vector< float >( inSet->size() ) );
+    std::shared_ptr< std::vector< float > > data( new std::vector< float >( inSet->size() ) );
     for( unsigned int i = 0; i < inSet->size(); ++i )
     {
         ( *data )[i] = static_cast< float >( inSet->getScalar( i ) );
     }
 
-    boost::shared_ptr< WValueSet< float > > outSet;
-    outSet = boost::shared_ptr< WValueSet< float > >( new WValueSet< float >( ( *inSet ).order(), ( *inSet ).dimension(), data, W_DT_FLOAT ) );
+    std::shared_ptr< WValueSet< float > > outSet;
+    outSet = std::shared_ptr< WValueSet< float > >( new WValueSet< float >( ( *inSet ).order(), ( *inSet ).dimension(), data, W_DT_FLOAT ) );
 
     return outSet;
 }
 
-boost::shared_ptr< WValueSet< float > > makeFloatValueSet( boost::shared_ptr< WValueSetBase > inSet )
+std::shared_ptr< WValueSet< float > > makeFloatValueSet( std::shared_ptr< WValueSetBase > inSet )
 {
     WAssert( inSet->dimension() == 1, "Works only for scalar data." );
     WAssert( inSet->order() == 0, "Works only for scalar data."  );
@@ -171,35 +171,35 @@ boost::shared_ptr< WValueSet< float > > makeFloatValueSet( boost::shared_ptr< WV
     switch( inSet->getDataType() )
     {
         case W_DT_UNSIGNED_CHAR:
-            return makeFloatValueSetHelper( boost::dynamic_pointer_cast< WValueSet< unsigned char > >( inSet ) );
+            return makeFloatValueSetHelper( std::dynamic_pointer_cast< WValueSet< unsigned char > >( inSet ) );
             break;
         case W_DT_INT16:
-            return makeFloatValueSetHelper( boost::dynamic_pointer_cast< WValueSet< int16_t > >( inSet ) );
+            return makeFloatValueSetHelper( std::dynamic_pointer_cast< WValueSet< int16_t > >( inSet ) );
             break;
         case W_DT_SIGNED_INT:
-            return makeFloatValueSetHelper( boost::dynamic_pointer_cast< WValueSet< int32_t > >( inSet ) );
+            return makeFloatValueSetHelper( std::dynamic_pointer_cast< WValueSet< int32_t > >( inSet ) );
             break;
         case W_DT_FLOAT:
-            return boost::dynamic_pointer_cast< WValueSet< float > >( inSet );
+            return std::dynamic_pointer_cast< WValueSet< float > >( inSet );
             break;
         default:
             WAssert( false, "Unknow data type in makeFloatDataSet" );
     }
 
     WAssert( false, "If this assertion is reached, the code above has to be fixed." );
-    return boost::shared_ptr< WValueSet< float > >();
+    return std::shared_ptr< WValueSet< float > >();
 }
 
-boost::shared_ptr< WValueSet< float > > WMDistanceMap::createOffset( boost::shared_ptr< const WDataSetScalar > dataSet )
+std::shared_ptr< WValueSet< float > > WMDistanceMap::createOffset( std::shared_ptr< const WDataSetScalar > dataSet )
 {
     std::vector<float> floatDataset;
 
     // wiebel: I know that this is not the most speed and memory efficient way to deal with different data types.
     //         However, it seems the most feasible at the moment (2009-11-24).
-    boost::shared_ptr< WValueSet< float > > valueSet = makeFloatValueSet( ( *dataSet ).getValueSet() );
+    std::shared_ptr< WValueSet< float > > valueSet = makeFloatValueSet( ( *dataSet ).getValueSet() );
     WAssert( valueSet, "Works only for float data sets." );
 
-    boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( ( *dataSet ).getGrid() );
+    std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( ( *dataSet ).getGrid() );
     WAssert( grid, "Works only for data on regular 3D grids."  );
 
     int b, r, c, bb, rr, r0, b0, c0;
@@ -243,7 +243,7 @@ boost::shared_ptr< WValueSet< float > > WMDistanceMap::createOffset( boost::shar
 
     // first pass
 
-    boost::shared_ptr< WProgress > progress1 = boost::shared_ptr< WProgress >(
+    std::shared_ptr< WProgress > progress1 = std::shared_ptr< WProgress >(
             new WProgress( "Distance Map", nbands + nbands + nrows + nbands + nbands + nbands )
     );
     m_progress->addSubProgress( progress1 );
@@ -485,10 +485,10 @@ boost::shared_ptr< WValueSet< float > > WMDistanceMap::createOffset( boost::shar
     delete[] kernel;
 
     floatDataset = tmp;
-    boost::shared_ptr< WValueSet< float > > resultValueSet;
-    resultValueSet = boost::shared_ptr< WValueSet< float > >(
+    std::shared_ptr< WValueSet< float > > resultValueSet;
+    resultValueSet = std::shared_ptr< WValueSet< float > >(
         new WValueSet< float >( valueSet->order(), valueSet->dimension(),
-                                boost::shared_ptr< std::vector< float > >( new std::vector< float >( floatDataset ) ), W_DT_FLOAT ) );
+                                std::shared_ptr< std::vector< float > >( new std::vector< float >( floatDataset ) ), W_DT_FLOAT ) );
 
     progress1->finish();
 

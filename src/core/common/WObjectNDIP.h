@@ -44,12 +44,12 @@ public:
    /**
      * Shared ptr to an instance.
      */
-    typedef boost::shared_ptr< WObjectNDIP > SPtr;
+    typedef std::shared_ptr< WObjectNDIP > SPtr;
 
     /**
      * Shared ptr to a const instance.
      */
-    typedef boost::shared_ptr< const WObjectNDIP > ConstSPtr;
+    typedef std::shared_ptr< const WObjectNDIP > ConstSPtr;
 
     /**
      * Destructor. Implement if you have non trivial cleanup stuff.

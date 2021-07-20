@@ -160,13 +160,13 @@ public:
      * setter for the talairach converter pointer
      * \param tc
      */
-    void setTalairachConverter( boost::shared_ptr<WTalairachConverter> tc );
+    void setTalairachConverter( std::shared_ptr<WTalairachConverter> tc );
 
     /**
      * getter for the talairach converter pointer
      * \return pointer
      */
-    boost::shared_ptr<WTalairachConverter> getTalairachConverter();
+    std::shared_ptr<WTalairachConverter> getTalairachConverter();
 
 protected:
 private:
@@ -180,7 +180,7 @@ private:
 
     coordinateSystemMode m_coordinateSystemMode; //!< the currently selected coordinate system mode
 
-    boost::shared_ptr<WTalairachConverter>m_talairachConverter; //!< pointer to talairach convert for easy access
+    std::shared_ptr<WTalairachConverter>m_talairachConverter; //!< pointer to talairach convert for easy access
 };
 
 #endif  // WCOORDCONVERTER_H

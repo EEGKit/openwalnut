@@ -45,7 +45,7 @@ public:
     /**
      * Convenience type for a shared_ptr on this type.
      */
-    typedef boost::shared_ptr< WHistogram2D > SPtr;
+    typedef std::shared_ptr< WHistogram2D > SPtr;
 
     /**
      * Creates a two dimensional histogram field, bounded by the given limits, containing the demanded number of buckets in each dimension.

@@ -26,6 +26,7 @@
 #include <map>
 #include <set>
 #include <list>
+#include <shared_mutex>
 #include <string>
 #include <utility>
 #include <limits>
@@ -55,7 +56,7 @@
 
 #include "WModuleProjectFileCombiner.h"
 
-WModuleProjectFileCombiner::WModuleProjectFileCombiner( boost::shared_ptr< WModuleContainer > target ):
+WModuleProjectFileCombiner::WModuleProjectFileCombiner( std::shared_ptr< WModuleContainer > target ):
     WModuleCombiner( target ),
     WProjectFileIO()
 {
@@ -100,7 +101,7 @@ bool WModuleProjectFileCombiner::parse( std::string line, unsigned int lineNumbe
         wlog::debug( "Project Loader [Parser]" ) << "Line " << lineNumber << ": Module \"" << matches[2] << "\" with ID " << matches[1];
 
         // create a module instance
-        boost::shared_ptr< WModule > proto = WModuleFactory::getModuleFactory()-> isPrototypeAvailable( matches[2] );
+        std::shared_ptr< WModule > proto = WModuleFactory::getModuleFactory()-> isPrototypeAvailable( matches[2] );
 
         // data modules are not allowed here
         if( !proto )
@@ -113,7 +114,7 @@ bool WModuleProjectFileCombiner::parse( std::string line, unsigned int lineNumbe
         }
         else
         {
-            boost::shared_ptr< WModule > module = WModuleFactory::getModuleFactory()->create( proto );
+            std::shared_ptr< WModule > module = WModuleFactory::getModuleFactory()->create( proto );
             // set restore mode
             module->setRestoreNeeded();
 
@@ -131,7 +132,7 @@ bool WModuleProjectFileCombiner::parse( std::string line, unsigned int lineNumbe
                                                     " and input \"" << matches[3] << " \" with parameters \"" << matches[4] << "\"";
 
         // create a module instance
-        boost::shared_ptr< WModule > proto = WModuleFactory::getModuleFactory()-> isPrototypeAvailable( matches[2] );
+        std::shared_ptr< WModule > proto = WModuleFactory::getModuleFactory()-> isPrototypeAvailable( matches[2] );
         if( !proto )
         {
             addError( "There is no prototype available for module \"" + matches[2] + "\". This should not happen!. Skipping." );
@@ -139,7 +140,7 @@ bool WModuleProjectFileCombiner::parse( std::string line, unsigned int lineNumbe
         else
         {
             std::string parameter = std::string( matches[4] );
-            boost::shared_ptr< WModule > module = WModuleFactory::getModuleFactory()->create( proto );
+            std::shared_ptr< WModule > module = WModuleFactory::getModuleFactory()->create( proto );
 
             // set restore mode
             module->setRestoreNeeded();
@@ -151,7 +152,7 @@ bool WModuleProjectFileCombiner::parse( std::string line, unsigned int lineNumbe
             {
                 if( !parameter.empty() )
                 {
-                    boost::static_pointer_cast< WDataModule >( module )->setInput( WDataModuleInput::create( matches[3], parameter ) );
+                    std::static_pointer_cast< WDataModule >( module )->setInput( WDataModuleInput::create( matches[3], parameter ) );
                 }
                 m_modules.insert( ModuleID( string_utils::fromString< unsigned int >( matches[1] ), module ) );
             }
@@ -165,7 +166,7 @@ bool WModuleProjectFileCombiner::parse( std::string line, unsigned int lineNumbe
         wlog::debug( "Project Loader [Parser]" ) << "Line " << lineNumber << ": Data \"" << matches[2] << "\" with ID " << matches[1];
 
         // create a module instance
-        boost::shared_ptr< WModule > proto = WModuleFactory::getModuleFactory()-> isPrototypeAvailable( "Data Module" );
+        std::shared_ptr< WModule > proto = WModuleFactory::getModuleFactory()-> isPrototypeAvailable( "Data Module" );
         if( !proto )
         {
             addError( "There is no prototype available for module \"Data Module\". This should not happen!. Skipping." );
@@ -173,7 +174,7 @@ bool WModuleProjectFileCombiner::parse( std::string line, unsigned int lineNumbe
         else
         {
             std::string parameter = std::string( matches[2] );
-            boost::shared_ptr< WModule > module = WModuleFactory::getModuleFactory()->create( proto );
+            std::shared_ptr< WModule > module = WModuleFactory::getModuleFactory()->create( proto );
 
             // set restore mode
             module->setRestoreNeeded();
@@ -183,7 +184,7 @@ bool WModuleProjectFileCombiner::parse( std::string line, unsigned int lineNumbe
             }
             else
             {
-                boost::static_pointer_cast< WDataModule >( module )->setInput( WDataModuleInput::SPtr( new WDataModuleInputFile( parameter ) ) );
+                std::static_pointer_cast< WDataModule >( module )->setInput( WDataModuleInput::SPtr( new WDataModuleInputFile( parameter ) ) );
                 m_modules.insert( ModuleID( string_utils::fromString< unsigned int >( matches[1] ), module ) );
             }
         }
@@ -227,14 +228,14 @@ void WModuleProjectFileCombiner::apply()
     WGEColormapping::instance()->resetSortIndices();
 
     // now add each module to the target container
-    for( std::map< unsigned int, boost::shared_ptr< WModule > >::const_iterator iter = m_modules.begin(); iter != m_modules.end(); ++iter )
+    for( std::map< unsigned int, std::shared_ptr< WModule > >::const_iterator iter = m_modules.begin(); iter != m_modules.end(); ++iter )
     {
         m_container->add( ( *iter ).second );
     }
 
     // now wait for the modules to get ready. We could have waited for this in the previous loop, but a long loading module would block others.
     // -> so we wait after adding and starting them
-    for( std::map< unsigned int, boost::shared_ptr< WModule > >::iterator iter = m_modules.begin(); iter != m_modules.end(); ++iter )
+    for( std::map< unsigned int, std::shared_ptr< WModule > >::iterator iter = m_modules.begin(); iter != m_modules.end(); ++iter )
     {
         ( *iter ).second->isReadyOrCrashed().wait();
 
@@ -257,10 +258,10 @@ void WModuleProjectFileCombiner::apply()
                                                         ( *iter ).first.second + std::string( "\" for. Skipping." ) );
             continue;
         }
-        boost::shared_ptr< WModule > m = m_modules[ ( *iter ).first.first ];
+        std::shared_ptr< WModule > m = m_modules[ ( *iter ).first.first ];
 
         // has this module the specified property?
-        boost::shared_ptr< WPropertyBase > prop = m->getProperties()->findProperty( ( *iter ).first.second );
+        std::shared_ptr< WPropertyBase > prop = m->getProperties()->findProperty( ( *iter ).first.second );
         if( !prop )
         {
             addWarning( "The module \"" + m->getName() + std::string( "\" has no property named \"" ) + ( *iter ).first.second +
@@ -295,7 +296,7 @@ void WModuleProjectFileCombiner::apply()
 
         // each of these connectors contains the module ID and the connector name
         // grab corresponding module 1
-        boost::shared_ptr< WModule > m1;
+        std::shared_ptr< WModule > m1;
         if( !m_modules.count( c1.first ) )
         {
             addError( "There is no module with ID \"" + string_utils::toString( c1.first ) + "\" for the connection "
@@ -305,7 +306,7 @@ void WModuleProjectFileCombiner::apply()
         }
         m1 = m_modules[ c1.first ];
 
-        boost::shared_ptr< WModule > m2;
+        std::shared_ptr< WModule > m2;
         if( !m_modules.count( c2.first ) )
         {
             addError( "There is no module with ID \"" + string_utils::toString( c2.first ) +  "\" for the connection "
@@ -319,7 +320,7 @@ void WModuleProjectFileCombiner::apply()
         // now we have the modules referenced by the ID
         // -> query the connectors
         // NOTE: we assume the first connector to be an output connector!
-        boost::shared_ptr< WModuleOutputConnector > con1;
+        std::shared_ptr< WModuleOutputConnector > con1;
         try
         {
             con1 = m1->getOutputConnector( c1.second );
@@ -329,7 +330,7 @@ void WModuleProjectFileCombiner::apply()
             addError( "There is no output connector \"" + c1.second + "\" in module \"" + m1->getName() + "\"" );
             continue;
         }
-        boost::shared_ptr< WModuleInputConnector > con2;
+        std::shared_ptr< WModuleInputConnector > con2;
         try
         {
             con2 = m2->getInputConnector( c2.second );
@@ -359,7 +360,7 @@ void WModuleProjectFileCombiner::apply()
     WGEColormapping::instance()->sortByIndex();
 
     // notify modules about the loaded set properties
-    for( std::map< unsigned int, boost::shared_ptr< WModule > >::iterator iter = m_modules.begin(); iter != m_modules.end(); ++iter )
+    for( std::map< unsigned int, std::shared_ptr< WModule > >::iterator iter = m_modules.begin(); iter != m_modules.end(); ++iter )
     {
         ( *iter ).second->reportRestoreComplete();
     }
@@ -382,7 +383,7 @@ void WModuleProjectFileCombiner::save( std::ostream& output )   // NOLINT
     // grab access object of root container
     WModuleContainer::ModuleSharedContainerType::ReadTicket container = WKernel::getRunningKernel()->getRootContainer()->getModules();
 
-    std::map< boost::shared_ptr< WModule >, unsigned int > moduleToIDMap;
+    std::map< std::shared_ptr< WModule >, unsigned int > moduleToIDMap;
 
     output << "//////////////////////////////////////////////////////////////////////////////////////////////////////////////////" << std::endl <<
               "// Modules and Properties" << std::endl <<
@@ -399,10 +400,10 @@ void WModuleProjectFileCombiner::save( std::ostream& output )   // NOLINT
         // handle data modules separately
         if( ( *iter )->getType() == MODULE_DATA )
         {
-            output << "DATA:" << i << ":" << boost::static_pointer_cast< WDataModule >( ( *iter ) )->getName()
-                                   << ":" << boost::static_pointer_cast< WDataModule >( ( *iter ) )->getInput()->getName()
+            output << "DATA:" << i << ":" << std::static_pointer_cast< WDataModule >( ( *iter ) )->getName()
+                                   << ":" << std::static_pointer_cast< WDataModule >( ( *iter ) )->getInput()->getName()
                                    << ":";
-            WDataModuleInput::SPtr input = boost::static_pointer_cast< WDataModule >( ( *iter ) )->getInput();
+            WDataModuleInput::SPtr input = std::static_pointer_cast< WDataModule >( ( *iter ) )->getInput();
             if( input )
             {
                 input->serialize( output );
@@ -440,12 +441,12 @@ void WModuleProjectFileCombiner::save( std::ostream& output )   // NOLINT
         for( WModule::OutputConnectorList::const_iterator citer = outs.begin(); citer != outs.end(); ++citer )
         {
             // iterate over all connections:
-            boost::unique_lock<boost::shared_mutex> lock( ( *citer )->m_connectionListLock );
-            for( std::set<boost::shared_ptr<WModuleConnector> >::const_iterator iciter = ( *citer )->m_connected.begin();
+            std::unique_lock<std::shared_mutex> lock( ( *citer )->m_connectionListLock );
+            for( std::set<std::shared_ptr<WModuleConnector> >::const_iterator iciter = ( *citer )->m_connected.begin();
                   iciter != ( *citer )->m_connected.end(); ++iciter )
             {
                 // as the module is a weak_ptr -> lock and get access to it
-                boost::shared_ptr< WModule > theOtherModule = ( *iciter )->m_module.lock();
+                std::shared_ptr< WModule > theOtherModule = ( *iciter )->m_module.lock();
                 output << "CONNECTION:(" << moduleToIDMap[ ( *iter ) ] << "," << ( *citer )->getName() << ")->(" <<
                                             moduleToIDMap[ theOtherModule ] << "," << ( *iciter )->getName() << ")" << std::endl;
             }
@@ -454,7 +455,7 @@ void WModuleProjectFileCombiner::save( std::ostream& output )   // NOLINT
     }
 }
 
-boost::shared_ptr< WModule > WModuleProjectFileCombiner::mapToModule( unsigned int id ) const
+std::shared_ptr< WModule > WModuleProjectFileCombiner::mapToModule( unsigned int id ) const
 {
     // existing?
     ModuleIDMap::const_iterator it = m_modules.find( id );
@@ -466,7 +467,7 @@ boost::shared_ptr< WModule > WModuleProjectFileCombiner::mapToModule( unsigned i
     return ( *it ).second;
 }
 
-unsigned int WModuleProjectFileCombiner::mapFromModule( boost::shared_ptr< WModule > module ) const
+unsigned int WModuleProjectFileCombiner::mapFromModule( std::shared_ptr< WModule > module ) const
 {
     ModuleIDMap::const_iterator it = std::find_if( m_modules.begin(), m_modules.end(),
                                                    boost::bind( &ModuleIDMap::value_type::second, boost::placeholders::_1 ) == module

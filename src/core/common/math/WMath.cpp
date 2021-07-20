@@ -49,7 +49,7 @@ bool testIntersectTriangle( const WPosition& p1, const WPosition& p2, const WPos
 bool intersectPlaneSegment( const WPlane& p,
                                    const WPosition& p1,
                                    const WPosition& p2,
-                                   boost::shared_ptr< WPosition > pointOfIntersection )
+                                   std::shared_ptr< WPosition > pointOfIntersection )
 {
     const WVector3d& normal = normalize( p.getNormal() );
     double const d = dot( normal, p.getPosition() );
@@ -84,7 +84,7 @@ bool intersectPlaneSegment( const WPlane& p,
     return false;
 }
 
-bool intersectPlaneLineNearCP( const WPlane& p, const WLine& l, boost::shared_ptr< WPosition > cutPoint )
+bool intersectPlaneLineNearCP( const WPlane& p, const WLine& l, std::shared_ptr< WPosition > cutPoint )
 {
     bool result = false;
     double minDistance = wlimits::MAX_DOUBLE;
@@ -92,7 +92,7 @@ bool intersectPlaneLineNearCP( const WPlane& p, const WLine& l, boost::shared_pt
     *cutPoint = WPosition( 0, 0, 0 );
     for( size_t i = 1; i < l.size(); ++i ) // test each segment
     {
-        boost::shared_ptr< WPosition > cP( new WPosition( 0, 0, 0 ) );
+        std::shared_ptr< WPosition > cP( new WPosition( 0, 0, 0 ) );
         if( intersectPlaneSegment( p, l[i-1], l[i], cP ) )
         {
             result = true;

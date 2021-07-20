@@ -47,10 +47,10 @@ WMWriteMesh::~WMWriteMesh()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMWriteMesh::factory() const
+std::shared_ptr< WModule > WMWriteMesh::factory() const
 {
     // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WMWriteMesh() );
+    return std::shared_ptr< WModule >( new WMWriteMesh() );
 }
 
 const char** WMWriteMesh::getXPMIcon() const
@@ -71,7 +71,7 @@ const std::string WMWriteMesh::getDescription() const
 
 void WMWriteMesh::connectors()
 {
-    m_meshInput = boost::shared_ptr< WModuleInputData < WTriangleMesh > >(
+    m_meshInput = std::shared_ptr< WModuleInputData < WTriangleMesh > >(
         new WModuleInputData< WTriangleMesh >( shared_from_this(), "mesh", "The mesh to save" )
         );
 
@@ -82,12 +82,12 @@ void WMWriteMesh::connectors()
 
 void WMWriteMesh::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
     m_savePropGroup = m_properties->addPropertyGroup( "Save Surface",  "" );
     m_saveTriggerProp = m_savePropGroup->addProperty( "Do save",  "Press!", WPVBaseTypes::PV_TRIGGER_READY, m_propCondition );
     m_meshFile = m_savePropGroup->addProperty( "Mesh file", "", WPathHelper::getAppPath() );
 
-    m_fileTypeSelectionsList = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_fileTypeSelectionsList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_fileTypeSelectionsList->addItem( "VTK ASCII", "" );
     m_fileTypeSelectionsList->addItem( "json", "" );
     m_fileTypeSelectionsList->addItem( "STL", "Ascii Stereo Lithography File." );
@@ -304,7 +304,7 @@ bool WMWriteMesh::saveJson()
         return false;
     }
 
-    std::vector< boost::shared_ptr< WTriangleMesh > >meshes;
+    std::vector< std::shared_ptr< WTriangleMesh > >meshes;
     meshes = splitMesh( m_triMesh, 65000 );
 
     for( size_t k = 0; k < meshes.size(); ++k )
@@ -389,9 +389,9 @@ bool WMWriteMesh::saveJson()
     return true;
 }
 
-std::vector< boost::shared_ptr< WTriangleMesh > >WMWriteMesh::splitMesh( boost::shared_ptr< WTriangleMesh > triMesh, size_t targetSize )
+std::vector< std::shared_ptr< WTriangleMesh > >WMWriteMesh::splitMesh( std::shared_ptr< WTriangleMesh > triMesh, size_t targetSize )
 {
-    std::vector< boost::shared_ptr< WTriangleMesh > >meshes;
+    std::vector< std::shared_ptr< WTriangleMesh > >meshes;
     if( triMesh->vertSize() <= targetSize )
     {
         meshes.push_back( triMesh );
@@ -402,7 +402,7 @@ std::vector< boost::shared_ptr< WTriangleMesh > >WMWriteMesh::splitMesh( boost::
 
     while( currentTri < triMesh->triangleSize() )
     {
-        boost::shared_ptr< WTriangleMesh > newMesh( new WTriangleMesh( 0, 0 ) );
+        std::shared_ptr< WTriangleMesh > newMesh( new WTriangleMesh( 0, 0 ) );
         std::vector<int>newIds( triMesh->vertSize(), -1 );
         while( newMesh->vertSize() < targetSize )
         {

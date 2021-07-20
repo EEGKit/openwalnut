@@ -54,9 +54,9 @@ WMApplyMask::~WMApplyMask()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMApplyMask::factory() const
+std::shared_ptr< WModule > WMApplyMask::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMApplyMask() );
+    return std::shared_ptr< WModule >( new WMApplyMask() );
 }
 
 const char** WMApplyMask::getXPMIcon() const
@@ -103,40 +103,40 @@ void WMApplyMask::moduleMain()
         {
             case W_DT_UNSIGNED_CHAR:
             {
-                boost::shared_ptr< WValueSet< unsigned char > > vals;
-                vals = boost::dynamic_pointer_cast< WValueSet< unsigned char > >( ( *m_dataSet ).getValueSet() );
+                std::shared_ptr< WValueSet< unsigned char > > vals;
+                vals = std::dynamic_pointer_cast< WValueSet< unsigned char > >( ( *m_dataSet ).getValueSet() );
                 WAssert( vals, "Data type and data type indicator must fit." );
                 applyMask( vals, type );
                 break;
             }
             case W_DT_INT16:
             {
-                boost::shared_ptr< WValueSet< int16_t > > vals;
-                vals = boost::dynamic_pointer_cast< WValueSet< int16_t > >( ( *m_dataSet ).getValueSet() );
+                std::shared_ptr< WValueSet< int16_t > > vals;
+                vals = std::dynamic_pointer_cast< WValueSet< int16_t > >( ( *m_dataSet ).getValueSet() );
                 WAssert( vals, "Data type and data type indicator must fit." );
                 applyMask( vals, type );
                 break;
             }
             case W_DT_SIGNED_INT:
             {
-                boost::shared_ptr< WValueSet< int32_t > > vals;
-                vals = boost::dynamic_pointer_cast< WValueSet< int32_t > >( ( *m_dataSet ).getValueSet() );
+                std::shared_ptr< WValueSet< int32_t > > vals;
+                vals = std::dynamic_pointer_cast< WValueSet< int32_t > >( ( *m_dataSet ).getValueSet() );
                 WAssert( vals, "Data type and data type indicator must fit." );
                 applyMask( vals, type );
                 break;
             }
             case W_DT_FLOAT:
             {
-                boost::shared_ptr< WValueSet< float > > vals;
-                vals = boost::dynamic_pointer_cast< WValueSet< float > >( ( *m_dataSet ).getValueSet() );
+                std::shared_ptr< WValueSet< float > > vals;
+                vals = std::dynamic_pointer_cast< WValueSet< float > >( ( *m_dataSet ).getValueSet() );
                 WAssert( vals, "Data type and data type indicator must fit." );
                 applyMask( vals, type );
                 break;
             }
             case W_DT_DOUBLE:
             {
-                boost::shared_ptr< WValueSet< double > > vals;
-                vals = boost::dynamic_pointer_cast< WValueSet< double > >( ( *m_dataSet ).getValueSet() );
+                std::shared_ptr< WValueSet< double > > vals;
+                vals = std::dynamic_pointer_cast< WValueSet< double > >( ( *m_dataSet ).getValueSet() );
                 WAssert( vals, "Data type and data type indicator must fit." );
                 applyMask( vals, type );
                 break;
@@ -154,14 +154,14 @@ void WMApplyMask::moduleMain()
 void WMApplyMask::connectors()
 {
     // initialize connectors
-    m_dataInput = boost::shared_ptr< WModuleInputData< WDataSetScalar > >( new WModuleInputData< WDataSetScalar >(
+    m_dataInput = std::shared_ptr< WModuleInputData< WDataSetScalar > >( new WModuleInputData< WDataSetScalar >(
                     shared_from_this(), "dataSet", "The dataset to apply the mask to." ) );
 
     // add it to the list of connectors. Please note, that a connector NOT added via addConnector will not work as expected.
     addConnector( m_dataInput );
 
     // initialize connectors
-    m_maskInput = boost::shared_ptr< WModuleInputData< WDataSetScalar > >(
+    m_maskInput = std::shared_ptr< WModuleInputData< WDataSetScalar > >(
             new WModuleInputData< WDataSetScalar >( shared_from_this(), "mask",
                     "The mask applied to the data." ) );
 
@@ -169,7 +169,7 @@ void WMApplyMask::connectors()
     addConnector( m_maskInput );
 
     // initialize connectors
-    m_output = boost::shared_ptr< WModuleOutputData< WDataSetScalar > >(
+    m_output = std::shared_ptr< WModuleOutputData< WDataSetScalar > >(
             new WModuleOutputData< WDataSetScalar >( shared_from_this(), "out",
                     "The filtered data set." ) );
 
@@ -185,20 +185,20 @@ void WMApplyMask::properties()
     WModule::properties();
 }
 
-template< typename T > void WMApplyMask::applyMask( boost::shared_ptr< WValueSet< T > > valSet, dataType type )
+template< typename T > void WMApplyMask::applyMask( std::shared_ptr< WValueSet< T > > valSet, dataType type )
 {
-    boost::shared_ptr< WValueSetBase > maskBase = m_mask->getValueSet();
-    boost::shared_ptr< WValueSet< float > > mask = boost::dynamic_pointer_cast< WValueSet< float > >( maskBase );
+    std::shared_ptr< WValueSetBase > maskBase = m_mask->getValueSet();
+    std::shared_ptr< WValueSet< float > > mask = std::dynamic_pointer_cast< WValueSet< float > >( maskBase );
 
     if( !mask )
     {
         throw WException( std::string( "Mask is not of type float." ) );
     }
 
-    boost::shared_ptr< WProgress > progress( new WProgress( "Apply Mask", valSet->size() ) );
+    std::shared_ptr< WProgress > progress( new WProgress( "Apply Mask", valSet->size() ) );
     m_progress->addSubProgress( progress );
 
-    boost::shared_ptr< std::vector< T > > newVals( new std::vector< T >( valSet->size() ) );
+    std::shared_ptr< std::vector< T > > newVals( new std::vector< T >( valSet->size() ) );
     for( size_t i = 0; i < valSet->size(); ++i )
     {
         ++*progress;
@@ -213,9 +213,9 @@ template< typename T > void WMApplyMask::applyMask( boost::shared_ptr< WValueSet
     }
     progress->finish();
 
-    boost::shared_ptr< WValueSet< T > > valueSet;
-    valueSet = boost::shared_ptr< WValueSet< T > >( new WValueSet< T >( 0, 1, newVals, type ) );
+    std::shared_ptr< WValueSet< T > > valueSet;
+    valueSet = std::shared_ptr< WValueSet< T > >( new WValueSet< T >( 0, 1, newVals, type ) );
 
-    m_dataSetOut = boost::shared_ptr< WDataSetScalar >( new WDataSetScalar( valueSet, m_dataSet->getGrid() ) );
+    m_dataSetOut = std::shared_ptr< WDataSetScalar >( new WDataSetScalar( valueSet, m_dataSet->getGrid() ) );
     m_output->updateData( m_dataSetOut );
 }

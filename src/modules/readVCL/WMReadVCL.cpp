@@ -45,9 +45,9 @@ WMReadVCL::~WMReadVCL()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMReadVCL::factory() const
+std::shared_ptr< WModule > WMReadVCL::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMReadVCL() );
+    return std::shared_ptr< WModule >( new WMReadVCL() );
 }
 
 const std::string WMReadVCL::getName() const
@@ -69,7 +69,7 @@ void WMReadVCL::connectors()
 
 void WMReadVCL::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
     m_dataFile = m_properties->addProperty( "File", "File to load.", WPathHelper::getAppPath() );
     WPropertyHelper::PC_PATHEXISTS::addTo( m_dataFile );
 
@@ -95,7 +95,7 @@ void WMReadVCL::moduleMain()
         }
 
         debugLog() << "Loading " << m_dataFile->get().string() << ".";
-        boost::shared_ptr< WProgress > progress = boost::shared_ptr< WProgress >( new WProgress( "Read Data" ) );
+        std::shared_ptr< WProgress > progress = std::shared_ptr< WProgress >( new WProgress( "Read Data" ) );
         m_progress->addSubProgress( progress );
         readData( m_dataFile->get().string() );
         m_output->updateData( m_dataSet );

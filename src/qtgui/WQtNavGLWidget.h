@@ -73,14 +73,14 @@ public:
      *
      * \param prop the property
      */
-    void setSliderProperty( boost::shared_ptr< WPropertyBase > prop );
+    void setSliderProperty( std::shared_ptr< WPropertyBase > prop );
 
     /**
      * Remove the property to control by the slider.
      *
      * \param prop the property
      */
-    void removeSliderProperty( boost::shared_ptr< WPropertyBase > prop );
+    void removeSliderProperty( std::shared_ptr< WPropertyBase > prop );
 
 protected:
 private:
@@ -103,7 +103,7 @@ private:
      * Map holding the widgets for module properties added automatically. So they can be removed again automatically
      * if the module is removed.
      */
-    std::map< boost::shared_ptr< WPropertyBase >, WPropertyDoubleWidget* > propertyWidgetMap;
+    std::map< std::shared_ptr< WPropertyBase >, WPropertyDoubleWidget* > propertyWidgetMap;
 };
 
 #endif  // WQTNAVGLWIDGET_H

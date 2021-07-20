@@ -59,7 +59,7 @@ WValueSetBase::SPtr WDataCreatorTuring::operator()( WProgress::SPtr progress, WG
     creator.setSpotIrregularity( m_spotIrregularity->get() );
     creator.setNumIterations( m_iterations->get() );
 
-    boost::shared_ptr< std::vector< float > > data = creator.create( grid->getNbCoordsX(), grid->getNbCoordsY(), grid->getNbCoordsZ() );
+    std::shared_ptr< std::vector< float > > data = creator.create( grid->getNbCoordsX(), grid->getNbCoordsY(), grid->getNbCoordsZ() );
 
     return WValueSet< float >::SPtr( new WValueSet< float >( 0, 1, data ) );
 }

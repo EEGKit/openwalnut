@@ -78,7 +78,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -138,31 +138,31 @@ private:
     void resetProgress( std::size_t todo );
 
     //! A pointer to the input dataset.
-    boost::shared_ptr< WDataSetSphericalHarmonics > m_dataSet;
+    std::shared_ptr< WDataSetSphericalHarmonics > m_dataSet;
 
     //! The output dataset.
-    boost::shared_ptr< WDataSetDTI > m_result;
+    std::shared_ptr< WDataSetDTI > m_result;
 
     //! The output Connector.
-    boost::shared_ptr< WModuleOutputData< WDataSetDTI > > m_output;
+    std::shared_ptr< WModuleOutputData< WDataSetDTI > > m_output;
 
     //! The input Connector for the SH data.
-    boost::shared_ptr< WModuleInputData< WDataSetSphericalHarmonics > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSetSphericalHarmonics > > m_input;
 
     //! The object that keeps track of the current progress.
-    boost::shared_ptr< WProgress > m_currentProgress;
+    std::shared_ptr< WProgress > m_currentProgress;
 
     //! The last exception thrown by any worker thread.
-    boost::shared_ptr< WException > m_lastException;
+    std::shared_ptr< WException > m_lastException;
 
     //! Condition indicating if any exception was thrown.
-    boost::shared_ptr< WCondition > m_exceptionCondition;
+    std::shared_ptr< WCondition > m_exceptionCondition;
 
     //! The threaded function object.
-    boost::shared_ptr< TensorFuncType > m_tensorFunc;
+    std::shared_ptr< TensorFuncType > m_tensorFunc;
 
     //! The threadpool.
-    boost::shared_ptr< TensorPoolType > m_tensorPool;
+    std::shared_ptr< TensorPoolType > m_tensorPool;
 
     //! The sh->tensor conversion.
     WMatrix<double> m_SHToTensorMat;

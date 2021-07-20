@@ -43,7 +43,7 @@ public:
      * \param in the input
      * \param out the output
      */
-    WModuleDisconnectEvent( boost::shared_ptr< WModuleConnector > in, boost::shared_ptr< WModuleConnector > out );
+    WModuleDisconnectEvent( std::shared_ptr< WModuleConnector > in, std::shared_ptr< WModuleConnector > out );
 
     /**
      * Destructor.
@@ -55,25 +55,25 @@ public:
      *
      * \return the connector.
      */
-    boost::shared_ptr< WModuleConnector > getInput() const;
+    std::shared_ptr< WModuleConnector > getInput() const;
 
     /**
      * Gets the output connector involved in this connection event.
      *
      * \return the connector.
      */
-    boost::shared_ptr< WModuleConnector > getOutput() const;
+    std::shared_ptr< WModuleConnector > getOutput() const;
 
 protected:
     /**
      * The input.
      */
-    boost::shared_ptr< WModuleConnector > m_in;
+    std::shared_ptr< WModuleConnector > m_in;
 
     /**
      * The output.
      */
-    boost::shared_ptr< WModuleConnector > m_out;
+    std::shared_ptr< WModuleConnector > m_out;
 
 private:
 };

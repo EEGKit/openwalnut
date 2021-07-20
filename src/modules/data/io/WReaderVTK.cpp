@@ -56,11 +56,11 @@ WReaderVTK::~WReaderVTK() throw()
 {
 }
 
-boost::shared_ptr< WDataSet > WReaderVTK::read()
+std::shared_ptr< WDataSet > WReaderVTK::read()
 {
-    boost::shared_ptr< WDataSet > ds;
+    std::shared_ptr< WDataSet > ds;
 
-    m_ifs = boost::shared_ptr< std::ifstream >( new std::ifstream() );
+    m_ifs = std::shared_ptr< std::ifstream >( new std::ifstream() );
     m_ifs->open( m_fname.c_str(), std::ifstream::in | std::ifstream::binary );
     if( !m_ifs || m_ifs->bad() )
     {
@@ -73,7 +73,7 @@ boost::shared_ptr< WDataSet > WReaderVTK::read()
     }
 
     // constructs the grid
-    boost::shared_ptr< WGridRegular3D > grid;
+    std::shared_ptr< WGridRegular3D > grid;
 
     switch( m_domainType )
     {
@@ -93,7 +93,7 @@ boost::shared_ptr< WDataSet > WReaderVTK::read()
         return ds;
     }
 
-    boost::shared_ptr< WValueSetBase > values = readData( grid );
+    std::shared_ptr< WValueSetBase > values = readData( grid );
     if( !values )
     {
         wlog::error( "WReaderVTK" ) << "Invalid values!";
@@ -105,23 +105,23 @@ boost::shared_ptr< WDataSet > WReaderVTK::read()
     switch( m_attributeType )
     {
     case SCALARS:
-        ds = boost::shared_ptr< WDataSet >( new WDataSetScalar( values, grid ) );
+        ds = std::shared_ptr< WDataSet >( new WDataSetScalar( values, grid ) );
         break;
     case VECTORS:
-        ds = boost::shared_ptr< WDataSet >( new WDataSetVector( values, grid ) );
+        ds = std::shared_ptr< WDataSet >( new WDataSetVector( values, grid ) );
         break;
     case TENSORS:
-        ds = boost::shared_ptr< WDataSet >( new WDataSetDTI( values, grid ) );
+        ds = std::shared_ptr< WDataSet >( new WDataSetDTI( values, grid ) );
         break;
     case ARRAYS:
         if( values->dimension() > 6 )
         {
-            boost::shared_ptr< std::vector< WVector3d > > grads = readGradients();
-            ds = boost::shared_ptr< WDataSet >( new WDataSetRawHARDI( values, grid, grads ) );
+            std::shared_ptr< std::vector< WVector3d > > grads = readGradients();
+            ds = std::shared_ptr< WDataSet >( new WDataSetRawHARDI( values, grid, grads ) );
         }
         else
         {
-            ds = boost::shared_ptr< WDataSet >( new WDataSetDTI( values, grid ) );
+            ds = std::shared_ptr< WDataSet >( new WDataSetDTI( values, grid ) );
         }
         break;
 
@@ -132,7 +132,7 @@ boost::shared_ptr< WDataSet > WReaderVTK::read()
     return ds;
 }
 
-boost::shared_ptr< std::vector< WVector3d > > WReaderVTK::readGradients()
+std::shared_ptr< std::vector< WVector3d > > WReaderVTK::readGradients()
 {
     typedef std::vector< WVector3d > GradVec;
 
@@ -172,7 +172,7 @@ boost::shared_ptr< std::vector< WVector3d > > WReaderVTK::readGradients()
             values.resize( values.size() / 3 );
         }
 
-        boost::shared_ptr< GradVec > newGradients( new GradVec( values.size() / 3 ) );
+        std::shared_ptr< GradVec > newGradients( new GradVec( values.size() / 3 ) );
 
         for( std::size_t j = 0; j < values.size() / 3; ++j )
         {
@@ -181,7 +181,7 @@ boost::shared_ptr< std::vector< WVector3d > > WReaderVTK::readGradients()
 
         return newGradients;
     }
-    return boost::shared_ptr< GradVec >();
+    return std::shared_ptr< GradVec >();
 }
 
 bool WReaderVTK::readHeader()
@@ -243,7 +243,7 @@ bool WReaderVTK::readHeader()
     return true;
 }
 
-boost::shared_ptr< WGridRegular3D > WReaderVTK::readStructuredPoints()
+std::shared_ptr< WGridRegular3D > WReaderVTK::readStructuredPoints()
 {
     std::string line = getLine( "reading DIMENSIONS" );
     std::vector< std::string > dimensions_line = string_utils::tokenize( line );
@@ -284,10 +284,10 @@ boost::shared_ptr< WGridRegular3D > WReaderVTK::readStructuredPoints()
     WGridTransformOrtho transform( spacings[ 0 ], spacings[ 1 ], spacings[ 2 ] );
     transform.translate( origin );
 
-    return boost::shared_ptr< WGridRegular3D >( new WGridRegular3D( dimensions[ 0 ], dimensions[ 1 ], dimensions[ 2 ], transform ) );
+    return std::shared_ptr< WGridRegular3D >( new WGridRegular3D( dimensions[ 0 ], dimensions[ 1 ], dimensions[ 2 ], transform ) );
 }
 
-boost::shared_ptr< WGridRegular3D > WReaderVTK::readRectilinearGrid()
+std::shared_ptr< WGridRegular3D > WReaderVTK::readRectilinearGrid()
 {
     std::string line = getLine( "reading DIMENSIONS" );
     std::vector< std::string > dimensions_line = string_utils::tokenize( line );
@@ -311,7 +311,7 @@ boost::shared_ptr< WGridRegular3D > WReaderVTK::readRectilinearGrid()
     wlog::warn( "WReaderVTK" ) << "Assuming evenly spaced rectilinear grid! This may not adhere to the domain data in the file!";
 
     WGridTransformOrtho transform( xcoords.at( 1 ) - xcoords.at( 0 ), ycoords.at( 1 ) - ycoords.at( 0 ), zcoords.at( 1 ) - zcoords.at( 0 ) ); // NOLINT this is not #<algorithm>'s transform!
-    return boost::shared_ptr< WGridRegular3D >( new WGridRegular3D( dimensions[ 0 ], dimensions[ 1 ], dimensions[ 2 ], transform ) );
+    return std::shared_ptr< WGridRegular3D >( new WGridRegular3D( dimensions[ 0 ], dimensions[ 1 ], dimensions[ 2 ], transform ) );
 }
 
 void WReaderVTK::readCoords( std::string const& name, std::size_t dim, std::vector< float >& coords )
@@ -366,7 +366,7 @@ void WReaderVTK::readValuesFromFile( std::vector< float >& values, std::size_t n
 }
 
 // we currently do not handle the name flag but should set the name of the data set somewhere
-boost::shared_ptr< WValueSetBase > WReaderVTK::readScalars( size_t nbPoints, const std::string& /*name*/ )
+std::shared_ptr< WValueSetBase > WReaderVTK::readScalars( size_t nbPoints, const std::string& /*name*/ )
 {
     std::size_t pos = m_ifs->tellg();
 
@@ -379,14 +379,14 @@ boost::shared_ptr< WValueSetBase > WReaderVTK::readScalars( size_t nbPoints, con
 
     m_ifs->seekg( pos, std::ios::beg );
 
-    boost::shared_ptr< std::vector< float > > data( new std::vector< float >() );
+    std::shared_ptr< std::vector< float > > data( new std::vector< float >() );
 
     readValuesFromFile( *data, nbPoints );
 
-    return boost::shared_ptr< WValueSetBase >( new WValueSet< float >( 0, 1, data, W_DT_FLOAT ) );
+    return std::shared_ptr< WValueSetBase >( new WValueSet< float >( 0, 1, data, W_DT_FLOAT ) );
 }
 
-boost::shared_ptr< WValueSetBase > WReaderVTK::readVectors( size_t nbPoints, const std::string& /*name*/ )
+std::shared_ptr< WValueSetBase > WReaderVTK::readVectors( size_t nbPoints, const std::string& /*name*/ )
 {
     int pos = m_ifs->tellg(); // remember where we are for binary files
 
@@ -406,17 +406,17 @@ boost::shared_ptr< WValueSetBase > WReaderVTK::readVectors( size_t nbPoints, con
     // There are other fields around, but there is no official VTK documentation dealing
     // with 2D vectors and no unique interpretation of the data
     const size_t dimension = 3;
-    boost::shared_ptr< std::vector< float > > data( new std::vector< float >( nbPoints * dimension ) );
+    std::shared_ptr< std::vector< float > > data( new std::vector< float >( nbPoints * dimension ) );
 
     readValuesFromFile( *data, nbPoints * dimension );
 
-    return boost::shared_ptr< WValueSetBase >( new WValueSet< float >( 1, 3, data, W_DT_FLOAT ) );
+    return std::shared_ptr< WValueSetBase >( new WValueSet< float >( 1, 3, data, W_DT_FLOAT ) );
 
     // line = getLine( "also eat the remaining newline after lines declaration" );
     // WAssert( std::string( "" ) == line, "Found characters in file where nothing was expected." );
 }
 
-boost::shared_ptr< WValueSetBase > WReaderVTK::readTensors( size_t nbPoints, const std::string& /*name*/ )
+std::shared_ptr< WValueSetBase > WReaderVTK::readTensors( size_t nbPoints, const std::string& /*name*/ )
 {
     int pos = m_ifs->tellg(); // remember where we are for binary files
 
@@ -436,7 +436,7 @@ boost::shared_ptr< WValueSetBase > WReaderVTK::readTensors( size_t nbPoints, con
         dimension = 6;
     }
 
-    boost::shared_ptr< std::vector< float > > data( new std::vector< float >( nbPoints * dimension ) );
+    std::shared_ptr< std::vector< float > > data( new std::vector< float >( nbPoints * dimension ) );
 
     readValuesFromFile( *data, nbPoints * dimension );
 
@@ -455,13 +455,13 @@ boost::shared_ptr< WValueSetBase > WReaderVTK::readTensors( size_t nbPoints, con
         data->resize( nbPoints * 6 );
     }
 
-    return boost::shared_ptr< WValueSetBase >( new WValueSet< float >( 1, 6, data, W_DT_FLOAT ) );
+    return std::shared_ptr< WValueSetBase >( new WValueSet< float >( 1, 6, data, W_DT_FLOAT ) );
 
     // line = getLine( "also eat the remaining newline after lines declaration" );
     // WAssert( std::string( "" ) == line, "Found characters in file where nothing was expected." );
 }
 
-boost::shared_ptr< WValueSetBase > WReaderVTK::readHARDI( std::size_t nbPoints, std::size_t nbGradients, const std::string& /*name*/ )
+std::shared_ptr< WValueSetBase > WReaderVTK::readHARDI( std::size_t nbPoints, std::size_t nbGradients, const std::string& /*name*/ )
 {
     int pos = m_ifs->tellg(); // remember where we are for binary files
 
@@ -480,18 +480,18 @@ boost::shared_ptr< WValueSetBase > WReaderVTK::readHARDI( std::size_t nbPoints, 
     // We assume that all VTK fields store 3-dimensional vectors.
     // There are other fields around, but there is no official VTK documentation dealing
     // with 2D vectors and no unique interpretation of the data
-    boost::shared_ptr< std::vector< float > > data( new std::vector< float >( nbPoints * nbGradients ) );
+    std::shared_ptr< std::vector< float > > data( new std::vector< float >( nbPoints * nbGradients ) );
 
     readValuesFromFile( *data, nbPoints * nbGradients );
 
-    return boost::shared_ptr< WValueSetBase >( new WValueSet< float >( 1, nbGradients, data, W_DT_FLOAT ) );
+    return std::shared_ptr< WValueSetBase >( new WValueSet< float >( 1, nbGradients, data, W_DT_FLOAT ) );
 
     // line = getLine( "also eat the remaining newline after lines declaration" );
     // WAssert( std::string( "" ) == line, "Found characters in file where nothing was expected." );
 }
 
 
-boost::shared_ptr< WValueSetBase > WReaderVTK::readData( boost::shared_ptr< WGridRegular3D > const& /* grid */ )
+std::shared_ptr< WValueSetBase > WReaderVTK::readData( std::shared_ptr< WGridRegular3D > const& /* grid */ )
 {
     std::string line = getLine( "POINT_DATA declaration" );
 

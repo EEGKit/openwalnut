@@ -33,12 +33,12 @@
 #include "WDataTexture3D.h"
 
 // prototype instance as singleton
-boost::shared_ptr< WPrototyped > WDataSet::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WDataSet::m_prototype = std::shared_ptr< WPrototyped >();
 
 WDataSet::WDataSet()
     : WTransferable(),
-    m_properties( boost::shared_ptr< WProperties >( new WProperties( "Data-Set Properties", "Properties of a data-set" ) ) ),
-    m_infoProperties( boost::shared_ptr< WProperties >( new WProperties( "Data-Set Info Properties", "Data-set's information properties" ) ) ),
+    m_properties( std::shared_ptr< WProperties >( new WProperties( "Data-Set Properties", "Properties of a data-set" ) ) ),
+    m_infoProperties( std::shared_ptr< WProperties >( new WProperties( "Data-Set Info Properties", "Data-set's information properties" ) ) ),
     m_filename( "" )
 {
     m_infoProperties->setPurpose( PV_PURPOSE_INFORMATION );
@@ -85,27 +85,27 @@ const std::string WDataSet::getDescription() const
     return "Encapsulates the whole common feature set of all datasets.";
 }
 
-boost::shared_ptr< WPrototyped > WDataSet::getPrototype()
+std::shared_ptr< WPrototyped > WDataSet::getPrototype()
 {
     if( !m_prototype )
     {
-        m_prototype = boost::shared_ptr< WPrototyped >( new WDataSet() );
+        m_prototype = std::shared_ptr< WPrototyped >( new WDataSet() );
     }
 
     return m_prototype;
 }
 
-boost::shared_ptr< WDataSetVector > WDataSet::isVectorDataSet()
+std::shared_ptr< WDataSetVector > WDataSet::isVectorDataSet()
 {
-    return boost::shared_ptr< WDataSetVector >();
+    return std::shared_ptr< WDataSetVector >();
 }
 
-boost::shared_ptr< WProperties > WDataSet::getProperties() const
+std::shared_ptr< WProperties > WDataSet::getProperties() const
 {
     return m_properties;
 }
 
-boost::shared_ptr< WProperties > WDataSet::getInformationProperties() const
+std::shared_ptr< WProperties > WDataSet::getInformationProperties() const
 {
     return m_infoProperties;
 }

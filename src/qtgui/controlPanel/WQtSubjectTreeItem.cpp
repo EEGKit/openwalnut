@@ -39,7 +39,7 @@ WQtSubjectTreeItem::~WQtSubjectTreeItem()
 }
 
 
-WQtDatasetTreeItem* WQtSubjectTreeItem::addDatasetItem( boost::shared_ptr< WModule > module )
+WQtDatasetTreeItem* WQtSubjectTreeItem::addDatasetItem( std::shared_ptr< WModule > module )
 {
     WQtDatasetTreeItem* ds = new WQtDatasetTreeItem( this, module );
 

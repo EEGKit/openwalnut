@@ -172,7 +172,7 @@ private:
 
     WPickInfo m_pickInfo; //!< Stores the pick information for potential redraw
 
-    boost::shared_ptr< WGEViewer > m_viewer; //!< makes viewer available all over this class.
+    std::shared_ptr< WGEViewer > m_viewer; //!< makes viewer available all over this class.
 
     osg::Vec4 m_color; //!< the color of the box
 

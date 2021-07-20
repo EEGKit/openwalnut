@@ -73,7 +73,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -135,7 +135,7 @@ private:
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
 
     /**
@@ -200,7 +200,7 @@ private:
 
     osg::ref_ptr<osg::Uniform> m_showCompleteUniform; //!< Determines whether the slice should be drawn completely
 
-    boost::shared_ptr< boost::function< void() > > m_changeRoiSignal; //!< Signal that can be used to update the plane
+    std::shared_ptr< boost::function< void() > > m_changeRoiSignal; //!< Signal that can be used to update the plane
 };
 
 #endif  // WMARBITRARYPLANE_H

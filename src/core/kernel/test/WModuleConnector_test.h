@@ -90,9 +90,9 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype()
+    static std::shared_ptr< WPrototyped > getPrototype()
     {
-        return boost::shared_ptr< WPrototyped >( new WTestTransferableBase() );
+        return std::shared_ptr< WPrototyped >( new WTestTransferableBase() );
     }
 
     /**
@@ -164,9 +164,9 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype()
+    static std::shared_ptr< WPrototyped > getPrototype()
     {
-        return boost::shared_ptr< WPrototyped >( new WTestTransferableDerived() );
+        return std::shared_ptr< WPrototyped >( new WTestTransferableDerived() );
     }
 
 protected:
@@ -204,9 +204,9 @@ public:
      *
      * \return new instance of this module.
      */
-    virtual boost::shared_ptr< WModule > factory() const
+    virtual std::shared_ptr< WModule > factory() const
     {
-        return boost::shared_ptr< WModule >( new WModuleImpl() );
+        return std::shared_ptr< WModule >( new WModuleImpl() );
     }
 
     /**
@@ -234,26 +234,26 @@ public:
      */
     virtual void connectors()
     {
-        m_input = boost::shared_ptr< WModuleInputData< WTestTransferableBase > >(
+        m_input = std::shared_ptr< WModuleInputData< WTestTransferableBase > >(
                 new WModuleInputData< WTestTransferableBase > ( shared_from_this(), "in1", "desc1" )
         );
         // add it to the list of connectors. Please note, that a connector NOT added via addConnector will not work as expected.
         addConnector( m_input );
 
-        m_output = boost::shared_ptr< WModuleOutputData< WTestTransferableBase > >(
+        m_output = std::shared_ptr< WModuleOutputData< WTestTransferableBase > >(
                 new WModuleOutputData< WTestTransferableBase > ( shared_from_this(), "out1", "desc2" )
         );
         // add it to the list of connectors. Please note, that a connector NOT added via addConnector will not work as expected.
         addConnector( m_output );
 
         // now, the same with the derived class as type
-        m_inputDerived = boost::shared_ptr< WModuleInputData< WTestTransferableDerived > >(
+        m_inputDerived = std::shared_ptr< WModuleInputData< WTestTransferableDerived > >(
                 new WModuleInputData< WTestTransferableDerived > ( shared_from_this(), "in2", "desc1" )
         );
         // add it to the list of connectors. Please note, that a connector NOT added via addConnector will not work as expected.
         addConnector( m_inputDerived );
 
-        m_outputDerived = boost::shared_ptr< WModuleOutputData< WTestTransferableDerived > >(
+        m_outputDerived = std::shared_ptr< WModuleOutputData< WTestTransferableDerived > >(
                 new WModuleOutputData< WTestTransferableDerived > ( shared_from_this(), "out2", "desc2" )
         );
         // add it to the list of connectors. Please note, that a connector NOT added via addConnector will not work as expected.
@@ -280,8 +280,8 @@ protected:
     /**
      * Notifier called whenever a connection got established.
      */
-    virtual void notifyConnectionEstablished( boost::shared_ptr< WModuleConnector > /*here*/,
-                                              boost::shared_ptr< WModuleConnector > /*there*/ )
+    virtual void notifyConnectionEstablished( std::shared_ptr< WModuleConnector > /*here*/,
+                                              std::shared_ptr< WModuleConnector > /*there*/ )
     {
         // std::cout << "connection established between " << n << ":" << here->getCanonicalName() << " and "
         //           << there->getCanonicalName() << std::endl;
@@ -290,8 +290,8 @@ protected:
     /**
      * Notifier called whenever a connection got closed.
      */
-    virtual void notifyConnectionClosed( boost::shared_ptr< WModuleConnector > /*here*/,
-                                              boost::shared_ptr< WModuleConnector > /*there*/ )
+    virtual void notifyConnectionClosed( std::shared_ptr< WModuleConnector > /*here*/,
+                                              std::shared_ptr< WModuleConnector > /*there*/ )
     {
         // std::cout << "connection closed between " << n << ":" <<  here->getCanonicalName() << " and "
         //           <<  there->getCanonicalName() << std::endl;
@@ -303,18 +303,18 @@ protected:
      * param input  the local connector receiving the event.
      * \param output the remote connector propagating the event.
      */
-    virtual void notifyDataChange( boost::shared_ptr< WModuleConnector > /*input */,
-                                   boost::shared_ptr< WModuleConnector > output )
+    virtual void notifyDataChange( std::shared_ptr< WModuleConnector > /*input */,
+                                   std::shared_ptr< WModuleConnector > output )
     {
         // just copy the data and add one
-        boost::shared_ptr< WModuleOutputData< WTestTransferableBase > > o =
-            boost::dynamic_pointer_cast< WModuleOutputData< WTestTransferableBase > >( output );
+        std::shared_ptr< WModuleOutputData< WTestTransferableBase > > o =
+            std::dynamic_pointer_cast< WModuleOutputData< WTestTransferableBase > >( output );
         if( !o.get() )
         {
             return;
         }
 
-        boost::shared_ptr< WTestTransferableBase > ds = o->getData();
+        std::shared_ptr< WTestTransferableBase > ds = o->getData();
         if( ds.get() )
         {
             data = ds->get() + 1;
@@ -333,22 +333,22 @@ private:
     /**
      * Input connection.
      */
-    boost::shared_ptr< WModuleInputData< WTestTransferableBase > > m_input;
+    std::shared_ptr< WModuleInputData< WTestTransferableBase > > m_input;
 
     /**
      * Input connection with a derived class as transferable.
      */
-    boost::shared_ptr< WModuleInputData< WTestTransferableDerived > > m_inputDerived;
+    std::shared_ptr< WModuleInputData< WTestTransferableDerived > > m_inputDerived;
 
     /**
      * Output connection.
      */
-    boost::shared_ptr< WModuleOutputData< WTestTransferableBase > > m_output;
+    std::shared_ptr< WModuleOutputData< WTestTransferableBase > > m_output;
 
     /**
      * Output connection with a derived class as transferable
      */
-    boost::shared_ptr< WModuleOutputData< WTestTransferableDerived > > m_outputDerived;
+    std::shared_ptr< WModuleOutputData< WTestTransferableDerived > > m_outputDerived;
 };
 
 /**
@@ -370,17 +370,17 @@ public:
     /**
      * Simple module to test with.
      */
-    boost::shared_ptr< WModuleImpl > m1;
+    std::shared_ptr< WModuleImpl > m1;
 
     /**
      * Simple module to test with.
      */
-    boost::shared_ptr< WModuleImpl > m2;
+    std::shared_ptr< WModuleImpl > m2;
 
     /**
      * Simple module to test with.
      */
-    boost::shared_ptr< WModuleImpl > m3;
+    std::shared_ptr< WModuleImpl > m3;
 
     /**
      * Initialized the test modules.
@@ -388,9 +388,9 @@ public:
     void createModules( void )
     {
         // init 3 separate test modules
-        m1 = boost::shared_ptr< WModuleImpl >( new WModuleImpl( "m1" ) );
-        m2 = boost::shared_ptr< WModuleImpl >( new WModuleImpl( "m2" ) );
-        m3 = boost::shared_ptr< WModuleImpl >( new WModuleImpl( "m3" ) );
+        m1 = std::shared_ptr< WModuleImpl >( new WModuleImpl( "m1" ) );
+        m2 = std::shared_ptr< WModuleImpl >( new WModuleImpl( "m2" ) );
+        m3 = std::shared_ptr< WModuleImpl >( new WModuleImpl( "m3" ) );
     }
 
     /**
@@ -616,7 +616,7 @@ public:
         initConnections();
 
         // set some data, propagate change
-        boost::shared_ptr< WTestTransferableBase > data( new WTestTransferableBase() );
+        std::shared_ptr< WTestTransferableBase > data( new WTestTransferableBase() );
         int d = 5;
         data->set( d );
         TS_ASSERT_THROWS_NOTHING( m1->m_output->updateData( data ) );
@@ -642,7 +642,7 @@ public:
         TS_ASSERT( !m3->m_input->getData().get() );
 
         // try to get uninitialized data -> should return an "NULL" Pointer
-        TS_ASSERT( m2->m_input->getData() == boost::shared_ptr< WTestTransferableBase >() );
+        TS_ASSERT( m2->m_input->getData() == std::shared_ptr< WTestTransferableBase >() );
     }
 };
 

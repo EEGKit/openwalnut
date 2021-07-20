@@ -46,7 +46,7 @@ public:
      * \param module the module that switched its state.
      * \param message the crash message.
      */
-    WModuleCrashEvent( boost::shared_ptr< WModule > module, std::string message );
+    WModuleCrashEvent( std::shared_ptr< WModule > module, std::string message );
 
     /**
      * Destructor.
@@ -58,7 +58,7 @@ public:
      *
      * \return the module.
      */
-    boost::shared_ptr< WModule > getModule();
+    std::shared_ptr< WModule > getModule();
 
     /**
      * The crash message.
@@ -71,7 +71,7 @@ protected:
     /**
      * The module that got associated.
      */
-    boost::shared_ptr< WModule > m_module;
+    std::shared_ptr< WModule > m_module;
 
     /**
      * The crash message.

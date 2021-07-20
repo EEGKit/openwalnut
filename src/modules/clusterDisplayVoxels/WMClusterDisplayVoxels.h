@@ -96,7 +96,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -205,27 +205,27 @@ private:
     /**
      * An input connector that accepts order 1 datasets.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;
 
     /**
      * An output connector for the output scalar dsataset.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output;
+    std::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output;
 
     /**
      * This is a pointer to the dataset the module is currently working on.
      */
-    boost::shared_ptr< WDataSetSingle > m_dataSet;
+    std::shared_ptr< WDataSetSingle > m_dataSet;
 
     /**
      * Point to the out dataset once it is invalid. Used to deregister from the datahandler
      */
-    boost::shared_ptr< WDataSetScalar > m_outDataOld;
+    std::shared_ptr< WDataSetScalar > m_outDataOld;
 
     /**
      * This is a pointer to the current output.
      */
-    boost::shared_ptr< WDataSetScalar > m_outData;
+    std::shared_ptr< WDataSetScalar > m_outData;
 
     /**
      * stores a pointer to the texture we paint in
@@ -246,7 +246,7 @@ private:
     /**
      * stores a pointer to the grid we use;
      */
-    boost::shared_ptr< WGridRegular3D > m_grid;
+    std::shared_ptr< WGridRegular3D > m_grid;
 
     /**
      * the currently active display mode
@@ -261,7 +261,7 @@ private:
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     WPropTrigger  m_propReadTrigger; //!< This property triggers the actual reading,
     WPropFilename m_propClusterFile; //!< The png files will be loaded form this directory
@@ -380,9 +380,9 @@ private:
 
     std::vector<osg::ref_ptr< osg::Geode > > m_outputGeodes; //!< a vector of dendrogram nodes
 
-    std::vector<boost::shared_ptr< WTriangleMesh > >m_triMeshes; //!< triangulation of the active clusters
+    std::vector<std::shared_ptr< WTriangleMesh > >m_triMeshes; //!< triangulation of the active clusters
 
-    boost::shared_ptr< WTriangleMesh >m_nonActiveMesh; //!< triangulation of the voxels not in active clusters
+    std::shared_ptr< WTriangleMesh >m_nonActiveMesh; //!< triangulation of the voxels not in active clusters
 
     std::vector<size_t>m_activatedClusters; //!< stores the currently activated clusters
 
@@ -421,7 +421,7 @@ private:
     /**
      * A list of cluster selection methods
      */
-    boost::shared_ptr< WItemSelection > m_clusterSelectionsList;
+    std::shared_ptr< WItemSelection > m_clusterSelectionsList;
 
     /**
      * Selection property for clusters
@@ -436,7 +436,7 @@ private:
     /**
      * A list of button labels
      */
-    boost::shared_ptr< WItemSelection > m_buttonLabelList;
+    std::shared_ptr< WItemSelection > m_buttonLabelList;
 
     /**
      * Selection property for button labels

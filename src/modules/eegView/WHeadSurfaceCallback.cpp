@@ -40,7 +40,7 @@
 
 WHeadSurfaceCallback::WHeadSurfaceCallback( const std::vector< std::size_t >& channelIDs,
                                             WPropDouble colorSensitivity,
-                                            boost::shared_ptr< WFlag< boost::shared_ptr< WEEGEvent > > > event )
+                                            std::shared_ptr< WFlag< std::shared_ptr< WEEGEvent > > > event )
     : m_currentColorSensitivity( 1.0 ),
       m_currentTime( -1.0 ),
       m_channelIDs( channelIDs ),
@@ -52,7 +52,7 @@ WHeadSurfaceCallback::WHeadSurfaceCallback( const std::vector< std::size_t >& ch
 void WHeadSurfaceCallback::update( osg::NodeVisitor* /*nv*/, osg::Drawable* drawable )
 {
     const double colorSensitivity = m_colorSensitivity->get();
-    boost::shared_ptr< WEEGEvent > event = m_event->get();
+    std::shared_ptr< WEEGEvent > event = m_event->get();
     const double time = event->getTime();
     if( colorSensitivity != m_currentColorSensitivity || time != m_currentTime )
     {

@@ -44,14 +44,14 @@ class WUIWidgetFactory
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WUIWidgetFactory >.
+     * Convenience typedef for a std::shared_ptr< WUIWidgetFactory >.
      */
-    typedef boost::shared_ptr< WUIWidgetFactory > SPtr;
+    typedef std::shared_ptr< WUIWidgetFactory > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WUIWidgetFactory >.
+     * Convenience typedef for a std::shared_ptr< const WUIWidgetFactory >.
      */
-    typedef boost::shared_ptr< const WUIWidgetFactory > ConstSPtr;
+    typedef std::shared_ptr< const WUIWidgetFactory > ConstSPtr;
 
     /**
      * Create a grid widget. This kind of widget is basically empty. Add others to it. Parentless widgets are initially invisible. Use
@@ -147,7 +147,7 @@ public:
     virtual WUIViewWidget::SPtr createViewWidget(
             std::string title,
             WGECamera::ProjectionMode projectionMode,
-            boost::shared_ptr< WCondition > abordCondition = WCondition::SPtr(),
+            std::shared_ptr< WCondition > abordCondition = WCondition::SPtr(),
             WUIWidgetBase::SPtr parent = WUIWidgetBase::SPtr() ) const
     {
         if( parent )
@@ -239,7 +239,7 @@ protected:
     virtual WUIViewWidget::SPtr createViewWidgetImpl(
             std::string title,
             WGECamera::ProjectionMode projectionMode,
-            boost::shared_ptr< WCondition > abordCondition = WCondition::SPtr(),
+            std::shared_ptr< WCondition > abordCondition = WCondition::SPtr(),
             WUIWidgetBase::SPtr parent = WUIWidgetBase::SPtr() ) const = 0;
 
 private:

@@ -40,14 +40,14 @@ class WDataModuleInputFile: public WDataModuleInput
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WDataModuleInputFile >.
+     * Convenience typedef for a std::shared_ptr< WDataModuleInputFile >.
      */
-    typedef boost::shared_ptr< WDataModuleInputFile > SPtr;
+    typedef std::shared_ptr< WDataModuleInputFile > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WDataModuleInputFile >.
+     * Convenience typedef for a std::shared_ptr< const WDataModuleInputFile >.
      */
-    typedef boost::shared_ptr< const WDataModuleInputFile > ConstSPtr;
+    typedef std::shared_ptr< const WDataModuleInputFile > ConstSPtr;
 
     /**
      * Default constructor.

@@ -78,7 +78,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -115,7 +115,7 @@ private:
      * \param filenames Names and locations of files to read.
      * \return A pointer to the loaded dataset
      */
-    boost::shared_ptr< WDataSetDipoles > readFiles( std::vector< std::string > filenames );
+    std::shared_ptr< WDataSetDipoles > readFiles( std::vector< std::string > filenames );
 
     /**
      * Function doing the actual reading from one file
@@ -140,19 +140,19 @@ private:
      * \param filename Name and location of meta file to read.
      * \return A pointer to the loaded dataset
      */
-    boost::shared_ptr< WDataSetDipoles > readMetaData( std::string filename );
+    std::shared_ptr< WDataSetDipoles > readMetaData( std::string filename );
 
     /**
      * Output connector for dipoles of EEG data
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetDipoles > > m_dipoles;
+    std::shared_ptr< WModuleOutputData< WDataSetDipoles > > m_dipoles;
 
     /**
      * Pointer to the loaded dataset
      */
-    boost::shared_ptr< WDataSetDipoles > m_dataSet;
+    std::shared_ptr< WDataSetDipoles > m_dataSet;
 
-    boost::shared_ptr< WCondition > m_propCondition;  //!< A condition used to notify about changes in several properties.
+    std::shared_ptr< WCondition > m_propCondition;  //!< A condition used to notify about changes in several properties.
     WPropFilename m_dataFile; //!< The data will be read from this file.
     WPropBool m_metaFile; //!< Use meta file containing fileNames.
 };

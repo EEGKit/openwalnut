@@ -45,7 +45,7 @@
 class WDataSetTimeSeriesTest : public CxxTest::TestSuite
 {
     //! a typedef
-    typedef std::vector< boost::shared_ptr< WDataSetScalar const > > DataSetPtrVector;
+    typedef std::vector< std::shared_ptr< WDataSetScalar const > > DataSetPtrVector;
 
     //! a typdef
     typedef std::vector< float > TimesVector;
@@ -89,17 +89,17 @@ public:
             t.push_back( 4.0f );
 
             WMatrix< double > mat( 4, 4 );
-            boost::shared_ptr< std::vector< double > > v( new std::vector< double >( 27, 4 ) );
+            std::shared_ptr< std::vector< double > > v( new std::vector< double >( 27, 4 ) );
             mat.makeIdentity();
             mat( 0, 0 ) = 1.0;
             mat( 1, 1 ) = 0.5;
             mat( 2, 2 ) = 2.0;
 
             WGridTransformOrtho transform( mat );
-            boost::shared_ptr< WGridRegular3D > g( new WGridRegular3D( 3, 3, 3, transform ) );
+            std::shared_ptr< WGridRegular3D > g( new WGridRegular3D( 3, 3, 3, transform ) );
 
-            boost::shared_ptr< WValueSet< double > > vs( new WValueSet< double >( 0, 1, v, W_DT_DOUBLE ) );
-            d.push_back( boost::shared_ptr< WDataSetScalar const >( new WDataSetScalar( vs, g ) ) );
+            std::shared_ptr< WValueSet< double > > vs( new WValueSet< double >( 0, 1, v, W_DT_DOUBLE ) );
+            d.push_back( std::shared_ptr< WDataSetScalar const >( new WDataSetScalar( vs, g ) ) );
             TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), const WException& );
 
             // test what happens if the valuesets data types don't match
@@ -108,9 +108,9 @@ public:
             TS_ASSERT_THROWS_NOTHING( WDataSetTimeSeries( d, t ) );
 
             t.push_back( 4.0f );
-            boost::shared_ptr< std::vector< float > > v2( new std::vector< float >( 27, 4 ) );
-            boost::shared_ptr< WValueSet< float > > vs2( new WValueSet< float >( 0, 1, v2, W_DT_FLOAT ) );
-            d.push_back( boost::shared_ptr< WDataSetScalar const >( new WDataSetScalar( vs2, d.front()->getGrid() ) ) );
+            std::shared_ptr< std::vector< float > > v2( new std::vector< float >( 27, 4 ) );
+            std::shared_ptr< WValueSet< float > > vs2( new WValueSet< float >( 0, 1, v2, W_DT_FLOAT ) );
+            d.push_back( std::shared_ptr< WDataSetScalar const >( new WDataSetScalar( vs2, d.front()->getGrid() ) ) );
             TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), const WException& );
         }
 
@@ -146,17 +146,17 @@ public:
             t.push_back( 4.0f );
 
             WMatrix< double > mat( 4, 4 );
-            boost::shared_ptr< std::vector< double > > v( new std::vector< double >( 27, 4 ) );
+            std::shared_ptr< std::vector< double > > v( new std::vector< double >( 27, 4 ) );
             mat.makeIdentity();
             mat( 0, 0 ) = 1.0;
             mat( 1, 1 ) = 0.5;
             mat( 2, 2 ) = 2.0;
 
             WGridTransformOrtho transform( mat );
-            boost::shared_ptr< WGridRegular3D > g( new WGridRegular3D( 3, 3, 3, transform ) );
+            std::shared_ptr< WGridRegular3D > g( new WGridRegular3D( 3, 3, 3, transform ) );
 
-            boost::shared_ptr< WValueSet< double > > vs( new WValueSet< double >( 0, 1, v, W_DT_DOUBLE ) );
-            d.push_back( boost::shared_ptr< WDataSetScalar const >( new WDataSetScalar( vs, g ) ) );
+            std::shared_ptr< WValueSet< double > > vs( new WValueSet< double >( 0, 1, v, W_DT_DOUBLE ) );
+            d.push_back( std::shared_ptr< WDataSetScalar const >( new WDataSetScalar( vs, g ) ) );
             TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), const WException& );
 
             // test what happens if the valuesets data types don't match
@@ -165,9 +165,9 @@ public:
             TS_ASSERT_THROWS_NOTHING( WDataSetTimeSeries( d, t ) );
 
             t.push_back( 4.0f );
-            boost::shared_ptr< std::vector< float > > v2( new std::vector< float >( 27, 4 ) );
-            boost::shared_ptr< WValueSet< float > > vs2( new WValueSet< float >( 0, 1, v2, W_DT_FLOAT ) );
-            d.push_back( boost::shared_ptr< WDataSetScalar const >( new WDataSetScalar( vs2, d.front()->getGrid() ) ) );
+            std::shared_ptr< std::vector< float > > v2( new std::vector< float >( 27, 4 ) );
+            std::shared_ptr< WValueSet< float > > vs2( new WValueSet< float >( 0, 1, v2, W_DT_FLOAT ) );
+            d.push_back( std::shared_ptr< WDataSetScalar const >( new WDataSetScalar( vs2, d.front()->getGrid() ) ) );
             TS_ASSERT_THROWS( WDataSetTimeSeries( d, t ), const WException& );
         }
 
@@ -340,7 +340,7 @@ public:
         createData( data, 3, d, t );
         WDataSetTimeSeries ts( d, t );
 
-        boost::shared_ptr< WDataSetScalar const > null;
+        std::shared_ptr< WDataSetScalar const > null;
 
         TS_ASSERT_EQUALS( ts.getDataSetPtrAtTimeSlice( 0.0f / 0.0f ), null );
         TS_ASSERT_EQUALS( ts.getDataSetPtrAtTimeSlice( -std::numeric_limits< float >::infinity() ), null );
@@ -365,8 +365,8 @@ public:
         createData( data, 3, d, t );
         WDataSetTimeSeries ts( d, t );
 
-        boost::shared_ptr< WDataSetScalar const > null;
-        boost::shared_ptr< WDataSetScalar const > ds;
+        std::shared_ptr< WDataSetScalar const > null;
+        std::shared_ptr< WDataSetScalar const > ds;
         std::string name( "a name" );
 
         ds = ts.calcDataSetAtTime( -std::numeric_limits< float >::infinity(), name );
@@ -394,7 +394,7 @@ public:
             std::vector< double > v( 27, 1.35 );
             ds = ts.calcDataSetAtTime( 0.35f, name );
             TS_ASSERT( ds );
-            boost::shared_ptr< WValueSet< double > > vs = boost::dynamic_pointer_cast< WValueSet< double > >( ds->getValueSet() );
+            std::shared_ptr< WValueSet< double > > vs = std::dynamic_pointer_cast< WValueSet< double > >( ds->getValueSet() );
             TS_ASSERT( vs );
             for( std::size_t k = 0; k < v.size(); ++k )
             {
@@ -405,7 +405,7 @@ public:
             std::vector< double > v( 27, 1.99 );
             ds = ts.calcDataSetAtTime( 0.99f, name );
             TS_ASSERT( ds );
-            boost::shared_ptr< WValueSet< double > > vs = boost::dynamic_pointer_cast< WValueSet< double > >( ds->getValueSet() );
+            std::shared_ptr< WValueSet< double > > vs = std::dynamic_pointer_cast< WValueSet< double > >( ds->getValueSet() );
             TS_ASSERT( vs );
             for( std::size_t k = 0; k < v.size(); ++k )
             {
@@ -416,7 +416,7 @@ public:
             std::vector< double > v( 27, 2.598 );
             ds = ts.calcDataSetAtTime( 1.598f, name );
             TS_ASSERT( ds );
-            boost::shared_ptr< WValueSet< double > > vs = boost::dynamic_pointer_cast< WValueSet< double > >( ds->getValueSet() );
+            std::shared_ptr< WValueSet< double > > vs = std::dynamic_pointer_cast< WValueSet< double > >( ds->getValueSet() );
             TS_ASSERT( vs );
             for( std::size_t k = 0; k < v.size(); ++k )
             {
@@ -555,13 +555,13 @@ private:
         mat( 2, 2 ) = 2.0;
 
         WGridTransformOrtho transform( mat );
-        boost::shared_ptr< WGridRegular3D > g( new WGridRegular3D( 3, 3, 3, transform ) );
+        std::shared_ptr< WGridRegular3D > g( new WGridRegular3D( 3, 3, 3, transform ) );
 
         for( int i = 0; i < number; ++i )
         {
-            boost::shared_ptr< std::vector< double > > v( new std::vector< double >( 27, data[i] ) );
-            boost::shared_ptr< WValueSet< double > > vs( new WValueSet< double >( 0, 1, v, W_DT_DOUBLE ) );
-            dsets.push_back( boost::shared_ptr< WDataSetScalar const >( new WDataSetScalar( vs, g ) ) );
+            std::shared_ptr< std::vector< double > > v( new std::vector< double >( 27, data[i] ) );
+            std::shared_ptr< WValueSet< double > > vs( new WValueSet< double >( 0, 1, v, W_DT_DOUBLE ) );
+            dsets.push_back( std::shared_ptr< WDataSetScalar const >( new WDataSetScalar( vs, g ) ) );
             times.push_back( static_cast< float >( i ) );
         }
     }

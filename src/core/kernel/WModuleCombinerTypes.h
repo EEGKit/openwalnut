@@ -41,13 +41,13 @@ namespace WCombinerTypes
     /**
      * A list of all combiners in a group.
      */
-    typedef std::vector< boost::shared_ptr< WModuleOneToOneCombiner > > WOneToOneCombiners;
+    typedef std::vector< std::shared_ptr< WModuleOneToOneCombiner > > WOneToOneCombiners;
 
     /**
      * A group of compatible connections to and from a specified module, which is additionally stored in the first element of the pair. This first
      * element will never be the module to which the compatible connections have been searched for.
      */
-    typedef std::pair< boost::shared_ptr< WModule >, WOneToOneCombiners > WCompatiblesGroup;
+    typedef std::pair< std::shared_ptr< WModule >, WOneToOneCombiners > WCompatiblesGroup;
 
     /**
      * This is a list of compatible connection groups, which has been created for a specific module.

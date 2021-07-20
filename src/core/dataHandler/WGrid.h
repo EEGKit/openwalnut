@@ -73,14 +73,14 @@ public:
      *
      * \return the properties.
      */
-    boost::shared_ptr< WPropertyGroup > getInformationProperties() const;
+    std::shared_ptr< WPropertyGroup > getInformationProperties() const;
 
 protected:
     /**
      * The property object for the grid containing only props whose purpose is "PV_PURPOSE_INFORMNATION". It is useful to define some property
      * to only be of informational nature. The GUI does not modify them.
      */
-    boost::shared_ptr< WPropertyGroup > m_infoProperties;
+    std::shared_ptr< WPropertyGroup > m_infoProperties;
 
 private:
     /**

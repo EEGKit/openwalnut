@@ -56,9 +56,9 @@ WMColormapper::~WMColormapper()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMColormapper::factory() const
+std::shared_ptr< WModule > WMColormapper::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMColormapper() );
+    return std::shared_ptr< WModule >( new WMColormapper() );
 }
 
 const char** WMColormapper::getXPMIcon() const
@@ -86,7 +86,7 @@ void WMColormapper::connectors()
 
 void WMColormapper::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_defaultName = m_properties->addProperty( "Default Name", "This specifies the name to use for textures which are not yet named.",
             std::string( "Unnamed" ), true );
@@ -111,7 +111,7 @@ void WMColormapper::properties()
     m_colorBarNameColor = colorBarNameLabelGroup->addProperty( "Name Color", "Color of the name text", WColor( 0.9, 0.9, 0.9, 1.0 ) );
     m_colorBarNameOutlineColor = colorBarNameLabelGroup->addProperty( "Name Outline Color", "Color of the name outline", defaultColor::BLACK );
 
-    m_possibleNamePositions = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_possibleNamePositions = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_possibleNamePositions->addItem( "Side", "On the side." );
     m_possibleNamePositions->addItem( "Below", "Below the colorbar." );          // NOTE: you can add XPM images here.
     m_possibleNamePositions->addItem( "Above", "Above the colorbar." );
@@ -214,7 +214,7 @@ void WMColormapper::moduleMain()
             WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_barProjection );
             colormapShader->deactivate( m_colorBar );
 
-            boost::shared_ptr< WDataSetSingle > dataSet = m_input->getData();
+            std::shared_ptr< WDataSetSingle > dataSet = m_input->getData();
 
             // add a colorbar
             if( dataSet && dataSet->isTexture() )

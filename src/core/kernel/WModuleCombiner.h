@@ -39,7 +39,7 @@
  * all specific combiner classes from this one.
  */
 class WModuleCombiner: public WThreadedRunner,
-                       public boost::enable_shared_from_this< WModuleCombiner >
+                       public std::enable_shared_from_this< WModuleCombiner >
 {
 public:
     /**
@@ -47,7 +47,7 @@ public:
      *
      * \param target the target container where to add the modules to.
      */
-    explicit WModuleCombiner( boost::shared_ptr< WModuleContainer > target );
+    explicit WModuleCombiner( std::shared_ptr< WModuleContainer > target );
 
     /**
      * Creates an empty combiner. This constructor automatically uses the kernel's root container as target container.
@@ -82,7 +82,7 @@ protected:
     /**
      * The module container to use for the modules.
      */
-    boost::shared_ptr< WModuleContainer > m_container;
+    std::shared_ptr< WModuleContainer > m_container;
 
 private:
 };

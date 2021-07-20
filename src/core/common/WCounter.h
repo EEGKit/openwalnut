@@ -25,6 +25,8 @@
 #ifndef WCOUNTER_H
 #define WCOUNTER_H
 
+#include <shared_mutex>
+
 #include <boost/thread.hpp>
 
 /**
@@ -50,7 +52,7 @@ public:
      */
     int operator++ ()
     {
-        boost::unique_lock< boost::shared_mutex > lock( m_counterMutex );
+        std::unique_lock< std::shared_mutex > lock( m_counterMutex );
         return ++m_counter;
     }
 
@@ -61,7 +63,7 @@ public:
      */
     int operator-- ()
     {
-        boost::unique_lock< boost::shared_mutex > lock( m_counterMutex );
+        std::unique_lock< std::shared_mutex > lock( m_counterMutex );
         return --m_counter;
     }
 
@@ -72,7 +74,7 @@ public:
      */
     int operator() () const
     {
-        boost::shared_lock< boost::shared_mutex > lock( m_counterMutex );
+        boost::shared_lock< std::shared_mutex > lock( m_counterMutex );
         return m_counter;
     }
 
@@ -83,7 +85,7 @@ public:
      */
     int reset()
     {
-        boost::unique_lock< boost::shared_mutex > lock( m_counterMutex );
+        std::unique_lock< std::shared_mutex > lock( m_counterMutex );
         int tmp = m_counter;
         m_counter = 0;
         return tmp;
@@ -101,7 +103,7 @@ private:
     WCounter operator= ( WCounter& /* count */ );
 
     //! A mutex to protect the counter from concurrent updates.
-    mutable boost::shared_mutex m_counterMutex;
+    mutable std::shared_mutex m_counterMutex;
 
     //! The counter.
     int m_counter;

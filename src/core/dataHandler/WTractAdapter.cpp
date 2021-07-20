@@ -29,7 +29,7 @@
 #include "../common/math/linearAlgebra/WPosition.h"
 #include "WTractAdapter.h"
 
-WTractAdapter::WTractAdapter( boost::shared_ptr< const std::vector< float > > pointComponents, size_t startIndex, size_t numPoints )
+WTractAdapter::WTractAdapter( std::shared_ptr< const std::vector< float > > pointComponents, size_t startIndex, size_t numPoints )
     : m_pointComponents( pointComponents ),
       m_numPoints( numPoints ),
       m_startIndex( startIndex )

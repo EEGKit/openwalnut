@@ -46,14 +46,14 @@ class WUIQtTabbedWidget: public WUITabbedWidget,
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WUIQtTabbedWidget >.
+     * Convenience typedef for a std::shared_ptr< WUIQtTabbedWidget >.
      */
-    typedef boost::shared_ptr< WUIQtTabbedWidget > SPtr;
+    typedef std::shared_ptr< WUIQtTabbedWidget > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr< const WUIQtTabbedWidget >.
+     * Convenience typedef for a std::shared_ptr< const WUIQtTabbedWidget >.
      */
-    typedef boost::shared_ptr< const WUIQtTabbedWidget > ConstSPtr;
+    typedef std::shared_ptr< const WUIQtTabbedWidget > ConstSPtr;
 
     /**
      * Default constructor.

@@ -37,19 +37,19 @@
 #include "WFiberCluster.h"
 
 // The prototype as singleton. Created during first getPrototype() call
-boost::shared_ptr< WPrototyped > WFiberCluster::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WFiberCluster::m_prototype = std::shared_ptr< WPrototyped >();
 
 WFiberCluster::WFiberCluster()
     : WTransferable(),
-    m_centerLineCreationLock( new boost::shared_mutex() ),
-    m_longestLineCreationLock( new boost::shared_mutex() )
+    m_centerLineCreationLock( new std::shared_mutex() ),
+    m_longestLineCreationLock( new std::shared_mutex() )
 {
 }
 
 WFiberCluster::WFiberCluster( size_t index )
     : WTransferable(),
-    m_centerLineCreationLock( new boost::shared_mutex() ),
-    m_longestLineCreationLock( new boost::shared_mutex() )
+    m_centerLineCreationLock( new std::shared_mutex() ),
+    m_longestLineCreationLock( new std::shared_mutex() )
 {
     m_memberIndices.push_back( index );
 }
@@ -59,8 +59,8 @@ WFiberCluster::WFiberCluster( const WFiberCluster::IndexList& indices, const WCo
     m_memberIndices( indices ),
     m_color( color ),
     m_annotation( annotation ),
-    m_centerLineCreationLock( new boost::shared_mutex() ),
-    m_longestLineCreationLock( new boost::shared_mutex() )
+    m_centerLineCreationLock( new std::shared_mutex() ),
+    m_longestLineCreationLock( new std::shared_mutex() )
 {
     // init
 }
@@ -72,8 +72,8 @@ WFiberCluster::WFiberCluster( WFiberCluster::IndexListConstIterator indicesBegin
     : WTransferable(),
     m_color( color ),
     m_annotation( annotation ),
-    m_centerLineCreationLock( new boost::shared_mutex() ),
-    m_longestLineCreationLock( new boost::shared_mutex() )
+    m_centerLineCreationLock( new std::shared_mutex() ),
+    m_longestLineCreationLock( new std::shared_mutex() )
 {
     // now copy the index list
     std::copy( indicesBegin, indicesEnd, m_memberIndices.begin() );
@@ -85,20 +85,20 @@ WFiberCluster::WFiberCluster( const WFiberCluster& other )
     m_fibs( other.m_fibs ),
     m_color( other.m_color ),
     m_annotation( other.m_annotation ),
-    m_centerLineCreationLock( new boost::shared_mutex() ),  // do not copy the mutex as both instances of WFiberCluster can be modifed at the
+    m_centerLineCreationLock( new std::shared_mutex() ),  // do not copy the mutex as both instances of WFiberCluster can be modifed at the
                                                             // same time
-    m_longestLineCreationLock( new boost::shared_mutex() ),
+    m_longestLineCreationLock( new std::shared_mutex() ),
     m_centerLine(),     // << we can't ensure that the centerline and longest line are initialized yet, but we want a deep copy
     m_longestLine()
 {
     // copy them only if they exist
     if( other.m_centerLine )
     {
-        m_centerLine = boost::shared_ptr< WFiber >( new WFiber( *other.m_centerLine.get() ) );
+        m_centerLine = std::shared_ptr< WFiber >( new WFiber( *other.m_centerLine.get() ) );
     }
     if( other.m_longestLine )
     {
-        m_longestLine = boost::shared_ptr< WFiber >( new WFiber( *other.m_longestLine.get() ) );
+        m_longestLine = std::shared_ptr< WFiber >( new WFiber( *other.m_longestLine.get() ) );
     }
 }
 
@@ -130,12 +130,12 @@ void WFiberCluster::merge( WFiberCluster::IndexListConstIterator indicesBegin,
 
 // NODOXYGEN
 // \cond Suppress_Doxygen
-void WFiberCluster::setDataSetReference( boost::shared_ptr< const WDataSetFiberVector > fibs )
+void WFiberCluster::setDataSetReference( std::shared_ptr< const WDataSetFiberVector > fibs )
 {
     m_fibs = fibs;
 }
 
-boost::shared_ptr< const WDataSetFiberVector > WFiberCluster::getDataSetReference() const
+std::shared_ptr< const WDataSetFiberVector > WFiberCluster::getDataSetReference() const
 {
     return m_fibs;
 }
@@ -145,11 +145,11 @@ boost::shared_ptr< const WDataSetFiberVector > WFiberCluster::getDataSetReferenc
 // InputConnectors we must agglomerate those into one object. Please remove this.
 // \endcond
 
-boost::shared_ptr< WPrototyped > WFiberCluster::getPrototype()
+std::shared_ptr< WPrototyped > WFiberCluster::getPrototype()
 {
     if( !m_prototype )
     {
-        m_prototype = boost::shared_ptr< WPrototyped >( new WFiberCluster() );
+        m_prototype = std::shared_ptr< WPrototyped >( new WFiberCluster() );
     }
     return m_prototype;
 }
@@ -157,7 +157,7 @@ boost::shared_ptr< WPrototyped > WFiberCluster::getPrototype()
 void WFiberCluster::generateCenterLine() const
 {
     // ensure nobody changes the mutable m_centerline
-    boost::unique_lock< boost::shared_mutex > lock = boost::unique_lock< boost::shared_mutex >( *m_centerLineCreationLock );
+    std::unique_lock< std::shared_mutex > lock = std::unique_lock< std::shared_mutex >( *m_centerLineCreationLock );
     // has the line been calculated while we waited?
     if( m_centerLine )
     {
@@ -166,7 +166,7 @@ void WFiberCluster::generateCenterLine() const
     }
 
     // make copies of the fibers
-    boost::shared_ptr< WDataSetFiberVector > fibs( new WDataSetFiberVector() );
+    std::shared_ptr< WDataSetFiberVector > fibs( new WDataSetFiberVector() );
     size_t avgFiberSize = 0;
     for( WFiberCluster::IndexList::const_iterator cit = m_memberIndices.begin(); cit != m_memberIndices.end(); ++cit )
     {
@@ -182,7 +182,7 @@ void WFiberCluster::generateCenterLine() const
         cit->resampleByNumberOfPoints( avgFiberSize );
     }
 
-    m_centerLine = boost::shared_ptr< WFiber >( new WFiber() );
+    m_centerLine = std::shared_ptr< WFiber >( new WFiber() );
     m_centerLine->reserve( avgFiberSize );
     for( size_t i = 0; i < avgFiberSize; ++i )
     {
@@ -202,7 +202,7 @@ void WFiberCluster::generateCenterLine() const
 void WFiberCluster::generateLongestLine() const
 {
     // ensure nobody changes the mutable m_longestline
-    boost::unique_lock< boost::shared_mutex > lock = boost::unique_lock< boost::shared_mutex >( *m_longestLineCreationLock );
+    std::unique_lock< std::shared_mutex > lock = std::unique_lock< std::shared_mutex >( *m_longestLineCreationLock );
     // has the line been calculated while we waited?
     if( m_longestLine )
     {
@@ -210,7 +210,7 @@ void WFiberCluster::generateLongestLine() const
         return;
     }
 
-    m_longestLine = boost::shared_ptr< WFiber >( new WFiber() );
+    m_longestLine = std::shared_ptr< WFiber >( new WFiber() );
 
     // empty datasets can be ignored
     if( m_fibs->size() == 0 )
@@ -243,11 +243,11 @@ void WFiberCluster::elongateCenterLine() const
     assert( m_centerLine->size() > 1 );
     WFiber cL( *m_centerLine );
     WPlane p( cL[0] - cL[1], cL[0] + ( cL[0] - cL[1] ) );
-    boost::shared_ptr< WPosition > cutPoint( new WPosition( 0, 0, 0 ) );
+    std::shared_ptr< WPosition > cutPoint( new WPosition( 0, 0, 0 ) );
     bool intersectionFound = true;
 
     // in the beginning all fibers participate
-    boost::shared_ptr< WDataSetFiberVector > fibs( new WDataSetFiberVector() );
+    std::shared_ptr< WDataSetFiberVector > fibs( new WDataSetFiberVector() );
     for( WFiberCluster::IndexList::const_iterator cit = m_memberIndices.begin(); cit != m_memberIndices.end(); ++cit )
     {
         fibs->push_back( m_fibs->at( *cit ) );
@@ -296,7 +296,7 @@ void WFiberCluster::elongateCenterLine() const
         }
     }
     // second ending of the centerline
-    boost::shared_ptr< WDataSetFiberVector > fobs( new WDataSetFiberVector() );
+    std::shared_ptr< WDataSetFiberVector > fobs( new WDataSetFiberVector() );
     for( WFiberCluster::IndexList::const_iterator cit = m_memberIndices.begin(); cit != m_memberIndices.end(); ++cit )
     {
         fobs->push_back( m_fibs->at( *cit ) );
@@ -351,7 +351,7 @@ void WFiberCluster::elongateCenterLine() const
     *m_centerLine = cL;
 }
 
-void WFiberCluster::unifyDirection( boost::shared_ptr< WDataSetFiberVector > fibs ) const
+void WFiberCluster::unifyDirection( std::shared_ptr< WDataSetFiberVector > fibs ) const
 {
     if( fibs->size() < 2 )
     {
@@ -387,7 +387,7 @@ void WFiberCluster::unifyDirection( boost::shared_ptr< WDataSetFiberVector > fib
     }
 }
 
-boost::shared_ptr< WFiber > WFiberCluster::getCenterLine() const
+std::shared_ptr< WFiber > WFiberCluster::getCenterLine() const
 {
     if( !m_centerLine )
     {
@@ -396,7 +396,7 @@ boost::shared_ptr< WFiber > WFiberCluster::getCenterLine() const
     return m_centerLine;
 }
 
-boost::shared_ptr< WFiber > WFiberCluster::getLongestLine() const
+std::shared_ptr< WFiber > WFiberCluster::getLongestLine() const
 {
     if( !m_longestLine )
     {

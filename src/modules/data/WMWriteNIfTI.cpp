@@ -57,9 +57,9 @@ WMWriteNIfTI::~WMWriteNIfTI()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMWriteNIfTI::factory() const
+std::shared_ptr< WModule > WMWriteNIfTI::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMWriteNIfTI() );
+    return std::shared_ptr< WModule >( new WMWriteNIfTI() );
 }
 
 const char** WMWriteNIfTI::getXPMIcon() const
@@ -134,12 +134,12 @@ void WMWriteNIfTI::properties()
 template< typename T > void WMWriteNIfTI::castData( void*& returnData )
 {
     // cast valueset
-    boost::shared_ptr< WValueSetBase > valsB = ( *m_dataSet ).getValueSet();
-    boost::shared_ptr< WValueSet< T > > vals = boost::dynamic_pointer_cast< WValueSet< T > >( ( *m_dataSet ).getValueSet() );
+    std::shared_ptr< WValueSetBase > valsB = ( *m_dataSet ).getValueSet();
+    std::shared_ptr< WValueSet< T > > vals = std::dynamic_pointer_cast< WValueSet< T > >( ( *m_dataSet ).getValueSet() );
     WAssert( vals, "Seems that value set type is not yet supported." );
     const size_t vDim = vals->dimension();
     // cast grid
-    boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
+    std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
     const size_t countVoxels = grid->getNbCoordsX() * grid->getNbCoordsY() * grid->getNbCoordsZ();
     WAssert( grid, "Seems that grid is of wrong type." );
 
@@ -160,7 +160,7 @@ void WMWriteNIfTI::writeToFile()
     infoLog() << "Writing Data to " << m_filename->get().string();
     nifti_image *outField = nifti_simple_init_nim();
 
-    boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
+    std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( m_dataSet->getGrid() );
     WAssert( grid, "Seems that grid is of wrong type." );
 
     size_t nbValues = ( *m_dataSet ).getValueSet()->size();
@@ -279,7 +279,7 @@ void WMWriteNIfTI::writeToFile()
 
     nifti_image_write( outField );
 
-    boost::shared_ptr< WDataSetRawHARDI > h = boost::dynamic_pointer_cast< WDataSetRawHARDI >( m_dataSet );
+    std::shared_ptr< WDataSetRawHARDI > h = std::dynamic_pointer_cast< WDataSetRawHARDI >( m_dataSet );
     if( h )
     {
         std::fstream f( ( s + ".bvec" ).c_str(), std::ios_base::out );

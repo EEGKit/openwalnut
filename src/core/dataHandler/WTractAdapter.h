@@ -45,7 +45,7 @@ public:
      * \param startIndex The position inside of the components array of the first x coordinate.
      * \param numPoints How many points this tract has
      */
-    WTractAdapter( boost::shared_ptr< const std::vector< float > > pointComponents, size_t startIndex, size_t numPoints );
+    WTractAdapter( std::shared_ptr< const std::vector< float > > pointComponents, size_t startIndex, size_t numPoints );
 
     /**
      * How many positions this tract incorporates.
@@ -64,7 +64,7 @@ public:
      */
     WPosition operator[]( size_t index ) const;
 
-//    void reset( boost::shared_ptr< const WTractData > tracts, size_t startIndex, size_t numPoints )
+//    void reset( std::shared_ptr< const WTractData > tracts, size_t startIndex, size_t numPoints )
 
 protected:
 private:
@@ -72,7 +72,7 @@ private:
      * The array where the components of this tracts live. But you will need the starting position
      * and the length of the tract to access them.
      */
-    boost::shared_ptr< const std::vector< float > > m_pointComponents;
+    std::shared_ptr< const std::vector< float > > m_pointComponents;
 
     /**
      * How many \e points aka WPositions this tract consists of.

@@ -30,14 +30,14 @@
 #include "WTreeNode.h"
 
 WTreeNode::WTreeNode( size_t index, double level )
-  : boost::enable_shared_from_this< WTreeNode >(),
+  : std::enable_shared_from_this< WTreeNode >(),
     m_level( level ),
     m_index( index )
 {
 }
 
 WTreeNode::WTreeNode( const WDendrogram &dendrogram )
-  : boost::enable_shared_from_this< WTreeNode >()
+  : std::enable_shared_from_this< WTreeNode >()
 {
     const std::vector< size_t >& nodes = dendrogram.getParents();
     const std::vector< double >& heights = dendrogram.getHeights();

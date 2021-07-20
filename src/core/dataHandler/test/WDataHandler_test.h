@@ -69,14 +69,14 @@ public:
      */
     void testAddSubjects()
     {
-        boost::shared_ptr< WDataHandler > dh = WDataHandler::getDataHandler();
+        std::shared_ptr< WDataHandler > dh = WDataHandler::getDataHandler();
 
         WPersonalInformation testInfo( WPersonalInformation::createDummyInformation() );
         testInfo.setSubjectID( 1 );
         testInfo.setLastName( "Testname" );
 
         WSubject* s = new WSubject( testInfo );
-        TS_ASSERT_THROWS_NOTHING( dh->addSubject( boost::shared_ptr< WSubject >( s ) ) );
+        TS_ASSERT_THROWS_NOTHING( dh->addSubject( std::shared_ptr< WSubject >( s ) ) );
         TS_ASSERT_EQUALS( 2, dh->m_subjects.size() );   // note: this is 2 since the datahandler always provides a default subject
 
         // test iteration
@@ -100,13 +100,13 @@ public:
      */
     void testRemoveSubjects()
     {
-        boost::shared_ptr< WDataHandler > dh = WDataHandler::getDataHandler();
+        std::shared_ptr< WDataHandler > dh = WDataHandler::getDataHandler();
 
         WPersonalInformation testInfo( WPersonalInformation::createDummyInformation() );
         testInfo.setSubjectID( 2 );
         testInfo.setLastName( "Testname2" );
 
-        boost::shared_ptr< WSubject > s( new WSubject( testInfo ) );
+        std::shared_ptr< WSubject > s( new WSubject( testInfo ) );
         dh->addSubject( s );
 
         // now there should be 3 subjects (one from testAddSubjects, the above added one and the default subject)

@@ -34,10 +34,10 @@
 #include "WDataSetVector.h"
 
 // prototype instance as singleton
-boost::shared_ptr< WPrototyped > WDataSetVector::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WDataSetVector::m_prototype = std::shared_ptr< WPrototyped >();
 
-WDataSetVector::WDataSetVector( boost::shared_ptr< WValueSetBase > newValueSet,
-                                boost::shared_ptr< WGrid > newGrid )
+WDataSetVector::WDataSetVector( std::shared_ptr< WValueSetBase > newValueSet,
+                                std::shared_ptr< WGrid > newGrid )
     : WDataSetSingle( newValueSet, newGrid )
 {
     WAssert( newValueSet, "No value set given." );
@@ -55,17 +55,17 @@ WDataSetVector::~WDataSetVector()
 {
 }
 
-WDataSetSingle::SPtr WDataSetVector::clone( boost::shared_ptr< WValueSetBase > newValueSet, boost::shared_ptr< WGrid > newGrid ) const
+WDataSetSingle::SPtr WDataSetVector::clone( std::shared_ptr< WValueSetBase > newValueSet, std::shared_ptr< WGrid > newGrid ) const
 {
     return WDataSetSingle::SPtr( new WDataSetVector( newValueSet, newGrid ) );
 }
 
-WDataSetSingle::SPtr WDataSetVector::clone( boost::shared_ptr< WValueSetBase > newValueSet ) const
+WDataSetSingle::SPtr WDataSetVector::clone( std::shared_ptr< WValueSetBase > newValueSet ) const
 {
     return WDataSetSingle::SPtr( new WDataSetVector( newValueSet, getGrid() ) );
 }
 
-WDataSetSingle::SPtr WDataSetVector::clone( boost::shared_ptr< WGrid > newGrid ) const
+WDataSetSingle::SPtr WDataSetVector::clone( std::shared_ptr< WGrid > newGrid ) const
 {
     return WDataSetSingle::SPtr( new WDataSetVector( getValueSet(), newGrid ) );
 }
@@ -75,11 +75,11 @@ WDataSetSingle::SPtr WDataSetVector::clone() const
     return WDataSetSingle::SPtr( new WDataSetVector( getValueSet(), getGrid() ) );
 }
 
-boost::shared_ptr< WPrototyped > WDataSetVector::getPrototype()
+std::shared_ptr< WPrototyped > WDataSetVector::getPrototype()
 {
     if( !m_prototype )
     {
-        m_prototype = boost::shared_ptr< WPrototyped >( new WDataSetVector() );
+        m_prototype = std::shared_ptr< WPrototyped >( new WDataSetVector() );
     }
 
     return m_prototype;
@@ -88,12 +88,12 @@ boost::shared_ptr< WPrototyped > WDataSetVector::getPrototype()
 namespace
 {
     boost::array< double, 8 > computePrefactors( const WPosition& pos,
-                                                 boost::shared_ptr< const WGrid > i_grid,
-                                                 boost::shared_ptr< const WValueSetBase > i_valueSet,
+                                                 std::shared_ptr< const WGrid > i_grid,
+                                                 std::shared_ptr< const WValueSetBase > i_valueSet,
                                                  bool *success,
-                                                 boost::shared_ptr< WGridRegular3D::CellVertexArray > vertexIds )
+                                                 std::shared_ptr< WGridRegular3D::CellVertexArray > vertexIds )
     {
-        boost::shared_ptr< const WGridRegular3D > grid = boost::dynamic_pointer_cast< const WGridRegular3D >( i_grid );
+        std::shared_ptr< const WGridRegular3D > grid = std::dynamic_pointer_cast< const WGridRegular3D >( i_grid );
 
         WAssert( grid,  "This data set has a grid whose type is not yet supported for interpolation." );
         WAssert( ( i_valueSet->order() == 1 &&  i_valueSet->dimension() == 3 ),
@@ -142,7 +142,7 @@ namespace
 
 WVector3d WDataSetVector::interpolate( const WPosition& pos, bool *success ) const
 {
-    boost::shared_ptr< WGridRegular3D::CellVertexArray > vertexIds( new WGridRegular3D::CellVertexArray );
+    std::shared_ptr< WGridRegular3D::CellVertexArray > vertexIds( new WGridRegular3D::CellVertexArray );
     boost::array< double, 8 > h = computePrefactors( pos, m_grid, m_valueSet, success, vertexIds );
     WVector3d result( 0.0, 0.0, 0.0 );
 
@@ -159,7 +159,7 @@ WVector3d WDataSetVector::interpolate( const WPosition& pos, bool *success ) con
 
 WVector3d WDataSetVector::eigenVectorInterpolate( const WPosition& pos, bool *success ) const
 {
-    boost::shared_ptr< WGridRegular3D::CellVertexArray > vertexIds( new WGridRegular3D::CellVertexArray );
+    std::shared_ptr< WGridRegular3D::CellVertexArray > vertexIds( new WGridRegular3D::CellVertexArray );
     boost::array< double, 8 > h = computePrefactors( pos, m_grid, m_valueSet, success, vertexIds );
     WVector3d result( 0.0, 0.0, 0.0 );
 
@@ -185,23 +185,23 @@ WVector3d WDataSetVector::getVectorAt( size_t index ) const
     {
         case W_DT_UNSIGNED_CHAR:
         {
-            return boost::dynamic_pointer_cast< WValueSet< uint8_t > >( getValueSet() )->getVector3D( index );
+            return std::dynamic_pointer_cast< WValueSet< uint8_t > >( getValueSet() )->getVector3D( index );
         }
         case W_DT_INT16:
         {
-            return boost::dynamic_pointer_cast< WValueSet< int16_t > >( getValueSet() )->getVector3D( index );
+            return std::dynamic_pointer_cast< WValueSet< int16_t > >( getValueSet() )->getVector3D( index );
         }
         case W_DT_SIGNED_INT:
         {
-            return boost::dynamic_pointer_cast< WValueSet< int32_t > >( getValueSet() )->getVector3D( index );
+            return std::dynamic_pointer_cast< WValueSet< int32_t > >( getValueSet() )->getVector3D( index );
         }
         case W_DT_FLOAT:
         {
-            return boost::dynamic_pointer_cast< WValueSet< float > >( getValueSet() )->getVector3D( index );
+            return std::dynamic_pointer_cast< WValueSet< float > >( getValueSet() )->getVector3D( index );
         }
         case W_DT_DOUBLE:
         {
-            return boost::dynamic_pointer_cast< WValueSet< double > >( getValueSet() )->getVector3D( index );
+            return std::dynamic_pointer_cast< WValueSet< double > >( getValueSet() )->getVector3D( index );
         }
         default:
             WAssert( false, "Unknow data type in dataset." );

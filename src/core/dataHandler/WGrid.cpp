@@ -31,7 +31,7 @@
 #include "WGrid.h"
 
 WGrid::WGrid( size_t size )
-    : m_infoProperties( boost::shared_ptr< WProperties >( new WProperties( "Grid Properties", "Grid's information properties" ) ) ),
+    : m_infoProperties( std::shared_ptr< WProperties >( new WProperties( "Grid Properties", "Grid's information properties" ) ) ),
       m_size( size )
 {
     m_infoProperties->setPurpose( PV_PURPOSE_INFORMATION );
@@ -47,7 +47,7 @@ size_t WGrid::size() const
     return m_size;
 }
 
-boost::shared_ptr< WProperties > WGrid::getInformationProperties() const
+std::shared_ptr< WProperties > WGrid::getInformationProperties() const
 {
     return m_infoProperties;
 }

@@ -57,7 +57,7 @@ public:
      * \param valueSet source of the data for the histogram
      * \param buckets the number of buckets to use. If not specified, 1000 is used as default. Must be larger than 1.
      */
-    explicit WValueSetHistogram( boost::shared_ptr< WValueSetBase > valueSet, size_t buckets = 1000 );
+    explicit WValueSetHistogram( std::shared_ptr< WValueSetBase > valueSet, size_t buckets = 1000 );
 
     /**
      * Constructor. Creates the histogram for the specified value set.
@@ -77,7 +77,7 @@ public:
      * \param max the maximum to use
      * \param buckets the number of buckets to use. If not specified, 1000 is used as default. Must be larger than 1.
      */
-     WValueSetHistogram( boost::shared_ptr< WValueSetBase > valueSet, double min, double max, size_t buckets = 1000 );
+     WValueSetHistogram( std::shared_ptr< WValueSetBase > valueSet, double min, double max, size_t buckets = 1000 );
 
     /**
      * Constructor. Creates a histogram from the specified value set but allows cropping of values below the given min and above the given max.

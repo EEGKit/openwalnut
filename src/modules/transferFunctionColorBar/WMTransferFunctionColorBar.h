@@ -71,7 +71,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -103,12 +103,12 @@ private:
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * Input connector required by this module.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;
 
     /**
      * The min of the current dataset. We store them here to avoid many calls to getTexture()->minimum()->get() and scale()->get().

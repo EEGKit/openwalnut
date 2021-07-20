@@ -132,12 +132,12 @@ public:
     /**
      * Convenience typedef for an osg::ref_ptr< WGEPostprocessor >.
      */
-    typedef boost::shared_ptr< WGEPostprocessor > SPtr;
+    typedef std::shared_ptr< WGEPostprocessor > SPtr;
 
     /**
      * Convenience typedef for an osg::ref_ptr< const WGEPostprocessor >.
      */
-    typedef boost::shared_ptr< const WGEPostprocessor > ConstSPtr;
+    typedef std::shared_ptr< const WGEPostprocessor > ConstSPtr;
 
     /**
      * Type used for returning lists of postprocessor prototypes.

@@ -55,9 +55,9 @@ public:
      * \param targetModule      the module whose connector should be disconnected from srcConnector
      * \param targetConnector   the targetModule connector to disconnect.
      */
-    WDisconnectCombiner( boost::shared_ptr< WModuleContainer > target,
-                         boost::shared_ptr< WModule > srcModule, std::string srcConnector,
-                         boost::shared_ptr< WModule > targetModule, std::string targetConnector );
+    WDisconnectCombiner( std::shared_ptr< WModuleContainer > target,
+                         std::shared_ptr< WModule > srcModule, std::string srcConnector,
+                         std::shared_ptr< WModule > targetModule, std::string targetConnector );
 
     /**
      * Creates a combiner which disconnects the specified connection. If the specified connection does not exist (anymore), nothing will happen.
@@ -67,8 +67,8 @@ public:
      * \param targetModule      the module whose connector should be disconnected from srcConnector
      * \param targetConnector   the targetModule connector to disconnect.
      */
-    WDisconnectCombiner( boost::shared_ptr< WModule > srcModule, std::string srcConnector,
-                         boost::shared_ptr< WModule > targetModule, std::string targetConnector );
+    WDisconnectCombiner( std::shared_ptr< WModule > srcModule, std::string srcConnector,
+                         std::shared_ptr< WModule > targetModule, std::string targetConnector );
 
     /**
      * Creates a combiner which disconnects the specified connection. If the specified connection does not exist (anymore), nothing will happen.
@@ -76,8 +76,8 @@ public:
      * \param srcConnector connector 1
      * \param targetConnector connector 2
      */
-    WDisconnectCombiner( boost::shared_ptr< WModuleConnector > srcConnector,
-                         boost::shared_ptr< WModuleConnector > targetConnector );
+    WDisconnectCombiner( std::shared_ptr< WModuleConnector > srcConnector,
+                         std::shared_ptr< WModuleConnector > targetConnector );
 
     /**
      * Destructor.

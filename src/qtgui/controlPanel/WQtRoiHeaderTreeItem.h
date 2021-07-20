@@ -57,7 +57,7 @@ public:
      *
      * \return Pointer to the new branch.
      */
-    WQtBranchTreeItem* addBranch( boost::shared_ptr< WRMBranch> branch );
+    WQtBranchTreeItem* addBranch( std::shared_ptr< WRMBranch> branch );
 
     /**
      * Create a representation widget for this item.

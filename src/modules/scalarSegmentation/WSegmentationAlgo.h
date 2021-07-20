@@ -40,11 +40,11 @@
  *
  * \class WSegmentationAlgo
  */
-class WSegmentationAlgo : public boost::static_visitor< boost::shared_ptr< WDataSetScalar > >
+class WSegmentationAlgo : public boost::static_visitor< std::shared_ptr< WDataSetScalar > >
 {
 public:
     //! A conveniant typedef.
-    typedef boost::shared_ptr< WDataSetScalar > DataSetPtr;
+    typedef std::shared_ptr< WDataSetScalar > DataSetPtr;
 
     /**
      * Standard constructor.
@@ -61,7 +61,7 @@ public:
      *
      * \return The condition.
      */
-    boost::shared_ptr< WCondition > getCondition();
+    std::shared_ptr< WCondition > getCondition();
 
     /**
      * Return the name of this algorithm.
@@ -120,7 +120,7 @@ protected:
     WPropGroup m_properties;
 
     //! The condition indicating changed to the properties.
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     //! A pointer to the currently processed dataset.
     DataSetPtr m_dataSet;

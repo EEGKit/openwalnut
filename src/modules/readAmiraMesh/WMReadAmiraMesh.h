@@ -77,7 +77,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -163,15 +163,15 @@ private:
     void prepareResult();
 
     WPropFilename m_dataFile; //!< The data will be read from this file.
-    boost::shared_ptr< WCondition > m_propCondition;  //!< A condition used to notify about changes in several properties.
+    std::shared_ptr< WCondition > m_propCondition;  //!< A condition used to notify about changes in several properties.
 
     std::vector< WPosition > m_vertices; //!< vertices of the spatial graph
     std::vector< std::pair< size_t, size_t > > m_edges; //!< Edge connectivity of the spatial graph.
     std::vector< size_t > m_numEdgePoints; //!< Number "points" per edge.
     std::vector< WPosition > m_edgePoints; //!< The positions of the points building the edges between the vertices.
 
-    boost::shared_ptr< WModuleOutputData< WDataSetFibers > > m_output; //!< The only output of this data module.
-    boost::shared_ptr< WDataSetFibers > m_graph; //!< The resulting fiber dataset respresenting the spatial graph
+    std::shared_ptr< WModuleOutputData< WDataSetFibers > > m_output; //!< The only output of this data module.
+    std::shared_ptr< WDataSetFibers > m_graph; //!< The resulting fiber dataset respresenting the spatial graph
 };
 
 #endif  // WMREADAMIRAMESH_H

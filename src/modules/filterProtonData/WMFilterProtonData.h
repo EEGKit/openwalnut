@@ -62,14 +62,14 @@ class WMFilterProtonData : public WModuleContainer
      friend class WCsvConverterTest;
 public:
     /**
-     * represents a boost::shared_ptr to a vector containing a vector of floats.
+     * represents a std::shared_ptr to a vector containing a vector of floats.
      */
-    typedef boost::shared_ptr< std::vector< float > > SPFloatVector;
+    typedef std::shared_ptr< std::vector< float > > SPFloatVector;
 
     /**
-     * represents a boost::shared_ptr to a vector containing a vector of size_t.
+     * represents a std::shared_ptr to a vector containing a vector of size_t.
      */
-    typedef boost::shared_ptr< std::vector< size_t > > SPSizeVector;
+    typedef std::shared_ptr< std::vector< size_t > > SPSizeVector;
 
     /**
      * Standard constructor.
@@ -99,7 +99,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -142,42 +142,42 @@ private:
     /**
      * Input connector (required for this module).
      */
-    boost::shared_ptr< WModuleInputData< WDataSetCSV > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSetCSV > > m_input;
 
     /**
      * WDataSetPoints output connector (required for this module).
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetPoints > > m_output_points;
+    std::shared_ptr< WModuleOutputData< WDataSetPoints > > m_output_points;
 
     /**
      * WDataSetFibers output connector (required for this module).
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetFibers > > m_output_fibers;
+    std::shared_ptr< WModuleOutputData< WDataSetFibers > > m_output_fibers;
 
     /**
      * WDataSetSingle output connector to output current transfer function
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetSingle > > m_output_transferFunction;
+    std::shared_ptr< WModuleOutputData< WDataSetSingle > > m_output_transferFunction;
 
     /**
      * WDataSetPointsAndEventIDs output connector to output points and eventIDs for PointConn.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetPoints > > m_output_points_eventIds;
+    std::shared_ptr< WModuleOutputData< WDataSetPoints > > m_output_points_eventIds;
 
     /**
      * Stores information of the input-csv-data
      */
-    boost::shared_ptr< WDataSetCSV > m_dataset;
+    std::shared_ptr< WDataSetCSV > m_dataset;
 
     /**
      * Contains all property-groups and the subproperties 
      */
-    boost::shared_ptr < WPropertyStatus > m_propertyStatus;
+    std::shared_ptr < WPropertyStatus > m_propertyStatus;
 
     /**
      * Contains the algorithm that converts the raw CSV file into compatible WDataSets (Points, Fibers, PointsAndSizes, PointConnector etc.)
      */
-    boost::shared_ptr < WCsvConverter > m_converter;
+    std::shared_ptr < WCsvConverter > m_converter;
 
     /**
      * Creates the transfer function color bar module within this module container

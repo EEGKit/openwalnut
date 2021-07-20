@@ -40,12 +40,12 @@ public:
     /**
      * Abbreviate shared_ptr
      */
-    typedef boost::shared_ptr< WDataCreatorFiberSpiral > SPtr;
+    typedef std::shared_ptr< WDataCreatorFiberSpiral > SPtr;
 
     /**
      * Abbreviate const shared_ptr
      */
-    typedef boost::shared_ptr< const WDataCreatorFiberSpiral > ConstSPtr;
+    typedef std::shared_ptr< const WDataCreatorFiberSpiral > ConstSPtr;
 
     /**
      * Default constructor.

@@ -45,12 +45,12 @@ public:
     /**
      * A shared_ptr for a float vector
      */
-    typedef boost::shared_ptr< std::vector< float > > SPFloatVector;
+    typedef std::shared_ptr< std::vector< float > > SPFloatVector;
 
     /**
      * A shared_ptr for a size_t vector
      */
-    typedef boost::shared_ptr< std::vector< size_t > > SPSizeVector;
+    typedef std::shared_ptr< std::vector< size_t > > SPSizeVector;
 
     /**
      * test for converting a fiber to a tuple of vectors and ids
@@ -231,7 +231,7 @@ private:
         }
         fiberStartIndexes->push_back( fiberLength );
 
-        WDataSetFibers::SPtr fibers = boost::shared_ptr< WDataSetFibers >( new WDataSetFibers(
+        WDataSetFibers::SPtr fibers = std::shared_ptr< WDataSetFibers >( new WDataSetFibers(
                 vertices,
                 fiberStartIndexes,
                 fiberLengths,

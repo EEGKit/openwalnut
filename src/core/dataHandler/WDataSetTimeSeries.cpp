@@ -32,17 +32,17 @@
 #include "WDataSetTimeSeries.h"
 
 // prototype instance as singleton
-boost::shared_ptr< WPrototyped > WDataSetTimeSeries::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WDataSetTimeSeries::m_prototype = std::shared_ptr< WPrototyped >();
 
-WDataSetTimeSeries::WDataSetTimeSeries( std::vector< boost::shared_ptr< WDataSetScalar const > > datasets,
+WDataSetTimeSeries::WDataSetTimeSeries( std::vector< std::shared_ptr< WDataSetScalar const > > datasets,
                                         std::vector< float > times )
     : m_dataSets()
 {
     WAssert( !datasets.empty(), "" );
     WAssert( datasets.size() == times.size(), "" );
-    std::vector< boost::shared_ptr< WDataSetScalar const > >::iterator dit;
+    std::vector< std::shared_ptr< WDataSetScalar const > >::iterator dit;
     std::vector< float >::iterator tit;
-    boost::shared_ptr< WGridRegular3D > g = boost::dynamic_pointer_cast< WGridRegular3D >( datasets.front()->getGrid() );
+    std::shared_ptr< WGridRegular3D > g = std::dynamic_pointer_cast< WGridRegular3D >( datasets.front()->getGrid() );
     WAssert( g, "" );
     dataType d = datasets.front()->getValueSet()->getDataType();
     m_minValue = datasets.front()->getMin();
@@ -50,7 +50,7 @@ WDataSetTimeSeries::WDataSetTimeSeries( std::vector< boost::shared_ptr< WDataSet
     for( dit = datasets.begin(), tit = times.begin(); dit != datasets.end() && tit != times.end(); ++dit, ++tit )
     {
         WAssert( *dit, "" );
-        WAssert( g == boost::dynamic_pointer_cast< WGridRegular3D >( ( *dit )->getGrid() ), "" );
+        WAssert( g == std::dynamic_pointer_cast< WGridRegular3D >( ( *dit )->getGrid() ), "" );
         WAssert( !wlimits::isNaN( *tit ), "" );
         WAssert( d == ( *dit )->getValueSet()->getDataType(), "" );
         WAssert( ( *dit )->getValueSet()->dimension() == 1, "" );
@@ -89,11 +89,11 @@ std::string const WDataSetTimeSeries::getDescription() const
     return std::string( "A time series." );
 }
 
-boost::shared_ptr< WPrototyped > WDataSetTimeSeries::getPrototype()
+std::shared_ptr< WPrototyped > WDataSetTimeSeries::getPrototype()
 {
     if( !m_prototype )
     {
-        m_prototype = boost::shared_ptr< WPrototyped >( new WDataSetTimeSeries() );
+        m_prototype = std::shared_ptr< WPrototyped >( new WDataSetTimeSeries() );
     }
 
     return m_prototype;
@@ -117,22 +117,22 @@ float WDataSetTimeSeries::findNearestTimeSlice( float time ) const
     return time - lb <= ub - time ? lb : ub;
 }
 
-boost::shared_ptr< WDataSetScalar const > WDataSetTimeSeries::getDataSetPtrAtTimeSlice( float time ) const
+std::shared_ptr< WDataSetScalar const > WDataSetTimeSeries::getDataSetPtrAtTimeSlice( float time ) const
 {
     std::vector< TimeSlice >::const_iterator f = std::lower_bound( m_dataSets.begin(), m_dataSets.end(), time, TimeSliceCompare() );
     if( f != m_dataSets.end() && f->second == time )
     {
         return f->first;
     }
-    return boost::shared_ptr< WDataSetScalar const >();
+    return std::shared_ptr< WDataSetScalar const >();
 }
 
-boost::shared_ptr< WDataSetScalar const > WDataSetTimeSeries::calcDataSetAtTime( float time, std::string const& name ) const
+std::shared_ptr< WDataSetScalar const > WDataSetTimeSeries::calcDataSetAtTime( float time, std::string const& name ) const
 {
     WAssert( !wlimits::isNaN( time ), "" );
     if( time < getMinTime() || time > getMaxTime() )
     {
-        return boost::shared_ptr< WDataSetScalar const >();
+        return std::shared_ptr< WDataSetScalar const >();
     }
     float lb = getLBTimeSlice( time );
     float ub = getUBTimeSlice( time );
@@ -142,7 +142,7 @@ boost::shared_ptr< WDataSetScalar const > WDataSetTimeSeries::calcDataSetAtTime(
         return getDataSetPtrAtTimeSlice( time );
     }
 
-    boost::shared_ptr< WValueSetBase > vs;
+    std::shared_ptr< WValueSetBase > vs;
     switch( m_dataSets.front().first->getValueSet()->getDataType() )
     {
     case W_DT_UINT8:
@@ -179,7 +179,7 @@ boost::shared_ptr< WDataSetScalar const > WDataSetTimeSeries::calcDataSetAtTime(
         throw WException( std::string( "Unsupported datatype in WDataSetTimeSeries::calcDataSetAtTime()" ) );
         break;
     }
-    boost::shared_ptr< WDataSetScalar > ds( new WDataSetScalar( vs, m_dataSets.front().first->getGrid() ) );
+    std::shared_ptr< WDataSetScalar > ds( new WDataSetScalar( vs, m_dataSets.front().first->getGrid() ) );
     ds->setFilename( name );
     return ds;
 }

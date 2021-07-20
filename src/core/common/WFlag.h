@@ -43,14 +43,14 @@ public:
     typedef T ValueType;
 
     /**
-     * Convenience typedef for a boost::shared_ptr.
+     * Convenience typedef for a std::shared_ptr.
      */
-    typedef boost::shared_ptr< WFlag< T > > SPtr;
+    typedef std::shared_ptr< WFlag< T > > SPtr;
 
     /**
-     * Convenience typedef for a boost::shared_ptr. Const.
+     * Convenience typedef for a std::shared_ptr. Const.
      */
-    typedef boost::shared_ptr< const WFlag< T > > ConstSPtr;
+    typedef std::shared_ptr< const WFlag< T > > ConstSPtr;
 
     /**
      * Constructor. Uses a given condition to realize the wait/notify functionality. By using this constructor, the specified
@@ -70,7 +70,7 @@ public:
      * \note condition can also be a WConditionOneShot.
      * \param initial the initial value of this flag.
      */
-    WFlag( boost::shared_ptr< WCondition > condition, const T& initial );
+    WFlag( std::shared_ptr< WCondition > condition, const T& initial );
 
     /**
      * Copy constructor. Creates a deep copy of this property. As boost::signals2 and condition variables are non-copyable, new instances get
@@ -147,7 +147,7 @@ public:
      *
      * \return the condition
      */
-    boost::shared_ptr< WCondition > getCondition();
+    std::shared_ptr< WCondition > getCondition();
 
     /**
      * Returns the condition denoting a value change. In contrast to getCondition, this condition fires regardless of notification is suppressed
@@ -155,7 +155,7 @@ public:
      *
      * \return the condition denoting a value change.
      */
-    boost::shared_ptr< WCondition > getValueChangeCondition();
+    std::shared_ptr< WCondition > getValueChangeCondition();
 
     /**
      * Determines whether the specified value is acceptable. In WFlags, this always returns true. To modify the behaviour,
@@ -188,13 +188,13 @@ protected:
     /**
      * The condition to be used for waiting/notifying. Please note, that it gets deleted during destruction.
      */
-    boost::shared_ptr< WCondition > m_condition;
+    std::shared_ptr< WCondition > m_condition;
 
     /**
      * This condition is fired whenever the value changes. In contrast to m_condition, this also fires if set() is called with
      * suppressNotification=true.
      */
-    boost::shared_ptr< WCondition > m_valueChangeCondition;
+    std::shared_ptr< WCondition > m_valueChangeCondition;
 
     /**
      * The flag value.
@@ -216,17 +216,17 @@ typedef WFlag< bool > WBoolFlag;
 
 template < typename T >
 WFlag< T >::WFlag( WCondition* condition, const T& initial ):
-    m_condition( boost::shared_ptr< WCondition >( condition ) ),
-    m_valueChangeCondition( boost::shared_ptr< WCondition >( new WCondition() ) ),
+    m_condition( std::shared_ptr< WCondition >( condition ) ),
+    m_valueChangeCondition( std::shared_ptr< WCondition >( new WCondition() ) ),
     m_flag( initial ),
     m_changed( true )
 {
 }
 
 template < typename T >
-WFlag< T >::WFlag( boost::shared_ptr< WCondition > condition, const T& initial ):
+WFlag< T >::WFlag( std::shared_ptr< WCondition > condition, const T& initial ):
     m_condition( condition ),
-    m_valueChangeCondition( boost::shared_ptr< WCondition >( new WCondition() ) ),
+    m_valueChangeCondition( std::shared_ptr< WCondition >( new WCondition() ) ),
     m_flag( initial ),
     m_changed( true )
 {
@@ -234,8 +234,8 @@ WFlag< T >::WFlag( boost::shared_ptr< WCondition > condition, const T& initial )
 
 template < typename T >
 WFlag< T >::WFlag( const WFlag& from ):
-    m_condition( boost::shared_ptr< WCondition >( new WCondition() ) ),
-    m_valueChangeCondition( boost::shared_ptr< WCondition >( new WCondition() ) ),
+    m_condition( std::shared_ptr< WCondition >( new WCondition() ) ),
+    m_valueChangeCondition( std::shared_ptr< WCondition >( new WCondition() ) ),
     m_flag( from.m_flag ),
     m_changed( from.m_changed )
 {
@@ -315,13 +315,13 @@ bool WFlag< T >::set( const T& value, bool suppressNotification )
 }
 
 template < typename T >
-boost::shared_ptr< WCondition > WFlag< T >::getCondition()
+std::shared_ptr< WCondition > WFlag< T >::getCondition()
 {
     return m_condition;
 }
 
 template < typename T >
-boost::shared_ptr< WCondition > WFlag< T >::getValueChangeCondition()
+std::shared_ptr< WCondition > WFlag< T >::getValueChangeCondition()
 {
     return m_valueChangeCondition;
 }

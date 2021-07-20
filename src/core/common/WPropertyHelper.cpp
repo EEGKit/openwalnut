@@ -30,7 +30,7 @@ namespace WPropertyHelper
     {
         void addTo( WPropSelection prop )
         {
-            prop->addConstraint( boost::shared_ptr< WPropertyConstraintSelectOnlyOne< WPVBaseTypes::PV_SELECTION > >(
+            prop->addConstraint( std::shared_ptr< WPropertyConstraintSelectOnlyOne< WPVBaseTypes::PV_SELECTION > >(
                     new  WPropertyConstraintSelectOnlyOne< WPVBaseTypes::PV_SELECTION >
             ) );
         }
@@ -40,21 +40,21 @@ namespace WPropertyHelper
     {
         void addTo( WPropSelection prop )
         {
-            prop->addConstraint( boost::shared_ptr< WPropertyConstraintNotEmpty< WPVBaseTypes::PV_SELECTION > >(
+            prop->addConstraint( std::shared_ptr< WPropertyConstraintNotEmpty< WPVBaseTypes::PV_SELECTION > >(
                     new  WPropertyConstraintNotEmpty< WPVBaseTypes::PV_SELECTION >
             ) );
         }
 
         void addTo( WPropString prop )
         {
-            prop->addConstraint( boost::shared_ptr< WPropertyConstraintNotEmpty< WPVBaseTypes::PV_STRING > >(
+            prop->addConstraint( std::shared_ptr< WPropertyConstraintNotEmpty< WPVBaseTypes::PV_STRING > >(
                     new  WPropertyConstraintNotEmpty< WPVBaseTypes::PV_STRING >
             ) );
         }
 
         void addTo( WPropFilename prop )
         {
-            prop->addConstraint( boost::shared_ptr< WPropertyConstraintNotEmpty< WPVBaseTypes::PV_PATH > >(
+            prop->addConstraint( std::shared_ptr< WPropertyConstraintNotEmpty< WPVBaseTypes::PV_PATH > >(
                     new  WPropertyConstraintNotEmpty< WPVBaseTypes::PV_PATH >
             ) );
         }
@@ -64,7 +64,7 @@ namespace WPropertyHelper
     {
         void addTo( WPropFilename prop )
         {
-            prop->addConstraint( boost::shared_ptr< WPropertyConstraintPathExists< WPVBaseTypes::PV_PATH > >(
+            prop->addConstraint( std::shared_ptr< WPropertyConstraintPathExists< WPVBaseTypes::PV_PATH > >(
                     new  WPropertyConstraintPathExists< WPVBaseTypes::PV_PATH >()
             ) );
         }
@@ -74,7 +74,7 @@ namespace WPropertyHelper
     {
         void addTo( WPropFilename prop )
         {
-            prop->addConstraint( boost::shared_ptr< WPropertyConstraintIsDirectory< WPVBaseTypes::PV_PATH > >(
+            prop->addConstraint( std::shared_ptr< WPropertyConstraintIsDirectory< WPVBaseTypes::PV_PATH > >(
                     new  WPropertyConstraintIsDirectory< WPVBaseTypes::PV_PATH >()
             ) );
         }
@@ -84,7 +84,7 @@ namespace WPropertyHelper
     {
         void addTo( WPropFilename prop )
         {
-            prop->addConstraint( boost::shared_ptr< WPropertyConstraintConfirmOverwrite< WPVBaseTypes::PV_PATH > >(
+            prop->addConstraint( std::shared_ptr< WPropertyConstraintConfirmOverwrite< WPVBaseTypes::PV_PATH > >(
                     new  WPropertyConstraintConfirmOverwrite< WPVBaseTypes::PV_PATH >()
             ) );
         }
@@ -94,7 +94,7 @@ namespace WPropertyHelper
     {
         void addTo( WPropSelection prop )
         {
-            prop->addConstraint( boost::shared_ptr< WPropertyConstraintIsValid< WPVBaseTypes::PV_SELECTION > >(
+            prop->addConstraint( std::shared_ptr< WPropertyConstraintIsValid< WPVBaseTypes::PV_SELECTION > >(
                     new  WPropertyConstraintIsValid< WPVBaseTypes::PV_SELECTION >()
             ) );
         }

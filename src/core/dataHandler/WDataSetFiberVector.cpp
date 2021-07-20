@@ -32,7 +32,7 @@
 #include "WDataSetFiberVector.h"
 
 // prototype instance as singleton
-boost::shared_ptr< WPrototyped > WDataSetFiberVector::m_prototype = boost::shared_ptr< WPrototyped >();
+std::shared_ptr< WPrototyped > WDataSetFiberVector::m_prototype = std::shared_ptr< WPrototyped >();
 
 WDataSetFiberVector::WDataSetFiberVector()
     : WMixinVector< WFiber >(),
@@ -40,13 +40,13 @@ WDataSetFiberVector::WDataSetFiberVector()
 {
 }
 
-WDataSetFiberVector::WDataSetFiberVector( boost::shared_ptr< std::vector< WFiber > > fibs )
-    : WMixinVector< WFiber >( *fibs ), // COPYING this into this since, WMixinVector has no possibility for references or boost::shared_ptr
+WDataSetFiberVector::WDataSetFiberVector( std::shared_ptr< std::vector< WFiber > > fibs )
+    : WMixinVector< WFiber >( *fibs ), // COPYING this into this since, WMixinVector has no possibility for references or std::shared_ptr
       WDataSet()
 {
 }
 
-WDataSetFiberVector::WDataSetFiberVector( boost::shared_ptr< const WDataSetFibers > fiberDS )
+WDataSetFiberVector::WDataSetFiberVector( std::shared_ptr< const WDataSetFibers > fiberDS )
     : WMixinVector< WFiber >(),
       WDataSet()
 {
@@ -101,9 +101,9 @@ void WDataSetFiberVector::sortDescLength()
     std::sort( begin(), end(), hasMorePointsThen );
 }
 
-boost::shared_ptr< WDataSetFiberVector > WDataSetFiberVector::generateDataSetOutOfUsedFibers( const std::vector< bool > &unused ) const
+std::shared_ptr< WDataSetFiberVector > WDataSetFiberVector::generateDataSetOutOfUsedFibers( const std::vector< bool > &unused ) const
 {
-    boost::shared_ptr< WDataSetFiberVector > result( new WDataSetFiberVector() );
+    std::shared_ptr< WDataSetFiberVector > result( new WDataSetFiberVector() );
     assert( unused.size() == size() );
     for( size_t i = 0 ; i < unused.size(); ++i )
     {
@@ -130,22 +130,22 @@ const std::string WDataSetFiberVector::getDescription() const
     return "Contains tracked fiber data.";
 }
 
-boost::shared_ptr< WPrototyped > WDataSetFiberVector::getPrototype()
+std::shared_ptr< WPrototyped > WDataSetFiberVector::getPrototype()
 {
     if( !m_prototype )
     {
-        m_prototype = boost::shared_ptr< WPrototyped >( new WDataSetFiberVector() );
+        m_prototype = std::shared_ptr< WPrototyped >( new WDataSetFiberVector() );
     }
 
     return m_prototype;
 }
 
-boost::shared_ptr< WDataSetFibers > WDataSetFiberVector::toWDataSetFibers() const
+std::shared_ptr< WDataSetFibers > WDataSetFiberVector::toWDataSetFibers() const
 {
-    boost::shared_ptr< std::vector< float > > points( new std::vector< float > );
-    boost::shared_ptr< std::vector< size_t > > fiberStartIndices( new std::vector< size_t > );
-    boost::shared_ptr< std::vector< size_t > > fiberLengths( new std::vector< size_t > );
-    boost::shared_ptr< std::vector< size_t > > pointFiberMapping( new std::vector< size_t > );
+    std::shared_ptr< std::vector< float > > points( new std::vector< float > );
+    std::shared_ptr< std::vector< size_t > > fiberStartIndices( new std::vector< size_t > );
+    std::shared_ptr< std::vector< size_t > > fiberLengths( new std::vector< size_t > );
+    std::shared_ptr< std::vector< size_t > > pointFiberMapping( new std::vector< size_t > );
 
     fiberStartIndices->reserve( size() );
     fiberLengths->reserve( size() );
@@ -167,14 +167,14 @@ boost::shared_ptr< WDataSetFibers > WDataSetFiberVector::toWDataSetFibers() cons
         }
     }
 
-    return boost::shared_ptr< WDataSetFibers >( new WDataSetFibers( points, fiberStartIndices, fiberLengths, pointFiberMapping ) );
+    return std::shared_ptr< WDataSetFibers >( new WDataSetFibers( points, fiberStartIndices, fiberLengths, pointFiberMapping ) );
 }
 
-boost::shared_ptr< WFiber > centerLine( boost::shared_ptr< const WDataSetFiberVector > tracts )
+std::shared_ptr< WFiber > centerLine( std::shared_ptr< const WDataSetFiberVector > tracts )
 {
     if( !tracts || tracts->empty() ) // invalid data produces invalid center lines
     {
-        return boost::shared_ptr< WFiber >( new WFiber() );
+        return std::shared_ptr< WFiber >( new WFiber() );
     }
 
     size_t avgTractSize = 0;
@@ -186,7 +186,7 @@ boost::shared_ptr< WFiber > centerLine( boost::shared_ptr< const WDataSetFiberVe
 
     WFiber firstTract( tracts->front() );
     firstTract.resampleByNumberOfPoints( avgTractSize );
-    boost::shared_ptr< WFiber > result( new WFiber( firstTract ) ); // copy the first tract into result centerline
+    std::shared_ptr< WFiber > result( new WFiber( firstTract ) ); // copy the first tract into result centerline
 
     for( size_t tractIndex = 1; tractIndex < tracts->size(); ++tractIndex )
     {
@@ -208,11 +208,11 @@ boost::shared_ptr< WFiber > centerLine( boost::shared_ptr< const WDataSetFiberVe
     return result;
 }
 
-boost::shared_ptr< WFiber > longestLine( boost::shared_ptr< const WDataSetFiberVector > tracts )
+std::shared_ptr< WFiber > longestLine( std::shared_ptr< const WDataSetFiberVector > tracts )
 {
     if( !tracts || tracts->empty() ) // invalid data produces invalid longest lines
     {
-        return boost::shared_ptr< WFiber >( new WFiber() );
+        return std::shared_ptr< WFiber >( new WFiber() );
     }
 
     size_t maxSize = 0;
@@ -227,15 +227,15 @@ boost::shared_ptr< WFiber > longestLine( boost::shared_ptr< const WDataSetFiberV
         }
     }
 
-    return boost::shared_ptr< WFiber >( new WFiber( tracts->at( maxIndex ) ) );
+    return std::shared_ptr< WFiber >( new WFiber( tracts->at( maxIndex ) ) );
 }
 
-boost::shared_ptr< WFiber > centerLine( boost::shared_ptr< const WDataSetFibers > tracts )
+std::shared_ptr< WFiber > centerLine( std::shared_ptr< const WDataSetFibers > tracts )
 {
-    return centerLine( boost::shared_ptr< WDataSetFiberVector >( new WDataSetFiberVector( tracts ) ) );
+    return centerLine( std::shared_ptr< WDataSetFiberVector >( new WDataSetFiberVector( tracts ) ) );
 }
 
-boost::shared_ptr< WFiber > longestLine( boost::shared_ptr< const WDataSetFibers > tracts )
+std::shared_ptr< WFiber > longestLine( std::shared_ptr< const WDataSetFibers > tracts )
 {
-    return longestLine( boost::shared_ptr< WDataSetFiberVector >( new WDataSetFiberVector( tracts ) ) );
+    return longestLine( std::shared_ptr< WDataSetFiberVector >( new WDataSetFiberVector( tracts ) ) );
 }

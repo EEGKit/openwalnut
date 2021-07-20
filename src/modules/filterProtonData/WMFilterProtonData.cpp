@@ -50,9 +50,9 @@ const std::string WMFilterProtonData::getDescription() const
     return "Converter CSV-data To WDataSetPoints and WDataSetFibers";
 }
 
-boost::shared_ptr< WModule > WMFilterProtonData::factory() const
+std::shared_ptr< WModule > WMFilterProtonData::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMFilterProtonData() );
+    return std::shared_ptr< WModule >( new WMFilterProtonData() );
 }
 
 const char** WMFilterProtonData::getXPMIcon() const
@@ -67,7 +67,7 @@ void WMFilterProtonData::moduleMain()
 
     ready();
 
-    m_propertyStatus = boost::shared_ptr< WPropertyStatus >( new WPropertyStatus() );
+    m_propertyStatus = std::shared_ptr< WPropertyStatus >( new WPropertyStatus() );
 
     while( !m_shutdownFlag() )
     {
@@ -78,7 +78,7 @@ void WMFilterProtonData::moduleMain()
             continue;
         }
 
-        boost::shared_ptr< WProgress > progressBar( new WProgress( "Preparing..." ) );
+        std::shared_ptr< WProgress > progressBar( new WProgress( "Preparing..." ) );
         m_progress->addSubProgress( progressBar );
 
         if( m_protonData == NULL )
@@ -239,7 +239,7 @@ void WMFilterProtonData::setToLoadedProperties()
 
 void WMFilterProtonData::setOutputFromCSV()
 {
-    m_converter = boost::shared_ptr< WCsvConverter >( new WCsvConverter( m_protonData, m_propertyStatus, m_colorBar ) );
+    m_converter = std::shared_ptr< WCsvConverter >( new WCsvConverter( m_protonData, m_propertyStatus, m_colorBar ) );
 
     m_output_points->updateData( m_converter->getPoints() );
     m_output_fibers->updateData( m_converter->getFibers() );

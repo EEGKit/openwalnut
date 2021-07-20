@@ -55,7 +55,7 @@ public:
      * \param positionsLibrary class which contains the positions of the
      *                         electrodes
      */
-    WEEG2( boost::shared_ptr< WPagerEEG > pager, boost::shared_ptr< WEEGPositionsLibrary > positionsLibrary );
+    WEEG2( std::shared_ptr< WPagerEEG > pager, std::shared_ptr< WEEGPositionsLibrary > positionsLibrary );
 
     /**
      * Constructor creating a quite unusable instance. Useful for prototype
@@ -90,7 +90,7 @@ public:
      * \param segmentID number of segment
      * \return segment
      */
-    boost::shared_ptr< WEEG2Segment > getSegment( std::size_t segmentID ) const;
+    std::shared_ptr< WEEG2Segment > getSegment( std::size_t segmentID ) const;
 
     /**
      * Get one channel info object.
@@ -98,7 +98,7 @@ public:
      * \param channelID number of channel
      * \return object containing information about the channel
      */
-    boost::shared_ptr< WEEGChannelInfo > getChannelInfo( std::size_t channelID ) const;
+    std::shared_ptr< WEEGChannelInfo > getChannelInfo( std::size_t channelID ) const;
 
     /**
      * Return the name of the dataset
@@ -119,20 +119,20 @@ public:
      *
      * \return the prototype
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
 protected:
     /**
      * Prototype needed to allow the EEG dataset to be transferred.
      */
-    static boost::shared_ptr< WPrototyped > m_prototype;
+    static std::shared_ptr< WPrototyped > m_prototype;
 
 private:
     double m_samplingRate; //!< sampling rate used by the recording
 
-    std::vector< boost::shared_ptr< WEEG2Segment > > m_segments; //!< list of all segments this EEG consists of
+    std::vector< std::shared_ptr< WEEG2Segment > > m_segments; //!< list of all segments this EEG consists of
 
-    std::vector< boost::shared_ptr< WEEGChannelInfo > > m_channelInfos; //!< list of the information about all channel infos this EEG has
+    std::vector< std::shared_ptr< WEEGChannelInfo > > m_channelInfos; //!< list of the information about all channel infos this EEG has
 };
 
 #endif  // WEEG2_H

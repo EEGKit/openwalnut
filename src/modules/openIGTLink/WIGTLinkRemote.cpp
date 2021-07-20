@@ -251,7 +251,7 @@ WDataSetScalarSPtr WIGTLinkRemote::receiveImage( igtl::MessageHeader::Pointer he
         }
         WGridRegular3D::SPtr grid( new WGridRegular3D( size[ 0 ], size[ 1 ], size[ 2 ], WGridTransformOrtho( owmat ) ) );
 
-        boost::shared_ptr< WValueSetBase > valueSet = createValueSet( imgMsg );
+        std::shared_ptr< WValueSetBase > valueSet = createValueSet( imgMsg );
 
         WDataSetScalarSPtr ds( new WDataSetScalar( valueSet, grid ) );
         // if( length( imgMsg->GetDeviceName() > 0 ) )
@@ -343,7 +343,7 @@ void WIGTLinkRemote::sendImageMetaData( const std::vector < WDataSetScalarSPtr >
         ts0->SetTime( 123456.78 );
 
         imgMeta->SetTimeStamp( ts0 );
-        boost::shared_ptr < WGridRegular3D > g3dr( boost::dynamic_pointer_cast < WGridRegular3D > ( dataSets[ i ]->getGrid() ) );
+        std::shared_ptr < WGridRegular3D > g3dr( std::dynamic_pointer_cast < WGridRegular3D > ( dataSets[ i ]->getGrid() ) );
         imgMeta->SetSize( g3dr->getNbCoordsX(), g3dr->getNbCoordsY(), g3dr->getNbCoordsZ() );
         imgMeta->SetScalarType( convertTypeOWtoIGTL( dataSets[ i ]->getValueSet()->getDataType() ) );
         imgMetaMsg->AddImageMetaElement( imgMeta );
@@ -356,27 +356,27 @@ void WIGTLinkRemote::sendImageMetaData( const std::vector < WDataSetScalarSPtr >
 namespace Ugly
 {
     template < int DT >
-    size_t getRawSizeT( boost::shared_ptr < WValueSetBase >  valueSet )
+    size_t getRawSizeT( std::shared_ptr < WValueSetBase >  valueSet )
     {
         typedef typename DataTypeRT<DT>::type type;
-        boost::shared_ptr < WValueSet < type > > v = boost::dynamic_pointer_cast < WValueSet < type > >( valueSet );
+        std::shared_ptr < WValueSet < type > > v = std::dynamic_pointer_cast < WValueSet < type > >( valueSet );
         WAssert( v, "Type cast failed" );
         return valueSet->rawSize() * sizeof( type );
     }
 
     template < int DT >
-    const void* getRawPtrT( boost::shared_ptr < WValueSetBase > valueSet )
+    const void* getRawPtrT( std::shared_ptr < WValueSetBase > valueSet )
     {
         typedef typename DataTypeRT<DT>::type type;
-        boost::shared_ptr < WValueSet < type > > v;
-        v = boost::dynamic_pointer_cast < WValueSet < type > >( valueSet );
+        std::shared_ptr < WValueSet < type > > v;
+        v = std::dynamic_pointer_cast < WValueSet < type > >( valueSet );
         WAssert( v, "Type cast failed" );
         const void* ptr = v->rawData();
         WAssert( ptr != 0, "Trying to query raw data, got null pointer" );
         return ptr;
     }
 
-    size_t getRawSize( boost::shared_ptr < WValueSetBase > valueSet )
+    size_t getRawSize( std::shared_ptr < WValueSetBase > valueSet )
     {
         int type = valueSet->getDataType();
 #define CASE( A ) case A: return getRawSizeT < A > ( valueSet );
@@ -399,7 +399,7 @@ namespace Ugly
 #undef CASE
     }
 
-    const void* getRawPtr( boost::shared_ptr < WValueSetBase > valueSet )
+    const void* getRawPtr( std::shared_ptr < WValueSetBase > valueSet )
     {
         int type = valueSet->getDataType();
 #define CASE( A ) case A: return getRawPtrT < A > ( valueSet );
@@ -425,7 +425,7 @@ namespace Ugly
 
 void WIGTLinkRemote::sendImageData( WDataSetScalarSPtr dataSetScalar )
 {
-    boost::shared_ptr< WValueSetBase > valueSet = dataSetScalar->getValueSet();
+    std::shared_ptr< WValueSetBase > valueSet = dataSetScalar->getValueSet();
     //size_t rawSize = valueSet->rawSize();
 
     int scalarType = 0;
@@ -483,7 +483,7 @@ void WIGTLinkRemote::sendImageData( WDataSetScalarSPtr dataSetScalar )
     if( socket.IsNotNull() )
     {
         int size[ 3 ];
-        boost::shared_ptr < WGridRegular3D > g3dr( boost::dynamic_pointer_cast < WGridRegular3D > ( dataSetScalar->getGrid() ) );
+        std::shared_ptr < WGridRegular3D > g3dr( std::dynamic_pointer_cast < WGridRegular3D > ( dataSetScalar->getGrid() ) );
         size[ 0 ] = g3dr->getNbCoordsX();
         size[ 1 ] = g3dr->getNbCoordsY();
         size[ 2 ] = g3dr->getNbCoordsZ();
@@ -512,16 +512,16 @@ void WIGTLinkRemote::sendImageData( WDataSetScalarSPtr dataSetScalar )
     }
 }
 
-boost::shared_ptr < WValueSetBase > WIGTLinkRemote::createValueSet( const igtl::ImageMessage::Pointer& imgMsg )
+std::shared_ptr < WValueSetBase > WIGTLinkRemote::createValueSet( const igtl::ImageMessage::Pointer& imgMsg )
 {
-    boost::shared_ptr<WValueSetBase> valueSet;
+    std::shared_ptr<WValueSetBase> valueSet;
     int size[ 3 ];
     imgMsg->GetDimensions( size );
     size_t sz =  size[ 0 ] * size[ 1 ] * size[ 2 ];
 #define CASE( igtltype, ctype, owtype )\
     case igtltype: \
             {\
-                boost::shared_ptr < std::vector < ctype > > values( new std::vector < ctype >( sz ) );\
+                std::shared_ptr < std::vector < ctype > > values( new std::vector < ctype >( sz ) );\
                 memcpy( ( void* )&( ( *values )[ 0 ] ), imgMsg->GetScalarPointer(), sizeof( ctype ) * sz );\
                 valueSet.reset( new WValueSet < ctype >( 0, 1, values, owtype ) );\
             }\

@@ -69,7 +69,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -104,12 +104,12 @@ private:
     /**
      * Input connector for the vector dataset.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetVector > > m_vectorIC;
+    std::shared_ptr< WModuleInputData< WDataSetVector > > m_vectorIC;
 
     /**
      * Output connector for the vector dataset.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetVector > > m_vectorOC;
+    std::shared_ptr< WModuleOutputData< WDataSetVector > > m_vectorOC;
 };
 
 #endif  // WMVECTORALIGN_H

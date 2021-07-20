@@ -61,9 +61,9 @@ WMVectorOperator::~WMVectorOperator()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMVectorOperator::factory() const
+std::shared_ptr< WModule > WMVectorOperator::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMVectorOperator() );
+    return std::shared_ptr< WModule >( new WMVectorOperator() );
 }
 
 const char** WMVectorOperator::getXPMIcon() const
@@ -93,10 +93,10 @@ void WMVectorOperator::connectors()
 
 void WMVectorOperator::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     // create a list of operations here
-    m_operations = boost::shared_ptr< WItemSelection >( new WItemSelection() );
+    m_operations = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_operations->addItem( "Length", "Length of the vector." );          // NOTE: you can add XPM images here.
     m_operations->addItem( "Curvature", "Curvature at each voxel." );
 
@@ -157,7 +157,7 @@ size_t getId( size_t xDim, size_t yDim, size_t /*zDim*/, size_t x, size_t y, siz
 /**
  * Visitor for discriminating the type of the first valueset.
  */
-class VisitorVSetA: public boost::static_visitor< boost::shared_ptr< WValueSetBase > >
+class VisitorVSetA: public boost::static_visitor< std::shared_ptr< WValueSetBase > >
 {
 public:
     /**
@@ -166,7 +166,7 @@ public:
      * \param opIdx The operator index.
      * \param grid the underlying grid
      */
-    VisitorVSetA( boost::shared_ptr< WGridRegular3D > grid, size_t opIdx = 0 ):
+    VisitorVSetA( std::shared_ptr< WGridRegular3D > grid, size_t opIdx = 0 ):
         boost::static_visitor< result_type >(),
         m_grid( grid ),
         m_opIdx( opIdx )
@@ -250,9 +250,9 @@ public:
         }
 
         // create result value set
-        return boost::shared_ptr< WValueSet< T > >( new WValueSet< T >( 0,
+        return std::shared_ptr< WValueSet< T > >( new WValueSet< T >( 0,
                                                                         1,
-                                                                        boost::shared_ptr< std::vector< T > >(
+                                                                        std::shared_ptr< std::vector< T > >(
                                                                             new std::vector< T >( data ) ),
                                                                         DataType< T >::type ) );
     }
@@ -260,7 +260,7 @@ public:
     /**
      * The underlying grid.
      */
-    boost::shared_ptr< WGridRegular3D > m_grid;
+    std::shared_ptr< WGridRegular3D > m_grid;
 
     /**
      * The operator index.
@@ -295,28 +295,28 @@ void WMVectorOperator::moduleMain()
         // has the data changed?
         if( m_opSelection->changed() || m_inputA->handledUpdate() )
         {
-            boost::shared_ptr< WDataSetVector > dataSetA = m_inputA->getData();
+            std::shared_ptr< WDataSetVector > dataSetA = m_inputA->getData();
 
             WItemSelector s = m_opSelection->get( true );
 
             // valid data?
             if( dataSetA )
             {
-                boost::shared_ptr< WValueSetBase > valueSetA = dataSetA->getValueSet();
+                std::shared_ptr< WValueSetBase > valueSetA = dataSetA->getValueSet();
 
                 // use a custom progress combiner
-                boost::shared_ptr< WProgress > prog = boost::shared_ptr< WProgress >(
+                std::shared_ptr< WProgress > prog = std::shared_ptr< WProgress >(
                     new WProgress( "Applying operator on data" ) );
                 m_progress->addSubProgress( prog );
 
                 // apply the operation to each voxel
                 debugLog() << "Processing ...";
-                boost::shared_ptr< WValueSetBase > newValueSet = valueSetA->applyFunction( VisitorVSetA(
-                    boost::dynamic_pointer_cast< WGridRegular3D >( dataSetA->getGrid() ), s )
+                std::shared_ptr< WValueSetBase > newValueSet = valueSetA->applyFunction( VisitorVSetA(
+                    std::dynamic_pointer_cast< WGridRegular3D >( dataSetA->getGrid() ), s )
                 );
 
                 // Create the new dataset and export it
-                m_output->updateData( boost::shared_ptr<WDataSetScalar>( new WDataSetScalar( newValueSet, m_inputA->getData()->getGrid() ) ) );
+                m_output->updateData( std::shared_ptr<WDataSetScalar>( new WDataSetScalar( newValueSet, m_inputA->getData()->getGrid() ) ) );
 
                 // done
                 prog->finish();

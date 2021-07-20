@@ -44,10 +44,10 @@ WMResampleRegular::~WMResampleRegular()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMResampleRegular::factory() const
+std::shared_ptr< WModule > WMResampleRegular::factory() const
 {
     // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WMResampleRegular() );
+    return std::shared_ptr< WModule >( new WMResampleRegular() );
 }
 
 const std::string WMResampleRegular::getName() const
@@ -62,12 +62,12 @@ const std::string WMResampleRegular::getDescription() const
 
 void WMResampleRegular::connectors()
 {
-    m_original = boost::shared_ptr<WModuleInputData<WDataSetScalar> >(
+    m_original = std::shared_ptr<WModuleInputData<WDataSetScalar> >(
         new WModuleInputData<WDataSetScalar> ( shared_from_this(), "Original",
                                                "The dataset to resample." ) );
     addConnector( m_original );
 
-    m_resampled = boost::shared_ptr<WModuleOutputData<WDataSetScalar> >(
+    m_resampled = std::shared_ptr<WModuleOutputData<WDataSetScalar> >(
         new WModuleOutputData<WDataSetScalar> ( shared_from_this(), "Resampled",
                                                 "The resampled data set." ) );
     addConnector( m_resampled );
@@ -77,7 +77,7 @@ void WMResampleRegular::connectors()
 
 void WMResampleRegular::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_preserverBoundingBox = m_properties->addProperty( "Preserve Bounding Box",
                                                         "Scale the voxel distance to preserve the original dataset size (bounding box).",
@@ -112,7 +112,7 @@ void WMResampleRegular::moduleMain()
             break;
         }
 
-        boost::shared_ptr< WDataSetScalar > originalData = m_original->getData();
+        std::shared_ptr< WDataSetScalar > originalData = m_original->getData();
 
         // If no data found go into waiting state again.
         if( !originalData )
@@ -121,7 +121,7 @@ void WMResampleRegular::moduleMain()
         }
 
 
-        boost::shared_ptr<WGridRegular3D> grid = boost::dynamic_pointer_cast< WGridRegular3D >( originalData->getGrid() );
+        std::shared_ptr<WGridRegular3D> grid = std::dynamic_pointer_cast< WGridRegular3D >( originalData->getGrid() );
 
         size_t nX = grid->getNbCoordsX();
         size_t nY = grid->getNbCoordsY();
@@ -136,15 +136,15 @@ void WMResampleRegular::moduleMain()
             transformation = WGridTransformOrthoTemplate<double>( resampleStepSize, resampleStepSize, resampleStepSize );
         }
 
-        boost::shared_ptr< WGrid > resampledGrid;
-        resampledGrid = boost::shared_ptr< WGridRegular3D >(
+        std::shared_ptr< WGrid > resampledGrid;
+        resampledGrid = std::shared_ptr< WGridRegular3D >(
             new WGridRegular3D( nY/resampleStepSize, nY/resampleStepSize, nZ/resampleStepSize, transformation ) );
 
-        boost::shared_ptr<WValueSetBase> vals;
-        vals = boost::dynamic_pointer_cast<WValueSetBase >( originalData->getValueSet() );
+        std::shared_ptr<WValueSetBase> vals;
+        vals = std::dynamic_pointer_cast<WValueSetBase >( originalData->getValueSet() );
 
-        boost::shared_ptr< std::vector< float > > theValues;
-        theValues =  boost::shared_ptr< std::vector< float > >( new std::vector<float>() );
+        std::shared_ptr< std::vector< float > > theValues;
+        theValues =  std::shared_ptr< std::vector< float > >( new std::vector<float>() );
 
         for( size_t idZ = 1; idZ < nZ; idZ += resampleStepSize )
         {
@@ -157,9 +157,9 @@ void WMResampleRegular::moduleMain()
             }
         }
 
-        boost::shared_ptr< WValueSet< float > >  newValueSet;
-        newValueSet = boost::shared_ptr< WValueSet< float > >( new WValueSet<float>( vals->order(), vals->dimension(), theValues ) );
+        std::shared_ptr< WValueSet< float > >  newValueSet;
+        newValueSet = std::shared_ptr< WValueSet< float > >( new WValueSet<float>( vals->order(), vals->dimension(), theValues ) );
 
-        m_resampled->updateData( boost::shared_ptr<WDataSetScalar>( new WDataSetScalar( newValueSet, resampledGrid ) ) );
+        m_resampled->updateData( std::shared_ptr<WDataSetScalar>( new WDataSetScalar( newValueSet, resampledGrid ) ) );
     }
 }

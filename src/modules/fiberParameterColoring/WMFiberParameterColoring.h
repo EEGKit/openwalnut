@@ -68,7 +68,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -96,17 +96,17 @@ private:
     /**
      * The fiber dataset which is going to be filtered.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetFibers > > m_fiberInput;
+    std::shared_ptr< WModuleInputData< WDataSetFibers > > m_fiberInput;
 
     /**
      * The output connector used to provide the calculated data to other modules.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetFibers > > m_fiberOutput;
+    std::shared_ptr< WModuleOutputData< WDataSetFibers > > m_fiberOutput;
 
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * The colors encoding the curvature

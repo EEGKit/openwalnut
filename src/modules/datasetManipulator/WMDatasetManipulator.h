@@ -72,7 +72,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -109,10 +109,10 @@ private:
      *
      * \return The new and transformed dataset.
      */
-    boost::shared_ptr< WDataSet > transformData( WMatrixFixed< double, 4, 4 > const& mat );
+    std::shared_ptr< WDataSet > transformData( WMatrixFixed< double, 4, 4 > const& mat );
 
     //! A condition for property updates.
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     //! A trigger to reset the current transformation to the initial one.
     WPropTrigger m_resetTrigger;
@@ -121,16 +121,16 @@ private:
     WPropTrigger m_applyTrigger;
 
     //! The current data.
-    boost::shared_ptr< WDataSet > m_data;
+    std::shared_ptr< WDataSet > m_data;
 
     //! The current transformation.
     WMatrixFixed< double, 4, 4 > m_currentMat;
 
     //! An input connector that accepts any dataset.
-    boost::shared_ptr< WModuleInputData< WDataSet > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSet > > m_input;
 
     //! An output connector for the transformed dataset.
-    boost::shared_ptr< WModuleOutputData< WDataSet > > m_output;
+    std::shared_ptr< WModuleOutputData< WDataSet > > m_output;
 
     //! The strategy to use for dataset transformation manipulation.
     WStrategyHelper< WObjectNDIP< WManipulatorInterface > > m_strategy;

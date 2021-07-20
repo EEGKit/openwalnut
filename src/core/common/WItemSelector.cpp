@@ -30,7 +30,7 @@
 
 #include "WItemSelector.h"
 
-WItemSelector::WItemSelector( boost::shared_ptr< WItemSelection > selection, IndexList selected ):
+WItemSelector::WItemSelector( std::shared_ptr< WItemSelection > selection, IndexList selected ):
     m_selection( selection ),
     m_selected( selected ),
     m_invalidateSignalConnection(),
@@ -143,12 +143,12 @@ size_t WItemSelector::size() const
     return m_selected.size();
 }
 
-const boost::shared_ptr< WItemSelectionItem > WItemSelector::atAll( size_t index ) const
+const std::shared_ptr< WItemSelectionItem > WItemSelector::atAll( size_t index ) const
 {
     return m_selection->at( index );
 }
 
-const boost::shared_ptr< WItemSelectionItem > WItemSelector::at( size_t index ) const
+const std::shared_ptr< WItemSelectionItem > WItemSelector::at( size_t index ) const
 {
     return m_selection->at( getItemIndexOfSelected( index ) );
 }

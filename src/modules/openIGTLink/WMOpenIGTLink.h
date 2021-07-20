@@ -78,7 +78,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -113,17 +113,17 @@ private:
     /**
      * input for data to send
      */
-    boost::shared_ptr < WModuleInputData < WDataSetScalar > > m_input;
+    std::shared_ptr < WModuleInputData < WDataSetScalar > > m_input;
 
     /**
      * output of received data
      */
-    boost::shared_ptr < WModuleOutputData < WDataSetScalar > > m_output;
+    std::shared_ptr < WModuleOutputData < WDataSetScalar > > m_output;
 
     /**
      * A condition used to notify about changes in several properties
      */
-    boost::shared_ptr < WCondition > m_propCondition;
+    std::shared_ptr < WCondition > m_propCondition;
 
     /**
      * hostname to connect to
@@ -151,7 +151,7 @@ private:
      * i.e., whether to listen on a port for incoming connections
      * or whether to connect actively to a remote host.
      */
-    boost::shared_ptr <  WItemSelection >  m_propServerOrClientSelections;
+    std::shared_ptr <  WItemSelection >  m_propServerOrClientSelections;
 
     /**
      * Pick whether to act as an TCPIP server or as an TCPIP client,

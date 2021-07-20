@@ -81,7 +81,7 @@ public:
      *
      * \\return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
 protected:
     /**
@@ -156,10 +156,10 @@ WM#name#::~WM#name#()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WM#name#::factory() const
+std::shared_ptr< WModule > WM#name#::factory() const
 {
     // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WM#name#() );
+    return std::shared_ptr< WModule >( new WM#name#() );
 }
 
 const std::string WM#name#::getName() const

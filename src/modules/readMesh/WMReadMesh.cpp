@@ -67,10 +67,10 @@ WMReadMesh::~WMReadMesh()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMReadMesh::factory() const
+std::shared_ptr< WModule > WMReadMesh::factory() const
 {
     // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WMReadMesh() );
+    return std::shared_ptr< WModule >( new WMReadMesh() );
 }
 
 const char** WMReadMesh::getXPMIcon() const
@@ -92,7 +92,7 @@ const std::string WMReadMesh::getDescription() const
 
 void WMReadMesh::connectors()
 {
-    m_output = boost::shared_ptr< WModuleOutputData< WTriangleMesh > >(
+    m_output = std::shared_ptr< WModuleOutputData< WTriangleMesh > >(
                 new WModuleOutputData< WTriangleMesh >( shared_from_this(), "mesh", "The loaded mesh." ) );
 
     addConnector( m_output );
@@ -103,7 +103,7 @@ void WMReadMesh::connectors()
 
 void WMReadMesh::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
     m_meshFile = m_properties->addProperty( "Mesh file", "", WPathHelper::getAppPath() );
     WPropertyHelper::PC_PATHEXISTS::addTo( m_meshFile );
 

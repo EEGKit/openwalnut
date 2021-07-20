@@ -75,7 +75,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -108,22 +108,22 @@ private:
     /**
      * An input connector used to get datasets from other modules. The connection management between connectors must not be handled by the module.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;
+    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;
 
     /**
      * The input for the volumized fiber traces. Mostly, this is some kind of integrated length data.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_tracesInput;
+    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_tracesInput;
 
     /**
      * This is a pointer to the dataset the module is currently working on.
      */
-    boost::shared_ptr< WDataSetSingle > m_dataSet;
+    std::shared_ptr< WDataSetSingle > m_dataSet;
 
     /**
      * The dataset containing the fiber traces in each voxel in m_dataSet.
      */
-    boost::shared_ptr< WDataSetSingle > m_tracesDataSet;
+    std::shared_ptr< WDataSetSingle > m_tracesDataSet;
 
     /////////////////////////////////////////////////////////////////////
     // The Properties
@@ -184,7 +184,7 @@ private:
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /////////////////////////////////////////////////////////////////////
     // OSG Stuff

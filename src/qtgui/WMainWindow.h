@@ -119,7 +119,7 @@ public:
      * \param name the name of the widget
      * \returns a shared pointer to the widget or NULL if not found
      */
-    boost::shared_ptr< WQtCustomDockWidget > getCustomDockWidget( std::string name );
+    std::shared_ptr< WQtCustomDockWidget > getCustomDockWidget( std::string name );
 
     /**
      * Close one of the custom dock widget saved in the map of customDockWidgets. This method is thread-safe and ensures that the widget is
@@ -269,13 +269,13 @@ protected:
      *
      * \param module the module to setup the GUI for.
      */
-    void moduleSpecificSetup( boost::shared_ptr< WModule > module );
+    void moduleSpecificSetup( std::shared_ptr< WModule > module );
     /**
      * Cleanup the GUI by handling special modules. NavSlices for example remove several toolbar buttons.
      *
      * \param module the module to setup the GUI for.
      */
-    void moduleSpecificCleanup( boost::shared_ptr< WModule > module );
+    void moduleSpecificCleanup( std::shared_ptr< WModule > module );
 
     /**
      * We want to react on close events.
@@ -310,7 +310,7 @@ protected:
      *
      * \returns true if saving was successful
      */
-    virtual bool projectSave( const std::vector< boost::shared_ptr< WProjectFileIO > >& writer );
+    virtual bool projectSave( const std::vector< std::shared_ptr< WProjectFileIO > >& writer );
 
     /**
      * drag and drop implementation for loading files
@@ -449,9 +449,9 @@ private:
 
     WQtGLWidget* m_mainGLWidget; //!< the main GL widget of the GUI
 
-    boost::shared_ptr< WQtNavGLWidget > m_navAxial; //!< the axial view widget GL widget of the GUI
-    boost::shared_ptr< WQtNavGLWidget > m_navCoronal; //!< the coronal view widget GL widget of the GUI
-    boost::shared_ptr< WQtNavGLWidget > m_navSagittal; //!< the sgittal view widget GL widget of the GUI
+    std::shared_ptr< WQtNavGLWidget > m_navAxial; //!< the axial view widget GL widget of the GUI
+    std::shared_ptr< WQtNavGLWidget > m_navCoronal; //!< the coronal view widget GL widget of the GUI
+    std::shared_ptr< WQtNavGLWidget > m_navSagittal; //!< the sgittal view widget GL widget of the GUI
     QMainWindow* m_glDock;  //!< the dock that is used for gl widgets
     QDockWidget* m_dummyWidget; //!< The dummywidget serves as spacer in the dockwidget area;
     WQtGLDockWidget* m_mainGLDock; //!< the dock containing the main gl widget
@@ -500,7 +500,7 @@ private:
      * \param proto the prototype to combine with the module.
      * \param onlyOnce if true, it is ensured that only one module is in the container.
      */
-    void autoAdd( boost::shared_ptr< WModule > module, std::string proto, bool onlyOnce = false );
+    void autoAdd( std::shared_ptr< WModule > module, std::string proto, bool onlyOnce = false );
 
     /**
      * Loads the window states and geometries from a file.

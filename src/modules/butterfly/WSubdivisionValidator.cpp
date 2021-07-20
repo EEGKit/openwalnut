@@ -53,7 +53,7 @@ WSubdivisionValidator::~WSubdivisionValidator()
     // TODO(schwarzkopf): Auto-generated destructor stub
 }
 
-void WSubdivisionValidator::setTriangleMesh( boost::shared_ptr< WTriangleMesh > processedMesh, WVertexFactory* vertexFactory )
+void WSubdivisionValidator::setTriangleMesh( std::shared_ptr< WTriangleMesh > processedMesh, WVertexFactory* vertexFactory )
 {
     this->m_processedMesh = processedMesh;
     this->m_vertexFactory = vertexFactory;
@@ -81,13 +81,13 @@ void WSubdivisionValidator::generateStatisticalInformation()
     }
 }
 
-boost::shared_ptr< WTriangleMesh > WSubdivisionValidator::joinNarrowVertices(
-        boost::shared_ptr< WTriangleMesh > inputMesh )
+std::shared_ptr< WTriangleMesh > WSubdivisionValidator::joinNarrowVertices(
+        std::shared_ptr< WTriangleMesh > inputMesh )
 {
     if  ( m_maxAmountOfMaxForVertexJoin > 0.0f )
     {
         size_t vertCount = inputMesh->vertSize();
-        boost::shared_ptr< WTriangleMesh > outputMesh( new WTriangleMesh( 0, 0 ) );
+        std::shared_ptr< WTriangleMesh > outputMesh( new WTriangleMesh( 0, 0 ) );
         size_t triCount = inputMesh->triangleSize();
         std::vector<osg::Vec3> vertices;
         vertices.reserve( vertCount );
@@ -157,13 +157,13 @@ boost::shared_ptr< WTriangleMesh > WSubdivisionValidator::joinNarrowVertices(
     }
     return inputMesh;
 }
-boost::shared_ptr< WTriangleMesh > WSubdivisionValidator::flipTrianglesAtLowAngles(
-        boost::shared_ptr< WTriangleMesh > inputMesh )
+std::shared_ptr< WTriangleMesh > WSubdivisionValidator::flipTrianglesAtLowAngles(
+        std::shared_ptr< WTriangleMesh > inputMesh )
 {
     if  ( m_maxNeighbourTriangleAngleTriangleFlip > 0.0f )
     {
         size_t vertCount = inputMesh->vertSize();
-        boost::shared_ptr< WTriangleMesh > outputMesh( new WTriangleMesh( 0, 0 ) );
+        std::shared_ptr< WTriangleMesh > outputMesh( new WTriangleMesh( 0, 0 ) );
         for  ( size_t vertID = 0; vertID < vertCount; vertID++)
             outputMesh->addVertex( inputMesh->getVertex( vertID ) );
 

@@ -49,7 +49,7 @@ WTriangleMesh::SPtr WMeshReaderDIP::operator()( WProgressCombiner::SPtr parentPr
     std::string fileName = file.string();
     WAssert( !fileName.empty(), "No filename specified." );
 
-    boost::shared_ptr< WProgress > progress( new WProgress( "Read Mesh", 3 ) );
+    std::shared_ptr< WProgress > progress( new WProgress( "Read Mesh", 3 ) );
     parentProgress->addSubProgress( progress );
 
     std::ifstream ifs;
@@ -80,7 +80,7 @@ WTriangleMesh::SPtr WMeshReaderDIP::operator()( WProgressCombiner::SPtr parentPr
             {
                 WLogger::getLogger()->addLogMessage( "Invalid number of points: " + tokens.at( 1 ), "Read Mesh", LL_ERROR );
                 progress->finish();
-                return boost::shared_ptr< WTriangleMesh >();
+                return std::shared_ptr< WTriangleMesh >();
             }
         }
         if( tokens.size() == 2 && su::toLower( tokens.at( 0 ) ) == "numberpolygons=" )
@@ -93,7 +93,7 @@ WTriangleMesh::SPtr WMeshReaderDIP::operator()( WProgressCombiner::SPtr parentPr
             {
                 WLogger::getLogger()->addLogMessage( "Invalid number of polygons: " + tokens.at( 1 ), "Read Mesh", LL_ERROR );
                 progress->finish();
-                return boost::shared_ptr< WTriangleMesh >();
+                return std::shared_ptr< WTriangleMesh >();
             }
         }
         if( tokens.size() == 2 && su::toLower( tokens.at( 0 ) ) == "typepolygons=" )
@@ -106,13 +106,13 @@ WTriangleMesh::SPtr WMeshReaderDIP::operator()( WProgressCombiner::SPtr parentPr
             {
                 WLogger::getLogger()->addLogMessage( "Invalid type of polygons: " + tokens.at( 1 ), "Read Mesh", LL_ERROR );
                 progress->finish();
-                return boost::shared_ptr< WTriangleMesh >();
+                return std::shared_ptr< WTriangleMesh >();
             }
             if( typeCells != 3 )
             {
                 WLogger::getLogger()->addLogMessage( "Invalid type of polygons: " + tokens.at( 1 ), "Read Mesh", LL_ERROR );
                 progress->finish();
-                return boost::shared_ptr< WTriangleMesh >();
+                return std::shared_ptr< WTriangleMesh >();
             }
         }
     }
@@ -136,7 +136,7 @@ WTriangleMesh::SPtr WMeshReaderDIP::operator()( WProgressCombiner::SPtr parentPr
     {
         WLogger::getLogger()->addLogMessage( "Couldn't find vertex info in the file", "Read Mesh", LL_ERROR );
         progress->finish();
-        return boost::shared_ptr< WTriangleMesh >();
+        return std::shared_ptr< WTriangleMesh >();
     }
 
     std::vector< osg::Vec3 > points;
@@ -158,12 +158,12 @@ WTriangleMesh::SPtr WMeshReaderDIP::operator()( WProgressCombiner::SPtr parentPr
         {
             WLogger::getLogger()->addLogMessage( "Invalid vertex position", "Read Mesh", LL_ERROR );
             progress->finish();
-            return boost::shared_ptr< WTriangleMesh >();
+            return std::shared_ptr< WTriangleMesh >();
         }
     }
     wlog::debug( "Read Mesh" ) << "Finished reading vertex info";
 
-    boost::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( numPoints, numCells ) );
+    std::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( numPoints, numCells ) );
 
     for( unsigned int i = 0; i < numPoints; ++i )
     {
@@ -189,7 +189,7 @@ WTriangleMesh::SPtr WMeshReaderDIP::operator()( WProgressCombiner::SPtr parentPr
     {
         WLogger::getLogger()->addLogMessage( "Couldn't find polygon info in the file", "Read Mesh", LL_ERROR );
         progress->finish();
-        return boost::shared_ptr< WTriangleMesh >();
+        return std::shared_ptr< WTriangleMesh >();
     }
 
 
@@ -209,7 +209,7 @@ WTriangleMesh::SPtr WMeshReaderDIP::operator()( WProgressCombiner::SPtr parentPr
         {
             WLogger::getLogger()->addLogMessage( "Invalid triangle ID", "Read Mesh", LL_ERROR );
             progress->finish();
-            return boost::shared_ptr< WTriangleMesh >();
+            return std::shared_ptr< WTriangleMesh >();
         }
     }
     wlog::debug( "Read Mesh" ) << "Finished reading polygon info";

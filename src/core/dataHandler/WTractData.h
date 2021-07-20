@@ -41,7 +41,7 @@ public:
      * \param pointComponents x, y, and z components of each position of each tract
      * \param startIndices For each tract the index of the first x component in pointComponents.
      */
-    WTractData( boost::shared_ptr< std::vector< float > > pointComponents, boost::shared_ptr< std::vector< size_t > > startIndices );
+    WTractData( std::shared_ptr< std::vector< float > > pointComponents, std::shared_ptr< std::vector< size_t > > startIndices );
 
     /**
      * \return Number of tracts.
@@ -60,7 +60,7 @@ private:
      * \note the reason for beeing restricted to float is, that graphic boards and also the tracking
      * algorithms which produce those tracks are just using floats.
      */
-    boost::shared_ptr< std::vector< float > > m_pointComponents;
+    std::shared_ptr< std::vector< float > > m_pointComponents;
 
     /**
      * Stores for every tract the index number where it starts in the \ref m_pointComponents array.
@@ -69,7 +69,7 @@ private:
      * \note the reason for using \c size_t instead of \c unsigned \c int is that more tracts with
      * more points are in sight.
      */
-    boost::shared_ptr< std::vector< size_t > > m_startIndices;
+    std::shared_ptr< std::vector< size_t > > m_startIndices;
 };
 
 inline size_t WTractData::numTracts() const

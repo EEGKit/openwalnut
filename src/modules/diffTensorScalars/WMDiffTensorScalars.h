@@ -65,7 +65,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
 protected:
     /**
@@ -92,33 +92,33 @@ private:
     /**
      * Input connector required by this module.
      */
-    boost::shared_ptr< WModuleInputForwardData< WDataSetDTI > > m_tensorsIC;
+    std::shared_ptr< WModuleInputForwardData< WDataSetDTI > > m_tensorsIC;
 
     /**
      * Internal input connector for the Eigenvalues computed by the submodule EigenSystem.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetVector > > m_evalsIC;
+    std::shared_ptr< WModuleInputData< WDataSetVector > > m_evalsIC;
 
     /**
      * Dataset for the Eigenvalues.
      */
-    boost::shared_ptr< WDataSetVector > m_evals;
+    std::shared_ptr< WDataSetVector > m_evals;
 
     /**
      * Dataset for the Tensors.
      */
-    boost::shared_ptr< WDataSetDTI > m_tensors;
+    std::shared_ptr< WDataSetDTI > m_tensors;
 
     /**
      * Output connector for the computed scalars.
      */
-    boost::shared_ptr< WModuleOutputData< WDataSetScalar > > m_scalarOC;
+    std::shared_ptr< WModuleOutputData< WDataSetScalar > > m_scalarOC;
 
     /**
      * Submodule doing computation of eigenvalues and eigenvectors.
      * This uses WMEigenSystem.
      */
-    boost::shared_ptr< WModule > m_eigenSystem;
+    std::shared_ptr< WModule > m_eigenSystem;
 
     WStrategyHelper< WObjectNDIP< WDataSetDTIToScalar_I > > m_strategy; //!< the strategy currently active.
 };

@@ -54,7 +54,7 @@ public:
      *
      * \return the tree item representing the module
      */
-    WQtDatasetTreeItem* addDatasetItem( boost::shared_ptr< WModule > module );
+    WQtDatasetTreeItem* addDatasetItem( std::shared_ptr< WModule > module );
 
 protected:
 private:

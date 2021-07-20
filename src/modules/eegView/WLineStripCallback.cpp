@@ -45,7 +45,7 @@
 WLineStripCallback::WLineStripCallback( std::size_t channelID,
                                         WPropDouble timePos,
                                         WPropDouble timeRange,
-                                        boost::shared_ptr< WEEG2Segment > segment,
+                                        std::shared_ptr< WEEG2Segment > segment,
                                         double samplingRate )
     : m_channelID( channelID ),
       m_currentTimePos( 0.0 ),
@@ -88,7 +88,7 @@ void WLineStripCallback::update( osg::NodeVisitor* /*nv*/, osg::Drawable* drawab
             if( start < end )
             {
                 const std::size_t length = end - start;
-                boost::shared_ptr< const WEEGValueMatrix > values = m_segment->getValues( start, length );
+                std::shared_ptr< const WEEGValueMatrix > values = m_segment->getValues( start, length );
                 for( std::size_t i = 0; i < length; ++i )
                 {
                     vertices->push_back( osg::Vec3( ( start + i ) / m_samplingRate, (*values)[m_channelID][i], -0.001 ) );
@@ -112,7 +112,7 @@ void WLineStripCallback::update( osg::NodeVisitor* /*nv*/, osg::Drawable* drawab
             if( start < end )
             {
                 const std::size_t length = end - start;
-                boost::shared_ptr< const WEEGValueMatrix > values = m_segment->getValues( start, length );
+                std::shared_ptr< const WEEGValueMatrix > values = m_segment->getValues( start, length );
                 for( std::size_t i = 0; i < length; ++i )
                 {
                     vertices->push_back( osg::Vec3( ( start + i ) / m_samplingRate, (*values)[m_channelID][i], -0.001 ) );

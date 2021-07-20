@@ -42,7 +42,7 @@ public:
      *
      * \param module the module
      */
-    explicit WModuleRemovedEvent( boost::shared_ptr< WModule > module );
+    explicit WModuleRemovedEvent( std::shared_ptr< WModule > module );
 
     /**
      * Destructor.
@@ -54,13 +54,13 @@ public:
      *
      * \return the module.
      */
-    boost::shared_ptr< WModule > getModule();
+    std::shared_ptr< WModule > getModule();
 
 protected:
     /**
      * The module that got removed.
      */
-    boost::shared_ptr< WModule > m_module;
+    std::shared_ptr< WModule > m_module;
 
 private:
 };

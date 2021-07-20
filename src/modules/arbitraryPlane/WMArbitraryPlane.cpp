@@ -59,10 +59,10 @@ WMArbitraryPlane::~WMArbitraryPlane()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMArbitraryPlane::factory() const
+std::shared_ptr< WModule > WMArbitraryPlane::factory() const
 {
     // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WMArbitraryPlane() );
+    return std::shared_ptr< WModule >( new WMArbitraryPlane() );
 }
 
 const char** WMArbitraryPlane::getXPMIcon() const
@@ -92,7 +92,7 @@ void WMArbitraryPlane::connectors()
 void WMArbitraryPlane::properties()
 {
     // Initialize the properties
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_showComplete = m_properties->addProperty( "Show complete", "Slice should be drawn complete even if the texture value is zero.",
             false, m_propCondition );
@@ -250,7 +250,7 @@ void WMArbitraryPlane::initPlane()
     WGraphicsEngine::getGraphicsEngine()->getScene()->addChild( &( *m_s2 ) );
 
     m_changeRoiSignal
-        = boost::shared_ptr< boost::function< void() > >( new boost::function< void() >( boost::bind( &WMArbitraryPlane::setDirty, this ) ) );
+        = std::shared_ptr< boost::function< void() > >( new boost::function< void() >( boost::bind( &WMArbitraryPlane::setDirty, this ) ) );
     m_s0->addROIChangeNotifier( m_changeRoiSignal );
     m_s1->addROIChangeNotifier( m_changeRoiSignal );
     m_s2->addROIChangeNotifier( m_changeRoiSignal );

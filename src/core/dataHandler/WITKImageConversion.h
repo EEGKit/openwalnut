@@ -45,9 +45,9 @@
  * \return A pointer to a 3D itk image.
  */
 template< typename T >
-typename itk::Image< T, 3 >::Pointer makeImageFromDataSet( boost::shared_ptr< WDataSetScalar const > dataSet )
+typename itk::Image< T, 3 >::Pointer makeImageFromDataSet( std::shared_ptr< WDataSetScalar const > dataSet )
 {
-    boost::shared_ptr< WGridRegular3D > grid = boost::dynamic_pointer_cast< WGridRegular3D >( dataSet->getGrid() );
+    std::shared_ptr< WGridRegular3D > grid = std::dynamic_pointer_cast< WGridRegular3D >( dataSet->getGrid() );
     WAssert( grid, "" );
 
     // this is a shared-pointer
@@ -114,7 +114,7 @@ typename itk::Image< T, 3 >::Pointer makeImageFromDataSet( boost::shared_ptr< WD
  * \return A pointer to the dataset.
  */
 template< typename T >
-boost::shared_ptr< WDataSetScalar > makeDataSetFromImage( typename itk::Image< T, 3 >::Pointer img )
+std::shared_ptr< WDataSetScalar > makeDataSetFromImage( typename itk::Image< T, 3 >::Pointer img )
 {
     typename itk::Image< T, 3 >::SizeType const& s = img->GetLargestPossibleRegion().GetSize();
 
@@ -139,8 +139,8 @@ boost::shared_ptr< WDataSetScalar > makeDataSetFromImage( typename itk::Image< T
     smat( 3, 2 ) = 0.0;
 
     WGridTransformOrtho t( smat );
-    boost::shared_ptr< WGrid > grid( new WGridRegular3D( s[ 0 ], s[ 1 ], s[ 2 ], t ) );
-    boost::shared_ptr< std::vector< T > > v( new std::vector< T >( s[ 0 ] * s[ 1 ] * s[ 2 ] ) );
+    std::shared_ptr< WGrid > grid( new WGridRegular3D( s[ 0 ], s[ 1 ], s[ 2 ], t ) );
+    std::shared_ptr< std::vector< T > > v( new std::vector< T >( s[ 0 ] * s[ 1 ] * s[ 2 ] ) );
 
     typename itk::Image< T, 3 >::IndexType i;
 
@@ -155,9 +155,9 @@ boost::shared_ptr< WDataSetScalar > makeDataSetFromImage( typename itk::Image< T
         }
     }
 
-    boost::shared_ptr< WValueSetBase > values( new WValueSet< T >( 0, 1, v, DataType< T >::type ) );
+    std::shared_ptr< WValueSetBase > values( new WValueSet< T >( 0, 1, v, DataType< T >::type ) );
 
-    return boost::shared_ptr< WDataSetScalar >( new WDataSetScalar( values, grid ) );
+    return std::shared_ptr< WDataSetScalar >( new WDataSetScalar( values, grid ) );
 }
 
 #endif  // OW_USE_ITK

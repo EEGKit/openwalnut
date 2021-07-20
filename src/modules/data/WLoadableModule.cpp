@@ -37,8 +37,8 @@
  */
 extern "C" void WLoadModule( WModuleList& m ) // NOLINT - yes this is a non-const reference
 {
-    m.push_back( boost::shared_ptr< WModule >( new WMData ) );
-    m.push_back( boost::shared_ptr< WModule >( new WMReadSphericalHarmonics ) );
-    m.push_back( boost::shared_ptr< WModule >( new WMWriteNIfTI ) );
+    m.push_back( std::shared_ptr< WModule >( new WMData ) );
+    m.push_back( std::shared_ptr< WModule >( new WMReadSphericalHarmonics ) );
+    m.push_back( std::shared_ptr< WModule >( new WMWriteNIfTI ) );
 }
 

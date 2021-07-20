@@ -77,7 +77,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -113,44 +113,44 @@ protected:
      * \param output this is the sender, the fiberSelection module.
      *
      */
-    void fiberDataChange( boost::shared_ptr< WModuleConnector > input, boost::shared_ptr< WModuleConnector > output );
+    void fiberDataChange( std::shared_ptr< WModuleConnector > input, std::shared_ptr< WModuleConnector > output );
 
 private:
     /**
      * The fiber dataset used.
      */
-    boost::shared_ptr< WModuleInputForwardData< WDataSetFibers > > m_fiberInput;
+    std::shared_ptr< WModuleInputForwardData< WDataSetFibers > > m_fiberInput;
 
     /**
      * The volume of interest 1.
      */
-    boost::shared_ptr< WModuleInputForwardData< WDataSetSingle > > m_VOI1;
+    std::shared_ptr< WModuleInputForwardData< WDataSetSingle > > m_VOI1;
 
     /**
      * The volume of interest 2.
      */
-    boost::shared_ptr< WModuleInputForwardData< WDataSetSingle > > m_VOI2;
+    std::shared_ptr< WModuleInputForwardData< WDataSetSingle > > m_VOI2;
 
     /**
      * The parameter dataset used.
      */
-    boost::shared_ptr< WModuleOutputForwardData< WDataSetScalar > > m_paramOutput;
+    std::shared_ptr< WModuleOutputForwardData< WDataSetScalar > > m_paramOutput;
 
     /**
      * The voxelized fibers used.
      */
-    boost::shared_ptr< WModuleOutputForwardData< WDataSetScalar > > m_voxelOutput;
+    std::shared_ptr< WModuleOutputForwardData< WDataSetScalar > > m_voxelOutput;
 
     /**
      * The fibers used.
      */
-    boost::shared_ptr< WModuleOutputForwardData< WDataSetFibers > > m_fiberOutput;
+    std::shared_ptr< WModuleOutputForwardData< WDataSetFibers > > m_fiberOutput;
 
 
-    boost::shared_ptr< WModule > m_fiberSelection;       //!< The fiber selection module.
-    boost::shared_ptr< WModule > m_voxelizer;            //!< The voxelizer module.
-    boost::shared_ptr< WModule > m_gauss;                //!< The Gauss filter which filters the voxelized fibers.
-    boost::shared_ptr< WModule > m_animation;            //!< The final animation.
+    std::shared_ptr< WModule > m_fiberSelection;       //!< The fiber selection module.
+    std::shared_ptr< WModule > m_voxelizer;            //!< The voxelizer module.
+    std::shared_ptr< WModule > m_gauss;                //!< The Gauss filter which filters the voxelized fibers.
+    std::shared_ptr< WModule > m_animation;            //!< The final animation.
 
     /**
      * The position of the first label showing m_voi1Name
@@ -189,7 +189,7 @@ private:
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /////////////////////////////////////////////////////////////////////
     // OSG Stuff

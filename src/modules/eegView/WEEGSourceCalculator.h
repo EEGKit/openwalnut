@@ -48,7 +48,7 @@ public:
      *
      * \param eeg pointer to the EEG dataset
      */
-    explicit WEEGSourceCalculator( const boost::shared_ptr< const WEEG2 > eeg );
+    explicit WEEGSourceCalculator( const std::shared_ptr< const WEEG2 > eeg );
 
     /**
      * Does the calculation
@@ -56,14 +56,14 @@ public:
      * \param event an event marking a time position
      * \return the calculated position
      */
-    WPosition calculate( const boost::shared_ptr< const WEEGEvent > event ) const;
+    WPosition calculate( const std::shared_ptr< const WEEGEvent > event ) const;
 
 protected:
 private:
     /**
      * pointer to the EEG dataset
      */
-    const boost::shared_ptr< const WEEG2 > m_eeg;
+    const std::shared_ptr< const WEEG2 > m_eeg;
 
     /**
      * vector which saves for each channel whether there exists a position in

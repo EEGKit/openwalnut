@@ -61,10 +61,10 @@ WMTemplateColormapping::~WMTemplateColormapping()
 {
 }
 
-boost::shared_ptr< WModule > WMTemplateColormapping::factory() const
+std::shared_ptr< WModule > WMTemplateColormapping::factory() const
 {
     // NOTE: Refer to WMTemplate.cpp if you do not understand these commands.
-    return boost::shared_ptr< WModule >( new WMTemplateColormapping() );
+    return std::shared_ptr< WModule >( new WMTemplateColormapping() );
 }
 
 const std::string WMTemplateColormapping::getName() const
@@ -91,7 +91,7 @@ void WMTemplateColormapping::properties()
 {
     // NOTE: Refer to WMTemplate.cpp if you do not understand these commands.
 
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     WModule::properties();
 }

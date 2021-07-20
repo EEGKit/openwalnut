@@ -119,13 +119,13 @@ bool WRoiProjectFileIO::parse( std::string line, unsigned int lineNumber )
 
 void WRoiProjectFileIO::done()
 {
-    boost::shared_ptr< WROIManager> rm = WKernel::getRunningKernel()->getRoiManager();
+    std::shared_ptr< WROIManager> rm = WKernel::getRunningKernel()->getRoiManager();
 
-    std::map< Branch, boost::shared_ptr< WRMBranch > > branches;
+    std::map< Branch, std::shared_ptr< WRMBranch > > branches;
     // add all branches
     for( std::vector< Branch >::const_iterator i = m_branches.begin(); i != m_branches.end(); ++i )
     {
-        boost::shared_ptr< WRMBranch > branch = rm->addBranch();
+        std::shared_ptr< WRMBranch > branch = rm->addBranch();
         branches[ *i ] = branch;
 
         // set the properties
@@ -151,7 +151,7 @@ void WRoiProjectFileIO::done()
     for( std::vector< Roi >::const_iterator i = m_rois.begin(); i != m_rois.end(); ++i )
     {
         // get branch of this ROI
-        boost::shared_ptr< WRMBranch > branch = branches[ ( *i ).get< 1 >() ];
+        std::shared_ptr< WRMBranch > branch = branches[ ( *i ).get< 1 >() ];
 
         // add ROI to branch
         osg::ref_ptr< WROI > roi( new WROIBox( WPosition(), WPosition() ) );

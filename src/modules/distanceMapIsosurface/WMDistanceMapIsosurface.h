@@ -62,7 +62,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -97,11 +97,11 @@ private:
     WPropBool m_useTextureProp; //!< Property indicating whether to use texturing with scalar data sets.
     WPropColor m_surfaceColorProp; //!< Property indicating which color to use for non-textured surface.
 
-    boost::shared_ptr< WModuleInputForwardData< WDataSetScalar > > m_input;  //!< Input connector required by this module.
-    boost::shared_ptr< WModuleOutputForwardData< WDataSetScalar > > m_output; //!< Connector to provide the distance map to other modules.
+    std::shared_ptr< WModuleInputForwardData< WDataSetScalar > > m_input;  //!< Input connector required by this module.
+    std::shared_ptr< WModuleOutputForwardData< WDataSetScalar > > m_output; //!< Connector to provide the distance map to other modules.
 
-    boost::shared_ptr< WModule > m_isosurfaceModule; //!< The isosurface module used in this container.
-    boost::shared_ptr< WModule > m_distanceMapModule; //!< The distance map module used in this container.
+    std::shared_ptr< WModule > m_isosurfaceModule; //!< The isosurface module used in this container.
+    std::shared_ptr< WModule > m_distanceMapModule; //!< The distance map module used in this container.
 };
 
 #endif  // WMDISTANCEMAPISOSURFACE_H

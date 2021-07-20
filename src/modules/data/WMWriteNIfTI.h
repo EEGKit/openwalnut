@@ -77,7 +77,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -120,7 +120,7 @@ private:
     WPropFilename m_filename;
     WPropTrigger  m_saveTriggerProp; //!< This property triggers the actual writing,
 
-    boost::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;  //!< Input connector required by this module.
-    boost::shared_ptr< WDataSetSingle > m_dataSet; //!< Pointer providing access to the treated data set in the whole module.
+    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_input;  //!< Input connector required by this module.
+    std::shared_ptr< WDataSetSingle > m_dataSet; //!< Pointer providing access to the treated data set in the whole module.
 };
 #endif  // WMWRITENIFTI_H

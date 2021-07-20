@@ -24,7 +24,7 @@
 
 #include "WInputConnectorWrapper.h"
 
-WInputConnectorWrapper::WInputConnectorWrapper( boost::shared_ptr< WModuleInputConnector > conn )
+WInputConnectorWrapper::WInputConnectorWrapper( std::shared_ptr< WModuleInputConnector > conn )
     : m_conn( conn )
 {
 }

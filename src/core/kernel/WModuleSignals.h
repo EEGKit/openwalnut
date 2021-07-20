@@ -52,14 +52,14 @@ enum MODULE_SIGNAL
  * \param module The module emitting the signal.
  *
  */
-typedef boost::function< void ( boost::shared_ptr< WModule > ) > t_ModuleGenericSignalHandlerType;
+typedef boost::function< void ( std::shared_ptr< WModule > ) > t_ModuleGenericSignalHandlerType;
 
 /**
  * Generic signal type used in the most signals involving just the emitting signal.
  *
  * \param module The module emitting the signal.
  */
-typedef boost::signals2::signal< void ( boost::shared_ptr< WModule > ) >  t_ModuleGenericSignalType;
+typedef boost::signals2::signal< void ( std::shared_ptr< WModule > ) >  t_ModuleGenericSignalType;
 
 /**
  * Signal for error events like "WM_ERROR".
@@ -67,14 +67,14 @@ typedef boost::signals2::signal< void ( boost::shared_ptr< WModule > ) >  t_Modu
  * \param module The module emitting the signal.
  *
  */
-typedef boost::function< void ( boost::shared_ptr< WModule >, const WException& ) > t_ModuleErrorSignalHandlerType;
+typedef boost::function< void ( std::shared_ptr< WModule >, const WException& ) > t_ModuleErrorSignalHandlerType;
 
 /**
  * Signal type used in the most signals involving exceptions.
  *
  * \param module The module emitting the signal.
  */
-typedef boost::signals2::signal< void ( boost::shared_ptr< WModule >, const WException& ) >  t_ModuleErrorSignalType;
+typedef boost::signals2::signal< void ( std::shared_ptr< WModule >, const WException& ) >  t_ModuleErrorSignalType;
 
 #endif  // WMODULESIGNALS_H
 

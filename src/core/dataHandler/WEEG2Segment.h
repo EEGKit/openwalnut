@@ -48,7 +48,7 @@ public:
      * \param pager pager class which contains the data, read from a file on
      *              demand
      */
-    WEEG2Segment( std::size_t segmentID, boost::shared_ptr< WPagerEEG > pager );
+    WEEG2Segment( std::size_t segmentID, std::shared_ptr< WPagerEEG > pager );
 
     /**
      * Get the number of samples this segment consists of.
@@ -64,12 +64,12 @@ public:
      * \param length length of the sample range
      * \return matrix of values
      */
-    boost::shared_ptr< WEEGValueMatrix > getValues( std::size_t start, std::size_t length ) const;
+    std::shared_ptr< WEEGValueMatrix > getValues( std::size_t start, std::size_t length ) const;
 
 protected:
 private:
     std::size_t m_segmentID; //!< number of this segment
-    boost::shared_ptr< WPagerEEG > m_pager; //!< pager class which contains the data, read from a file on demand
+    std::shared_ptr< WPagerEEG > m_pager; //!< pager class which contains the data, read from a file on demand
     std::size_t m_nbSamples; //!< number of samples this segment consists of
 };
 

@@ -89,12 +89,12 @@ public:
      * \return the created triangle mesh
      */
     template< typename T >
-    boost::shared_ptr< WTriangleMesh > generateSurface( size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
+    std::shared_ptr< WTriangleMesh > generateSurface( size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
                                                         const WMatrix< double >& mat,
                                                         const std::vector< T >* vals,
                                                         double isoValue,
-                                                        boost::shared_ptr<WProgressCombiner> mainProgress
-                                                            = boost::shared_ptr < WProgressCombiner >() );
+                                                        std::shared_ptr<WProgressCombiner> mainProgress
+                                                            = std::shared_ptr < WProgressCombiner >() );
 
     /**
      * Generate the triangles for the surface on the given dataSet (inGrid, vals). The texture coordinates in the resulting mesh are relative to
@@ -111,12 +111,12 @@ public:
      *
      * \return the created triangle mesh
      */
-    boost::shared_ptr< WTriangleMesh > genSurfaceOneValue( size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
+    std::shared_ptr< WTriangleMesh > genSurfaceOneValue( size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
                                                            const WMatrix< double >& mat,
                                                            const std::vector< size_t >* vals,
                                                            size_t isoValue,
-                                                           boost::shared_ptr<WProgressCombiner> progress
-                                                                = boost::shared_ptr < WProgressCombiner >() );
+                                                           std::shared_ptr<WProgressCombiner> progress
+                                                                = std::shared_ptr < WProgressCombiner >() );
 
 protected:
 private:
@@ -150,12 +150,12 @@ private:
     WMLTriangleVECTOR m_trivecTriangles;  //!< List of WMCTriangleS which form the triangulation of the isosurface.
 };
 
-template<typename T> boost::shared_ptr<WTriangleMesh>
+template<typename T> std::shared_ptr<WTriangleMesh>
 WMarchingLegoAlgorithm::generateSurface( size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
                                          const WMatrix< double >& mat,
                                          const std::vector< T >* vals,
                                          double isoValue,
-                                         boost::shared_ptr<WProgressCombiner> mainProgress )
+                                         std::shared_ptr<WProgressCombiner> mainProgress )
 {
     WAssert( vals, "No value set provided." );
 
@@ -175,10 +175,10 @@ WMarchingLegoAlgorithm::generateSurface( size_t nbCoordsX, size_t nbCoordsY, siz
 
     size_t nPointsInSlice = nX * nY;
 
-    boost::shared_ptr< WProgress > progress;
+    std::shared_ptr< WProgress > progress;
     if( mainProgress )
     {
-        progress = boost::shared_ptr< WProgress >( new WProgress( "Marching Cubes", m_nCellsZ ) );
+        progress = std::shared_ptr< WProgress >( new WProgress( "Marching Cubes", m_nCellsZ ) );
         mainProgress->addSubProgress( progress );
     }
 
@@ -259,7 +259,7 @@ WMarchingLegoAlgorithm::generateSurface( size_t nbCoordsX, size_t nbCoordsY, siz
         }
     }
     unsigned int nextID = 0;
-    boost::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( m_idToVertices.size(), m_trivecTriangles.size() ) );
+    std::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( m_idToVertices.size(), m_trivecTriangles.size() ) );
 
     // Rename vertices.
     ID2WMLPointXYZId::iterator mapIterator = m_idToVertices.begin();

@@ -75,7 +75,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -152,8 +152,8 @@ private:
      */
     WPropFilename m_filename;
 
-    boost::shared_ptr< WModuleInputData< WDataSetCSV > > m_CSVInput;  //!< Input connector required by this module.
-    boost::shared_ptr< WModuleInputData< WDataSetFibers > > m_fibersInput;  //!< Input connector required by this module.
+    std::shared_ptr< WModuleInputData< WDataSetCSV > > m_CSVInput;  //!< Input connector required by this module.
+    std::shared_ptr< WModuleInputData< WDataSetFibers > > m_fibersInput;  //!< Input connector required by this module.
 };
 
 

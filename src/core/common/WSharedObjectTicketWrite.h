@@ -25,6 +25,8 @@
 #ifndef WSHAREDOBJECTTICKETWRITE_H
 #define WSHAREDOBJECTTICKETWRITE_H
 
+#include <shared_mutex>
+
 #include <boost/shared_ptr.hpp>
 
 #include "WCondition.h"
@@ -69,16 +71,16 @@ protected:
      * \param mutex the mutex used to lock
      * \param condition a condition that should be fired upon unlock. Can be NULL.
      */
-    WSharedObjectTicketWrite( Data& data, boost::shared_ptr< boost::shared_mutex > mutex, boost::shared_ptr< WCondition > condition ): // NOLINT
+    WSharedObjectTicketWrite( Data& data, std::shared_ptr< std::shared_mutex > mutex, std::shared_ptr< WCondition > condition ): // NOLINT
         WSharedObjectTicket< Data >( data, mutex, condition ),
-        m_lock( boost::unique_lock< boost::shared_mutex >( *mutex ) )
+        m_lock( std::unique_lock< std::shared_mutex >( *mutex ) )
     {
     };
 
     /**
      * The lock.
      */
-    boost::unique_lock< boost::shared_mutex > m_lock;
+    std::unique_lock< std::shared_mutex > m_lock;
 
     /**
      * Unlocks the mutex.

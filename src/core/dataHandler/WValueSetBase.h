@@ -62,12 +62,12 @@ public:
     /**
      * Shared pointer to an instance of this class.
      */
-    typedef boost::shared_ptr< WValueSetBase > SPtr;
+    typedef std::shared_ptr< WValueSetBase > SPtr;
 
     /**
      * Shared pointer to an const instance of this class.
      */
-    typedef boost::shared_ptr< const WValueSetBase > ConstSPtr;
+    typedef std::shared_ptr< const WValueSetBase > ConstSPtr;
 
     /**
      * Despite this is an abstract class all subclasses should have an order

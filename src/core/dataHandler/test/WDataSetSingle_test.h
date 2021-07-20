@@ -43,8 +43,8 @@
 class WDataSetSingleTest : public CxxTest::TestSuite
 {
 public:
-    boost::shared_ptr< WGrid > gridDummy; //!< Dummy grid used in the tests.
-    boost::shared_ptr< WValueSetBase > valueSetDummy; //!< Dummy value set used in the tests.
+    std::shared_ptr< WGrid > gridDummy; //!< Dummy grid used in the tests.
+    std::shared_ptr< WValueSetBase > valueSetDummy; //!< Dummy value set used in the tests.
 
     /**
      * Constructs unit test environment.
@@ -54,9 +54,9 @@ public:
         WLogger::startup();
 
         // create dummies, since they are needed in almost every test
-        gridDummy = boost::shared_ptr< WGrid >( new WGridRegular3D( 1, 1, 1 ) );
-        boost::shared_ptr< std::vector< int8_t > > data( new std::vector< int8_t >( 1, 1 ) );
-        valueSetDummy = boost::shared_ptr< WValueSet< int8_t > >( new WValueSet< int8_t >( 0, 1, data, W_DT_INT8 ) );
+        gridDummy = std::shared_ptr< WGrid >( new WGridRegular3D( 1, 1, 1 ) );
+        std::shared_ptr< std::vector< int8_t > > data( new std::vector< int8_t >( 1, 1 ) );
+        valueSetDummy = std::shared_ptr< WValueSet< int8_t > >( new WValueSet< int8_t >( 0, 1, data, W_DT_INT8 ) );
     }
 
     /**
@@ -72,9 +72,9 @@ public:
      */
     void testGetValueSet( void )
     {
-        boost::shared_ptr< std::vector< double > > data( new std::vector< double >( 1, 3.1415 ) );
-        boost::shared_ptr< WValueSet< double > > other;
-        other = boost::shared_ptr< WValueSet< double > >( new WValueSet< double >( 0, 1, data, W_DT_DOUBLE ) );
+        std::shared_ptr< std::vector< double > > data( new std::vector< double >( 1, 3.1415 ) );
+        std::shared_ptr< WValueSet< double > > other;
+        other = std::shared_ptr< WValueSet< double > >( new WValueSet< double >( 0, 1, data, W_DT_DOUBLE ) );
         WDataSetSingle dataSetSingle( valueSetDummy, gridDummy );
         TS_ASSERT_EQUALS( dataSetSingle.getValueSet(), valueSetDummy );
         TS_ASSERT_DIFFERS( dataSetSingle.getValueSet(), other );
@@ -85,7 +85,7 @@ public:
      */
     void testGetGrid( void )
     {
-        boost::shared_ptr< WGrid > other = boost::shared_ptr< WGridRegular3D >( new WGridRegular3D( 1, 1, 1 ) );
+        std::shared_ptr< WGrid > other = std::shared_ptr< WGridRegular3D >( new WGridRegular3D( 1, 1, 1 ) );
         WDataSetSingle dataSetSingle( valueSetDummy, gridDummy );
         TS_ASSERT_EQUALS( dataSetSingle.getGrid(), gridDummy );
         TS_ASSERT_DIFFERS( dataSetSingle.getGrid(), other );

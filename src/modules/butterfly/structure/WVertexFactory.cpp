@@ -35,7 +35,7 @@ namespace butterfly
         m_triangleCount = 0;
     }
 
-    WVertexFactory::WVertexFactory( boost::shared_ptr< WTriangleMesh > triangleMesh )
+    WVertexFactory::WVertexFactory( std::shared_ptr< WTriangleMesh > triangleMesh )
     {
         this->m_triangleMesh = triangleMesh;
         m_vertexCount = 0;
@@ -51,7 +51,7 @@ namespace butterfly
         m_vertProp.resize( 0 );
         m_vertProp.reserve( 0 );
     }
-    void WVertexFactory::setTriangleMesh( boost::shared_ptr< WTriangleMesh > triangleMesh )
+    void WVertexFactory::setTriangleMesh( std::shared_ptr< WTriangleMesh > triangleMesh )
     {
         this->m_triangleMesh = triangleMesh;
     }
@@ -177,7 +177,7 @@ namespace butterfly
         return m_vertProp[vertex1]->getNewVertexProperty( vertex2 );
     }
     void WVertexFactory::examineStencilRange( size_t fromVertex, size_t toVertex,
-            boost::shared_ptr< WProgress > progress )
+            std::shared_ptr< WProgress > progress )
     {
         for  ( size_t vert = fromVertex; vert <= toVertex; vert++ )
         {

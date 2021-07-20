@@ -71,12 +71,12 @@ public:
     /**
      * Abbreviation for a shared pointer on a instance of this class.
      */
-    typedef boost::shared_ptr< WUIViewWidget > SPtr;
+    typedef std::shared_ptr< WUIViewWidget > SPtr;
 
     /**
      * Abbreviation for a const shared pointer on a instance of this class.
      */
-    typedef boost::shared_ptr< const WUIViewWidget > ConstSPtr;
+    typedef std::shared_ptr< const WUIViewWidget > ConstSPtr;
 
     /**
      * Destructor
@@ -93,9 +93,9 @@ public:
     /**
      * Get the viewer which is used
      *
-     * \return the viewer as boost::shard_ptr
+     * \return the viewer as shared_ptr
      */
-    virtual boost::shared_ptr< WGEViewer > getViewer() const = 0;
+    virtual std::shared_ptr< WGEViewer > getViewer() const = 0;
 
     /**
      * Returns the height of the viewport of the camera.

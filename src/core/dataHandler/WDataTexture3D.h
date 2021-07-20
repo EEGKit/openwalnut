@@ -27,6 +27,7 @@
 
 #include <algorithm>
 #include <limits>
+#include <shared_mutex>
 #include <string>
 
 #include <boost/shared_ptr.hpp>
@@ -102,7 +103,7 @@ public:
      * \param valueSet  the value set to use
      * \param grid the grid to use
      */
-     WDataTexture3D( boost::shared_ptr< WValueSetBase > valueSet, boost::shared_ptr< WGridRegular3D > grid );
+     WDataTexture3D( std::shared_ptr< WValueSetBase > valueSet, std::shared_ptr< WGridRegular3D > grid );
 
     /**
      * Destructor.
@@ -127,7 +128,7 @@ private:
     /**
      * The value set from which the texture gets created.
      */
-    boost::shared_ptr< WValueSetBase > m_valueSet;
+    std::shared_ptr< WValueSetBase > m_valueSet;
 
     /**
      * The bounding box of the underlying grid.
@@ -137,7 +138,7 @@ private:
     /**
      * The lock for securing createTexture.
      */
-    boost::shared_mutex m_creationLock;
+    std::shared_mutex m_creationLock;
 
     /**
      * Creates a properly sized osg::Image from the specified source data.
@@ -180,7 +181,7 @@ template < typename T >
 osg::ref_ptr< osg::Image > WDataTexture3D::createTexture( T* source, int components )
 {
     // get lock
-    boost::unique_lock< boost::shared_mutex > lock( m_creationLock );
+    std::unique_lock< std::shared_mutex > lock( m_creationLock );
 
     // get the current scaling info
     T min = static_cast< T >( minimum()->get() );

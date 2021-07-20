@@ -36,7 +36,7 @@
 
 #include "WRulerOrtho.h"
 
-WRulerOrtho::WRulerOrtho( boost::shared_ptr<WCoordConverter>coordConverter, osg::Vec3 origin, scaleMode mode, bool showNumbers ) :
+WRulerOrtho::WRulerOrtho( std::shared_ptr<WCoordConverter>coordConverter, osg::Vec3 origin, scaleMode mode, bool showNumbers ) :
     WRuler(),
     m_coordConverter( coordConverter ),
     m_origin( origin ),

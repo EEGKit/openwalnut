@@ -60,10 +60,10 @@ WMTriangleMeshRenderer::~WMTriangleMeshRenderer()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMTriangleMeshRenderer::factory() const
+std::shared_ptr< WModule > WMTriangleMeshRenderer::factory() const
 {
     // See "src/modules/template/" for an extensively documented example.
-    return boost::shared_ptr< WModule >( new WMTriangleMeshRenderer() );
+    return std::shared_ptr< WModule >( new WMTriangleMeshRenderer() );
 }
 
 const char** WMTriangleMeshRenderer::getXPMIcon() const
@@ -160,12 +160,12 @@ void WMTriangleMeshRenderer::properties()
     m_nbVertices->setMax( std::numeric_limits< int >::max() );
 
     // some properties need to trigger an update
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     // setup all the properties. See header file for their meaning and purpose.
     // Allow the user to select different colormodes
 
-    boost::shared_ptr< WItemSelection > renderingModes( boost::shared_ptr< WItemSelection >( new WItemSelection() ) );
+    std::shared_ptr< WItemSelection > renderingModes( std::shared_ptr< WItemSelection >( new WItemSelection() ) );
     renderingModes->addItem( "Smooth Shading", "Smooth shading with Phong illumination model." );
     renderingModes->addItem( "Flat Shading", "Each triangle has one constant color for shading." );
     renderingModes->addItem( "Outline", "The surface is represented by lines only." );
@@ -186,7 +186,7 @@ void WMTriangleMeshRenderer::properties()
     m_opacity->setMax( 100.0 );
 
     // Allow the user to select different colormodes
-    boost::shared_ptr< WItemSelection > colorModes( boost::shared_ptr< WItemSelection >( new WItemSelection() ) );
+    std::shared_ptr< WItemSelection > colorModes( std::shared_ptr< WItemSelection >( new WItemSelection() ) );
     colorModes->addItem( "Single Color", "The whole surface is colored using the default color." );
     colorModes->addItem( "From Mesh", "The surface is colored according to the mesh." );
     colorModes->addItem( "From colormap connector", "The surface is colored using the colormap on colorMap connector." );
@@ -267,7 +267,7 @@ struct WMeshSizeComp
      *
      * \return True if and only if the first Mesh has less vertices as the second mesh.
      */
-    bool operator()( const boost::shared_ptr< WTriangleMesh >& m, const boost::shared_ptr< WTriangleMesh >& n ) const
+    bool operator()( const std::shared_ptr< WTriangleMesh >& m, const std::shared_ptr< WTriangleMesh >& n ) const
     {
         return m->vertSize() < n->vertSize();
     }
@@ -338,7 +338,7 @@ void WMTriangleMeshRenderer::moduleMain()
         }
 
         // Get data and check for invalid data.
-        boost::shared_ptr< WTriangleMesh > mesh = m_meshInput->getData();
+        std::shared_ptr< WTriangleMesh > mesh = m_meshInput->getData();
         if( !mesh )
         {
             debugLog() << "Invalid Data. Disabling.";
@@ -352,9 +352,9 @@ void WMTriangleMeshRenderer::moduleMain()
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( postNode );
 }
 
-void WMTriangleMeshRenderer::renderMesh( boost::shared_ptr< WTriangleMesh > mesh )
+void WMTriangleMeshRenderer::renderMesh( std::shared_ptr< WTriangleMesh > mesh )
 {
-    boost::shared_ptr< WColoredVertices > colorMap = m_colorMapInput->getData();
+    std::shared_ptr< WColoredVertices > colorMap = m_colorMapInput->getData();
 
     m_nbTriangles->set( mesh->triangleSize() );
     m_nbVertices->set( mesh->vertSize() );
@@ -393,14 +393,14 @@ void WMTriangleMeshRenderer::renderMesh( boost::shared_ptr< WTriangleMesh > mesh
                               getIntervallCenterMiddle( minZ, maxZ ) );
 
     // start rendering
-    boost::shared_ptr< WProgress > progress( new WProgress( "Rendering", 3 ) );
+    std::shared_ptr< WProgress > progress( new WProgress( "Rendering", 3 ) );
     m_progress->addSubProgress( progress );
 
     if( m_mainComponentOnly->get( true ) )
     {
         // component decomposition
         debugLog() << "Start mesh decomposition";
-        boost::shared_ptr< std::list< boost::shared_ptr< WTriangleMesh > > > m_components = tm_utils::componentDecomposition( *mesh );
+        std::shared_ptr< std::list< std::shared_ptr< WTriangleMesh > > > m_components = tm_utils::componentDecomposition( *mesh );
         mesh = *std::max_element( m_components->begin(), m_components->end(), WMeshSizeComp() );
         debugLog() << "Decomposing mesh done";
     }

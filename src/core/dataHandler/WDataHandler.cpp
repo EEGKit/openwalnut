@@ -36,20 +36,20 @@
 #include "WDataHandler.h"
 
 // instance as singleton
-boost::shared_ptr< WDataHandler > WDataHandler::m_instance = boost::shared_ptr< WDataHandler >();
+std::shared_ptr< WDataHandler > WDataHandler::m_instance = std::shared_ptr< WDataHandler >();
 
 WDataHandler::WDataHandler():
     m_subjects()
 {
     WLogger::getLogger()->addLogMessage( "Initializing Data Handler", "Data Handler", LL_INFO );
-    addSubject( boost::shared_ptr< WSubject >( new WSubject( WPersonalInformation::createDummyInformation() ) ) );
+    addSubject( std::shared_ptr< WSubject >( new WSubject( WPersonalInformation::createDummyInformation() ) ) );
 }
 
 WDataHandler::~WDataHandler()
 {
 }
 
-void WDataHandler::addSubject( boost::shared_ptr< WSubject > subject )
+void WDataHandler::addSubject( std::shared_ptr< WSubject > subject )
 {
     WLogger::getLogger()->addLogMessage( "Adding subject with ID \"" +
                                          string_utils::toString( subject->getPersonalInformation().getSubjectID() ) + "\" and Name \""
@@ -60,7 +60,7 @@ void WDataHandler::addSubject( boost::shared_ptr< WSubject > subject )
     m_subjects.push_back( subject );
 }
 
-void WDataHandler::removeSubject( boost::shared_ptr< WSubject > subject )
+void WDataHandler::removeSubject( std::shared_ptr< WSubject > subject )
 {
     SubjectSharedContainerType::WriteTicket l = m_subjects.getWriteTicket();
 
@@ -105,12 +105,12 @@ WDataHandler::SubjectSharedContainerType::ReadTicket WDataHandler::getSubjects()
     return m_subjects.getReadTicket();
 }
 
-boost::shared_ptr< WSubject > WDataHandler::getSubjectByID( size_t subjectID )
+std::shared_ptr< WSubject > WDataHandler::getSubjectByID( size_t subjectID )
 {
     SubjectSharedContainerType::ReadTicket l = m_subjects.getReadTicket();
 
     // search it
-    boost::shared_ptr< WSubject > result;
+    std::shared_ptr< WSubject > result;
     try
     {
         if( subjectID < l->get().size() )
@@ -119,7 +119,7 @@ boost::shared_ptr< WSubject > WDataHandler::getSubjectByID( size_t subjectID )
         }
         else
         {
-            result = boost::shared_ptr< WSubject >();
+            result = std::shared_ptr< WSubject >();
         }
     }
     catch( const std::out_of_range& e )
@@ -130,17 +130,17 @@ boost::shared_ptr< WSubject > WDataHandler::getSubjectByID( size_t subjectID )
     return result;
 }
 
-boost::shared_ptr< WDataHandler > WDataHandler::getDataHandler()
+std::shared_ptr< WDataHandler > WDataHandler::getDataHandler()
 {
     if( !m_instance )
     {
-        m_instance = boost::shared_ptr< WDataHandler >( new WDataHandler() );
+        m_instance = std::shared_ptr< WDataHandler >( new WDataHandler() );
     }
 
     return m_instance;
 }
 
-boost::shared_ptr< WSubject > WDataHandler::getDefaultSubject()
+std::shared_ptr< WSubject > WDataHandler::getDefaultSubject()
 {
     return getDataHandler()->getSubjectByID( WSubject::SUBJECT_UNKNOWN );
 }

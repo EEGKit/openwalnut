@@ -112,11 +112,11 @@ public:
      * \return the genereated surface
      */
     template< typename T >
-    boost::shared_ptr< WTriangleMesh > generateSurface(  size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
+    std::shared_ptr< WTriangleMesh > generateSurface(  size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
                                                           const WMatrix< double >& mat,
                                                           const std::vector< T >* vals,
                                                           double isoValue,
-                                                          boost::shared_ptr< WProgressCombiner > mainProgress );
+                                                          std::shared_ptr< WProgressCombiner > mainProgress );
 
 protected:
 private:
@@ -187,11 +187,11 @@ private:
 };
 
 
-template<typename T> boost::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::generateSurface( size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
+template<typename T> std::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::generateSurface( size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
                                                                                                  const WMatrix< double >& mat,
                                                                                                  const std::vector< T >* vals,
                                                                                                  double isoValue,
-                                                                                                 boost::shared_ptr< WProgressCombiner > mainProgress )
+                                                                                                 std::shared_ptr< WProgressCombiner > mainProgress )
 {
     WAssert( vals, "No value set provided." );
 
@@ -212,7 +212,7 @@ template<typename T> boost::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::g
 
     unsigned int nPointsInSlice = nX * nY;
 
-    boost::shared_ptr< WProgress > progress( new WProgress( "Marching Cubes", m_nCellsZ ) );
+    std::shared_ptr< WProgress > progress( new WProgress( "Marching Cubes", m_nCellsZ ) );
     mainProgress->addSubProgress( progress );
     // Generate isosurface.
     for( unsigned int z = 0; z < m_nCellsZ; z++ )
@@ -350,7 +350,7 @@ template<typename T> boost::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::g
     }
 
     unsigned int nextID = 0;
-    boost::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( m_idToVertices.size(), m_trivecTriangles.size() ) );
+    std::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( m_idToVertices.size(), m_trivecTriangles.size() ) );
 
     // Rename vertices.
     ID2WPointXYZId::iterator mapIterator = m_idToVertices.begin();

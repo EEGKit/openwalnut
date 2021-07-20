@@ -45,7 +45,7 @@ public:
      * \param newValueSet Valueset having vectors of dimension 6.
      * \param newGrid
      */
-    WDataSetDTI( boost::shared_ptr< WValueSetBase > newValueSet, boost::shared_ptr< WGrid > newGrid );
+    WDataSetDTI( std::shared_ptr< WValueSetBase > newValueSet, std::shared_ptr< WGrid > newGrid );
 
     /**
      * Constructs a new set of tracts. The constructed instance is not usable but needed for prototype mechanism.
@@ -66,7 +66,7 @@ public:
      *
      * \return the clone
      */
-    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WValueSetBase > newValueSet, boost::shared_ptr< WGrid > newGrid ) const;
+    virtual WDataSetSingle::SPtr clone( std::shared_ptr< WValueSetBase > newValueSet, std::shared_ptr< WGrid > newGrid ) const;
 
     /**
      * Creates a copy (clone) of this instance but allows one to change the valueset. Unlike copy construction, this is a very useful function if you
@@ -76,7 +76,7 @@ public:
      *
      * \return the clone
      */
-    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WValueSetBase > newValueSet ) const;
+    virtual WDataSetSingle::SPtr clone( std::shared_ptr< WValueSetBase > newValueSet ) const;
 
     /**
      * Creates a copy (clone) of this instance but allows one to change the grid. Unlike copy construction, this is a very useful function if you
@@ -86,7 +86,7 @@ public:
      *
      * \return the clone
      */
-    virtual WDataSetSingle::SPtr clone( boost::shared_ptr< WGrid > newGrid ) const;
+    virtual WDataSetSingle::SPtr clone( std::shared_ptr< WGrid > newGrid ) const;
 
     /**
      * Creates a copy (clone) of this instance. Unlike copy construction, this is a very useful function if you
@@ -126,13 +126,13 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
 protected:
     /**
      * The prototype as singleton.
      */
-    static boost::shared_ptr< WPrototyped > m_prototype;
+    static std::shared_ptr< WPrototyped > m_prototype;
 
 private:
 };

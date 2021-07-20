@@ -55,11 +55,11 @@ public:
      */
     void testInterpolate( void )
     {
-        boost::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( 2, 2, 2 ) );
+        std::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( 2, 2, 2 ) );
         boost::array< WPosition, 8 > d = { { WPosition(  0, 1, 2 ), WPosition(  3, 4, 5 ), WPosition(  6, 7, 8 ), // NOLINT braces
             WPosition(  9,10,11 ), WPosition( 12,13,14 ), WPosition( 15,16,17 ), WPosition( 18,19,20 ), WPosition( 21,22,23 ) } }; // NOLINT braces
 
-        boost::shared_ptr< std::vector< double > > data( new std::vector< double > );
+        std::shared_ptr< std::vector< double > > data( new std::vector< double > );
         for( size_t i = 0; i < grid->size() * 3; ++i )
         {
             data->push_back( i );
@@ -70,7 +70,7 @@ public:
             WPosition( almost1, almost1, 0 ), WPosition( 0, 0, almost1 ), WPosition(  almost1, 0, almost1 ),
             WPosition( 0, almost1, almost1 ), WPosition(  almost1, almost1, almost1 ) } }; // NOLINT braces
 
-        boost::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 1, 3, data, W_DT_DOUBLE ) );
+        std::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 1, 3, data, W_DT_DOUBLE ) );
         WDataSetVector ds( valueSet, grid );
 
         bool success = false;
@@ -120,8 +120,8 @@ public:
      */
     void testEigenVectorInterpolate( void )
     {
-        boost::shared_ptr< WGrid > grid( new WGridRegular3D( 2, 2, 2 ) );
-        boost::shared_ptr< std::vector< double > > data( new std::vector< double > );
+        std::shared_ptr< WGrid > grid( new WGridRegular3D( 2, 2, 2 ) );
+        std::shared_ptr< std::vector< double > > data( new std::vector< double > );
         boost::array< WPosition, 8 > d = { { WPosition( -1, 0, 0 ), // NOLINT braces
                                              WPosition(  1, 0, 0 ),
                                              WPosition(  1, 0, 0 ),
@@ -137,7 +137,7 @@ public:
             data->push_back( d[i][1] );
             data->push_back( d[i][2] );
         }
-        boost::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 1, 3, data, W_DT_DOUBLE ) );
+        std::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 1, 3, data, W_DT_DOUBLE ) );
         WDataSetVector ds( valueSet, grid );
 
         bool success = false;
@@ -161,14 +161,14 @@ public:
      */
     void testBoundary_ticket313( void )
     {
-        boost::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( 3, 4, 5 ) );
+        std::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( 3, 4, 5 ) );
         bool success = false;
-        boost::shared_ptr< std::vector< double > > data( new std::vector< double >( grid->size() * 3 ) );
+        std::shared_ptr< std::vector< double > > data( new std::vector< double >( grid->size() * 3 ) );
         for( size_t i = 0; i < grid->size() * 3; ++i )
         {
             ( *data )[i] = i;
         }
-        boost::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 1, 3, data, W_DT_DOUBLE ) );
+        std::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 1, 3, data, W_DT_DOUBLE ) );
         WDataSetVector ds( valueSet, grid );
         ds.interpolate( WPosition( 2.0, 3.0, 4.0 ), &success );
         TS_ASSERT( !success );
@@ -189,8 +189,8 @@ public:
 
         WGridTransformOrtho v( mat );
 
-        boost::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( 2, 2, 2, v ) );
-        boost::shared_ptr< std::vector< double > > data( new std::vector< double > );
+        std::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( 2, 2, 2, v ) );
+        std::shared_ptr< std::vector< double > > data( new std::vector< double > );
         boost::array< WPosition, 8 > d = { { WPosition( -1, 0, 0 ), // NOLINT braces
                                              WPosition(  1, 0, 0 ),
                                              WPosition(  1, 0, 0 ),
@@ -206,7 +206,7 @@ public:
             data->push_back( d[i][1] );
             data->push_back( d[i][2] );
         }
-        boost::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 1, 3, data, W_DT_DOUBLE ) );
+        std::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 1, 3, data, W_DT_DOUBLE ) );
         WDataSetVector ds( valueSet, grid );
 
         bool success = false;
@@ -254,8 +254,8 @@ public:
         boost::random::uniform_real_distribution<> prndz( 0.0, ( sz - 1.000000001 ) * mat( 2, 2 ) );
 
         WGridTransformOrtho v( mat );
-        boost::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( sx, sy, sz, v ) );
-        boost::shared_ptr< std::vector< double > > data( new std::vector< double >( grid->size() * 3 ) );
+        std::shared_ptr< WGridRegular3D > grid( new WGridRegular3D( sx, sy, sz, v ) );
+        std::shared_ptr< std::vector< double > > data( new std::vector< double >( grid->size() * 3 ) );
 
         for( std::size_t k = 0; k < grid->size(); ++k )
         {
@@ -264,7 +264,7 @@ public:
             data->at( 3 * k + 2 ) = drnd( rng );
         }
 
-        boost::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 1, 3, data, W_DT_DOUBLE ) );
+        std::shared_ptr< WValueSet< double > > valueSet( new WValueSet< double >( 1, 3, data, W_DT_DOUBLE ) );
         WDataSetVector ds( valueSet, grid );
 
         for( std::size_t k = 0; k < 1000; ++k )
@@ -276,8 +276,8 @@ public:
             m( 2, 3 ) = drnd( rng );
 
             WGridTransformOrtho t( m );
-            boost::shared_ptr< WGridRegular3D > tGrid( new WGridRegular3D( sx, sy, sz, t ) );
-            boost::shared_ptr< WValueSet< double > > tValueSet( new WValueSet< double >( 1, 3, data, W_DT_DOUBLE ) );
+            std::shared_ptr< WGridRegular3D > tGrid( new WGridRegular3D( sx, sy, sz, t ) );
+            std::shared_ptr< WValueSet< double > > tValueSet( new WValueSet< double >( 1, 3, data, W_DT_DOUBLE ) );
             WDataSetVector tds( tValueSet, tGrid );
 
             // test random positions in the dataset

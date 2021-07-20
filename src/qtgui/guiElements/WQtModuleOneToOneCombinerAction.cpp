@@ -27,7 +27,7 @@
 #include "WQtModuleOneToOneCombinerAction.h"
 
 WQtModuleOneToOneCombinerAction::WQtModuleOneToOneCombinerAction( QWidget* parent, WIconManager* iconManager,
-                                                                  boost::shared_ptr< WModuleOneToOneCombiner > combiner,
+                                                                  std::shared_ptr< WModuleOneToOneCombiner > combiner,
                                                                   bool advancedText ):
     QAction( parent ),
     m_combiner( combiner )

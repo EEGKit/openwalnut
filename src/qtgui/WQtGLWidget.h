@@ -100,7 +100,7 @@ public:
      *
      * \return a shared pointer to the viewer
      */
-    boost::shared_ptr< WGEViewer > getViewer() const;
+    std::shared_ptr< WGEViewer > getViewer() const;
 
     /**
      * Creates and returns a default OpenGL format description with vertical sync enabled.
@@ -196,7 +196,7 @@ protected:
     /**
      * The viewer to the scene.
      */
-    boost::shared_ptr<WGEViewer> m_Viewer;
+    std::shared_ptr<WGEViewer> m_Viewer;
 
     /**
      * The name of the viewer.

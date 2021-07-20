@@ -60,12 +60,12 @@ public:
      */
     WEEGEvent( double time,
                double yPos,
-               boost::shared_ptr< WEEG2 > eeg,
+               std::shared_ptr< WEEG2 > eeg,
                std::size_t segmentID,
                osg::ref_ptr< WGEGroupNode > parentNode,
                bool snapToDipole,
                bool proofOfConcept,
-               boost::shared_ptr< WDataSetDipoles > dipoles );
+               std::shared_ptr< WDataSetDipoles > dipoles );
 
     /**
      * Constructor for an empty event

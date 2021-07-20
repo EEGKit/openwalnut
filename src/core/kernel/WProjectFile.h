@@ -47,18 +47,18 @@ class WModule;
  * WProjectFileIO instances which then do their job.
  */
 class WProjectFile: public WThreadedRunner,
-                    public boost::enable_shared_from_this< WProjectFile >
+                    public std::enable_shared_from_this< WProjectFile >
 {
 public:
     /**
      * Abbreviation for a shared pointer.
      */
-    typedef boost::shared_ptr< WProjectFile > SPtr;
+    typedef std::shared_ptr< WProjectFile > SPtr;
 
     /**
      * Abbreviation for const shared pointer.
      */
-    typedef boost::shared_ptr< const WProjectFile > ConstSPtr;
+    typedef std::shared_ptr< const WProjectFile > ConstSPtr;
 
     /**
      * A callback function type reporting bach a finished load job. The given string vector contains a list of errors if any.
@@ -107,7 +107,7 @@ public:
      *
      * \param writer the list of writers to use.
      */
-    virtual void save( const std::list< boost::shared_ptr< WProjectFileIO > >& writer );
+    virtual void save( const std::list< std::shared_ptr< WProjectFileIO > >& writer );
 
     /**
      * Saves the current state to the file specified in the constructor. This also supports a custom list of writers. This is useful to only
@@ -115,28 +115,28 @@ public:
      *
      * \param writer the list of writers to use.
      */
-    virtual void save( const std::vector< boost::shared_ptr< WProjectFileIO > >& writer );
+    virtual void save( const std::vector< std::shared_ptr< WProjectFileIO > >& writer );
 
     /**
      * Returns an instance of the Camera writer.
      *
      * \return the writer able to output the camera configuration to a stream.
      */
-    static boost::shared_ptr< WProjectFileIO > getCameraWriter();
+    static std::shared_ptr< WProjectFileIO > getCameraWriter();
 
     /**
      * Returns an instance of the module writer.
      *
      * \return the writer able to output the module configuration to a stream.
      */
-    static boost::shared_ptr< WProjectFileIO > getModuleWriter();
+    static std::shared_ptr< WProjectFileIO > getModuleWriter();
 
     /**
      * Returns an instance of the ROI writer.
      *
      * \return the writer able to output the ROI configuration to a stream.
      */
-    static boost::shared_ptr< WProjectFileIO > getROIWriter();
+    static std::shared_ptr< WProjectFileIO > getROIWriter();
 
     /**
      * Register a custom project file parser. Use this to add and re-read information from project files. The change takes effect when creating a
@@ -164,7 +164,7 @@ public:
      *
      * \return the module, or NULL if ID is not known.
      */
-    boost::shared_ptr< WModule > mapToModule( unsigned int id ) const;
+    std::shared_ptr< WModule > mapToModule( unsigned int id ) const;
 
     /**
      * Map a given module to project file ID. This method must not be used by WModuleProjectFileCombiner, as it builds this mapping. All other
@@ -174,7 +174,7 @@ public:
      *
      * \return the ID, or numeric_limits< unisigned int >::max() if module not known.*
      */
-    unsigned int mapFromModule( boost::shared_ptr< WModule > module ) const;
+    unsigned int mapFromModule( std::shared_ptr< WModule > module ) const;
 
 protected:
     /**
@@ -191,12 +191,12 @@ protected:
     /**
      * The parser instances. They are used to parse the file.
      */
-    std::list< boost::shared_ptr< WProjectFileIO > > m_parsers;
+    std::list< std::shared_ptr< WProjectFileIO > > m_parsers;
 
     /**
      * The writer instances. They are used to write the file.
      */
-    std::list< boost::shared_ptr< WProjectFileIO > > m_writers;
+    std::list< std::shared_ptr< WProjectFileIO > > m_writers;
 
     /**
      * Do custom exception handling.
@@ -230,7 +230,7 @@ private:
     /**
      * This is the only WProjectFileIO instance which is needed. It is used to map ID to module.
      */
-    boost::shared_ptr< WModuleProjectFileCombiner > m_moduleIO;
+    std::shared_ptr< WModuleProjectFileCombiner > m_moduleIO;
 };
 
 #endif  // WPROJECTFILE_H

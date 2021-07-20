@@ -58,12 +58,12 @@ public:
     /**
      * Convenience typedef for a boost_shared_ptr< WGEShaderPropertyDefineOptions >.
      */
-    typedef boost::shared_ptr< WGEShaderPropertyDefineOptions > SPtr;
+    typedef std::shared_ptr< WGEShaderPropertyDefineOptions > SPtr;
 
     /**
      * Convenience typedef for a boost_shared_ptr< const WGEShaderPropertyDefineOptions >.
      */
-    typedef boost::shared_ptr< const WGEShaderPropertyDefineOptions > ConstSPtr;
+    typedef std::shared_ptr< const WGEShaderPropertyDefineOptions > ConstSPtr;
 
     /**
      * Create a new instance of this class. The first option is mandatory and is set as default. The specified property controls the activations.

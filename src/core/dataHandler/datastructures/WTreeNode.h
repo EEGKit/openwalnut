@@ -36,13 +36,13 @@
 /**
  * A node in a tree, holding an index, a level in the tree and pointers to its child nodes
  */
-class WTreeNode : public boost::enable_shared_from_this<WTreeNode>
+class WTreeNode : public std::enable_shared_from_this<WTreeNode>
 {
 public:
     /**
      * Shared pointer abbreviation.
      */
-    typedef boost::shared_ptr< WTreeNode > SPtr;
+    typedef std::shared_ptr< WTreeNode > SPtr;
 
     /**
      * Constructs a new TreeNode.

@@ -48,12 +48,12 @@ public:
     /**
      * Pointer to dataset.
      */
-    typedef boost::shared_ptr< WDataSetHierarchicalClustering > SPtr;
+    typedef std::shared_ptr< WDataSetHierarchicalClustering > SPtr;
 
     /**
      * Pointer to const dataset.
      */
-    typedef boost::shared_ptr< const WDataSetHierarchicalClustering > ConstSPtr;
+    typedef std::shared_ptr< const WDataSetHierarchicalClustering > ConstSPtr;
 
      /**
      * Constructs a hierarchical clustering dataset
@@ -92,7 +92,7 @@ public:
      *
      * \return the prototype.
      */
-    static boost::shared_ptr< WPrototyped > getPrototype();
+    static std::shared_ptr< WPrototyped > getPrototype();
 
     /**
      * Returns the root cluster
@@ -121,7 +121,7 @@ protected:
     /**
      * The prototype as singleton.
      */
-    static boost::shared_ptr< WPrototyped > m_prototype;
+    static std::shared_ptr< WPrototyped > m_prototype;
 
 private:
     /**

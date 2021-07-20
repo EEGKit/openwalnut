@@ -32,7 +32,7 @@
 
 #include "WCsvConverter.h"
 
-WCsvConverter::WCsvConverter( WProtonData::SPtr protonData, boost::shared_ptr< WPropertyStatus > propertyStatus,
+WCsvConverter::WCsvConverter( WProtonData::SPtr protonData, std::shared_ptr< WPropertyStatus > propertyStatus,
                                 WModule::SPtr colorBar )
 {
     if( protonData == nullptr || propertyStatus == nullptr || colorBar == nullptr )
@@ -49,17 +49,17 @@ WCsvConverter::WCsvConverter( WProtonData::SPtr protonData, boost::shared_ptr< W
     setOutputFromCSV( );
 }
 
-boost::shared_ptr< WDataSetFibers > WCsvConverter::getFibers()
+std::shared_ptr< WDataSetFibers > WCsvConverter::getFibers()
 {
     return m_fibers;
 }
 
-boost::shared_ptr< WDataSetPoints > WCsvConverter::getPoints()
+std::shared_ptr< WDataSetPoints > WCsvConverter::getPoints()
 {
     return m_points;
 }
 
-boost::shared_ptr< WDataSetPoints > WCsvConverter::getPointsAndIDs()
+std::shared_ptr< WDataSetPoints > WCsvConverter::getPointsAndIDs()
 {
     return m_selectedEventIDs;
 }
@@ -118,14 +118,14 @@ void WCsvConverter::setOutputFromCSV( )
     createOutputPointsAndEventIDs();
 }
 
-boost::shared_ptr< WDataSetSingle > WCsvConverter::getTransferFunction()
+std::shared_ptr< WDataSetSingle > WCsvConverter::getTransferFunction()
 {
     return m_transferFunction;
 }
 
-boost::shared_ptr< std::vector<unsigned char> > WCsvConverter::sampleTransferFunction()
+std::shared_ptr< std::vector<unsigned char> > WCsvConverter::sampleTransferFunction()
 {
-    boost::shared_ptr< std::vector<unsigned char> > data( new std::vector<unsigned char>( 50 * 4 ) );
+    std::shared_ptr< std::vector<unsigned char> > data( new std::vector<unsigned char>( 50 * 4 ) );
 
     WTransferFunction tf = m_propertyStatus->getVisualizationPropertyHandler()->getTransferFunction()->get( true );
 
@@ -138,7 +138,7 @@ void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArra
 {
     if( m_protonData->isColumnAvailable( WSingleSelectorName::getEdep() ) )
     {
-        boost::shared_ptr< std::vector< unsigned char > > data = sampleTransferFunction();
+        std::shared_ptr< std::vector< unsigned char > > data = sampleTransferFunction();
 
         setTransferFunction( data );
 
@@ -267,15 +267,15 @@ void WCsvConverter::addEdepAndSize( WDataSetCSV::Content::iterator dataRow, floa
 void WCsvConverter::calculateFibers()
 {
     size_t skippedPoints = 0;
-    boost::shared_ptr< std::map< size_t, boost::shared_ptr< WFiber > > > fibers( new std::map< size_t, boost::shared_ptr< WFiber > >() );
-    boost::shared_ptr< std::map< size_t, SPFloatVector > > colors( new std::map< size_t, SPFloatVector >() );
+    std::shared_ptr< std::map< size_t, std::shared_ptr< WFiber > > > fibers( new std::map< size_t, std::shared_ptr< WFiber > >() );
+    std::shared_ptr< std::map< size_t, SPFloatVector > > colors( new std::map< size_t, SPFloatVector >() );
 
     for( size_t i = 0; i < m_vectors->getEventIDs()->size(); i++ )
     {
         size_t eID = m_vectors->getEventIDs()->at( i );
         WPosition pos( m_vectors->getVertices()->at( i * 3 ), m_vectors->getVertices()->at( i * 3 + 1 ), m_vectors->getVertices()->at( i * 3 + 2 ) );
 
-        boost::shared_ptr< WFiber > fib;
+        std::shared_ptr< WFiber > fib;
         SPFloatVector col;
 
         if( fibers->find( eID ) != fibers->end() )
@@ -285,7 +285,7 @@ void WCsvConverter::calculateFibers()
         }
         else
         {
-            fib = boost::shared_ptr< WFiber >( new WFiber() );
+            fib = std::shared_ptr< WFiber >( new WFiber() );
             col = SPFloatVector( new std::vector< float > );
             fibers->operator[]( eID ) = fib;
             colors->operator[]( eID ) = col;
@@ -333,17 +333,17 @@ void WCsvConverter::createOutputPoints()
     {
         if( m_propertyStatus->getVisualizationPropertyHandler()->getSizesFromEdep()->get() )
         {
-            m_points = boost::shared_ptr< WDataSetPoints >(
+            m_points = std::shared_ptr< WDataSetPoints >(
                     new WDataSetPoints(
                             m_vectors->getVertices(),
                             m_vectors->getColors(),
-                            boost::shared_ptr< WValueSet< float > >( new WValueSet< float >( 0, 1, m_vectors->getSizes() ) )
+                            std::shared_ptr< WValueSet< float > >( new WValueSet< float >( 0, 1, m_vectors->getSizes() ) )
                     )
             );
             return;
         }
     }
-    m_points = boost::shared_ptr < WDataSetPoints >(
+    m_points = std::shared_ptr < WDataSetPoints >(
                     new WDataSetPoints(
                     m_vectors->getVertices(),
                     m_vectors->getColors()
@@ -355,7 +355,7 @@ void WCsvConverter::createOutputFibers()
 {
     if( !m_protonData->isColumnAvailable( WSingleSelectorName::getEventId() ) )
     {
-        m_fibers = boost::shared_ptr< WDataSetFibers >(
+        m_fibers = std::shared_ptr< WDataSetFibers >(
             new WDataSetFibers(
                     SPFloatVector( new std::vector< float >() ),
                     SPSizeVector( new std::vector< size_t >() ),
@@ -374,11 +374,11 @@ void WCsvConverter::createOutputPointsAndEventIDs()
 {
     if( m_protonData->isColumnAvailable( WSingleSelectorName::getEventId() ) )
     {
-        m_selectedEventIDs = boost::shared_ptr < WDataSetPoints >(
+        m_selectedEventIDs = std::shared_ptr < WDataSetPoints >(
                 new WDataSetPoints(
                         m_vectors->getVertices(),
                         m_vectors->getColors(),
-                        boost::shared_ptr< WValueSet< size_t > >( new WValueSet< size_t >( 0, 1, m_vectors->getEventIDs() ) )
+                        std::shared_ptr< WValueSet< size_t > >( new WValueSet< size_t >( 0, 1, m_vectors->getEventIDs() ) )
                 )
         );
     }
@@ -397,13 +397,13 @@ void WCsvConverter::addEventID( WDataSetCSV::Content::iterator dataRow )
     }
 }
 
-void WCsvConverter::setTransferFunction( boost::shared_ptr< std::vector<unsigned char> > data )
+void WCsvConverter::setTransferFunction( std::shared_ptr< std::vector<unsigned char> > data )
 {
-    boost::shared_ptr< WValueSetBase > newValueSet( new WValueSet<unsigned char>( 1, 4, data, W_DT_UNSIGNED_CHAR ) );
+    std::shared_ptr< WValueSetBase > newValueSet( new WValueSet<unsigned char>( 1, 4, data, W_DT_UNSIGNED_CHAR ) );
 
     WGridTransformOrtho transform;
-    boost::shared_ptr< WGridRegular3D > newGrid( new WGridRegular3D( 50, 1, 1, transform ) );
-    boost::shared_ptr< WDataSetSingle > newData( new WDataSetSingle( newValueSet, newGrid ) );
+    std::shared_ptr< WGridRegular3D > newGrid( new WGridRegular3D( 50, 1, 1, transform ) );
+    std::shared_ptr< WDataSetSingle > newData( new WDataSetSingle( newValueSet, newGrid ) );
 
     m_transferFunction = newData;
 }

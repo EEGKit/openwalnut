@@ -71,8 +71,8 @@ public:
      */
     void testInstantiation( void )
     {
-        boost::shared_ptr< WProperties > p;
-        TS_ASSERT_THROWS_NOTHING( p =  boost::shared_ptr< WProperties >( new WProperties( "hey", "you" ) ) );
+        std::shared_ptr< WProperties > p;
+        TS_ASSERT_THROWS_NOTHING( p =  std::shared_ptr< WProperties >( new WProperties( "hey", "you" ) ) );
 
         // test names
         TS_ASSERT( p->getName() == "hey" );
@@ -89,12 +89,12 @@ public:
     {
         WException::disableBacktrace(); // in tests, turn of backtrace globally
 
-        boost::shared_ptr< WProperties > p( new WProperties( "hey", "you" ) );
+        std::shared_ptr< WProperties > p( new WProperties( "hey", "you" ) );
 
         // add some new properties
-        boost::shared_ptr< WPropertyBase > p1 = p->addProperty( "1", "test1", true );
-        boost::shared_ptr< WPropertyBase > p2 = p->addProperty( "2", "test2", 1 );
-        boost::shared_ptr< WPropertyBase > p3 = p->addProperty( "3", "test3", 1.0 );
+        std::shared_ptr< WPropertyBase > p1 = p->addProperty( "1", "test1", true );
+        std::shared_ptr< WPropertyBase > p2 = p->addProperty( "2", "test2", 1 );
+        std::shared_ptr< WPropertyBase > p3 = p->addProperty( "3", "test3", 1.0 );
 
         // add a malformed (name) property
         // The name is malformed since the "/" is used as group separator
@@ -119,12 +119,12 @@ public:
     {
         WException::disableBacktrace(); // in tests, turn of backtrace globally
 
-        boost::shared_ptr< WProperties > p( new WProperties( "hey", "you" ) );
+        std::shared_ptr< WProperties > p( new WProperties( "hey", "you" ) );
 
         // add some new properties
-        boost::shared_ptr< WPropertyBase > p1 = p->addProperty( "1", "test1", true );
-        boost::shared_ptr< WPropertyBase > p2 = p->addProperty( "2", "test2", 1 );
-        boost::shared_ptr< WPropertyBase > p3 = p->addProperty( "3", "test3", 1.0 );
+        std::shared_ptr< WPropertyBase > p1 = p->addProperty( "1", "test1", true );
+        std::shared_ptr< WPropertyBase > p2 = p->addProperty( "2", "test2", 1 );
+        std::shared_ptr< WPropertyBase > p3 = p->addProperty( "3", "test3", 1.0 );
 
         // this should have created 3 props
         TS_ASSERT( p->m_properties.getReadTicket()->get().size() == 3 );
@@ -144,12 +144,12 @@ public:
     {
         WException::disableBacktrace(); // in tests, turn of backtrace globally
 
-        boost::shared_ptr< WProperties > p( new WProperties( "hey", "you" ) );
+        std::shared_ptr< WProperties > p( new WProperties( "hey", "you" ) );
 
         // add some new properties
-        boost::shared_ptr< WPropertyBase > p1 = p->addProperty( "1", "test1", true );
-        boost::shared_ptr< WPropertyBase > p2 = p->addProperty( "2", "test2", 1 );
-        boost::shared_ptr< WPropertyBase > p3 = p->addProperty( "3", "test3", 1.0 );
+        std::shared_ptr< WPropertyBase > p1 = p->addProperty( "1", "test1", true );
+        std::shared_ptr< WPropertyBase > p2 = p->addProperty( "2", "test2", 1 );
+        std::shared_ptr< WPropertyBase > p3 = p->addProperty( "3", "test3", 1.0 );
 
         // this should have created 3 props
         TS_ASSERT( p->m_properties.getReadTicket()->get().size() == 3 );
@@ -171,7 +171,7 @@ public:
         WException::disableBacktrace(); // in tests, turn of backtrace globally
 
         // some props we can use as target
-        boost::shared_ptr< WProperties > t( new WProperties( "hey", "you" ) );
+        std::shared_ptr< WProperties > t( new WProperties( "hey", "you" ) );
 
         // add some new properties
         WPropBool tp1 = t->addProperty( "p1", "", true );
@@ -181,7 +181,7 @@ public:
         WPropDouble tp4 = t->addProperty( "p4", "", 10.0 );
 
         // create a group we can use as source
-        boost::shared_ptr< WProperties > s( new WProperties( "hey", "you" ) );
+        std::shared_ptr< WProperties > s( new WProperties( "hey", "you" ) );
 
         // add some new properties
         WPropBool sp1 = s->addProperty( "p1", "", false );
@@ -211,12 +211,12 @@ public:
     {
         WException::disableBacktrace(); // in tests, turn of backtrace globally
 
-        boost::shared_ptr< WProperties > p( new WProperties( "hey", "you" ) );
+        std::shared_ptr< WProperties > p( new WProperties( "hey", "you" ) );
 
         // add some new properties
-        boost::shared_ptr< WPropertyBase > p1 = p->addProperty( "1", "test1", true );
-        boost::shared_ptr< WPropertyBase > p2 = p->addProperty( "2", "test2", 1 );
-        boost::shared_ptr< WPropertyBase > p3 = p->addProperty( "3", "test3", 1.0 );
+        std::shared_ptr< WPropertyBase > p1 = p->addProperty( "1", "test1", true );
+        std::shared_ptr< WPropertyBase > p2 = p->addProperty( "2", "test2", 1 );
+        std::shared_ptr< WPropertyBase > p3 = p->addProperty( "3", "test3", 1.0 );
 
         /////////////
         // exists
@@ -229,7 +229,7 @@ public:
         // find
 
         // same for find. Find does not throw an exception if the property does not exist! It simply returns it or NULL
-        boost::shared_ptr< WPropertyBase > someProp;
+        std::shared_ptr< WPropertyBase > someProp;
         TS_ASSERT_THROWS_NOTHING( someProp = p->findProperty( "1" ) );
         // The property exists -> return value is not NULL
         TS_ASSERT( someProp );
@@ -257,14 +257,14 @@ public:
      */
     void testGetAndExistsAndFindRecursive( void )
     {
-        boost::shared_ptr< WProperties > p( new WProperties( "hey", "you" ) );
-        boost::shared_ptr< WProperties > psub = p->addPropertyGroup( "heySub", "you" );
+        std::shared_ptr< WProperties > p( new WProperties( "hey", "you" ) );
+        std::shared_ptr< WProperties > psub = p->addPropertyGroup( "heySub", "you" );
 
         // add some new properties
-        boost::shared_ptr< WPropertyBase > p1 = p->addProperty( "1", "test1", true );
-        boost::shared_ptr< WPropertyBase > p2 = p->addProperty( "2", "test2", 1 );
-        boost::shared_ptr< WPropertyBase > p3 = psub->addProperty( "3", "test3", 1.0 );
-        boost::shared_ptr< WPropertyBase > p4 = psub->addProperty( "4", "test4", std::string( "hello" ) );
+        std::shared_ptr< WPropertyBase > p1 = p->addProperty( "1", "test1", true );
+        std::shared_ptr< WPropertyBase > p2 = p->addProperty( "2", "test2", 1 );
+        std::shared_ptr< WPropertyBase > p3 = psub->addProperty( "3", "test3", 1.0 );
+        std::shared_ptr< WPropertyBase > p4 = psub->addProperty( "4", "test4", std::string( "hello" ) );
 
         // insert a prop with the same name as a sub property
         TS_ASSERT_THROWS( p->addProperty( "heySub", "test1", true ), const WPropertyNotUnique& );
@@ -292,7 +292,7 @@ public:
         TS_ASSERT( p4 == p->findProperty( "heySub/4" ) );
 
         // ensure nothing is found if wrong name is specified
-        TS_ASSERT( boost::shared_ptr< WPropertyBase >() == p->findProperty( "heySub/1" ) );
+        TS_ASSERT( std::shared_ptr< WPropertyBase >() == p->findProperty( "heySub/1" ) );
 
         /////////////
         // get
@@ -312,8 +312,8 @@ public:
         /////////////////////
         // Clone
 
-        boost::shared_ptr< WProperties > orig( new WProperties( "hey", "you" ) );
-        boost::shared_ptr< WProperties > clone = orig->clone()->toPropGroup();
+        std::shared_ptr< WProperties > orig( new WProperties( "hey", "you" ) );
+        std::shared_ptr< WProperties > clone = orig->clone()->toPropGroup();
 
         // test that toPropGroup worked and both are different
         TS_ASSERT( clone.get() );
@@ -356,7 +356,7 @@ public:
         // cloned list
 
         // the clone now contains some properties -> clone it again and check the list of contained properties
-        boost::shared_ptr< WProperties > cloneClone = clone->clone()->toPropGroup();
+        std::shared_ptr< WProperties > cloneClone = clone->clone()->toPropGroup();
 
         // same size?
         TS_ASSERT( clone->m_properties.getReadTicket()->get().size() == 2 );
@@ -368,7 +368,7 @@ public:
         for( WProperties::PropertyConstIterator iter = t->get().begin(); iter != t->get().end(); ++iter )
         {
             // ensure there is a corresponding property in cloneClone
-            boost::shared_ptr< WPropertyBase > p = cloneClone->findProperty( ( *iter )->getName() );
+            std::shared_ptr< WPropertyBase > p = cloneClone->findProperty( ( *iter )->getName() );
             TS_ASSERT( p ); // found?
             TS_ASSERT( p != ( *iter ) ); // is it really a clone? (the cloning functionality of WPropertyVariable is tested separately
         }

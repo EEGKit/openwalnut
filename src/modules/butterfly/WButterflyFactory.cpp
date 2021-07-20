@@ -64,7 +64,7 @@ namespace butterfly
         m_cpuThreads.resize( m_cpuThreadCount );
     }
 
-    void WButterflyFactory::assignProgressCombiner( boost::shared_ptr< WProgressCombiner > progress )
+    void WButterflyFactory::assignProgressCombiner( std::shared_ptr< WProgressCombiner > progress )
     {
         this->m_associatedProgressCombiner = progress;
     }
@@ -73,7 +73,7 @@ namespace butterfly
         m_associatedProgressCombiner->removeSubProgress( m_progressStatus );
         std::ostringstream headerText;
         headerText << "Iteration " << iteration;
-        m_progressStatus = boost::shared_ptr< WProgress >( new WProgress( headerText.str(), steps ) );
+        m_progressStatus = std::shared_ptr< WProgress >( new WProgress( headerText.str(), steps ) );
         m_associatedProgressCombiner->addSubProgress( m_progressStatus );
     }
 
@@ -122,7 +122,7 @@ namespace butterfly
     }
     void WButterflyFactory::examineVertexNeighborhood( size_t iteration )
     {
-        boost::shared_ptr< WTriangleMesh > tmpMesh( new WTriangleMesh( 0, 0 ) );
+        std::shared_ptr< WTriangleMesh > tmpMesh( new WTriangleMesh( 0, 0 ) );
         m_outputMesh = tmpMesh;
         m_verts = new WVertexFactory( m_inputMesh );
         m_butterflyCalculator->assignInputMesh( m_inputMesh, m_verts );
@@ -147,7 +147,7 @@ namespace butterfly
         examineStencilAll();
         m_validator->generateStatisticalInformation();
     }
-    boost::shared_ptr< WTriangleMesh > WButterflyFactory::getSubdividedMesh( boost::shared_ptr< WTriangleMesh > edgedMesh )
+    std::shared_ptr< WTriangleMesh > WButterflyFactory::getSubdividedMesh( std::shared_ptr< WTriangleMesh > edgedMesh )
     {
         m_inputMesh = edgedMesh;
         for  ( size_t iteration = 1; iteration <= m_iterations &&

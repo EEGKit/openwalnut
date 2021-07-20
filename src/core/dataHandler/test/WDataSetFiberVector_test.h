@@ -45,7 +45,7 @@ public:
     void setUp( void )
     {
         using std::vector;
-        m_somefibs = boost::shared_ptr< vector< WFiber > >( new vector< WFiber > );
+        m_somefibs = std::shared_ptr< vector< WFiber > >( new vector< WFiber > );
         vector< WPosition > points;
         points.push_back( WPosition( 0., 0., 1. ) );
         m_somefibs->push_back( WFiber( points ) );
@@ -69,7 +69,7 @@ public:
         TS_ASSERT_EQUALS( d[2], expected );
     }
 private:
-    boost::shared_ptr< std::vector< WFiber > > m_somefibs; //!< Default fiber dataset
+    std::shared_ptr< std::vector< WFiber > > m_somefibs; //!< Default fiber dataset
 };
 
 #endif  // WDATASETFIBERVECTOR_TEST_H

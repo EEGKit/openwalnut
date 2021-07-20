@@ -25,6 +25,7 @@
 #ifndef WFIBERDRAWABLE_H
 #define WFIBERDRAWABLE_H
 
+#include <shared_mutex>
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
@@ -104,37 +105,37 @@ public:
      * setter
      * \param bitField selected fibers to draw
      */
-    void setBitfield( boost::shared_ptr< std::vector< bool > > bitField );
+    void setBitfield( std::shared_ptr< std::vector< bool > > bitField );
 
     /**
      * setter
      * \param idx
      */
-    void setStartIndexes( boost::shared_ptr< std::vector< size_t > > idx );
+    void setStartIndexes( std::shared_ptr< std::vector< size_t > > idx );
 
     /**
      * setter
      * \param ppl
      */
-    void setPointsPerLine( boost::shared_ptr< std::vector< size_t > > ppl );
+    void setPointsPerLine( std::shared_ptr< std::vector< size_t > > ppl );
 
     /**
      * setter
      * \param verts
      */
-    void setVerts( boost::shared_ptr< std::vector< float > > verts );
+    void setVerts( std::shared_ptr< std::vector< float > > verts );
 
     /**
      * setter
      * \param tangents
      */
-    void setTangents( boost::shared_ptr< std::vector< float > > tangents );
+    void setTangents( std::shared_ptr< std::vector< float > > tangents );
 
     /**
      * setter
      * \param color
      */
-    void setColor( boost::shared_ptr< std::vector< float > > color );
+    void setColor( std::shared_ptr< std::vector< float > > color );
 
 protected:
 private:
@@ -150,17 +151,17 @@ private:
      */
     void drawTubes() const;
 
-    boost::shared_mutex m_recalcLock; //!< lock
+    std::shared_mutex m_recalcLock; //!< lock
 
     bool m_useTubes; //!< flag
 
-    boost::shared_ptr< std::vector< bool > > m_active; //!< pointer to the bitfield of active fibers
+    std::shared_ptr< std::vector< bool > > m_active; //!< pointer to the bitfield of active fibers
 
-    boost::shared_ptr< std::vector< size_t > > m_startIndexes; //!< pointer to the field of line start indexes
-    boost::shared_ptr< std::vector< size_t > > m_pointsPerLine; //!< pointer to the field of points per line
-    boost::shared_ptr< std::vector< float > > m_verts; //!< pointer to the field of vertexes
-    boost::shared_ptr< std::vector< float > > m_tangents; //!< pointer to the field of line tangents
-    boost::shared_ptr< std::vector< float > > m_colors; //!< pointer to the field of colors per vertex
+    std::shared_ptr< std::vector< size_t > > m_startIndexes; //!< pointer to the field of line start indexes
+    std::shared_ptr< std::vector< size_t > > m_pointsPerLine; //!< pointer to the field of points per line
+    std::shared_ptr< std::vector< float > > m_verts; //!< pointer to the field of vertexes
+    std::shared_ptr< std::vector< float > > m_tangents; //!< pointer to the field of line tangents
+    std::shared_ptr< std::vector< float > > m_colors; //!< pointer to the field of colors per vertex
 };
 
 inline void WFiberDrawable::setUseTubes( bool flag )
@@ -168,32 +169,32 @@ inline void WFiberDrawable::setUseTubes( bool flag )
     m_useTubes = flag;
 }
 
-inline void WFiberDrawable::setBitfield( boost::shared_ptr< std::vector< bool > > bitField )
+inline void WFiberDrawable::setBitfield( std::shared_ptr< std::vector< bool > > bitField )
 {
     m_active = bitField;
 }
 
-inline void WFiberDrawable::setStartIndexes( boost::shared_ptr< std::vector< size_t > > idx )
+inline void WFiberDrawable::setStartIndexes( std::shared_ptr< std::vector< size_t > > idx )
 {
     m_startIndexes = idx;
 }
 
-inline void WFiberDrawable::setPointsPerLine( boost::shared_ptr< std::vector< size_t > > ppl )
+inline void WFiberDrawable::setPointsPerLine( std::shared_ptr< std::vector< size_t > > ppl )
 {
     m_pointsPerLine = ppl;
 }
 
-inline void WFiberDrawable::setVerts( boost::shared_ptr< std::vector< float > > verts )
+inline void WFiberDrawable::setVerts( std::shared_ptr< std::vector< float > > verts )
 {
     m_verts = verts;
 }
 
-inline void WFiberDrawable::setTangents( boost::shared_ptr< std::vector< float > > tangents )
+inline void WFiberDrawable::setTangents( std::shared_ptr< std::vector< float > > tangents )
 {
     m_tangents = tangents;
 }
 
-inline void WFiberDrawable::setColor( boost::shared_ptr< std::vector< float > > color )
+inline void WFiberDrawable::setColor( std::shared_ptr< std::vector< float > > color )
 {
     m_colors = color;
 }

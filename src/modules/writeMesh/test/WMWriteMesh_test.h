@@ -64,10 +64,10 @@ public:
     void testSaveZero()
     {
         WMWriteMesh mc;
-        boost::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( 0, 0 ) );
+        std::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( 0, 0 ) );
         mc.m_triMesh = triMesh;
         std::string fileName = tempFilename().string();
-        mc.m_properties = boost::shared_ptr< WProperties >( new WProperties( "Properties", "Module's properties" ) );
+        mc.m_properties = std::shared_ptr< WProperties >( new WProperties( "Properties", "Module's properties" ) );
         mc.m_savePropGroup = mc.m_properties->addPropertyGroup( "Save Surface",  "" );
         mc.m_meshFile = mc.m_savePropGroup->addProperty( "Mesh file", "", boost::filesystem::path( fileName.c_str() ) );
         mc.m_saveTriggerProp = mc.m_savePropGroup->addProperty( "Do save",  "Press!", WPVBaseTypes::PV_TRIGGER_READY );
@@ -84,7 +84,7 @@ public:
     {
         WMWriteMesh mc;
         const unsigned int nbPos = 10;
-        boost::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( nbPos, 3 ) );
+        std::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( nbPos, 3 ) );
         mc.m_triMesh = triMesh;
 
         std::vector< WPosition > vertices( 0 );
@@ -97,7 +97,7 @@ public:
         }
 
         std::string fileName = tempFilename().string();
-        mc.m_properties = boost::shared_ptr< WProperties >( new WProperties( "Properties", "Module's properties" ) );
+        mc.m_properties = std::shared_ptr< WProperties >( new WProperties( "Properties", "Module's properties" ) );
         mc.m_savePropGroup = mc.m_properties->addPropertyGroup( "Save Surface",  "" );
         mc.m_meshFile = mc.m_savePropGroup->addProperty( "Mesh file", "", boost::filesystem::path( fileName.c_str() ) );
         mc.m_saveTriggerProp = mc.m_savePropGroup->addProperty( "Do save",  "Press!", WPVBaseTypes::PV_TRIGGER_READY );

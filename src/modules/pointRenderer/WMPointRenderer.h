@@ -72,7 +72,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -100,12 +100,12 @@ private:
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * An input connector used to get points from other modules.
      */
-    boost::shared_ptr< WModuleInputData< WDataSetPoints > > m_pointInput;
+    std::shared_ptr< WModuleInputData< WDataSetPoints > > m_pointInput;
 
     /**
      * The shader for the points

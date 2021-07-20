@@ -42,10 +42,10 @@ WDataSetScalar::SPtr WDataSetDTIToScalar_I::operator()( WProgress::SPtr progress
     wlog::debug( "WDataSetDTIToScalar_I" ) << "Start computation";
     typedef double ValueType;
     typedef WValueSet< ValueType > ValueSetType;
-    boost::shared_ptr< WGrid > grid( evals->getGrid() );
-    boost::shared_ptr< std::vector< ValueType > > data( new std::vector< ValueType >( grid->size() ) );
+    std::shared_ptr< WGrid > grid( evals->getGrid() );
+    std::shared_ptr< std::vector< ValueType > > data( new std::vector< ValueType >( grid->size() ) );
 
-    boost::shared_ptr< WValueSet< float > > t = boost::dynamic_pointer_cast< WValueSet< float > >( tensors->getValueSet() );
+    std::shared_ptr< WValueSet< float > > t = std::dynamic_pointer_cast< WValueSet< float > >( tensors->getValueSet() );
     WAssert( t, "Error: Only tensor data sets with doubles are allowed currently." );
 
     for( unsigned int i = 0; i < grid->size() && !shutdown; ++i )
@@ -62,6 +62,6 @@ WDataSetScalar::SPtr WDataSetDTIToScalar_I::operator()( WProgress::SPtr progress
     }
 
     wlog::debug( "WDataSetDTIToScalar_I" ) << "Computation done.";
-    boost::shared_ptr< ValueSetType > vals( new ValueSetType( 0, 1, data ) );
+    std::shared_ptr< ValueSetType > vals( new ValueSetType( 0, 1, data ) );
     return WDataSetScalar::SPtr( new WDataSetScalar( vals, grid ) );
 }

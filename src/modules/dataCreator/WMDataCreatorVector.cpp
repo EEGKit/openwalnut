@@ -57,9 +57,9 @@ WMDataCreatorVector::~WMDataCreatorVector()
     removeConnectors();
 }
 
-boost::shared_ptr< WModule > WMDataCreatorVector::factory() const
+std::shared_ptr< WModule > WMDataCreatorVector::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMDataCreatorVector() );
+    return std::shared_ptr< WModule >( new WMDataCreatorVector() );
 }
 
 const char** WMDataCreatorVector::getXPMIcon() const
@@ -88,7 +88,7 @@ void WMDataCreatorVector::connectors()
 
 void WMDataCreatorVector::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     // how much voxels?
     m_nbVoxelsX = m_properties->addProperty( "Voxels X", "The number of voxels in X direction.", 128, m_propCondition );

@@ -53,7 +53,7 @@
  */
 WKernel* WKernel::m_kernel = NULL;
 
-WKernel::WKernel( boost::shared_ptr< WGraphicsEngine > ge, boost::shared_ptr< WUI > ui ):
+WKernel::WKernel( std::shared_ptr< WGraphicsEngine > ge, std::shared_ptr< WUI > ui ):
     WThreadedRunner(),
     m_timer( WTimer::SPtr( new WRealtimeTimer() ) )
 {
@@ -79,7 +79,7 @@ WKernel::~WKernel()
     WLogger::getLogger()->addLogMessage( "Shutting down Kernel", "Kernel", LL_INFO );
 }
 
-WKernel* WKernel::instance( boost::shared_ptr< WGraphicsEngine > ge, boost::shared_ptr< WUI > ui )
+WKernel* WKernel::instance( std::shared_ptr< WGraphicsEngine > ge, std::shared_ptr< WUI > ui )
 {
     if( m_kernel == NULL )
     {
@@ -92,9 +92,9 @@ WKernel* WKernel::instance( boost::shared_ptr< WGraphicsEngine > ge, boost::shar
 void WKernel::init()
 {
     // initialize
-    m_roiManager = boost::shared_ptr< WROIManager >( new WROIManager() );
+    m_roiManager = std::shared_ptr< WROIManager >( new WROIManager() );
 
-    m_selectionManager = boost::shared_ptr< WSelectionManager >( new WSelectionManager() );
+    m_selectionManager = std::shared_ptr< WSelectionManager >( new WSelectionManager() );
 
     // get module factory
     m_moduleFactory = WModuleFactory::getModuleFactory();
@@ -103,7 +103,7 @@ void WKernel::init()
     WDataHandler::getDataHandler();
 
     // initialize module container
-    m_moduleContainer = boost::shared_ptr< WModuleContainer >( new WModuleContainer( "KernelRootContainer",
+    m_moduleContainer = std::shared_ptr< WModuleContainer >( new WModuleContainer( "KernelRootContainer",
                 "Root module container in Kernel." ) );
     // this avoids the root container to be marked as "crashed" if a contained module crashes.
     m_moduleContainer->setCrashIfModuleCrashes( false );
@@ -111,7 +111,7 @@ void WKernel::init()
     // load all modules
     m_moduleFactory->load();
 
-    m_scriptEngine = boost::shared_ptr< WScriptEngine >( new WScriptEngine( m_moduleContainer ) );
+    m_scriptEngine = std::shared_ptr< WScriptEngine >( new WScriptEngine( m_moduleContainer ) );
 }
 
 WKernel* WKernel::getRunningKernel()
@@ -119,17 +119,17 @@ WKernel* WKernel::getRunningKernel()
     return m_kernel;
 }
 
-boost::shared_ptr< WGraphicsEngine > WKernel::getGraphicsEngine() const
+std::shared_ptr< WGraphicsEngine > WKernel::getGraphicsEngine() const
 {
     return m_graphicsEngine;
 }
 
-boost::shared_ptr< WModuleContainer > WKernel::getRootContainer() const
+std::shared_ptr< WModuleContainer > WKernel::getRootContainer() const
 {
     return m_moduleContainer;
 }
 
-boost::shared_ptr< WUI > WKernel::getUI() const
+std::shared_ptr< WUI > WKernel::getUI() const
 {
     return m_ui;
 }
@@ -201,22 +201,22 @@ WBatchLoader::SPtr WKernel::loadDataSetsSynchronously( std::vector< std::string 
     return getRootContainer()->loadDataSetsSynchronously( filenames, suppressColormaps );
 }
 
-boost::shared_ptr< WModule > WKernel::applyModule( boost::shared_ptr< WModule > applyOn, boost::shared_ptr< WModule > prototype )
+std::shared_ptr< WModule > WKernel::applyModule( std::shared_ptr< WModule > applyOn, std::shared_ptr< WModule > prototype )
 {
     return getRootContainer()->applyModule( applyOn, prototype );
 }
 
-boost::shared_ptr< WROIManager > WKernel::getRoiManager()
+std::shared_ptr< WROIManager > WKernel::getRoiManager()
 {
     return m_roiManager;
 }
 
-boost::shared_ptr< WSelectionManager>WKernel::getSelectionManager()
+std::shared_ptr< WSelectionManager>WKernel::getSelectionManager()
 {
     return m_selectionManager;
 }
 
-boost::shared_ptr<WScriptEngine> WKernel::getScriptEngine()
+std::shared_ptr<WScriptEngine> WKernel::getScriptEngine()
 {
     return m_scriptEngine;
 }

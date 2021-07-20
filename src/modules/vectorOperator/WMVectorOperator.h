@@ -75,7 +75,7 @@ public:
      *
      * \return the prototype used to create every module in OpenWalnut.
      */
-    virtual boost::shared_ptr< WModule > factory() const;
+    virtual std::shared_ptr< WModule > factory() const;
 
     /**
      * Get the icon for this module in XPM format.
@@ -103,21 +103,21 @@ private:
     /**
      * A condition used to notify about changes in several properties.
      */
-    boost::shared_ptr< WCondition > m_propCondition;
+    std::shared_ptr< WCondition > m_propCondition;
 
     /**
      * A list of operations that are possible
      */
-    boost::shared_ptr< WItemSelection > m_operations;
+    std::shared_ptr< WItemSelection > m_operations;
 
     /**
      * The currently selected operation.
      */
     WPropSelection m_opSelection;
 
-    boost::shared_ptr< WModuleInputData< WDataSetVector > > m_inputA;  //!< Input connector required by this module.
+    std::shared_ptr< WModuleInputData< WDataSetVector > > m_inputA;  //!< Input connector required by this module.
 
-    boost::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output; //!< The only output of this filter module.
+    std::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output; //!< The only output of this filter module.
 };
 #endif  // WMVECTOROPERATOR_H
 

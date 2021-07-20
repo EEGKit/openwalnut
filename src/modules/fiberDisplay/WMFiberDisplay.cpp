@@ -68,9 +68,9 @@ WMFiberDisplay::~WMFiberDisplay()
     // Cleanup!
 }
 
-boost::shared_ptr< WModule > WMFiberDisplay::factory() const
+std::shared_ptr< WModule > WMFiberDisplay::factory() const
 {
-    return boost::shared_ptr< WModule >( new WMFiberDisplay() );
+    return std::shared_ptr< WModule >( new WMFiberDisplay() );
 }
 
 const std::string WMFiberDisplay::getName() const
@@ -94,7 +94,7 @@ void WMFiberDisplay::connectors()
 
 void WMFiberDisplay::properties()
 {
-    m_propCondition = boost::shared_ptr< WCondition >( new WCondition() );
+    m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     m_roiFiltering = m_properties->addProperty( "ROI Filtering", "When active, you can use the ROI mechanism to filter fibers.", true );
     m_roiFilterColors = m_properties->addProperty( "ROI Coloring", "When active, you will see the coloring specified by the ROI branches.", true );
@@ -290,7 +290,7 @@ void WMFiberDisplay::moduleMain()
     ready();
 
     // needed to observe the properties of the input connector data
-    boost::shared_ptr< WPropertyObserver > propObserver = WPropertyObserver::create();
+    std::shared_ptr< WPropertyObserver > propObserver = WPropertyObserver::create();
     m_moduleState.add( propObserver );
 
     m_plane = createClipPlane();
@@ -316,8 +316,8 @@ void WMFiberDisplay::moduleMain()
         bool clusteringUpdated = m_fiberClusteringInput->updated();
 
         // To query whether an input was updated, simply ask the input:
-        boost::shared_ptr< WDataSetFibers > fibers = m_fiberInput->getData();
-        boost::shared_ptr< WDataSetFiberClustering > fiberClustering = m_fiberClusteringInput->getData();
+        std::shared_ptr< WDataSetFibers > fibers = m_fiberInput->getData();
+        std::shared_ptr< WDataSetFiberClustering > fiberClustering = m_fiberClusteringInput->getData();
 
         bool dataValid = ( fibers != NULL );
         bool dataPropertiesUpdated = propObserver->updated();
@@ -363,12 +363,12 @@ void WMFiberDisplay::moduleMain()
             debugLog() << "Fibers updated.";
 
             {
-                boost::unique_lock< boost::mutex > lock( m_mutex );
+                std::unique_lock< boost::mutex > lock( m_mutex );
 
                 m_fibers = fibers;
 
                 // get a new fiber selector
-                m_fiberSelector = boost::shared_ptr<WFiberSelector>( new WFiberSelector( fibers ) );
+                m_fiberSelector = std::shared_ptr<WFiberSelector>( new WFiberSelector( fibers ) );
             }
 
             // update the prop observer if new data is available
@@ -498,7 +498,7 @@ osg::ref_ptr< osg::Node > WMFiberDisplay::createClipPlane() const
     return planeTransform;
 }
 
-void WMFiberDisplay::createFiberGeode( boost::shared_ptr< WDataSetFibers > fibers, osg::ref_ptr< osg::Geode > fibGeode,
+void WMFiberDisplay::createFiberGeode( std::shared_ptr< WDataSetFibers > fibers, osg::ref_ptr< osg::Geode > fibGeode,
                                                                                          osg::ref_ptr< osg::Geode > endCapGeode )
 {
     // geode and geometry
@@ -565,7 +565,7 @@ void WMFiberDisplay::createFiberGeode( boost::shared_ptr< WDataSetFibers > fiber
     endState->setMode( GL_BLEND, osg::StateAttribute::ON );
 
     // progress indication
-    boost::shared_ptr< WProgress > progress1( new WProgress( "Adding fibers to geode", fibStart->size() ) );
+    std::shared_ptr< WProgress > progress1( new WProgress( "Adding fibers to geode", fibStart->size() ) );
     m_progress->addSubProgress( progress1 );
 
     // for each fiber:
@@ -759,7 +759,7 @@ void WMFiberDisplay::geometryUpdate( osg::Drawable* geometry )
 {
     if( m_fiberSelectorChanged )
     {
-        boost::unique_lock< boost::mutex > lock( m_mutex );
+        std::unique_lock< boost::mutex > lock( m_mutex );
 
         bool overrideROIFiltering = m_fiberSelector->isNothingFiltered();
         m_roiFilterColorsOverride->set( overrideROIFiltering ? 1.0f : 0.0f );

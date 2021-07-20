@@ -53,32 +53,32 @@ WGEGroupNode::~WGEGroupNode()
 
 void WGEGroupNode::insert( osg::ref_ptr< osg::Node > node )
 {
-    boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_childOperationQueueLock );
-    m_childOperationQueue.push( boost::shared_ptr< ChildOperation >( new ChildOperation( INSERT, node ) ) );
+    std::unique_lock<std::shared_mutex> lock = std::unique_lock<std::shared_mutex>( m_childOperationQueueLock );
+    m_childOperationQueue.push( std::shared_ptr< ChildOperation >( new ChildOperation( INSERT, node ) ) );
     m_childOperationQueueDirty = true;
     lock.unlock();
 }
 
 void WGEGroupNode::remove( osg::ref_ptr< osg::Node > node )
 {
-    boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_childOperationQueueLock );
-    m_childOperationQueue.push( boost::shared_ptr< ChildOperation >( new ChildOperation( REMOVE, node ) ) );
+    std::unique_lock<std::shared_mutex> lock = std::unique_lock<std::shared_mutex>( m_childOperationQueueLock );
+    m_childOperationQueue.push( std::shared_ptr< ChildOperation >( new ChildOperation( REMOVE, node ) ) );
     m_childOperationQueueDirty = true;
     lock.unlock();
 }
 
-void WGEGroupNode::remove_if( boost::shared_ptr< WGEGroupNode::NodePredicate > predicate )
+void WGEGroupNode::remove_if( std::shared_ptr< WGEGroupNode::NodePredicate > predicate )
 {
-    boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_childOperationQueueLock );
-    m_childOperationQueue.push( boost::shared_ptr< ChildOperation >( new ChildOperation( REMOVE_IF, predicate ) ) );
+    std::unique_lock<std::shared_mutex> lock = std::unique_lock<std::shared_mutex>( m_childOperationQueueLock );
+    m_childOperationQueue.push( std::shared_ptr< ChildOperation >( new ChildOperation( REMOVE_IF, predicate ) ) );
     m_childOperationQueueDirty = true;
     lock.unlock();
 }
 
 void WGEGroupNode::clear()
 {
-    boost::unique_lock<boost::shared_mutex> lock = boost::unique_lock<boost::shared_mutex>( m_childOperationQueueLock );
-    m_childOperationQueue.push( boost::shared_ptr< ChildOperation >( new ChildOperation( CLEAR, osg::ref_ptr< osg::Node >() ) ) );
+    std::unique_lock<std::shared_mutex> lock = std::unique_lock<std::shared_mutex>( m_childOperationQueueLock );
+    m_childOperationQueue.push( std::shared_ptr< ChildOperation >( new ChildOperation( CLEAR, osg::ref_ptr< osg::Node >() ) ) );
     // this encodes the remove all feature
     m_childOperationQueueDirty = true;
     lock.unlock();
@@ -90,12 +90,12 @@ void WGEGroupNode::SafeUpdaterCallback::operator()( osg::Node* node, osg::NodeVi
     WGEGroupNode* rootNode = static_cast< WGEGroupNode* >( node );
 
     // write lock the insertion list
-    boost::unique_lock<boost::shared_mutex> lock;
+    std::unique_lock<std::shared_mutex> lock;
 
     // write lock the removal list
     if( rootNode->m_childOperationQueueDirty )
     {
-        lock = boost::unique_lock<boost::shared_mutex>( rootNode->m_childOperationQueueLock );
+        lock = std::unique_lock<std::shared_mutex>( rootNode->m_childOperationQueueLock );
         // insert/remove children which requested it
         while( !rootNode->m_childOperationQueue.empty() )
         {

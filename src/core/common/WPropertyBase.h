@@ -42,18 +42,18 @@
 /**
  * Abstract base class for all properties. Simply provides name and type information.
  */
-class WPropertyBase: public boost::enable_shared_from_this< WPropertyBase >
+class WPropertyBase: public std::enable_shared_from_this< WPropertyBase >
 {
 public:
     /**
-     * Convenience typedef for a boost::shared_ptr< WPropertyBase >
+     * Convenience typedef for a std::shared_ptr< WPropertyBase >
      */
-    typedef boost::shared_ptr< WPropertyBase > SPtr;
+    typedef std::shared_ptr< WPropertyBase > SPtr;
 
     /**
-     * Convenience typedef for a  boost::shared_ptr< const WPropertyBase >
+     * Convenience typedef for a  std::shared_ptr< const WPropertyBase >
      */
-    typedef boost::shared_ptr< const WPropertyBase > ConstSPtr;
+    typedef std::shared_ptr< const WPropertyBase > ConstSPtr;
 
     /**
      * Create an empty named property.
@@ -85,7 +85,7 @@ public:
      *
      * \return the deep clone of this property.
      */
-    virtual boost::shared_ptr< WPropertyBase > clone() = 0;
+    virtual std::shared_ptr< WPropertyBase > clone() = 0;
 
     /**
      * Gets the name of the class.
@@ -187,7 +187,7 @@ public:
      *
      * \return a condition notified whenever something changes.
      */
-    virtual boost::shared_ptr< WCondition > getUpdateCondition() const;
+    virtual std::shared_ptr< WCondition > getUpdateCondition() const;
 
     /**
      * Sets the value from the specified property to this one. This is especially useful to copy a value without explicitly casting/knowing the
@@ -198,7 +198,7 @@ public:
      *
      * \return true if the value has been accepted.
      */
-    virtual bool set( boost::shared_ptr< WPropertyBase > value, bool recommendedOnly = false ) = 0;
+    virtual bool set( std::shared_ptr< WPropertyBase > value, bool recommendedOnly = false ) = 0;
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Helpers for easy conversion to the possible types
@@ -300,7 +300,7 @@ public:
      *
      * \return the property as base group.
      */
-    boost::shared_ptr< WPropertyGroupBase > toPropGroupBase();
+    std::shared_ptr< WPropertyGroupBase > toPropGroupBase();
 
     /**
      * Helper converts this instance to an arbitrary type.
@@ -308,12 +308,12 @@ public:
      * \return the property of given type of NULL if not valid type
      */
     template< typename T >
-    boost::shared_ptr< WPropertyVariable< T > > toPropertyVariable();
+    std::shared_ptr< WPropertyVariable< T > > toPropertyVariable();
 
     /**
      * Signal signature emitted during set operations
      */
-    typedef boost::function<void ( boost::shared_ptr< WPropertyBase > )> PropertyChangeNotifierType;
+    typedef boost::function<void ( std::shared_ptr< WPropertyBase > )> PropertyChangeNotifierType;
 
 protected:
     /**
@@ -349,7 +349,7 @@ protected:
     /**
      * Signal used for firing change signals
      */
-    typedef boost::signals2::signal<void ( boost::shared_ptr< WPropertyBase >  )>  PropertyChangeSignalType;
+    typedef boost::signals2::signal<void ( std::shared_ptr< WPropertyBase >  )>  PropertyChangeSignalType;
 
     /**
      * Signal getting fired whenever the property changes.
@@ -360,15 +360,15 @@ protected:
      * Condition notified whenever something changes. See getUpdateCondition for more details.
      * \see getUpdateCondition
      */
-    boost::shared_ptr< WConditionSet > m_updateCondition;
+    std::shared_ptr< WConditionSet > m_updateCondition;
 
 private:
 };
 
 template< typename T >
-boost::shared_ptr< WPropertyVariable< T > > WPropertyBase::toPropertyVariable()
+std::shared_ptr< WPropertyVariable< T > > WPropertyBase::toPropertyVariable()
 {
-    return boost::dynamic_pointer_cast< WPropertyVariable< T > >( shared_from_this() );
+    return std::dynamic_pointer_cast< WPropertyVariable< T > >( shared_from_this() );
 }
 
 template< typename T >
