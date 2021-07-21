@@ -91,6 +91,8 @@ void WMPointConnector::properties()
 
 void WMPointConnector::moduleMain()
 {
+    createHandler();
+
     m_onscreenSelection = std::shared_ptr< WOnscreenSelection >( new WOnscreenSelection() );
     m_onscreenSelection->setOnend( boost::bind( &WMPointConnector::selectionEnd, this,
                                    boost::placeholders::_1, boost::placeholders::_2, boost::placeholders::_3 ) );
@@ -100,7 +102,6 @@ void WMPointConnector::moduleMain()
 
     createPointRenderer();
     createFiberDisplay();
-    createHandler();
 
     ready();
 

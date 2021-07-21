@@ -34,6 +34,11 @@ bool WClickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAd
 {
     osgViewer::Viewer* viewer = dynamic_cast< osgViewer::Viewer* >( &aa );
 
+    if( m_connector->getOnscreenSelection()->isSelecting() )
+    {
+        return false;
+    }
+
     if( ea.getEventType() == osgGA::GUIEventAdapter::RELEASE && ea.getButton() != osgGA::GUIEventAdapter::MIDDLE_MOUSE_BUTTON )
     {
         osg::Camera* camera = viewer->getCamera();
