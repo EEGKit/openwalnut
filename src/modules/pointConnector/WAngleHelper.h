@@ -60,6 +60,14 @@ namespace WAngleHelper
      * \return std::vector< WPosition > All the positions on the smallest path
      */
     std::vector< WPosition > findSmoothestPath( std::vector< WPosition > positions, WFiberHandler::PCFiber fiber );
+
+    /**
+     * Calculates the angle between two positions.
+     * \param a The first position.
+     * \param b The second position.
+     * \return double The angle.
+     */
+    double calculateAngle( WPosition a, WPosition b );
 }
 
 #endif  // WANGLEHELPER_H

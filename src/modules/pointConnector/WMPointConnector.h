@@ -216,6 +216,14 @@ private:
     void selectionEnd( WOnscreenSelection::WSelectionType type, float x, float y );
 
     /**
+     * Checks whether a vertex is adaptively hidden.
+     * \param vertex The vertex to check.
+     * \return true The vertex is hidden.
+     * \return false The vertex is visible.
+     */
+    bool isAdaptivelyHidden( osg::Vec3 vertex );
+
+    /**
      * The WMPointRenderer associated with this module.
      */
     WModule::SPtr m_pointRenderer;
@@ -256,9 +264,19 @@ private:
     std::shared_ptr< WOnscreenSelection > m_onscreenSelection;
 
     /**
-     * Bool property to enable the adjusted dijkstra.
+     * Property to enable the adjusted dijkstra.
      */
-    WPropBool m_enableDijkstra;
+    WPropBool m_enableSAPT;
+
+    /**
+     * Property to enable adaptive visibility.
+     */
+    WPropBool m_enableAdaptiveVisibility;
+
+    /**
+     * Property to set the angle for the adaptive visibility.
+     */
+    WPropDouble m_adaptiveVisibilityAngle;
 };
 
 #endif  // WMPOINTCONNECTOR_H

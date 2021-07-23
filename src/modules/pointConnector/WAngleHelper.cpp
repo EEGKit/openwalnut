@@ -37,7 +37,7 @@ static int compareWPosition( WPosition a, WPosition b )
     return a.z() < b.z();
 }
 
-static double calcAngle( WPosition a, WPosition b )
+double WAngleHelper::calculateAngle( WPosition a, WPosition b )
 {
     double num = a.x() * b.x() + a.y() * b.y() + a.z() * b.z();
     double denom = ( a.x() * a.x() + a.y() * a.y() + a.z() * a.z() ) *
@@ -75,7 +75,7 @@ static std::vector< WAngleHelper::DJLine > createLines( std::vector< WPosition >
         for( size_t j = 0; j < oldPoints.size(); j++ )
         {
             WPosition p = oldPoints.at( j );
-            lines.push_back( std::make_tuple( p, point, calcAngle( p, point ) ) );
+            lines.push_back( std::make_tuple( p, point, WAngleHelper::calculateAngle( p, point ) ) );
         }
         currentPoints.push_back( point );
     }
@@ -141,11 +141,6 @@ static WAngleHelper::DJOut dijkstra( std::vector< WAngleHelper::DJLine > lines, 
                 prev[v] = u;
             }
         }
-    }
-
-    for( auto it = prev.begin(); it != prev.end(); it++ )
-    {
-        std::cout << it->first << " => " << it->second << std::endl;
     }
 
     return std::make_pair( prev, dist );

@@ -22,6 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
+#define _USE_MATH_DEFINES
+
+#include <cmath>
 #include <string>
 #include <vector>
 
@@ -84,7 +87,15 @@ void WMPointConnector::properties()
 {
     m_fiberHandler->createProperties( m_properties );
 
-    m_enableDijkstra = m_properties->addProperty( "Enable Dijkstra ", "Enable adjusted Dijkstra", true );
+    WPropertyGroup::SPtr assistanceGroup = m_properties->addPropertyGroup( "Assistance", "Property group assistance features." );
+
+    m_enableSAPT = assistanceGroup->addProperty( "Enable SAPT ", "Enable Semi-Automatic-Proton-Tracking", true );
+    m_enableAdaptiveVisibility = assistanceGroup->addProperty( "Enable adaptive visibility", "Enable adaptive visibility using a cone", true,
+                                                                boost::bind( &WMPointConnector::updatePoints, this ) );
+    m_adaptiveVisibilityAngle = assistanceGroup->addProperty( "Adaptive visibility angle", "Adaptive visibility angle", 45.0,
+                                                               boost::bind( &WMPointConnector::updatePoints, this ) );
+    m_adaptiveVisibilityAngle->setMin( 0.0 );
+    m_adaptiveVisibilityAngle->setMax( 90.0 );
 
     WModule::properties();
 }
@@ -257,7 +268,7 @@ void WMPointConnector::updatePoints()
         {
             color = COLOR_SEL_FIBER;
         }
-        if( m_fiberHandler->isPointHidden( vertex ) )
+        else if( m_fiberHandler->isPointHidden( vertex ) || isAdaptivelyHidden( vertex ) )
         {
             color[3] = 0.1;
         }
@@ -269,6 +280,31 @@ void WMPointConnector::updatePoints()
     }
 
     m_pointOutput->updateData( WDataSetPoints::SPtr( new WDataSetPoints( vertices, colors ) ) );
+}
+
+bool WMPointConnector::isAdaptivelyHidden( osg::Vec3 vertex )
+{
+    if( !m_enableAdaptiveVisibility->get() )
+    {
+        return false;
+    }
+
+    size_t verIdx = 0;
+    if( !m_connectorData->getSelectedPoint( &verIdx ) )
+    {
+        return false;
+    }
+
+    osg::Vec3 selected = m_connectorData->getVertices()->at( verIdx );
+
+    double num = vertex.z() - selected.z();
+    double denom = ( vertex.x() - selected.x() ) * ( vertex.x() - selected.x() ) +
+                   ( vertex.y() - selected.y() ) * ( vertex.y() - selected.y() ) +
+                   ( vertex.z() - selected.z() ) * ( vertex.z() - selected.z() );
+    denom = sqrt( denom );
+    double angle = acos( num / denom ) * 180.0 / M_PI;
+
+    return angle > m_adaptiveVisibilityAngle->get() && angle < ( 180.0 - m_adaptiveVisibilityAngle->get() );
 }
 
 void WMPointConnector::handleClick( osg::Vec3 cameraPosition, osg::Vec3 direction, bool isLeftClick )
@@ -503,7 +539,7 @@ void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float, 
     {
         for( auto vertex = positions.begin(); vertex != positions.end(); )
         {
-            if( m_fiberHandler->getFiberOfPoint( *vertex ) )
+            if( m_fiberHandler->getFiberOfPoint( *vertex ) || m_fiberHandler->isPointHidden( *vertex ) || isAdaptivelyHidden( *vertex ) )
             {
                 positions.erase( vertex );
             }
@@ -512,7 +548,7 @@ void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float, 
                 vertex++;
             }
         }
-        if( m_enableDijkstra->get() )
+        if( m_enableSAPT->get() )
         {
             positions = WAngleHelper::findSmoothestPath( positions, m_fiberHandler->getFibers()->at( m_fiberHandler->getSelectedFiber() ) );
         }
