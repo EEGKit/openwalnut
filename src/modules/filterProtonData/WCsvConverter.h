@@ -100,7 +100,7 @@ public:
      * Getter
      * \return shared_ptr of generated selected event ID
      */
-    std::shared_ptr< WDataSetPoints > getPointsAndIDs();
+    std::shared_ptr< WDataSetPoints > getPointsAndData();
 
 private:
     /**
@@ -126,7 +126,7 @@ private:
     /**
      * Stores information for the point Conncetor
      */
-    std::shared_ptr< WDataSetPoints > m_selectedEventIDs;
+    std::shared_ptr< WDataSetPoints > m_pointsAndData;
 
     /**
      * Stores the currently mapped transfer function
@@ -218,9 +218,9 @@ private:
     void createOutputPoints();
 
     /**
-     * Create the points and selected event IDs for Point Connector
+     * Create the points and selected data for Point Connector
      */
-    void createOutputPointsAndEventIDs();
+    void createOutputPointsAndData();
 
     /**
      * Create outputs, so it can be displayed by the fiber display and the point renderer.

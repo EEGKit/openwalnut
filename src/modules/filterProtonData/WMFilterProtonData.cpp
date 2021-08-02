@@ -98,6 +98,9 @@ void WMFilterProtonData::moduleMain()
                 new WEventIDLimitationPropertyHandler( m_protonData, m_properties, boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
 
             m_propertyStatus->getColumnPropertyHandler()->setSelectionEventMethod( boost::bind( &WMFilterProtonData::updateProperty, this ) );
+
+            m_propertyStatus->setOutputPropertyHandler( WOutputPropertyHandler::SPtr( new WOutputPropertyHandler( m_protonData, m_properties,
+                boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
         }
         else
         {
@@ -112,6 +115,7 @@ void WMFilterProtonData::moduleMain()
         m_propertyStatus->getFilterPropertyHandler()->createProperties();
         m_propertyStatus->getVisualizationPropertyHandler()->createProperties();
         m_propertyStatus->getEventIDLimitationPropertyHandler()->createProperties();
+        m_propertyStatus->getOutputPropertyHandler()->createProperties();
 
         if( m_colorBar == NULL )
         {
@@ -151,14 +155,14 @@ void WMFilterProtonData::clearProperties()
 void WMFilterProtonData::properties()
 {
     // Creating dummy properties for loading of projects
-    // TODO(robin.eschbach) This is only a hotfix until property buffer is implemented
+    // TODO(eschbach) This is only a hotfix until property buffer is implemented
     // When changing property names they also have to be changed here, so the loading works.
     WPropertyGroup::SPtr groupColumn  = m_properties->addPropertyGroup( "Select columns", "Select the columns which should be used", false );
     WPropertyGroup::SPtr groupFilter  = m_properties->addPropertyGroup( "Filtering", "Filter primaries, secondaries and particle types", false );
     WPropertyGroup::SPtr groupVisual  = m_properties->addPropertyGroup( "Visualization", "Visualization options", false );
     WPropertyGroup::SPtr groupEventID = m_properties->addPropertyGroup( "Event Id Limitation", "Adjust the range of eventIDs to be shown.", false );
-    WPropertyGroup::SPtr groupRename  = groupFilter->addPropertyGroup( "Rename Particle Types",
-                                                    "Filtering/Rename Particle Types", false );
+    WPropertyGroup::SPtr groupRename  = groupFilter->addPropertyGroup( "Rename Particle Types", "Filtering/Rename Particle Types", false );
+    WPropertyGroup::SPtr groupOutput  = groupFilter->addPropertyGroup( "Output", "Configures the third output", false );
 
     WPropertyBase::PropertyChangeNotifierType columnNotifier = boost::bind( &WMFilterProtonData::loadNotifier,
                                                                 this, groupColumn, boost::placeholders::_1 );
@@ -170,6 +174,8 @@ void WMFilterProtonData::properties()
                                                                 this, groupEventID, boost::placeholders::_1 );
     WPropertyBase::PropertyChangeNotifierType renameNotifier = boost::bind( &WMFilterProtonData::loadNotifier,
                                                                 this, groupRename, boost::placeholders::_1 );
+    WPropertyBase::PropertyChangeNotifierType outputNotifier = boost::bind( &WMFilterProtonData::loadNotifier,
+                                                                this, groupOutput, boost::placeholders::_1 );
 
     groupColumn->addProperty( "X", "Choose the column which should be used to determine the x coordinate.",
                             std::string( "" ), columnNotifier, false );
@@ -215,6 +221,9 @@ void WMFilterProtonData::properties()
                             eventIDNotifier, false );
     groupEventID->addProperty( "Set selection", "Apply", std::string( "" ), eventIDNotifier, false );
 
+    groupOutput->addProperty( "Energy deposition", "Enables the energy deposition output", std::string( "" ), outputNotifier, false );
+    groupOutput->addProperty( "Event id", "Enables the event id output", std::string( "" ), outputNotifier, false );
+
     WModule::properties();
 }
 
@@ -243,7 +252,7 @@ void WMFilterProtonData::setOutputFromCSV()
 
     m_output_points->updateData( m_converter->getPoints() );
     m_output_fibers->updateData( m_converter->getFibers() );
-    m_output_points_eventIds->updateData( m_converter->getPointsAndIDs() );
+    m_output_points_eventIds->updateData( m_converter->getPointsAndData() );
     m_output_transferFunction->updateData( m_converter->getTransferFunction() );
 }
 

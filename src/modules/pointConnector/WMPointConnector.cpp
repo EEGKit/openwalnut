@@ -97,6 +97,9 @@ void WMPointConnector::properties()
     m_adaptiveVisibilityAngle->setMin( 0.0 );
     m_adaptiveVisibilityAngle->setMax( 90.0 );
 
+    m_enablePhysicalAngle = assistanceGroup->addProperty( "Enable physical angle", "Enables the calculation of the visibility angle", false,
+                                                           boost::bind( &WMPointConnector::updatePoints, this ) );
+
     WModule::properties();
 }
 
@@ -247,6 +250,11 @@ void WMPointConnector::updatePoints()
         return;
     }
 
+    if( m_enablePhysicalAngle->get() != m_adaptiveVisibilityAngle->isHidden() )
+    {
+        m_adaptiveVisibilityAngle->setHidden( m_enablePhysicalAngle->get() );
+    }
+
     WDataSetPoints::VertexArray vertices( new std::vector< float > );
     WDataSetPoints::VertexArray colors( new std::vector< float > );
 
@@ -304,7 +312,19 @@ bool WMPointConnector::isAdaptivelyHidden( osg::Vec3 vertex )
     denom = sqrt( denom );
     double angle = acos( num / denom ) * 180.0 / M_PI;
 
-    return angle > m_adaptiveVisibilityAngle->get() && angle < ( 180.0 - m_adaptiveVisibilityAngle->get() );
+    double checkAngle = m_adaptiveVisibilityAngle->get();
+    if( m_enablePhysicalAngle->get() )
+    {
+        checkAngle = calculatePhysicalAngle();
+    }
+
+    return angle > checkAngle && angle < ( 180.0 - checkAngle );
+}
+
+double WMPointConnector::calculatePhysicalAngle()
+{
+    // TODO(eschbach): calculate the physical angle
+    return 0.0;
 }
 
 void WMPointConnector::handleClick( osg::Vec3 cameraPosition, osg::Vec3 direction, bool isLeftClick )

@@ -59,9 +59,9 @@ std::shared_ptr< WDataSetPoints > WCsvConverter::getPoints()
     return m_points;
 }
 
-std::shared_ptr< WDataSetPoints > WCsvConverter::getPointsAndIDs()
+std::shared_ptr< WDataSetPoints > WCsvConverter::getPointsAndData()
 {
-    return m_selectedEventIDs;
+    return m_pointsAndData;
 }
 
 void WCsvConverter::setOutputFromCSV( )
@@ -115,7 +115,7 @@ void WCsvConverter::setOutputFromCSV( )
 
     createOutputPoints();
     createOutputFibers();
-    createOutputPointsAndEventIDs();
+    createOutputPointsAndData();
 }
 
 std::shared_ptr< WDataSetSingle > WCsvConverter::getTransferFunction()
@@ -370,16 +370,64 @@ void WCsvConverter::createOutputFibers()
     calculateFibers();
 }
 
-void WCsvConverter::createOutputPointsAndEventIDs()
+void WCsvConverter::createOutputPointsAndData()
 {
-    if( m_protonData->isColumnAvailable( WSingleSelectorName::getEventId() ) )
+    bool edep = m_propertyStatus->getOutputPropertyHandler()->getEnergyDeposition()->get() &&
+                m_protonData->isColumnAvailable( WSingleSelectorName::getEdep() );
+
+    bool eventID = m_propertyStatus->getOutputPropertyHandler()->getEventID()->get() &&
+                   m_protonData->isColumnAvailable( WSingleSelectorName::getEventId() );
+
+    // Not working because of tuple not possible for value set.
+    if( edep && eventID )
     {
-        m_selectedEventIDs = std::shared_ptr < WDataSetPoints >(
-                new WDataSetPoints(
-                        m_vectors->getVertices(),
-                        m_vectors->getColors(),
-                        std::shared_ptr< WValueSet< size_t > >( new WValueSet< size_t >( 0, 1, m_vectors->getEventIDs() ) )
+        std::shared_ptr< std::vector< std::tuple< float, size_t > > > data( new std::vector< std::tuple< float, size_t > >() );
+        for( size_t i = 0; m_vectors->getEdeps()->size(); i++ )
+        {
+            data->push_back( std::make_tuple( m_vectors->getEdeps()->at( i ), m_vectors->getEventIDs()->at( i ) ) );
+        }
+        m_pointsAndData = WDataSetPoints::SPtr(
+            new WDataSetPoints(
+                m_vectors->getVertices(),
+                m_vectors->getColors(),
+                std::shared_ptr< WValueSet< std::tuple< float, size_t > > >(
+                    new WValueSet< std::tuple< float, size_t > >( 0, 1, data )
                 )
+            )
+        );
+    }
+    else if( edep )
+    {
+        std::shared_ptr< std::vector< std::tuple< float > > > data( new std::vector< std::tuple< float > >() );
+        for( size_t i = 0; m_vectors->getEdeps()->size(); i++ )
+        {
+            data->push_back( std::make_tuple( m_vectors->getEdeps()->at( i ) ) );
+        }
+        m_pointsAndData = WDataSetPoints::SPtr(
+            new WDataSetPoints(
+                m_vectors->getVertices(),
+                m_vectors->getColors(),
+                std::shared_ptr< WValueSet< std::tuple< float > > >(
+                    new WValueSet< std::tuple< float > >( 0, 1, data )
+                )
+            )
+        );
+    }
+    else if( eventID )
+    {
+        std::shared_ptr< std::vector< std::tuple< size_t > > > data( new std::vector< std::tuple< size_t > >() );
+        for( size_t i = 0; m_vectors->getEventIDs()->size(); i++ )
+        {
+            data->push_back( std::make_tuple( m_vectors->getEventIDs()->at( i ) ) );
+        }
+        m_pointsAndData = WDataSetPoints::SPtr(
+            new WDataSetPoints(
+                m_vectors->getVertices(),
+                m_vectors->getColors(),
+                std::shared_ptr< WValueSet< std::tuple< size_t > > >(
+                    new WValueSet< std::tuple< size_t > >( 0, 1, data )
+                )
+            )
         );
     }
 }
@@ -414,7 +462,7 @@ bool WCsvConverter::checkIfOutputIsNull()
     {
         m_points = NULL;
         m_fibers = NULL;
-        m_selectedEventIDs = NULL;
+        m_pointsAndData = NULL;
         return true;
     }
     return false;

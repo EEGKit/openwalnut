@@ -224,6 +224,12 @@ private:
     bool isAdaptivelyHidden( osg::Vec3 vertex );
 
     /**
+     * Calculates the physical angle of the currently selected vertex.
+     * \return double The physical angle.
+     */
+    double calculatePhysicalAngle();
+
+    /**
      * The WMPointRenderer associated with this module.
      */
     WModule::SPtr m_pointRenderer;
@@ -277,6 +283,11 @@ private:
      * Property to set the angle for the adaptive visibility.
      */
     WPropDouble m_adaptiveVisibilityAngle;
+
+    /**
+     * Property to set the angle via physical conditions.
+     */
+    WPropBool m_enablePhysicalAngle;
 };
 
 #endif  // WMPOINTCONNECTOR_H
