@@ -25,13 +25,12 @@
 #ifndef WPROPERTYWRAPPER_H
 #define WPROPERTYWRAPPER_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
-
-#include "core/common/WPropertyBase.h"
 
 #include "WColorWrapper.h"
+#include "core/common/WPropertyBase.h"
 
 /**
  * \class WPropertyWrapper

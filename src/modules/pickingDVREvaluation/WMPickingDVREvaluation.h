@@ -25,6 +25,7 @@
 #ifndef WMPICKINGDVREVALUATION_H
 #define WMPICKINGDVREVALUATION_H
 
+#include <memory>
 #include <string>
 
 #include <osg/Geode>

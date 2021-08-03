@@ -25,6 +25,8 @@
 #ifndef WEVENTIDLIMITATIONPROPERTYHANDLER_H
 #define WEVENTIDLIMITATIONPROPERTYHANDLER_H
 
+#include <memory>
+
 #include "../WProtonData.h"
 #include "../WSingleSelectorName.h"
 

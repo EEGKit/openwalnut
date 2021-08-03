@@ -26,16 +26,14 @@
 #define WHEADSURFACECALLBACK_H
 
 #include <cstddef>
-
+#include <memory>
 #include <vector>
-
-#include <boost/shared_ptr.hpp>
 
 #include <osg/Drawable>
 
+#include "WEEGEvent.h"
 #include "core/common/WFlag.h"
 #include "core/common/WPropertyTypes.h"
-#include "WEEGEvent.h"
 
 
 /**

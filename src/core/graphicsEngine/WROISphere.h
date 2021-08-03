@@ -25,14 +25,14 @@
 #ifndef WROISPHERE_H
 #define WROISPHERE_H
 
+#include <memory>
 #include <utility>
 
 #include <boost/thread.hpp>
 
 #include "../common/math/linearAlgebra/WPosition.h"
-#include "WPickHandler.h"
 #include "WGEViewer.h"
-
+#include "WPickHandler.h"
 #include "WROI.h"
 
 

@@ -25,14 +25,15 @@
 #ifndef WPROTONDATA_H
 #define WPROTONDATA_H
 
-#include <regex>
 #include <list>
 #include <map>
+#include <memory>
+#include <regex>
 #include <string>
 #include <vector>
 
-#include "core/dataHandler/WDataSetCSV.h"
 #include "WDataType.h"
+#include "core/dataHandler/WDataSetCSV.h"
 
 
 /**

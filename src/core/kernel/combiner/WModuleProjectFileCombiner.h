@@ -25,16 +25,15 @@
 #ifndef WMODULEPROJECTFILECOMBINER_H
 #define WMODULEPROJECTFILECOMBINER_H
 
-#include <ostream>
 #include <list>
 #include <map>
+#include <memory>
+#include <ostream>
 #include <string>
 #include <utility>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../../common/WProjectFileIO.h"
-
 #include "../WModuleCombiner.h"
 
 class WProjectFile;

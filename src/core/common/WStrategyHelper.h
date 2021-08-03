@@ -25,18 +25,18 @@
 #ifndef WSTRATEGYHELPER_H
 #define WSTRATEGYHELPER_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
-#include "WLogger.h"
 #include "WItemSelection.h"
 #include "WItemSelector.h"
-#include "WSharedSequenceContainer.h"
+#include "WLogger.h"
 #include "WProperties.h"
 #include "WPropertyHelper.h"
+#include "WSharedSequenceContainer.h"
 
 /**
  * This class allows for an easy strategy pattern-based switching between properties and strategy instances using a WPropSelection. The idea of

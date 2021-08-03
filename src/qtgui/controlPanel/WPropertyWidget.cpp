@@ -22,18 +22,20 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
 #include <QApplication>
 
+#include "../WGuiConsts.h"
 #include "../events/WEventTypes.h"
 #include "../events/WPropertyChangedEvent.h"
-#include "core/common/WLogger.h"
 #include "WPropertyBoolWidget.h"
 #include "WPropertyColorWidget.h"
 #include "WPropertyDoubleWidget.h"
 #include "WPropertyFilenameWidget.h"
 #include "WPropertyIntWidget.h"
+#include "WPropertyIntervalWidget.h"
 #include "WPropertyMatrix4X4Widget.h"
 #include "WPropertyPositionWidget.h"
 #include "WPropertySelectionWidget.h"
@@ -41,12 +43,9 @@
 #include "WPropertyStructWidget.h"
 #include "WPropertyTransferFunctionWidget.h"
 #include "WPropertyTriggerWidget.h"
-#include "WPropertyIntervalWidget.h"
 #include "WPropertyWidget.h"
-
-#include "../WGuiConsts.h"
-
 #include "WQtPropertyGroupWidget.h"
+#include "core/common/WLogger.h"
 
 WPropertyWidget::WPropertyWidget(  std::shared_ptr< WPropertyBase > property, QGridLayout* propertyGrid, QWidget* parent ):
     QStackedWidget( parent ),

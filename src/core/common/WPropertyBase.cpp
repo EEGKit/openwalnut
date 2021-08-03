@@ -23,17 +23,17 @@
 //---------------------------------------------------------------------------
 
 #include <list>
+#include <memory>
 #include <string>
 
 #include <boost/filesystem.hpp>
 
-#include "exceptions/WPropertyNameMalformed.h"
 #include "WProperties.h"
 #include "WPropertyBase.h"
 #include "WPropertyGroupBase.h"
 #include "WPropertyVariable.h"
-
 #include "WTransferFunction.h"
+#include "exceptions/WPropertyNameMalformed.h"
 
 WPropertyBase::WPropertyBase( std::string name, std::string description ):
     std::enable_shared_from_this< WPropertyBase >(),

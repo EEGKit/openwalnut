@@ -22,15 +22,16 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <vector>
 
+#include "WDataSetDTIToScalar_I.h"
 #include "core/common/WFlag.h"
 #include "core/common/WLogger.h"
 #include "core/common/WProgress.h"
 #include "core/dataHandler/WDataSetDTI.h"
 #include "core/dataHandler/WDataSetScalar.h"
 #include "core/dataHandler/WDataSetVector.h"
-#include "WDataSetDTIToScalar_I.h"
 
 WDataSetDTIToScalar_I::~WDataSetDTIToScalar_I()
 {

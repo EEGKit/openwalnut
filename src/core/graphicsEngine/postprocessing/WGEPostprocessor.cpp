@@ -22,17 +22,17 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <vector>
 
+#include "WGEPostprocessor.h"
 #include "WGEPostprocessorCelShading.h"
 #include "WGEPostprocessorEdgeEnhance.h"
 #include "WGEPostprocessorGauss.h"
 #include "WGEPostprocessorHalftone.h"
 #include "WGEPostprocessorLineAO.h"
 #include "WGEPostprocessorSSAO.h"
-
-#include "WGEPostprocessor.h"
 
 WGEPostprocessor::ProcessorList WGEPostprocessor::m_postProcessors;
 

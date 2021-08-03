@@ -23,14 +23,14 @@
 //---------------------------------------------------------------------------
 
 #include <fstream>
+#include <memory>
 #include <string>
 
 #include <boost/filesystem.hpp>
-#include <boost/shared_ptr.hpp>
 
-#include "../../common/datastructures/WDendrogram.h"
 #include "../../common/WAssert.h"
 #include "../../common/WIOTools.h"
+#include "../../common/datastructures/WDendrogram.h"
 #include "../exceptions/WDHIOFailure.h"
 #include "WWriterDendrogram.h"
 

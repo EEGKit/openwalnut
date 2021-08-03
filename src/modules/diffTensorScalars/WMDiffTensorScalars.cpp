@@ -22,17 +22,17 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
-#include "core/kernel/WModuleFactory.h"
-#include "WMDiffTensorScalars.h"
-
-#include "WTensorTrace.h"
+#include "WAD.h"
 #include "WFA.h"
+#include "WMD.h"
+#include "WMDiffTensorScalars.h"
 #include "WRA.h"
 #include "WRD.h"
-#include "WMD.h"
-#include "WAD.h"
+#include "WTensorTrace.h"
+#include "core/kernel/WModuleFactory.h"
 
 W_LOADABLE_MODULE( WMDiffTensorScalars )
 

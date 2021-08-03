@@ -25,16 +25,15 @@
 #ifndef WREADERNIFTI_H
 #define WREADERNIFTI_H
 
-#include <nifti1_io.h>
-
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
+#include <nifti1_io.h> // NOLINT: brainlint thinks this is C System Header
 
-#include "core/dataHandler/io/WReader.h"
-#include "core/dataHandler/WDataSet.h"
 #include "core/common/math/WMatrix.h"
+#include "core/dataHandler/WDataSet.h"
+#include "core/dataHandler/io/WReader.h"
 
 /**
  * Reader for the NIfTI file format. For NIfTI just see http://nifti.nimh.nih.gov/.

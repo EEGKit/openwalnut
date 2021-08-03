@@ -22,27 +22,27 @@
 //
 //---------------------------------------------------------------------------
 
-#include <string>
 #include <map>
+#include <memory>
+#include <string>
 
-#include <QtCore/QList>
+#include <QApplication>
+#include <QListWidgetItem>
 #include <QScrollArea>
 #include <QVBoxLayout>
-#include <QListWidgetItem>
-#include <QApplication>
 #include <QWidgetAction>
+#include <QtCore/QList>
 
-#include "../guiElements/WScaleLabel.h"
-#include "../WQtGui.h"
 #include "../WMainWindow.h"
+#include "../WQtGui.h"
+#include "../guiElements/WScaleLabel.h"
 #include "WPropertyBoolWidget.h"
-#include "WPropertyDoubleWidget.h"
 #include "WPropertyColorWidget.h"
-#include "WQtPropertyGroupWidget.h"
-
-#include "WTreeItemTypes.h"
-#include "WQtRoiTreeItem.h"
+#include "WPropertyDoubleWidget.h"
 #include "WQtBranchTreeItem.h"
+#include "WQtPropertyGroupWidget.h"
+#include "WQtRoiTreeItem.h"
+#include "WTreeItemTypes.h"
 
 WQtBranchTreeItem::WQtBranchTreeItem( QTreeWidgetItem* parent, std::shared_ptr< WRMBranch > branch ) :
     QTreeWidgetItem( parent, ROIBRANCH ),

@@ -23,13 +23,13 @@
 //---------------------------------------------------------------------------
 
 #include <list>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "../graphicsEngine/WGraphicsEngine.h"
-
-#include "WROIManager.h"
 #include "WRMBranch.h"
+#include "WROIManager.h"
 
 
 WRMBranch::WRMBranch( std::shared_ptr< WROIManager > roiManager ) :

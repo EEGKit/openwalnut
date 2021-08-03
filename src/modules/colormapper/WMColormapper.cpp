@@ -22,23 +22,23 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <osg/Projection>
 #include <osg/Geode>
+#include <osg/Projection>
 
+#include "WMColormapper.h"
+#include "WMColormapper.xpm"
 #include "core/dataHandler/WDataTexture3D.h"
 #include "core/graphicsEngine/WGEColormapping.h"
-#include "core/graphicsEngine/callbacks/WGENodeMaskCallback.h"
-#include "core/graphicsEngine/callbacks/WGEFunctorCallback.h"
 #include "core/graphicsEngine/WGEGeodeUtils.h"
+#include "core/graphicsEngine/callbacks/WGEFunctorCallback.h"
+#include "core/graphicsEngine/callbacks/WGENodeMaskCallback.h"
 #include "core/graphicsEngine/shaders/WGEShader.h"
 #include "core/graphicsEngine/widgets/labeling/WGELabel.h"
 #include "core/kernel/WKernel.h"
-
-#include "WMColormapper.xpm"
-#include "WMColormapper.h"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMColormapper )

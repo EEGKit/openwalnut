@@ -25,11 +25,10 @@
 #ifndef WDATASETSINGLE_H
 #define WDATASETSINGLE_H
 
+#include <memory>
 #include <string>
 
 #include <osg/ref_ptr>
-
-#include <boost/shared_ptr.hpp>
 
 #include "WDataSet.h"
 #include "WGrid.h"

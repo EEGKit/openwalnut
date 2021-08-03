@@ -28,11 +28,10 @@
 #ifdef WEEP_ENABLED
 
 #include <cstddef>
-
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
 #include "core/dataHandler/WEEGValueMatrix.h"
 #include "core/dataHandler/io/WPagerEEG.h"

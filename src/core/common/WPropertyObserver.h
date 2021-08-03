@@ -26,8 +26,9 @@
 #define WPROPERTYOBSERVER_H
 
 #include <map>
-#include <string>
+#include <memory>
 #include <set>
+#include <string>
 
 #include <boost/signals2/signal.hpp>
 #include <boost/thread.hpp>

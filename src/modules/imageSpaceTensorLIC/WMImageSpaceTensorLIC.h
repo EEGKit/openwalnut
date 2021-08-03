@@ -25,14 +25,13 @@
 #ifndef WMIMAGESPACETENSORLIC_H
 #define WMIMAGESPACETENSORLIC_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "core/dataHandler/WDataSetVector.h"
-
-#include "core/graphicsEngine/WTriangleMesh.h"
 #include "core/graphicsEngine/WGEManagedGroupNode.h"
-
+#include "core/graphicsEngine/WTriangleMesh.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 

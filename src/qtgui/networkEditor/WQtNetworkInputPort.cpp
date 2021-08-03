@@ -22,6 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
+
 #include "WQtNetworkInputPort.h"
 
 WQtNetworkInputPort::WQtNetworkInputPort( std::shared_ptr<WModuleInputConnector> connector )

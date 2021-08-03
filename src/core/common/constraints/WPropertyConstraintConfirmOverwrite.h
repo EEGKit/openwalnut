@@ -25,6 +25,8 @@
 #ifndef WPROPERTYCONSTRAINTCONFIRMOVERWRITE_H
 #define WPROPERTYCONSTRAINTCONFIRMOVERWRITE_H
 
+#include <memory>
+
 #include "../WPropertyTypes.h"
 #include "WPropertyConstraintTypes.h"
 

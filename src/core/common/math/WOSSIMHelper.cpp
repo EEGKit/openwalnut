@@ -24,10 +24,10 @@
 
 #ifdef OW_USE_OSSIM
 
-#include <ossim/matrix/newmat.h>
-#include <ossim/matrix/newmatap.h>
+#include <memory>
 
-#include <boost/shared_ptr.hpp>
+#include <ossim/matrix/newmat.h> // NOLINT: brainlint thinks this is C System Header
+#include <ossim/matrix/newmatap.h> // NOLINT: brainlint thinks this is C System Header
 
 #include "WOSSIMHelper.h"
 

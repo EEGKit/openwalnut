@@ -25,15 +25,14 @@
 #ifndef WKERNEL_H
 #define WKERNEL_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../common/WTimer.h"
-#include "../scripting/WScriptEngine.h"
 #include "../graphicsEngine/WGraphicsEngine.h"
-
+#include "../scripting/WScriptEngine.h"
 #include "WBatchLoader.h"
 
 // forward declarations

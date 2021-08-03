@@ -25,9 +25,9 @@
 #ifndef WMODULEOUTPUTFORWARDDATA_H
 #define WMODULEOUTPUTFORWARDDATA_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
 #include "WModuleInputData.h"
 #include "WModuleOutputData.h"

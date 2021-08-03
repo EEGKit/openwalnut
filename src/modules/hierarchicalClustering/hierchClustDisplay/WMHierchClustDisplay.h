@@ -49,34 +49,33 @@
 #ifndef WMHIERCHCLUSTDISPLAY_H
 #define WMHIERCHCLUSTDISPLAY_H
 
+#include <map>
+#include <memory>
 #include <queue>
 #include <string>
 #include <vector>
-#include <map>
 
 #include <osg/Geode>
 #include <osgGA/GUIEventAdapter>
 #include <osgGA/GUIEventHandler>
 
+#include "WHtree.h"
+#include "WHtreePartition.h"
+#include "WHtreeProcesser.h"
+#include "WNonBinDendroGeode.h"
 #include "core/dataHandler/WDataHandler.h"
 #include "core/dataHandler/WDataSetScalar.h"
 #include "core/dataHandler/WDataSetVector.h"
 #include "core/dataHandler/WSubject.h"
 #include "core/dataHandler/WValueSet.h"
-#include "core/graphicsEngine/WGETexture.h"
-#include "core/graphicsEngine/WGEManagedGroupNode.h"
 #include "core/graphicsEngine/WGEGeodeUtils.h"
+#include "core/graphicsEngine/WGEManagedGroupNode.h"
+#include "core/graphicsEngine/WGETexture.h"
+#include "core/graphicsEngine/shaders/WGEShader.h"
 #include "core/graphicsEngine/widgets/WOSGButton.h"
-//DEPRECATED #include "core/graphicsEngine/WPickHandler.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
-#include "core/graphicsEngine/shaders/WGEShader.h"
-
-#include "WHtree.h"
-#include "WHtreeProcesser.h"
-#include "WHtreePartition.h"
-#include "WNonBinDendroGeode.h"
 
 const unsigned int MASK_2D = 0xF0000000; //!< used for osgWidget processes
 const unsigned int MASK_3D = 0x0F000000; //!< used for osgWidget processes

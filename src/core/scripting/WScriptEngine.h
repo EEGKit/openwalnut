@@ -25,13 +25,12 @@
 #ifndef WSCRIPTENGINE_H
 #define WSCRIPTENGINE_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../kernel/WModuleContainer.h"
-
 #include "WScriptInterpreter.h"
 
 /**

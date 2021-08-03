@@ -23,10 +23,9 @@
 //---------------------------------------------------------------------------
 
 #include <fstream>
+#include <memory>
 #include <string>
 #include <vector>
-
-#include "core/kernel/WKernel.h"
 
 #include "../wrappers/WColorWrapper.h"
 #include "../wrappers/WLoggerWrapper.h"
@@ -34,8 +33,8 @@
 #include "../wrappers/WPropertyGroupWrapper.h"
 #include "../wrappers/WPropertyWrapper.h"
 #include "../wrappers/WUtilityFunctions.h"
-
 #include "WScriptInterpreterPython.h"
+#include "core/kernel/WKernel.h"
 
 #ifdef PYTHON_FOUND
 

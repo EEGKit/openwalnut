@@ -22,16 +22,16 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
 #include <QApplication>
 
 #include "../WMainWindow.h"
-#include "WUIQtViewWidget.h"
 #include "WUIQtGridWidget.h"
-#include "WUIQtTabbedWidget.h"
 #include "WUIQtPropertyGroupWidget.h"
-
+#include "WUIQtTabbedWidget.h"
+#include "WUIQtViewWidget.h"
 #include "WUIQtWidgetFactory.h"
 
 WUIQtWidgetFactory::WUIQtWidgetFactory( WMainWindow* mainWindow ):

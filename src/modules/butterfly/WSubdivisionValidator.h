@@ -26,6 +26,7 @@
 #define WSUBDIVISIONVALIDATOR_H_
 
 #include <cstring>
+#include <memory>
 
 #include "structure/WVertexFactory.h"
 

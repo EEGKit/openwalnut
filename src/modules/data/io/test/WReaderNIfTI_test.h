@@ -25,16 +25,15 @@
 #ifndef WREADERNIFTI_TEST_H
 #define WREADERNIFTI_TEST_H
 
+#include <memory>
 #include <vector>
-
-#include <boost/shared_ptr.hpp>
 
 #include <cxxtest/TestSuite.h>
 
+#include "../WReaderNIfTI.cpp" //need this to be able instatiate template function
+#include "../WReaderNIfTI.h"
 #include "core/common/WLogger.h"
 #include "core/dataHandler/exceptions/WDHNoSuchFile.h"
-#include "../WReaderNIfTI.h"
-#include "../WReaderNIfTI.cpp" //need this to be able instatiate template function
 
 /**
  * test class the nifti reader class

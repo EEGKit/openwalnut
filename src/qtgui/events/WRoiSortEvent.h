@@ -25,7 +25,7 @@
 #ifndef WROISORTEVENT_H
 #define WROISORTEVENT_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <QtCore/QEvent>
 

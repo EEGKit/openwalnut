@@ -25,6 +25,8 @@
 #ifndef WPROPERTYCONSTRAINTSELECTONLYONE_H
 #define WPROPERTYCONSTRAINTSELECTONLYONE_H
 
+#include <memory>
+
 #include "../WPropertyTypes.h"
 #include "WPropertyConstraintTypes.h"
 

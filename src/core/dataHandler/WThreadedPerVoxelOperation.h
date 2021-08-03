@@ -25,21 +25,21 @@
 #ifndef WTHREADEDPERVOXELOPERATION_H
 #define WTHREADEDPERVOXELOPERATION_H
 
-#include <vector>
+#include <memory>
 #include <string>
+#include <vector>
 
 #include <boost/array.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 
 #include "../common/WException.h"
-#include "../common/WThreadedJobs.h"
 #include "../common/WSharedObject.h"
 #include "../common/WSharedSequenceContainer.h"
-#include "WDataSetSingle.h"
-#include "WDataSetScalar.h"
-#include "WValueSet.h"
+#include "../common/WThreadedJobs.h"
 #include "WDataHandlerEnums.h"
+#include "WDataSetScalar.h"
+#include "WDataSetSingle.h"
+#include "WValueSet.h"
 
 //! forward declaration for the test
 class WThreadedPerVoxelOperationTest;

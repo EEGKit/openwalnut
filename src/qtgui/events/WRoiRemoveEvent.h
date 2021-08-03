@@ -25,7 +25,7 @@
 #ifndef WROIREMOVEEVENT_H
 #define WROIREMOVEEVENT_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <QtCore/QEvent>
 

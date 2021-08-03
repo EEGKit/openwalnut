@@ -22,9 +22,10 @@
 //
 //---------------------------------------------------------------------------
 
-#include "core/common/exceptions/WPreconditionNotMet.h"
+#include <memory>
 
 #include "WSegmentationAlgo.h"
+#include "core/common/exceptions/WPreconditionNotMet.h"
 
 WSegmentationAlgo::WSegmentationAlgo()
     : m_properties(),

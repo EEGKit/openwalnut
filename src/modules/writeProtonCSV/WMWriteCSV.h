@@ -25,15 +25,15 @@
 #ifndef WMWRITECSV_H
 #define WMWRITECSV_H
 
-#include <string>
 #include <list>
+#include <memory>
+#include <string>
 
+#include "../filterProtonData/WProtonData.h"
 #include "core/dataHandler/WDataSetCSV.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
-
-#include "../filterProtonData/WProtonData.h"
 
 
 /**

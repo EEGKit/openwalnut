@@ -25,25 +25,24 @@
 #include <cstdlib>
 #include <fstream>
 #include <list>
+#include <memory>
 #include <stdint.h>
 #include <string>
 #include <vector>
 
 #include <boost/regex.hpp>
-#include <boost/shared_ptr.hpp>
 
+#include "WReaderClustering.h"
 #include "core/common/WAssert.h"
 #include "core/common/WIOTools.h"
 #include "core/common/WLimits.h"
 #include "core/common/WLogger.h"
 #include "core/common/WStringUtils.h"
+#include "core/dataHandler/WDataSetHierarchicalClustering.h"
 #include "core/dataHandler/datastructures/WFiberCluster.h"
 #include "core/dataHandler/exceptions/WDHIOFailure.h"
 #include "core/dataHandler/exceptions/WDHNoSuchFile.h"
 #include "core/dataHandler/exceptions/WDHParseError.h"
-#include "core/dataHandler/WDataSetHierarchicalClustering.h"
-
-#include "WReaderClustering.h"
 
 WReaderClustering::WReaderClustering( std::string fname )
     : WReader( fname )

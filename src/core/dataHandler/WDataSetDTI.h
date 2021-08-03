@@ -25,9 +25,9 @@
 #ifndef WDATASETDTI_H
 #define WDATASETDTI_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../common/math/WTensorSym.h"
 #include "WDataSetSingle.h"

@@ -25,6 +25,8 @@
 #ifndef WPROPERTYCONSTRAINTISVALID_H
 #define WPROPERTYCONSTRAINTISVALID_H
 
+#include <memory>
+
 #include "../WPropertyTypes.h"
 #include "WPropertyConstraintTypes.h"
 

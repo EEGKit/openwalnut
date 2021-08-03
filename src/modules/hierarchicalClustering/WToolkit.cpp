@@ -22,9 +22,11 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WToolkit.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 #include <core/kernel/WModule.h>
+
+#include "WToolkit.h"
 #include "hierchClustDisplay/WMHierchClustDisplay.h"
 #include "partition2Mesh/WMPartition2Mesh.h"
 

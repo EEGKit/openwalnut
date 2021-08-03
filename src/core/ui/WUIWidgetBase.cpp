@@ -22,12 +22,12 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
+#include "WUIWidgetBase.h"
 #include "core/common/WConditionOneShot.h"
 #include "core/common/WLogger.h"
-
-#include "WUIWidgetBase.h"
 
 WUIWidgetBase::WUIWidgetBase( std::string title ):
     m_title( title ),

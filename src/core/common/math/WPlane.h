@@ -25,12 +25,11 @@
 #ifndef WPLANE_H
 #define WPLANE_H
 
+#include <memory>
 #include <set>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../../dataHandler/WGridRegular3D.h"
-
 #include "linearAlgebra/WVectorFixed.h"
 
 /**

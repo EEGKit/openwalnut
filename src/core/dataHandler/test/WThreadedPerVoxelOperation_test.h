@@ -25,12 +25,13 @@
 #ifndef WTHREADEDPERVOXELOPERATION_TEST_H
 #define WTHREADEDPERVOXELOPERATION_TEST_H
 
+#include <memory>
 #include <vector>
 
 #include <cxxtest/TestSuite.h>
 
-#include "../../common/WThreadedFunction.h"
 #include "../../common/WLogger.h"
+#include "../../common/WThreadedFunction.h"
 #include "../WDataHandlerEnums.h"
 #include "../WDataSetSingle.h"
 #include "../WThreadedPerVoxelOperation.h"

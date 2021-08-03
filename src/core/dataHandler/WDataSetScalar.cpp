@@ -22,15 +22,15 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "../common/WAssert.h"
 #include "../common/WLimits.h"
-#include "datastructures/WValueSetHistogram.h"
-#include "WDataSetSingle.h"
-
 #include "WDataSetScalar.h"
+#include "WDataSetSingle.h"
+#include "datastructures/WValueSetHistogram.h"
 
 // prototype instance as singleton
 std::shared_ptr< WPrototyped > WDataSetScalar::m_prototype = std::shared_ptr< WPrototyped >();

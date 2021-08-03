@@ -25,17 +25,16 @@
 #ifndef WTHREADEDTRACKINGFUNCTION_H
 #define WTHREADEDTRACKINGFUNCTION_H
 
+#include <memory>
 #include <stdint.h>
-
-#include <vector>
 #include <utility>
+#include <vector>
 
 #include <boost/array.hpp>
 
-#include "../common/math/linearAlgebra/WVectorFixed.h"
 #include "../common/WSharedObject.h"
 #include "../common/WThreadedJobs.h"
-
+#include "../common/math/linearAlgebra/WVectorFixed.h"
 #include "WDataSetSingle.h"
 
 class WThreadedTrackingFunctionTest; //! forward declaration

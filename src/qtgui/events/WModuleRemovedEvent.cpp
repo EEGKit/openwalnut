@@ -22,8 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WEventTypes.h"
+#include <memory>
 
+#include "WEventTypes.h"
 #include "WModuleRemovedEvent.h"
 
 WModuleRemovedEvent::WModuleRemovedEvent( std::shared_ptr< WModule > module )

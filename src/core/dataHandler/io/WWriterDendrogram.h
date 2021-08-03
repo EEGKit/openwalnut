@@ -25,11 +25,10 @@
 #ifndef WWRITERDENDROGRAM_H
 #define WWRITERDENDROGRAM_H
 
+#include <memory>
 #include <string>
 
 #include <boost/filesystem.hpp>
-#include <boost/shared_ptr.hpp>
-
 
 #include "WWriter.h"
 

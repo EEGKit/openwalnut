@@ -25,10 +25,10 @@
 #ifndef WGESHADERDEFINEOPTIONS_H
 #define WGESHADERDEFINEOPTIONS_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
 #include "WGEShaderPreprocessor.h"
 

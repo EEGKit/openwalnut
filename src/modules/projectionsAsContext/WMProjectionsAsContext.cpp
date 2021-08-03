@@ -23,29 +23,28 @@
 //---------------------------------------------------------------------------
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <osg/Geometry>
-#include <osg/ShapeDrawable>
-#include <osg/Group>
 #include <osg/Geode>
+#include <osg/Geometry>
+#include <osg/Group>
 #include <osg/Material>
+#include <osg/ShapeDrawable>
 #include <osg/StateAttribute>
 
+#include "WMProjectionsAsContext.h"
 #include "core/dataHandler/WDataSetScalar.h"
+#include "core/graphicsEngine/WGEColormapping.h"
+#include "core/graphicsEngine/WGEGeodeUtils.h"
+#include "core/graphicsEngine/WGEManagedGroupNode.h"
+#include "core/graphicsEngine/WGEUtils.h"
 #include "core/graphicsEngine/callbacks/WGELinearTranslationCallback.h"
 #include "core/graphicsEngine/shaders/WGEPropertyUniform.h"
 #include "core/graphicsEngine/shaders/WGEShader.h"
-#include "core/graphicsEngine/WGEGeodeUtils.h"
-#include "core/graphicsEngine/WGEManagedGroupNode.h"
 #include "core/kernel/WKernel.h"
 #include "core/kernel/WModuleInputData.h"
-
-#include "core/graphicsEngine/WGEUtils.h"
-#include "core/graphicsEngine/WGEColormapping.h"
-
-#include "WMProjectionsAsContext.h"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMProjectionsAsContext )

@@ -25,17 +25,17 @@
 // This file's purpose is to provide a list of modules and additional extensions as entry point for OpenWalnut's module loader.
 // Both functAdd your modules here. If you miss this step, OpenWalnut will not be able to load your modules/extensions.
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <core/kernel/WModule.h>
 
 #include "WMTemplate.h"
-#include "WMTemplateContainers.h"
-#include "WMTemplateUI.h"
-#include "WMTemplateShaders.h"
 #include "WMTemplateColormapping.h"
-#include "WMTemplateRenderPipelines.h"
+#include "WMTemplateContainers.h"
 #include "WMTemplateDataLoader.h"
+#include "WMTemplateRenderPipelines.h"
+#include "WMTemplateShaders.h"
+#include "WMTemplateUI.h"
 
 // #include "WToolkit.h"
 

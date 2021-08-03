@@ -25,15 +25,15 @@
 #ifndef WMIMAGESPACELIC_H
 #define WMIMAGESPACELIC_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include "core/dataHandler/WDataSetVector.h"
 #include "core/dataHandler/WDataSetScalar.h"
+#include "core/dataHandler/WDataSetVector.h"
 #include "core/dataHandler/WSubject.h"
-#include "core/graphicsEngine/WTriangleMesh.h"
 #include "core/graphicsEngine/WGEManagedGroupNode.h"
-
+#include "core/graphicsEngine/WTriangleMesh.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 

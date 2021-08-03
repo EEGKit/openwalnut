@@ -25,12 +25,12 @@
 #ifndef WMODULEINPUTCONNECTOR_H
 #define WMODULEINPUTCONNECTOR_H
 
+#include <memory>
 #include <shared_mutex>
 #include <string>
 
 #include <boost/thread/locks.hpp>
 
-class WModule;
 #include "WModuleConnector.h"
 
 class WCondition;

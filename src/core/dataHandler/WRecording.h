@@ -25,10 +25,10 @@
 #ifndef WRECORDING_H
 #define WRECORDING_H
 
+#include <memory>
 #include <string>
 
 #include "../common/WPrototyped.h"
-
 #include "WDataSet.h"
 
 

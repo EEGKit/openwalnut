@@ -26,16 +26,14 @@
 #define WGRIDTRANSFORMORTHO_TEST_H
 
 #include <cstdio>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
-
 #include <cxxtest/TestSuite.h>
 
 #include "../../common/exceptions/WPreconditionNotMet.h"
-
 #include "../WGridTransformOrtho.h"
 
 /**

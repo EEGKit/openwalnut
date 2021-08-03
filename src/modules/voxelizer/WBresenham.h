@@ -26,15 +26,15 @@
 #define WBRESENHAM_H
 
 #include <cmath>
+#include <memory>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
-#include "core/dataHandler/WGridRegular3D.h"
+#include "WRasterAlgorithm.h"
 #include "core/common/math/WLine.h"
 #include "core/common/math/linearAlgebra/WPosition.h"
 #include "core/common/math/linearAlgebra/WVectorFixed.h"
-#include "WRasterAlgorithm.h"
+#include "core/dataHandler/WGridRegular3D.h"
 
 /**
  * Implements basic Bresenham algorithm for rasterization.

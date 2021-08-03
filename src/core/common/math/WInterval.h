@@ -25,10 +25,10 @@
 #ifndef WINTERVAL_H
 #define WINTERVAL_H
 
-#include <utility>
 #include <algorithm>
+#include <memory>
+#include <utility>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../WTypeTraits.h"
 

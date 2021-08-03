@@ -25,10 +25,9 @@
 #ifndef WWRITERMATRIXSYMVTK_H
 #define WWRITERMATRIXSYMVTK_H
 
+#include <memory>
 #include <string>
 #include <vector>
-
-#include <boost/shared_ptr.hpp>
 
 
 #include "WWriter.h"

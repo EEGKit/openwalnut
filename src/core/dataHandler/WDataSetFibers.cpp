@@ -23,21 +23,22 @@
 //---------------------------------------------------------------------------
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "../common/datastructures/WFiber.h"
 #include "../common/WBoundingBox.h"
 #include "../common/WColor.h"
 #include "../common/WLogger.h"
 #include "../common/WPredicateHelper.h"
 #include "../common/WPropertyHelper.h"
+#include "../common/datastructures/WFiber.h"
 #include "../graphicsEngine/WGEUtils.h"
-#include "exceptions/WDHNoSuchDataSet.h"
 #include "WCreateColorArraysThread.h"
 #include "WDataSet.h"
 #include "WDataSetFibers.h"
+#include "exceptions/WDHNoSuchDataSet.h"
 
 // prototype instance as singleton
 std::shared_ptr< WPrototyped > WDataSetFibers::m_prototype = std::shared_ptr< WPrototyped >();

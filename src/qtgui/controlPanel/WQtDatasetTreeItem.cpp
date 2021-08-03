@@ -22,11 +22,11 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
-#include "WTreeItemTypes.h"
-
 #include "WQtDatasetTreeItem.h"
+#include "WTreeItemTypes.h"
 
 WQtDatasetTreeItem::WQtDatasetTreeItem( QTreeWidgetItem * parent, std::shared_ptr< WModule > module )
     : WQtTreeItem( parent, DATASET, module )

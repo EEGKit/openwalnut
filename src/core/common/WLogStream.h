@@ -25,9 +25,10 @@
 #ifndef WLOGSTREAM_H
 #define WLOGSTREAM_H
 
+#include <memory>
 #include <ostream>
 #include <string>
-#include <boost/shared_ptr.hpp>
+
 
 #include "WLogEntry.h"
 

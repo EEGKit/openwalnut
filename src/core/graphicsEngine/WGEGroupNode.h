@@ -25,11 +25,11 @@
 #ifndef WGEGROUPNODE_H
 #define WGEGROUPNODE_H
 
+#include <memory>
 #include <queue>
 #include <shared_mutex>
 
 #include <boost/thread.hpp>
-
 #include <osg/MatrixTransform>
 #include <osg/NodeCallback>
 

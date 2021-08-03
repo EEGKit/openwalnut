@@ -22,12 +22,13 @@
 //
 //---------------------------------------------------------------------------
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
-#include "core/dataHandler/WGridRegular3D.h"
+
+#include "WBresenhamDBL.h"
 #include "core/common/math/WLine.h"
 #include "core/common/math/linearAlgebra/WPosition.h"
-#include "WBresenhamDBL.h"
+#include "core/dataHandler/WGridRegular3D.h"
 
 WBresenhamDBL::WBresenhamDBL( std::shared_ptr< WGridRegular3D > grid, bool antialiased )
     : WBresenham( grid, antialiased )

@@ -25,7 +25,7 @@
 #ifndef WGEPOSTPROCESSORGAUSS_H
 #define WGEPOSTPROCESSORGAUSS_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <osg/Texture2D>
 

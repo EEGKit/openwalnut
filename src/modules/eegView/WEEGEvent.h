@@ -26,10 +26,8 @@
 #define WEEGEVENT_H
 
 #include <cstddef>
-
+#include <memory>
 #include <vector>
-
-#include <boost/shared_ptr.hpp>
 
 #include <osg/Node>
 #include <osg/ref_ptr>

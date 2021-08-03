@@ -26,17 +26,16 @@
 #define WEEG2_H
 
 #include <cstddef>
-
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
-#include "io/WPagerEEG.h"
+#include "WEEG2Segment.h"
 #include "WEEGChannelInfo.h"
 #include "WEEGPositionsLibrary.h"
-#include "WEEG2Segment.h"
 #include "WRecording.h"
+#include "io/WPagerEEG.h"
 
 
 

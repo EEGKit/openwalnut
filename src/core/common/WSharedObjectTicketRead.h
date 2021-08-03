@@ -25,9 +25,9 @@
 #ifndef WSHAREDOBJECTTICKETREAD_H
 #define WSHAREDOBJECTTICKETREAD_H
 
+#include <memory>
 #include <shared_mutex>
 
-#include <boost/shared_ptr.hpp>
 
 #include "WCondition.h"
 #include "WSharedObjectTicket.h"

@@ -22,21 +22,21 @@
 //
 //---------------------------------------------------------------------------
 
-#include <stdint.h>
-
 #include <cmath>
 #include <fstream>
 #include <iostream>
+#include <memory>
+#include <stdint.h>
 #include <string>
 #include <vector>
 
+#include "WMGaussFiltering.h"
+#include "WMGaussFiltering.xpm"
 #include "core/common/WAssert.h"
 #include "core/common/WProgress.h"
 #include "core/common/WStringUtils.h"
 #include "core/dataHandler/WGridRegular3D.h"
 #include "core/kernel/WKernel.h"
-#include "WMGaussFiltering.xpm"
-#include "WMGaussFiltering.h"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMGaussFiltering )

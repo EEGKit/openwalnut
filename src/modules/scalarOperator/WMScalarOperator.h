@@ -26,17 +26,17 @@
 #define WMSCALAROPERATOR_H
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <osg/Node>
 #include <osg/Geode>
+#include <osg/Node>
 #include <osg/Uniform>
 
+#include "core/dataHandler/WDataSetScalar.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
-
-#include "core/dataHandler/WDataSetScalar.h"
 
 /**
  * Operators for processing two WDataSetScalar.

@@ -25,22 +25,19 @@
 #ifndef WDATASETFIBERS_H
 #define WDATASETFIBERS_H
 
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/tuple/tuple.hpp>
 
-#include "../common/math/linearAlgebra/WPosition.h"
 #include "../common/WBoundingBox.h"
+#include "../common/WDefines.h" // for deprecated
 #include "../common/WProperties.h"
-
-#include "../common/WDefines.h"  // for deprecated
-
-#include "WIteratorRange.h"
+#include "../common/math/linearAlgebra/WPosition.h"
 #include "WDataSet.h"
-
+#include "WIteratorRange.h"
 
 // forward declarations
 class WFiber;

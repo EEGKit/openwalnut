@@ -25,6 +25,7 @@
 #ifndef WMTEEMGLYPHS_H
 #define WMTEEMGLYPHS_H
 
+#include <memory>
 #include <string>
 
 #include <osg/Geode>

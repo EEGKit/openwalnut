@@ -23,24 +23,23 @@
 //---------------------------------------------------------------------------
 
 #include <cstdlib>
-#include <stdint.h>
 #include <fstream>
+#include <memory>
+#include <stdint.h>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
+#include "WReaderFiberVTK.h"
+#include "core/common/WAssert.h"
 #include "core/common/WIOTools.h"
 #include "core/common/WLimits.h"
-#include "core/common/WAssert.h"
 #include "core/common/WLogger.h"
 #include "core/common/WStringUtils.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/exceptions/WDHIOFailure.h"
 #include "core/dataHandler/exceptions/WDHNoSuchFile.h"
 #include "core/dataHandler/exceptions/WDHParseError.h"
-
-#include "WReaderFiberVTK.h"
 
 WReaderFiberVTK::WReaderFiberVTK( std::string fname )
     : WReader( fname )

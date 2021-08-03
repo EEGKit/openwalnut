@@ -26,29 +26,28 @@
 #define WQTCONTROLPANEL_H
 
 #include <list>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <QDockWidget>
+#include <QListWidget>
 #include <QSplitter>
 #include <QTabWidget>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <QListWidget>
-
-#include "core/dataHandler/WDataSet.h"
-#include "core/graphicsEngine/WROI.h"
-
-#include "../WQtModuleConfig.h"
 
 #include "../WQtCombinerToolbar.h"
-#include "WQtPropertyGroupWidget.h"
+#include "../WQtModuleConfig.h"
+#include "../guiElements/WQtDockWidget.h"
 #include "WQtModuleHeaderTreeItem.h"
 #include "WQtModuleTreeItem.h"
+#include "WQtPropertyGroupWidget.h"
 #include "WQtRoiHeaderTreeItem.h"
 #include "WQtSubjectTreeItem.h"
 #include "WQtTreeWidget.h"
-#include "../guiElements/WQtDockWidget.h"
+#include "core/dataHandler/WDataSet.h"
+#include "core/graphicsEngine/WROI.h"
 
 class WMainWindow;
 class WQtColormapper;

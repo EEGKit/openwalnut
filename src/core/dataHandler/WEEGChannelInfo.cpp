@@ -23,16 +23,15 @@
 //---------------------------------------------------------------------------
 
 #include <cstddef>
-
+#include <memory>
 #include <sstream>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../common/exceptions/WOutOfBounds.h"
 #include "../common/math/linearAlgebra/WPosition.h"
-#include "WEEGPositionsLibrary.h"
 #include "WEEGChannelInfo.h"
+#include "WEEGPositionsLibrary.h"
 #include "exceptions/WDHException.h"
 #include "io/WPagerEEG.h"
 

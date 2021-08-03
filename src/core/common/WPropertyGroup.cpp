@@ -22,20 +22,19 @@
 //
 //---------------------------------------------------------------------------
 
+#include <algorithm>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
-#include <algorithm>
 
 #include <boost/tokenizer.hpp>
 
 #include "WLogger.h"
-#include "exceptions/WPropertyUnknown.h"
-
-#include "WPropertyHelper.h"
-
 #include "WPropertyGroup.h"
+#include "WPropertyHelper.h"
+#include "exceptions/WPropertyUnknown.h"
 
 WPropertyGroup::WPropertyGroup( std::string name, std::string description ):
     WPropertyGroupBase( name, description )

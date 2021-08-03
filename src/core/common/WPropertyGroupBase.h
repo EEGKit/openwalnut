@@ -26,13 +26,14 @@
 #define WPROPERTYGROUPBASE_H
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/thread/thread.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/locks.hpp>
 #include <boost/thread.hpp>
+#include <boost/thread/locks.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/thread.hpp>
 
 #include "WConditionSet.h"
 #include "WPropertyBase.h"

@@ -25,13 +25,14 @@
 #ifndef WVALUESET_TEST_H
 #define WVALUESET_TEST_H
 
+#include <memory>
 #include <stdint.h>
 #include <vector>
 
 #include <cxxtest/TestSuite.h>
 
-#include "../WValueSet.h"
 #include "../WDataHandlerEnums.h"
+#include "../WValueSet.h"
 
 /**
  * UnitTests the WValueSet class

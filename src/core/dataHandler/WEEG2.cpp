@@ -23,20 +23,19 @@
 //---------------------------------------------------------------------------
 
 #include <cstddef>
-
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../common/exceptions/WOutOfBounds.h"
-#include "exceptions/WDHException.h"
-#include "io/WPagerEEG.h"
+#include "WEEG2.h"
+#include "WEEG2Segment.h"
 #include "WEEGChannelInfo.h"
 #include "WEEGPositionsLibrary.h"
-#include "WEEG2Segment.h"
-#include "WEEG2.h"
+#include "exceptions/WDHException.h"
+#include "io/WPagerEEG.h"
 
 
 std::shared_ptr< WPrototyped > WEEG2::m_prototype = std::shared_ptr< WPrototyped >();

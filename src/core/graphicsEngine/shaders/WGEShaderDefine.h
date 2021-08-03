@@ -25,13 +25,12 @@
 #ifndef WGESHADERDEFINE_H
 #define WGESHADERDEFINE_H
 
+#include <iostream>
+#include <memory>
 #include <string>
-#include  <iostream>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../../common/WStringUtils.h"
-
 #include "WGEShaderPreprocessor.h"
 
 /**

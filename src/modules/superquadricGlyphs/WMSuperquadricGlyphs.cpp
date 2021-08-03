@@ -22,24 +22,23 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <osg/Geode>
 #include <osg/Geometry>
-#include <osg/StateSet>
-#include <osg/StateAttribute>
-#include <osg/PolygonMode>
 #include <osg/LightModel>
-
-#include "core/kernel/WKernel.h"
-
-#include "core/graphicsEngine/WGEUtils.h"
-#include "core/graphicsEngine/shaders/WGEPropertyUniform.h"
-#include "core/graphicsEngine/postprocessing/WGEPostprocessingNode.h"
+#include <osg/PolygonMode>
+#include <osg/StateAttribute>
+#include <osg/StateSet>
 
 #include "WMSuperquadricGlyphs.h"
 #include "WMSuperquadricGlyphs.xpm"
+#include "core/graphicsEngine/WGEUtils.h"
+#include "core/graphicsEngine/postprocessing/WGEPostprocessingNode.h"
+#include "core/graphicsEngine/shaders/WGEPropertyUniform.h"
+#include "core/kernel/WKernel.h"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMSuperquadricGlyphs )

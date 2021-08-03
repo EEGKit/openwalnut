@@ -25,11 +25,13 @@
 #ifndef WVERTEXFACTORY_H_
 #define WVERTEXFACTORY_H_
 
+#include <memory>
 #include <vector>
-#include "WVertexProperty.h"
-#include "core/kernel/WModule.h"
+
 #include "WNewVertex.h"
+#include "WVertexProperty.h"
 #include "core/graphicsEngine/WTriangleMesh.h"
+#include "core/kernel/WModule.h"
 #include "osg/Vec3"
 
 

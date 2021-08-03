@@ -25,10 +25,10 @@
 #ifndef WTURINGTEXTURECREATOR_H
 #define WTURINGTEXTURECREATOR_H
 
+#include <memory>
 #include <vector>
 
 #include <boost/thread.hpp>
-
 #include <core/common/WThreadedRunner.h>
 #include <core/graphicsEngine/WGETexture.h>
 

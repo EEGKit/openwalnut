@@ -25,7 +25,8 @@
 #ifndef WOUTPUTCONNECTORWRAPPER_H
 #define WOUTPUTCONNECTORWRAPPER_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 
 #include "core/kernel/WModuleOutputConnector.h"
 

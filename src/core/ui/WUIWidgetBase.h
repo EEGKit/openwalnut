@@ -25,15 +25,15 @@
 #ifndef WUIWIDGETBASE_H
 #define WUIWIDGETBASE_H
 
+#include <memory>
 #include <string>
 #include <vector>
+
 
 #include "core/common/WCondition.h"
 #include "core/common/WProperties.h"
 #include "core/common/WSharedSequenceContainer.h"
 #include "core/graphicsEngine/WGEImage.h"
-
-#include <boost/shared_ptr.hpp>
 
 /**
  * Base class for all the widget abstraction the core UI provides. All the abstract widgets use the bridge pattern to let the UI/GUI implementor

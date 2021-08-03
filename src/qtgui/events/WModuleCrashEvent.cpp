@@ -22,10 +22,10 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
 #include "WEventTypes.h"
-
 #include "WModuleCrashEvent.h"
 
 WModuleCrashEvent::WModuleCrashEvent( std::shared_ptr< WModule > module, std::string message )

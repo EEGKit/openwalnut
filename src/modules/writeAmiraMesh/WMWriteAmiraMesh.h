@@ -26,6 +26,7 @@
 #define WMWRITEAMIRAMESH_H
 
 #include <fstream>
+#include <memory>
 #include <string>
 
 #include <osg/Geode>

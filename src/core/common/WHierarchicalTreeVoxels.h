@@ -25,15 +25,14 @@
 #ifndef WHIERARCHICALTREEVOXELS_H
 #define WHIERARCHICALTREEVOXELS_H
 
+#include <list>
+#include <memory>
+#include <queue>
 #include <utility>
 #include <vector>
-#include <queue>
-#include <list>
 
-#include <boost/shared_ptr.hpp>
 
 #include "WColor.h"
-
 #include "WHierarchicalTree.h"
 
 

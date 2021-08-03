@@ -25,10 +25,12 @@
 #ifndef WQTDATASETTREEITEM_H
 #define WQTDATASETTREEITEM_H
 
+#include <memory>
+
 #include <QTreeWidgetItem>
 
-#include "core/kernel/WModule.h"
 #include "WQtTreeItem.h"
+#include "core/kernel/WModule.h"
 
 /**
  * Tree widget item to represent a dataset in the control panel tree widget. This class is currently empty as all the functionality has been

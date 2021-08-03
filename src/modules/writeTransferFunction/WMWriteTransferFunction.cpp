@@ -28,20 +28,16 @@
 // C++ headers
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <string>
 
-// External lib headers
-#include <boost/shared_ptr.hpp>
 
-// OW core headers
-#include "core/common/WAssert.h"
-#include "core/common/WPropertyHelper.h"
-#include "core/common/WPathHelper.h"
-#include "core/common/WStringUtils.h"
-
-// own, local headers
-#include "WMWriteTransferFunction.xpm"
 #include "WMWriteTransferFunction.h"
+#include "WMWriteTransferFunction.xpm"
+#include "core/common/WAssert.h"
+#include "core/common/WPathHelper.h"
+#include "core/common/WPropertyHelper.h"
+#include "core/common/WStringUtils.h"
 
 W_LOADABLE_MODULE( WMWriteTransferFunction )
 

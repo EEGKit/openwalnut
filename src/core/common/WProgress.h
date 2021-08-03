@@ -25,10 +25,10 @@
 #ifndef WPROGRESS_H
 #define WPROGRESS_H
 
+#include <memory>
 #include <set>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
 
 /**

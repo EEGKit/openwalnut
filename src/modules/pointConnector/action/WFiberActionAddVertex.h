@@ -25,11 +25,12 @@
 #ifndef WFIBERACTIONADDVERTEX_H
 #define WFIBERACTIONADDVERTEX_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 #include <osg/Geode>
 
-#include "WFiberAction.h"
 #include "../WFiberHandler.h"
+#include "WFiberAction.h"
 
 
 /**

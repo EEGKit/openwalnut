@@ -25,10 +25,10 @@
 #ifndef WMDATA_H
 #define WMDATA_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
 #include "core/kernel/WDataModule.h"

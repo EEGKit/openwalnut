@@ -23,24 +23,23 @@
 //---------------------------------------------------------------------------
 
 #include <fstream>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp>
-
-#include "core/common/WLogger.h"
-#include "core/common/WIOTools.h"
-#include "core/common/WLogStream.h"
-#include "core/common/WThreadedRunner.h"
-#include "core/common/WSegmentationFault.h"
-#include "core/common/WPathHelper.h"
-
-#include "core/kernel/WKernel.h"
-#include "core/kernel/WModuleFactory.h"
+#include <boost/algorithm/string/predicate.hpp>
 
 #include "WScriptUI.h"
+#include "core/common/WIOTools.h"
+#include "core/common/WLogStream.h"
+#include "core/common/WLogger.h"
+#include "core/common/WPathHelper.h"
+#include "core/common/WSegmentationFault.h"
+#include "core/common/WThreadedRunner.h"
+#include "core/kernel/WKernel.h"
+#include "core/kernel/WModuleFactory.h"
 
 WScriptUI::WScriptUI( int argc, char** argv, boost::program_options::variables_map const& options )
     : WUI( argc, argv ),

@@ -26,11 +26,17 @@
 #define WCSVCONVERTER_H
 
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <boost/lexical_cast.hpp>
 
+#include "WConverterIndexes.h"
+#include "WConverterVectors.h"
+#include "WPropertyStatus.h"
+#include "WProtonData.h"
+#include "WSingleSelectorName.h"
 #include "core/common/WLogger.h"
 #include "core/common/WTransferFunction.h"
 #include "core/dataHandler/WDataSetFibers.h"
@@ -39,12 +45,6 @@
 #include "core/dataHandler/WGridRegular3D.h"
 #include "core/dataHandler/WValueSet.h"
 #include "core/dataHandler/WValueSetBase.h"
-
-#include "WConverterIndexes.h"
-#include "WConverterVectors.h"
-#include "WPropertyStatus.h"
-#include "WProtonData.h"
-#include "WSingleSelectorName.h"
 
 
 /**

@@ -25,15 +25,12 @@
 #ifndef WBATCHLOADER_H
 #define WBATCHLOADER_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/shared_ptr.hpp>
-
-#include "../common/WThreadedRunner.h"
 #include "../common/WSharedSequenceContainer.h"
-
+#include "../common/WThreadedRunner.h"
 #include "WDataModule.h"
 
 class WModuleContainer;

@@ -27,16 +27,15 @@
 
 #include <list>
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../WModule.h"
 #include "../WModuleCombinerTypes.h"
-#include "WModuleOneToOneCombiner.h"
-
 #include "../WModuleConnector.h"
+#include "WModuleOneToOneCombiner.h"
 
 
 

@@ -25,12 +25,11 @@
 #ifndef WUIQTWIDGETFACTORY_H
 #define WUIQTWIDGETFACTORY_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
 #include "core/common/WCondition.h"
-
 #include "core/ui/WUIWidgetFactory.h"
 
 class WMainWindow;

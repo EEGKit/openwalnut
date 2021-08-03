@@ -22,19 +22,18 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
 #include <boost/filesystem.hpp>
-
 #include <osg/Image>
 #include <osgDB/WriteFile>
 
-#include "core/common/WStringUtils.h"
-#include "core/common/WPathHelper.h"
-#include "core/kernel/WKernel.h"
-#include "WMWebglSupport.xpm"
-
 #include "WMWebglSupport.h"
+#include "WMWebglSupport.xpm"
+#include "core/common/WPathHelper.h"
+#include "core/common/WStringUtils.h"
+#include "core/kernel/WKernel.h"
 
 // This line is needed by the module loader to actually find your module. Do not remove. Do NOT add a ";" here.
 W_LOADABLE_MODULE( WMWebglSupport )

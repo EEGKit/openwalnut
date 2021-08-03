@@ -26,20 +26,20 @@
 #define WMEFFECTIVECONNECTIVITYCLUSTER_H
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <osg/Node>
 
+#include "core/common/math/linearAlgebra/WPosition.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetScalar.h"
-#include "core/common/math/linearAlgebra/WPosition.h"
-
+#include "core/graphicsEngine/WGEGroupNode.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleContainer.h"
 #include "core/kernel/WModuleInputForwardData.h"
 #include "core/kernel/WModuleOutputForwardData.h"
-#include "core/graphicsEngine/WGEGroupNode.h"
 
 /**
  * This module is able to visualize connectome data in the context of MRI data. It uses the module container class to allow the

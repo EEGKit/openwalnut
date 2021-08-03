@@ -26,12 +26,13 @@
 #define WCONDITIONSET_TEST_H
 
 #include <iostream>
+#include <memory>
 
 #include <boost/thread.hpp>
 #include <cxxtest/TestSuite.h>
 
-#include "../WConditionSet.h"
 #include "../WCondition.h"
+#include "../WConditionSet.h"
 
 /**
  * Helper class.

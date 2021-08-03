@@ -25,6 +25,7 @@
 #ifndef WMMERGEPOINTS_H
 #define WMMERGEPOINTS_H
 
+#include <memory>
 #include <string>
 
 #include "core/dataHandler/WDataSetPoints.h"

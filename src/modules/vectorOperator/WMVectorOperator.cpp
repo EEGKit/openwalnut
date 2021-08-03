@@ -22,29 +22,29 @@
 //
 //---------------------------------------------------------------------------
 
-#include <stdint.h>
-
 #include <cmath>
 #include <fstream>
 #include <iostream>
+#include <memory>
+#include <stdint.h>
 #include <string>
 #include <vector>
 
 #include <boost/variant.hpp>
 
-#include "core/common/math/linearAlgebra/WVectorFixed.h"
+#include "WMVectorOperator.h"
+#include "WMVectorOperator.xpm"
 #include "core/common/WAssert.h"
 #include "core/common/WProgress.h"
 #include "core/common/WStringUtils.h"
 #include "core/common/WTypeTraits.h"
 #include "core/common/exceptions/WTypeMismatch.h"
-#include "core/dataHandler/WGridRegular3D.h"
-#include "core/dataHandler/WDataHandlerEnums.h"
+#include "core/common/math/linearAlgebra/WVectorFixed.h"
 #include "core/dataHandler/WDataHandler.h"
+#include "core/dataHandler/WDataHandlerEnums.h"
+#include "core/dataHandler/WGridRegular3D.h"
 #include "core/dataHandler/exceptions/WDHValueSetMismatch.h"
 #include "core/kernel/WKernel.h"
-#include "WMVectorOperator.xpm"
-#include "WMVectorOperator.h"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMVectorOperator )

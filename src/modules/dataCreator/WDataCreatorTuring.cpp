@@ -22,12 +22,13 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <vector>
 
 #include <core/common/WAssert.h>
 
-#include "WTuringPatternCreator.h"
 #include "WDataCreatorTuring.h"
+#include "WTuringPatternCreator.h"
 
 WDataCreatorTuring::WDataCreatorTuring()
     : WObjectNDIP< WDataSetSingleCreatorInterface >( "Turing", "Creates a volume with evenly distributed dots." )

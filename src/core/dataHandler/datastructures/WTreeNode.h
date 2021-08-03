@@ -25,12 +25,11 @@
 #ifndef WTREENODE_H
 #define WTREENODE_H
 
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
 #include "../../common/datastructures/WDendrogram.h"
 
 /**

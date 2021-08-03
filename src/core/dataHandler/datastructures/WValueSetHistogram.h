@@ -25,11 +25,11 @@
 #ifndef WVALUESETHISTOGRAM_H
 #define WVALUESETHISTOGRAM_H
 
-#include <map>
 #include <list>
+#include <map>
+#include <memory>
 #include <utility>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/scoped_array.hpp>
 #include <boost/shared_array.hpp>
 

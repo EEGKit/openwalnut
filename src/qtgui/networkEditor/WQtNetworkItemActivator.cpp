@@ -23,20 +23,18 @@
 //---------------------------------------------------------------------------
 
 #include <iostream>
-
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <QApplication>
-#include <QPaintEvent>
 #include <QGraphicsSceneMouseEvent>
+#include <QPaintEvent>
 #include <QPolygonF>
 
-#include "WQtNetworkOutputPort.h"
-#include "WQtNetworkInputPort.h"
 #include "WQtNetworkColors.h"
 #include "WQtNetworkEditorGlobals.h"
-
+#include "WQtNetworkInputPort.h"
 #include "WQtNetworkItemActivator.h"
+#include "WQtNetworkOutputPort.h"
 
 WQtNetworkItemActivator::WQtNetworkItemActivator( std::shared_ptr< WModule > module )
     : m_module( module ), m_activeColor( WQtNetworkColors::ActivatorActive ),

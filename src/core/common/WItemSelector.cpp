@@ -22,13 +22,13 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include "WStringUtils.h"
 #include "WItemSelection.h"
-
 #include "WItemSelector.h"
+#include "WStringUtils.h"
 
 WItemSelector::WItemSelector( std::shared_ptr< WItemSelection > selection, IndexList selected ):
     m_selection( selection ),

@@ -25,11 +25,11 @@
 #ifndef WJOINCONTOURTREE_H
 #define WJOINCONTOURTREE_H
 
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../../common/WTransferable.h"
 #include "../WDataSetSingle.h"

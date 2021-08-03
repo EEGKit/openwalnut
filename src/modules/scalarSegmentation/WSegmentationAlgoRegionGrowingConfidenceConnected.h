@@ -27,22 +27,19 @@
 
 #ifdef OW_USE_ITK
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include "itkImage.h"
-#include "itkConfidenceConnectedImageFilter.h"
-#include "itkGradientAnisotropicDiffusionImageFilter.h"
-#include "itkCastImageFilter.h"
-
+#include "WSegmentationAlgo.h"
+#include "core/dataHandler/WITKImageConversion.h"
+#include "core/graphicsEngine/WROIBox.h"
 #include "core/kernel/WKernel.h"
 #include "core/kernel/WROIManager.h"
-
-#include "core/graphicsEngine/WROIBox.h"
-
-#include "core/dataHandler/WITKImageConversion.h"
-
-#include "WSegmentationAlgo.h"
+#include "itkCastImageFilter.h"
+#include "itkConfidenceConnectedImageFilter.h"
+#include "itkGradientAnisotropicDiffusionImageFilter.h"
+#include "itkImage.h"
 
 /**
  * Confidence connected region growing segmentation.

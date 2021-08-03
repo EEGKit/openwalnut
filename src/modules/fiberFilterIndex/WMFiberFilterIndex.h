@@ -25,11 +25,11 @@
 #ifndef WMFIBERFILTERINDEX_H
 #define WMFIBERFILTERINDEX_H
 
+#include <memory>
 #include <string>
 
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/kernel/WFiberSelector.h"
-
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"

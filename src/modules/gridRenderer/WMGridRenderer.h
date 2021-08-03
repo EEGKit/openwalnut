@@ -26,18 +26,19 @@
 #define WMGRIDRENDERER_H
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <osg/Node>
 #include <osg/Geode>
+#include <osg/Node>
 #include <osg/Uniform>
 
+#include "core/dataHandler/WDataSet.h"
 #include "core/graphicsEngine/WGEGroupNode.h"
 #include "core/graphicsEngine/geodes/WGEGridNode.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
-#include "core/dataHandler/WDataSet.h"
 
 /**
  * Show the bounding box and grid of a WDataSetSingle

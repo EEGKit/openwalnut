@@ -24,6 +24,7 @@
 
 #include <iostream>
 #include <map>
+#include <memory>
 #include <string>
 
 #include <QApplication>
@@ -31,12 +32,12 @@
 #include <QKeyEvent>
 #include <QVBoxLayout>
 
+#include "WQtNavGLWidget.h"
 #include "core/graphicsEngine/WGECamera.h"
 #include "core/graphicsEngine/WGEScene.h"
 #include "core/graphicsEngine/WGEViewer.h"
 #include "events/WEventTypes.h"
 #include "events/WPropertyChangedEvent.h"
-#include "WQtNavGLWidget.h"
 
 WQtNavGLWidget::WQtNavGLWidget( QString viewTitle, QString dockTitle, QWidget* parent, std::string sliderTitle, const QWidget * shareWidget )
     : WQtGLDockWidget( viewTitle, dockTitle, parent, WGECamera::TWO_D_UNIT, shareWidget )

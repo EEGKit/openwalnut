@@ -25,12 +25,12 @@
 #ifndef WMFIBERFILTERROI_H
 #define WMFIBERFILTERROI_H
 
+#include <memory>
 #include <string>
 
-#include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetFiberClustering.h"
+#include "core/dataHandler/WDataSetFibers.h"
 #include "core/kernel/WFiberSelector.h"
-
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"

@@ -23,13 +23,13 @@
 //---------------------------------------------------------------------------
 
 #include <list>
+#include <memory>
 #include <string>
 #include <vector>
 
+#include "WMWriteCSV.h"
 #include "core/common/WPathHelper.h"
 #include "core/kernel/WKernel.h"
-
-#include "WMWriteCSV.h"
 
 W_LOADABLE_MODULE( WMWriteCSV )
 

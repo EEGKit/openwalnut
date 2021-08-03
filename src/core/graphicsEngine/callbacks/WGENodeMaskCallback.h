@@ -25,8 +25,9 @@
 #ifndef WGENODEMASKCALLBACK_H
 #define WGENODEMASKCALLBACK_H
 
-#include <boost/signals2.hpp>
+#include <memory>
 
+#include <boost/signals2.hpp>
 #include <osg/Camera>
 #include <osg/Node>
 

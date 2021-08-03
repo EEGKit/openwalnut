@@ -25,6 +25,7 @@
 #ifndef WACTIONHANDLER_H
 #define WACTIONHANDLER_H
 
+#include <memory>
 #include <vector>
 
 #include "WFiberAction.h"

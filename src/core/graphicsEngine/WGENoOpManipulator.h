@@ -25,6 +25,8 @@
 #ifndef WGENOOPMANIPULATOR_H
 #define WGENOOPMANIPULATOR_H
 
+#include <memory>
+
 #include <osg/Version>
 
 // OSG interface changed in 2.9.7, to make it compile also with those versions we do this:

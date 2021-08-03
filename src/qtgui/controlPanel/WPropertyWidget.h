@@ -25,20 +25,18 @@
 #ifndef WPROPERTYWIDGET_H
 #define WPROPERTYWIDGET_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
-
-#include <QWidget>
-#include <QStackedWidget>
-#include <QLabel>
 #include <QFrame>
 #include <QGridLayout>
-
-#include "core/common/WPropertyBase.h"
-#include "core/common/WPropertyTypes.h"
+#include <QLabel>
+#include <QStackedWidget>
+#include <QWidget>
 
 #include "../guiElements/WScaleLabel.h"
+#include "core/common/WPropertyBase.h"
+#include "core/common/WPropertyTypes.h"
 
 /**
  * Class building the base for all widgets representing properties. It simply contains the handled property object.

@@ -26,25 +26,23 @@
 #define WGRIDREGULAR3D_H
 
 #include <cmath>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include <boost/array.hpp>
-#include <boost/shared_ptr.hpp>
-
 #include <osg/Matrix>
 #include <osg/Vec3>
 
-#include "../common/exceptions/WOutOfBounds.h"
-#include "../common/exceptions/WPreconditionNotMet.h"
-#include "../common/math/WLinearAlgebraFunctions.h"
-#include "../common/math/WMatrix.h"
 #include "../common/WBoundingBox.h"
 #include "../common/WCondition.h"
 #include "../common/WDefines.h"
 #include "../common/WProperties.h"
-
+#include "../common/exceptions/WOutOfBounds.h"
+#include "../common/exceptions/WPreconditionNotMet.h"
+#include "../common/math/WLinearAlgebraFunctions.h"
+#include "../common/math/WMatrix.h"
 #include "WGrid.h"
 #include "WGridTransformOrtho.h"
 

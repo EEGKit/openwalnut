@@ -25,9 +25,9 @@
 #ifndef WUIGRIDWIDGET_H
 #define WUIGRIDWIDGET_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
 #include "WUIWidgetBase.h"
 

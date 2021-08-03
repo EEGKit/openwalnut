@@ -23,20 +23,20 @@
 //---------------------------------------------------------------------------
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <utility>
 
-#include <osg/LineWidth>
-#include <osg/LightModel>
 #include <osg/Geometry>
+#include <osg/LightModel>
+#include <osg/LineWidth>
 
 #include "../common/WLogger.h"
-#include "shaders/WGEShader.h"
-
-#include "WROIBox.h"
-#include "WGraphicsEngine.h"
-#include "WGEUtils.h"
 #include "WGEGeodeUtils.h"
+#include "WGEUtils.h"
+#include "WGraphicsEngine.h"
+#include "WROIBox.h"
+#include "shaders/WGEShader.h"
 
 size_t WROIBox::maxBoxId = 0;
 

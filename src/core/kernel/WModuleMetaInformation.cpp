@@ -23,6 +23,7 @@
 //---------------------------------------------------------------------------
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -30,7 +31,6 @@
 #include "../common/WLogger.h"
 #include "../common/WStructuredTextParser.h"
 #include "WModule.h"
-
 #include "WModuleMetaInformation.h"
 
 WModuleMetaInformation::WModuleMetaInformation( std::string name ):

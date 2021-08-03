@@ -22,6 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -30,22 +31,6 @@
 #include <osg/ShapeDrawable>
 #include <osgSim/ColorRange>
 
-#include "core/dataHandler/WDataSetDipoles.h"
-#include "core/dataHandler/WEEG2.h"
-#include "core/dataHandler/WEEG2Segment.h"
-#include "core/dataHandler/WEEGChannelInfo.h"
-#include "core/dataHandler/WEEGValueMatrix.h"
-#include "core/graphicsEngine/WGEGeodeUtils.h"
-#include "core/graphicsEngine/WGEGeometryUtils.h"
-#include "core/graphicsEngine/WGEGroupNode.h"
-#include "core/graphicsEngine/WGERequirement.h"
-#include "core/graphicsEngine/WGEUtils.h"
-#include "core/graphicsEngine/WROIBox.h"
-#include "core/ui/WUIViewWidget.h"
-#include "core/ui/WUI.h"
-#include "core/kernel/WKernel.h"
-#include "core/kernel/WModuleInputData.h"
-#include "core/kernel/WROIManager.h"
 #include "WEEGEvent.h"
 #include "WEEGSourceCalculator.h"
 #include "WEEGViewHandler.h"
@@ -57,6 +42,22 @@
 #include "WMEEGView.xpm"
 #include "WPanTransformCallback.h"
 #include "WScaleTransformCallback.h"
+#include "core/dataHandler/WDataSetDipoles.h"
+#include "core/dataHandler/WEEG2.h"
+#include "core/dataHandler/WEEG2Segment.h"
+#include "core/dataHandler/WEEGChannelInfo.h"
+#include "core/dataHandler/WEEGValueMatrix.h"
+#include "core/graphicsEngine/WGEGeodeUtils.h"
+#include "core/graphicsEngine/WGEGeometryUtils.h"
+#include "core/graphicsEngine/WGEGroupNode.h"
+#include "core/graphicsEngine/WGERequirement.h"
+#include "core/graphicsEngine/WGEUtils.h"
+#include "core/graphicsEngine/WROIBox.h"
+#include "core/kernel/WKernel.h"
+#include "core/kernel/WModuleInputData.h"
+#include "core/kernel/WROIManager.h"
+#include "core/ui/WUI.h"
+#include "core/ui/WUIViewWidget.h"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMEEGView )

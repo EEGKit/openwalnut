@@ -25,19 +25,19 @@
 #ifndef WCOLUMNPROPERTYHANDLER_H
 #define WCOLUMNPROPERTYHANDLER_H
 
-#include <tuple>
 #include <list>
 #include <map>
+#include <memory>
 #include <string>
+#include <tuple>
 #include <vector>
 
 #include <boost/function.hpp>
 
-#include "core/common/WItemSelectionItemTyped.h"
-
 #include "../WDataType.h"
 #include "../WProtonData.h"
 #include "../WSingleSelectorName.h"
+#include "core/common/WItemSelectionItemTyped.h"
 
 
 

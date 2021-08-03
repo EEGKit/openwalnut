@@ -25,10 +25,11 @@
 #ifndef WGEMANAGEDGROUPNODE_H
 #define WGEMANAGEDGROUPNODE_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
-#include "WGEGroupNode.h"
+
 #include "../common/WFlag.h"
+#include "WGEGroupNode.h"
 
 
 /**

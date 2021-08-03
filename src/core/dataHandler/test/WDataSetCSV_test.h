@@ -25,10 +25,9 @@
 #ifndef WDATASETCSV_TEST_H
 #define WDATASETCSV_TEST_H
 
+#include <memory>
 #include <string>
 #include <vector>
-
-#include <boost/shared_ptr.hpp>
 
 #include <cxxtest/TestSuite.h>
 

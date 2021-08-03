@@ -22,17 +22,17 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include "core/common/math/WSymmetricSphericalHarmonic.h"
-#include "core/common/WLimits.h"
-#include "core/common/math/linearAlgebra/WVectorFixed.h"
-#include "core/common/math/WGeometryFunctions.h"
-#include "core/kernel/WKernel.h"
-#include "WMCalculateGFA.xpm"
-
 #include "WMCalculateGFA.h"
+#include "WMCalculateGFA.xpm"
+#include "core/common/WLimits.h"
+#include "core/common/math/WGeometryFunctions.h"
+#include "core/common/math/WSymmetricSphericalHarmonic.h"
+#include "core/common/math/linearAlgebra/WVectorFixed.h"
+#include "core/kernel/WKernel.h"
 
 // This line is needed by the module loader to actually find your module. Do not remove. Do NOT add a ";" here.
 W_LOADABLE_MODULE( WMCalculateGFA )

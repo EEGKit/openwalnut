@@ -25,12 +25,13 @@
 #ifndef WBRESENHAM_TEST_H
 #define WBRESENHAM_TEST_H
 
+#include <memory>
 #include <vector>
 
 #include <cxxtest/TestSuite.h>
 
-#include "core/common/WLogger.h"
 #include "../WBresenham.h"
+#include "core/common/WLogger.h"
 
 /**
  * Unit tests the Bresenham algorithm.

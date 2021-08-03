@@ -25,16 +25,16 @@
 #ifndef WGEVIEWEREFFECT_H
 #define WGEVIEWEREFFECT_H
 
+#include <memory>
 #include <string>
 
 #include <osg/Camera>
 #include <osg/Geode>
 #include <osg/StateSet>
 
+#include "WGECamera.h"
 #include "core/common/WObjectNDIP.h"
 #include "core/common/WProperties.h"
-
-#include "WGECamera.h"
 
 /**
  * Base class for implementing basic fullscreen effects for the WGEViewer. It uses properties for configuration.

@@ -25,31 +25,23 @@
 #include <iostream>
 #include <list>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
 
-#include <QtCore/QList>
-#include <QtCore/QCoreApplication>
 #include <QMenu>
+#include <QMessageBox>
 #include <QScrollArea>
 #include <QShortcut>
 #include <QSplitter>
-#include <QMessageBox>
 #include <QVBoxLayout>
+#include <QtCore/QCoreApplication>
+#include <QtCore/QList>
 
-#include "core/common/WLogger.h"
-#include "core/common/WPredicateHelper.h"
-#include "core/dataHandler/WDataSet.h"
-#include "core/kernel/WDataModule.h"
-#include "core/kernel/WKernel.h"
-#include "core/kernel/WModule.h"
-#include "core/kernel/WModuleContainer.h"
-#include "core/kernel/WModuleFactory.h"
-#include "core/kernel/WROIManager.h"
 #include "../WMainWindow.h"
-#include "../WQtGui.h"
 #include "../WQtCombinerActionList.h"
+#include "../WQtGui.h"
 #include "../WQtModuleConfig.h"
 #include "../events/WEventTypes.h"
 #include "../events/WModuleAssocEvent.h"
@@ -62,14 +54,22 @@
 #include "../events/WRoiAssocEvent.h"
 #include "../events/WRoiRemoveEvent.h"
 #include "../events/WRoiSortEvent.h"
-#include "../guiElements/WQtModuleMetaInfo.h"
-#include "../guiElements/WQtMenuFiltered.h"
 #include "../guiElements/WQtDataModuleInput.h"
+#include "../guiElements/WQtMenuFiltered.h"
+#include "../guiElements/WQtModuleMetaInfo.h"
 #include "../networkEditor/WQtNetworkEditor.h"
 #include "WQtBranchTreeItem.h"
 #include "WQtColormapper.h"
-
 #include "WQtControlPanel.h"
+#include "core/common/WLogger.h"
+#include "core/common/WPredicateHelper.h"
+#include "core/dataHandler/WDataSet.h"
+#include "core/kernel/WDataModule.h"
+#include "core/kernel/WKernel.h"
+#include "core/kernel/WModule.h"
+#include "core/kernel/WModuleContainer.h"
+#include "core/kernel/WModuleFactory.h"
+#include "core/kernel/WROIManager.h"
 
 WQtControlPanel::WQtControlPanel( WMainWindow* parent )
     : WQtDockWidget( "Control Panel", parent ),

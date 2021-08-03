@@ -23,11 +23,11 @@
 //---------------------------------------------------------------------------
 
 #include <iostream>
+#include <memory>
 #include <string>
 
 #include <boost/bind/bind.hpp>
 #include <boost/function.hpp>
-
 #include <osg/Camera>
 #include <osg/Geode>
 #include <osg/Geometry>
@@ -36,7 +36,6 @@
 #include <osg/TexEnv>
 
 #include "../common/WPathHelper.h"
-
 #include "WGETextureHud.h"
 
 WGETextureHud::WGETextureHud():

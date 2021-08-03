@@ -25,13 +25,13 @@
 #ifndef WCOORDCONVERTER_H
 #define WCOORDCONVERTER_H
 
+#include <memory>
 #include <utility>
 
+#include "WTalairachConverter.h"
 #include "core/common/WBoundingBox.h"
 #include "core/common/math/WMatrix.h"
 #include "core/common/math/linearAlgebra/WPosition.h"
-
-#include "WTalairachConverter.h"
 
 
 typedef enum

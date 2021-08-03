@@ -25,13 +25,14 @@
 #ifndef WBUTTERFLYFACTORY_H_
 #define WBUTTERFLYFACTORY_H_
 
+#include <memory>
 #include <string>
 #include <vector>
 
+#include "WButterflyCalculator.h"
+#include "WSubdivisionValidator.h"
 #include "core/kernel/WModule.h"
 #include "structure/WVertexFactory.h"
-#include "WSubdivisionValidator.h"
-#include "WButterflyCalculator.h"
 
 
 using osg::Vec3;

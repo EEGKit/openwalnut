@@ -25,6 +25,7 @@
 #ifndef WMVOXELIZER_H
 #define WMVOXELIZER_H
 
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -34,6 +35,7 @@
 
 class WBresenhamDBL;
 class WDataSetScalar;
+class WDataSetFibers;
 class WFiberCluster;
 class WRasterAlgorithm;
 class WGEManagedGroupNode;

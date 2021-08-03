@@ -25,20 +25,18 @@
 #ifndef WMDATASETPROFILE_H
 #define WMDATASETPROFILE_H
 
-#include <osgWidget/WindowManager>
-
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <osg/Geode>
+#include <osgWidget/WindowManager> // NOLINT: brainlint thinks this is C System Header
 
 #include "core/dataHandler/WDataSetScalar.h"
 #include "core/dataHandler/WDataSetSingle.h"
-
+#include "core/graphicsEngine/WGECamera.h"
 #include "core/graphicsEngine/WGEManagedGroupNode.h"
 #include "core/graphicsEngine/WROISphere.h"
-#include "core/graphicsEngine/WGECamera.h"
-
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"

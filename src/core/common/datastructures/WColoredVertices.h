@@ -26,10 +26,11 @@
 #define WCOLOREDVERTICES_H
 
 #include <map>
+#include <memory>
 #include <string>
 
-#include "../WTransferable.h"
 #include "../WColor.h"
+#include "../WTransferable.h"
 
 
 

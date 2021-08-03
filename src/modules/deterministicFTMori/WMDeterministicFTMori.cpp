@@ -22,24 +22,24 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
 
+#include "WMDeterministicFTMori.h"
+#include "WMDeterministicFTMori.xpm"
+#include "core/common/WAssert.h"
 #include "core/common/math/WLinearAlgebraFunctions.h"
 #include "core/common/math/WTensorFunctions.h"
 #include "core/common/math/WTensorSym.h"
-#include "core/common/WAssert.h"
-#include "core/dataHandler/io/WWriterFiberVTK.h"
 #include "core/dataHandler/WDataSetFiberVector.h"
 #include "core/dataHandler/WDataSetSingle.h"
 #include "core/dataHandler/WGridRegular3D.h"
 #include "core/dataHandler/WValueSet.h"
+#include "core/dataHandler/io/WWriterFiberVTK.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
-
-#include "WMDeterministicFTMori.h"
-#include "WMDeterministicFTMori.xpm"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMDeterministicFTMori )

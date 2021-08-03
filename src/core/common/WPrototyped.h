@@ -25,9 +25,9 @@
 #ifndef WPROTOTYPED_H
 #define WPROTOTYPED_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
 
 

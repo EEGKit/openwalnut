@@ -25,17 +25,16 @@
 #ifndef WMTEMPLATE_H
 #define WMTEMPLATE_H
 
+#include <memory>
 #include <string>
 
 #include <osg/Geode>
 
 #include "core/common/WItemSelection.h"
-#include "core/common/WItemSelector.h"
 #include "core/common/WItemSelectionItemTyped.h"
-
+#include "core/common/WItemSelector.h"
 #include "core/graphicsEngine/WGEManagedGroupNode.h"
 #include "core/graphicsEngine/shaders/WGEShader.h"
-
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"

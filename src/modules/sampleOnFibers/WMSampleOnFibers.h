@@ -25,6 +25,7 @@
 #ifndef WMSAMPLEONFIBERS_H
 #define WMSAMPLEONFIBERS_H
 
+#include <memory>
 #include <string>
 
 #include "core/dataHandler/WDataSetFibers.h"

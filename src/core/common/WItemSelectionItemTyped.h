@@ -26,9 +26,9 @@
 #define WITEMSELECTIONITEMTYPED_H
 
 #include <cstddef>
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
 #include "WItemSelectionItem.h"
 

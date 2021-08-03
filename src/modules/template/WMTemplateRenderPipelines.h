@@ -25,6 +25,7 @@
 #ifndef WMTEMPLATERENDERPIPELINES_H
 #define WMTEMPLATERENDERPIPELINES_H
 
+#include <memory>
 #include <string>
 #include <vector>
 

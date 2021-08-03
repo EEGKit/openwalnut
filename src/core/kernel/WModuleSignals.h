@@ -25,8 +25,10 @@
 #ifndef WMODULESIGNALS_H
 #define WMODULESIGNALS_H
 
-#include <boost/signals2/signal.hpp>
+#include <memory>
+
 #include <boost/function.hpp>
+#include <boost/signals2/signal.hpp>
 
 class WModule;
 class WException;

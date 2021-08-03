@@ -22,10 +22,11 @@
 //
 //---------------------------------------------------------------------------
 
+#include <algorithm>
+#include <cstdlib>
+#include <memory>
 #include <string>
 #include <vector>
-#include <cstdlib>
-#include <algorithm>
 
 #include <boost/tokenizer.hpp>
 

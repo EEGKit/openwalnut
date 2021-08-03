@@ -25,8 +25,10 @@
 #ifndef WMODULECONNECTORSIGNALS_H
 #define WMODULECONNECTORSIGNALS_H
 
-#include <boost/signals2/signal.hpp>
+#include <memory>
+
 #include <boost/function.hpp>
+#include <boost/signals2/signal.hpp>
 
 class WModuleConnector;
 

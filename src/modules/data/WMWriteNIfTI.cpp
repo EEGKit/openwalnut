@@ -22,27 +22,25 @@
 //
 //---------------------------------------------------------------------------
 
-#include <nifti1_io.h>
-
-#include <stdint.h>
-
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <utility>
-
 #include <cmath>
+#include <fstream>
+#include <iostream>
+#include <memory>
+#include <stdint.h>
+#include <string>
+#include <utility>
+#include <vector>
 
+#include <nifti1_io.h> // NOLINT: brainlint thinks this is C System Header
+
+#include "WMWriteNIfTI.h"
 #include "core/common/WAssert.h"
 #include "core/common/WPathHelper.h"
 #include "core/common/WStringUtils.h"
-#include "core/dataHandler/WGridRegular3D.h"
 #include "core/dataHandler/WDataSetRawHARDI.h"
+#include "core/dataHandler/WGridRegular3D.h"
 #include "core/kernel/WKernel.h"
 #include "core/kernel/WModule.h"
-
-#include "WMWriteNIfTI.h"
 
 WMWriteNIfTI::WMWriteNIfTI() :
     WModule()

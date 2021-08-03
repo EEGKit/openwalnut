@@ -22,12 +22,12 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
+#include "WModuleWrapper.h"
 #include "core/kernel/WModuleInputConnector.h"
 #include "core/kernel/WModuleOutputConnector.h"
-
-#include "WModuleWrapper.h"
 
 WModuleWrapper::WModuleWrapper( std::shared_ptr< WModule > module )
     : m_module( module )

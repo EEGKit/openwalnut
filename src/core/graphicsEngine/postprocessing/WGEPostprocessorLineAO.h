@@ -25,7 +25,8 @@
 #ifndef WGEPOSTPROCESSORLINEAO_H
 #define WGEPOSTPROCESSORLINEAO_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 
 #include "WGEPostprocessor.h"
 

@@ -23,20 +23,19 @@
 //---------------------------------------------------------------------------
 
 #include <iostream>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include <osg/LineWidth>
-#include <osg/LightModel>
 #include <osg/Geometry>
+#include <osg/LightModel>
+#include <osg/LineWidth>
 
-#include "core/common/algorithms/WMarchingLegoAlgorithm.h"
-
-#include "callbacks/WGEFunctorCallback.h"
 #include "WGraphicsEngine.h"
-
 #include "WROIArbitrary.h"
+#include "callbacks/WGEFunctorCallback.h"
+#include "core/common/algorithms/WMarchingLegoAlgorithm.h"
 
 WROIArbitrary::WROIArbitrary( size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
                               const WMatrix< double >& mat,

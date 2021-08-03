@@ -25,10 +25,11 @@
 #ifndef WQTNETWORKITEMACTIVATOR_H
 #define WQTNETWORKITEMACTIVATOR_H
 
-#include <boost/signals2.hpp>
+#include <memory>
 
-#include <QGraphicsPolygonItem>
 #include <QGraphicsLineItem>
+#include <QGraphicsPolygonItem>
+#include <boost/signals2.hpp>
 
 #include "WQtNetworkArrow.h"
 #include "WQtNetworkItemActivator.h"

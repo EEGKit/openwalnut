@@ -25,19 +25,20 @@
 #ifndef WMVECTORPLOT_H
 #define WMVECTORPLOT_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <osg/Geode>
 #include <osg/Geometry>
 
+#include "core/common/math/linearAlgebra/WPosition.h"
 #include "core/dataHandler/WDataSetVector.h"
 #include "core/graphicsEngine/shaders/WGEShader.h"
+#include "core/kernel/WKernel.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
-
-#include "core/common/math/linearAlgebra/WPosition.h"
 
 /**
  * Show an glyph plot (in this case the glyphs are arrows) of a vector data set.

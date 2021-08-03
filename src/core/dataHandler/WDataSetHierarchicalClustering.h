@@ -27,16 +27,16 @@
 
 #include <list>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
-#include "../common/exceptions/WInvalidID.h"
 #include "../common/WTransferable.h"
+#include "../common/exceptions/WInvalidID.h"
+#include "WDataSet.h"
 #include "datastructures/WFiberCluster.h"
 #include "datastructures/WTreeNode.h"
-#include "WDataSet.h"
 
 /**
  * Represents a hierarchy of clusters

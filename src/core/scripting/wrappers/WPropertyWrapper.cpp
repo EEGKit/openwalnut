@@ -22,12 +22,12 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
-#include <boost/shared_ptr.hpp>
 
-#include "core/common/WProperties.h"
 
 #include "WPropertyWrapper.h"
+#include "core/common/WProperties.h"
 
 WPropertyWrapper::WPropertyWrapper( std::shared_ptr< WPropertyBase > prop )
     : m_prop( prop )

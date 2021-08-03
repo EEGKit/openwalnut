@@ -25,6 +25,7 @@
 #ifndef WMFIBERPARAMETERCOLORING_H
 #define WMFIBERPARAMETERCOLORING_H
 
+#include <memory>
 #include <string>
 
 #include "core/dataHandler/WDataSetFibers.h"

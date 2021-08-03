@@ -26,11 +26,12 @@
 #define WMDATATYPECONVERSION_H
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <osg/Node>
 #include <osg/Geode>
+#include <osg/Node>
 #include <osg/Uniform>
 
 #include "core/kernel/WModule.h"

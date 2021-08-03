@@ -23,8 +23,9 @@
 //---------------------------------------------------------------------------
 
 #include <cmath>
-#include <iostream>
 #include <fstream>
+#include <iostream>
+#include <memory>
 #include <string>
 #include <utility> // for std::pair
 #include <vector>
@@ -32,23 +33,20 @@
 #include <boost/math/special_functions/spherical_harmonic.hpp>
 #include <boost/thread/thread.hpp>
 
-#include "core/common/WLimits.h"
+#include "WMHARDIToSphericalHarmonics.h"
+#include "WMHARDIToSphericalHarmonics.xpm"
+#include "WSphericalHarmonicsCoefficientsThread.h"
 #include "core/common/WAssert.h"
-
+#include "core/common/WLimits.h"
 #include "core/common/WProgress.h"
-#include "core/common/math/WUnitSphereCoordinates.h"
+#include "core/common/math/WLinearAlgebraFunctions.h"
 #include "core/common/math/WMatrix.h"
 #include "core/common/math/WSymmetricSphericalHarmonic.h"
+#include "core/common/math/WUnitSphereCoordinates.h"
 #include "core/common/math/linearAlgebra/WVectorFixed.h"
-#include "core/common/math/WLinearAlgebraFunctions.h"
 #include "core/dataHandler/WDataHandler.h"
 #include "core/dataHandler/WSubject.h"
 #include "core/kernel/WKernel.h"
-
-#include "WSphericalHarmonicsCoefficientsThread.h"
-
-#include "WMHARDIToSphericalHarmonics.h"
-#include "WMHARDIToSphericalHarmonics.xpm"
 
 W_LOADABLE_MODULE( WMHARDIToSphericalHarmonics )
 

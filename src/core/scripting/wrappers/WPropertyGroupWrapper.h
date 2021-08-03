@@ -25,11 +25,11 @@
 #ifndef WPROPERTYGROUPWRAPPER_H
 #define WPROPERTYGROUPWRAPPER_H
 
+#include <memory>
 #include <string>
 
-#include "core/common/WPropertyGroup.h"
-
 #include "WPropertyWrapper.h"
+#include "core/common/WPropertyGroup.h"
 
 /**
  * \class WPropertyGroupWrapper

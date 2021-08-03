@@ -25,14 +25,12 @@
 #ifndef WSELECTIONMANAGER_H
 #define WSELECTIONMANAGER_H
 
+#include <memory>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../common/WProperties.h"
-
 #include "../dataHandler/WGridRegular3D.h"
-
 #include "WCrosshair.h"
 
 namespace osg

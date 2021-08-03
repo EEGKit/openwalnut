@@ -25,6 +25,7 @@
 #ifndef WMREADVCL_H
 #define WMREADVCL_H
 
+#include <memory>
 #include <string>
 #include <vector>
 

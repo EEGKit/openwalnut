@@ -22,11 +22,11 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <vector>
 
-#include "core/common/math/linearAlgebra/WVectorFixed.h"
-
 #include "WIntegrationParameterization.h"
+#include "core/common/math/linearAlgebra/WVectorFixed.h"
 
 WIntegrationParameterization::WIntegrationParameterization( std::shared_ptr< WGridRegular3D > grid ):
     WRasterParameterization( grid ),

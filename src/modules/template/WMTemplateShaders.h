@@ -25,6 +25,7 @@
 #ifndef WMTEMPLATESHADERS_H
 #define WMTEMPLATESHADERS_H
 
+#include <memory>
 #include <string>
 #include <vector>
 

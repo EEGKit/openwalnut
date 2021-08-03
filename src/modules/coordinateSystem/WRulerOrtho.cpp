@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
-
 
 #include <osg/Geode>
 #include <osg/Geometry>
@@ -31,10 +31,9 @@
 #include <osg/PositionAttitudeTransform>
 #include <osgText/Text>
 
-#include "core/common/WStringUtils.h"
-#include "core/common/WPathHelper.h"
-
 #include "WRulerOrtho.h"
+#include "core/common/WPathHelper.h"
+#include "core/common/WStringUtils.h"
 
 WRulerOrtho::WRulerOrtho( std::shared_ptr<WCoordConverter>coordConverter, osg::Vec3 origin, scaleMode mode, bool showNumbers ) :
     WRuler(),

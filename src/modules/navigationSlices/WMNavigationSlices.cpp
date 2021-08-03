@@ -23,14 +23,22 @@
 //---------------------------------------------------------------------------
 
 #include <algorithm>
+#include <memory>
 #include <string>
 
 #include <osg/LineWidth>
 #include <osg/MatrixTransform>
 #include <osg/Vec3>
 
-#include "core/common/math/WMath.h"
+#include "WMNavigationSlices.h"
+#include "WMNavigationSlices.xpm"
 #include "core/common/WPropertyHelper.h"
+#include "core/common/math/WMath.h"
+#include "core/graphicsEngine/WGEColormapping.h"
+#include "core/graphicsEngine/WGEGeodeUtils.h"
+#include "core/graphicsEngine/WGEUtils.h"
+#include "core/graphicsEngine/WGraphicsEngine.h"
+#include "core/graphicsEngine/WPickHandler.h"
 #include "core/graphicsEngine/callbacks/WGELinearTranslationCallback.h"
 #include "core/graphicsEngine/callbacks/WGENodeMaskCallback.h"
 #include "core/graphicsEngine/callbacks/WGEPropertyUniformCallback.h"
@@ -39,15 +47,8 @@
 #include "core/graphicsEngine/shaders/WGEShader.h"
 #include "core/graphicsEngine/shaders/WGEShaderDefineOptions.h"
 #include "core/graphicsEngine/shaders/WGEShaderPropertyDefineOptions.h"
-#include "core/graphicsEngine/WGEColormapping.h"
-#include "core/graphicsEngine/WGEGeodeUtils.h"
-#include "core/graphicsEngine/WGEUtils.h"
-#include "core/graphicsEngine/WGraphicsEngine.h"
-#include "core/graphicsEngine/WPickHandler.h"
 #include "core/kernel/WKernel.h"
 #include "core/kernel/WSelectionManager.h"
-#include "WMNavigationSlices.h"
-#include "WMNavigationSlices.xpm"
 
 // This line is needed by the module loader to actually find your module. You need to add this to your module too. Do NOT add a ";" here.
 W_LOADABLE_MODULE( WMNavigationSlices )

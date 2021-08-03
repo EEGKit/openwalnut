@@ -25,10 +25,10 @@
 #ifndef WWORKERTHREAD_H
 #define WWORKERTHREAD_H
 
-#include <string> // because of std::size_t
 #include <exception>
+#include <memory>
+#include <string> // because of std::size_t
 
-#include <boost/shared_ptr.hpp>
 #include <boost/signals2/signal.hpp>
 
 #include "WAssert.h"

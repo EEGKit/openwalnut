@@ -27,6 +27,7 @@
 
 #include <list>
 #include <map>
+#include <memory>
 #include <set>
 #include <shared_mutex>
 #include <string>
@@ -34,17 +35,15 @@
 #include <vector>
 
 #include <boost/function.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/signals2/signal.hpp>
 #include <boost/thread.hpp>
 
 #include "../common/WSharedObject.h"
-
+#include "WBatchLoader.h"
 #include "WModule.h"
 #include "WModuleCombinerTypes.h"
 #include "WModuleConnectorSignals.h"
 #include "WModuleSignals.h"
-#include "WBatchLoader.h"
 
 class WThreadedRunner;
 class WDataModule;

@@ -25,18 +25,17 @@
 #ifndef WGESHADERPROPERTYDEFINEOPTIONS_H
 #define WGESHADERPROPERTYDEFINEOPTIONS_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
-#include "boost/tuple/tuple.hpp"
 #include <boost/signals2.hpp>
 
 #include "../../common/WProperties.h"
 #include "../../common/WPropertyTypes.h"
 #include "../../common/exceptions/WPreconditionNotMet.h"
-
 #include "WGEShaderDefineOptions.h"
+#include "boost/tuple/tuple.hpp"
 
 template< typename PropType >
 class WGEShaderPropertyDefineOptionsIndexAdapter;

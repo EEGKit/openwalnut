@@ -25,12 +25,13 @@
 #ifndef WDATASETDTI_TEST_H
 #define WDATASETDTI_TEST_H
 
+#include <memory>
 #include <vector>
 
 #include <cxxtest/TestSuite.h>
 
-#include "../../common/math/test/WTensorTraits.h"
 #include "../../common/WLogger.h"
+#include "../../common/math/test/WTensorTraits.h"
 #include "../WDataSetDTI.h"
 #include "../WGridRegular3D.h"
 

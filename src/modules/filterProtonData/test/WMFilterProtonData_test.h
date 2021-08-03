@@ -25,6 +25,8 @@
 #ifndef WMFILTERPROTONDATA_TEST_H
 #define WMFILTERPROTONDATA_TEST_H
 
+#include <memory>
+
 #include <cxxtest/TestSuite.h>
 
 #include "../WMFilterProtonData.h"

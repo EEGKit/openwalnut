@@ -25,11 +25,11 @@
 #ifndef WINTEGRATIONPARAMETERIZATION_H
 #define WINTEGRATIONPARAMETERIZATION_H
 
+#include <memory>
 #include <vector>
 
-#include "core/common/math/linearAlgebra/WVectorFixed.h"
-
 #include "WRasterParameterization.h"
+#include "core/common/math/linearAlgebra/WVectorFixed.h"
 
 /**
  * Stores the direction if a line in a separate dataset for each voxel.

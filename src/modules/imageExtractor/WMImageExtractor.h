@@ -25,14 +25,15 @@
 #ifndef WMIMAGEEXTRACTOR_H
 #define WMIMAGEEXTRACTOR_H
 
+#include <memory>
 #include <string>
 
+#include "core/dataHandler/WDataSetRawHARDI.h"
+#include "core/dataHandler/WDataSetScalar.h"
+#include "core/dataHandler/WValueSet.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
-#include "core/dataHandler/WDataSetScalar.h"
-#include "core/dataHandler/WDataSetRawHARDI.h"
-#include "core/dataHandler/WValueSet.h"
 
 /**
  * This module extracts single images from a dataset.

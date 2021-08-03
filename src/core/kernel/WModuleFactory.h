@@ -26,18 +26,18 @@
 #define WMODULEFACTORY_H
 
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 
 #include "../common/WSharedAssociativeContainer.h"
-#include "WModuleCombinerTypes.h"
-#include "WModule.h"
 #include "WDataModule.h"
+#include "WModule.h"
+#include "WModuleCombinerTypes.h"
 #include "WModuleLoader.h"
 
 /**

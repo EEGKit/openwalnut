@@ -25,10 +25,11 @@
 #ifndef WMDIFFTENSORSCALARS_H
 #define WMDIFFTENSORSCALARS_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
+#include "WDataSetDTIToScalar_I.h"
 #include "core/common/WObjectNDIP.h"
 #include "core/common/WStrategyHelper.h"
 #include "core/dataHandler/WDataSetDTI.h"
@@ -39,7 +40,6 @@
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleInputForwardData.h"
 #include "core/kernel/WModuleOutputForwardData.h"
-#include "WDataSetDTIToScalar_I.h"
 
 /**
  * Computes a scalar dataset for a given tensor dataset.

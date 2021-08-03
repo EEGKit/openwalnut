@@ -25,6 +25,7 @@
 #ifndef WMTEMPLATECOLORMAPPING_H
 #define WMTEMPLATECOLORMAPPING_H
 
+#include <memory>
 #include <string>
 #include <vector>
 

@@ -23,18 +23,18 @@
 //---------------------------------------------------------------------------
 
 #include <fstream>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include "WMReadAmiraMesh.h"
 #include "WMReadAmiraMesh.xpm"
 #include "core/common/WIOTools.h"
 #include "core/common/WPathHelper.h"
 #include "core/dataHandler/WDataSetFiberVector.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/kernel/WKernel.h"
-
-#include "WMReadAmiraMesh.h"
 
 // This line is needed by the module loader to actually find your module. Do not remove. Do NOT add a ";" here.
 W_LOADABLE_MODULE( WMReadAmiraMesh )

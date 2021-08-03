@@ -22,11 +22,11 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
-#include "python/WScriptInterpreterPython.h"
-
 #include "WScriptEngine.h"
+#include "python/WScriptInterpreterPython.h"
 
 WScriptEngine::WScriptEngine( std::shared_ptr<WModuleContainer> const& rootContainer )
 {

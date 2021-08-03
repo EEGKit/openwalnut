@@ -25,7 +25,7 @@
 #ifndef WMODULEREMOVEDEVENT_H
 #define WMODULEREMOVEDEVENT_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <QtCore/QEvent>
 

@@ -31,21 +31,22 @@
 // This work was required especially in the methods calcNewVertex and
 // getInterpolatedValue.
 
-#include <string>
 #include <cmath>
+#include <memory>
+#include <string>
 
 #include <osg/Geometry>
 
+#include "WMButterfly.h"
+#include "WMButterfly.xpm"
 #include "core/dataHandler/WDataSetScalar.h"
+#include "core/graphicsEngine/WGEGeodeUtils.h"
+#include "core/graphicsEngine/WGEManagedGroupNode.h"
 #include "core/graphicsEngine/callbacks/WGELinearTranslationCallback.h"
 #include "core/graphicsEngine/shaders/WGEPropertyUniform.h"
 #include "core/graphicsEngine/shaders/WGEShader.h"
-#include "core/graphicsEngine/WGEGeodeUtils.h"
-#include "core/graphicsEngine/WGEManagedGroupNode.h"
 #include "core/kernel/WKernel.h"
 #include "core/kernel/WModuleInputData.h"
-#include "WMButterfly.xpm"
-#include "WMButterfly.h"
 #include "structure/WVertexFactory.h"
 
 

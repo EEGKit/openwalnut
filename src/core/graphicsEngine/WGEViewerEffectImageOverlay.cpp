@@ -22,22 +22,20 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
 
+#include "../common/WLogger.h"
 #include "../common/WPathHelper.h"
 #include "../common/WProperties.h"
-#include "../common/WLogger.h"
-
 #include "WGEViewer.h"
-
-#include "callbacks/WGEFunctorCallback.h"
-#include "shaders/WGEShader.h"
-#include "shaders/WGEPropertyUniform.h"
-
 #include "WGEViewerEffectImageOverlay.h"
+#include "callbacks/WGEFunctorCallback.h"
+#include "shaders/WGEPropertyUniform.h"
+#include "shaders/WGEShader.h"
 
 WGEViewerEffectImageOverlay::WGEViewerEffectImageOverlay():
     WGEViewerEffect( "Image Overlay", "Blend in some arbitrary image." )

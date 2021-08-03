@@ -25,8 +25,10 @@
 #ifndef WDATASET_TEST_H
 #define WDATASET_TEST_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 #include <cxxtest/TestSuite.h>
+
 #include "../WDataSet.h"
 
 /**

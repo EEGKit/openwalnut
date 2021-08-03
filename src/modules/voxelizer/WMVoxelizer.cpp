@@ -25,45 +25,43 @@
 #include <algorithm>
 #include <iomanip>
 #include <list>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
-
+#include <osg/Depth>
 #include <osg/Geode>
 #include <osg/Geometry>
-#include <osg/Depth>
 
-#include "core/common/datastructures/WFiber.h"
-#include "core/common/WColor.h"
-#include "core/common/WLogger.h"
-#include "core/common/WPropertyHelper.h"
-#include "core/dataHandler/datastructures/WFiberCluster.h"
-#include "core/dataHandler/WDataSetFiberVector.h"
-#include "core/dataHandler/WDataSetScalar.h"
-#include "core/dataHandler/WSubject.h"
-#include "core/dataHandler/WGridTransformOrtho.h"
-#include "core/graphicsEngine/WGEColormapping.h"
-#include "core/graphicsEngine/WGEGeodeUtils.h"
-#include "core/graphicsEngine/WGEGeometryUtils.h"
-#include "core/graphicsEngine/WGEManagedGroupNode.h"
-#include "core/graphicsEngine/shaders/WGEShaderDefineOptions.h"
-#include "core/graphicsEngine/shaders/WGEShaderPropertyDefineOptions.h"
-#include "core/graphicsEngine/shaders/WGEShaderPropertyDefine.h"
-#include "core/graphicsEngine/shaders/WGEPropertyUniform.h"
-#include "core/graphicsEngine/postprocessing/WGEPostprocessingNode.h"
-#include "core/graphicsEngine/WGEUtils.h"
-#include "core/kernel/WKernel.h"
-#include "core/kernel/WModuleInputData.h"
 #include "WBresenham.h"
 #include "WBresenhamDBL.h"
 #include "WCenterlineParameterization.h"
 #include "WIntegrationParameterization.h"
-
 #include "WMVoxelizer.h"
 #include "WMVoxelizer.xpm"
 #include "WRasterAlgorithm.h"
+#include "core/common/WColor.h"
+#include "core/common/WLogger.h"
+#include "core/common/WPropertyHelper.h"
+#include "core/common/datastructures/WFiber.h"
+#include "core/dataHandler/WDataSetFiberVector.h"
+#include "core/dataHandler/WDataSetScalar.h"
+#include "core/dataHandler/WGridTransformOrtho.h"
+#include "core/dataHandler/WSubject.h"
+#include "core/dataHandler/datastructures/WFiberCluster.h"
+#include "core/graphicsEngine/WGEColormapping.h"
+#include "core/graphicsEngine/WGEGeodeUtils.h"
+#include "core/graphicsEngine/WGEGeometryUtils.h"
+#include "core/graphicsEngine/WGEManagedGroupNode.h"
+#include "core/graphicsEngine/WGEUtils.h"
+#include "core/graphicsEngine/postprocessing/WGEPostprocessingNode.h"
+#include "core/graphicsEngine/shaders/WGEPropertyUniform.h"
+#include "core/graphicsEngine/shaders/WGEShaderDefineOptions.h"
+#include "core/graphicsEngine/shaders/WGEShaderPropertyDefine.h"
+#include "core/graphicsEngine/shaders/WGEShaderPropertyDefineOptions.h"
+#include "core/kernel/WKernel.h"
+#include "core/kernel/WModuleInputData.h"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMVoxelizer )

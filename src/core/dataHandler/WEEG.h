@@ -26,13 +26,13 @@
 #define WEEG_H
 
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "../common/math/linearAlgebra/WPosition.h"
 #include "../common/WPrototyped.h"
-
+#include "../common/math/linearAlgebra/WPosition.h"
 #include "WRecording.h"
 
 /**

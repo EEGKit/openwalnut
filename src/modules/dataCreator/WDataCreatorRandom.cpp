@@ -22,15 +22,15 @@
 //
 //---------------------------------------------------------------------------
 
-#include <ctime>
 #include <cstdlib>
+#include <ctime>
+#include <memory>
 #include <vector>
 
+#include "WDataCreatorRandom.h"
 #include "core/common/WLogger.h"
 #include "core/dataHandler/WDataHandlerEnums.h"
 #include "core/dataHandler/WValueSet.h"
-
-#include "WDataCreatorRandom.h"
 
 WDataCreatorRandom::WDataCreatorRandom():
     WObjectNDIP< WDataSetSingleCreatorInterface >( "Random", "Creates a noise volume." )

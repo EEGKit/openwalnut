@@ -22,19 +22,19 @@
 //
 //---------------------------------------------------------------------------
 
+#include <algorithm>
+#include <memory>
 #include <stdint.h>
 #include <string>
-#include <algorithm>
 #include <vector>
 
 #include "WMDistanceMapIsosurface.h"
 #include "WMDistanceMapIsosurface.xpm"
-
+#include "core/dataHandler/WGridRegular3D.h"
+#include "core/dataHandler/WSubject.h"
 #include "core/kernel/WKernel.h"
 #include "core/kernel/WModuleFactory.h"
 #include "core/kernel/WPrototypeRequirement.h"
-#include "core/dataHandler/WSubject.h"
-#include "core/dataHandler/WGridRegular3D.h"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMDistanceMapIsosurface )

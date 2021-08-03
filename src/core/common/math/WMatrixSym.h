@@ -28,11 +28,11 @@
 #include <algorithm>
 #include <cassert>
 #include <iomanip>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../exceptions/WOutOfBounds.h"
 

@@ -25,18 +25,17 @@
 #ifndef WRASTERALGORITHM_H
 #define WRASTERALGORITHM_H
 
+#include <memory>
 #include <shared_mutex>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
-#include "core/dataHandler/WDataSetScalar.h"
-#include "core/dataHandler/WGridRegular3D.h"
+#include "WRasterParameterization.h"
 #include "core/common/math/WLine.h"
 #include "core/common/math/linearAlgebra/WVectorFixed.h"
-
-#include "WRasterParameterization.h"
+#include "core/dataHandler/WDataSetScalar.h"
+#include "core/dataHandler/WGridRegular3D.h"
 
 /**
  * Base class for all rasterization algorithms. The interface will be as

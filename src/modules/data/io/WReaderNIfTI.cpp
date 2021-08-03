@@ -22,15 +22,15 @@
 //
 //---------------------------------------------------------------------------
 
-#include <stdint.h>
-
 #include <fstream>
 #include <iostream>
+#include <memory>
+#include <stdint.h>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
+#include "WReaderNIfTI.h"
 #include "core/common/WIOTools.h"
 #include "core/common/WLogger.h"
 #include "core/dataHandler/WDataHandlerEnums.h"
@@ -48,8 +48,6 @@
 #include "core/dataHandler/WSubject.h"
 #include "core/dataHandler/WValueSet.h"
 #include "core/dataHandler/WValueSetBase.h"
-
-#include "WReaderNIfTI.h"
 
 WReaderNIfTI::WReaderNIfTI( std::string fileName )
     : WReader( fileName ),

@@ -28,14 +28,14 @@
 #include <cmath>
 #include <cstddef>
 #include <limits>
+#include <memory>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
-#include "../common/math/linearAlgebra/WVectorFixed.h"
-#include "../common/math/WValue.h"
 #include "../common/WAssert.h"
 #include "../common/WLimits.h"
+#include "../common/math/WValue.h"
+#include "../common/math/linearAlgebra/WVectorFixed.h"
 #include "WDataHandlerEnums.h"
 #include "WValueSetBase.h"
 

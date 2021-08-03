@@ -25,15 +25,15 @@
 #ifndef WMRESAMPLEREGULAR_H
 #define WMRESAMPLEREGULAR_H
 
+#include <memory>
 #include <string>
 
 #include <osg/Geode>
 
+#include "core/dataHandler/WDataSetScalar.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
-
-#include "core/dataHandler/WDataSetScalar.h"
 
 /**
  * A module to resample a regular dataset with a different regular grid.

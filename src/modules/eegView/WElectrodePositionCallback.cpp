@@ -23,19 +23,18 @@
 //---------------------------------------------------------------------------
 
 #include <cstddef>
-
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <osg/Drawable>
 #include <osg/ShapeDrawable>
 #include <osg/ref_ptr>
 #include <osgSim/ScalarsToColors>
 
+#include "WEEGEvent.h"
+#include "WElectrodePositionCallback.h"
 #include "core/common/WFlag.h"
 #include "core/common/WPropertyTypes.h"
 #include "core/common/WPropertyVariable.h"
-#include "WEEGEvent.h"
-#include "WElectrodePositionCallback.h"
 
 
 WElectrodePositionCallback::WElectrodePositionCallback( std::size_t channelID,

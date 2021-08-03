@@ -25,6 +25,7 @@
 #ifndef WGEPROPERTYUNIFORM_H
 #define WGEPROPERTYUNIFORM_H
 
+#include <memory>
 #include <string>
 
 #include <osg/Uniform>

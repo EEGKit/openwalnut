@@ -25,12 +25,14 @@
 #ifndef WMTRIANGLEMESHRENDERER_H
 #define WMTRIANGLEMESHRENDERER_H
 
+#include <memory>
 #include <string>
 
 #include <osg/Uniform>
 
 #include "core/common/datastructures/WColoredVertices.h"
 #include "core/common/math/linearAlgebra/WVectorFixed.h"
+#include "core/graphicsEngine/WGEManagedGroupNode.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
@@ -38,7 +40,6 @@
 
 class WTriangleMesh;
 class WGEShader;
-class WGEManagedGroupNode;
 
 /**
  * This module renders the triangle mesh given at its input connector

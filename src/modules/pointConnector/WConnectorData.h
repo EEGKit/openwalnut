@@ -25,9 +25,9 @@
 #ifndef WCONNECTORDATA_H
 #define WCONNECTORDATA_H
 
-#include <osg/Geode>
+#include <memory>
 
-#include <boost/shared_ptr.hpp>
+#include <osg/Geode>
 
 
 /**

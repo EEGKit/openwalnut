@@ -25,6 +25,7 @@
 #ifndef WTHREADEDTRACKINGFUNCTION_TEST_H
 #define WTHREADEDTRACKINGFUNCTION_TEST_H
 
+#include <memory>
 #include <vector>
 
 #include <cxxtest/TestSuite.h>

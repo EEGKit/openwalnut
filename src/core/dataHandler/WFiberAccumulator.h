@@ -25,9 +25,9 @@
 #ifndef WFIBERACCUMULATOR_H
 #define WFIBERACCUMULATOR_H
 
+#include <memory>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
 #include "../common/math/linearAlgebra/WVectorFixed.h"

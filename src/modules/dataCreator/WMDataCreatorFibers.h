@@ -25,15 +25,15 @@
 #ifndef WMDATACREATORFIBERS_H
 #define WMDATACREATORFIBERS_H
 
+#include <memory>
 #include <string>
 
-#include "core/common/WStrategyHelper.h"
+#include "WDataSetFibersCreatorInterface.h"
 #include "core/common/WObjectNDIP.h"
+#include "core/common/WStrategyHelper.h"
+#include "core/dataHandler/WDataSetFibers.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleOutputData.h"
-#include "core/dataHandler/WDataSetFibers.h"
-
-#include "WDataSetFibersCreatorInterface.h"
 
 /**
  * Module which utilizes the strategy pattern to provide a multitude of dataset creation algorithms for fiber data.

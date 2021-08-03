@@ -25,14 +25,12 @@
 #ifndef WUIVIEWWIDGET_H
 #define WUIVIEWWIDGET_H
 
+#include <memory>
 #include <string>
-
-#include <boost/shared_ptr.hpp>
 
 #include <osg/ref_ptr>
 
 #include "../graphicsEngine/WGEViewer.h"
-
 #include "WUIWidgetBase.h"
 
 class WGEGroupNode;

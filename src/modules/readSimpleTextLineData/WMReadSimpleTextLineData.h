@@ -25,11 +25,11 @@
 #ifndef WMREADSIMPLETEXTLINEDATA_H
 #define WMREADSIMPLETEXTLINEDATA_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "core/dataHandler/WDataSetFibers.h"
-
 #include "core/kernel/WDataModule.h"
 #include "core/kernel/WModuleOutputData.h"
 

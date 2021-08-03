@@ -22,6 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -31,6 +32,8 @@
 #include <osg/ShapeDrawable>
 #include <osg/StateAttribute>
 
+#include "WMIsosurfaceRaytracer.h"
+#include "WMIsosurfaceRaytracer.xpm"
 #include "core/common/WColor.h"
 #include "core/common/WPropertyHelper.h"
 #include "core/dataHandler/WDataSetScalar.h"
@@ -39,19 +42,17 @@
 #include "core/graphicsEngine/WGEColormapping.h"
 #include "core/graphicsEngine/WGEGeodeUtils.h"
 #include "core/graphicsEngine/WGEManagedGroupNode.h"
-#include "core/graphicsEngine/WGEUtils.h"
+#include "core/graphicsEngine/WGERequirement.h"
 #include "core/graphicsEngine/WGETextureUtils.h"
+#include "core/graphicsEngine/WGEUtils.h"
+#include "core/graphicsEngine/callbacks/WGENodeMaskCallback.h"
+#include "core/graphicsEngine/postprocessing/WGEPostprocessingNode.h"
 #include "core/graphicsEngine/shaders/WGEPropertyUniform.h"
 #include "core/graphicsEngine/shaders/WGEShader.h"
 #include "core/graphicsEngine/shaders/WGEShaderDefineOptions.h"
-#include "core/graphicsEngine/shaders/WGEShaderPropertyDefineOptions.h"
 #include "core/graphicsEngine/shaders/WGEShaderPropertyDefine.h"
-#include "core/graphicsEngine/postprocessing/WGEPostprocessingNode.h"
-#include "core/graphicsEngine/WGERequirement.h"
-#include "core/graphicsEngine/callbacks/WGENodeMaskCallback.h"
+#include "core/graphicsEngine/shaders/WGEShaderPropertyDefineOptions.h"
 #include "core/kernel/WKernel.h"
-#include "WMIsosurfaceRaytracer.xpm"
-#include "WMIsosurfaceRaytracer.h"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMIsosurfaceRaytracer )
