@@ -29,7 +29,6 @@
 #include <vector>
 
 #include "WAngleHelper.h"
-#include "WClickHandler.h"
 #include "WConnectorData.h"
 #include "WFiberHandler.h"
 #include "WMPointConnector.h"
@@ -178,8 +177,6 @@ void WMPointConnector::toggleActivationOfModule( WModule::SPtr mod )
 void WMPointConnector::createHandler()
 {
     osg::ref_ptr< osgViewer::View > viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView();
-    osg::ref_ptr< WClickHandler > clickHandler = new WClickHandler( this );
-    viewer->addEventHandler( clickHandler.get() );
 
     osg::ref_ptr< WKeyboardHandler > keyboardHandler = new WKeyboardHandler( this );
     viewer->addEventHandler( keyboardHandler.get() );
@@ -557,8 +554,33 @@ WFiberHandler::SPtr WMPointConnector::getFiberHandler()
     return m_fiberHandler;
 }
 
-void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float, float )
+void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float x, float y )
 {
+    // TODO(eschbach): maybe clean up this method. It is pretty long
+    if( !m_onscreenSelection->hasMoved() )
+    {
+        // no movement do raycast.
+        float mouseX = x * 2.0 - 1.0;
+        float mouseY = y * 2.0 - 1.0;
+
+        osg::Camera* camera = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera();
+        osg::Matrix VP = camera->getViewMatrix() * camera->getProjectionMatrix();
+
+        osg::Matrix inverseVP;
+        inverseVP.invert( VP );
+
+        osg::Vec3 nearPoint( mouseX, mouseY, -1.0f );
+        osg::Vec3 farPoint( mouseX, mouseY, 1.0f );
+        nearPoint = nearPoint * inverseVP;
+        farPoint = farPoint * inverseVP;
+
+        osg::Vec3 direction = farPoint - nearPoint;
+        direction.normalize();
+
+        handleClick( nearPoint, direction, m_onscreenSelection->getClickType() );
+        return;
+    }
+
     std::vector< WPosition > positions;
     for( size_t idx = 0; idx < m_connectorData->getVertices()->size(); idx++ )
     {
@@ -572,7 +594,7 @@ void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float, 
         return;
     }
 
-    if( !m_onscreenSelection->getClickType() )
+    if( !m_onscreenSelection->getClickType() ) // right click delete
     {
         size_t idx = 0;
         size_t fibIdx = m_fiberHandler->getSelectedFiber();
@@ -596,7 +618,7 @@ void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float, 
         m_fiberHandler->removeVerticesFromFiber( std::vector< osg::Vec3 >( positions.begin(), positions.end() ), fibIdx );
         m_fiberHandler->selectLastPoint();
     }
-    else
+    else // left click add
     {
         for( auto vertex = positions.begin(); vertex != positions.end(); )
         {

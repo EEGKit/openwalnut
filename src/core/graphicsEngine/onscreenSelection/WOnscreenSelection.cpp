@@ -54,6 +54,7 @@ void WOnscreenSelection::start( float x, float y )
     clear();
 
     m_isSelecting = true;
+    m_moved = false;
     WPosition pos( x, y, 0 );
 
     m_line.push_back( pos );
@@ -103,6 +104,8 @@ void WOnscreenSelection::move( float x, float y )
     {
         return;
     }
+
+    m_moved = true;
 
     WPosition pos( x, y, 0 );
     switch( m_selectionType )
@@ -281,7 +284,6 @@ bool WOnscreenSelection::isSelected( float x, float y, float z )
         return false;
     }
 
-    // TODO(eschbach): selection checks
     switch( m_selectionType )
     {
         case WSelectionType::BRUSH:
@@ -424,4 +426,9 @@ void WOnscreenSelection::setClickType( bool clickType )
 bool WOnscreenSelection::getClickType()
 {
     return m_clickType;
+}
+
+bool WOnscreenSelection::hasMoved()
+{
+    return m_moved;
 }

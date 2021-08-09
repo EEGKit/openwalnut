@@ -43,8 +43,6 @@
 #include "../fiberDisplay/WMFiberDisplay.h"
 #include "../pointRenderer/WMPointRenderer.h"
 
-
-class WClickHandler;
 class WConnectorData;
 class WFiberHandler;
 
@@ -191,7 +189,7 @@ private:
     void createFiberDisplay();
 
     /**
-     * Creates the WClickHandler and the WKeyboardHandler and registers them.
+     * Creates the WKeyboardHandler and registers them.
      */
     void createHandler();
 

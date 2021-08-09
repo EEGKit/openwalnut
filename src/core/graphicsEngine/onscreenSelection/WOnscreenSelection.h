@@ -213,6 +213,12 @@ public:
      */
     bool getClickType();
 
+    /**
+     * \return true The mouse has been moved.
+     * \return false The mouse has not been moved.
+     */
+    bool hasMoved();
+
 private:
     /**
      * Updates the current rendered data.
@@ -234,6 +240,8 @@ private:
     float m_thickness; //!< The thickness of the brush.
 
     bool m_clickType; //!< Whether this is a left click or not.
+
+    bool m_moved; //!< Whether the mouse has been moved.
 
     CallbackType m_onstart; //!< The Callback for the start function.
 
