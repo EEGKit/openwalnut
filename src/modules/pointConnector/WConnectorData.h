@@ -25,6 +25,8 @@
 #ifndef WCONNECTORDATA_H
 #define WCONNECTORDATA_H
 
+#include <vector>
+
 #include <osg/Geode>
 
 #include <boost/shared_ptr.hpp>
@@ -62,11 +64,17 @@ public:
     osg::ref_ptr< osg::Vec4Array > getColors();
 
     /**
+     * \return std::shared_ptr< std::vector< float > > The energy deposition in this data.
+     */
+    std::shared_ptr< std::vector< float > > getEdeps();
+
+    /**
      * Adds a vertex with its color to the currently selected fiber.
      * \param vertex The vertex to add.
      * \param color The color of the vertex.
+     * \param edep The energy deposition of the vertex.
      */
-    void addVertex( osg::Vec3 vertex, osg::Vec4 color );
+    void addVertex( osg::Vec3 vertex, osg::Vec4 color, float edep );
 
     /**
      * Selects a point by its index in m_vertices.
@@ -103,6 +111,11 @@ private:
      * The color of the vertices that are drawn.
      */
     osg::ref_ptr< osg::Vec4Array > m_colors;
+
+    /**
+     * The energy deposition of the vertices.
+     */
+    std::shared_ptr< std::vector< float > > m_edeps;
 
     /**
      * The index of the selected vertex.

@@ -62,6 +62,16 @@ class WMPointConnector: public WModuleContainer
 
 public:
     /**
+     * represents a std::shared_ptr to a vector containing a vector of floats.
+     */
+    typedef std::shared_ptr< std::vector< float > > SPFloatVector;
+
+    /**
+     * represents a std::shared_ptr to a vector containing a vector of size_t.
+     */
+    typedef std::shared_ptr< std::vector< size_t > > SPSizeVector;
+
+    /**
      * A shared_ptr to this class.
      */
     typedef std::shared_ptr< WMPointConnector > SPtr;

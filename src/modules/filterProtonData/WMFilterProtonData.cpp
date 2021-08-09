@@ -139,7 +139,7 @@ void WMFilterProtonData::connectors()
     m_output_transferFunction = WModuleOutputData< WDataSetSingle >::create( shared_from_this(),
                                                                              "output transferfunction", "Output transfer function" );
     m_output_points_eventIds = WModuleOutputData< WDataSetPoints >::createAndAdd( shared_from_this(),
-                                                    "output points and eventIDs",  "Output CSV data as points and EventIDs for PointConnector" );
+                                                    "output points and data",  "Output CSV data as points and additional data for PointConnector" );
 
     WModule::connectors();
 }
@@ -150,6 +150,7 @@ void WMFilterProtonData::clearProperties()
     m_properties->removeProperty( m_properties->getProperty( "Filtering" ) );
     m_properties->removeProperty( m_properties->getProperty( "Visualization" ) );
     m_properties->removeProperty( m_properties->getProperty( "Event Id Limitation" ) );
+    m_properties->removeProperty( m_properties->getProperty( "Output" ) );
 }
 
 void WMFilterProtonData::properties()
@@ -162,7 +163,7 @@ void WMFilterProtonData::properties()
     WPropertyGroup::SPtr groupVisual  = m_properties->addPropertyGroup( "Visualization", "Visualization options", false );
     WPropertyGroup::SPtr groupEventID = m_properties->addPropertyGroup( "Event Id Limitation", "Adjust the range of eventIDs to be shown.", false );
     WPropertyGroup::SPtr groupRename  = groupFilter->addPropertyGroup( "Rename Particle Types", "Filtering/Rename Particle Types", false );
-    WPropertyGroup::SPtr groupOutput  = groupFilter->addPropertyGroup( "Output", "Configures the third output", false );
+    WPropertyGroup::SPtr groupOutput  = m_properties->addPropertyGroup( "Output", "Configures the third output", false );
 
     WPropertyBase::PropertyChangeNotifierType columnNotifier = boost::bind( &WMFilterProtonData::loadNotifier,
                                                                 this, groupColumn, boost::placeholders::_1 );

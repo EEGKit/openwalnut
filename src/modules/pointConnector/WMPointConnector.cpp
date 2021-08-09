@@ -194,7 +194,22 @@ void WMPointConnector::handleInput()
         return;
     }
 
-    std::shared_ptr< WValueSet< size_t > > eventIDs = std::dynamic_pointer_cast< WValueSet< size_t > >( points->getValueSet() );
+    SPFloatVector edeps;
+    SPSizeVector eventIDs;
+
+    if( points->getData().type() == typeid( std::tuple< SPFloatVector > ) )
+    {
+        edeps = std::get< 0 >( std::any_cast< std::tuple< SPFloatVector > >( points->getData() ) );
+    }
+    else if( points->getData().type() == typeid( std::tuple< SPSizeVector > ) )
+    {
+        eventIDs = std::get< 0 >( std::any_cast< std::tuple< SPSizeVector > >( points->getData() ) );
+    }
+    else if( points->getData().type() == typeid( std::tuple< SPFloatVector, SPSizeVector > ) )
+    {
+        edeps = std::get< 0 >( std::any_cast< std::tuple< SPFloatVector, SPSizeVector > >( points->getData() ) );
+        eventIDs = std::get< 1 >( std::any_cast< std::tuple< SPFloatVector, SPSizeVector > >( points->getData() ) );
+    }
 
     m_connectorData->clear();
 
@@ -205,11 +220,11 @@ void WMPointConnector::handleInput()
     for( size_t pointIdx = 0; pointIdx < points->size(); ++pointIdx )
     {
         osg::Vec3 vertex = points->operator[]( pointIdx );
-        m_connectorData->addVertex( vertex, points->getColor( pointIdx ) );
+        m_connectorData->addVertex( vertex, points->getColor( pointIdx ), edeps ? edeps->at( pointIdx ) : 0 );
 
         if( eventIDs )
         {
-            size_t eventID = eventIDs->getScalar( pointIdx );
+            size_t eventID = eventIDs->at( pointIdx );
 
             while( fibers->size() <= eventID )
             {
@@ -315,7 +330,7 @@ bool WMPointConnector::isAdaptivelyHidden( osg::Vec3 vertex )
     double checkAngle = m_adaptiveVisibilityAngle->get();
     if( m_enablePhysicalAngle->get() )
     {
-        checkAngle = calculatePhysicalAngle();
+        checkAngle = calculatePhysicalAngle() * 2.5; // Helge wrote that his angle should be either multiplied by 2.5 or 5.0
     }
 
     return angle > checkAngle && angle < ( 180.0 - checkAngle );
@@ -323,8 +338,34 @@ bool WMPointConnector::isAdaptivelyHidden( osg::Vec3 vertex )
 
 double WMPointConnector::calculatePhysicalAngle()
 {
-    // TODO(eschbach): calculate the physical angle
-    return 0.0;
+    // Based on this paper: https://www.researchgate.net/publication/309738658_Proton_tracking_in_a_high-granularity_Digital_Tracking_Calorimeter_for_proton_CT_purposes
+
+    const double mass = 1.6726219e-27;                                      // The mass of a proton in kg
+    const double energyRest = 0.939;                                        // The rest energy of a proton in GeV
+    const double lightSpeed = 3.0e8;                                        // The speed of light in m/s
+    const double mevFact = 5.36e-22;                                        // The factor of kg-m/s to MeV
+    const double helgeEnding = 0.98374582424;                               // The ending of helge's formula precalculated
+
+    size_t verIdx = 0;
+    if( !m_connectorData->getSelectedPoint( &verIdx ) )
+    {
+        return 0.0;
+    }
+    double energyDep = m_connectorData->getEdeps()->at( verIdx );           // The energy deposition of the proton
+    if( energyDep == 0.0 )
+    {
+        return 0.0;
+    }
+
+    double relFactor = ( energyDep + energyRest ) / energyRest;             // The relative factor is the factor between total energy and rest energy
+    double relSpeed = sqrt( 1.0 - ( 1.0 / ( relFactor * relFactor ) ) );    // The relative speed from the relative factor
+
+    double momentum = relFactor * mass * relSpeed * lightSpeed;             // Calculating momentum in kg-m/s
+    momentum = momentum / mevFact;                                          // Convert to MeV
+
+    double angle = ( 13.6 / ( relSpeed * momentum ) ) * helgeEnding;        // Use Helge's formula
+
+    return angle * 180.0 / M_PI;                                            // return angle in degrees
 }
 
 void WMPointConnector::handleClick( osg::Vec3 cameraPosition, osg::Vec3 direction, bool isLeftClick )

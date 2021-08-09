@@ -35,15 +35,15 @@ WOutputPropertyHandler::WOutputPropertyHandler( WProtonData::SPtr protonData,
 
 void WOutputPropertyHandler::createProperties()
 {
+    WPropertyBase::PropertyChangeNotifierType notifier = boost::bind( &WOutputPropertyHandler::updateProperties, this );
     WPropGroup outputGroup = m_properties->addPropertyGroup( "Output", "Configures the third output" );
-    m_energyDeposition = outputGroup->addProperty( "Energy deposition", "Enables the energy deposition output", true );
-    m_eventID = outputGroup->addProperty( "Event id", "Enables the event id output", false );
-
-    updateProperties();
+    m_energyDeposition = outputGroup->addProperty( "Energy deposition", "Enables the energy deposition output", true, notifier );
+    m_eventID = outputGroup->addProperty( "Event id", "Enables the event id output", false, notifier );
 }
 
 void WOutputPropertyHandler::updateProperties()
 {
+    m_dataUpdate();
 }
 
 WPropBool WOutputPropertyHandler::getEnergyDeposition()

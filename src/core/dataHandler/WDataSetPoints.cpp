@@ -57,10 +57,10 @@ WDataSetPoints::WDataSetPoints( WDataSetPoints::VertexArray vertices,
 
 WDataSetPoints::WDataSetPoints( WDataSetPoints::VertexArray vertices,
                                 WDataSetPoints::ColorArray colors,
-                                WValueSetBase::SPtr valueSet ):
+                                std::any data ):
     m_vertices( vertices ),
     m_colors( colors ),
-    m_valueSet( valueSet )
+    m_data( data )
 {
     WAssert( vertices->size() % 3 == 0, "Number of floats in the vertex array must be a multiple of 3" );
     if( colors )
@@ -171,9 +171,9 @@ WDataSetPoints::ColorArray WDataSetPoints::getColors() const
     return m_colors;
 }
 
-WValueSetBase::SPtr WDataSetPoints::getValueSet() const
+std::any WDataSetPoints::getData() const
 {
-    return m_valueSet;
+    return m_data;
 }
 
 WBoundingBox WDataSetPoints::getBoundingBox() const
