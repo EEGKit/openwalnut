@@ -296,6 +296,11 @@ private:
      * Property to set the angle via physical conditions.
      */
     WPropBool m_enablePhysicalAngle;
+
+    /**
+     * Property to set the opacity of the hidden points.
+     */
+    WPropDouble m_hiddenOpacity;
 };
 
 #endif  // WMPOINTCONNECTOR_H

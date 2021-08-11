@@ -99,6 +99,11 @@ void WMPointConnector::properties()
     m_enablePhysicalAngle = assistanceGroup->addProperty( "Enable physical angle", "Enables the calculation of the visibility angle", false,
                                                            boost::bind( &WMPointConnector::updatePoints, this ) );
 
+    m_hiddenOpacity = assistanceGroup->addProperty( "Hidden point opacity", "Changes the opacity of the hidden points", 0.1,
+                                                     boost::bind( &WMPointConnector::updatePoints, this ) );
+    m_hiddenOpacity->setMin( 0.0 );
+    m_hiddenOpacity->setMax( 1.0 );
+
     WModule::properties();
 }
 
@@ -290,7 +295,7 @@ void WMPointConnector::updatePoints()
         }
         else if( m_fiberHandler->isPointHidden( vertex ) || isAdaptivelyHidden( vertex ) )
         {
-            color[3] = 0.1;
+            color[3] = m_hiddenOpacity->get();
         }
 
         colors->push_back( color.x() );
@@ -505,7 +510,7 @@ void WMPointConnector::updateOutput()
 
         if( m_fiberHandler->isHidden( idx ) )
         {
-            color[3] = 0.1;
+            color[3] = m_hiddenOpacity->get();
         }
 
         for( size_t vIdx = 0; vIdx < fiber.size(); vIdx++ )
