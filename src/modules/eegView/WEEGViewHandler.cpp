@@ -23,23 +23,22 @@
 //---------------------------------------------------------------------------
 
 #include <cstddef>
-
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <osg/ref_ptr>
 #include <osgGA/GUIActionAdapter>
 #include <osgGA/GUIEventAdapter>
 
-#include "core/common/exceptions/WOutOfBounds.h"
+#include "WEEGEvent.h"
+#include "WEEGViewHandler.h"
 #include "core/common/WAssert.h"
 #include "core/common/WFlag.h"
 #include "core/common/WPropertyTypes.h"
 #include "core/common/WPropertyVariable.h"
+#include "core/common/exceptions/WOutOfBounds.h"
 #include "core/dataHandler/WDataSetDipoles.h"
 #include "core/dataHandler/WEEG2.h"
 #include "core/graphicsEngine/WGEGroupNode.h"
-#include "WEEGEvent.h"
-#include "WEEGViewHandler.h"
 
 
 WEEGViewHandler::WEEGViewHandler( WPropInt labelsWidth,

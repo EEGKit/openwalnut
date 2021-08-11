@@ -25,7 +25,8 @@
 #ifndef WTIMER_H
 #define WTIMER_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 
 
 

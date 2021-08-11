@@ -24,10 +24,10 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <vector>
 
 #include <boost/random.hpp>
-
 #include <core/common/exceptions/WPreconditionNotMet.h>
 
 #include "WTuringTextureCreator.h"

@@ -25,10 +25,10 @@
 #ifndef WUNIONFIND_H
 #define WUNIONFIND_H
 
+#include <memory>
 #include <set>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
 
 /**

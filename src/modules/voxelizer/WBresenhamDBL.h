@@ -25,12 +25,13 @@
 #ifndef WBRESENHAMDBL_H
 #define WBRESENHAMDBL_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
-#include "core/dataHandler/WGridRegular3D.h"
+
+#include "WBresenham.h"
 #include "core/common/math/WLine.h"
 #include "core/common/math/linearAlgebra/WPosition.h"
-#include "WBresenham.h"
+#include "core/dataHandler/WGridRegular3D.h"
 
 /**
  * This is a modified version the Bresenham algorithm.

@@ -32,8 +32,6 @@
 
     #include <matrix/newmat.h>
 
-    #include <boost/shared_ptr.hpp>
-
     #include "WMatrix.h"
     #include "WValue.h"
 

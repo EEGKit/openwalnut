@@ -22,6 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
+
 #include "WOutputConnectorWrapper.h"
 
 WOutputConnectorWrapper::WOutputConnectorWrapper( std::shared_ptr< WModuleOutputConnector > conn )

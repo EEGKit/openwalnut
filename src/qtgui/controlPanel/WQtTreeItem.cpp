@@ -22,27 +22,28 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
 
 #include <QApplication>
 
+#include "../WMainWindow.h"
+#include "../WQtGui.h"
 #include "../events/WEventTypes.h"
 #include "../events/WModuleConnectorEvent.h"
 #include "../events/WModuleDeleteEvent.h"
 #include "../events/WPropertyChangedEvent.h"
-#include "../WMainWindow.h"
-#include "../WQtGui.h"
+#include "WQtControlPanel.h"
+#include "WQtTreeItem.h"
+#include "WTreeItemTypes.h"
 #include "core/common/WLogger.h"
 #include "core/common/WProgress.h"
 #include "core/common/WProgressCombiner.h"
 #include "core/kernel/WKernel.h"
 #include "core/kernel/WModuleInputConnector.h"
 #include "core/kernel/WModuleOutputConnector.h"
-#include "WQtControlPanel.h"
-#include "WQtTreeItem.h"
-#include "WTreeItemTypes.h"
 
 WQtTreeItem::WQtTreeItem( QTreeWidgetItem * parent, WTreeItemType type, std::shared_ptr< WModule > module ) :
     QTreeWidgetItem( parent, type ),

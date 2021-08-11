@@ -25,17 +25,16 @@
 #ifndef WITEMSELECTION_H
 #define WITEMSELECTION_H
 
-#include <vector>
+#include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
-#include <boost/tuple/tuple.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/signals2/signal.hpp>
-#include <boost/enable_shared_from_this.hpp>
+#include <boost/tuple/tuple.hpp>
 
-#include "WSharedSequenceContainer.h"
 #include "WItemSelectionItem.h"
+#include "WSharedSequenceContainer.h"
 
 class WItemSelector;
 

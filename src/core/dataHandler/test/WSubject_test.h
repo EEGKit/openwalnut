@@ -25,11 +25,13 @@
 #ifndef WSUBJECT_TEST_H
 #define WSUBJECT_TEST_H
 
+#include <memory>
 #include <string>
+
 #include <cxxtest/TestSuite.h>
 
-#include "../WSubject.h"
 #include "../WDataSet.h"
+#include "../WSubject.h"
 
 /**
  * The tests for our subject class.

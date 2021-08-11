@@ -25,17 +25,16 @@
 #ifndef WUIWIDGETFACTORY_H
 #define WUIWIDGETFACTORY_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
-
-#include "core/common/WException.h"
-#include "core/common/WPropertyTypes.h"
 
 #include "WUIGridWidget.h"
-#include "WUITabbedWidget.h"
 #include "WUIPropertyGroupWidget.h"
+#include "WUITabbedWidget.h"
 #include "WUIViewWidget.h"
+#include "core/common/WException.h"
+#include "core/common/WPropertyTypes.h"
 
 /**
  * Create instances of WUI widgets. This needs to be implemented by the UI/GUI developer.

@@ -22,13 +22,13 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
 #include "../common/WCondition.h"
 #include "WModuleConnectorSignals.h"
-#include "WModuleOutputConnector.h"
-
 #include "WModuleInputConnector.h"
+#include "WModuleOutputConnector.h"
 
 WModuleInputConnector::WModuleInputConnector( std::shared_ptr< WModule > module, std::string name, std::string description ):
     WModuleConnector( module, name, description ),

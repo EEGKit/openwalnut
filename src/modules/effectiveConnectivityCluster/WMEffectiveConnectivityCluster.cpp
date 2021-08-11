@@ -22,40 +22,36 @@
 //
 //---------------------------------------------------------------------------
 
-#include <iostream>
+#include <cmath>
 #include <fstream>
+#include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <cmath>
-
-#include <boost/shared_ptr.hpp>
-
-#include "WMEffectiveConnectivityCluster.h"
-
 #include <osg/Geode>
 #include <osg/Geometry>
-#include <osgText/Text>
-#include <osgText/FadeText>
-#include <osg/StateSet>
-#include <osg/StateAttribute>
-#include <osg/PolygonMode>
 #include <osg/LightModel>
+#include <osg/PolygonMode>
+#include <osg/StateAttribute>
+#include <osg/StateSet>
 #include <osgDB/WriteFile>
+#include <osgText/FadeText>
+#include <osgText/Text>
 
+#include "WMEffectiveConnectivityCluster.h"
+#include "WMEffectiveConnectivityCluster.xpm"
 #include "core/common/WProgress.h"
-#include "core/dataHandler/WSubject.h"
 #include "core/dataHandler/WGridRegular3D.h"
+#include "core/dataHandler/WSubject.h"
 #include "core/dataHandler/datastructures/WFiberCluster.h"
+#include "core/graphicsEngine/WGEUtils.h"
+#include "core/graphicsEngine/WGraphicsEngine.h"
+#include "core/graphicsEngine/widgets/labeling/WGEBorderLayout.h"
+#include "core/graphicsEngine/widgets/labeling/WGELabel.h"
 #include "core/kernel/WKernel.h"
 #include "core/kernel/WModuleFactory.h"
 #include "core/kernel/WModuleOutputData.h"
-#include "core/graphicsEngine/widgets/labeling/WGEBorderLayout.h"
-#include "core/graphicsEngine/widgets/labeling/WGELabel.h"
-#include "core/graphicsEngine/WGraphicsEngine.h"
-#include "core/graphicsEngine/WGEUtils.h"
-
-#include "WMEffectiveConnectivityCluster.xpm"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMEffectiveConnectivityCluster )

@@ -24,11 +24,11 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <vector>
 
-#include "core/common/math/linearAlgebra/WVectorFixed.h"
-
 #include "WCenterlineParameterization.h"
+#include "core/common/math/linearAlgebra/WVectorFixed.h"
 
 WCenterlineParameterization::WCenterlineParameterization( std::shared_ptr< WGridRegular3D > grid, std::shared_ptr< WFiber > centerline ):
     WRasterParameterization( grid ),

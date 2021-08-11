@@ -22,17 +22,16 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
+#include "WMReadSphericalHarmonics.h"
+#include "WMReadSphericalHarmonics.xpm"
 #include "core/common/WPathHelper.h"
 #include "core/dataHandler/WDataHandlerEnums.h"
 #include "core/graphicsEngine/WGERequirement.h"
 #include "core/kernel/WKernel.h"
-
 #include "io/WReaderNIfTI.h"
-
-#include "WMReadSphericalHarmonics.h"
-#include "WMReadSphericalHarmonics.xpm"
 
 WMReadSphericalHarmonics::WMReadSphericalHarmonics():
     WModule()

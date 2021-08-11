@@ -25,12 +25,13 @@
 #ifndef WTHREADEDFUNCTION_TEST_H
 #define WTHREADEDFUNCTION_TEST_H
 
+#include <memory>
 #include <string>
 
 #include <cxxtest/TestSuite.h>
 
-#include "../WThreadedFunction.h"
 #include "../WSharedObject.h"
+#include "../WThreadedFunction.h"
 
 /**
  * \class WThreadedFunctionTest

@@ -22,23 +22,22 @@
 //
 //---------------------------------------------------------------------------
 
+#include <algorithm>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
-#include <algorithm>
 
-#include <boost/tokenizer.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/tokenizer.hpp>
 
-#include "WStringUtils.h"
 #include "WLogger.h"
-#include "exceptions/WPropertyUnknown.h"
-#include "exceptions/WPropertyNotUnique.h"
-
-#include "WPropertyHelper.h"
-
 #include "WPropertyGroupBase.h"
+#include "WPropertyHelper.h"
+#include "WStringUtils.h"
+#include "exceptions/WPropertyNotUnique.h"
+#include "exceptions/WPropertyUnknown.h"
 
 const std::string WPropertyGroupBase::separator = "/";
 

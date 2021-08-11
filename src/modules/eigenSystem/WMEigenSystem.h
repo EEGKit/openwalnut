@@ -25,16 +25,16 @@
 #ifndef WMEIGENSYSTEM_H
 #define WMEIGENSYSTEM_H
 
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include <Eigen/Eigen>
 #include <osg/Geode>
 
-#include <Eigen/Eigen>
-
-#include "core/common/math/WTensorFunctions.h"
 #include "core/common/WThreadedFunction.h"
+#include "core/common/math/WTensorFunctions.h"
 #include "core/dataHandler/WThreadedPerVoxelOperation.h"
 #include "core/dataHandler/WThreadedTrackingFunction.h"
 #include "core/kernel/WModule.h"

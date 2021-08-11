@@ -22,8 +22,10 @@
 //
 //---------------------------------------------------------------------------
 
-#include <string>
 #include <map>
+#include <memory>
+#include <string>
+
 #include "WDataSetFiberClustering.h"
 
 // The prototype as singleton. Created during first getPrototype() call

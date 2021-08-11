@@ -25,18 +25,19 @@
 #ifndef WMDETERMINISTICFTMORI_H
 #define WMDETERMINISTICFTMORI_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
-#include "core/kernel/WModule.h"
-#include "core/common/math/linearAlgebra/WVectorFixed.h"
 #include "core/common/WThreadedFunction.h"
+#include "core/common/math/linearAlgebra/WVectorFixed.h"
+#include "core/common/math/WTensorSym.h"
+#include "core/dataHandler/WFiberAccumulator.h"
 #include "core/dataHandler/WThreadedPerVoxelOperation.h"
 #include "core/dataHandler/WThreadedTrackingFunction.h"
-#include "core/dataHandler/WFiberAccumulator.h"
+#include "core/kernel/WModule.h"
 
 // forward delcarations
 class WDataSetFiberVector;

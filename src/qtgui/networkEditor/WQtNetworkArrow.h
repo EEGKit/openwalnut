@@ -25,15 +25,15 @@
 #ifndef WQTNETWORKARROW_H
 #define WQTNETWORKARROW_H
 
-#include <string>
 #include <iostream>
+#include <memory>
+#include <string>
 
-#include <QGraphicsSceneMouseEvent>
 #include <QGraphicsLineItem>
 #include <QGraphicsPathItem>
 #include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
 #include <QPainter>
-#include <boost/shared_ptr.hpp>
 
 #include "core/kernel/WModuleConnector.h"
 

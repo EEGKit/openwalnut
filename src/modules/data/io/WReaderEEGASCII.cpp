@@ -24,17 +24,16 @@
 
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
-
+#include "WReaderEEGASCII.h"
 #include "core/common/WAssert.h"
 #include "core/common/WException.h"
 #include "core/common/WStringUtils.h"
 #include "core/dataHandler/WEEG.h"
 #include "core/dataHandler/WSubject.h"
-
-#include "WReaderEEGASCII.h"
 
 WReaderEEGASCII::WReaderEEGASCII( std::string fileName )
     : WReaderEEG( fileName )

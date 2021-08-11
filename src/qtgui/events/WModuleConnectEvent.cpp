@@ -22,8 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WEventTypes.h"
+#include <memory>
 
+#include "WEventTypes.h"
 #include "WModuleConnectEvent.h"
 
 WModuleConnectEvent::WModuleConnectEvent( std::shared_ptr<WModuleConnector> in, std::shared_ptr<WModuleConnector> out )

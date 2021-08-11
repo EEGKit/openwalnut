@@ -25,12 +25,12 @@
 #ifndef WPROGRESSCOMBINER_H
 #define WPROGRESSCOMBINER_H
 
+#include <memory>
 #include <set>
 #include <shared_mutex>
 #include <string>
 
 #include <boost/thread.hpp>
-#include <boost/shared_ptr.hpp>
 
 #include "WProgress.h"
 

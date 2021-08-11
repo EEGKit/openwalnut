@@ -22,15 +22,15 @@
 //
 //---------------------------------------------------------------------------
 
-#include <ctime>
 #include <cstdlib>
+#include <ctime>
+#include <memory>
 #include <vector>
 
+#include "WDataCreatorLinearAscent.h"
 #include "core/common/WLogger.h"
 #include "core/dataHandler/WDataHandlerEnums.h"
 #include "core/dataHandler/WValueSet.h"
-
-#include "WDataCreatorLinearAscent.h"
 
 WDataCreatorLinearAscent::WDataCreatorLinearAscent():
     WObjectNDIP< WDataSetSingleCreatorInterface >( "LinearAscent", "Creates a linear increasing values starting from the bottom (x,y,z)." )

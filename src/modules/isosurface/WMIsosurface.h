@@ -25,21 +25,22 @@
 #ifndef WMISOSURFACE_H
 #define WMISOSURFACE_H
 
+#include <memory>
 #include <shared_mutex>
 #include <string>
 
-#include <osg/Node>
 #include <osg/Geode>
+#include <osg/Node>
 #include <osg/Uniform>
 
+#include "core/dataHandler/WDataSetScalar.h"
+#include "core/dataHandler/WGridRegular3D.h"
 #include "core/graphicsEngine/WGEManagedGroupNode.h"
 #include "core/graphicsEngine/WTriangleMesh.h"
-#include "core/dataHandler/WDataSetScalar.h"
+#include "core/graphicsEngine/shaders/WGEShader.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
-#include "core/dataHandler/WGridRegular3D.h"
-#include "core/graphicsEngine/shaders/WGEShader.h"
 
 /**
  * Module implementing the marching cubes algorithm with consistent triangulation for data

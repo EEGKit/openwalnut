@@ -22,15 +22,15 @@
 //
 //---------------------------------------------------------------------------
 
-#include <vector>
+#include <memory>
 #include <string>
-
-#include "core/kernel/WKernel.h"
-#include "core/common/WPropertyHelper.h"
-#include "core/dataHandler/WDataHandler.h"
+#include <vector>
 
 #include "WMSpatialDerivative.h"
 #include "WMSpatialDerivative.xpm"
+#include "core/common/WPropertyHelper.h"
+#include "core/dataHandler/WDataHandler.h"
+#include "core/kernel/WKernel.h"
 
 // This line is needed by the module loader to actually find your module. You need to add this to your module too. Do NOT add a ";" here.
 W_LOADABLE_MODULE( WMSpatialDerivative )

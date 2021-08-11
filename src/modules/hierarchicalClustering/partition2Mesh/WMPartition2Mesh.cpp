@@ -34,19 +34,19 @@
 //---------------------------------------------------------------------------
 
 #include <fstream>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/unordered_map.hpp>
 #include <boost/foreach.hpp>
 #include <boost/format.hpp>
-
-#include "core/common/WStringUtils.h"
-#include "core/kernel/WKernel.h"
-#include "core/common/WIOTools.h"
-#include "core/graphicsEngine/WGEUtils.h"
+#include <boost/unordered_map.hpp>
 
 #include "WMPartition2Mesh.h"
+#include "core/common/WIOTools.h"
+#include "core/common/WStringUtils.h"
+#include "core/graphicsEngine/WGEUtils.h"
+#include "core/kernel/WKernel.h"
 
 WMPartition2Mesh::WMPartition2Mesh():
     WModule()

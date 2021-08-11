@@ -25,6 +25,7 @@
 #ifndef WMREADRAWDATA_H
 #define WMREADRAWDATA_H
 
+#include <memory>
 #include <string>
 #include <vector>
 

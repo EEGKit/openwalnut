@@ -22,12 +22,12 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <utility>
 
+#include "WCoordConverter.h"
 #include "core/common/WBoundingBox.h"
 #include "core/common/math/WLinearAlgebraFunctions.h"
-
-#include "WCoordConverter.h"
 
 
 WCoordConverter::WCoordConverter( WMatrix<double> rotMat, WVector3d origin, WVector3d scale ) :

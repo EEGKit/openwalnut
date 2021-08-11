@@ -25,7 +25,7 @@
 #ifndef WMODULECONNECTEVENT_H
 #define WMODULECONNECTEVENT_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <QtCore/QEvent>
 

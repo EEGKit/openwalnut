@@ -26,22 +26,22 @@
 #define WMAINWINDOW_H
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
-
-#include <boost/signals2/signal.hpp>
-#include <boost/thread.hpp>
 
 #include <QMainWindow>
 #include <QSplashScreen>
 #include <QtCore/QSettings>
+#include <boost/signals2/signal.hpp>
+#include <boost/thread.hpp>
 
 #include "WIconManager.h"
-#include "WQtToolBar.h"
 #include "WQtGLWidget.h"
+#include "WQtMessageDock.h"
+#include "WQtToolBar.h"
 #include "WSettingAction.h"
 #include "networkEditor/WQtNetworkEditor.h"
-#include "WQtMessageDock.h"
 
 // forward declarations
 class QMenuBar;

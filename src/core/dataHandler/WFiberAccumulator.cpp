@@ -23,11 +23,11 @@
 //---------------------------------------------------------------------------
 
 #include <fstream>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "../common/WAssert.h"
-
 #include "WFiberAccumulator.h"
 
 WFiberAccumulator::WFiberAccumulator()

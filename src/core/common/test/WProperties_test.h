@@ -25,14 +25,15 @@
 #ifndef WPROPERTIES_TEST_H
 #define WPROPERTIES_TEST_H
 
+#include <memory>
 #include <string>
 
 #include <cxxtest/TestSuite.h>
 
 #include "../WProperties.h"
+#include "../exceptions/WPropertyNameMalformed.h"
 #include "../exceptions/WPropertyNotUnique.h"
 #include "../exceptions/WPropertyUnknown.h"
-#include "../exceptions/WPropertyNameMalformed.h"
 
 /**
  * Test WProperties

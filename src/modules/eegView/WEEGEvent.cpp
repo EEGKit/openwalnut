@@ -23,12 +23,10 @@
 //---------------------------------------------------------------------------
 
 #include <cstddef>
-
 #include <limits>
+#include <memory>
 #include <sstream>
 #include <vector>
-
-#include <boost/shared_ptr.hpp>
 
 #include <osg/Array>
 #include <osg/Geode>
@@ -39,14 +37,14 @@
 #include <osg/ref_ptr>
 #include <osgText/Text>
 
-#include "core/common/exceptions/WOutOfBounds.h"
+#include "WEEGEvent.h"
 #include "core/common/WStringUtils.h"
+#include "core/common/exceptions/WOutOfBounds.h"
 #include "core/dataHandler/WDataSetDipoles.h"
 #include "core/dataHandler/WEEG2.h"
 #include "core/dataHandler/WEEG2Segment.h"
 #include "core/dataHandler/WEEGValueMatrix.h"
 #include "core/graphicsEngine/WGEGroupNode.h"
-#include "WEEGEvent.h"
 
 WEEGEvent::WEEGEvent( double time,
                       double yPos,

@@ -23,6 +23,7 @@
 //---------------------------------------------------------------------------
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -33,14 +34,13 @@
 #include <osg/ShapeDrawable>
 #include <osg/StateAttribute>
 
-#include "core/common/exceptions/WTypeMismatch.h"
+#include "WMVectorPlot.h"
+#include "WMVectorPlot.xpm"
 #include "core/common/WColor.h"
+#include "core/common/exceptions/WTypeMismatch.h"
 #include "core/dataHandler/WDataHandlerEnums.h"
 #include "core/kernel/WKernel.h"
 #include "core/kernel/WSelectionManager.h"
-
-#include "WMVectorPlot.h"
-#include "WMVectorPlot.xpm"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMVectorPlot )

@@ -25,17 +25,17 @@
 #ifndef WMFIBERDISPLAY_H
 #define WMFIBERDISPLAY_H
 
+#include <memory>
 #include <string>
 
 #include <boost/thread.hpp>
 
-#include "core/kernel/WModule.h"
-#include "core/kernel/WModuleInputData.h"
-#include "core/kernel/WModuleOutputData.h"
-
 #include "core/dataHandler/WDataSetFiberClustering.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/kernel/WFiberSelector.h"
+#include "core/kernel/WModule.h"
+#include "core/kernel/WModuleInputData.h"
+#include "core/kernel/WModuleOutputData.h"
 
 // forward declarations
 class WGEShader;

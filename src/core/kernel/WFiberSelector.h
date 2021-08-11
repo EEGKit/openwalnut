@@ -26,15 +26,14 @@
 #define WFIBERSELECTOR_H
 
 #include <list>
+#include <memory>
 #include <vector>
 
-#include "../dataHandler/WDataSetFibers.h"
 #include "../common/WCondition.h"
-
-#include "WSelectorRoi.h"
-#include "WSelectorBranch.h"
-
+#include "../dataHandler/WDataSetFibers.h"
 #include "WKdTree.h"
+#include "WSelectorBranch.h"
+#include "WSelectorRoi.h"
 
 /**
  * Adaptor class between the roi manager and the fiber display

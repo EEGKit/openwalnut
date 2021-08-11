@@ -25,6 +25,7 @@
 #ifndef WMSURFACEPARAMETERANIMATOR_H
 #define WMSURFACEPARAMETERANIMATOR_H
 
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -37,6 +38,11 @@
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
+
+/**
+ * Forward declaration of the WGEGroupNode.
+ */
+class WGEGroupNode;
 
 /**
  * This module is a ray-tracing based isosurface using special methods for animating particle flow on its surface. The modules needs a scalar

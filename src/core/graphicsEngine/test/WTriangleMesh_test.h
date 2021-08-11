@@ -27,6 +27,7 @@
 
 #include <algorithm>
 #include <list>
+#include <memory>
 #include <vector>
 
 #include <cxxtest/TestSuite.h>

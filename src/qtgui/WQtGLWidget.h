@@ -25,22 +25,20 @@
 #ifndef WQTGLWIDGET_H
 #define WQTGLWIDGET_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
+#include <QMenu>
+#include <QWidget>
+#include <QtCore/QTimer>
+#include <QtOpenGL/QGLFormat>
+#include <QtOpenGL/QGLWidget>
 #include <boost/signals2/signal.hpp>
 
-#include <QtCore/QTimer>
-#include <QWidget>
-#include <QMenu>
-#include <QtOpenGL/QGLWidget>
-#include <QtOpenGL/QGLFormat>
-
+#include "WQtGLScreenCapture.h"
 #include "core/common/WColor.h" // not forwarded due to duplicated typedef
 #include "core/graphicsEngine/WGECamera.h"
 #include "core/graphicsEngine/WGEViewer.h"
-
-#include "WQtGLScreenCapture.h"
 
 class WSettingAction;
 

@@ -52,29 +52,29 @@
 //    * headers of other classes inside OpenWalnut
 //    * your own header file
 
+#include <memory>
 #include <string>
 
-#include <osg/ShapeDrawable>
-#include <osg/Group>
 #include <osg/Geode>
+#include <osg/Group>
 #include <osg/Material>
+#include <osg/ShapeDrawable>
 #include <osg/StateAttribute>
 
-#include "core/kernel/WKernel.h"
-#include "core/common/exceptions/WFileNotFound.h"
+#include "WMTemplate.h"
 #include "core/common/WColor.h"
-#include "core/common/WPathHelper.h"
-#include "core/common/WPropertyHelper.h"
 #include "core/common/WItemSelection.h"
 #include "core/common/WItemSelectionItem.h"
 #include "core/common/WItemSelector.h"
-#include "core/graphicsEngine/WGEUtils.h"
+#include "core/common/WPathHelper.h"
+#include "core/common/WPropertyHelper.h"
+#include "core/common/exceptions/WFileNotFound.h"
 #include "core/graphicsEngine/WGERequirement.h"
-
+#include "core/graphicsEngine/WGEUtils.h"
+#include "core/kernel/WKernel.h"
 #include "icons/bier.xpm"
-#include "icons/wurst.xpm"
 #include "icons/steak.xpm"
-#include "WMTemplate.h"
+#include "icons/wurst.xpm"
 
 WMTemplate::WMTemplate():
     WModule()

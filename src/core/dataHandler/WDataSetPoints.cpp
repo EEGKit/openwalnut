@@ -23,13 +23,13 @@
 //---------------------------------------------------------------------------
 
 #include <algorithm>
+#include <memory>
 #include <string>
 
-#include "../common/exceptions/WOutOfBounds.h"
 #include "../common/WAssert.h"
 #include "../common/WColor.h"
+#include "../common/exceptions/WOutOfBounds.h"
 #include "../common/math/linearAlgebra/WPosition.h"
-
 #include "WDataSetPoints.h"
 
 // prototype instance as singleton

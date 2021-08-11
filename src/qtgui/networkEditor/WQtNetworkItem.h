@@ -25,22 +25,22 @@
 #ifndef WQTNETWORKITEM_H
 #define WQTNETWORKITEM_H
 
+#include <memory>
 #include <string>
 
-#include <QtCore/QObject>
-#include <QtCore/QTimer>
-#include <QtCore/QTimeLine>
+#include <QColor>
+#include <QGraphicsItemAnimation>
 #include <QGraphicsObject>
 #include <QGraphicsTextItem>
-#include <QGraphicsItemAnimation>
 #include <QPainter>
-#include <QColor>
+#include <QtCore/QObject>
+#include <QtCore/QTimeLine>
+#include <QtCore/QTimer>
 
-#include "core/kernel/WModule.h"
-
+#include "WQtNetworkEditorGlobals.h"
 #include "WQtNetworkInputPort.h"
 #include "WQtNetworkOutputPort.h"
-#include "WQtNetworkEditorGlobals.h"
+#include "core/kernel/WModule.h"
 
 class WQtNetworkEditor;
 class WQtNetworkItemActivator;

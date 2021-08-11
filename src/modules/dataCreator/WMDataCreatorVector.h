@@ -25,17 +25,17 @@
 #ifndef WMDATACREATORVECTOR_H
 #define WMDATACREATORVECTOR_H
 
+#include <memory>
 #include <string>
 
-#include "core/common/WStrategyHelper.h"
+#include "WDataSetSingleCreatorInterface.h"
 #include "core/common/WObjectNDIP.h"
-#include "core/kernel/WModule.h"
-#include "core/kernel/WModuleOutputData.h"
+#include "core/common/WStrategyHelper.h"
+#include "core/dataHandler/WDataHandlerEnums.h"
 #include "core/dataHandler/WDataSetVector.h"
 #include "core/dataHandler/WValueSetBase.h"
-#include "core/dataHandler/WDataHandlerEnums.h"
-
-#include "WDataSetSingleCreatorInterface.h"
+#include "core/kernel/WModule.h"
+#include "core/kernel/WModuleOutputData.h"
 
 /**
  * Module which utilizes the strategy pattern to provide a multitude of dataset creation algorithms for vector data.

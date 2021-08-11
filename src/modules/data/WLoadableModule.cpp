@@ -22,11 +22,12 @@
 //
 //---------------------------------------------------------------------------
 
-#include "core/kernel/WModule.h"
+#include <memory>
 
 #include "WMData.h"
 #include "WMReadSphericalHarmonics.h"
 #include "WMWriteNIfTI.h"
+#include "core/kernel/WModule.h"
 
 /**
  * The following macro is used by modules so the factory can acquire a prototype instance from a shared library using the symbol.

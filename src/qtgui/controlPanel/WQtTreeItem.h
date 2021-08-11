@@ -25,14 +25,14 @@
 #ifndef WQTTREEITEM_H
 #define WQTTREEITEM_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/signals2/connection.hpp>
-
-#include <QTreeWidgetItem>
 #include <QProgressBar>
+#include <QTreeWidgetItem>
 #include <QtCore/QTimer>
+#include <boost/signals2/connection.hpp>
 
 #include "WTreeItemTypes.h"
 #include "core/kernel/WModule.h"

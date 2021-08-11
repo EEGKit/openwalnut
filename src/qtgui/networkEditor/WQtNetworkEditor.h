@@ -25,16 +25,13 @@
 #ifndef WQTNETWORKEDITOR_H
 #define WQTNETWORKEDITOR_H
 
-#include <string>
 #include <list>
+#include <memory>
+#include <string>
 
-#include <boost/shared_ptr.hpp>
-
-#include <QWidget>
 #include <QDockWidget>
 #include <QVBoxLayout>
-
-#include "core/kernel/WModule.h"
+#include <QWidget>
 
 #include "../WQtCombinerToolbar.h"
 #include "../guiElements/WQtDockWidget.h"
@@ -42,6 +39,7 @@
 #include "WQtNetworkItem.h"
 #include "WQtNetworkScene.h"
 #include "WQtNetworkSceneLayout.h"
+#include "core/kernel/WModule.h"
 
 // forward declaration
 class WMainWindow;

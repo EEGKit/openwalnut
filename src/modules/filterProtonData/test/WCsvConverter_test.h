@@ -26,16 +26,18 @@
 #define WCSVCONVERTER_TEST_H
 
 #include <map>
+#include <memory>
+#include <string>
 #include <utility>
 #include <vector>
-#include <string>
+
 #include <cxxtest/TestSuite.h>
 
-#include "core/kernel/WModuleFactory.h"
+#include "../../data/io/WReaderCSV.h"
+#include "../../transferFunctionColorBar/WMTransferFunctionColorBar.h"
 #include "../WCsvConverter.h"
 #include "../WMFilterProtonData.h"
-#include "../../transferFunctionColorBar/WMTransferFunctionColorBar.h"
-#include "../../data/io/WReaderCSV.h"
+#include "core/kernel/WModuleFactory.h"
 
 /**
  * Test class of WCsvConverter class

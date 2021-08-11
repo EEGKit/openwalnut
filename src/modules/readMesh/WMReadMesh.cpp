@@ -22,27 +22,26 @@
 //
 //---------------------------------------------------------------------------
 
+#include <fstream>
 #include <limits>
+#include <memory>
 #include <string>
 #include <vector>
-#include <fstream>
-
-#include "core/common/WIOTools.h"
-#include "core/common/WStringUtils.h"
-#include "core/common/WPathHelper.h"
-#include "core/common/WPropertyHelper.h"
-#include "core/kernel/WKernel.h"
-#include "core/graphicsEngine/WTriangleMesh.h"
-
-#include "WMeshReaderVTK.h"
-#include "WMeshReaderFiberNavigator.h"
-#include "WMeshReaderDIP.h"
-#include "WMeshReaderBrainVISA.h"
-#include "WMeshReaderFreesurfer.h"
-#include "WMeshReaderOBJ.h"
 
 #include "WMReadMesh.h"
 #include "WMReadMesh.xpm"
+#include "WMeshReaderBrainVISA.h"
+#include "WMeshReaderDIP.h"
+#include "WMeshReaderFiberNavigator.h"
+#include "WMeshReaderFreesurfer.h"
+#include "WMeshReaderOBJ.h"
+#include "WMeshReaderVTK.h"
+#include "core/common/WIOTools.h"
+#include "core/common/WPathHelper.h"
+#include "core/common/WPropertyHelper.h"
+#include "core/common/WStringUtils.h"
+#include "core/graphicsEngine/WTriangleMesh.h"
+#include "core/kernel/WKernel.h"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMReadMesh )

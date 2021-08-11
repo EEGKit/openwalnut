@@ -25,16 +25,16 @@
 #ifndef WPROPERTYHELPER_H
 #define WPROPERTYHELPER_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 
 #include "WPropertyVariable.h"
-
+#include "constraints/WPropertyConstraintConfirmOverwrite.h"
+#include "constraints/WPropertyConstraintIsDirectory.h"
+#include "constraints/WPropertyConstraintIsValid.h"
 #include "constraints/WPropertyConstraintNotEmpty.h"
 #include "constraints/WPropertyConstraintPathExists.h"
-#include "constraints/WPropertyConstraintIsDirectory.h"
 #include "constraints/WPropertyConstraintSelectOnlyOne.h"
-#include "constraints/WPropertyConstraintIsValid.h"
-#include "constraints/WPropertyConstraintConfirmOverwrite.h"
 
 
 /**

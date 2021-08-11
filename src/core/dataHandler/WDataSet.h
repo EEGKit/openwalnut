@@ -25,10 +25,8 @@
 #ifndef WDATASET_H
 #define WDATASET_H
 
+#include <memory>
 #include <string>
-
-#include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
 
 #include <osg/ref_ptr>
 

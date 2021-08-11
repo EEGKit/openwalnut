@@ -24,30 +24,29 @@
 
 #include <algorithm>
 #include <limits>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include <boost/bind/bind.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>
-#include <boost/bind/bind.hpp>
-
 #include <osg/Drawable>
 #include <osg/Geode>
 #include <osg/Geometry>
 #include <osg/LineWidth>
 #include <osgText/Text>
 
-#include "core/common/WStringUtils.h"
-#include "core/common/WPathHelper.h"
-#include "core/graphicsEngine/WGERequirement.h"
-#include "core/ui/WUIViewWidget.h"
-#include "core/ui/WUIViewEventHandler.h"
-#include "core/ui/WUI.h"
-#include "core/kernel/WKernel.h"
-
-#include "WMMultiHistogramView.h"
 #include "WMHistogramView.xpm"
+#include "WMMultiHistogramView.h"
+#include "core/common/WPathHelper.h"
+#include "core/common/WStringUtils.h"
+#include "core/graphicsEngine/WGERequirement.h"
+#include "core/kernel/WKernel.h"
+#include "core/ui/WUI.h"
+#include "core/ui/WUIViewEventHandler.h"
+#include "core/ui/WUIViewWidget.h"
 
 //! The number of inputs/datasets/histograms.
 #define NUM_INPUTS 3

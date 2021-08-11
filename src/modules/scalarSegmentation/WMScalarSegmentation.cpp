@@ -22,16 +22,15 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include "core/kernel/WKernel.h"
-
+#include "WMScalarSegmentation.h"
+#include "WMScalarSegmentation.xpm"
 #include "core/common/WColor.h"
 #include "core/common/WPropertyHelper.h"
-
-#include "WMScalarSegmentation.xpm"
-#include "WMScalarSegmentation.h"
+#include "core/kernel/WKernel.h"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMScalarSegmentation )

@@ -22,16 +22,15 @@
 //
 //---------------------------------------------------------------------------
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <QGraphicsSceneMouseEvent>
 
-#include "WQtNetworkPort.h"
-#include "WQtNetworkOutputPort.h"
-#include "WQtNetworkInputPort.h"
 #include "WQtNetworkColors.h"
 #include "WQtNetworkEditorGlobals.h"
-
+#include "WQtNetworkInputPort.h"
+#include "WQtNetworkOutputPort.h"
+#include "WQtNetworkPort.h"
 #include "core/kernel/combiner/WApplyCombiner.h"
 
 WQtNetworkPort::WQtNetworkPort():

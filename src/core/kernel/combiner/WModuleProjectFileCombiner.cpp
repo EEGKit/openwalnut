@@ -23,37 +23,36 @@
 //---------------------------------------------------------------------------
 
 #include <iostream>
-#include <map>
-#include <set>
+#include <limits>
 #include <list>
+#include <map>
+#include <memory>
+#include <set>
 #include <shared_mutex>
 #include <string>
 #include <utility>
-#include <limits>
 
 #include <boost/regex.hpp>
 
-#include "../WDataModuleInputFile.h"
-#include "../WKernel.h"
-#include "../WModuleCombiner.h"
-#include "../WModuleFactory.h"
-#include "../WModuleConnector.h"
-#include "../WModule.h"
-#include "../WDataModule.h"
-#include "../WModuleInputConnector.h"
-#include "../WModuleOutputConnector.h"
-#include "../exceptions/WModuleConnectorNotFound.h"
-
-#include "../../common/exceptions/WFileNotFound.h"
-#include "../../common/WStringUtils.h"
+#include "../../common/WLogger.h"
 #include "../../common/WProperties.h"
 #include "../../common/WPropertyBase.h"
-#include "../../common/WPropertyVariable.h"
 #include "../../common/WPropertyTypes.h"
-#include "../../common/WLogger.h"
-#include "../WProjectFile.h"
+#include "../../common/WPropertyVariable.h"
+#include "../../common/WStringUtils.h"
+#include "../../common/exceptions/WFileNotFound.h"
 #include "../../graphicsEngine/WGEColormapping.h"
-
+#include "../WDataModule.h"
+#include "../WDataModuleInputFile.h"
+#include "../WKernel.h"
+#include "../WModule.h"
+#include "../WModuleCombiner.h"
+#include "../WModuleConnector.h"
+#include "../WModuleFactory.h"
+#include "../WModuleInputConnector.h"
+#include "../WModuleOutputConnector.h"
+#include "../WProjectFile.h"
+#include "../exceptions/WModuleConnectorNotFound.h"
 #include "WModuleProjectFileCombiner.h"
 
 WModuleProjectFileCombiner::WModuleProjectFileCombiner( std::shared_ptr< WModuleContainer > target ):

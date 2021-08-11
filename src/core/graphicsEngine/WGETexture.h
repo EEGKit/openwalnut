@@ -25,26 +25,24 @@
 #ifndef WGETEXTURE_H
 #define WGETEXTURE_H
 
-#include <string>
 #include <limits>
-
-#include <boost/shared_ptr.hpp>
+#include <memory>
+#include <string>
 
 #include <osg/Node>
 #include <osg/StateSet>
-#include <osg/Texture>
 #include <osg/Texture1D>
 #include <osg/Texture2D>
 #include <osg/Texture3D>
+#include <osg/Texture>
 
-#include "callbacks/WGEFunctorCallback.h"
 #include "../common/WBoundingBox.h"
 #include "../common/WProperties.h"
-#include "../common/WPropertyTypes.h"
 #include "../common/WPropertyHelper.h"
-
+#include "../common/WPropertyTypes.h"
 #include "WGEImage.h"
 #include "WGETextureUtils.h"
+#include "callbacks/WGEFunctorCallback.h"
 
 /**
  * This calls serves a simple purpose: have a texture and its scaling information together which allows very easy binding of textures to nodes

@@ -26,18 +26,18 @@
 #define WMREADMESH_H
 
 #include <fstream>
+#include <memory>
 #include <string>
 
 #include <osg/Geode>
 
-#include "core/common/WStrategyHelper.h"
+#include "WMeshReaderInterface.h"
 #include "core/common/WObjectNDIP.h"
+#include "core/common/WStrategyHelper.h"
+#include "core/graphicsEngine/WTriangleMesh.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
-#include "core/graphicsEngine/WTriangleMesh.h"
-
-#include "WMeshReaderInterface.h"
 
 /**
  * This module reads a file containing mesh data (several formats supported) and creates a mesh

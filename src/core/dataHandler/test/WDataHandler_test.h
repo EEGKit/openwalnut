@@ -25,13 +25,13 @@
 #ifndef WDATAHANDLER_TEST_H
 #define WDATAHANDLER_TEST_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <cxxtest/TestSuite.h>
 
 #include "../../common/WLogger.h"
-#include "../WSubject.h"
 #include "../WDataHandler.h"
+#include "../WSubject.h"
 
 /**
  * Test important functionality of WDataHandler class

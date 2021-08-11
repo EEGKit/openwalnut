@@ -26,26 +26,26 @@
 #define WMFILTERPROTONDATA_H
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include <boost/lexical_cast.hpp>
 
+#include "WCsvConverter.h"
+#include "WPropertyStatus.h"
+#include "WProtonData.h"
 #include "core/common/WItemSelectionItem.h"
 #include "core/common/WItemSelector.h"
 #include "core/dataHandler/WDataSetCSV.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
+#include "core/kernel/WKernel.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleContainer.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
-#include "core/kernel/WKernel.h"
-
-#include "WCsvConverter.h"
-#include "WProtonData.h"
-#include "WPropertyStatus.h"
 
 
 /**

@@ -26,27 +26,26 @@
 #define WMODULECONNECTOR_TEST_H
 
 #include <iostream>
+#include <memory>
 #include <string>
-
-#include <boost/shared_ptr.hpp>
 
 #include <cxxtest/TestSuite.h>
 
-#include "../WModuleConnector.h"
-#include "../WModuleInputData.h"
-#include "../WModuleOutputData.h"
-#include "../WModuleInputConnector.h"
-#include "../WModuleOutputConnector.h"
-#include "../WModule.h"
+#include "../../common/WLogger.h"
+#include "../../common/WPrototyped.h"
 #include "../../common/WSegmentationFault.h"
 #include "../../common/WTransferable.h"
-#include "../../common/WPrototyped.h"
-#include "../../common/WLogger.h"
-#include "../exceptions/WModuleConnectorInitFailed.h"
+#include "../WModule.h"
+#include "../WModuleConnector.h"
+#include "../WModuleInputConnector.h"
+#include "../WModuleInputData.h"
+#include "../WModuleOutputConnector.h"
+#include "../WModuleOutputData.h"
 #include "../exceptions/WModuleConnectionFailed.h"
+#include "../exceptions/WModuleConnectorInitFailed.h"
+#include "../exceptions/WModuleConnectorUnconnected.h"
 #include "../exceptions/WModuleConnectorsIncompatible.h"
 #include "../exceptions/WModuleException.h"
-#include "../exceptions/WModuleConnectorUnconnected.h"
 
 /**
  * Test class used to test data transfer and compatibility checks.

@@ -25,16 +25,16 @@
 #ifndef WMFIBERSELECTION_H
 #define WMFIBERSELECTION_H
 
+#include <memory>
 #include <string>
 
 #include <osg/Geode>
 
+#include "core/dataHandler/WDataSetFibers.h"
+#include "core/dataHandler/datastructures/WFiberCluster.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
-
-#include "core/dataHandler/WDataSetFibers.h"
-#include "core/dataHandler/datastructures/WFiberCluster.h"
 
 /**
  * This module handles selection of fibers based on two volumes of interest. It can filter out ALL fibers which do not go through both VOI.

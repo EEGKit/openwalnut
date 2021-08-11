@@ -29,9 +29,8 @@
 #include <itkImage.h>
 #endif
 
+#include <memory>
 #include <vector>
-
-#include <boost/shared_ptr.hpp>
 
 #include "WDataSetScalar.h"
 

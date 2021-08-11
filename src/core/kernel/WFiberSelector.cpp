@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <iostream>
 #include <list>
+#include <memory>
 #include <vector>
 
 #include "../kernel/WKernel.h"

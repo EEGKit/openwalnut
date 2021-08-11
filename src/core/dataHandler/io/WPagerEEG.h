@@ -26,13 +26,12 @@
 #define WPAGEREEG_H
 
 #include <cstddef>
-
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
-#include "../WEEGValueMatrix.h"
 #include "../../common/WDefines.h"
+#include "../WEEGValueMatrix.h"
 
 /**
  * Abstract class to load an EEG file and keep it open to support paging.

@@ -23,21 +23,20 @@
 //---------------------------------------------------------------------------
 
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "WIGTLinkRemote.h"
-
-#include "core/dataHandler/WDataSet.h"
-#include "core/dataHandler/WValueSet.h"
-#include "core/dataHandler/WGridRegular3D.h"
-#include "core/dataHandler/WDataSetScalar.h"
 #include "core/common/WIOTools.h"
 #include "core/common/WLogger.h"
-
-#include "igtlOSUtil.h"
+#include "core/dataHandler/WDataSet.h"
+#include "core/dataHandler/WDataSetScalar.h"
+#include "core/dataHandler/WGridRegular3D.h"
+#include "core/dataHandler/WValueSet.h"
 #include "igtlImageMessage.h"
 #include "igtlImageMetaMessage.h"
+#include "igtlOSUtil.h"
 #include "igtlServerSocket.h"
 #include "igtlTransformMessage.h"
 

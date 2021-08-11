@@ -25,19 +25,24 @@
 #ifndef WMCOORDINATESYSTEM_H
 #define WMCOORDINATESYSTEM_H
 
+#include <memory>
 #include <string>
 
 #include <osg/Geode>
 #include <osg/Node>
 
+#include "WCoordConverter.h"
+#include "WRulerOrtho.h"
 #include "core/dataHandler/WDataSet.h"
 #include "core/graphicsEngine/WGEGroupNode.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleConnector.h"
 #include "core/kernel/WModuleInputData.h"
 
-#include "WCoordConverter.h"
-#include "WRulerOrtho.h"
+/**
+ * Forward declaration of WDataSetScalar.
+ */
+class WDataSetScalar;
 
 /**
  * class that implements the various coordinate systems as overlays within the 3D view

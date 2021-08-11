@@ -25,6 +25,7 @@
 #ifndef WMREADDIPOLES_H
 #define WMREADDIPOLES_H
 
+#include <memory>
 #include <string>
 #include <vector>
 

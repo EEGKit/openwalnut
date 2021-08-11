@@ -25,12 +25,12 @@
 #ifndef WMODULECONNECTOREVENT_H
 #define WMODULECONNECTOREVENT_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <QtCore/QEvent>
 
-#include "core/kernel/WModuleConnector.h"
 #include "core/kernel/WModule.h"
+#include "core/kernel/WModuleConnector.h"
 
 /**
  * Event signalling a module connector changed its data.

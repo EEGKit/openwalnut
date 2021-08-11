@@ -25,15 +25,14 @@
 #ifndef WMODULEWRAPPER_H
 #define WMODULEWRAPPER_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
-#include "core/kernel/WModule.h"
-
-#include "WPropertyGroupWrapper.h"
 #include "WInputConnectorWrapper.h"
 #include "WOutputConnectorWrapper.h"
+#include "WPropertyGroupWrapper.h"
+#include "core/kernel/WModule.h"
 
 /**
  * \class WModuleWrapper

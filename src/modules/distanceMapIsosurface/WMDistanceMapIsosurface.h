@@ -25,7 +25,8 @@
 #ifndef WMDISTANCEMAPISOSURFACE_H
 #define WMDISTANCEMAPISOSURFACE_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 
 #include "core/dataHandler/WDataSetScalar.h"
 #include "core/kernel/WModule.h"

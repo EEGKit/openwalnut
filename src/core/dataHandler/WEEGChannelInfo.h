@@ -26,10 +26,9 @@
 #define WEEGCHANNELINFO_H
 
 #include <cstddef>
-
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../common/math/linearAlgebra/WPosition.h"
 #include "WEEGPositionsLibrary.h"

@@ -23,14 +23,8 @@
 //---------------------------------------------------------------------------
 
 #include <algorithm>
+#include <memory>
 #include <string>
-
-#include "core/common/WAssert.h"
-#include "core/common/WProgress.h"
-#include "core/common/WStrategyHelper.h"
-#include "core/dataHandler/WDataSetScalar.h"
-#include "core/dataHandler/WGridRegular3D.h"
-#include "core/kernel/WKernel.h"
 
 #include "WDataCreatorBreyzel5.h"
 #include "WDataCreatorConstant.h"
@@ -39,9 +33,14 @@
 #include "WDataCreatorSphere.h"
 #include "WDataCreatorTangle.h"
 #include "WDataCreatorTuring.h"
-
 #include "WMDataCreator.xpm"
 #include "WMDataCreatorScalar.h"
+#include "core/common/WAssert.h"
+#include "core/common/WProgress.h"
+#include "core/common/WStrategyHelper.h"
+#include "core/dataHandler/WDataSetScalar.h"
+#include "core/dataHandler/WGridRegular3D.h"
+#include "core/kernel/WKernel.h"
 
 WMDataCreatorScalar::WMDataCreatorScalar():
     WModule(),

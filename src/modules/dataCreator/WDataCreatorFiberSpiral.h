@@ -25,11 +25,11 @@
 #ifndef WDATACREATORFIBERSPIRAL_H
 #define WDATACREATORFIBERSPIRAL_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
-#include "core/common/WObjectNDIP.h"
 
 #include "WDataSetFibersCreatorInterface.h"
+#include "core/common/WObjectNDIP.h"
 
 /**
  * Create a fiber spiral

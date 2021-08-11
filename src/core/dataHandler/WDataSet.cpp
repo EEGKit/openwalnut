@@ -22,15 +22,16 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
 #include "../common/WAssert.h"
 #include "../common/WCondition.h"
 #include "../common/WTransferable.h"
-#include "exceptions/WDHException.h"
 #include "WDataSet.h"
 #include "WDataSetVector.h"
 #include "WDataTexture3D.h"
+#include "exceptions/WDHException.h"
 
 // prototype instance as singleton
 std::shared_ptr< WPrototyped > WDataSet::m_prototype = std::shared_ptr< WPrototyped >();

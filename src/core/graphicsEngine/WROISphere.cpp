@@ -22,17 +22,17 @@
 //
 //---------------------------------------------------------------------------
 
-#include <string>
+#include <memory>
 #include <sstream>
+#include <string>
 #include <utility>
 
 #include <osg/ShapeDrawable>
 
-#include "callbacks/WGEFunctorCallback.h"
-
-#include "WROISphere.h"
-#include "WGraphicsEngine.h"
 #include "WGEUtils.h"
+#include "WGraphicsEngine.h"
+#include "WROISphere.h"
+#include "callbacks/WGEFunctorCallback.h"
 
 size_t WROISphere::maxSphereId = 0;
 

@@ -26,8 +26,7 @@
 #define WPROGRESSCOMBINER_TEST_H
 
 #include <iostream>
-
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <cxxtest/TestSuite.h>
 

@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -35,6 +36,9 @@
 #include <osg/ShapeDrawable>
 #include <osgViewer/View>
 
+#include "WMPickingDVR.h"
+#include "WMPickingDVRHelper.h"
+#include "WVisiTrace.h"
 #include "core/common/datastructures/WSinglePosition.h"
 #include "core/dataHandler/WDataSetScalar.h"
 #include "core/graphicsEngine/WGEGeodeUtils.h"
@@ -46,10 +50,6 @@
 #include "core/kernel/WKernel.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/ui/WUIRequirement.h"
-
-#include "WMPickingDVR.h"
-#include "WMPickingDVRHelper.h"
-#include "WVisiTrace.h"
 
 // Module Defines
 #define WMPICKINGDVR_MAX_INT   "Picking - Maximum Intensity"

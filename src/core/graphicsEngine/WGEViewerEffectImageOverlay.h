@@ -25,13 +25,13 @@
 #ifndef WGEVIEWEREFFECTIMAGEOVERLAY_H
 #define WGEVIEWEREFFECTIMAGEOVERLAY_H
 
+#include <memory>
+
 #include <osg/Texture2D>
 
-#include "core/common/WLogger.h"
-
-#include "callbacks/WGEShaderAnimationCallback.h"
-
 #include "WGEViewerEffect.h"
+#include "callbacks/WGEShaderAnimationCallback.h"
+#include "core/common/WLogger.h"
 
 class WGEViewer;
 

@@ -22,6 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <vector>
 
 #include <osg/Matrix>
@@ -33,7 +34,6 @@
 #include "../graphicsEngine/WGraphicsEngine.h"
 #include "../graphicsEngine/WPickHandler.h"
 #include "WKernel.h"
-
 #include "WSelectionManager.h"
 
 

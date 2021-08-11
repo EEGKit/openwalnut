@@ -25,12 +25,12 @@
 #ifndef WHIERARCHICALTREE_H
 #define WHIERARCHICALTREE_H
 
+#include <list>
+#include <memory>
+#include <queue>
 #include <utility>
 #include <vector>
-#include <queue>
-#include <list>
 
-#include <boost/shared_ptr.hpp>
 
 #include "WColor.h"
 

@@ -22,19 +22,19 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
-#include <QtCore/QList>
+#include <QApplication>
+#include <QListWidgetItem>
 #include <QScrollArea>
 #include <QVBoxLayout>
-#include <QListWidgetItem>
-#include <QApplication>
 #include <QWidgetAction>
+#include <QtCore/QList>
 
-#include "../guiElements/WScaleLabel.h"
-#include "../WQtGui.h"
 #include "../WMainWindow.h"
-
+#include "../WQtGui.h"
+#include "../guiElements/WScaleLabel.h"
 #include "WQtRoiHeaderTreeItem.h"
 #include "WQtRoiTreeItem.h"
 #include "WTreeItemTypes.h"

@@ -25,10 +25,10 @@
 #ifndef WMODULEMETAINFORMATION_H
 #define WMODULEMETAINFORMATION_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/filesystem/path.hpp>
 
 #include "../common/WStructuredTextParser.h"

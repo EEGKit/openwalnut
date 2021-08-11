@@ -22,29 +22,29 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <queue>
 #include <string>
 #include <vector>
 
+#include <osg/LightModel> //NOLINT
 #include <osgGA/StateSetManipulator>
 #include <osgViewer/ViewerEventHandlers>
 #include <osgWidget/Util> //NOLINT
 #include <osgWidget/ViewerEventHandlers> //NOLINT
 #include <osgWidget/WindowManager> //NOLINT
-#include <osg/LightModel>
 
-#include "core/common/WStringUtils.h"
+#include "WFileParser.h"
+#include "WMClusterDisplayVoxels.h"
+#include "WMClusterDisplayVoxels.xpm"
 #include "core/common/WPathHelper.h"
 #include "core/common/WPropertyHelper.h"
+#include "core/common/WStringUtils.h"
 #include "core/common/algorithms/WMarchingLegoAlgorithm.h"
 #include "core/graphicsEngine/WGEColormapping.h"
 #include "core/graphicsEngine/WGEUtils.h"
 #include "core/kernel/WKernel.h"
 #include "core/kernel/WSelectionManager.h"
-
-#include "WFileParser.h"
-#include "WMClusterDisplayVoxels.h"
-#include "WMClusterDisplayVoxels.xpm"
 
 // This line is needed by the module loader to actually find your module. Do not remove. Do NOT add a ";" here.
 W_LOADABLE_MODULE( WMClusterDisplayVoxels )

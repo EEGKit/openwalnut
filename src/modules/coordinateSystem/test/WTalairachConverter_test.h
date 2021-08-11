@@ -26,10 +26,9 @@
 #define WTALAIRACHCONVERTER_TEST_H
 
 #include <iostream>
+#include <memory>
 
 #include <cxxtest/TestSuite.h>
-
-#include <boost/shared_ptr.hpp>
 
 #include "../WTalairachConverter.h"
 

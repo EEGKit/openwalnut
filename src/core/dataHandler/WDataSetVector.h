@@ -25,6 +25,8 @@
 #ifndef WDATASETVECTOR_H
 #define WDATASETVECTOR_H
 
+#include <memory>
+
 #include "WDataSetSingle.h"
 
 

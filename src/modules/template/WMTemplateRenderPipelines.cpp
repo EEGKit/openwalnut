@@ -32,21 +32,19 @@
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include <memory>
 #include <string>
 
 #include <osg/StateAttribute>
 
-#include "core/kernel/WKernel.h"
-
-#include "core/graphicsEngine/callbacks/WGENodeMaskCallback.h"
-#include "core/graphicsEngine/WGEManagedGroupNode.h"
-#include "core/graphicsEngine/WGERequirement.h"
-#include "core/graphicsEngine/offscreen/WGEOffscreenRenderNode.h"    // <- this is the awesome new header you will need
-#include "core/graphicsEngine/shaders/WGEShader.h"
-
-// Some utils for creating some demo geometry.
 #include "WDemoGeometry.h"
 #include "WMTemplateRenderPipelines.h"
+#include "core/graphicsEngine/WGEManagedGroupNode.h"
+#include "core/graphicsEngine/WGERequirement.h"
+#include "core/graphicsEngine/callbacks/WGENodeMaskCallback.h"
+#include "core/graphicsEngine/offscreen/WGEOffscreenRenderNode.h"    // <- this is the awesome new header you will need
+#include "core/graphicsEngine/shaders/WGEShader.h"
+#include "core/kernel/WKernel.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // All the basic setup ... Refer to WMTemplate.cpp if you do not understand these commands.

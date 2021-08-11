@@ -25,16 +25,14 @@
 #ifndef WQTMODULEONETOONECOMBINERACTION_H
 #define WQTMODULEONETOONECOMBINERACTION_H
 
+#include <memory>
 #include <string>
-
-#include <boost/shared_ptr.hpp>
 
 #include <QAction>
 
+#include "../WIconManager.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/combiner/WModuleOneToOneCombiner.h"
-
-#include "../WIconManager.h"
 
 /**
  * Implements a action which applies the specified combiners (of the specified group) if pressed.

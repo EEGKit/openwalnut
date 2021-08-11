@@ -25,13 +25,13 @@
 #ifndef WUI_H
 #define WUI_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 
 #include "../common/WFlag.h"
-
-#include "WUIWidgetFactory.h"
-#include "WUIViewEventHandler.h"
 #include "WUIRequirement.h"
+#include "WUIViewEventHandler.h"
+#include "WUIWidgetFactory.h"
 
 class WDataSet;
 

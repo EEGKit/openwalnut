@@ -25,6 +25,8 @@
 #ifndef WPROPERTYCONSTRAINTMIN_H
 #define WPROPERTYCONSTRAINTMIN_H
 
+#include <memory>
+
 #include "../WPropertyTypes.h"
 #include "WPropertyConstraintTypes.h"
 

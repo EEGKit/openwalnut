@@ -25,6 +25,7 @@
 #ifndef WMARBITRARYPLANE_H
 #define WMARBITRARYPLANE_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -32,10 +33,14 @@
 
 #include "core/graphicsEngine/WGEManagedGroupNode.h"
 #include "core/graphicsEngine/WROISphere.h"
-
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
+
+/**
+ * Forward declaration of WGEShader.
+ */
+class WGEShader;
 
 /**
  * Arbitrarily orientable cutting plane through the data.

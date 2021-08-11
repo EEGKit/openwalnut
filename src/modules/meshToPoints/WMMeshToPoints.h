@@ -25,10 +25,11 @@
 #ifndef WMMESHTOPOINTS_H
 #define WMMESHTOPOINTS_H
 
+#include <memory>
 #include <string>
 
-#include "core/graphicsEngine/WTriangleMesh.h"
 #include "core/dataHandler/WDataSetPoints.h"
+#include "core/graphicsEngine/WTriangleMesh.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"

@@ -25,11 +25,11 @@
 #ifndef WINPUTCONNECTORWRAPPER_H
 #define WINPUTCONNECTORWRAPPER_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
-#include "core/kernel/WModuleInputConnector.h"
 
 #include "WOutputConnectorWrapper.h"
+#include "core/kernel/WModuleInputConnector.h"
 
 /**
  * \class WInputConnectorWrapper

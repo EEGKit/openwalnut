@@ -26,12 +26,10 @@
 #define WDATASETTIMESERIES_H
 
 #include <limits>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
-
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/shared_ptr.hpp>
 
 #include "../common/WLimits.h"
 #include "../common/WProperties.h"

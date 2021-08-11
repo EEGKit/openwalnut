@@ -22,8 +22,10 @@
 //
 //---------------------------------------------------------------------------
 
-#include "../../common/math/linearAlgebra/WPosition.h"
+#include <memory>
+
 #include "../../common/WTransferable.h"
+#include "../../common/math/linearAlgebra/WPosition.h"
 #include "WSinglePosition.h"
 
 // The prototype as singleton. Created during first getPrototype() call

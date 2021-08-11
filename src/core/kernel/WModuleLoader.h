@@ -25,16 +25,15 @@
 #ifndef WMODULELOADER_H
 #define WMODULELOADER_H
 
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
 
 #include <boost/filesystem.hpp>
-#include <boost/shared_ptr.hpp>
 
 #include "../common/WSharedAssociativeContainer.h"
 #include "../common/WSharedLib.h"
-
 #include "WModule.h"
 
 /**

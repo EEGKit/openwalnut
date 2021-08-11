@@ -25,12 +25,12 @@
 #ifndef WMODULECONNECTOR_H
 #define WMODULECONNECTOR_H
 
+#include <memory>
 #include <set>
 #include <shared_mutex>
 #include <string>
 
 #include <boost/bind/bind.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/signals2/connection.hpp>
 #include <boost/signals2/signal.hpp>
 #include <boost/thread.hpp>

@@ -22,6 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
+
 #include "WInputConnectorWrapper.h"
 
 WInputConnectorWrapper::WInputConnectorWrapper( std::shared_ptr< WModuleInputConnector > conn )

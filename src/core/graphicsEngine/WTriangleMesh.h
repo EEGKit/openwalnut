@@ -26,16 +26,17 @@
 #define WTRIANGLEMESH_H
 
 #include <list>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <osg/Geode>
 
-#include "../common/math/linearAlgebra/WPosition.h"
-#include "../common/math/linearAlgebra/WVectorFixed.h"
 #include "../common/WAssert.h"
 #include "../common/WColor.h"
 #include "../common/WTransferable.h"
+#include "../common/math/linearAlgebra/WPosition.h"
+#include "../common/math/linearAlgebra/WVectorFixed.h"
 
 
 /**

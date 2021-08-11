@@ -27,6 +27,7 @@
 
 #ifdef WEEP_ENABLED
 
+#include <memory>
 #include <string>
 
 #include "WReaderEEG.h"

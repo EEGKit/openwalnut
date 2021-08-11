@@ -25,19 +25,20 @@
 #ifndef WMPICKINGDVR_H
 #define WMPICKINGDVR_H
 
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "core/kernel/WModule.h"
-
 #include "WVisiTrace.h"
+#include "core/kernel/WModule.h"
 
 // forward declarations to reduce compile dependencies
 template< class T > class WModuleInputData;
 class WDataSetScalar;
 class WSinglePosition;
 class WGEManagedGroupNode;
+class WPickInfo;
 
 /**
  * Allows to select a 3D position in a DVR by selecting a 2D location on the screen.

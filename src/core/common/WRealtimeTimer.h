@@ -25,7 +25,7 @@
 #ifndef WREALTIMETIMER_H
 #define WREALTIMETIMER_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <osg/Timer>
 

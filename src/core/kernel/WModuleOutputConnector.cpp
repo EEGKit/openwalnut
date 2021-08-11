@@ -22,15 +22,15 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
-#include <boost/signals2/signal.hpp>
 #include <boost/signals2/connection.hpp>
+#include <boost/signals2/signal.hpp>
 
 #include "../common/WCondition.h"
 #include "WModuleConnectorSignals.h"
 #include "WModuleInputConnector.h"
-
 #include "WModuleOutputConnector.h"
 
 WModuleOutputConnector::WModuleOutputConnector( std::shared_ptr< WModule > module, std::string name, std::string description )

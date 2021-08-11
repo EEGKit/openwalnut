@@ -25,7 +25,7 @@
 #ifndef WRENDEREDFRAMEEVENT_H
 #define WRENDEREDFRAMEEVENT_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <QtCore/QEvent>
 

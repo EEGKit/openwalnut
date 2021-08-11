@@ -25,7 +25,8 @@
 #ifndef WGEPOSTPROCESSOREDGEENHANCE_H
 #define WGEPOSTPROCESSOREDGEENHANCE_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 
 #include "WGEPostprocessor.h"
 

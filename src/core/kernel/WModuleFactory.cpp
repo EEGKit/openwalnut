@@ -24,18 +24,20 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <set>
 #include <string>
-#include <typeinfo>
 #include <vector>
 
+#include <typeinfo>
+
 #include "../common/WLogger.h"
-#include "combiner/WApplyCombiner.h"
-#include "exceptions/WPrototypeNotUnique.h"
-#include "exceptions/WPrototypeUnknown.h"
 #include "WModule.h"
 #include "WModuleCombiner.h"
 #include "WModuleFactory.h"
+#include "combiner/WApplyCombiner.h"
+#include "exceptions/WPrototypeNotUnique.h"
+#include "exceptions/WPrototypeUnknown.h"
 
 // factory instance as singleton
 std::shared_ptr< WModuleFactory > WModuleFactory::m_instance = std::shared_ptr< WModuleFactory >();

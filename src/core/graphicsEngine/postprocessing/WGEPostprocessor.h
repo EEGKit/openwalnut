@@ -25,25 +25,22 @@
 #ifndef WGEPOSTPROCESSOR_H
 #define WGEPOSTPROCESSOR_H
 
-#include <vector>
+#include <memory>
 #include <string>
+#include <vector>
 
-#include <boost/shared_ptr.hpp>
-
-#include <osg/ref_ptr>
-#include <osg/Node>
 #include <osg/Camera>
+#include <osg/Node>
 #include <osg/Texture>
-
-#include "../offscreen/WGEOffscreenRenderNode.h"
-#include "../offscreen/WGEOffscreenRenderPass.h"
-#include "../offscreen/WGEOffscreenFinalPass.h"
-
-#include "../shaders/WGEShaderPropertyDefineOptions.h"
-#include "../WGECamera.h"
+#include <osg/ref_ptr>
 
 #include "../../common/WProperties.h"
 #include "../../common/WPrototyped.h"
+#include "../WGECamera.h"
+#include "../offscreen/WGEOffscreenFinalPass.h"
+#include "../offscreen/WGEOffscreenRenderNode.h"
+#include "../offscreen/WGEOffscreenRenderPass.h"
+#include "../shaders/WGEShaderPropertyDefineOptions.h"
 
 /**
  * The base class for all custom post-processors. It allows building an own texture processing pipeline for special processings.

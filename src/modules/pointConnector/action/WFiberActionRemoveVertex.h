@@ -25,13 +25,13 @@
 #ifndef WFIBERACTIONREMOVEVERTEX_H
 #define WFIBERACTIONREMOVEVERTEX_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 #include <osg/Geode>
 
-#include "WFiberAction.h"
 #include "../WFiberHandler.h"
+#include "WFiberAction.h"
 
 
 /**

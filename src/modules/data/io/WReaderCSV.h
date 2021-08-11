@@ -25,14 +25,14 @@
 #ifndef WREADERCSV_H
 #define WREADERCSV_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
-
-#include "core/dataHandler/io/WReader.h"
 #include <core/dataHandler/WDataSetCSV.h>
 #include <core/dataHandler/WDataSetPoints.h>
+
+#include "core/dataHandler/io/WReader.h"
 
 
 /**

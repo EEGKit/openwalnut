@@ -25,13 +25,13 @@
 #ifndef WMCALCULATEHISTOGRAM_H
 #define WMCALCULATEHISTOGRAM_H
 
+#include <memory>
 #include <string>
 
+#include "core/dataHandler/WDataSetHistogram1D.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
-
-#include "core/dataHandler/WDataSetHistogram1D.h"
 
 /**
  * Calculates a histogram from WDataSetSingle.

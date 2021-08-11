@@ -23,11 +23,11 @@
 //---------------------------------------------------------------------------
 
 #include <fstream>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../../common/WAssert.h"
 #include "../../common/WIOTools.h"

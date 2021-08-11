@@ -22,6 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
+
 #include "WManipulatorNormalize.h"
 #include "core/dataHandler/WDataSetSingle.h"
 

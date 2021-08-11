@@ -25,10 +25,11 @@
 #ifndef WTALAIRACHCONVERTER_H
 #define WTALAIRACHCONVERTER_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
-#include "core/common/math/linearAlgebra/WVectorFixed.h"
+
 #include "core/common/math/WMatrix.h"
+#include "core/common/math/linearAlgebra/WVectorFixed.h"
 
 /**
  * class to provide conversions between world or voxel space coordinates und Talairach coordinates

@@ -25,12 +25,11 @@
 #ifndef WHISTOGRAM2D_H
 #define WHISTOGRAM2D_H
 
+#include <memory>
 #include <utility>
 
-#include <boost/array.hpp>
-
 #include <Eigen/Core>
-
+#include <boost/array.hpp>
 #include <core/graphicsEngine/WGETexture.h>
 
 #include "WHistogramND.h"

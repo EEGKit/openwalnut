@@ -30,14 +30,13 @@ extern "C"
 }
 
 #include <locale.h>
-
+#include <memory>
 #include <string>
 
+#include "WReaderLibeep.h"
 #include "core/common/WLogger.h"
 #include "core/dataHandler/WEEG.h"
 #include "core/dataHandler/exceptions/WDHNoSuchFile.h"
-
-#include "WReaderLibeep.h"
 
 WReaderLibeep::WReaderLibeep( std::string fileName )
     : WReaderEEG( fileName )

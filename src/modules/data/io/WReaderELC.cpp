@@ -23,23 +23,21 @@
 //---------------------------------------------------------------------------
 
 #include <cstddef>
-
 #include <fstream>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
-#include "core/common/math/linearAlgebra/WPosition.h"
+#include "WReaderELC.h"
 #include "core/common/WLogger.h"
 #include "core/common/WStringUtils.h"
+#include "core/common/math/linearAlgebra/WPosition.h"
+#include "core/dataHandler/WEEGPositionsLibrary.h"
 #include "core/dataHandler/exceptions/WDHIOFailure.h"
 #include "core/dataHandler/exceptions/WDHNoSuchFile.h"
 #include "core/dataHandler/exceptions/WDHParseError.h"
-#include "core/dataHandler/WEEGPositionsLibrary.h"
-
-#include "WReaderELC.h"
 
 WReaderELC::WReaderELC( std::string fname )
     : WReader( fname )

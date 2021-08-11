@@ -22,16 +22,14 @@
 //
 //---------------------------------------------------------------------------
 
-#include <stdlib.h>
-
 #include <iostream>
 #include <list>
+#include <memory>
+#include <stdlib.h>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/thread/locks.hpp>
-
 #include <osg/Vec3>
 #include <osg/Vec4>
 #include <osg/ref_ptr>
@@ -44,13 +42,11 @@
 #include "../common/WPathHelper.h"
 #include "../common/exceptions/WNameNotUnique.h"
 #include "WGEViewer.h"
+#include "WGraphicsEngine.h"
+#include "WStaticOSGSetup.h"
 #include "exceptions/WGEInitFailed.h"
 #include "exceptions/WGESignalSubscriptionFailed.h"
 #include "postprocessing/WGEPostprocessor.h"
-
-#include "WStaticOSGSetup.h"
-
-#include "WGraphicsEngine.h"
 
 // graphics engine instance as singleton
 std::shared_ptr< WGraphicsEngine > WGraphicsEngine::m_instance = std::shared_ptr< WGraphicsEngine >();

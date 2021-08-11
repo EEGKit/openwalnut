@@ -22,9 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../common/math/linearAlgebra/WPosition.h"
 #include "WTractAdapter.h"

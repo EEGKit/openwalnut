@@ -26,10 +26,9 @@
 #define WROIMANAGER_H
 
 #include <list>
+#include <memory>
 #include <shared_mutex>
 #include <vector>
-
-#include <boost/enable_shared_from_this.hpp>
 
 #include "WRMBranch.h"
 

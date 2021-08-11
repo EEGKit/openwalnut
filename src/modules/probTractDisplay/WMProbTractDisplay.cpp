@@ -22,16 +22,16 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <vector>
 
+#include "WMProbTractDisplay.h"
+#include "WMProbTractDisplay.xpm"
 #include "core/common/WStringUtils.h"
 #include "core/dataHandler/WDataSetScalar.h"
 #include "core/kernel/WModuleFactory.h"
 #include "core/kernel/WModuleInputForwardData.h"
-
-#include "WMProbTractDisplay.h"
-#include "WMProbTractDisplay.xpm"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMProbTractDisplay )

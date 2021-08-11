@@ -25,8 +25,10 @@
 #ifndef WEEG_TEST_H
 #define WEEG_TEST_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 #include <cxxtest/TestSuite.h>
+
 #include "../WEEG.h"
 
 /**

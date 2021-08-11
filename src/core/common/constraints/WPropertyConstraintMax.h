@@ -25,6 +25,8 @@
 #ifndef WPROPERTYCONSTRAINTMAX_H
 #define WPROPERTYCONSTRAINTMAX_H
 
+#include <memory>
+
 #include "../WPropertyTypes.h"
 #include "WPropertyConstraintTypes.h"
 

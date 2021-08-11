@@ -22,27 +22,24 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
-#include <vector>
 #include <utility>
+#include <vector>
 
-#include "core/kernel/WKernel.h"
-
-#include "core/dataHandler/WGridRegular3D.h"
-#include "core/dataHandler/WGridTransformOrtho.h"
-
-#include "core/dataHandler/WDataSetSingle.h"
-#include "core/dataHandler/WDataSetFibers.h"
-#include "core/dataHandler/WDataSetPoints.h"
-#include "core/graphicsEngine/WTriangleMesh.h"
-
+#include "WMDatasetManipulator.h"
+#include "WMDatasetManipulator.xpm"
 #include "WManipulatorNormalize.h"
-#include "WManipulatorTranslation.h"
 #include "WManipulatorRotation.h"
 #include "WManipulatorScaling.h"
-
-#include "WMDatasetManipulator.xpm"
-#include "WMDatasetManipulator.h"
+#include "WManipulatorTranslation.h"
+#include "core/dataHandler/WDataSetFibers.h"
+#include "core/dataHandler/WDataSetPoints.h"
+#include "core/dataHandler/WDataSetSingle.h"
+#include "core/dataHandler/WGridRegular3D.h"
+#include "core/dataHandler/WGridTransformOrtho.h"
+#include "core/graphicsEngine/WTriangleMesh.h"
+#include "core/kernel/WKernel.h"
 
 W_LOADABLE_MODULE( WMDatasetManipulator )
 

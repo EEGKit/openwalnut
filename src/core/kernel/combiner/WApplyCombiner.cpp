@@ -22,10 +22,10 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
 #include "../WModuleFactory.h"
-
 #include "WApplyCombiner.h"
 
 WApplyCombiner::WApplyCombiner( std::shared_ptr< WModuleContainer > target,

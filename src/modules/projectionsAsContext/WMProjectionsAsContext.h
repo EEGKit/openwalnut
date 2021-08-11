@@ -25,16 +25,16 @@
 #ifndef WMPROJECTIONSASCONTEXT_H
 #define WMPROJECTIONSASCONTEXT_H
 
+#include <memory>
 #include <string>
+
+#include <osg/Geode>
 
 #include "core/common/WItemSelection.h"
 #include "core/common/WItemSelectionItem.h"
 #include "core/common/WItemSelectionItemTyped.h"
 #include "core/common/WItemSelector.h"
 #include "core/common/WPropertyHelper.h"
-
-#include <osg/Geode>
-
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
@@ -48,6 +48,7 @@ enum PlaneType
 template< class T > class WModuleInputData;
 class WDataSetScalar;
 class WGEManagedGroupNode;
+class WGEShader;
 
 /**
  * Computes contour lines (aka isolines) for the given data and render them on a 2D plane.

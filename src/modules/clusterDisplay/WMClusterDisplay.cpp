@@ -22,12 +22,12 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <queue>
 #include <string>
 #include <vector>
 
 #include <boost/regex.hpp>
-
 #include <osgGA/GUIEventAdapter>
 #include <osgGA/GUIEventHandler>
 #include <osgGA/StateSetManipulator>
@@ -37,16 +37,15 @@
 #include <osgWidget/ViewerEventHandlers> //NOLINT
 #include <osgWidget/WindowManager> //NOLINT
 
-#include "core/common/WStringUtils.h"
+#include "WMClusterDisplay.h"
+#include "WMClusterDisplay.xpm"
 #include "core/common/WPathHelper.h"
 #include "core/common/WPropertyHelper.h"
+#include "core/common/WStringUtils.h"
 #include "core/graphicsEngine/WGEUtils.h"
 #include "core/kernel/WKernel.h"
 #include "core/kernel/WROIManager.h"
 #include "core/ui/WUIViewWidget.h"
-
-#include "WMClusterDisplay.h"
-#include "WMClusterDisplay.xpm"
 
 // This line is needed by the module loader to actually find your module. Do not remove. Do NOT add a ";" here.
 W_LOADABLE_MODULE( WMClusterDisplay )

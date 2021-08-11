@@ -26,18 +26,18 @@
 #define WMVECTORSCALE_H
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <osg/Node>
 #include <osg/Geode>
+#include <osg/Node>
 #include <osg/Uniform>
-
-#include "core/kernel/WModule.h"
-#include "core/kernel/WModuleInputData.h"
 
 #include "core/dataHandler/WDataSetScalar.h"
 #include "core/dataHandler/WDataSetVector.h"
+#include "core/kernel/WModule.h"
+#include "core/kernel/WModuleInputData.h"
 
 /**
  * Operators for processing a vector with a WDataSetScalar.

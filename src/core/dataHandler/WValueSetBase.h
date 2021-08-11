@@ -25,10 +25,10 @@
 #ifndef WVALUESETBASE_H
 #define WVALUESETBASE_H
 
-#include <cstddef>
 #include <cmath>
+#include <cstddef>
+#include <memory>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/variant.hpp>
 
 #include "../common/math/WValue.h"

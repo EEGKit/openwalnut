@@ -25,16 +25,14 @@
 #ifndef WDATAHANDLER_H
 #define WDATAHANDLER_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <boost/thread.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
 
 #include "../common/WSharedObject.h"
 #include "../common/WSharedSequenceContainer.h"
-
 #include "WDataSet.h"
 
 

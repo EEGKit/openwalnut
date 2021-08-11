@@ -24,10 +24,11 @@
 
 #include <algorithm>
 #include <iostream>
+#include <list>
+#include <memory>
+#include <queue>
 #include <utility>
 #include <vector>
-#include <queue>
-#include <list>
 
 #include "WHierarchicalTreeFibers.h"
 

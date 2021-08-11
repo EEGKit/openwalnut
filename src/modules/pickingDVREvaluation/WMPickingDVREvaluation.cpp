@@ -22,15 +22,15 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <vector>
 
+#include "WMPickingDVREvaluation.h"
 #include "core/dataHandler/WDataSetScalar.h"
 #include "core/graphicsEngine/WGERequirement.h"
 #include "core/kernel/WKernel.h"
 #include "core/ui/WUIRequirement.h"
-
-#include "WMPickingDVREvaluation.h"
 
 //Module Defines
 #define WMPICKINGDVR_MAX_INTENS        "Maximum intensity"

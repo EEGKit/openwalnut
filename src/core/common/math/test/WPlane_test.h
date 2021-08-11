@@ -25,6 +25,7 @@
 #ifndef WPLANE_TEST_H
 #define WPLANE_TEST_H
 
+#include <memory>
 #include <set>
 
 #include <cxxtest/TestSuite.h>

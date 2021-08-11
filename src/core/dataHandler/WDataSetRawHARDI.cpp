@@ -22,13 +22,13 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "../common/WAssert.h"
-#include "WDataSetSingle.h"
-
 #include "WDataSetRawHARDI.h"
+#include "WDataSetSingle.h"
 
 // prototype instance as singleton
 std::shared_ptr< WPrototyped > WDataSetRawHARDI::m_prototype = std::shared_ptr< WPrototyped >();

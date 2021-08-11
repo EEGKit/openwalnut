@@ -23,20 +23,20 @@
 //---------------------------------------------------------------------------
 
 #include <fstream>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <liblas/liblas.hpp>    // NOLINT: this is not a C system header as brainlint thinks
+#include <liblas/point.hpp>    // NOLINT: this is not a C system header as brainlint thinks
 #include <liblas/reader.hpp>    // NOLINT: this is not a C system header as brainlint thinks
-#include <liblas/point.hpp>     // NOLINT: this is not a C system header as brainlint thinks
-
-#include "core/kernel/WKernel.h"
-#include "core/kernel/WDataModuleInputFile.h"
-#include "core/kernel/WDataModuleInputFilterFile.h"
-#include "core/common/WPathHelper.h"
-#include "core/common/WStringUtils.h"
 
 #include "WMReadLAS.h"
+#include "core/common/WPathHelper.h"
+#include "core/common/WStringUtils.h"
+#include "core/kernel/WDataModuleInputFile.h"
+#include "core/kernel/WDataModuleInputFilterFile.h"
+#include "core/kernel/WKernel.h"
 
 // This line is needed by the module loader to actually find your module. You need to add this to your module too. Do NOT add a ";" here.
 W_LOADABLE_MODULE( WMReadLAS )

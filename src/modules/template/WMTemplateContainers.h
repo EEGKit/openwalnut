@@ -25,6 +25,7 @@
 #ifndef WMTEMPLATECONTAINERS_H
 #define WMTEMPLATECONTAINERS_H
 
+#include <memory>
 #include <string>
 #include <vector>
 

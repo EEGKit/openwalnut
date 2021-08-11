@@ -22,18 +22,17 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
+#include "../guiElements/WQtPropertyTriggerAction.h"
+#include "WUIQtViewWidget.h"
 #include "core/common/WConditionOneShot.h"
 #include "core/common/WFlag.h"
-
-#include "../guiElements/WQtPropertyTriggerAction.h"
-
-#include "WUIQtViewWidget.h"
 
 WUIQtViewWidget::WUIQtViewWidget(
             std::string title,

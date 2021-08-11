@@ -22,28 +22,28 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <utility>
 
-#include <osg/ShapeDrawable>
-#include <osg/Group>
 #include <osg/Geode>
+#include <osg/Group>
 #include <osg/Material>
-#include <osg/StateAttribute>
 #include <osg/MatrixTransform>
 #include <osg/Projection>
-
-#include "core/kernel/WKernel.h"
-#include "core/dataHandler/WDataTexture3D.h"
-#include "core/common/WColor.h"
-#include "core/common/WBoundingBox.h"
-#include "core/graphicsEngine/WGEUtils.h"
-#include "core/graphicsEngine/WGEGeodeUtils.h"
-#include "core/graphicsEngine/shaders/WGEShader.h"
-#include "core/graphicsEngine/callbacks/WGEShaderAnimationCallback.h"
+#include <osg/ShapeDrawable>
+#include <osg/StateAttribute>
 
 #include "WMSurfaceParameterAnimator.h"
 #include "WMSurfaceParameterAnimator.xpm"
+#include "core/common/WBoundingBox.h"
+#include "core/common/WColor.h"
+#include "core/dataHandler/WDataTexture3D.h"
+#include "core/graphicsEngine/WGEGeodeUtils.h"
+#include "core/graphicsEngine/WGEUtils.h"
+#include "core/graphicsEngine/callbacks/WGEShaderAnimationCallback.h"
+#include "core/graphicsEngine/shaders/WGEShader.h"
+#include "core/kernel/WKernel.h"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMSurfaceParameterAnimator )

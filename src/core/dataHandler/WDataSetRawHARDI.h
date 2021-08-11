@@ -25,11 +25,12 @@
 #ifndef WDATASETRAWHARDI_H
 #define WDATASETRAWHARDI_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include "WDataSetSingle.h"
 #include "../common/math/linearAlgebra/WVectorFixed.h"
+#include "WDataSetSingle.h"
 
 
 /**

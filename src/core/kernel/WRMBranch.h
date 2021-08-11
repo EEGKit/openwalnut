@@ -27,14 +27,12 @@
 
 #include <algorithm>
 #include <list>
+#include <memory>
 #include <shared_mutex>
 #include <string>
 #include <vector>
 
-#include <boost/enable_shared_from_this.hpp>
-
 #include "../common/WProperties.h"
-
 #include "../graphicsEngine/WROI.h"
 
 class WROIManager;

@@ -23,40 +23,39 @@
 //---------------------------------------------------------------------------
 
 #include <algorithm>
+#include <memory>
 #include <set>
-#include <string>
 #include <sstream>
+#include <string>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
-#include "WModuleInputConnector.h"
-#include "WModuleOutputConnector.h"
-#include "WModuleInputData.h"
-#include "WModuleOutputData.h"
-#include "WModuleConnectorSignals.h"
-#include "WModuleContainer.h"
-#include "WModuleFactory.h"
-#include "WModuleMetaInformation.h"
-#include "exceptions/WModuleConnectorInitFailed.h"
-#include "exceptions/WModuleConnectorNotFound.h"
-#include "exceptions/WModuleUninitialized.h"
-#include "exceptions/WModuleRequirementNotMet.h"
-#include "../common/WException.h"
-#include "../common/exceptions/WNameNotUnique.h"
-#include "../common/exceptions/WSignalUnknown.h"
-#include "../common/exceptions/WSignalSubscriptionFailed.h"
-#include "../common/WLogger.h"
 #include "../common/WCondition.h"
 #include "../common/WConditionOneShot.h"
 #include "../common/WConditionSet.h"
+#include "../common/WException.h"
+#include "../common/WLogger.h"
 #include "../common/WPathHelper.h"
-#include "../common/WProgressCombiner.h"
 #include "../common/WPredicateHelper.h"
-
+#include "../common/WProgressCombiner.h"
+#include "../common/exceptions/WNameNotUnique.h"
+#include "../common/exceptions/WSignalSubscriptionFailed.h"
+#include "../common/exceptions/WSignalUnknown.h"
 #include "WModule.h"
+#include "WModuleConnectorSignals.h"
+#include "WModuleContainer.h"
+#include "WModuleFactory.h"
+#include "WModuleInputConnector.h"
+#include "WModuleInputData.h"
+#include "WModuleMetaInformation.h"
+#include "WModuleOutputConnector.h"
+#include "WModuleOutputData.h"
+#include "exceptions/WModuleConnectorInitFailed.h"
+#include "exceptions/WModuleConnectorNotFound.h"
+#include "exceptions/WModuleRequirementNotMet.h"
+#include "exceptions/WModuleUninitialized.h"
 
 WModule::WModule():
     WThreadedRunner(),

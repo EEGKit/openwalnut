@@ -25,6 +25,7 @@
 #ifndef WCREATECOLORARRAYSTHREAD_H
 #define WCREATECOLORARRAYSTHREAD_H
 
+#include <memory>
 #include <vector>
 
 #include "../common/WThreadedRunner.h"

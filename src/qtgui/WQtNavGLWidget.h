@@ -26,16 +26,16 @@
 #define WQTNAVGLWIDGET_H
 
 #include <map>
+#include <memory>
 #include <string>
 
 #include <QDockWidget>
 #include <QSlider>
 
+#include "WQtGLDockWidget.h"
+#include "controlPanel/WPropertyDoubleWidget.h"
 #include "core/common/WPropertyVariable.h"
 #include "core/graphicsEngine/WGEGroupNode.h"
-#include "controlPanel/WPropertyDoubleWidget.h"
-
-#include "WQtGLDockWidget.h"
 
 /**
  * container widget to hold as GL widget and a slider

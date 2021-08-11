@@ -23,30 +23,27 @@
 //---------------------------------------------------------------------------
 
 #include <algorithm>
-#include <string>
 #include <iostream>
-
-#include <boost/shared_ptr.hpp>
+#include <memory>
+#include <string>
 
 #include <QStyleOptionGraphicsItem>
 #include <QTextCharFormat>
 #include <QTextCursor>
 
-#include "core/common/WStringUtils.h"
-#include "core/common/WLogger.h"
-
-#include "../controlPanel/WQtTreeItem.h"
 #include "../controlPanel/WQtPropertyGroupWidget.h"
+#include "../controlPanel/WQtTreeItem.h"
 #include "../guiElements/WQtDataModuleInput.h"
-
 #include "WQtNetworkArrow.h"
+#include "WQtNetworkColors.h"
+#include "WQtNetworkEditor.h"
 #include "WQtNetworkItem.h"
 #include "WQtNetworkItemActivator.h"
 #include "WQtNetworkItemGrid.h"
 #include "WQtNetworkScene.h"
 #include "WQtNetworkSceneLayout.h"
-#include "WQtNetworkEditor.h"
-#include "WQtNetworkColors.h"
+#include "core/common/WLogger.h"
+#include "core/common/WStringUtils.h"
 
 
 WQtNetworkItem::WQtNetworkItem( WQtNetworkEditor* editor, std::shared_ptr< WModule > module ):

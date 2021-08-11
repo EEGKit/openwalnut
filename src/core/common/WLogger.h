@@ -25,18 +25,18 @@
 #ifndef WLOGGER_H
 #define WLOGGER_H
 
+#include <memory>
 #include <ostream>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/signals2/signal.hpp>
 
 #include "WLogEntry.h"
 #include "WLogStream.h"
-#include "WStringUtils.h"
 #include "WSharedSequenceContainer.h"
+#include "WStringUtils.h"
 
 
 /**

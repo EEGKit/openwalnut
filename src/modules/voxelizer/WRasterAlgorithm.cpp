@@ -22,16 +22,16 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <shared_mutex>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
+#include "WRasterAlgorithm.h"
 #include "core/common/WLogger.h"
 #include "core/common/math/linearAlgebra/WVectorFixed.h"
 #include "core/dataHandler/WDataSetScalar.h"
 #include "core/dataHandler/WGridRegular3D.h"
-#include "WRasterAlgorithm.h"
 
 WRasterAlgorithm::WRasterAlgorithm( std::shared_ptr< WGridRegular3D > grid )
     : m_grid( grid ),

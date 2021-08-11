@@ -57,6 +57,7 @@
 #include <osg/MatrixTransform>
 #include <osg/PositionAttitudeTransform>
 
+#include "core/common/WColor.h"
 #include "WHtree.h"
 
 /**

@@ -25,13 +25,12 @@
 #ifndef WMODULECONTAINERWRAPPER_H
 #define WMODULECONTAINERWRAPPER_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
-
-#include "core/kernel/WModuleContainer.h"
 
 #include "WModuleWrapper.h"
+#include "core/kernel/WModuleContainer.h"
 
 /**
  * \class WModuleContainerWrapper

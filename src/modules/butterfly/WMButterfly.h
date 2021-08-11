@@ -34,10 +34,12 @@
 #ifndef WMBUTTERFLY_H
 #define WMBUTTERFLY_H
 
+#include <memory>
 #include <string>
+
+#include "WButterflyFactory.h"
 #include "core/kernel/WModule.h"
 #include "structure/WVertexFactory.h"
-#include "WButterflyFactory.h"
 
 
 using osg::Vec3;

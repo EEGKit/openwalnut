@@ -23,12 +23,13 @@
 //---------------------------------------------------------------------------
 
 #include <cmath>
+#include <memory>
 #include <string>
 #include <vector>
 
+#include <core/common/WPropertyHelper.h>
 #include <core/common/WStrategyHelper.h>
 #include <core/common/math/WMath.h>
-#include <core/common/WPropertyHelper.h>
 #include <core/dataHandler/WDataHandler.h>
 #include <core/kernel/WKernel.h>
 

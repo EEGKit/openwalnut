@@ -25,6 +25,7 @@
 #ifndef WMWRITEDENDROGRAM_H
 #define WMWRITEDENDROGRAM_H
 
+#include <memory>
 #include <string>
 
 #include <osg/Geode>

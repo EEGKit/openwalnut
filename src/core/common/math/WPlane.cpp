@@ -22,15 +22,14 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <set>
 
-#include <boost/shared_ptr.hpp>
 
-#include "../../common/math/WLinearAlgebraFunctions.h"
-#include "../../common/math/linearAlgebra/WVectorFixed.h"
 #include "../../common/WAssert.h"
 #include "../../common/WLimits.h"
-
+#include "../../common/math/WLinearAlgebraFunctions.h"
+#include "../../common/math/linearAlgebra/WVectorFixed.h"
 #include "WPlane.h"
 
 WPlane::WPlane( const WVector3d& normal, const WPosition& pos )

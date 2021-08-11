@@ -25,17 +25,15 @@
 #ifndef WDATAMODULE_H
 #define WDATAMODULE_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
-
-#include "core/common/WProperties.h"
 
 #include "WDataModuleInput.h"
 #include "WDataModuleInputFilter.h"
-
 #include "WModule.h"
+#include "core/common/WProperties.h"
 
 /**
  * Base for all data loader modules. It provides the basic mechanism to define input filters and some other settings.

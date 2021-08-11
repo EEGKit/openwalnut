@@ -26,10 +26,11 @@
 #define WSELECTORBRANCH_H
 
 #include <list>
+#include <memory>
 #include <vector>
 
-#include "WSelectorRoi.h"
 #include "../kernel/WRMBranch.h"
+#include "WSelectorRoi.h"
 
 /**
  * TODO(schurade): Document this!

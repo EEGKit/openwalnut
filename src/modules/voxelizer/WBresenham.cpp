@@ -24,18 +24,18 @@
 
 #include <algorithm>
 #include <cmath>
+#include <memory>
 #include <shared_mutex>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
+#include "WBresenham.h"
+#include "core/common/WAssert.h"
+#include "core/common/WLogger.h"
 #include "core/common/math/WLine.h"
 #include "core/common/math/linearAlgebra/WPosition.h"
 #include "core/common/math/linearAlgebra/WVectorFixed.h"
-#include "core/common/WAssert.h"
-#include "core/common/WLogger.h"
 #include "core/dataHandler/WGridRegular3D.h"
-#include "WBresenham.h"
 
 WBresenham::WBresenham( std::shared_ptr< WGridRegular3D > grid, bool antialiased )
     : WRasterAlgorithm( grid ),

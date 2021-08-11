@@ -22,10 +22,13 @@
 //
 //---------------------------------------------------------------------------
 
-#include <string>
+#include <memory>
 #include <sstream>
+#include <string>
 #include <vector>
 
+#include "WMPaintTexture.h"
+#include "WMPaintTexture.xpm"
 #include "core/common/WPropertyHelper.h"
 #include "core/graphicsEngine/WGEColormapping.h"
 #include "core/graphicsEngine/WGEUtils.h"
@@ -33,8 +36,6 @@
 #include "core/kernel/WKernel.h"
 #include "core/kernel/WROIManager.h"
 #include "core/kernel/WSelectionManager.h"
-#include "WMPaintTexture.h"
-#include "WMPaintTexture.xpm"
 
 // This line is needed by the module loader to actually find your module. Do not remove. Do NOT add a ";" here.
 W_LOADABLE_MODULE( WMPaintTexture )

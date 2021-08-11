@@ -26,11 +26,11 @@
 #define WFIBERCLUSTER_H
 
 #include <list>
+#include <memory>
 #include <shared_mutex>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
 #include "../../common/WColor.h"

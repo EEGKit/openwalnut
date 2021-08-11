@@ -26,11 +26,11 @@
 #define WEEG2SEGMENT_H
 
 #include <cstddef>
+#include <memory>
 
-#include <boost/shared_ptr.hpp>
 
-#include "io/WPagerEEG.h"
 #include "WEEGValueMatrix.h"
+#include "io/WPagerEEG.h"
 
 
 

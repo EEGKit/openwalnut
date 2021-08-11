@@ -25,9 +25,9 @@
 #ifndef WEXCEPTION_TEST_H
 #define WEXCEPTION_TEST_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 #include <cxxtest/TestSuite.h>
 
 #include "../WException.h"

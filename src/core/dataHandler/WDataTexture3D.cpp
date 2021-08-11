@@ -22,6 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
 #include "../graphicsEngine/WGETextureUtils.h"

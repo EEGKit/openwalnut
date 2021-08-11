@@ -25,11 +25,11 @@
 #ifndef WMODULECOMBINERTYPES_H
 #define WMODULECOMBINERTYPES_H
 
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
 
 

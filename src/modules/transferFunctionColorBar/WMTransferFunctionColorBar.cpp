@@ -22,24 +22,23 @@
 //
 //---------------------------------------------------------------------------
 
-#include <string>
 #include <algorithm>
+#include <memory>
+#include <string>
 
-
-#include <osg/Projection>
 #include <osg/Geode>
+#include <osg/Projection>
 
+#include "WMTransferFunctionColorBar.h"
+#include "WMTransferFunctionColorBar.xpm"
 #include "core/dataHandler/WDataTexture3D.h"
 #include "core/graphicsEngine/WGEColormapping.h"
-#include "core/graphicsEngine/callbacks/WGENodeMaskCallback.h"
-#include "core/graphicsEngine/callbacks/WGEFunctorCallback.h"
 #include "core/graphicsEngine/WGEGeodeUtils.h"
+#include "core/graphicsEngine/callbacks/WGEFunctorCallback.h"
+#include "core/graphicsEngine/callbacks/WGENodeMaskCallback.h"
 #include "core/graphicsEngine/shaders/WGEShader.h"
 #include "core/graphicsEngine/widgets/labeling/WGELabel.h"
 #include "core/kernel/WKernel.h"
-
-#include "WMTransferFunctionColorBar.xpm"
-#include "WMTransferFunctionColorBar.h"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMTransferFunctionColorBar )

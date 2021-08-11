@@ -26,13 +26,11 @@
 #define WQTNETWORKITEMGRID_H
 
 #include <map>
-
-#include <boost/shared_ptr.hpp>
-
-#include <QtCore/QObject>
+#include <memory>
 
 #include <QGraphicsItem>
 #include <QWidget>
+#include <QtCore/QObject>
 #include <QtCore/QPoint>
 
 /**

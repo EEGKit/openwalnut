@@ -25,20 +25,24 @@
 #ifndef WMPAINTTEXTURE_H
 #define WMPAINTTEXTURE_H
 
+#include <memory>
 #include <queue>
 #include <string>
 #include <vector>
 
 #include <osg/Geode>
 
+#include "core/dataHandler/WDataSetScalar.h"
+#include "core/dataHandler/WValueSet.h"
+#include "core/graphicsEngine/WGETexture.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
 
-#include "core/dataHandler/WDataSetScalar.h"
-#include "core/dataHandler/WValueSet.h"
-
-#include "core/graphicsEngine/WGETexture.h"
+/**
+ * Forward declaration of WPickInfo.
+ */
+class WPickInfo;
 
 /**
  * This module allows mark areas in a 3D texture by "painting"

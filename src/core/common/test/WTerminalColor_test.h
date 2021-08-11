@@ -25,10 +25,10 @@
 #ifndef WTERMINALCOLOR_TEST_H
 #define WTERMINALCOLOR_TEST_H
 
-#include <string>
+#include <memory>
 #include <sstream>
+#include <string>
 
-#include <boost/shared_ptr.hpp>
 #include <cxxtest/TestSuite.h>
 
 #include "../WTerminalColor.h"

@@ -25,17 +25,17 @@
 #ifndef WFILTERPROPERTYHANDLER_H
 #define WFILTERPROPERTYHANDLER_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <boost/bimap.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "core/common/WPathHelper.h"
-#include "../WSingleSelectorName.h"
-
-#include "WColumnPropertyHandler.h"
 #include "../WProtonData.h"
+#include "../WSingleSelectorName.h"
+#include "WColumnPropertyHandler.h"
+#include "core/common/WPathHelper.h"
 
 
 /**

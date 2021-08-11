@@ -22,6 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
+
 #include "WPropertyHelper.h"
 
 namespace WPropertyHelper

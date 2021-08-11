@@ -25,22 +25,22 @@
 #ifndef WPROPERTYTYPES_H
 #define WPROPERTYTYPES_H
 
+#include <memory>
 #include <stdint.h>
-
 #include <string>
-#include <vector>
 #include <utility>
+#include <vector>
 
 #include <boost/filesystem.hpp>
 
-#include "WStringUtils.h"
-#include "math/linearAlgebra/WMatrixFixed.h"
-#include "math/linearAlgebra/WPosition.h"
-#include "math/linearAlgebra/WVectorFixed.h"
-#include "math/WInterval.h"
 #include "WAssert.h"
 #include "WColor.h"
 #include "WItemSelector.h"
+#include "WStringUtils.h"
+#include "math/WInterval.h"
+#include "math/linearAlgebra/WMatrixFixed.h"
+#include "math/linearAlgebra/WPosition.h"
+#include "math/linearAlgebra/WVectorFixed.h"
 
 template < typename T >
 class WPropertyVariable;

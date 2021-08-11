@@ -25,7 +25,8 @@
 #ifndef WGEGRAPHICSWINDOW_H
 #define WGEGRAPHICSWINDOW_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 #include <osgViewer/GraphicsWindow>
 
 /**

@@ -26,14 +26,13 @@
 #define WGRAPHICSENGINE_H
 
 #include <map>
+#include <memory>
 #include <shared_mutex>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/signals2/signal.hpp>
 #include <boost/thread/mutex.hpp>
-
 #include <osg/Camera>
 #include <osg/Texture3D>
 #include <osg/Vec3>
@@ -41,14 +40,14 @@
 #include <osg/ref_ptr>
 #include <osgViewer/CompositeViewer>
 
-#include "../common/WThreadedRunner.h"
-#include "../common/WConditionOneShot.h"
 #include "../common/WColor.h"
 #include "../common/WCondition.h"
+#include "../common/WConditionOneShot.h"
+#include "../common/WThreadedRunner.h"
 #include "WGEGraphicsWindow.h"
 #include "WGEScene.h"
-#include "WGEViewer.h"
 #include "WGESignals.h"
+#include "WGEViewer.h"
 
 /**
  * Base class for initializing the graphics engine. This Class also serves as adaptor to access the graphics

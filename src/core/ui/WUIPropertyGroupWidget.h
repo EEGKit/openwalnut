@@ -25,13 +25,12 @@
 #ifndef WUIPROPERTYGROUPWIDGET_H
 #define WUIPROPERTYGROUPWIDGET_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
-
-#include "core/common/WPropertyTypes.h"
 
 #include "WUIWidgetBase.h"
+#include "core/common/WPropertyTypes.h"
 
 /**
  * Widget which is a container for a WPropertyGroup.

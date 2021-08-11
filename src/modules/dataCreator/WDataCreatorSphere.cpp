@@ -22,12 +22,12 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <vector>
 
+#include "WDataCreatorSphere.h"
 #include "core/common/WAssert.h"
 #include "core/common/WLimits.h"
-
-#include "WDataCreatorSphere.h"
 
 WDataCreatorSphere::WDataCreatorSphere():
     WObjectNDIP< WDataSetSingleCreatorInterface >( "Spherical", "Creates a spherical volume." )

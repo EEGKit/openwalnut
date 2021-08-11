@@ -22,24 +22,26 @@
 //
 //---------------------------------------------------------------------------
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/shared_ptr.hpp>
-
 #include <QApplication>
-#include <QSplashScreen>
 #include <QFileDialog>
-#include <QtGlobal> // for QCoreApplication::setAttribute
+#include <QSplashScreen>
 #include <QtCore/QDir>
 #include <QtCore/QSettings>
+#include <QtGlobal> // for QCoreApplication::setAttribute
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/filesystem.hpp>
 
-#include "WMainWindow.h" // this has to be included before any other includes
 #include "WApplication.h"
+#include "WMainWindow.h" // this has to be included before any other includes
+#include "WQtGui.h"
+#include "WQtModuleConfig.h"
+#include "controlPanel/WQtControlPanel.h"
 #include "core/common/WConditionOneShot.h"
 #include "core/common/WIOTools.h"
 #include "core/common/WPathHelper.h"
@@ -50,7 +52,7 @@
 #include "core/kernel/WModuleContainer.h"
 #include "core/kernel/WProjectFile.h"
 #include "core/kernel/WROIManager.h"
-#include "controlPanel/WQtControlPanel.h"
+#include "events/WLogEvent.h"
 #include "events/WModuleAssocEvent.h"
 #include "events/WModuleConnectEvent.h"
 #include "events/WModuleCrashEvent.h"
@@ -60,10 +62,6 @@
 #include "events/WRoiAssocEvent.h"
 #include "events/WRoiRemoveEvent.h"
 #include "events/WUpdateTextureSorterEvent.h"
-#include "events/WLogEvent.h"
-#include "WQtModuleConfig.h"
-
-#include "WQtGui.h"
 
 WMainWindow* WQtGui::m_mainWindow = NULL;
 

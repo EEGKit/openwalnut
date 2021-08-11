@@ -23,11 +23,10 @@
 //---------------------------------------------------------------------------
 
 #include <cstddef>
+#include <memory>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../common/WProperties.h"
-
 #include "WGrid.h"
 
 WGrid::WGrid( size_t size )

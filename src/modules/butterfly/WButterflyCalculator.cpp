@@ -31,6 +31,7 @@
 // This work was required especially in the methods calcNewVertex and
 // getInterpolatedValue.
 
+#include <memory>
 #include <string>
 #include <vector>
 

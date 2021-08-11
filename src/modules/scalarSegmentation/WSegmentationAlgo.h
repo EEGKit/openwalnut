@@ -25,14 +25,13 @@
 #ifndef WSEGMENTATIONALGO_H
 #define WSEGMENTATIONALGO_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/variant.hpp>
 
-#include "core/common/WPropertyTypes.h"
 #include "core/common/WCondition.h"
-
+#include "core/common/WPropertyTypes.h"
 #include "core/dataHandler/WDataSetScalar.h"
 
 /**

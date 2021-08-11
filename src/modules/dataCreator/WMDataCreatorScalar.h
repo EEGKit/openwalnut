@@ -25,8 +25,10 @@
 #ifndef WMDATACREATORSCALAR_H
 #define WMDATACREATORSCALAR_H
 
+#include <memory>
 #include <string>
 
+#include "WDataSetSingleCreatorInterface.h"
 #include "core/common/WObjectNDIP.h"
 #include "core/common/WStrategyHelper.h"
 #include "core/dataHandler/WDataHandlerEnums.h"
@@ -34,8 +36,6 @@
 #include "core/dataHandler/WValueSetBase.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleOutputData.h"
-
-#include "WDataSetSingleCreatorInterface.h"
 
 /**
  * Module which utilizes the strategy pattern to provide a multitude of dataset creation algorithms for scalar data.

@@ -25,25 +25,22 @@
 #ifndef WMSCALARSEGMENTATION_H
 #define WMSCALARSEGMENTATION_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
+#include "WSegmentationAlgoLevelSetCanny.h"
+#include "WSegmentationAlgoOtsu.h"
+#include "WSegmentationAlgoRegionGrowingConfidenceConnected.h"
+#include "WSegmentationAlgoThreshold.h"
+#include "WSegmentationAlgoWatershed.h"
 #include "core/common/WItemSelection.h"
 #include "core/common/WItemSelector.h"
-
 #include "core/dataHandler/WDataHandler.h"
-
+#include "core/dataHandler/WDataSetScalar.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
-#include "core/dataHandler/WDataSetScalar.h"
-
-#include "WSegmentationAlgoThreshold.h"
-
-#include "WSegmentationAlgoWatershed.h"
-#include "WSegmentationAlgoOtsu.h"
-#include "WSegmentationAlgoRegionGrowingConfidenceConnected.h"
-#include "WSegmentationAlgoLevelSetCanny.h"
 
 /**
  * First version of a module that implements 3D-image segmentation algorithms.

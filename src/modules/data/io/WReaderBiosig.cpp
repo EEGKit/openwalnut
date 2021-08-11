@@ -25,19 +25,18 @@
 #ifdef WBIOSIG_ENABLED
 
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
-#include "core/dataHandler/WEEG.h"
-#include "core/dataHandler/WSubject.h"
+#include "WReaderBiosig.h"
 #include "core/common/WAssert.h"
 #include "core/common/WException.h"
 #include "core/common/WLogger.h"
 #include "core/common/WStringUtils.h"
-
-#include "WReaderBiosig.h"
+#include "core/dataHandler/WEEG.h"
+#include "core/dataHandler/WSubject.h"
 
 WReaderBiosig::WReaderBiosig( std::string fileName )
     : WReaderEEG( fileName ),

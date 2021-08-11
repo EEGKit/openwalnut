@@ -25,10 +25,10 @@
 #ifndef WPROPERTYSTATUS_H
 #define WPROPERTYSTATUS_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 
 #include "core/kernel/WModule.h"
-
 #include "propertyHandler/WColumnPropertyHandler.h"
 #include "propertyHandler/WEventIDLimitationPropertyHandler.h"
 #include "propertyHandler/WFilterPropertyHandler.h"

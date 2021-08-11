@@ -22,11 +22,11 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <vector>
 
-#include "core/common/WAssert.h"
-
 #include "WDataCreatorBreyzel5.h"
+#include "core/common/WAssert.h"
 
 WDataCreatorBreyzel5::WDataCreatorBreyzel5():
     WObjectNDIP< WDataSetSingleCreatorInterface >( "Breyzel5", "Creates a volume with some nice shape." )

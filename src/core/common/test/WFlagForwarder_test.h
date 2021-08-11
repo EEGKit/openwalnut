@@ -25,11 +25,13 @@
 #ifndef WFLAGFORWARDER_TEST_H
 #define WFLAGFORWARDER_TEST_H
 
+#include <memory>
+
 #include <cxxtest/TestSuite.h>
 
-#include "../WFlagForwarder.h"
-#include "../WFlag.h"
 #include "../WConditionOneShot.h"
+#include "../WFlag.h"
+#include "../WFlagForwarder.h"
 
 /**
  * Test WFlagForwarder.

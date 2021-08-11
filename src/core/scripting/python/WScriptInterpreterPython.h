@@ -27,19 +27,18 @@
 
 #ifdef PYTHON_FOUND
 
+#include <memory>
 #include <queue>
 #include <string>
 #include <vector>
 
-#include <boost/thread/mutex.hpp>
 #include <boost/python.hpp>
+#include <boost/thread/mutex.hpp>
 
 #include "../../common/WThreadedRunner.h"
-
+#include "../WScriptInterpreter.h"
 #include "../wrappers/WLoggerWrapper.h"
 #include "../wrappers/WModuleContainerWrapper.h"
-
-#include "../WScriptInterpreter.h"
 
 namespace pb = boost::python;
 

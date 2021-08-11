@@ -25,16 +25,16 @@
 #ifndef WMDATASETMANIPULATOR_H
 #define WMDATASETMANIPULATOR_H
 
+#include <memory>
 #include <string>
 
+#include "core/common/WObjectNDIP.h"
+#include "core/common/WStrategyHelper.h"
 #include "core/dataHandler/WDataSet.h"
-
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
-
-#include "core/common/WStrategyHelper.h"
-#include "core/common/WObjectNDIP.h"
+#include "WManipulatorInterface.h"
 
 /**
  * Module allowing manipulation of the dataset scaling, orientation and position.

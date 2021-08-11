@@ -25,13 +25,13 @@
 #ifndef WJOINCONTOURTREE_TEST_H
 #define WJOINCONTOURTREE_TEST_H
 
+#include <memory>
 #include <set>
 #include <vector>
 
 #include <cxxtest/TestSuite.h>
 
 #include "../../../common/WLogger.h"
-
 #include "../WJoinContourTree.h"
 
 /**

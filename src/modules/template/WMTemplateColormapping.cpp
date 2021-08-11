@@ -32,21 +32,19 @@
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include <memory>
 #include <string>
 
 #include <osg/StateAttribute>
 
-#include "core/kernel/WKernel.h"
-
+#include "WDemoGeometry.h"
+#include "WMTemplateColormapping.h"
+#include "core/graphicsEngine/WGEColormapping.h"    // <- this is the awesome new header you will need
 #include "core/graphicsEngine/WGEManagedGroupNode.h"
 #include "core/graphicsEngine/WGERequirement.h"
 #include "core/graphicsEngine/WGETexture.h"
-#include "core/graphicsEngine/WGEColormapping.h"    // <- this is the awesome new header you will need
 #include "core/graphicsEngine/shaders/WGEShader.h"
-
-// Some utils for creating some demo geometry.
-#include "WDemoGeometry.h"
-#include "WMTemplateColormapping.h"
+#include "core/kernel/WKernel.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // All the basic setup ... Refer to WMTemplate.cpp if you do not understand these commands.

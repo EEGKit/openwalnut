@@ -25,12 +25,12 @@
 #ifndef WMODULEOUTPUTCONNECTOR_H
 #define WMODULEOUTPUTCONNECTOR_H
 
+#include <memory>
 #include <string>
 
 #include <boost/signals2/connection.hpp>
 #include <boost/signals2/signal.hpp>
 
-class WModule;
 #include "../common/WPrototyped.h"
 #include "../common/WTransferable.h"
 #include "WModuleConnector.h"

@@ -25,15 +25,20 @@
 #ifndef WPROPERTYVARIABLE_H
 #define WPROPERTYVARIABLE_H
 
-#include <stdint.h>
-
 #include <list>
+#include <memory>
 #include <set>
+#include <stdint.h>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/signals2.hpp>
 
+#include "WCondition.h"
+#include "WFlag.h"
+#include "WPropertyBase.h"
+#include "WSharedAssociativeContainer.h"
+#include "WSharedObjectTicketRead.h"
+#include "WSharedObjectTicketWrite.h"
 #include "constraints/WPropertyConstraintIsDirectory.h"
 #include "constraints/WPropertyConstraintMax.h"
 #include "constraints/WPropertyConstraintMin.h"
@@ -41,12 +46,6 @@
 #include "constraints/WPropertyConstraintPathExists.h"
 #include "constraints/WPropertyConstraintSelectOnlyOne.h"
 #include "constraints/WPropertyConstraintTypes.h"
-#include "WCondition.h"
-#include "WFlag.h"
-#include "WPropertyBase.h"
-#include "WSharedAssociativeContainer.h"
-#include "WSharedObjectTicketRead.h"
-#include "WSharedObjectTicketWrite.h"
 
 /**
  * A named property class with a concrete type.

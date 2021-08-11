@@ -25,15 +25,13 @@
 #ifndef WGEPOSTPROCESSORMERGEOP_H
 #define WGEPOSTPROCESSORMERGEOP_H
 
+#include <memory>
 #include <string>
-
-#include <boost/shared_ptr.hpp>
 
 #include <osg/Texture2D>
 
 #include "../shaders/WGEShader.h"
 #include "../shaders/WGEShaderCodeInjector.h"
-
 #include "WGEPostprocessor.h"
 
 /**

@@ -22,17 +22,18 @@
 //
 //---------------------------------------------------------------------------
 
-#include <string>
 #include <fstream>
+#include <memory>
+#include <string>
 #include <vector>
 
+#include "WMWriteMesh.h"
+#include "WMWriteMesh.xpm"
+#include "core/common/WLimits.h"
+#include "core/common/WPathHelper.h"
 #include "core/common/WStringUtils.h"
 #include "core/common/math/WMath.h"
-#include "core/common/WPathHelper.h"
-#include "core/common/WLimits.h"
 #include "core/kernel/WKernel.h"
-#include "WMWriteMesh.xpm"
-#include "WMWriteMesh.h"
 
 // This line is needed by the module loader to actually find your module. Do not remove. Do NOT add a ";" here.
 W_LOADABLE_MODULE( WMWriteMesh )

@@ -22,6 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -33,17 +34,16 @@
 #include <osg/StateAttribute>
 #include <osg/StateSet>
 
+#include "WMArbitraryROIs.h"
+#include "WMArbitraryROIs.xpm"
 #include "core/common/WAssert.h"
-#include "core/dataHandler/WDataSetScalar.h"
 #include "core/common/algorithms/WMarchingLegoAlgorithm.h"
+#include "core/dataHandler/WDataSetScalar.h"
 #include "core/graphicsEngine/WROIArbitrary.h"
 #include "core/graphicsEngine/WROIBox.h"
 #include "core/kernel/WKernel.h"
 #include "core/kernel/WROIManager.h"
 #include "core/kernel/WSelectionManager.h"
-
-#include "WMArbitraryROIs.h"
-#include "WMArbitraryROIs.xpm"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMArbitraryROIs )
