@@ -161,6 +161,18 @@ bool WGEZoomTrackballManipulator::handle( const osgGA::GUIEventAdapter& ea, osgG
     }
 }
 
+void WGEZoomTrackballManipulator::computeHomePosition( const osg::Camera *camera, bool )
+{
+    TrackballManipulator::computeHomePosition( camera, true );
+
+    osg::Vec3d homeEye;
+    osg::Vec3d homeCenter;
+    osg::Vec3d homeUp;
+
+    TrackballManipulator::getHomePosition( homeEye, homeCenter, homeUp );
+    TrackballManipulator::setCenter( homeCenter );
+}
+
 void WGEZoomTrackballManipulator::setPaintMode( int mode )
 {
     m_paintMode = mode;
