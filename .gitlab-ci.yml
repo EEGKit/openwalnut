@@ -12,7 +12,7 @@ create_directory_and_cmake___release:
                 key: "CacheRelease"
                 paths:
                         - build/release
-        image: ladbukkit/openwalnut_build_environment:1.4.2
+        image: ladbukkit/openwalnut_build_environment:1.5
         script:
                 - ls
                 - mkdir -p build
@@ -29,7 +29,7 @@ create_directory_and_cmake___debug:
                 key: "CacheDebug"
                 paths:
                         - build/debug
-        image: ladbukkit/openwalnut_build_environment:1.4.2
+        image: ladbukkit/openwalnut_build_environment:1.5
         script:
                 - ls
                 - mkdir -p build
@@ -46,7 +46,7 @@ stylecheck_job:
                 key: "CacheRelease"
                 paths:
                         - build/release
-        image: ladbukkit/openwalnut_build_environment:1.4.2
+        image: ladbukkit/openwalnut_build_environment:1.5
         script:
                 - pwd
                 - cd build/release
@@ -60,7 +60,7 @@ doc_job:
                 key: "CacheDebug"
                 paths:
                         - build/debug
-        image: ladbukkit/openwalnut_build_environment:1.4.2
+        image: ladbukkit/openwalnut_build_environment:1.5
         script:
                 - doxygen --version
                 - pwd
@@ -75,7 +75,7 @@ buildAndTest:
                 key: "CacheRelease"
                 paths:
                         - build/release
-        image: ladbukkit/openwalnut_build_environment:1.4.2
+        image: ladbukkit/openwalnut_build_environment:1.5
         script:
                 - pwd
                 - cd build/release
@@ -90,7 +90,7 @@ buildAndTestDebug:
                 key: "CacheDebug"
                 paths:
                         - build/debug
-        image: ladbukkit/openwalnut_build_environment:1.4.2
+        image: ladbukkit/openwalnut_build_environment:1.5
         script:
                 - pwd
                 - cd build/debug
@@ -105,7 +105,7 @@ buildAppImage:
                 key: "CacheAppImage"
                 paths:
                         - tools/AppImage/AppImageBuild
-        image: ladbukkit/openwalnut_build_environment:1.4.2
+        image: ladbukkit/openwalnut_build_environment:1.5
         script:
                 - pwd
                 - cd tools/AppImage
@@ -120,7 +120,7 @@ uploadArtifacts:
                 key: "CacheAppImage"
                 paths:
                         - tools/AppImage/AppImageBuild
-        image: ladbukkit/openwalnut_build_environment:1.4.2
+        image: ladbukkit/openwalnut_build_environment:1.5
         script:
                 - pwd
                 - cd tools/upload
