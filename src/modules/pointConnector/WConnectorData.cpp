@@ -38,6 +38,7 @@ void WConnectorData::clear()
 {
     m_vertices->clear();
     m_colors->clear();
+    m_edeps->clear();
 }
 
 osg::ref_ptr< osg::Vec3Array > WConnectorData::getVertices()
