@@ -83,6 +83,10 @@ WEEG2::WEEG2( std::shared_ptr< WPagerEEG > pager, std::shared_ptr< WEEGPositions
     {
         m_channelInfos.push_back( std::shared_ptr< WEEGChannelInfo >( new WEEGChannelInfo( channelID, pager, positionsLibrary ) ) );
     }
+
+    m_infoProperties->addProperty( "Segments", "The number of segments", static_cast< WPVBaseTypes::PV_INT >( nbSegments ) );
+    m_infoProperties->addProperty( "Channels", "The number of channels", static_cast< WPVBaseTypes::PV_INT >( nbChannels ) );
+    m_infoProperties->addProperty( "Sampling rate", "Sampling rate of the recording", static_cast< WPVBaseTypes::PV_DOUBLE >( m_samplingRate ) );
 }
 
 WEEG2::WEEG2()
