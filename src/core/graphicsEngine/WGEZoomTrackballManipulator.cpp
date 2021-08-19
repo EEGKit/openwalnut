@@ -26,7 +26,7 @@
 #include "WGraphicsEngine.h"
 
 WGEZoomTrackballManipulator::WGEZoomTrackballManipulator():
-    TrackballManipulator(),
+    TrackballManipulator( 0x02 ),
     m_zoom( 1.0 ),
     m_allowThrow( false ),
     m_paintMode( 0 )
@@ -159,18 +159,6 @@ bool WGEZoomTrackballManipulator::handle( const osgGA::GUIEventAdapter& ea, osgG
     {
         return TrackballManipulator::handle( ea, us );
     }
-}
-
-void WGEZoomTrackballManipulator::computeHomePosition( const osg::Camera *camera, bool )
-{
-    TrackballManipulator::computeHomePosition( camera, true );
-
-    osg::Vec3d homeEye;
-    osg::Vec3d homeCenter;
-    osg::Vec3d homeUp;
-
-    TrackballManipulator::getHomePosition( homeEye, homeCenter, homeUp );
-    TrackballManipulator::setCenter( homeCenter );
 }
 
 void WGEZoomTrackballManipulator::setPaintMode( int mode )

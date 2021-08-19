@@ -84,13 +84,6 @@ public:
     virtual bool handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
 
     /**
-     * Overloading the function to always use the bounding box and not the bounding spehere.
-     * \param camera The camera of the viewer.
-     * \param useBoundingBox This one is irrelevant as its value is ignored.
-     */
-    virtual void computeHomePosition( const osg::Camera *camera = NULL, bool useBoundingBox = true );
-
-    /**
      * Get zoom factor.
      *
      * \return the current zoom factor

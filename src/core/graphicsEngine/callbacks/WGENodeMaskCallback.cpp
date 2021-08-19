@@ -47,10 +47,6 @@ void WGENodeMaskCallback::activate()
     if( m_flag->get() ) // only handle activation here
     {
         m_reactivateSignal();
-
-        // Update the home position
-        WGEViewer::SPtr viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer();
-        viewer->getCameraManipulator()->computeHomePosition( viewer->getCamera() );
     }
 }
 
@@ -64,10 +60,6 @@ void WGENodeMaskCallback::operator()( osg::Node* node, osg::NodeVisitor* nv )
         // NOTE: this also deactivates the callback. So reactivating the node is done in a separate method
         // connect the flag's callback to the signal, only this way, we can ensure the reactivation of a node without saving a pointer to it.
         m_reactivateConnection = m_reactivateSignal.connect( boost::bind( &osg::Node::setNodeMask, node, 0xFFFFFFFF ) );
-
-        // Update the home position
-        WGEViewer::SPtr viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer();
-        viewer->getCameraManipulator()->computeHomePosition( viewer->getCamera() );
     }
 
     traverse( node, nv );
