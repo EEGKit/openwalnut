@@ -321,13 +321,15 @@ bool WMPointConnector::isAdaptivelyHidden( osg::Vec3 vertex )
     }
 
     osg::Vec3 selected = m_connectorData->getVertices()->at( verIdx );
+    WFiberHandler::PCFiber fiber = m_fiberHandler->getFibers()->at( m_fiberHandler->getSelectedFiber() );
+    auto it = std::find( fiber.begin(), fiber.end(), selected );
+    osg::Vec3 before = osg::Vec3( 0.0, 0.0, 1.0 );
+    if( it != fiber.end() && it != fiber.begin() )
+    {
+        before = *( --it );
+    }
 
-    double num = vertex.z() - selected.z();
-    double denom = ( vertex.x() - selected.x() ) * ( vertex.x() - selected.x() ) +
-                   ( vertex.y() - selected.y() ) * ( vertex.y() - selected.y() ) +
-                   ( vertex.z() - selected.z() ) * ( vertex.z() - selected.z() );
-    denom = sqrt( denom );
-    double angle = acos( num / denom ) * 180.0 / M_PI;
+    double angle = WAngleHelper::calculateAngle( selected - before, vertex - selected );
 
     double checkAngle = m_adaptiveVisibilityAngle->get();
     if( m_enablePhysicalAngle->get() )
