@@ -26,7 +26,7 @@
 #include "WGraphicsEngine.h"
 
 WGEZoomTrackballManipulator::WGEZoomTrackballManipulator():
-    TrackballManipulator(),
+    TrackballManipulator( 0x02 ),
     m_zoom( 1.0 ),
     m_allowThrow( false ),
     m_paintMode( 0 )
