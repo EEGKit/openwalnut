@@ -121,6 +121,12 @@ WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::
                                                QKeySequence( Qt::CTRL + Qt::SHIFT + Qt::Key_P ) );
     tmpAction->setIconVisibleInMenu( true );
     m_cameraPresetResetMenu->addAction( tmpAction );
+
+    tmpAction = m_cameraPresetMenu->addAction( WQtGui::getIconManager()->getIcon( "coronal icon" ), "Fit screen", this,
+                                               SLOT( setFitScreenPosition() ),
+                                               QKeySequence( Qt::CTRL + Qt::SHIFT + Qt::Key_F ) );
+    tmpAction->setIconVisibleInMenu( true );
+    m_cameraPresetResetMenu->addAction( tmpAction );
 }
 
 WQtGLWidget::~WQtGLWidget()
@@ -494,6 +500,26 @@ void WQtGLWidget::setPresetViewPosterior()
         if( cm )
         {
             cm->setRotation( q );
+        }
+        else
+        {
+            wlog::warn( "WQtGLWidget(" + m_Viewer->getName() + ")" ) << "GL Widget does not use a TrackballManipulator. Preset cannot be used.";
+        }
+    }
+}
+
+void WQtGLWidget::setFitScreenPosition()
+{
+    if( m_Viewer )
+    {
+        osg::ref_ptr<WGEZoomTrackballManipulator> cm = osg::dynamic_pointer_cast<WGEZoomTrackballManipulator>( m_Viewer->getCameraManipulator() );
+        if( cm )
+        {
+            osg::Vec3d eye, center, up;
+            cm->getHomePosition( eye, center, up );
+
+            cm->setCenter( center );
+            cm->fitToScreen( WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera() );
         }
         else
         {

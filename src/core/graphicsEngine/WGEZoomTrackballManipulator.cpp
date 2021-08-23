@@ -175,3 +175,98 @@ bool WGEZoomTrackballManipulator::getThrow() const
 {
     return m_allowThrow;
 }
+
+void WGEZoomTrackballManipulator::computeHomePosition( const osg::Camera *camera, bool useBoundingBox )
+{
+    if( getNode() )
+    {
+        osg::BoundingSphere boundingSphere;
+
+        if( useBoundingBox )
+        {
+            WGEZoomTrackballNodeVisitor cbVisitor;
+            getNode()->accept( cbVisitor );
+            osg::BoundingBox& bb = cbVisitor.getBoundingBox();
+
+            if( bb.valid() )
+            {
+                boundingSphere.expandBy( bb );
+            }
+            else
+            {
+                boundingSphere = getNode()->getBound();
+            }
+        }
+        else
+        {
+            boundingSphere = getNode()->getBound();
+        }
+
+        double radius = osg::maximum( ( double ) boundingSphere.radius(), 1e-6 );
+        m_radius = radius;
+        double dist = 3.5f * radius;
+
+        if( camera )
+        {
+            double left, right, bottom, top, zNear, zFar;
+            if( camera->getProjectionMatrixAsFrustum( left, right, bottom, top, zNear, zFar ) )
+            {
+                double vertical2 = fabs( right - left ) / zNear / 2.0;
+                double horizontal2 = fabs( top - bottom ) / zNear / 2.0;
+                double dim = horizontal2 < vertical2 ? horizontal2 : vertical2;
+                double viewAngle = atan2( dim, 1.0 );
+                dist = radius / sin( viewAngle );
+            }
+            else
+            {
+                if( camera->getProjectionMatrixAsOrtho( left, right, bottom, top, zNear, zFar ) )
+                {
+                    dist = fabs( zFar - zNear ) / 2.0;
+                }
+            }
+        }
+
+        setHomePosition( boundingSphere.center() + osg::Vec3d( 0.0, -dist, 0.0 ),
+                         boundingSphere.center(),
+                         osg::Vec3d( 0.0, 0.0, 1.0 ),
+                         _autoComputeHomePosition );
+    }
+}
+
+void WGEZoomTrackballManipulator::fitToScreen( const osg::Camera* camera )
+{
+    if( !camera )
+    {
+        return;
+    }
+
+    double radiusFac[] = {
+         1,  1,  1,
+        -1,  1,  1,
+         1, -1,  1,
+        -1, -1,  1,
+         1,  1, -1,
+        -1,  1, -1,
+         1, -1, -1,
+        -1, -1, -1
+    };
+    osg::Vec3 center = _homeCenter;
+    osg::Matrix transf = camera->getProjectionMatrix() * camera->getViewport()->computeWindowMatrix();
+    double fac = INFINITY;
+    for( int i = 0; i < 8; i++ )
+    {
+        osg::Vec3d vec = osg::Vec3( center.x() + m_radius * radiusFac[ i * 3 ],
+                                    center.y() + m_radius * radiusFac[ i * 3 + 1 ],
+                                    center.z() + m_radius * radiusFac[ i * 3 + 2 ] );
+        osg::Vec3d screenCoords = vec * transf;
+
+        double facX = abs( camera->getViewport()->width() / screenCoords.x() );
+        double facY = abs( camera->getViewport()->height() / screenCoords.y() );
+
+        fac = fmin( fac, facX );
+        fac = fmin( fac, facY );
+    }
+
+    m_zoom = fac;
+    setCenter( center );
+}
