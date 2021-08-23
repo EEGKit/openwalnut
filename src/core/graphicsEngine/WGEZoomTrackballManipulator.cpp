@@ -176,7 +176,7 @@ bool WGEZoomTrackballManipulator::getThrow() const
     return m_allowThrow;
 }
 
-void WGEZoomTrackballManipulator::computeHomePosition( const osg::Camera *camera, bool useBoundingBox )
+void WGEZoomTrackballManipulator::computeHomePosition( const osg::Camera*, bool useBoundingBox )
 {
     if( getNode() )
     {
@@ -202,31 +202,9 @@ void WGEZoomTrackballManipulator::computeHomePosition( const osg::Camera *camera
             boundingSphere = getNode()->getBound();
         }
 
-        double radius = osg::maximum( ( double ) boundingSphere.radius(), 1e-6 );
-        m_radius = radius;
-        double dist = 3.5f * radius;
+        m_radius = osg::maximum( ( double ) boundingSphere.radius(), 1e-6 );
 
-        if( camera )
-        {
-            double left, right, bottom, top, zNear, zFar;
-            if( camera->getProjectionMatrixAsFrustum( left, right, bottom, top, zNear, zFar ) )
-            {
-                double vertical2 = fabs( right - left ) / zNear / 2.0;
-                double horizontal2 = fabs( top - bottom ) / zNear / 2.0;
-                double dim = horizontal2 < vertical2 ? horizontal2 : vertical2;
-                double viewAngle = atan2( dim, 1.0 );
-                dist = radius / sin( viewAngle );
-            }
-            else
-            {
-                if( camera->getProjectionMatrixAsOrtho( left, right, bottom, top, zNear, zFar ) )
-                {
-                    dist = fabs( zFar - zNear ) / 2.0;
-                }
-            }
-        }
-
-        setHomePosition( boundingSphere.center() + osg::Vec3d( 0.0, -dist, 0.0 ),
+        setHomePosition( boundingSphere.center() + osg::Vec3d( 0.0, -100.0, 0.0 ), // The more far away the number from 0 is, the stronger is the pan
                          boundingSphere.center(),
                          osg::Vec3d( 0.0, 0.0, 1.0 ),
                          _autoComputeHomePosition );
