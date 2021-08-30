@@ -122,7 +122,7 @@ WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::
     tmpAction->setIconVisibleInMenu( true );
     m_cameraPresetResetMenu->addAction( tmpAction );
 
-    tmpAction = m_cameraPresetMenu->addAction( WQtGui::getIconManager()->getIcon( "coronal icon" ), "Fit screen", this,
+    tmpAction = m_cameraPresetMenu->addAction( WQtGui::getIconManager()->getIcon( "center icon" ), "Fit screen", this,
                                                SLOT( setFitScreenPosition() ),
                                                QKeySequence( Qt::CTRL + Qt::SHIFT + Qt::Key_F ) );
     tmpAction->setIconVisibleInMenu( true );

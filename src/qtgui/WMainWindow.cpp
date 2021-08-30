@@ -190,6 +190,7 @@ void WMainWindow::setupGUI()
     m_iconManager.addMapping( "axial icon", "orientation_axial" );
     m_iconManager.addMapping( "coronal icon", "orientation_coronal" );
     m_iconManager.addMapping( "sagittal icon", "orientation_sagittal" );
+    m_iconManager.addMapping( "center icon", "center_scene" );
     m_iconManager.addMapping( "DefaultModuleIcon", "default" );
     m_iconManager.addMapping( "missingModule", "question" );
     m_iconManager.addMapping( "view", "camera" );
