@@ -33,6 +33,7 @@
 #include <QDialog>
 #include <QListWidget>
 #include <QCheckBox>
+#include <QComboBox>
 
 #include "core/kernel/WModule.h"
 
@@ -127,6 +128,16 @@ private slots:
      */
     virtual void pathListSelectionChanged();
 
+    /**
+     * Call this to refresh the selected modules when a preset is selected
+     */
+    void comboboxItemChanged( QString selectedPreset );
+
+    /**
+     * Call this to show the blacklist preset options
+     */
+    void showBlacklistPresetOptions();
+
 protected:
 private:
     /**
@@ -167,6 +178,11 @@ private:
     void saveListToSettings();
 
     /**
+     * Saves the whitelist and the blacklist to the settings.
+     */
+    void resetAllModuleCheckboxes();
+
+    /**
      * This widget contains the allowed module list
      */
     QListWidget* m_list;
@@ -185,6 +201,16 @@ private:
      * Control whether the list is interpreted as black list
      */
     QCheckBox* m_asBlackList;
+
+    /**
+     * Check if you want to use a preset module list
+     */
+    QCheckBox* m_usePreset;
+    
+    /**
+     * Combobox to select a black list
+     */
+    QComboBox* m_selectPresetBlacklist;
 
     /**
      * Button responsible for removing the currently selected path in m_pathList.

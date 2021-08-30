@@ -33,6 +33,7 @@
 
 #include <QtCore/QDir>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QGridLayout>
@@ -115,7 +116,60 @@ WQtModuleConfig::WQtModuleConfig( QWidget* parent, Qt::WindowFlags f ):
 
     m_asBlackList = new QCheckBox( "Use as black-list", this );
     m_asBlackList->setToolTip( "Activate this option if you want all modules to be active in OpenWalnut that are not explicitly deactivated here." );
+    connect( m_asBlackList, SIGNAL( stateChanged( int ) ), this, SLOT( showBlacklistPresetOptions() ) );
     layoutAllowedModules->addWidget( m_asBlackList );
+
+    m_usePreset = new QCheckBox( "Use a preset module list", this );
+    m_usePreset->setToolTip( "Activate this option if you want to use a preset of preselected modules which may be specific for different research areas." );
+    m_usePreset->setDisabled(true);
+    if(m_asBlackList->checkState())
+    {
+        m_usePreset->setDisabled(false);
+    }
+    connect( m_usePreset, SIGNAL( stateChanged( int ) ), this, SLOT( resetAllModuleCheckboxes() ));
+    layoutAllowedModules->addWidget( m_usePreset );
+    
+    // Set presets here
+    WQtGui::getSettings().setValue( "qtgui/modules/preset/ ", QString::fromStdString(""));
+    WQtGui::getSettings().setValue( "qtgui/modules/preset/SIVERT", QString::fromStdString("Anisotropic Filter,Calculate GFA,Calculate Tensors,Cluster Display,ClusterDisplayVoxels,"
+                                                                                            "Data Type Conversion,Diffusion Tensor Scalars,EEG View,Effective Connectivity Cluster,Fiber Data Creator,"
+                                                                                            "Fiber translator,Functional MRI Viewer,Hierarchical Clustering Display,Image Space LIC,Image Space Tensor LIC,"
+                                                                                            "Merge Components To Vector,Mori Det. Tracking,Partition To Mesh,Picking in DVR Evaluation,"
+                                                                                            "Probabilistic Tract Rendering with multi transparent iso surfaces.,"
+                                                                                            "Read Amira Mesh,Read Dipoles,Read Raw Data,Read Simple Text Line Data,Read Spherical Harmonics,Read VCL,"
+                                                                                            "Read VIM,Scalar Data Creator,Spline Surface,Superquadric Glyphs,Surface Parameter Animator,"
+                                                                                            "Template,Template Colormapping,Template Containers,Template Data Loader,Template Render Pipelines,"
+                                                                                            "Template Shaders,Template UI,Vector Align,Vector Data Creator,Vector Normalize,Vector Operator,"
+                                                                                            "Vector Plot,Vector Scaling,WebGL Support,Write Amira Mesh,Write Dendrogram,"));
+
+    // combobox for black-list presets 
+    m_selectPresetBlacklist = new QComboBox ( this );
+    m_selectPresetBlacklist->setInsertPolicy( QComboBox::InsertAtBottom );
+    m_selectPresetBlacklist->setToolTip( "Select a blacklist preset or create a new one." );
+    m_selectPresetBlacklist->setFixedSize(120, 26);
+    m_selectPresetBlacklist->setEditable( false );
+    // read preset names from settings
+    QSettings* settings = &WQtGui::getSettings();
+    settings->beginGroup("qtgui/modules/preset/");
+    QStringList childKeys = settings->childKeys();
+    m_selectPresetBlacklist->addItems(childKeys);
+    settings->endGroup();
+    int selectedPresetIndex = m_selectPresetBlacklist->findText(WQtGui::getSettings().value( "qtgui/modules/selectedPreset", "" ).toString());
+    // -1 means selectedPresetIndex not found
+    if(selectedPresetIndex != -1)
+    {
+        m_selectPresetBlacklist->setCurrentIndex(selectedPresetIndex);
+    }else{
+        m_selectPresetBlacklist->setCurrentIndex(0);
+    }
+
+    m_selectPresetBlacklist->setDisabled(true);
+    if(m_asBlackList->checkState())
+    {
+        m_selectPresetBlacklist->setDisabled(false);
+    }
+    connect( m_selectPresetBlacklist, SIGNAL( currentTextChanged( QString ) ), this, SLOT( comboboxItemChanged ( QString ) ) );
+    layoutAllowedModules->addWidget( m_selectPresetBlacklist );
 
     // create the module list
     m_list = new QListWidget();
@@ -236,10 +290,21 @@ void WQtModuleConfig::loadListsFromSettings( bool defaultModulePaths )
     bool asBlackList = WQtGui::getSettings().value( "qtgui/modules/asBlackList", false ).toBool();
     m_asBlackList->setCheckState( asBlackList ? Qt::Checked : Qt::Unchecked );
 
-    // read settings
-    std::string allowedModules = WQtGui::getSettings().value( "qtgui/modules/allowedList", "" ).toString().toStdString();
-    m_allowedModules = string_utils::tokenize( allowedModules, "," );
+    bool usePreset = WQtGui::getSettings().value( "qtgui/modules/usePreset", false ).toBool();
+    m_usePreset->setCheckState( usePreset ? Qt::Checked : Qt::Unchecked );
 
+    std::string allowedModules = "";
+
+    // read settings
+    if(usePreset)
+    {
+        allowedModules = WQtGui::getSettings().value( "qtgui/modules/preset/" + m_selectPresetBlacklist->currentText(), "" ).toString().toStdString();
+    }else{
+        allowedModules = WQtGui::getSettings().value( "qtgui/modules/allowedList", "" ).toString().toStdString();
+    }
+
+    m_allowedModules = string_utils::tokenize( allowedModules, "," );
+ 
     // set dialog according to the settings
     for( AllowedModuleList::const_iterator iter = m_allowedModules.begin(); iter != m_allowedModules.end(); ++iter )
     {
@@ -284,6 +349,9 @@ void WQtModuleConfig::saveListToSettings()
     WQtGui::getSettings().setValue( "qtgui/modules/allowedList", QString::fromStdString( allowedAsString ) );
     WQtGui::getSettings().setValue( "qtgui/modules/IgnoreAllowedList", ( m_showThemAll->checkState() == Qt::Checked ) );
     WQtGui::getSettings().setValue( "qtgui/modules/asBlackList", ( m_asBlackList->checkState() == Qt::Checked ) );
+    
+    WQtGui::getSettings().setValue( "qtgui/modules/usePreset", m_usePreset->checkState());
+    WQtGui::getSettings().setValue( "qtgui/modules/selectedPreset", m_selectPresetBlacklist->currentText());
 
     // also write the path list
     QList< QVariant > paths;
@@ -352,16 +420,12 @@ void WQtModuleConfig::reset()
 {
     m_pathList->clear();
 
-    // reset all checkboxes
-    for( std::vector< WModule::ConstSPtr >::const_iterator iter = m_moduleList.begin(); iter != m_moduleList.end(); ++iter )
-    {
-        // we later need to find the checkbox for one module easily:
-        m_moduleItemMap[ ( *iter )->getName() ]->setCheckState( Qt::Unchecked );
-    }
+    resetAllModuleCheckboxes();
     loadListsFromSettings( true );
 
     m_showThemAll->setCheckState( Qt::Unchecked );
     m_asBlackList->setCheckState( Qt::Unchecked );
+    m_usePreset->setCheckState( Qt::Unchecked );
 
     m_list->setDisabled( false );
 }
@@ -388,5 +452,54 @@ void WQtModuleConfig::pathListSelectionChanged()
     else
     {
         m_removePathButton->setEnabled( false );
+    }
+}
+
+void WQtModuleConfig::resetAllModuleCheckboxes()
+{
+    for( std::vector< WModule::ConstSPtr >::const_iterator iter = m_moduleList.begin(); iter != m_moduleList.end(); ++iter )
+    {
+        // we later need to find the checkbox for one module easily:
+        m_moduleItemMap[ ( *iter )->getName() ]->setCheckState( Qt::Unchecked );
+    }
+}
+
+void WQtModuleConfig::comboboxItemChanged( QString selectedPreset )
+{
+    std::string allowedModules = "";
+
+    // read settings
+    if(m_usePreset->isChecked())
+    {
+        allowedModules = WQtGui::getSettings().value( "qtgui/modules/preset/" + selectedPreset, "" ).toString().toStdString();
+    }else{
+        allowedModules = WQtGui::getSettings().value( "qtgui/modules/allowedList", "" ).toString().toStdString();
+    }
+
+    m_allowedModules = string_utils::tokenize( allowedModules, "," );
+
+    resetAllModuleCheckboxes();
+
+    // set dialog according to the settings
+    for( AllowedModuleList::const_iterator iter = m_allowedModules.begin(); iter != m_allowedModules.end(); ++iter )
+    {
+        if( m_moduleItemMap.count( *iter ) )
+        {
+            m_moduleItemMap[ *iter ]->setCheckState( Qt::Checked );
+        }
+    }
+}
+
+void WQtModuleConfig::showBlacklistPresetOptions()
+{
+    if( m_asBlackList->checkState() == Qt::Checked )
+    {
+        m_usePreset->setDisabled( false );
+        m_selectPresetBlacklist->setDisabled( false );
+    }
+    else
+    {
+        m_usePreset->setDisabled( true );
+        m_selectPresetBlacklist->setDisabled( true );
     }
 }
