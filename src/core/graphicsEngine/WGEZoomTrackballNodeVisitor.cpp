@@ -24,10 +24,11 @@
 
 #include <iostream>
 
-#include <osg/Drawable>
-#include <osg/Projection>
 #include <osg/Camera>
+#include <osg/Drawable>
+#include <osg/Geometry>
 #include <osg/MatrixTransform>
+#include <osg/Projection>
 
 #include "geodes/WGEGridNode.h"
 #include "WGEZoomTrackballNodeVisitor.h"
@@ -43,6 +44,7 @@ void WGEZoomTrackballNodeVisitor::reset()
 
 void WGEZoomTrackballNodeVisitor::apply( osg::Camera& node ) // NOLINT
 {
+    // Ignore all cameras that are a 2D orthogonal projection.
     double left, right, bottom, top, zNear, zFar;
     if( node.getProjectionMatrixAsOrtho( left, right, bottom, top, zNear, zFar ) && zNear == -1 && zFar == 1 )
     {
@@ -53,6 +55,7 @@ void WGEZoomTrackballNodeVisitor::apply( osg::Camera& node ) // NOLINT
 
 void WGEZoomTrackballNodeVisitor::apply( osg::Projection& node ) // NOLINT
 {
+    // Ignore all 2D orthogonal projections.
     double left, right, bottom, top, zNear, zFar;
     if( node.getMatrix().getOrtho( left, right, bottom, top, zNear, zFar ) && zNear == -1 && zFar == 1 )
     {
@@ -72,6 +75,7 @@ void WGEZoomTrackballNodeVisitor::apply( osg::Drawable& node ) // NOLINT
 
 void WGEZoomTrackballNodeVisitor::apply( osg::MatrixTransform& node ) // NOLINT
 {
+    // Ignore grids.
     if( !dynamic_cast< WGEGridNode* >( &node ) )
     {
         traverse( node );

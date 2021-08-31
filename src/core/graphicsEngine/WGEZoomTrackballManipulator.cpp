@@ -204,7 +204,7 @@ void WGEZoomTrackballManipulator::computeHomePosition( const osg::Camera*, bool 
 
         m_radius = osg::maximum( ( double ) boundingSphere.radius(), 1e-6 );
 
-        setHomePosition( boundingSphere.center() + osg::Vec3d( 0.0, -100.0, 0.0 ), // The more far away the number from 0 is, the stronger is the pan
+        setHomePosition( boundingSphere.center() + osg::Vec3d( 0.0, -m_radius, 0.0 ), // The more far away the number from 0 is, the stronger is the pan
                          boundingSphere.center(),
                          osg::Vec3d( 0.0, 0.0, 1.0 ),
                          _autoComputeHomePosition );
