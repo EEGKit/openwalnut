@@ -96,9 +96,6 @@ void WMPointConnector::properties()
     m_adaptiveVisibilityAngle->setMin( 0.0 );
     m_adaptiveVisibilityAngle->setMax( 90.0 );
 
-    m_enablePhysicalAngle = assistanceGroup->addProperty( "Enable physical angle", "Enables the calculation of the visibility angle", false,
-                                                           boost::bind( &WMPointConnector::updatePoints, this ) );
-
     m_hiddenOpacity = assistanceGroup->addProperty( "Hidden point opacity", "Changes the opacity of the hidden points", 0.1,
                                                      boost::bind( &WMPointConnector::updatePoints, this ) );
     m_hiddenOpacity->setMin( 0.0 );
@@ -267,11 +264,6 @@ void WMPointConnector::updatePoints()
         return;
     }
 
-    if( m_enablePhysicalAngle->get() != m_adaptiveVisibilityAngle->isHidden() )
-    {
-        m_adaptiveVisibilityAngle->setHidden( m_enablePhysicalAngle->get() );
-    }
-
     WDataSetPoints::VertexArray vertices( new std::vector< float > );
     WDataSetPoints::VertexArray colors( new std::vector< float > );
 
@@ -332,44 +324,8 @@ bool WMPointConnector::isAdaptivelyHidden( osg::Vec3 vertex )
     double angle = WAngleHelper::calculateAngle( selected - before, vertex - selected );
 
     double checkAngle = m_adaptiveVisibilityAngle->get();
-    if( m_enablePhysicalAngle->get() )
-    {
-        checkAngle = calculatePhysicalAngle() * 2.5; // Helge wrote that his angle should be either multiplied by 2.5 or 5.0
-    }
 
     return angle > checkAngle && angle < ( 180.0 - checkAngle );
-}
-
-double WMPointConnector::calculatePhysicalAngle()
-{
-    // Based on this paper: https://www.researchgate.net/publication/309738658_Proton_tracking_in_a_high-granularity_Digital_Tracking_Calorimeter_for_proton_CT_purposes
-
-    const double mass = 1.6726219e-27;                                      // The mass of a proton in kg
-    const double energyRest = 0.939;                                        // The rest energy of a proton in GeV
-    const double lightSpeed = 3.0e8;                                        // The speed of light in m/s
-    const double mevFact = 5.36e-22;                                        // The factor of kg-m/s to MeV
-    const double helgeEnding = 0.98374582424;                               // The ending of helge's formula precalculated
-
-    size_t verIdx = 0;
-    if( !m_connectorData->getSelectedPoint( &verIdx ) )
-    {
-        return 0.0;
-    }
-    double energyDep = m_connectorData->getEdeps()->at( verIdx );           // The energy deposition of the proton
-    if( energyDep == 0.0 )
-    {
-        return 0.0;
-    }
-
-    double relFactor = ( energyDep + energyRest ) / energyRest;             // The relative factor is the factor between total energy and rest energy
-    double relSpeed = sqrt( 1.0 - ( 1.0 / ( relFactor * relFactor ) ) );    // The relative speed from the relative factor
-
-    double momentum = relFactor * mass * relSpeed * lightSpeed;             // Calculating momentum in kg-m/s
-    momentum = momentum / mevFact;                                          // Convert to MeV
-
-    double angle = ( 13.6 / ( relSpeed * momentum ) ) * helgeEnding;        // Use Helge's formula
-
-    return angle * 180.0 / M_PI;                                            // return angle in degrees
 }
 
 void WMPointConnector::handleClick( osg::Vec3 cameraPosition, osg::Vec3 direction, bool isLeftClick )
