@@ -32,8 +32,6 @@
 
 #include <osg/Geode>
 
-#include "../fiberDisplay/WMFiberDisplay.h"
-#include "../pointRenderer/WMPointRenderer.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
 #include "core/graphicsEngine/onscreenSelection/WOnscreenSelection.h"

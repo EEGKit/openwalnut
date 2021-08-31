@@ -33,7 +33,6 @@
 #include "action/WFiberActionAddVertex.h"
 #include "action/WFiberActionMultideselect.h"
 #include "action/WFiberActionMultiselect.h"
-#include "action/WFiberActionRemoveVertex.h"
 #include "action/WFiberActionRemoveFiber.h"
 #include "action/WFiberActionRemoveVertex.h"
 #include "action/WFiberActionToggle.h"
