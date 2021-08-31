@@ -33,6 +33,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include <memory>
 #include <string>
 
 #include <osg/Geode>
@@ -41,26 +42,22 @@
 #include <osg/ShapeDrawable>
 #include <osg/StateAttribute>
 
-#include "core/kernel/WKernel.h"
-// #include "core/common/WPathHelper.h"
-
+#include "WDemoGeometry.h"
+#include "WMTemplateShaders.h"
 #include "core/graphicsEngine/WGEGeodeUtils.h"
+#include "core/graphicsEngine/WGEImage.h"
 #include "core/graphicsEngine/WGEManagedGroupNode.h"
 #include "core/graphicsEngine/WGERequirement.h"
 #include "core/graphicsEngine/WGETexture.h"
-#include "core/graphicsEngine/WGEImage.h"
 #include "core/graphicsEngine/WGETextureUtils.h"
 #include "core/graphicsEngine/WGEUtils.h"
+#include "core/graphicsEngine/callbacks/WGEShaderAnimationCallback.h"
 #include "core/graphicsEngine/shaders/WGEPropertyUniform.h"
 #include "core/graphicsEngine/shaders/WGEShader.h"
 #include "core/graphicsEngine/shaders/WGEShaderDefineOptions.h"
 #include "core/graphicsEngine/shaders/WGEShaderPropertyDefine.h"
 #include "core/graphicsEngine/shaders/WGEShaderPropertyDefineOptions.h"
-#include "core/graphicsEngine/callbacks/WGEShaderAnimationCallback.h"
-
-// Some utils for creating some demo geometry.
-#include "WDemoGeometry.h"
-#include "WMTemplateShaders.h"
+#include "core/kernel/WKernel.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // All the basic setup ... Refer to WMTemplate.cpp if you do not understand these commands.

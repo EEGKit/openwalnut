@@ -25,14 +25,14 @@
 #ifndef WSUBJECT_H
 #define WSUBJECT_H
 
+#include <memory>
 #include <string>
 #include <vector>
-#include <boost/shared_ptr.hpp>
+
 
 #include "../common/WConditionSet.h"
 #include "../common/WSharedObject.h"
 #include "../common/WSharedSequenceContainer.h"
-
 #include "WPersonalInformation.h"
 
 

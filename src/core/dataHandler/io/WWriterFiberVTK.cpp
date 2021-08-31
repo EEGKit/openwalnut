@@ -23,10 +23,10 @@
 //---------------------------------------------------------------------------
 
 #include <fstream>
+#include <memory>
 #include <string>
 
 #include <boost/filesystem.hpp>
-#include <boost/shared_ptr.hpp>
 
 #include "../../common/WAssert.h"
 #include "../../common/WIOTools.h"

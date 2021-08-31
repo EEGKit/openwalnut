@@ -26,12 +26,12 @@
 #define WROI_H
 
 #include <list>
+#include <memory>
 #include <shared_mutex>
 #include <string>
 
-#include <boost/signals2/signal.hpp>
 #include <boost/signals2/connection.hpp>
-
+#include <boost/signals2/signal.hpp>
 #include <osg/Geode>
 
 #include "../common/WProperties.h"

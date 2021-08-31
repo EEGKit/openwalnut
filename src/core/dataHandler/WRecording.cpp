@@ -22,10 +22,10 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
 #include "../common/WPrototyped.h"
-
 #include "WRecording.h"
 
 // prototype instance as singleton

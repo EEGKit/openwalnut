@@ -25,6 +25,8 @@
 #ifndef WGEVIEWEREFFECTHORIZON_H
 #define WGEVIEWEREFFECTHORIZON_H
 
+#include <memory>
+
 #include "WGEViewerEffect.h"
 
 /**

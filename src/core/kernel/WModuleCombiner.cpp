@@ -22,12 +22,12 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
+
 #include "../common/WLogger.h"
-
 #include "WKernel.h"
-#include "WModuleContainer.h"
-
 #include "WModuleCombiner.h"
+#include "WModuleContainer.h"
 
 WModuleCombiner::WModuleCombiner( std::shared_ptr< WModuleContainer > target ):
     WThreadedRunner(),

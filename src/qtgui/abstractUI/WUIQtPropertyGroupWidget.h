@@ -25,15 +25,14 @@
 #ifndef WUIQTPROPERTYGROUPWIDGET_H
 #define WUIQTPROPERTYGROUPWIDGET_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
-#include "core/ui/WUIPropertyGroupWidget.h"
 #include "../WMainWindow.h"
 #include "../controlPanel/WQtPropertyGroupWidget.h"
-
 #include "WUIQtWidgetBase.h"
+#include "core/ui/WUIPropertyGroupWidget.h"
 
 /**
  * Implementation of \ref WUIPropertyGroupWidget.

@@ -22,6 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -595,4 +596,7 @@ void WMData::load()
 
     // done. close file and report finish
     progress1->finish();
+
+    m_infoProperties->removeProperty( m_dataSet->getInformationProperties() );
+    m_infoProperties->addProperty( m_dataSet->getInformationProperties() );
 }

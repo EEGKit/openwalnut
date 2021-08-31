@@ -25,24 +25,21 @@
 #ifndef WMHISTOGRAMVIEW_H
 #define WMHISTOGRAMVIEW_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <boost/thread.hpp>
 #include <osg/Geode>
 
-#include "core/common/math/linearAlgebra/WMatrixFixed.h"
-#include "core/common/WHistogramBasic.h"
 #include "core/common/WCounter.h"
-
+#include "core/common/WHistogramBasic.h"
+#include "core/common/math/linearAlgebra/WMatrixFixed.h"
 #include "core/dataHandler/WDataSetHistogram1D.h"
-
+#include "core/graphicsEngine/WGEGroupNode.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
-
-#include "core/graphicsEngine/WGEGroupNode.h"
-
 #include "core/ui/WUIViewWidget.h"
 
 // TODO(reichenbach): choose color of frame and marker depending on the user's chosen window background color

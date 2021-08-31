@@ -25,10 +25,10 @@
 #ifndef WDATAMODULEINPUTFILE_H
 #define WDATAMODULEINPUTFILE_H
 
-#include <string>
+#include <memory>
 #include <ostream>
+#include <string>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/filesystem/path.hpp>
 
 #include "WDataModuleInput.h"

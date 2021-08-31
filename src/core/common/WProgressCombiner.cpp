@@ -22,9 +22,10 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
+#include <set>
 #include <sstream>
 #include <string>
-#include <set>
 
 #include <boost/utility.hpp>
 

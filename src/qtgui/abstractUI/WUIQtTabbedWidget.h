@@ -25,18 +25,15 @@
 #ifndef WUIQTTABBEDWIDGET_H
 #define WUIQTTABBEDWIDGET_H
 
+#include <memory>
 #include <string>
 
 #include <QTabWidget>
 
-#include <boost/shared_ptr.hpp>
-
-#include "core/ui/WUITabbedWidget.h"
 #include "../WMainWindow.h"
-
 #include "../guiElements/WQtDockWidget.h"
-
 #include "WUIQtWidgetBase.h"
+#include "core/ui/WUITabbedWidget.h"
 
 /**
  * Implementation of \ref WUITabbedWidget.

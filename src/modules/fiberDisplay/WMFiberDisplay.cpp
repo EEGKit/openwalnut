@@ -22,8 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
-#include <vector>
+#include <memory>
 #include <string>
+#include <vector>
 
 #include <osg/Depth>
 #include <osg/Drawable>
@@ -37,14 +38,15 @@
 #include <osgDB/Registry>
 #include <osgDB/WriteFile>
 
+#include "WMFiberDisplay.h"
 #include "core/common/WPropertyHelper.h"
 #include "core/common/WPropertyObserver.h"
 #include "core/dataHandler/WDataHandler.h"
 #include "core/dataHandler/WDataSetFiberClustering.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/graphicsEngine/WGEColormapping.h"
-#include "core/graphicsEngine/WGEUtils.h"
 #include "core/graphicsEngine/WGEGeodeUtils.h"
+#include "core/graphicsEngine/WGEUtils.h"
 #include "core/graphicsEngine/callbacks/WGEFunctorCallback.h"
 #include "core/graphicsEngine/callbacks/WGENodeMaskCallback.h"
 #include "core/graphicsEngine/postprocessing/WGEPostprocessingNode.h"
@@ -52,8 +54,6 @@
 #include "core/graphicsEngine/shaders/WGEShaderDefineOptions.h"
 #include "core/graphicsEngine/shaders/WGEShaderPropertyDefineOptions.h"
 #include "core/kernel/WKernel.h"
-
-#include "WMFiberDisplay.h"
 
 // This line is needed by the module loader to actually find your module. You need to add this to your module too. Do NOT add a ";" here.
 W_LOADABLE_MODULE( WMFiberDisplay )

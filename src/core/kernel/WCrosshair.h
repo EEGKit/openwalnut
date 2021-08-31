@@ -25,7 +25,9 @@
 #ifndef WCROSSHAIR_H
 #define WCROSSHAIR_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
+
 #include "../common/math/linearAlgebra/WPosition.h"
 
 

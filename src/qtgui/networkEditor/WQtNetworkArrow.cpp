@@ -22,29 +22,26 @@
 //
 //---------------------------------------------------------------------------
 
-#include <math.h>
-#include <cmath>
-
 #include <algorithm>
-#include <string>
+#include <cmath>
 #include <iostream>
+#include <math.h>
+#include <memory>
+#include <string>
 
 #include <QGraphicsLineItem>
 #include <QGraphicsPathItem>
-#include <QStyleOptionGraphicsItem>
 #include <QPainterPath>
+#include <QStyleOptionGraphicsItem>
 
-#include "core/kernel/combiner/WApplyCombiner.h"
-
-#include "../WQtGui.h"
 #include "../WMainWindow.h"
-
-#include "WQtNetworkScene.h"
+#include "../WQtGui.h"
+#include "WQtNetworkArrow.h"
 #include "WQtNetworkEditor.h"
 #include "WQtNetworkInputPort.h"
 #include "WQtNetworkOutputPort.h"
-
-#include "WQtNetworkArrow.h"
+#include "WQtNetworkScene.h"
+#include "core/kernel/combiner/WApplyCombiner.h"
 
 const QColor owRed( 248, 87, 87 );
 const QColor owGreen( 115, 225, 115 );

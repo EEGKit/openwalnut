@@ -25,21 +25,19 @@
 #ifndef WUIQTVIEWWIDGET_H
 #define WUIQTVIEWWIDGET_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
-#include "core/graphicsEngine/WGEGroupNode.h"
-#include "core/graphicsEngine/WGECamera.h"
-#include "core/graphicsEngine/WGEViewer.h"
-#include "core/common/WCondition.h"
-
-#include "core/ui/WUIViewWidget.h"
 #include "../WMainWindow.h"
 #include "../WQtGLDockWidget.h"
 #include "../WQtGLWidget.h"
-
 #include "WUIQtWidgetBase.h"
+#include "core/common/WCondition.h"
+#include "core/graphicsEngine/WGECamera.h"
+#include "core/graphicsEngine/WGEGroupNode.h"
+#include "core/graphicsEngine/WGEViewer.h"
+#include "core/ui/WUIViewWidget.h"
 
 /**
  * Implementation of \ref WUIViewWidget.

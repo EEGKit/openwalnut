@@ -24,15 +24,15 @@
 
 #include <algorithm>
 #include <list>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
-#include "../../common/math/WMath.h"
-#include "../../common/math/WPlane.h"
 #include "../../common/WLimits.h"
 #include "../../common/WTransferable.h"
+#include "../../common/math/WMath.h"
+#include "../../common/math/WPlane.h"
 #include "../WDataSetFiberVector.h"
 #include "WFiberCluster.h"
 

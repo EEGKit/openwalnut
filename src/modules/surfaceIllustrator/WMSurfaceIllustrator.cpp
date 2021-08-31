@@ -23,29 +23,28 @@
 //---------------------------------------------------------------------------
 
 #include <algorithm>
-#include <list>
 #include <limits>
+#include <list>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <osg/Geode>
 #include <osg/LightModel>
 
-#include "core/common/math/WMath.h"
+#include "WMSurfaceIllustrator.h"
+#include "WMSurfaceIllustrator.xpm"
 #include "core/common/WLimits.h"
+#include "core/common/math/WMath.h"
+#include "core/graphicsEngine/WGEColormapping.h"
+#include "core/graphicsEngine/WGEGeodeUtils.h"
+#include "core/graphicsEngine/WGEUtils.h"
+#include "core/graphicsEngine/WTriangleMesh.h"
 #include "core/graphicsEngine/shaders/WGEPropertyUniform.h"
 #include "core/graphicsEngine/shaders/WGEShader.h"
 #include "core/graphicsEngine/shaders/WGEShaderPropertyDefineOptions.h"
-#include "core/graphicsEngine/WGEColormapping.h"
-#include "core/graphicsEngine/WGEGeodeUtils.h"
-#include "core/graphicsEngine/WGEManagedGroupNode.h"
-#include "core/graphicsEngine/WGEUtils.h"
-#include "core/graphicsEngine/WTriangleMesh.h"
 #include "core/kernel/WKernel.h"
-
-#include "WMSurfaceIllustrator.h"
-#include "WMSurfaceIllustrator.xpm"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMSurfaceIllustrator )

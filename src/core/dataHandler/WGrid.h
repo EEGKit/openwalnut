@@ -26,8 +26,8 @@
 #define WGRID_H
 
 #include <cstddef>
+#include <memory>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../common/WBoundingBox.h"
 

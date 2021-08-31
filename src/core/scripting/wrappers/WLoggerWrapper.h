@@ -25,15 +25,14 @@
 #ifndef WLOGGERWRAPPER_H
 #define WLOGGERWRAPPER_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/tuple/tuple.hpp>
 
-
-#include "core/common/WLogger.h"
 #include "core/common/WLogStream.h"
+#include "core/common/WLogger.h"
 
 /**
  * \class WLoggerWrapper

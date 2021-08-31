@@ -22,19 +22,22 @@
 //
 //---------------------------------------------------------------------------
 
-#include <list>
-#include <set>
-#include <vector>
-#include <string>
-#include <sstream>
 #include <algorithm>
+#include <list>
+#include <memory>
+#include <set>
+#include <sstream>
+#include <string>
 #include <utility>
+#include <vector>
 
 #include "../common/WLogger.h"
 #include "../common/WThreadedRunner.h"
 #include "../common/exceptions/WSignalSubscriptionFailed.h"
 #include "WBatchLoader.h"
+#include "WDataModule.h"
 #include "WModuleCombiner.h"
+#include "WModuleContainer.h"
 #include "WModuleFactory.h"
 #include "WModuleInputConnector.h"
 #include "WModuleOutputConnector.h"
@@ -42,9 +45,6 @@
 #include "combiner/WApplyCombiner.h"
 #include "exceptions/WModuleAlreadyAssociated.h"
 #include "exceptions/WModuleUninitialized.h"
-#include "WDataModule.h"
-
-#include "WModuleContainer.h"
 
 WModuleContainer::WModuleContainer( std::string name, std::string description ):
     WModule(),

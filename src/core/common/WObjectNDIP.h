@@ -25,9 +25,9 @@
 #ifndef WOBJECTNDIP_H
 #define WOBJECTNDIP_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
 #include "WProperties.h"
 

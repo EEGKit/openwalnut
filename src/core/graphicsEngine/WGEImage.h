@@ -25,10 +25,10 @@
 #ifndef WGEIMAGE_H
 #define WGEIMAGE_H
 
+#include <memory>
 #include <string>
 
 #include <boost/filesystem.hpp>
-
 #include <osg/Image>
 
 #include "core/common/WColor.h"

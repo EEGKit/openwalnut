@@ -23,14 +23,15 @@
 //---------------------------------------------------------------------------
 
 #include <fstream>
+#include <memory>
 #include <string>
 #include <vector>
 
+#include "WMWriteTracts.h"
+#include "WMWriteTracts.xpm"
 #include "core/common/WPropertyHelper.h"
 #include "core/dataHandler/io/WWriterFiberVTK.h"
 #include "core/kernel/WKernel.h"
-#include "WMWriteTracts.h"
-#include "WMWriteTracts.xpm"
 
 W_LOADABLE_MODULE( WMWriteTracts )
 

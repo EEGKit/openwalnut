@@ -22,6 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
+
 #include "WRasterParameterization.h"
 
 WRasterParameterization::WRasterParameterization( std::shared_ptr< WGridRegular3D > grid ):

@@ -25,6 +25,7 @@
 #ifndef WMWEBGLSUPPORT_H
 #define WMWEBGLSUPPORT_H
 
+#include <memory>
 #include <string>
 
 #include <osg/Geode>

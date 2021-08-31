@@ -25,21 +25,20 @@
 #ifndef WMSUPERQUADRICGLYPHS_H
 #define WMSUPERQUADRICGLYPHS_H
 
+#include <memory>
 #include <string>
 
-#include <osg/Node>
 #include <osg/Geode>
+#include <osg/Node>
 #include <osg/Uniform>
 
+#include "core/dataHandler/WDataSetDTI.h"
+#include "core/graphicsEngine/WGEManagedGroupNode.h"
+#include "core/graphicsEngine/callbacks/WGELinearTranslationCallback.h"
+#include "core/graphicsEngine/shaders/WGEShader.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
-
-#include "core/dataHandler/WDataSetDTI.h"
-
-#include "core/graphicsEngine/callbacks/WGELinearTranslationCallback.h"
-#include "core/graphicsEngine/WGEManagedGroupNode.h"
-#include "core/graphicsEngine/shaders/WGEShader.h"
 
 /**
  * Rendering of GPU bases Superquadric Glyphs. These glyphs are completely ray-traced on the GPU.

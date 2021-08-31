@@ -25,21 +25,20 @@
 #ifndef WQTCOLORMAPPER_H
 #define WQTCOLORMAPPER_H
 
+#include <memory>
 #include <vector>
-#include <boost/shared_ptr.hpp>
-#include <boost/signals2/signal.hpp>
 
 #include <QDockWidget>
 #include <QListWidget>
-#include <QVBoxLayout>
-#include <QPushButton>
 #include <QListWidgetItem>
-
-#include "core/common/WSharedSequenceContainer.h"
-#include "core/common/WSharedObject.h"
-#include "core/graphicsEngine/WGETexture.h"
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <boost/signals2/signal.hpp>
 
 #include "../guiElements/WQtDockWidget.h"
+#include "core/common/WSharedObject.h"
+#include "core/common/WSharedSequenceContainer.h"
+#include "core/graphicsEngine/WGETexture.h"
 
 class WDataSet;
 

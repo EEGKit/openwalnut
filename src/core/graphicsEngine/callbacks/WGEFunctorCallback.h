@@ -25,8 +25,9 @@
 #ifndef WGEFUNCTORCALLBACK_H
 #define WGEFUNCTORCALLBACK_H
 
-#include <boost/signals2.hpp>
+#include <memory>
 
+#include <boost/signals2.hpp>
 #include <osg/Node>
 #include <osg/NodeCallback>
 

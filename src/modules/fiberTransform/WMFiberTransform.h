@@ -25,11 +25,17 @@
 #ifndef WMFIBERTRANSFORM_H
 #define WMFIBERTRANSFORM_H
 
+#include <memory>
 #include <string>
 
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
+
+/**
+ * Forward declaration of WDataSetFibers.
+ */
+class WDataSetFibers;
 
 /**
  * Transforms a fiber dataset

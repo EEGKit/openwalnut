@@ -22,15 +22,14 @@
 //
 //---------------------------------------------------------------------------
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
-#include "core/kernel/WModule.h"
-
-#include "WMDataCreatorScalar.h"
-#include "WMDataCreatorVector.h"
-#include "WMDataCreatorFibers.h"
 
 #include "WMDataCreator.h"
+#include "WMDataCreatorFibers.h"
+#include "WMDataCreatorScalar.h"
+#include "WMDataCreatorVector.h"
+#include "core/kernel/WModule.h"
 
 extern "C" void WLoadModule( WModuleList& m )  // NOLINT
 {

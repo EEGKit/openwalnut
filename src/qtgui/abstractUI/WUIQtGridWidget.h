@@ -25,16 +25,14 @@
 #ifndef WUIQTGRIDWIDGET_H
 #define WUIQTGRIDWIDGET_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
-#include "core/ui/WUIGridWidget.h"
 #include "../WMainWindow.h"
-
 #include "../guiElements/WQtDockWidget.h"
-
 #include "WUIQtWidgetBase.h"
+#include "core/ui/WUIGridWidget.h"
 
 /**
  * Implementation of \ref WUIGridWidget.

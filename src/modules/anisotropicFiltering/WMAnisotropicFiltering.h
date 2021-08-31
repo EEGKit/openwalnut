@@ -25,14 +25,15 @@
 #ifndef WMANISOTROPICFILTERING_H
 #define WMANISOTROPICFILTERING_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
+#include "core/dataHandler/WDataSetSingle.h"
+#include "core/dataHandler/WValueSet.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
-#include "core/dataHandler/WDataSetSingle.h"
-#include "core/dataHandler/WValueSet.h"
 
 /**
  * This module smoothes images of a dataset while preserving edges.

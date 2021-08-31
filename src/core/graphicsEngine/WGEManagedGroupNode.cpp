@@ -22,8 +22,10 @@
 //
 //---------------------------------------------------------------------------
 
-#include "callbacks/WGENodeMaskCallback.h"
+#include <memory>
+
 #include "WGEManagedGroupNode.h"
+#include "callbacks/WGENodeMaskCallback.h"
 
 WGEManagedGroupNode::WGEManagedGroupNode( std::shared_ptr< WBoolFlag > active ):
     WGEGroupNode()

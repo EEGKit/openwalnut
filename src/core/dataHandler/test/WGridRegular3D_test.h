@@ -26,17 +26,16 @@
 #define WGRIDREGULAR3D_TEST_H
 
 #include <cstdio>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
-
 #include <cxxtest/TestSuite.h>
 
+#include "../../common/WLimits.h"
 #include "../../common/exceptions/WOutOfBounds.h"
 #include "../../common/math/test/WVector3dTraits.h"
-#include "../../common/WLimits.h"
 #include "../WGridRegular3D.h"
 
 

@@ -22,11 +22,11 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <vector>
 
-#include "core/common/WAssert.h"
-
 #include "WDataCreatorTangle.h"
+#include "core/common/WAssert.h"
 
 WDataCreatorTangle::WDataCreatorTangle():
     WObjectNDIP< WDataSetSingleCreatorInterface >( "Tangle", "Creates a volume using the tangle equation." )

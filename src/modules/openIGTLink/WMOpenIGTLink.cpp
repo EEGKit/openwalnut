@@ -22,15 +22,14 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
-#include "core/kernel/WKernel.h"
-
-#include "core/dataHandler/WDataSetScalar.h"
-#include "core/kernel/WSelectionManager.h"
-
-#include "WMOpenIGTLink.h"
 #include "WIGTLinkRemote.h"
+#include "WMOpenIGTLink.h"
+#include "core/dataHandler/WDataSetScalar.h"
+#include "core/kernel/WKernel.h"
+#include "core/kernel/WSelectionManager.h"
 
 #define PORT_SLICER_DEFAULT 18944
 

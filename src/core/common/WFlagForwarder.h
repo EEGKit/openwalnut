@@ -25,7 +25,8 @@
 #ifndef WFLAGFORWARDER_H
 #define WFLAGFORWARDER_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 #include <boost/signals2/signal.hpp>
 
 #include "WFlag.h"

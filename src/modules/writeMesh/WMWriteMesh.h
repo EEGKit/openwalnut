@@ -25,6 +25,7 @@
 #ifndef WMWRITEMESH_H
 #define WMWRITEMESH_H
 
+#include <memory>
 #include <string>
 #include <vector>
 

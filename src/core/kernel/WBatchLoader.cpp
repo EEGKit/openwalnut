@@ -22,15 +22,15 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <vector>
 
+#include "WBatchLoader.h"
+#include "WDataModuleInputFile.h"
 #include "WModule.h"
 #include "WModuleContainer.h"
 #include "WModuleFactory.h"
-#include "WDataModuleInputFile.h"
-
-#include "WBatchLoader.h"
 
 WBatchLoader::WBatchLoader( std::vector< std::string > filenames, std::shared_ptr< WModuleContainer > targetContainer ):
     WThreadedRunner(),

@@ -25,6 +25,8 @@
 #ifndef WGEVIEWEREFFECTVIGNETTE_H
 #define WGEVIEWEREFFECTVIGNETTE_H
 
+#include <memory>
+
 #include "WGEViewerEffect.h"
 
 /**

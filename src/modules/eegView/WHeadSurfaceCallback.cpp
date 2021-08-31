@@ -23,20 +23,18 @@
 //---------------------------------------------------------------------------
 
 #include <cstddef>
-
+#include <memory>
 #include <vector>
-
-#include <boost/shared_ptr.hpp>
 
 #include <osg/Array>
 #include <osg/Drawable>
 #include <osg/Geometry>
 
+#include "WEEGEvent.h"
+#include "WHeadSurfaceCallback.h"
 #include "core/common/WFlag.h"
 #include "core/common/WPropertyTypes.h"
 #include "core/common/WPropertyVariable.h"
-#include "WEEGEvent.h"
-#include "WHeadSurfaceCallback.h"
 
 WHeadSurfaceCallback::WHeadSurfaceCallback( const std::vector< std::size_t >& channelIDs,
                                             WPropDouble colorSensitivity,

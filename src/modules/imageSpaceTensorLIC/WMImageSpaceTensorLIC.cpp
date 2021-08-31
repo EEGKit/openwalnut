@@ -24,15 +24,18 @@
 
 #include <cmath>
 #include <cstdlib>
-#include <vector>
+#include <memory>
 #include <string>
+#include <vector>
 
 #include <osg/BoundingSphere>
-#include <osg/Vec3>
+#include <osg/Drawable>
 #include <osg/Geode>
 #include <osg/Geometry>
-#include <osg/Drawable>
+#include <osg/Vec3>
 
+#include "WMImageSpaceTensorLIC.h"
+#include "WTuringTextureCreator.h"
 #include "core/common/WPropertyHelper.h"
 #include "core/common/math/WMath.h"
 #include "core/dataHandler/WDataHandler.h"
@@ -40,21 +43,18 @@
 #include "core/dataHandler/WGridRegular3D.h"
 #include "core/graphicsEngine/WGEColormapping.h"
 #include "core/graphicsEngine/WGEGeodeUtils.h"
-#include "core/graphicsEngine/WGEUtils.h"
 #include "core/graphicsEngine/WGETextureUtils.h"
+#include "core/graphicsEngine/WGEUtils.h"
 #include "core/graphicsEngine/callbacks/WGELinearTranslationCallback.h"
 #include "core/graphicsEngine/callbacks/WGENodeMaskCallback.h"
+#include "core/graphicsEngine/callbacks/WGEShaderAnimationCallback.h"
 #include "core/graphicsEngine/offscreen/WGEOffscreenRenderNode.h"
 #include "core/graphicsEngine/offscreen/WGEOffscreenRenderPass.h"
 #include "core/graphicsEngine/shaders/WGEPropertyUniform.h"
 #include "core/graphicsEngine/shaders/WGEShader.h"
 #include "core/graphicsEngine/shaders/WGEShaderDefineOptions.h"
 #include "core/graphicsEngine/shaders/WGEShaderPropertyDefineOptions.h"
-#include "core/graphicsEngine/callbacks/WGEShaderAnimationCallback.h"
 #include "core/kernel/WKernel.h"
-
-#include "WTuringTextureCreator.h"
-#include "WMImageSpaceTensorLIC.h"
 
 
   /**

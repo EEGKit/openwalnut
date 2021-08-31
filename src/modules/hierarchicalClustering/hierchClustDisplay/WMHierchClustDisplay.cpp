@@ -46,39 +46,36 @@
 //
 //---------------------------------------------------------------------------
 
-#include <queue>
-#include <string>
-#include <vector>
-#include <utility>
-#include <map>
 #include <algorithm>
 #include <list>
+#include <map>
+#include <memory>
+#include <queue>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include <boost/regex.hpp>
+#include <osg/LightModel>
 #include <osgGA/GUIEventAdapter>
 #include <osgGA/GUIEventHandler>
-#include <osgGA/TrackballManipulator>
 #include <osgGA/StateSetManipulator>
+#include <osgGA/TrackballManipulator>
 #include <osgViewer/ViewerEventHandlers>
 #include <osgWidget/Util> //NOLINT
 #include <osgWidget/ViewerEventHandlers> //NOLINT
 #include <osgWidget/WindowManager> //NOLINT
-#include <osg/LightModel>
 
-#include "core/common/WStringUtils.h"
+#include "WMHierchClustDisplay.h"
 #include "core/common/WPathHelper.h"
 #include "core/common/WPropertyHelper.h"
+#include "core/common/WStringUtils.h"
 #include "core/common/algorithms/WMarchingLegoAlgorithm.h"
 #include "core/graphicsEngine/WGEColormapping.h"
 #include "core/graphicsEngine/WGEUtils.h"
 #include "core/kernel/WKernel.h"
-#include "core/kernel/WSelectionManager.h"
 #include "core/kernel/WROIManager.h"
-//#include "core/ui/WUIViewWidget.h"
-
-
-#include "WMHierchClustDisplay.h"
-
+#include "core/kernel/WSelectionManager.h"
 
 bool WMHierchClustDisplay::MainViewEventHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& /* aa */ )
 {

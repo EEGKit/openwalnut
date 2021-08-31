@@ -25,20 +25,19 @@
 #ifndef WROIARBITRARY_H
 #define WROIARBITRARY_H
 
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include <boost/thread.hpp>
 
-#include "../common/math/WMatrix.h"
 #include "../common/WColor.h"
-#include "WPickHandler.h"
+#include "../common/math/WMatrix.h"
 #include "WGEViewer.h"
-
-#include "WTriangleMesh.h"
-
+#include "WPickHandler.h"
 #include "WROI.h"
+#include "WTriangleMesh.h"
 
 
 class WDataSetScalar;

@@ -25,18 +25,18 @@
 #ifndef WMCOLORMAPPER_H
 #define WMCOLORMAPPER_H
 
+#include <memory>
 #include <string>
 
 #include <osg/Projection>
 
-#include "core/kernel/WModule.h"
-#include "core/kernel/WModuleInputData.h"
-#include "core/common/WPropertyVariable.h"
-#include "core/common/math/WInterval.h"
 #include "core/common/WItemSelection.h"
 #include "core/common/WItemSelector.h"
-
+#include "core/common/WPropertyVariable.h"
+#include "core/common/math/WInterval.h"
 #include "core/dataHandler/WDataSetSingle.h"
+#include "core/kernel/WModule.h"
+#include "core/kernel/WModuleInputData.h"
 
 /**
  * This module simply registers the given dataset to the texture handling mechanism. This allows all outputs to be shown as a texture.

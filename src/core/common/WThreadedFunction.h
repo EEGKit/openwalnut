@@ -25,16 +25,16 @@
 #ifndef WTHREADEDFUNCTION_H
 #define WTHREADEDFUNCTION_H
 
-#include <memory.h>
 #include <iostream>
-
+#include <memory>
 #include <string>
 #include <vector>
+
 #include <boost/thread.hpp>
 
 #include "WAssert.h"
-#include "WWorkerThread.h"
 #include "WSharedObject.h"
+#include "WWorkerThread.h"
 
 
 /**

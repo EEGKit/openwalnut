@@ -23,18 +23,18 @@
 //---------------------------------------------------------------------------
 
 #include <algorithm>
-#include <string>
+#include <memory>
 #include <sstream>
+#include <string>
 #include <vector>
 
-#include "core/kernel/WKernel.h"
+#include "WMImageExtractor.h"
+#include "WMImageExtractor.xpm"
+#include "core/common/WPropertyHelper.h"
 #include "core/dataHandler/WDataHandler.h"
 #include "core/dataHandler/WDataTexture3D.h"
 #include "core/graphicsEngine/WGEColormapping.h"
-#include "core/common/WPropertyHelper.h"
-
-#include "WMImageExtractor.xpm"
-#include "WMImageExtractor.h"
+#include "core/kernel/WKernel.h"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMImageExtractor )

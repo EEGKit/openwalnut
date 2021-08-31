@@ -25,6 +25,7 @@
 #ifndef WQTROIHEADERTREEITEM_H
 #define WQTROIHEADERTREEITEM_H
 
+#include <memory>
 #include <string>
 
 #include <QTreeWidgetItem>

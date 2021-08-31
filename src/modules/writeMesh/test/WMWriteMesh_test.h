@@ -25,16 +25,17 @@
 #ifndef WMWRITEMESH_TEST_H
 #define WMWRITEMESH_TEST_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <cxxtest/TestSuite.h>
 
-#include "core/common/math/linearAlgebra/WPosition.h"
+#include "../WMWriteMesh.h"
 #include "core/common/WIOTools.h"
 #include "core/common/WLogger.h"
+#include "core/common/math/linearAlgebra/WPosition.h"
 #include "core/graphicsEngine/WTriangleMesh.h"
-#include "../WMWriteMesh.h"
 
 /**
  * Test for WMWriteMesh

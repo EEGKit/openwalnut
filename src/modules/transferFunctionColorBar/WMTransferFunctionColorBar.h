@@ -25,15 +25,15 @@
 #ifndef WMTRANSFERFUNCTIONCOLORBAR_H
 #define WMTRANSFERFUNCTIONCOLORBAR_H
 
+#include <memory>
 #include <string>
 
 #include <osg/Projection>
 
+#include "core/common/WPropertyVariable.h"
+#include "core/dataHandler/WDataSetSingle.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
-#include "core/common/WPropertyVariable.h"
-
-#include "core/dataHandler/WDataSetSingle.h"
 
 /**
  * This module simply registers the given dataset to the texture handling mechanism. This allows all outputs to be shown as a texture.

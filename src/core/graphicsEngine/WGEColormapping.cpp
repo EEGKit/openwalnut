@@ -24,16 +24,15 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 
 #include "../common/WLogger.h"
 #include "../common/WStringUtils.h"
-
+#include "WGEColormapping.h"
 #include "WGETextureUtils.h"
 #include "exceptions/WGESignalSubscriptionFailed.h"
-
-#include "WGEColormapping.h"
 
 // instance as singleton
 std::shared_ptr< WGEColormapping > WGEColormapping::m_instance = std::shared_ptr< WGEColormapping >();

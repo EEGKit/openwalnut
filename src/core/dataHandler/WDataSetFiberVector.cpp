@@ -22,8 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
-#include <string>
 #include <algorithm>
+#include <memory>
+#include <string>
 #include <vector>
 
 #include "../common/WLogger.h"

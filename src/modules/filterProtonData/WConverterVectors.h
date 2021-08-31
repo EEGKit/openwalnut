@@ -25,9 +25,9 @@
 #ifndef WCONVERTERVECTORS_H
 #define WCONVERTERVECTORS_H
 
+#include <memory>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
 
 /**

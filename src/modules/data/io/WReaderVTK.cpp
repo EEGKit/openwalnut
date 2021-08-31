@@ -22,30 +22,29 @@
 //
 //---------------------------------------------------------------------------
 
-#include <stdint.h>
-
 #include <fstream>
 #include <iosfwd>
+#include <memory>
+#include <stdint.h>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
+#include "WReaderVTK.h"
 #include "core/common/WAssert.h"
 #include "core/common/WIOTools.h"
 #include "core/common/WLimits.h"
 #include "core/common/WLogger.h"
 #include "core/common/WStringUtils.h"
+#include "core/dataHandler/WDataSet.h"
+#include "core/dataHandler/WDataSetDTI.h"
+#include "core/dataHandler/WDataSetRawHARDI.h"
+#include "core/dataHandler/WDataSetScalar.h"
+#include "core/dataHandler/WDataSetVector.h"
+#include "core/dataHandler/WGridRegular3D.h"
 #include "core/dataHandler/exceptions/WDHIOFailure.h"
 #include "core/dataHandler/exceptions/WDHNoSuchFile.h"
 #include "core/dataHandler/exceptions/WDHParseError.h"
-#include "core/dataHandler/WDataSet.h"
-#include "core/dataHandler/WDataSetScalar.h"
-#include "core/dataHandler/WDataSetVector.h"
-#include "core/dataHandler/WDataSetDTI.h"
-#include "core/dataHandler/WDataSetRawHARDI.h"
-#include "core/dataHandler/WGridRegular3D.h"
-#include "WReaderVTK.h"
 
 WReaderVTK::WReaderVTK( std::string fname )
     : WReader( fname )

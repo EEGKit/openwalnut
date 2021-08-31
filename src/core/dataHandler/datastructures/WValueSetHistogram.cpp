@@ -24,6 +24,7 @@
 
 #include <algorithm>
 #include <cstring> // memset()
+#include <memory>
 #include <numeric>
 #include <string>
 #include <utility>
@@ -32,7 +33,6 @@
 #include "../../common/WLimits.h"
 #include "../../common/exceptions/WOutOfBounds.h"
 #include "../WDataHandlerEnums.h"
-
 #include "WValueSetHistogram.h"
 
 WValueSetHistogram::WValueSetHistogram( std::shared_ptr< WValueSetBase > valueSet, size_t buckets ):

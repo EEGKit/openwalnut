@@ -25,7 +25,8 @@
 #ifndef WGEPOSTPROCESSORCELSHADING_H
 #define WGEPOSTPROCESSORCELSHADING_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 
 #include "WGEPostprocessor.h"
 

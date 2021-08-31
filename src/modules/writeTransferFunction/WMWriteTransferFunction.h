@@ -25,12 +25,13 @@
 #ifndef WMWRITETRANSFERFUNCTION_H
 #define WMWRITETRANSFERFUNCTION_H
 
+#include <memory>
 #include <string>
 
-#include "core/kernel/WModule.h"
-#include "core/kernel/WModuleOutputData.h"
-#include "core/kernel/WModuleInputData.h"
 #include "core/common/WProperties.h"
+#include "core/kernel/WModule.h"
+#include "core/kernel/WModuleInputData.h"
+#include "core/kernel/WModuleOutputData.h"
 
 /**
  * Module to export transferfunctions

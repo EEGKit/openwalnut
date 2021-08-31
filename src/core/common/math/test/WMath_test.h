@@ -26,11 +26,12 @@
 #define WMATH_TEST_H
 
 #include <iomanip>
+#include <memory>
 
 #include <cxxtest/TestSuite.h>
 
-#include "../WMath.h"
 #include "../../WLimits.h"
+#include "../WMath.h"
 #include "WPositionTraits.h"
 
 

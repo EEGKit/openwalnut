@@ -25,9 +25,9 @@
 #ifndef WREADEREEGASCII_H
 #define WREADEREEGASCII_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
 #include "WReaderEEG.h"
 

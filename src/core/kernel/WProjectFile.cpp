@@ -26,21 +26,21 @@
 #include <fstream>
 #include <iterator>
 #include <list>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <boost/regex.hpp>
 
-#include "WModule.h"
-#include "WKernel.h"
-#include "combiner/WModuleProjectFileCombiner.h"
-#include "WRoiProjectFileIO.h"
-#include "../graphicsEngine/WGEProjectFileIO.h"
+#include "../common/WStringUtils.h"
 #include "../common/exceptions/WFileNotFound.h"
 #include "../common/exceptions/WFileOpenFailed.h"
-#include "../common/WStringUtils.h"
-
+#include "../graphicsEngine/WGEProjectFileIO.h"
+#include "WKernel.h"
+#include "WModule.h"
 #include "WProjectFile.h"
+#include "WRoiProjectFileIO.h"
+#include "combiner/WModuleProjectFileCombiner.h"
 
 WProjectFile::ParserList WProjectFile::m_additionalParsers;
 

@@ -26,6 +26,7 @@
 #define WMATH_H
 
 #include <cmath>
+#include <memory>
 
 #include <boost/math/constants/constants.hpp>
 

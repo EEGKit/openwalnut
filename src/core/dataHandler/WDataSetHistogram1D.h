@@ -25,12 +25,12 @@
 #ifndef WDATASETHISTOGRAM1D_H
 #define WDATASETHISTOGRAM1D_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include "../common/WHistogramBasic.h"
 #include "../common/WColor.h"
-
+#include "../common/WHistogramBasic.h"
 #include "WDataSet.h"
 
 /**

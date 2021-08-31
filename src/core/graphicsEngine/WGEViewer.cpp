@@ -22,40 +22,36 @@
 //
 //---------------------------------------------------------------------------
 
-#include <string>
 #include <iostream>
+#include <memory>
+#include <string>
 
-#include <osg/ShapeDrawable>
-#include <osg/Geode>
 #include <osg/Camera>
-
-#include <osgGA/FlightManipulator>
+#include <osg/Geode>
+#include <osg/ShapeDrawable>
+#include <osgDB/ReadFile>
+#include <osgGA/AnimationPathManipulator>
 #include <osgGA/DriveManipulator>
-#include <osgGA/UFOManipulator>
+#include <osgGA/FlightManipulator>
 #include <osgGA/KeySwitchMatrixManipulator>
 #include <osgGA/StateSetManipulator>
-#include <osgGA/AnimationPathManipulator>
 #include <osgGA/TerrainManipulator>
-#include <osgViewer/ViewerEventHandlers>
+#include <osgGA/UFOManipulator>
 #include <osgViewer/View>
-
-#include <osgDB/ReadFile>
-
-#include "core/common/WLogger.h"
+#include <osgViewer/ViewerEventHandlers>
 
 #include "WGE2DManipulator.h"
 #include "WGEGroupNode.h"
 #include "WGENoOpManipulator.h"
+#include "WGEViewer.h"
 #include "WGEZoomTrackballManipulator.h"
 #include "WGraphicsEngine.h"
-#include "WPickHandler.h"
 #include "WMouseLocationHandler.h"
-#include "exceptions/WGEInitFailed.h"
-
+#include "WPickHandler.h"
 #include "core/common/WConditionOneShot.h"
+#include "core/common/WLogger.h"
 #include "core/common/WThreadedRunner.h"
-
-#include "WGEViewer.h"
+#include "exceptions/WGEInitFailed.h"
 
 WGEViewer::WGEViewer( std::string name, osg::ref_ptr<osg::Referenced> wdata, int x, int y, int width, int height,
                       WGECamera::ProjectionMode projectionMode ):

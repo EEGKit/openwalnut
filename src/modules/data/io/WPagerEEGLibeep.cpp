@@ -32,19 +32,18 @@ extern "C"
 #include <clocale>
 #include <cstddef>
 #include <cstdio>
-
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
+#include "WPagerEEGLibeep.h"
 #include "core/common/exceptions/WOutOfBounds.h"
+#include "core/dataHandler/WEEGValueMatrix.h"
 #include "core/dataHandler/exceptions/WDHIOFailure.h"
 #include "core/dataHandler/exceptions/WDHNoSuchFile.h"
-#include "core/dataHandler/WEEGValueMatrix.h"
-#include "WPagerEEGLibeep.h"
 
 
 WPagerEEGLibeep::WPagerEEGLibeep( std::string fileName )

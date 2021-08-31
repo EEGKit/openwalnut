@@ -26,20 +26,19 @@
 #define WEEGVIEWHANDLER_H
 
 #include <cstddef>
-
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <osg/ref_ptr>
 #include <osgGA/GUIActionAdapter>
 #include <osgGA/GUIEventAdapter>
 #include <osgGA/GUIEventHandler>
 
+#include "WEEGEvent.h"
 #include "core/common/WFlag.h"
 #include "core/common/WPropertyTypes.h"
 #include "core/dataHandler/WDataSetDipoles.h"
 #include "core/dataHandler/WEEG2.h"
 #include "core/graphicsEngine/WGEGroupNode.h"
-#include "WEEGEvent.h"
 
 
 /**

@@ -25,6 +25,7 @@
 #ifndef WMVECTORALIGN_H
 #define WMVECTORALIGN_H
 
+#include <memory>
 #include <string>
 
 #include <osg/Geode>

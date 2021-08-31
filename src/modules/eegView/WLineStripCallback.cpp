@@ -22,12 +22,10 @@
 //
 //---------------------------------------------------------------------------
 
+#include <algorithm>
 #include <cmath>
 #include <cstddef>
-
-#include <algorithm>
-
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <osg/Array>
 #include <osg/Drawable>
@@ -36,11 +34,11 @@
 #include <osg/PrimitiveSet>
 #include <osg/Vec3>
 
+#include "WLineStripCallback.h"
 #include "core/common/WPropertyTypes.h"
 #include "core/common/WPropertyVariable.h"
 #include "core/dataHandler/WEEG2Segment.h"
 #include "core/dataHandler/WEEGValueMatrix.h"
-#include "WLineStripCallback.h"
 
 WLineStripCallback::WLineStripCallback( std::size_t channelID,
                                         WPropDouble timePos,

@@ -22,23 +22,22 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
 #include <osg/Geode>
 
-#include "core/common/math/WMath.h"
+#include "WMPointRenderer.h"
 #include "core/common/WLimits.h"
-#include "core/graphicsEngine/shaders/WGEShader.h"
+#include "core/common/math/WMath.h"
+#include "core/dataHandler/WDataSetPoints.h"
 #include "core/graphicsEngine/WGEColormapping.h"
 #include "core/graphicsEngine/WGEGeodeUtils.h"
 #include "core/graphicsEngine/WGEManagedGroupNode.h"
-#include "core/graphicsEngine/postprocessing/WGEPostprocessingNode.h"
 #include "core/graphicsEngine/WGEUtils.h"
+#include "core/graphicsEngine/postprocessing/WGEPostprocessingNode.h"
+#include "core/graphicsEngine/shaders/WGEShader.h"
 #include "core/kernel/WKernel.h"
-
-#include "core/dataHandler/WDataSetPoints.h"
-
-#include "WMPointRenderer.h"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMPointRenderer )

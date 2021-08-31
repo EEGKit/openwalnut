@@ -25,9 +25,10 @@
 #ifndef WMANIPULATORNORMALIZE_H
 #define WMANIPULATORNORMALIZE_H
 
-#include "core/common/WObjectNDIP.h"
+#include <memory>
 
 #include "WManipulatorInterface.h"
+#include "core/common/WObjectNDIP.h"
 
 class WDataSet;
 

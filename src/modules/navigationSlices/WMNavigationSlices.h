@@ -25,19 +25,19 @@
 #ifndef WMNAVIGATIONSLICES_H
 #define WMNAVIGATIONSLICES_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
+#include <boost/signals2.hpp>
 #include <osg/Camera>
 
-#include <boost/signals2.hpp>
-
-#include "core/graphicsEngine/WGEManagedGroupNode.h"
-#include "core/graphicsEngine/WGEGroupNode.h"
-#include "core/common/math/linearAlgebra/WVectorFixed.h"
 #include "core/common/WPropertyTypes.h"
-#include "core/graphicsEngine/WPickInfo.h"
+#include "core/common/math/linearAlgebra/WVectorFixed.h"
 #include "core/graphicsEngine/WGECamera.h"
+#include "core/graphicsEngine/WGEGroupNode.h"
+#include "core/graphicsEngine/WGEManagedGroupNode.h"
+#include "core/graphicsEngine/WPickInfo.h"
 #include "core/kernel/WModule.h"
 
 /**

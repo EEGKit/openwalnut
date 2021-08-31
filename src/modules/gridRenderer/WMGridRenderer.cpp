@@ -25,6 +25,7 @@
 #include <cmath>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -33,22 +34,22 @@
 #include <osg/PositionAttitudeTransform>
 #include <osgText/Text>
 
-#include "core/common/math/linearAlgebra/WVectorFixed.h"
-#include "core/common/WAssert.h"
-#include "core/common/WBoundingBox.h"
-#include "core/common/WStringUtils.h"
-#include "core/dataHandler/WGridRegular3D.h"
-#include "core/dataHandler/WDataSetSingle.h"
-#include "core/dataHandler/WDataSetFibers.h"
-#include "core/dataHandler/WDataSetPoints.h"
-#include "core/graphicsEngine/WGEGeodeUtils.h"
-#include "core/graphicsEngine/callbacks/WGENodeMaskCallback.h"
-#include "core/kernel/WKernel.h"
 #include "WMGridRenderer.h"
 #include "WMGridRenderer.xpm"
 #include "WMGridRenderer_boundary.xpm"
 #include "WMGridRenderer_grid.xpm"
 #include "WMGridRenderer_label.xpm"
+#include "core/common/WAssert.h"
+#include "core/common/WBoundingBox.h"
+#include "core/common/WStringUtils.h"
+#include "core/common/math/linearAlgebra/WVectorFixed.h"
+#include "core/dataHandler/WDataSetFibers.h"
+#include "core/dataHandler/WDataSetPoints.h"
+#include "core/dataHandler/WDataSetSingle.h"
+#include "core/dataHandler/WGridRegular3D.h"
+#include "core/graphicsEngine/WGEGeodeUtils.h"
+#include "core/graphicsEngine/callbacks/WGENodeMaskCallback.h"
+#include "core/kernel/WKernel.h"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMGridRenderer )

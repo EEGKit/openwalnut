@@ -25,12 +25,13 @@
 #ifndef WMWRITETRACTS_H
 #define WMWRITETRACTS_H
 
+#include <memory>
 #include <string>
 
 #include <osg/Geode>
 
-#include "core/dataHandler/datastructures/WFiberCluster.h"
 #include "core/dataHandler/WDataSetFibers.h"
+#include "core/dataHandler/datastructures/WFiberCluster.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"

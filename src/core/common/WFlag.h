@@ -25,7 +25,8 @@
 #ifndef WFLAG_H
 #define WFLAG_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 
 #include "WCondition.h"
 

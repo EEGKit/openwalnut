@@ -25,14 +25,13 @@
 #ifndef WDATASETSPHERICALHARMONICS_H
 #define WDATASETSPHERICALHARMONICS_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "../common/math/WSymmetricSphericalHarmonic.h"
-
-#include "WValueSet.h"
-
 #include "WDataSetSingle.h"
+#include "WValueSet.h"
 
 
 /**

@@ -25,10 +25,10 @@
 #ifndef WSELECTORROI_H
 #define WSELECTORROI_H
 
+#include <memory>
 #include <vector>
 
 #include "../dataHandler/WDataSetFibers.h"
-
 #include "../graphicsEngine/WROI.h"
 
 class WKdTree;

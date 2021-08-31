@@ -22,8 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
-#include <string>
 #include <iostream>
+#include <memory>
+#include <string>
 
 #include <QApplication>
 #include <QColorDialog>
@@ -31,12 +32,15 @@
 #include <QKeyEvent>
 #include <QPixmap>
 
+#include "WMainWindow.h"
+#include "WQtGLScreenCapture.h"
 #include "WQtGLWidget.h"
-
+#include "WQtGui.h"
+#include "WSettingAction.h"
+#include "core/common/WColor.h"
 #include "core/common/WConditionOneShot.h"
 #include "core/common/WFlag.h"
 #include "core/common/WLogger.h"
-#include "core/common/WColor.h"
 #include "core/graphicsEngine/WGE2DManipulator.h"
 #include "core/graphicsEngine/WGEAdvancedManipulator.h"
 #include "core/graphicsEngine/WGENoOpManipulator.h"
@@ -44,13 +48,8 @@
 #include "core/graphicsEngine/WGEZoomTrackballManipulator.h"
 #include "core/graphicsEngine/WGraphicsEngine.h"
 #include "core/kernel/WKernel.h"
-
-#include "WQtGui.h"
-#include "WQtGLScreenCapture.h"
-#include "events/WRenderedFrameEvent.h"
 #include "events/WEventTypes.h"
-#include "WSettingAction.h"
-#include "WMainWindow.h"
+#include "events/WRenderedFrameEvent.h"
 
 WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::ProjectionMode projectionMode, const QWidget* shareWidget ):
     QGLWidget( getDefaultFormat(), parent, dynamic_cast< const QGLWidget* >( shareWidget ) ),

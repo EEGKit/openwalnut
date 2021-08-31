@@ -22,6 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
+
 #include "WQtNetworkOutputPort.h"
 
 WQtNetworkOutputPort::WQtNetworkOutputPort( std::shared_ptr<WModuleOutputConnector> connector )

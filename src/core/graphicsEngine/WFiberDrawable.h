@@ -25,13 +25,12 @@
 #ifndef WFIBERDRAWABLE_H
 #define WFIBERDRAWABLE_H
 
+#include <memory>
 #include <shared_mutex>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 #include <boost/thread/thread.hpp>
-
 #include <osg/Drawable>
 
 

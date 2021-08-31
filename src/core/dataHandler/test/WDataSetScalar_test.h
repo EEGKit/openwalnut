@@ -25,14 +25,13 @@
 #ifndef WDATASETSCALAR_TEST_H
 #define WDATASETSCALAR_TEST_H
 
+#include <memory>
 #include <vector>
 
+#include <boost/random.hpp>
 #include <cxxtest/TestSuite.h>
 
-#include <boost/random.hpp>
-
 #include "../../common/WLogger.h"
-
 #include "../WDataSetScalar.h"
 
 /**

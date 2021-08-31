@@ -25,10 +25,12 @@
 #ifndef WGELINEARTRANSLATIONCALLBACK_H
 #define WGELINEARTRANSLATIONCALLBACK_H
 
+#include <memory>
+
+#include <osg/MatrixTransform>
 #include <osg/Node>
 #include <osg/TexMat>
 #include <osg/Uniform>
-#include <osg/MatrixTransform>
 
 #include "../../common/WProperties.h"
 

@@ -23,21 +23,20 @@
 //---------------------------------------------------------------------------
 
 #include <algorithm>
+#include <memory>
 #include <string>
 
+#include "WDataCreatorRandom.h"
+#include "WDataCreatorSingleDirection.h"
+#include "WDataCreatorSphere.h"
+#include "WMDataCreatorVector.h"
+#include "WMDataCreatorVector.xpm"
 #include "core/common/WAssert.h"
 #include "core/common/WProgress.h"
 #include "core/common/WStrategyHelper.h"
-#include "core/dataHandler/WGridRegular3D.h"
 #include "core/dataHandler/WDataSetVector.h"
+#include "core/dataHandler/WGridRegular3D.h"
 #include "core/kernel/WKernel.h"
-
-#include "WDataCreatorSphere.h"
-#include "WDataCreatorRandom.h"
-#include "WDataCreatorSingleDirection.h"
-
-#include "WMDataCreatorVector.xpm"
-#include "WMDataCreatorVector.h"
 
 WMDataCreatorVector::WMDataCreatorVector():
     WModule(),

@@ -26,11 +26,14 @@
 #define WMPOINTCONNECTOR_H
 
 #include <cmath>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <osg/Geode>
 
+#include "../fiberDisplay/WMFiberDisplay.h"
+#include "../pointRenderer/WMPointRenderer.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
 #include "core/graphicsEngine/onscreenSelection/WOnscreenSelection.h"
@@ -43,6 +46,7 @@
 #include "../fiberDisplay/WMFiberDisplay.h"
 #include "../pointRenderer/WMPointRenderer.h"
 
+class WClickHandler;
 class WConnectorData;
 class WFiberHandler;
 

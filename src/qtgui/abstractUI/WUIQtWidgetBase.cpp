@@ -22,14 +22,14 @@
 //
 //---------------------------------------------------------------------------
 
-#include <boost/function.hpp>
+#include <memory>
 
-#include "core/common/WLogger.h"
+#include <boost/function.hpp>
 
 #include "../WQtGui.h"
 #include "../guiElements/WQtDockWidget.h"
-
 #include "WUIQtWidgetBase.h"
+#include "core/common/WLogger.h"
 
 WUIQtWidgetBase::WUIQtWidgetBase( WMainWindow* mainWindow, WUIQtWidgetBase::SPtr parent ):
     m_mainWindow( mainWindow ),

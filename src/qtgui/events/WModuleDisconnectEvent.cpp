@@ -22,8 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WEventTypes.h"
+#include <memory>
 
+#include "WEventTypes.h"
 #include "WModuleDisconnectEvent.h"
 
 WModuleDisconnectEvent::WModuleDisconnectEvent( std::shared_ptr<WModuleConnector> in, std::shared_ptr<WModuleConnector> out )

@@ -25,6 +25,7 @@
 #ifndef WMCLUSTERDISPLAYVOXELS_H
 #define WMCLUSTERDISPLAYVOXELS_H
 
+#include <memory>
 #include <queue>
 #include <string>
 #include <vector>
@@ -34,17 +35,22 @@
 #include "core/common/WHierarchicalTreeVoxels.h"
 #include "core/dataHandler/WDataHandler.h"
 #include "core/dataHandler/WDataSetScalar.h"
-#include "core/graphicsEngine/WGETexture.h"
 #include "core/dataHandler/WSubject.h"
 #include "core/dataHandler/WValueSet.h"
-#include "core/graphicsEngine/geodes/WDendrogramGeode.h"
-#include "core/graphicsEngine/WGEManagedGroupNode.h"
 #include "core/graphicsEngine/WGECamera.h"
-#include "core/graphicsEngine/widgets/WOSGButton.h"
+#include "core/graphicsEngine/WGEManagedGroupNode.h"
+#include "core/graphicsEngine/WGETexture.h"
 #include "core/graphicsEngine/WPickHandler.h"
+#include "core/graphicsEngine/geodes/WDendrogramGeode.h"
+#include "core/graphicsEngine/widgets/WOSGButton.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
+
+/**
+ * Forward declaration of WTriangleMesh
+ */
+class WTriangleMesh;
 
 const unsigned int MASK_2D = 0xF0000000; //!< used for osgWidget stuff
 const unsigned int MASK_3D = 0x0F000000; //!< used for osgWidget stuff

@@ -26,10 +26,10 @@
 #define WCONDITIONSET_H
 
 #include <map>
+#include <memory>
 #include <shared_mutex>
 #include <utility>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
 #include "WCondition.h"

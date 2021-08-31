@@ -25,20 +25,22 @@
 #ifndef WROIBOX_H
 #define WROIBOX_H
 
+#include <memory>
 #include <shared_mutex>
 #include <string>
 #include <utility>
 
 #include <boost/thread.hpp>
-
 #include <osg/Geometry>
 
 #include "WPickHandler.h"
+#include "WROI.h"
 #include "shaders/WGEShader.h"
 
+/**
+ * Forward declaration of WGEViewer.
+ */
 class WGEViewer;
-
-#include "WROI.h"
 
 /**
  * A box representing a region of interest.

@@ -25,7 +25,8 @@
 #ifndef WGEPOSTPROCESSORHALFTONE_H
 #define WGEPOSTPROCESSORHALFTONE_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 
 #include "WGEPostprocessor.h"
 

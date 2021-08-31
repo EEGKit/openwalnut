@@ -22,16 +22,15 @@
 //
 //---------------------------------------------------------------------------
 
-#include "../../common/WPropertyHelper.h"
+#include <memory>
+
 #include "../../common/WItemSelection.h"
-
-#include "../shaders/WGEShaderPropertyDefineOptions.h"
-#include "../callbacks/WGENodeMaskCallback.h"
+#include "../../common/WPropertyHelper.h"
 #include "../WGEUtils.h"
-
-#include "WGEPostprocessor.h"
-
+#include "../callbacks/WGENodeMaskCallback.h"
+#include "../shaders/WGEShaderPropertyDefineOptions.h"
 #include "WGEPostprocessingNode.h"
+#include "WGEPostprocessor.h"
 
 WGEPostprocessingNode::WGEPostprocessingNode( osg::ref_ptr< WGECamera > reference, size_t width, size_t height, bool noHud ):
     osg::Switch(),

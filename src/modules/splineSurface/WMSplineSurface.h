@@ -26,19 +26,20 @@
 #define WMSPLINESURFACE_H
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <osg/Node>
 #include <osg/Geode>
+#include <osg/Node>
 #include <osg/Uniform>
 
-#include "core/dataHandler/datastructures/WFiberCluster.h"
 #include "core/dataHandler/WDataSetScalar.h"
 #include "core/dataHandler/WGridRegular3D.h"
+#include "core/dataHandler/datastructures/WFiberCluster.h"
 #include "core/graphicsEngine/WGEGroupNode.h"
-#include "core/graphicsEngine/shaders/WGEShader.h"
 #include "core/graphicsEngine/WTriangleMesh.h"
+#include "core/graphicsEngine/shaders/WGEShader.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"

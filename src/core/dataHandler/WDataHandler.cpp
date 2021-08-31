@@ -23,17 +23,15 @@
 //---------------------------------------------------------------------------
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <vector>
 
-
-#include "WSubject.h"
-#include "exceptions/WDHNoSuchSubject.h"
-
 #include "../common/WLogger.h"
 #include "../common/WStringUtils.h"
-
 #include "WDataHandler.h"
+#include "WSubject.h"
+#include "exceptions/WDHNoSuchSubject.h"
 
 // instance as singleton
 std::shared_ptr< WDataHandler > WDataHandler::m_instance = std::shared_ptr< WDataHandler >();

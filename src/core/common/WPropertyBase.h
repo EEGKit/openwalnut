@@ -25,19 +25,21 @@
 #ifndef WPROPERTYBASE_H
 #define WPROPERTYBASE_H
 
+#include <memory>
 #include <string>
 
 #include <boost/function.hpp>
 #include <boost/signals2/signal.hpp>
 
-#include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
-
-#include "WStringUtils.h"
-#include "WProperties_Fwd.h"
 #include "WCondition.h"
 #include "WConditionSet.h"
+#include "WProperties_Fwd.h"
+#include "WStringUtils.h"
 
+/**
+ * Forward declaration for the PropertyGroupBase.
+ */
+class WPropertyGroupBase;
 
 /**
  * Abstract base class for all properties. Simply provides name and type information.

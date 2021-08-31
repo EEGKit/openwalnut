@@ -25,12 +25,13 @@
 #include <cmath>
 #include <fstream>
 #include <map>
+#include <memory>
 #include <vector>
 
+#include "WSurface.h"
 #include "core/common/math/WLinearAlgebraFunctions.h"
 #include "core/common/math/WMatrix.h"
 #include "core/common/math/WTensorFunctions.h"
-#include "WSurface.h"
 
 WSurface::WSurface()
     : m_tMesh( new WTriangleMesh( 0, 0 ) ),

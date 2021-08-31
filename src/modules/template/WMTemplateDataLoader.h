@@ -25,11 +25,11 @@
 #ifndef WMTEMPLATEDATALOADER_H
 #define WMTEMPLATEDATALOADER_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "core/dataHandler/WDataSetScalar.h"
-
 #include "core/kernel/WDataModule.h"
 #include "core/kernel/WModuleOutputData.h"
 

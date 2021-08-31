@@ -22,21 +22,19 @@
 //
 //---------------------------------------------------------------------------
 
-#include <string>
 #include <iostream>
-
-#include <boost/shared_ptr.hpp>
+#include <memory>
+#include <string>
 
 #include <QDockWidget>
-#include <QVBoxLayout>
-#include <QGraphicsView>
 #include <QGraphicsItemGroup>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsView>
+#include <QVBoxLayout>
 
 #include "../WMainWindow.h"
 #include "WQtNetworkItem.h"
 #include "WQtNetworkPort.h"
-
 #include "WQtNetworkScene.h"
 
 WQtNetworkScene::WQtNetworkScene( QObject* parent )

@@ -25,9 +25,9 @@
 #ifndef WDATAMODULEINPUTFILTER_H
 #define WDATAMODULEINPUTFILTER_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
 #include "WDataModuleInput.h"
 

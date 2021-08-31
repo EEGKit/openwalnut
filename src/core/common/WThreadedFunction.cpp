@@ -22,6 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
+
 #include "WThreadedFunction.h"
 
 WThreadedFunctionBase::WThreadedFunctionBase()

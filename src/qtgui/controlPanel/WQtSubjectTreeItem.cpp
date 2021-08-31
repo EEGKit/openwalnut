@@ -22,11 +22,11 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
-#include "WTreeItemTypes.h"
-
 #include "WQtSubjectTreeItem.h"
+#include "WTreeItemTypes.h"
 
 WQtSubjectTreeItem::WQtSubjectTreeItem( QTreeWidget * parent )
     : QTreeWidgetItem( parent, SUBJECT ) // type 0

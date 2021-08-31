@@ -25,14 +25,14 @@
 #ifndef WRULERORTHO_H
 #define WRULERORTHO_H
 
+#include <memory>
 #include <string>
 
 #include <osgText/Text>
 
-#include "core/common/math/linearAlgebra/WVectorFixed.h"
-
 #include "WCoordConverter.h"
 #include "WRuler.h"
+#include "core/common/math/linearAlgebra/WVectorFixed.h"
 
 typedef enum
 {

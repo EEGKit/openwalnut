@@ -25,9 +25,9 @@
 #ifndef WTRACTDATA_H
 #define WTRACTDATA_H
 
+#include <memory>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
 /**
  * Stores the data of deterministic fiber tractograms. Derived or optional data as tangents, FA,

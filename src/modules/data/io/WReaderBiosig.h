@@ -27,12 +27,11 @@
 
 #ifdef WBIOSIG_ENABLED
 
-#include <biosig.h>
-
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
+#include <biosig.h> // NOLINT: brainlint thinks this is C System Header
 
 #include "WReaderEEG.h"
 

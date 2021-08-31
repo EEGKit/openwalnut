@@ -25,6 +25,7 @@
 #ifndef WMTEMPLATEUI_H
 #define WMTEMPLATEUI_H
 
+#include <memory>
 #include <string>
 #include <vector>
 

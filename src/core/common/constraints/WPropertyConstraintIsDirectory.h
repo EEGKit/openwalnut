@@ -25,6 +25,8 @@
 #ifndef WPROPERTYCONSTRAINTISDIRECTORY_H
 #define WPROPERTYCONSTRAINTISDIRECTORY_H
 
+#include <memory>
+
 #include "../WPropertyTypes.h"
 #include "WPropertyConstraintTypes.h"
 

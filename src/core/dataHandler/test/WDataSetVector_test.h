@@ -25,12 +25,12 @@
 #ifndef WDATASETVECTOR_TEST_H
 #define WDATASETVECTOR_TEST_H
 
-#include <vector>
 #include <cmath>
+#include <memory>
+#include <vector>
 
 #include <boost/array.hpp>
 #include <boost/random.hpp>
-
 #include <cxxtest/TestSuite.h>
 
 #include "../../common/WLogger.h"

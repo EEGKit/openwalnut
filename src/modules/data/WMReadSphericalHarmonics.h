@@ -25,6 +25,7 @@
 #ifndef WMREADSPHERICALHARMONICS_H
 #define WMREADSPHERICALHARMONICS_H
 
+#include <memory>
 #include <string>
 
 #include <osg/Geode>

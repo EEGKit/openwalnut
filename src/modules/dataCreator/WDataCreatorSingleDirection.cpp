@@ -22,15 +22,15 @@
 //
 //---------------------------------------------------------------------------
 
-#include <ctime>
 #include <cstdlib>
+#include <ctime>
+#include <memory>
 #include <vector>
 
+#include "WDataCreatorSingleDirection.h"
 #include "core/common/WLogger.h"
 #include "core/dataHandler/WDataHandlerEnums.h"
 #include "core/dataHandler/WValueSet.h"
-
-#include "WDataCreatorSingleDirection.h"
 
 WDataCreatorSingleDirection::WDataCreatorSingleDirection():
     WObjectNDIP< WDataSetSingleCreatorInterface >( "Single direction.", "Creates a volume with a single direction for all vectors." )

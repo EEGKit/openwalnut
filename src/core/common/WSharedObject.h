@@ -25,6 +25,7 @@
 #ifndef WSHAREDOBJECT_H
 #define WSHAREDOBJECT_H
 
+#include <memory>
 #include <shared_mutex>
 
 #include <boost/thread.hpp>

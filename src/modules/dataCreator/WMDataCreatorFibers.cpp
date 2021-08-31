@@ -23,18 +23,17 @@
 //---------------------------------------------------------------------------
 
 #include <algorithm>
+#include <memory>
 #include <string>
 
+#include "WDataCreatorFiberSpiral.h"
+#include "WMDataCreatorFibers.h"
+#include "WMDataCreatorFibers.xpm"
 #include "core/common/WAssert.h"
 #include "core/common/WProgress.h"
 #include "core/common/WStrategyHelper.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/kernel/WKernel.h"
-
-#include "WDataCreatorFiberSpiral.h"
-
-#include "WMDataCreatorFibers.xpm"
-#include "WMDataCreatorFibers.h"
 
 WMDataCreatorFibers::WMDataCreatorFibers():
     WModule(),

@@ -25,9 +25,9 @@
 #ifndef WTHREADEDJOBS_H
 #define WTHREADEDJOBS_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
 #include "WException.h"
 #include "WFlag.h"

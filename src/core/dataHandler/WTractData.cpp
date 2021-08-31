@@ -22,9 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
 #include "WTractData.h"
 

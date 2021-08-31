@@ -25,9 +25,9 @@
 #ifndef WCONDITION_H
 #define WCONDITION_H
 
+#include <memory>
 #include <shared_mutex>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 #include <boost/signals2/signal.hpp>
 #include <boost/thread.hpp>

@@ -25,15 +25,14 @@
 #ifndef WTURINGPATTERNCREATOR_H
 #define WTURINGPATTERNCREATOR_H
 
+#include <memory>
 #include <vector>
 
 #include <boost/thread.hpp>
-
-#include <core/common/WCounter.h>
 #include <core/common/WConditionSet.h>
+#include <core/common/WCounter.h>
 #include <core/common/WProgress.h>
 #include <core/common/WThreadedRunner.h>
-
 #include <core/graphicsEngine/WGETexture.h>
 
 /**

@@ -22,11 +22,11 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "WDataSetScalar.h"
-
 #include "WDataSetSegmentation.h"
 
 // prototype instance as singleton

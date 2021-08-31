@@ -23,10 +23,11 @@
 //---------------------------------------------------------------------------
 
 #include <list>
+#include <memory>
 #include <string>
 
-#include "WROI.h"
 #include "WPickHandler.h"
+#include "WROI.h"
 
 WROI::WROI():
     osg::Geode()

@@ -22,12 +22,12 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
-#include "core/kernel/WModuleFactory.h"
-#include "core/kernel/WDataModuleInputFile.h"
-
 #include "WModuleContainerWrapper.h"
+#include "core/kernel/WDataModuleInputFile.h"
+#include "core/kernel/WModuleFactory.h"
 
 WModuleContainerWrapper::WModuleContainerWrapper()
     : m_mc()

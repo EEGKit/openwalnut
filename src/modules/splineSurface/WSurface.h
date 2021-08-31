@@ -25,11 +25,12 @@
 #ifndef WSURFACE_H
 #define WSURFACE_H
 
+#include <memory>
 #include <vector>
 
+#include "WBSplineSurface.h"
 #include "core/common/math/WTensorSym.h"
 #include "core/graphicsEngine/WTriangleMesh.h"
-#include "WBSplineSurface.h"
 
 /**
  * Constructs a triangle mesh representation of a spline surface from a given

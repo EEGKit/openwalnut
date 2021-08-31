@@ -25,15 +25,15 @@
 #ifndef WQTBRANCHTREEITEM_H
 #define WQTBRANCHTREEITEM_H
 
-#include <QtCore/QTimer>
+#include <memory>
+
 #include <QProgressBar>
 #include <QTreeWidgetItem>
-
-#include "core/graphicsEngine/WROI.h"
-
-#include "core/kernel/WRMBranch.h"
+#include <QtCore/QTimer>
 
 #include "WQtTreeItem.h"
+#include "core/graphicsEngine/WROI.h"
+#include "core/kernel/WRMBranch.h"
 
 class WQtRoiTreeItem;
 

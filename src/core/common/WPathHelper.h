@@ -25,11 +25,11 @@
 #ifndef WPATHHELPER_H
 #define WPATHHELPER_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <boost/filesystem.hpp>
-#include <boost/shared_ptr.hpp>
 
 /**
  * Singleton class helping to find files and paths. It is a useful to to search for resources and the central place to "hardcode" relative paths.

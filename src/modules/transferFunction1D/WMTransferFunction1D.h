@@ -25,6 +25,7 @@
 #ifndef WMTRANSFERFUNCTION1D_H
 #define WMTRANSFERFUNCTION1D_H
 
+#include <memory>
 #include <string>
 
 #include <osg/Geode>

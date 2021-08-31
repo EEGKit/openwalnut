@@ -25,15 +25,14 @@
 #ifndef WGESHADERPROPERTYDEFINE_H
 #define WGESHADERPROPERTYDEFINE_H
 
-#include <string>
 #include <iostream>
+#include <memory>
+#include <string>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/signals2.hpp>
 
 #include "../../common/WPropertyTypes.h"
 #include "../../common/WPropertyVariable.h"
-
 #include "WGEShaderDefine.h"
 
 

@@ -25,18 +25,14 @@
 #ifndef WMODULEOUTPUTDATA_H
 #define WMODULEOUTPUTDATA_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../common/WLogger.h"
-
-// this is necessary since we have some kind of cyclic includes
-template < typename T > class WModuleInputData;
-#include "WModuleInputData.h"
 #include "../common/WPrototyped.h"
 #include "../common/WTransferable.h"
-
+#include "WModuleInputData.h"
 #include "WModuleOutputConnector.h"
 
 /**

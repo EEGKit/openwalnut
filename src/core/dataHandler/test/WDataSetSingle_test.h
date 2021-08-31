@@ -25,17 +25,18 @@
 #ifndef WDATASETSINGLE_TEST_H
 #define WDATASETSINGLE_TEST_H
 
+#include <memory>
 #include <stdint.h>
 #include <vector>
 
 #include <cxxtest/TestSuite.h>
 
+#include "../../common/WLogger.h"
+#include "../WDataHandlerEnums.h"
 #include "../WDataSetSingle.h"
-#include "../WValueSet.h"
 #include "../WGrid.h"
 #include "../WGridRegular3D.h"
-#include "../WDataHandlerEnums.h"
-#include "../../common/WLogger.h"
+#include "../WValueSet.h"
 
 /**
  * Test important functionality of WDataSetSingle class

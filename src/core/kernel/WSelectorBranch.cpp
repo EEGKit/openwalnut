@@ -23,6 +23,7 @@
 //---------------------------------------------------------------------------
 
 #include <list>
+#include <memory>
 #include <vector>
 
 #include "WSelectorBranch.h"

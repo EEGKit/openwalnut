@@ -25,11 +25,11 @@
 #ifndef WMREADLAS_H
 #define WMREADLAS_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "core/dataHandler/WDataSetPoints.h"
-
 #include "core/kernel/WDataModule.h"
 #include "core/kernel/WModuleOutputData.h"
 

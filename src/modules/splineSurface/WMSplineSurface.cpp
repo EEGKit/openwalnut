@@ -22,40 +22,38 @@
 //
 //---------------------------------------------------------------------------
 
-#include <iostream>
+#include <cmath>
 #include <fstream>
+#include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <cmath>
-
-#include "WMSplineSurface.xpm"
-#include "core/common/WLimits.h"
-#include "core/common/WAssert.h"
-
 #include <osg/Geode>
 #include <osg/Geometry>
-#include <osg/Material>
-#include <osg/StateSet>
-#include <osg/StateAttribute>
-#include <osg/PolygonMode>
 #include <osg/LightModel>
+#include <osg/Material>
+#include <osg/PolygonMode>
+#include <osg/StateAttribute>
+#include <osg/StateSet>
 #include <osgDB/WriteFile>
 
+#include "WMSplineSurface.h"
+#include "WMSplineSurface.xpm"
+#include "WSurface.h"
+#include "core/common/WAssert.h"
+#include "core/common/WLimits.h"
 #include "core/common/WPathHelper.h"
 #include "core/common/WProgress.h"
+#include "core/common/math/WLinearAlgebraFunctions.h"
 #include "core/common/math/linearAlgebra/WPosition.h"
 #include "core/common/math/linearAlgebra/WVectorFixed.h"
-#include "core/common/math/WLinearAlgebraFunctions.h"
 #include "core/dataHandler/WDataHandler.h"
 #include "core/dataHandler/WSubject.h"
 #include "core/graphicsEngine/WGEColormapping.h"
 #include "core/graphicsEngine/WGEUtils.h"
 #include "core/graphicsEngine/shaders/WGEShaderPropertyDefineOptions.h"
 #include "core/kernel/WKernel.h"
-
-#include "WSurface.h"
-#include "WMSplineSurface.h"
 
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMSplineSurface )

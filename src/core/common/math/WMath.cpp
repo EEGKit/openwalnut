@@ -22,12 +22,14 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
+
+#include "../WAssert.h"
+#include "../WLimits.h"
 #include "WMath.h"
 #include "WPlane.h"
 #include "linearAlgebra/WPosition.h"
 #include "linearAlgebra/WVectorFixed.h"
-#include "../WAssert.h"
-#include "../WLimits.h"
 
 bool testIntersectTriangle( const WPosition& p1, const WPosition& p2, const WPosition& p3, const WPlane& p )
 {

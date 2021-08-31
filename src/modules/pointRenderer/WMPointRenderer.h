@@ -25,6 +25,7 @@
 #ifndef WMPOINTRENDERER_H
 #define WMPOINTRENDERER_H
 
+#include <memory>
 #include <string>
 
 #include "core/common/math/linearAlgebra/WVectorFixed.h"

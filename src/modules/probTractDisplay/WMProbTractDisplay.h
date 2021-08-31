@@ -25,6 +25,7 @@
 #ifndef WMPROBTRACTDISPLAY_H
 #define WMPROBTRACTDISPLAY_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -32,6 +33,7 @@
 
 // forward declarations
 class WModule;
+class WDataSetScalar;
 template< class T > class WModuleInputForwardData;
 
 /**

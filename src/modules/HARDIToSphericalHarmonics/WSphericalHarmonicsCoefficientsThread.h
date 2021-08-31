@@ -29,6 +29,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <string>
 #include <utility> // for std::pair
 #include <vector>
@@ -36,12 +37,11 @@
 #include <boost/math/special_functions/spherical_harmonic.hpp>
 #include <boost/thread/thread.hpp>
 
-#include "core/common/WLimits.h"
 #include "core/common/WAssert.h"
+#include "core/common/WLimits.h"
 #include "core/common/WProgress.h"
 #include "core/common/WThreadedRunner.h"
 #include "core/common/math/WMatrix.h"
-
 #include "core/dataHandler/WDataSetRawHARDI.h"
 #include "core/dataHandler/WDataSetSphericalHarmonics.h"
 #include "core/dataHandler/WGridRegular3D.h"

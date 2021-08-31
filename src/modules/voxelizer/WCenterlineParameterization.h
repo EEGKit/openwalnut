@@ -25,11 +25,11 @@
 #ifndef WCENTERLINEPARAMETERIZATION_H
 #define WCENTERLINEPARAMETERIZATION_H
 
+#include <memory>
 #include <vector>
 
-#include "core/common/datastructures/WFiber.h"
-
 #include "WRasterParameterization.h"
+#include "core/common/datastructures/WFiber.h"
 
 /**
  * Stores the direction if a line in a separate dataset for each voxel.

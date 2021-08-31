@@ -25,6 +25,8 @@
 #ifndef WVISUALIZATIONPROPERTYHANDLER_H
 #define WVISUALIZATIONPROPERTYHANDLER_H
 
+#include <memory>
+
 #include "../WProtonData.h"
 #include "../WSingleSelectorName.h"
 

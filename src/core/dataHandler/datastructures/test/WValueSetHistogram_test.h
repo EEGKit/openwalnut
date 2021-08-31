@@ -25,12 +25,12 @@
 #ifndef WVALUESETHISTOGRAM_TEST_H
 #define WVALUESETHISTOGRAM_TEST_H
 
+#include <memory>
 #include <vector>
 
 #include <cxxtest/TestSuite.h>
 
 #include "../../WValueSet.h"
-
 #include "../WValueSetHistogram.h"
 
 /**

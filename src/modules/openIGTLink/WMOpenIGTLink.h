@@ -25,6 +25,7 @@
 #ifndef WMOPENIGTLINK_H
 #define WMOPENIGTLINK_H
 
+#include <memory>
 #include <string>
 
 #include <osg/Geode>

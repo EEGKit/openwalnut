@@ -25,11 +25,11 @@
 #ifndef WMSPATIALDERIVATIVE_H
 #define WMSPATIALDERIVATIVE_H
 
+#include <memory>
 #include <string>
 
 #include "core/dataHandler/WDataSetScalar.h"
 #include "core/dataHandler/WDataSetVector.h"
-
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"

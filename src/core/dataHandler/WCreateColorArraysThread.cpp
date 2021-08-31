@@ -22,8 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
-#include <vector>
 #include <cmath>
+#include <memory>
+#include <vector>
 
 #include "WCreateColorArraysThread.h"
 

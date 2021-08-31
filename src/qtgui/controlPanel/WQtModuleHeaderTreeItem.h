@@ -25,6 +25,7 @@
 #ifndef WQTMODULEHEADERTREEITEM_H
 #define WQTMODULEHEADERTREEITEM_H
 
+#include <memory>
 #include <string>
 
 #include <QTreeWidgetItem>

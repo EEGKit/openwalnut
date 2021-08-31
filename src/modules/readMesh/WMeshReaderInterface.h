@@ -25,17 +25,18 @@
 #ifndef WMESHREADERINTERFACE_H
 #define WMESHREADERINTERFACE_H
 
+#include <fstream>
 #include <limits>
+#include <memory>
 #include <string>
 #include <vector>
-#include <fstream>
 
 #include <boost/filesystem/path.hpp>
 
 #include "core/common/WIOTools.h"
+#include "core/common/WLogger.h"
 #include "core/common/WProgressCombiner.h"
 #include "core/common/WStringUtils.h"
-#include "core/common/WLogger.h"
 #include "core/dataHandler/exceptions/WDHIOFailure.h"
 #include "core/dataHandler/exceptions/WDHNoSuchFile.h"
 #include "core/dataHandler/exceptions/WDHParseError.h"

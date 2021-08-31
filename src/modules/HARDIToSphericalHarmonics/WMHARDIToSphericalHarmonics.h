@@ -26,19 +26,20 @@
 #define WMHARDITOSPHERICALHARMONICS_H
 
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "core/common/math/WMatrix.h"
+#include "WSphericalHarmonicsCoefficientsThread.h"
 #include "core/common/WThreadedRunner.h"
+#include "core/common/math/WMatrix.h"
 #include "core/dataHandler/WDataSetRawHARDI.h"
 #include "core/dataHandler/WDataSetSphericalHarmonics.h"
 #include "core/dataHandler/WGridRegular3D.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
-#include "WSphericalHarmonicsCoefficientsThread.h"
 
 // forward declaration
 template< typename T >

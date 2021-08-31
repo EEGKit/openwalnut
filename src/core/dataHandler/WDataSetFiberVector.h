@@ -25,10 +25,10 @@
 #ifndef WDATASETFIBERVECTOR_H
 #define WDATASETFIBERVECTOR_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../common/datastructures/WFiber.h"
 #include "WDataSet.h"

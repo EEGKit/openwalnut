@@ -25,7 +25,8 @@
 #ifndef WCONVERTERINDEXES_H
 #define WCONVERTERINDEXES_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 
 #include "WProtonData.h"
 

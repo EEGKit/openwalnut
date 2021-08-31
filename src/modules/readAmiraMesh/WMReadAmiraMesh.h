@@ -25,6 +25,7 @@
 #ifndef WMREADAMIRAMESH_H
 #define WMREADAMIRAMESH_H
 
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>

@@ -26,8 +26,7 @@
 #define WLINESTRIPCALLBACK_H
 
 #include <cstddef>
-
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <osg/Drawable>
 #include <osg/NodeVisitor>

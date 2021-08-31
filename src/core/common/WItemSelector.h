@@ -26,11 +26,11 @@
 #define WITEMSELECTOR_H
 
 #include <istream>
+#include <memory>
 #include <ostream>
-#include <vector>
 #include <string>
+#include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/signals2/signal.hpp>
 
 #include "WItemSelection.h"

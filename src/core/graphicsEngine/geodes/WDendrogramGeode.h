@@ -31,8 +31,8 @@
 #include <osg/MatrixTransform>
 #include <osg/PositionAttitudeTransform>
 
-#include "../../common/WHierarchicalTreeFibers.h"
-
+#include "core/common/math/linearAlgebra/WVectorFixed.h"
+#include "core/common/WHierarchicalTreeFibers.h"
 
 /**
  * Class creates a dendrogram from a hierarchical clustering

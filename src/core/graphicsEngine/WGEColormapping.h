@@ -25,24 +25,22 @@
 #ifndef WGECOLORMAPPING_H
 #define WGECOLORMAPPING_H
 
-#include <map>
-#include <string>
 #include <algorithm>
 #include <functional>
+#include <map>
+#include <memory>
+#include <string>
 #include <vector>
 
-#include <boost/signals2/signal.hpp>
 #include <boost/function.hpp>
-
+#include <boost/signals2/signal.hpp>
 #include <osg/Node>
 
 #include "../common/WBoundingBox.h"
-#include "../common/WSharedSequenceContainer.h"
 #include "../common/WSharedAssociativeContainer.h"
-
-#include "callbacks/WGEFunctorCallback.h"
-
+#include "../common/WSharedSequenceContainer.h"
 #include "WGETexture.h"
+#include "callbacks/WGEFunctorCallback.h"
 #include "shaders/WGEShader.h"
 
 

@@ -22,22 +22,20 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
 #include <boost/regex.hpp>
 #include <boost/tokenizer.hpp>
-
 #include <osg/Camera>
 
 #include "../common/WLogger.h"
 #include "../common/WStringUtils.h"
 #include "../kernel/WProjectFile.h"
-
-#include "WGraphicsEngine.h"
-#include "WGEViewer.h"
 #include "WGECamera.h"
-
 #include "WGEProjectFileIO.h"
+#include "WGEViewer.h"
+#include "WGraphicsEngine.h"
 
 WGEProjectFileIO::WGEProjectFileIO():
     WProjectFileIO()

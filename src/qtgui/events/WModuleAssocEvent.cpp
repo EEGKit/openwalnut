@@ -22,8 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WEventTypes.h"
+#include <memory>
 
+#include "WEventTypes.h"
 #include "WModuleAssocEvent.h"
 
 WModuleAssocEvent::WModuleAssocEvent( std::shared_ptr< WModule > module )

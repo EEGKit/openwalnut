@@ -23,24 +23,24 @@
 //---------------------------------------------------------------------------
 
 #include <iostream>
+#include <limits>
 #include <list>
 #include <map>
+#include <memory>
 #include <set>
 #include <sstream>
 #include <stack>
 #include <string>
 #include <utility>
 #include <vector>
-#include <limits>
-
-#include <osg/io_utils>
 
 #include <Eigen/Eigenvalues>
+#include <osg/io_utils>
 
 #include "../common/WAssert.h"
 #include "../common/WLogger.h"
-#include "../common/math/WMath.h"
 #include "../common/datastructures/WUnionFind.h"
+#include "../common/math/WMath.h"
 #include "WTriangleMesh.h"
 
 // init _static_ member variable and provide a linker reference to it

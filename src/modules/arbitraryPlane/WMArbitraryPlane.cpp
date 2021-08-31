@@ -22,11 +22,14 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <osg/Geometry>
 
+#include "WMArbitraryPlane.h"
+#include "WMArbitraryPlane.xpm"
 #include "core/dataHandler/WDataHandler.h"
 #include "core/dataHandler/WDataSet.h"
 #include "core/dataHandler/WDataSetScalar.h"
@@ -34,15 +37,12 @@
 #include "core/dataHandler/WGridRegular3D.h"
 #include "core/dataHandler/WSubject.h"
 #include "core/dataHandler/WValueSet.h"
-#include "core/graphicsEngine/shaders/WGEShader.h"
-#include "core/graphicsEngine/WGEUtils.h"
 #include "core/graphicsEngine/WGEColormapping.h"
+#include "core/graphicsEngine/WGEUtils.h"
 #include "core/graphicsEngine/shaders/WGEPropertyUniform.h"
+#include "core/graphicsEngine/shaders/WGEShader.h"
 #include "core/kernel/WKernel.h"
 #include "core/kernel/WSelectionManager.h"
-
-#include "WMArbitraryPlane.h"
-#include "WMArbitraryPlane.xpm"
 
 // This line is needed by the module loader to actually find your module. Do not remove. Do NOT add a ";" here.
 W_LOADABLE_MODULE( WMArbitraryPlane )

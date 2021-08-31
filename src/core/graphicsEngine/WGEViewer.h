@@ -25,10 +25,8 @@
 #ifndef WGEVIEWER_H
 #define WGEVIEWER_H
 
+#include <memory>
 #include <string>
-
-#include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
 
 #include <osg/Node>
 #include <osg/Version>

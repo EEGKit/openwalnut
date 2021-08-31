@@ -22,13 +22,14 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
+#include "WMWriteDendrogram.h"
+#include "WMWriteDendrogram.xpm"
 #include "core/common/WPropertyHelper.h"
 #include "core/dataHandler/io/WWriterDendrogram.h"
 #include "core/kernel/WKernel.h"
-#include "WMWriteDendrogram.h"
-#include "WMWriteDendrogram.xpm"
 
 W_LOADABLE_MODULE( WMWriteDendrogram )
 

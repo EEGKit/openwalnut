@@ -22,16 +22,14 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <vector>
 
-
 #include "../common/WLogger.h"
-
 #include "WDataSet.h"
-#include "exceptions/WDHNoSuchDataSet.h"
-
 #include "WSubject.h"
+#include "exceptions/WDHNoSuchDataSet.h"
 
 WSubject::WSubject():
     m_datasets(),

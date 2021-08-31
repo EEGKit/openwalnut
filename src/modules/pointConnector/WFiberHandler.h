@@ -25,21 +25,20 @@
 #ifndef WFIBERHANDLER_H
 #define WFIBERHANDLER_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/lexical_cast.hpp>
 #include <osg/Geode>
 
+#include "WMPointConnector.h"
+#include "action/WActionHandler.h"
 #include "core/common/WItemSelectionItem.h"
 #include "core/common/WItemSelectionItemTyped.h"
 #include "core/common/WItemSelector.h"
 #include "core/common/WPropertyGroup.h"
 #include "core/kernel/WModule.h"
-
-#include "action/WActionHandler.h"
-#include "WMPointConnector.h"
 
 
 /**

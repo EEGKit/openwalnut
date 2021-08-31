@@ -23,11 +23,10 @@
 //---------------------------------------------------------------------------
 
 #include <cstddef>
-
+#include <memory>
 #include <sstream>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../common/exceptions/WOutOfBounds.h"
 #include "WEEG2Segment.h"

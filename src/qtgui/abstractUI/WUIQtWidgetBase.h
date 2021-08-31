@@ -25,13 +25,12 @@
 #ifndef WUIQTWIDGETBASE_H
 #define WUIQTWIDGETBASE_H
 
+#include <memory>
+
 #include <QWidget>
 
-#include <boost/shared_ptr.hpp>
-
-#include "core/common/WCondition.h"
-
 #include "../WMainWindow.h"
+#include "core/common/WCondition.h"
 
 /**
  * Implementation of \ref WUIWidgetBase. Not really. It is an base class for all WUIWidgetBase implementations to comfortably allow thread-save

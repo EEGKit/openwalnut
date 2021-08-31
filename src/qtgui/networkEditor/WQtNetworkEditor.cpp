@@ -22,40 +22,35 @@
 //
 //---------------------------------------------------------------------------
 
-#include <string>
 #include <cstdlib>
 #include <iostream>
+#include <memory>
+#include <string>
 
-#include <boost/shared_ptr.hpp>
-
-#include <QKeyEvent>
-#include <QGraphicsView>
 #include <QGraphicsItem>
 #include <QGraphicsItemGroup>
+#include <QGraphicsView>
+#include <QKeyEvent>
 
 #include "../WMainWindow.h"
-#include "WQtNetworkPort.h"
-#include "WQtNetworkItemGrid.h"
-
-#include "core/kernel/combiner/WDisconnectCombiner.h"
-#include "core/kernel/WKernel.h"
-#include "core/kernel/WModule.h"
-#include "core/kernel/WModuleFactory.h"
-#include "core/kernel/WProjectFile.h"
-
 #include "../controlPanel/WQtControlPanel.h"
 #include "../events/WEventTypes.h"
 #include "../events/WModuleAssocEvent.h"
 #include "../events/WModuleConnectEvent.h"
+#include "../events/WModuleCrashEvent.h"
 #include "../events/WModuleDeleteEvent.h"
 #include "../events/WModuleDisconnectEvent.h"
 #include "../events/WModuleReadyEvent.h"
 #include "../events/WModuleRemovedEvent.h"
-#include "../events/WModuleCrashEvent.h"
-
-#include "WQtNetworkEditorProjectFileIO.h"
-
 #include "WQtNetworkEditor.h"
+#include "WQtNetworkEditorProjectFileIO.h"
+#include "WQtNetworkItemGrid.h"
+#include "WQtNetworkPort.h"
+#include "core/kernel/WKernel.h"
+#include "core/kernel/WModule.h"
+#include "core/kernel/WModuleFactory.h"
+#include "core/kernel/WProjectFile.h"
+#include "core/kernel/combiner/WDisconnectCombiner.h"
 
 WQtNetworkEditor::WQtNetworkEditor( WMainWindow* parent ):
     WQtDockWidget( "Modules", parent )

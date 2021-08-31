@@ -23,8 +23,8 @@
 //---------------------------------------------------------------------------
 
 #include <map>
+#include <memory>
 
-#include <boost/shared_ptr.hpp>
 
 #include "WColoredVertices.h"
 

@@ -22,16 +22,15 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include "WLogger.h"
-
-#include "exceptions/WOutOfBounds.h"
-#include "exceptions/WNameNotUnique.h"
-#include "WItemSelector.h"
-
 #include "WItemSelection.h"
+#include "WItemSelector.h"
+#include "WLogger.h"
+#include "exceptions/WNameNotUnique.h"
+#include "exceptions/WOutOfBounds.h"
 
 WItemSelection::WItemSelection() :
                 WSharedSequenceContainer< std::vector< std::shared_ptr< WItemSelectionItem > > >()

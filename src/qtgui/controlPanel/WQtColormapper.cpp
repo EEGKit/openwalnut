@@ -22,38 +22,37 @@
 //
 //---------------------------------------------------------------------------
 
+#include <algorithm>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
-#include <algorithm>
 
-#include <boost/bind/bind.hpp>
-
-#include <QtCore/QList>
+#include <QApplication>
+#include <QListWidgetItem>
 #include <QScrollArea>
 #include <QVBoxLayout>
-#include <QListWidgetItem>
-#include <QApplication>
 #include <QWidgetAction>
+#include <QtCore/QList>
+#include <boost/bind/bind.hpp>
 
+#include "../WMainWindow.h"
+#include "../WQtGui.h"
+#include "../events/WEventTypes.h"
+#include "../events/WUpdateTextureSorterEvent.h"
+#include "../guiElements/WScaleLabel.h"
+#include "WPropertyBoolWidget.h"
+#include "WPropertyDoubleWidget.h"
+#include "WQtColormapper.h"
+#include "WQtPropertyGroupWidget.h"
 #include "core/common/WAssert.h"
-#include "core/dataHandler/WDataSet.h"
 #include "core/dataHandler/WDataHandler.h"
+#include "core/dataHandler/WDataSet.h"
 #include "core/dataHandler/exceptions/WDHNoSuchSubject.h"
 #include "core/graphicsEngine/WGEColormapping.h"
 #include "core/graphicsEngine/WGETexture.h"
-#include "WPropertyBoolWidget.h"
-#include "WPropertyDoubleWidget.h"
-#include "WQtPropertyGroupWidget.h"
-#include "../events/WUpdateTextureSorterEvent.h"
-#include "../events/WEventTypes.h"
-#include "../guiElements/WScaleLabel.h"
-#include "../WQtGui.h"
-#include "../WMainWindow.h"
-
-#include "WQtColormapper.h"
 
 WQtColormapper::WQtColormapper( QWidget* parent )
     : WQtDockWidget( "Colormaps", parent )

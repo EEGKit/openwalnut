@@ -22,9 +22,10 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WTreeItemTypes.h"
+#include <memory>
 
 #include "WQtModuleTreeItem.h"
+#include "WTreeItemTypes.h"
 
 WQtModuleTreeItem::WQtModuleTreeItem( QTreeWidgetItem * parent, std::shared_ptr< WModule > module ) :
     WQtTreeItem( parent, MODULE, module )

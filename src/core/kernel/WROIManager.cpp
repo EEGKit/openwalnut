@@ -23,12 +23,11 @@
 //---------------------------------------------------------------------------
 
 #include <list>
+#include <memory>
 #include <vector>
 
 #include "../common/WAssert.h"
-
 #include "../graphicsEngine/WGraphicsEngine.h"
-
 #include "WROIManager.h"
 
 WROIManager::WROIManager()

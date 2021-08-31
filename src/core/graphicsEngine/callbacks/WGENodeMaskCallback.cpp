@@ -22,6 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
+
 #include "WGENodeMaskCallback.h"
 
 WGENodeMaskCallback::WGENodeMaskCallback( std::shared_ptr< WBoolFlag > flag ):

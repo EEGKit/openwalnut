@@ -27,19 +27,18 @@
 
 #include <algorithm>
 #include <limits>
+#include <memory>
 #include <shared_mutex>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/signals2.hpp>
 
+#include "../common/WLogger.h"
+#include "../common/WProperties.h"
 #include "../graphicsEngine/WGETexture.h"
 #include "../graphicsEngine/WGETypeTraits.h"
-#include "../common/WProperties.h"
-#include "../common/WLogger.h"
-
-#include "WValueSetBase.h"
 #include "WGridRegular3D.h"
+#include "WValueSetBase.h"
 
 /**
  * Namespace provides some scaling functions for scaling data values to meet the OpenGL requirements.

@@ -25,17 +25,16 @@
 #ifndef WDATASETTIMESERIES_TEST_H
 #define WDATASETTIMESERIES_TEST_H
 
-#include <vector>
-#include <limits>
 #include <algorithm>
+#include <limits>
+#include <memory>
 #include <string>
+#include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <cxxtest/TestSuite.h>
 
 #include "../../common/WLimits.h"
 #include "../../common/WLogger.h"
-
 #include "../WDataSetTimeSeries.h"
 
 

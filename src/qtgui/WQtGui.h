@@ -25,29 +25,25 @@
 #ifndef WQTGUI_H
 #define WQTGUI_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/program_options.hpp>
-#include <boost/function.hpp>
-
 #include <QApplication>
-#include <QtCore/QSettings>
-#include <QtCore/QMutex>
 #include <QSplashScreen>
-
-#include "core/graphicsEngine/WROI.h"
-#include "core/graphicsEngine/WGraphicsEngine.h"
-
-#include "core/kernel/WModule.h"
-#include "core/common/WDefines.h"
-
-#include "core/ui/WUI.h"
-
-#include "events/WDeferredCallEvent.h"
-#include "abstractUI/WUIQtWidgetFactory.h"
+#include <QtCore/QMutex>
+#include <QtCore/QSettings>
+#include <boost/function.hpp>
+#include <boost/program_options.hpp>
 
 #include "WIconManager.h"
+#include "abstractUI/WUIQtWidgetFactory.h"
+#include "core/common/WDefines.h"
+#include "core/graphicsEngine/WGraphicsEngine.h"
+#include "core/graphicsEngine/WROI.h"
+#include "core/kernel/WModule.h"
+#include "core/ui/WUI.h"
+#include "events/WDeferredCallEvent.h"
 
 class WMainWindow;
 class WKernel;

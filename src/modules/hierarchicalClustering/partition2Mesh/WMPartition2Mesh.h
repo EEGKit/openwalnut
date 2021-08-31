@@ -36,20 +36,19 @@
 #ifndef WMPARTITION2MESH_H
 #define WMPARTITION2MESH_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <osg/Geode>
 
-#include "core/kernel/WModule.h"
-#include "core/kernel/WModuleInputData.h"
-#include "core/kernel/WModuleOutputData.h"
-
 #include "core/dataHandler/WDataSetScalar.h"
 #include "core/dataHandler/WDataSetVector.h"
 #include "core/dataHandler/WValueSet.h"
-
 #include "core/graphicsEngine/WTriangleMesh.h"
+#include "core/kernel/WModule.h"
+#include "core/kernel/WModuleInputData.h"
+#include "core/kernel/WModuleOutputData.h"
 
 
 /**

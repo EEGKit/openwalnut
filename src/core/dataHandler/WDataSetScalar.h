@@ -26,14 +26,13 @@
 #define WDATASETSCALAR_H
 
 #include <map>
+#include <memory>
 #include <string>
 
 #include <boost/thread.hpp>
-#include <boost/shared_ptr.hpp>
-
-#include "datastructures/WValueSetHistogram.h"
 
 #include "WDataSetSingle.h"
+#include "datastructures/WValueSetHistogram.h"
 
 
 /**

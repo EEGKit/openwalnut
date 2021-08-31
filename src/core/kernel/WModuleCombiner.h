@@ -25,10 +25,10 @@
 #ifndef WMODULECOMBINER_H
 #define WMODULECOMBINER_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 
 #include "../common/WThreadedRunner.h"
-
 #include "WModuleContainer.h"
 
 /**

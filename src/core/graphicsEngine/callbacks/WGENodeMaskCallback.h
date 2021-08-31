@@ -25,12 +25,14 @@
 #ifndef WGENODEMASKCALLBACK_H
 #define WGENODEMASKCALLBACK_H
 
-#include <boost/signals2.hpp>
+#include <memory>
 
+#include <boost/signals2.hpp>
 #include <osg/Camera>
 #include <osg/Node>
 
-#include "../../common/WFlag.h"
+#include "core/common/WFlag.h"
+#include "core/kernel/WKernel.h"
 
 /**
  * This callback is useful to en-/disable nodes using the node mask based on properties. In contrast to WGEManagedGroupNode, this callback can be

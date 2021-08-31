@@ -23,24 +23,23 @@
 //---------------------------------------------------------------------------
 
 #include <algorithm>
+#include <memory>
 #include <sstream>
 #include <string>
 
-#include <osg/LightModel>
 #include <osg/Geometry>
-
+#include <osg/LightModel>
 #include <teem/elf.h> // NOLINT false positive C system header
 
-#include "core/common/WStringUtils.h"
+#include "WMTeemGlyphs.h"
+#include "WMTeemGlyphs.xpm"
 #include "core/common/WAssert.h"
 #include "core/common/WConditionOneShot.h"
 #include "core/common/WLimits.h"
 #include "core/common/WPropertyHelper.h"
+#include "core/common/WStringUtils.h"
 #include "core/common/WThreadedFunction.h"
 #include "core/kernel/WKernel.h"
-
-#include "WMTeemGlyphs.h"
-#include "WMTeemGlyphs.xpm"
 
 // This line is needed by the module loader to actually find your module. Do not remove. Do NOT add a ";" here.
 W_LOADABLE_MODULE( WMTeemGlyphs )

@@ -25,11 +25,10 @@
 #ifndef WCONNECTORDATA_H
 #define WCONNECTORDATA_H
 
+#include <memory>
 #include <vector>
 
 #include <osg/Geode>
-
-#include <boost/shared_ptr.hpp>
 
 
 /**

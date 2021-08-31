@@ -26,11 +26,11 @@
 #define WDATASETPOINTS_H
 
 #include <any>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../common/WBoundingBox.h"
 #include "WDataSet.h"

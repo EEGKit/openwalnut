@@ -25,6 +25,7 @@
 #ifndef WQTSUBJECTTREEITEM_H
 #define WQTSUBJECTTREEITEM_H
 
+#include <memory>
 #include <string>
 
 #include <QTreeWidgetItem>

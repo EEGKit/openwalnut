@@ -25,12 +25,12 @@
 #ifndef WREADERELC_H
 #define WREADERELC_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
-#include "core/dataHandler/io/WReader.h"
 #include "core/dataHandler/WEEGPositionsLibrary.h"
+#include "core/dataHandler/io/WReader.h"
 
 /**
  * Read electrode positions from an ELC file.

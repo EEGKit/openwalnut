@@ -22,10 +22,10 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
 #include "../../core/kernel/WKernel.h"
-
 #include "WMCalculateHistogram.h"
 
 // This line is needed by the module loader to actually find your module. Do not remove. Do NOT add a ";" here.

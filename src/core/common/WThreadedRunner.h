@@ -25,13 +25,12 @@
 #ifndef WTHREADEDRUNNER_H
 #define WTHREADEDRUNNER_H
 
+#include <memory>
 #include <stdint.h>
-
 #include <string>
 
 #include <boost/function.hpp>
 #include <boost/signals2.hpp>
-
 #include <boost/thread.hpp>
 #include <boost/thread/thread.hpp>
 

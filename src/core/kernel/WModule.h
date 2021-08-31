@@ -25,14 +25,13 @@
 #ifndef WMODULE_H
 #define WMODULE_H
 
+#include <memory>
 #include <string>
 #include <typeinfo>
 #include <vector>
 
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/function.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/signals2/signal.hpp>
 #include <boost/thread.hpp>
 
@@ -47,12 +46,11 @@
 #include "../dataHandler/WDataSet.h"
 #include "../dataHandler/WDataSetSingle.h"
 #include "../dataHandler/WValueSet.h"
-
 #include "WModuleCombinerTypes.h"
 #include "WModuleConnectorSignals.h"
+#include "WModuleMetaInformation.h"
 #include "WModuleSignals.h"
 #include "WModuleTypes.h"
-#include "WModuleMetaInformation.h"
 
 class WModuleConnector;
 class WModuleContainer;

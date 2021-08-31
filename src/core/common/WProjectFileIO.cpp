@@ -22,13 +22,12 @@
 //
 //---------------------------------------------------------------------------
 
-#include <vector>
+#include <memory>
 #include <string>
-
-#include "WLogger.h"
+#include <vector>
 
 #include "../kernel/WProjectFile.h"
-
+#include "WLogger.h"
 #include "WProjectFileIO.h"
 
 WProjectFileIO::WProjectFileIO():

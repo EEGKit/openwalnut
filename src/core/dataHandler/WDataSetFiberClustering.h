@@ -26,14 +26,13 @@
 #define WDATASETFIBERCLUSTERING_H
 
 #include <map>
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
-#include "datastructures/WFiberCluster.h"
-
-#include "../common/exceptions/WInvalidID.h"
 #include "../common/WTransferable.h"
+#include "../common/exceptions/WInvalidID.h"
+#include "datastructures/WFiberCluster.h"
 
 /**
  * This is a dataset which represent a clustering of fibers. It does not itself contain the fiber-data. This dataset only contains the indices of

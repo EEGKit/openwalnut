@@ -22,6 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -31,7 +32,6 @@
 #include "../common/WIOTools.h"
 #include "../common/WPathHelper.h"
 #include "../common/WSharedLib.h"
-
 #include "WModuleLoader.h"
 
 WModuleLoader::WModuleLoader( )

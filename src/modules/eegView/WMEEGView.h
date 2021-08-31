@@ -25,6 +25,7 @@
 #ifndef WMEEGVIEW_H
 #define WMEEGVIEW_H
 
+#include <memory>
 #include <string>
 #include <vector>
 

@@ -25,7 +25,8 @@
 #ifndef WFIBERACTION_H
 #define WFIBERACTION_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 
 
 /**

@@ -25,9 +25,8 @@
 #ifndef WITKIMAGECONVERSION_TEST_H
 #define WITKIMAGECONVERSION_TEST_H
 
+#include <memory>
 #include <vector>
-
-#include <boost/shared_ptr.hpp>
 
 #include <cxxtest/TestSuite.h>
 

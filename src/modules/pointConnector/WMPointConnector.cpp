@@ -25,14 +25,15 @@
 #define _USE_MATH_DEFINES
 
 #include <cmath>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "WAngleHelper.h"
 #include "WConnectorData.h"
 #include "WFiberHandler.h"
-#include "WMPointConnector.h"
 #include "WKeyboardHandler.h"
+#include "WMPointConnector.h"
 
 static const osg::Vec4 COLOR_SEL_POINT( 255.0 / 255.0, 190.0 / 255.0,   7.0 / 255.0, 1.0 );
 static const osg::Vec4 COLOR_SEL_FIBER(  30.0 / 255.0, 136.0 / 255.0, 229.0 / 255.0, 1.0 );

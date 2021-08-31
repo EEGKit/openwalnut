@@ -23,20 +23,21 @@
 //---------------------------------------------------------------------------
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <vector>
 
+#include "WConnectorData.h"
+#include "WFiberHandler.h"
 #include "action/WFiberActionAddFiber.h"
 #include "action/WFiberActionAddVertex.h"
 #include "action/WFiberActionMultideselect.h"
 #include "action/WFiberActionMultiselect.h"
 #include "action/WFiberActionRemoveVertex.h"
 #include "action/WFiberActionRemoveFiber.h"
+#include "action/WFiberActionRemoveVertex.h"
 #include "action/WFiberActionToggle.h"
 #include "core/common/WPathHelper.h"
-
-#include "WConnectorData.h"
-#include "WFiberHandler.h"
 
 
 WFiberHandler::WFiberHandler( WMPointConnector* pointConnector )

@@ -25,14 +25,13 @@
 #ifndef WWRITERFIBERVTK_H
 #define WWRITERFIBERVTK_H
 
+#include <memory>
 #include <string>
 
 #include <boost/filesystem.hpp>
-#include <boost/shared_ptr.hpp>
 
 #include "../WDataSetFiberVector.h"
 #include "../WDataSetFibers.h"
-
 #include "WWriter.h"
 
 /**

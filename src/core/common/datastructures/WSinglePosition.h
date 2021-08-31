@@ -25,10 +25,11 @@
 #ifndef WSINGLEPOSITION_H
 #define WSINGLEPOSITION_H
 
+#include <memory>
 #include <string>
 
-#include "../../common/math/linearAlgebra/WPosition.h"
 #include "../../common/WTransferable.h"
+#include "../../common/math/linearAlgebra/WPosition.h"
 
 /**
  * Represents a single position that is transferable between modules by connectors.

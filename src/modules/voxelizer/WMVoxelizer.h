@@ -25,6 +25,7 @@
 #ifndef WMVOXELIZER_H
 #define WMVOXELIZER_H
 
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -34,6 +35,7 @@
 
 class WBresenhamDBL;
 class WDataSetScalar;
+class WDataSetFibers;
 class WFiberCluster;
 class WRasterAlgorithm;
 class WGEManagedGroupNode;
@@ -83,12 +85,6 @@ public:
      * \return The prototype used to create every module in OpenWalnut.
      */
     virtual std::shared_ptr< WModule > factory() const;
-
-    /**
-     * Get the icon for this module in XPM format.
-     * \return The icon.
-     */
-    virtual const char** getXPMIcon() const;
 
 protected:
     /**

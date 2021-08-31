@@ -25,12 +25,11 @@
 #ifndef WMODULEINPUTFORWARDDATA_H
 #define WMODULEINPUTFORWARDDATA_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../common/WLogger.h"
-
 #include "WModuleInputData.h"
 #include "WModuleOutputData.h"
 

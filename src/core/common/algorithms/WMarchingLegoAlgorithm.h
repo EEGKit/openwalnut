@@ -25,12 +25,12 @@
 #ifndef WMARCHINGLEGOALGORITHM_H
 #define WMARCHINGLEGOALGORITHM_H
 
-#include <vector>
 #include <map>
+#include <memory>
+#include <vector>
 
-#include "../math/WMatrix.h"
 #include "../WProgressCombiner.h"
-
+#include "../math/WMatrix.h"
 #include "core/graphicsEngine/WTriangleMesh.h"
 
 /**

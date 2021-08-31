@@ -24,16 +24,16 @@
 
 #include <algorithm>
 #include <fstream>
+#include <memory>
 #include <string>
 #include <vector>
 
+#include "WMReadDipoles.h"
 #include "core/common/WPathHelper.h"
 #include "core/dataHandler/WDataSetDipoles.h"
 #include "core/dataHandler/exceptions/WDHIOFailure.h"
 #include "core/kernel/WKernel.h"
 #include "modules/readDipoles/WMReadDipoles.xpm"
-
-#include "WMReadDipoles.h"
 
 // This line is needed by the module loader to actually find your module. Do not remove. Do NOT add a ";" here.
 W_LOADABLE_MODULE( WMReadDipoles )

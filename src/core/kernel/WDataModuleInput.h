@@ -25,10 +25,10 @@
 #ifndef WDATAMODULEINPUT_H
 #define WDATAMODULEINPUT_H
 
-#include <string>
+#include <memory>
 #include <ostream>
+#include <string>
 
-#include <boost/shared_ptr.hpp>
 
 /**
  * This class is the abstract interface to all the possible inputs a \ref WDataModule might handle. The classes can be specialized into streamed

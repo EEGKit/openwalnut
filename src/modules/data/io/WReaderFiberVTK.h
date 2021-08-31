@@ -26,17 +26,16 @@
 #define WREADERFIBERVTK_H
 
 #include <fstream>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
 #include "core/common/WStringUtils.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/exceptions/WDHIOFailure.h"
 #include "core/dataHandler/exceptions/WDHNoSuchFile.h"
 #include "core/dataHandler/exceptions/WDHParseError.h"
-
 #include "core/dataHandler/io/WReader.h"
 
 /**

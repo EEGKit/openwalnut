@@ -22,6 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -33,11 +34,10 @@
 #include <osgWidget/ViewerEventHandlers> //NOLINT
 #include <osgWidget/WindowManager> //NOLINT
 
-#include "core/kernel/WKernel.h"
-#include "core/kernel/WSelectionManager.h"
-
 #include "WMDatasetProfile.h"
 #include "WMDatasetProfile.xpm" // Please put a real icon here.
+#include "core/kernel/WKernel.h"
+#include "core/kernel/WSelectionManager.h"
 
 // This line is needed by the module loader to actually find your module. Do not remove. Do NOT add a ";" here.
 W_LOADABLE_MODULE( WMDatasetProfile )

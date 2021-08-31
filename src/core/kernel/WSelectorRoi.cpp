@@ -22,12 +22,12 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <vector>
 
-#include "../graphicsEngine/WROIBox.h"
 #include "../graphicsEngine/WROIArbitrary.h"
+#include "../graphicsEngine/WROIBox.h"
 #include "WKdTree.h"
-
 #include "WSelectorRoi.h"
 
 

@@ -25,9 +25,8 @@
 #ifndef WMODULECRASHEVENT_H
 #define WMODULECRASHEVENT_H
 
+#include <memory>
 #include <string>
-
-#include <boost/shared_ptr.hpp>
 
 #include <QtCore/QEvent>
 

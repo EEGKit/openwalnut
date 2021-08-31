@@ -25,6 +25,7 @@
 #ifndef WSEGMENTATIONALGOTHRESHOLD_H
 #define WSEGMENTATIONALGOTHRESHOLD_H
 
+#include <memory>
 #include <string>
 #include <vector>
 

@@ -22,11 +22,11 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
-#include "WTreeItemTypes.h"
-
 #include "WQtModuleHeaderTreeItem.h"
+#include "WTreeItemTypes.h"
 
 WQtModuleHeaderTreeItem::WQtModuleHeaderTreeItem( QTreeWidget * parent ) :
     QTreeWidgetItem( parent, MODULEHEADER )

@@ -25,15 +25,15 @@
 #ifndef WMARBITRARYROIS_H
 #define WMARBITRARYROIS_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <osg/Geode>
 
-#include "core/graphicsEngine/WROI.h"
 #include "core/graphicsEngine/WGEGroupNode.h"
+#include "core/graphicsEngine/WROI.h"
 #include "core/graphicsEngine/WTriangleMesh.h"
-
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"

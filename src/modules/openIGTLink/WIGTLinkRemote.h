@@ -25,20 +25,18 @@
 #ifndef WIGTLINKREMOTE_H
 #define WIGTLINKREMOTE_H
 
-#include <vector>
+#include <memory>
 #include <queue>
 #include <string>
+#include <vector>
 
 #include "core/common/WCondition.h"
-
 #include "core/common/WThreadedRunner.h"
-
 #include "core/common/math/WMatrix.h"
-
-#include "igtlMessageHeader.h"
-#include "igtlImageMessage.h"
-#include "igtlClientSocket.h"
 #include "core/dataHandler/WDataSetScalar.h"
+#include "igtlClientSocket.h"
+#include "igtlImageMessage.h"
+#include "igtlMessageHeader.h"
 
 class WDataSet;
 class WDataSetScalar;

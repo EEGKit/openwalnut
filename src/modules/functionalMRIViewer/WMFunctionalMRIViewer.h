@@ -25,13 +25,13 @@
 #ifndef WMFUNCTIONALMRIVIEWER_H
 #define WMFUNCTIONALMRIVIEWER_H
 
+#include <memory>
 #include <string>
 
+#include "core/dataHandler/WDataSetTimeSeries.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
-
-#include "core/dataHandler/WDataSetTimeSeries.h"
 
 /**
  * Views a time series at different points in time.

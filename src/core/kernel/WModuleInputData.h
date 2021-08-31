@@ -25,21 +25,18 @@
 #ifndef WMODULEINPUTDATA_H
 #define WMODULEINPUTDATA_H
 
+#include <memory>
 #include <shared_mutex>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/thread/locks.hpp>
 
-// this is necessary since we have some kind of cyclic includes
-template < typename T > class WModuleOutputData;
-#include "WModuleOutputData.h"
-#include "exceptions/WModuleConnectorUnconnected.h"
-#include "../common/WTransferable.h"
 #include "../common/WPrototyped.h"
-
+#include "../common/WTransferable.h"
 #include "WModuleInputConnector.h"
 #include "WModuleOutputConnector.h"
+#include "WModuleOutputData.h"
+#include "exceptions/WModuleConnectorUnconnected.h"
 
 /**
  * Class offering an instantiate-able data connection between modules.

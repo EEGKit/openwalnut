@@ -25,23 +25,22 @@
 #ifndef WPROPERTYSTRUCT_H
 #define WPROPERTYSTRUCT_H
 
-#include <vector>
+#include <memory>
 #include <string>
+#include <vector>
 
-#include <boost/shared_ptr.hpp>
-
-#include <boost/tuple/tuple.hpp>
-#include <boost/mpl/vector.hpp>
+#include <boost/mpl/at.hpp>
 #include <boost/mpl/copy.hpp>
 #include <boost/mpl/size.hpp>
-#include <boost/mpl/at.hpp>
+#include <boost/mpl/vector.hpp>
 #include <boost/preprocessor/repetition/enum_params.hpp>
+#include <boost/tuple/tuple.hpp>
 
-#include "WStringUtils.h"
 #include "WCondition.h"
-#include "WPropertyGroupBase.h"
 #include "WPropertyBase.h"
+#include "WPropertyGroupBase.h"
 #include "WPropertyTypes.h"
+#include "WStringUtils.h"
 #include "exceptions/WPropertyUnknown.h"
 
 /**

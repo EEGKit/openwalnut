@@ -22,6 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
+
 #include "WConditionSet.h"
 
 WConditionSet::WConditionSet():

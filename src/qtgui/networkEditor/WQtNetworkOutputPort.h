@@ -25,8 +25,10 @@
 #ifndef WQTNETWORKOUTPUTPORT_H
 #define WQTNETWORKOUTPUTPORT_H
 
-#include "core/kernel/WModuleOutputConnector.h"
+#include <memory>
+
 #include "WQtNetworkPort.h"
+#include "core/kernel/WModuleOutputConnector.h"
 
 // forward declaration
 class WQtNetworkArrow;

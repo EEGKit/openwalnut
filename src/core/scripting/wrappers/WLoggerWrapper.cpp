@@ -22,15 +22,15 @@
 //
 //---------------------------------------------------------------------------
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
+#include <memory>
 #include <string>
 
-#include "core/common/WAssert.h"
-#include "core/common/WLogger.h"
-#include "core/common/WLogStream.h"
-
 #include "WLoggerWrapper.h"
+#include "core/common/WAssert.h"
+#include "core/common/WLogStream.h"
+#include "core/common/WLogger.h"
 
 WLoggerWrapper::WLoggerWrapper()
 {

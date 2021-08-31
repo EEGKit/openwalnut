@@ -25,13 +25,13 @@
 #ifndef WDATASETFIBERVECTOR_TEST_H
 #define WDATASETFIBERVECTOR_TEST_H
 
+#include <memory>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <cxxtest/TestSuite.h>
 
-#include "../WDataSetFiberVector.h"
 #include "../../common/math/linearAlgebra/WPosition.h"
+#include "../WDataSetFiberVector.h"
 
 /**
  * Unit tests our fiber dataset class

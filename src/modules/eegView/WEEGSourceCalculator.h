@@ -26,14 +26,13 @@
 #define WEEGSOURCECALCULATOR_H
 
 #include <cstddef>
-
+#include <memory>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
+#include "WEEGEvent.h"
 #include "core/common/math/linearAlgebra/WPosition.h"
 #include "core/dataHandler/WEEG2.h"
-#include "WEEGEvent.h"
 
 
 /**

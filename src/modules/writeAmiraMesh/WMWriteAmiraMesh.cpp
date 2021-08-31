@@ -22,13 +22,12 @@
 //
 //---------------------------------------------------------------------------
 
+#include <memory>
 #include <string>
 
-#include "core/kernel/WKernel.h"
-#include "core/common/datastructures/WFiber.h"
-
-
 #include "WMWriteAmiraMesh.h"
+#include "core/common/datastructures/WFiber.h"
+#include "core/kernel/WKernel.h"
 
 // This line is needed by the module loader to actually find your module. Do not remove. Do NOT add a ";" here.
 W_LOADABLE_MODULE( WMWriteAmiraMesh )

@@ -22,15 +22,15 @@
 //
 //---------------------------------------------------------------------------
 
-#include <stdint.h>
-
 #include <cmath>
+#include <memory>
+#include <stdint.h>
 #include <string>
 #include <vector>
 
 #include "../common/WAssert.h"
-#include "../common/math/linearAlgebra/WPosition.h"
 #include "../common/math/WSymmetricSphericalHarmonic.h"
+#include "../common/math/linearAlgebra/WPosition.h"
 #include "WDataSetSingle.h"
 #include "WDataSetSphericalHarmonics.h"
 

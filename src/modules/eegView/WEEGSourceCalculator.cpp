@@ -23,19 +23,18 @@
 //---------------------------------------------------------------------------
 
 #include <cstddef>
-
 #include <limits>
+#include <memory>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 
+#include "WEEGEvent.h"
+#include "WEEGSourceCalculator.h"
 #include "core/common/WAssert.h"
 #include "core/common/math/linearAlgebra/WPosition.h"
 #include "core/dataHandler/WEEG2.h"
 #include "core/dataHandler/WEEGChannelInfo.h"
 #include "core/dataHandler/exceptions/WDHException.h"
-#include "WEEGEvent.h"
-#include "WEEGSourceCalculator.h"
 
 
 WEEGSourceCalculator::WEEGSourceCalculator( const std::shared_ptr< const WEEG2 > eeg )

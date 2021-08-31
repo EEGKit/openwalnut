@@ -25,9 +25,9 @@
 #ifndef WMODULEONETOONECOMBINER_H
 #define WMODULEONETOONECOMBINER_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 
 #include "../WModule.h"
 #include "../WModuleCombiner.h"

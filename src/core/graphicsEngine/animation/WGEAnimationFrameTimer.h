@@ -25,7 +25,8 @@
 #ifndef WGEANIMATIONFRAMETIMER_H
 #define WGEANIMATIONFRAMETIMER_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 
 #include "../../common/WTimer.h"
 

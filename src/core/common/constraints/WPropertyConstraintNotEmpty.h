@@ -25,6 +25,8 @@
 #ifndef WPROPERTYCONSTRAINTNOTEMPTY_H
 #define WPROPERTYCONSTRAINTNOTEMPTY_H
 
+#include <memory>
+
 #include "../WPropertyTypes.h"
 #include "WPropertyConstraintTypes.h"
 

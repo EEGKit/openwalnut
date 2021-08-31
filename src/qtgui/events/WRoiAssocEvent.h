@@ -25,7 +25,7 @@
 #ifndef WROIASSOCEVENT_H
 #define WROIASSOCEVENT_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <QtCore/QEvent>
 

@@ -25,19 +25,18 @@
 #ifndef WPROJECTFILE_H
 #define WPROJECTFILE_H
 
-#include <string>
 #include <list>
+#include <memory>
+#include <string>
 #include <vector>
 
 #include <boost/filesystem.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 #include <boost/signals2/signal.hpp>
 
+#include "../common/WProjectFileIO.h"
 #include "../common/WSharedSequenceContainer.h"
 #include "../common/WThreadedRunner.h"
-
-#include "../common/WProjectFileIO.h"
 
 class WModuleProjectFileCombiner;
 class WModule;

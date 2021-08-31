@@ -23,10 +23,11 @@
 //---------------------------------------------------------------------------
 
 #include <iostream>
+#include <memory>
 
-#include <osg/ShapeDrawable>
-#include <osg/MatrixTransform>
 #include <osg/Geode>
+#include <osg/MatrixTransform>
+#include <osg/ShapeDrawable>
 
 #include "WGEGroupNode.h"
 

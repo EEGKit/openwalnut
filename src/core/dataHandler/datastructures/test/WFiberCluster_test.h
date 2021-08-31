@@ -26,6 +26,7 @@
 #define WFIBERCLUSTER_TEST_H
 
 #include <list>
+#include <memory>
 
 #include <cxxtest/TestSuite.h>
 

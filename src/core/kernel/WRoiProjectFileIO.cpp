@@ -22,25 +22,25 @@
 //
 //---------------------------------------------------------------------------
 
-#include <string>
 #include <map>
+#include <memory>
+#include <string>
 #include <vector>
 
 #include <boost/regex.hpp>
 
-#include "../common/WStringUtils.h"
+#include "../common/WLogger.h"
 #include "../common/WProperties.h"
 #include "../common/WPropertyBase.h"
-#include "../common/WPropertyVariable.h"
 #include "../common/WPropertyTypes.h"
+#include "../common/WPropertyVariable.h"
+#include "../common/WStringUtils.h"
 #include "../common/exceptions/WFileNotFound.h"
-#include "../common/WLogger.h"
 #include "../graphicsEngine/WROI.h"
 #include "../graphicsEngine/WROIBox.h"
-#include "WROIManager.h"
 #include "WKernel.h"
 #include "WProjectFile.h"
-
+#include "WROIManager.h"
 #include "WRoiProjectFileIO.h"
 
 WRoiProjectFileIO::WRoiProjectFileIO():

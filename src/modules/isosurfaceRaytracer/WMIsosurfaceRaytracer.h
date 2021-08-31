@@ -25,13 +25,13 @@
 #ifndef WMISOSURFACERAYTRACER_H
 #define WMISOSURFACERAYTRACER_H
 
+#include <memory>
 #include <string>
 
 #include <osg/Node>
 #include <osg/Uniform>
 
 #include "core/graphicsEngine/shaders/WGEShader.h"
-
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"

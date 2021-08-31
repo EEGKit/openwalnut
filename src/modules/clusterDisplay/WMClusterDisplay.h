@@ -25,6 +25,7 @@
 #ifndef WMCLUSTERDISPLAY_H
 #define WMCLUSTERDISPLAY_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -33,11 +34,11 @@
 #include <osgGA/GUIEventHandler>
 
 #include "core/common/WHierarchicalTreeFibers.h"
-#include "core/graphicsEngine/geodes/WDendrogramGeode.h"
 #include "core/graphicsEngine/WFiberDrawable.h"
-#include "core/graphicsEngine/WGEManagedGroupNode.h"
-#include "core/graphicsEngine/widgets/WOSGButton.h"
 #include "core/graphicsEngine/WGECamera.h"
+#include "core/graphicsEngine/WGEManagedGroupNode.h"
+#include "core/graphicsEngine/geodes/WDendrogramGeode.h"
+#include "core/graphicsEngine/widgets/WOSGButton.h"
 #include "core/kernel/WFiberSelector.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"

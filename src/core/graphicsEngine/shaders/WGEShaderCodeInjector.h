@@ -25,6 +25,7 @@
 #ifndef WGESHADERCODEINJECTOR_H
 #define WGESHADERCODEINJECTOR_H
 
+#include <memory>
 #include <string>
 
 #include "WGEShaderPreprocessor.h"

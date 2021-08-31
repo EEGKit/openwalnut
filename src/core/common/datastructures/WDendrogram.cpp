@@ -26,15 +26,16 @@
 #include <fstream>
 #include <iterator>
 #include <map>
+#include <memory>
 #include <set>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include "../exceptions/WOutOfBounds.h"
 #include "../WAssert.h"
 #include "../WLogger.h"
 #include "../WStringUtils.h"
+#include "../exceptions/WOutOfBounds.h"
 #include "WDendrogram.h"
 
 // init _static_ member variable and provide a linker reference to it
