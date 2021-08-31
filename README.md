@@ -1,4 +1,4 @@
-# OpenWalnut
+# OpenWalnut (SIVERT-Release)
 
 OpenWalnut is an open source tool for multi-modal medical and brain data
 visualization. Its universality allows it to be easily extended and used in a
