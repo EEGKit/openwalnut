@@ -30,7 +30,7 @@
 
 "Filter Proton Data"
 {
-  icon="proton_module_icon2.png";
+  icon="proton_module_icon.png";
 };
 
 "common"
