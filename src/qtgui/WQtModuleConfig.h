@@ -130,6 +130,8 @@ private slots:
 
     /**
      * Call this to refresh the selected modules when a preset is selected
+     * 
+     * \param selectedPreset the preset which is selected inside of the combobox
      */
     void comboboxItemChanged( QString selectedPreset );
 
