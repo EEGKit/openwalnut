@@ -147,10 +147,10 @@ WQtModuleConfig::WQtModuleConfig( QWidget* parent, Qt::WindowFlags f ):
 
     // combobox for black-list presets
     m_selectPresetBlacklist = new QComboBox( this );
-    m_selectPresetBlacklist->setInsertPolicy( QComboBox::InsertAtBottom );
     m_selectPresetBlacklist->setToolTip( "Select a blacklist preset or create a new one." );
     m_selectPresetBlacklist->setFixedSize( 120, 26 );
-    m_selectPresetBlacklist->setEditable( false );
+    m_selectPresetBlacklist->setEditable( true );
+    m_selectPresetBlacklist->setInsertPolicy( QComboBox::InsertAtBottom );
     // read preset names from settings
     QSettings* settings = &WQtGui::getSettings();
     settings->beginGroup( "qtgui/modules/preset/" );
@@ -173,7 +173,7 @@ WQtModuleConfig::WQtModuleConfig( QWidget* parent, Qt::WindowFlags f ):
     {
         m_selectPresetBlacklist->setDisabled( false );
     }
-    connect( m_selectPresetBlacklist, SIGNAL( currentTextChanged( QString ) ), this, SLOT( comboboxItemChanged( QString ) ) );
+    connect( m_selectPresetBlacklist, SIGNAL( editTextChanged( QString ) ), this, SLOT( comboboxItemChanged( QString ) ) );
     layoutAllowedModules->addWidget( m_selectPresetBlacklist );
 
     // create the module list
@@ -359,6 +359,12 @@ void WQtModuleConfig::saveListToSettings()
 
     WQtGui::getSettings().setValue( "qtgui/modules/usePreset", m_usePreset->checkState() );
     WQtGui::getSettings().setValue( "qtgui/modules/selectedPreset", m_selectPresetBlacklist->currentText() );
+
+    // -1 means, that the preset name is not in the list of presets
+    if( m_selectPresetBlacklist->findText( m_selectPresetBlacklist->currentText() ) == -1 )
+    {
+        WQtGui::getSettings().setValue( "qtgui/modules/preset/" + m_selectPresetBlacklist->currentText(), QString::fromStdString( allowedAsString ) );
+    }
 
     // also write the path list
     QList< QVariant > paths;
