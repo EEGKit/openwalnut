@@ -120,55 +120,60 @@ WQtModuleConfig::WQtModuleConfig( QWidget* parent, Qt::WindowFlags f ):
     layoutAllowedModules->addWidget( m_asBlackList );
 
     m_usePreset = new QCheckBox( "Use a preset module list", this );
-    m_usePreset->setToolTip( "Activate this option if you want to use a preset of preselected modules which may be specific for different research areas." );
-    m_usePreset->setDisabled(true);
-    if(m_asBlackList->checkState())
+    m_usePreset->setToolTip( "Activate this option if you want to use a preset of preselected "
+                                "modules which may be specific for different research areas." );
+    m_usePreset->setDisabled( true );
+    if( m_asBlackList->checkState() )
     {
-        m_usePreset->setDisabled(false);
+        m_usePreset->setDisabled( false );
     }
-    connect( m_usePreset, SIGNAL( stateChanged( int ) ), this, SLOT( resetAllModuleCheckboxes() ));
+    connect( m_usePreset, SIGNAL( stateChanged( int ) ), this, SLOT( resetAllModuleCheckboxes() ) );
     layoutAllowedModules->addWidget( m_usePreset );
-    
-    // Set presets here
-    WQtGui::getSettings().setValue( "qtgui/modules/preset/ ", QString::fromStdString(""));
-    WQtGui::getSettings().setValue( "qtgui/modules/preset/SIVERT", QString::fromStdString("Anisotropic Filter,Calculate GFA,Calculate Tensors,Cluster Display,ClusterDisplayVoxels,"
-                                                                                            "Data Type Conversion,Diffusion Tensor Scalars,EEG View,Effective Connectivity Cluster,Fiber Data Creator,"
-                                                                                            "Fiber translator,Functional MRI Viewer,Hierarchical Clustering Display,Image Space LIC,Image Space Tensor LIC,"
-                                                                                            "Merge Components To Vector,Mori Det. Tracking,Partition To Mesh,Picking in DVR Evaluation,"
-                                                                                            "Probabilistic Tract Rendering with multi transparent iso surfaces.,"
-                                                                                            "Read Amira Mesh,Read Dipoles,Read Raw Data,Read Simple Text Line Data,Read Spherical Harmonics,Read VCL,"
-                                                                                            "Read VIM,Scalar Data Creator,Spline Surface,Superquadric Glyphs,Surface Parameter Animator,"
-                                                                                            "Template,Template Colormapping,Template Containers,Template Data Loader,Template Render Pipelines,"
-                                                                                            "Template Shaders,Template UI,Vector Align,Vector Data Creator,Vector Normalize,Vector Operator,"
-                                                                                            "Vector Plot,Vector Scaling,WebGL Support,Write Amira Mesh,Write Dendrogram,"));
 
-    // combobox for black-list presets 
-    m_selectPresetBlacklist = new QComboBox ( this );
+    // Set presets here
+    QString presetSIVERT = "Anisotropic Filter,Calculate GFA,Calculate Tensors,Cluster Display,ClusterDisplayVoxels,"
+                            "Data Type Conversion,Diffusion Tensor Scalars,EEG View,Effective Connectivity Cluster,Fiber Data Creator,"
+                            "Fiber translator,Functional MRI Viewer,Hierarchical Clustering Display,Image Space LIC,Image Space Tensor LIC,"
+                            "Merge Components To Vector,Mori Det. Tracking,Partition To Mesh,Picking in DVR Evaluation,"
+                            "Probabilistic Tract Rendering with multi transparent iso surfaces.,"
+                            "Read Amira Mesh,Read Dipoles,Read Raw Data,Read Simple Text Line Data,Read Spherical Harmonics,Read VCL,"
+                            "Read VIM,Scalar Data Creator,Spline Surface,Superquadric Glyphs,Surface Parameter Animator,"
+                            "Template,Template Colormapping,Template Containers,Template Data Loader,Template Render Pipelines,"
+                            "Template Shaders,Template UI,Vector Align,Vector Data Creator,Vector Normalize,Vector Operator,"
+                            "Vector Plot,Vector Scaling,WebGL Support,Write Amira Mesh,Write Dendrogram,";
+
+    WQtGui::getSettings().setValue( "qtgui/modules/preset/ ", QString::fromStdString( "" ) );
+    WQtGui::getSettings().setValue( "qtgui/modules/preset/SIVERT", presetSIVERT );
+
+    // combobox for black-list presets
+    m_selectPresetBlacklist = new QComboBox( this );
     m_selectPresetBlacklist->setInsertPolicy( QComboBox::InsertAtBottom );
     m_selectPresetBlacklist->setToolTip( "Select a blacklist preset or create a new one." );
-    m_selectPresetBlacklist->setFixedSize(120, 26);
+    m_selectPresetBlacklist->setFixedSize( 120, 26 );
     m_selectPresetBlacklist->setEditable( false );
     // read preset names from settings
     QSettings* settings = &WQtGui::getSettings();
-    settings->beginGroup("qtgui/modules/preset/");
+    settings->beginGroup( "qtgui/modules/preset/" );
     QStringList childKeys = settings->childKeys();
-    m_selectPresetBlacklist->addItems(childKeys);
+    m_selectPresetBlacklist->addItems( childKeys );
     settings->endGroup();
-    int selectedPresetIndex = m_selectPresetBlacklist->findText(WQtGui::getSettings().value( "qtgui/modules/selectedPreset", "" ).toString());
+    int selectedPresetIndex = m_selectPresetBlacklist->findText( WQtGui::getSettings().value( "qtgui/modules/selectedPreset", "" ).toString() );
     // -1 means selectedPresetIndex not found
-    if(selectedPresetIndex != -1)
+    if( selectedPresetIndex != -1 )
     {
-        m_selectPresetBlacklist->setCurrentIndex(selectedPresetIndex);
-    }else{
-        m_selectPresetBlacklist->setCurrentIndex(0);
+        m_selectPresetBlacklist->setCurrentIndex( selectedPresetIndex );
+    }
+    else
+    {
+        m_selectPresetBlacklist->setCurrentIndex( 0 );
     }
 
-    m_selectPresetBlacklist->setDisabled(true);
-    if(m_asBlackList->checkState())
+    m_selectPresetBlacklist->setDisabled( true );
+    if( m_asBlackList->checkState() )
     {
-        m_selectPresetBlacklist->setDisabled(false);
+        m_selectPresetBlacklist->setDisabled( false );
     }
-    connect( m_selectPresetBlacklist, SIGNAL( currentTextChanged( QString ) ), this, SLOT( comboboxItemChanged ( QString ) ) );
+    connect( m_selectPresetBlacklist, SIGNAL( currentTextChanged( QString ) ), this, SLOT( comboboxItemChanged( QString ) ) );
     layoutAllowedModules->addWidget( m_selectPresetBlacklist );
 
     // create the module list
@@ -296,16 +301,18 @@ void WQtModuleConfig::loadListsFromSettings( bool defaultModulePaths )
     std::string allowedModules = "";
 
     // read settings
-    if(usePreset)
+    if( usePreset )
     {
         allowedModules = WQtGui::getSettings().value( "qtgui/modules/preset/" + m_selectPresetBlacklist->currentText(), "" ).toString().toStdString();
-    }else{
+    }
+    else
+    {
         allowedModules = WQtGui::getSettings().value( "qtgui/modules/allowedList", "" ).toString().toStdString();
     }
 
     m_allowedModules = string_utils::tokenize( allowedModules, "," );
- 
-    // set dialog according to the settings
+
+     // set dialog according to the settings
     for( AllowedModuleList::const_iterator iter = m_allowedModules.begin(); iter != m_allowedModules.end(); ++iter )
     {
         if( m_moduleItemMap.count( *iter ) )
@@ -349,9 +356,9 @@ void WQtModuleConfig::saveListToSettings()
     WQtGui::getSettings().setValue( "qtgui/modules/allowedList", QString::fromStdString( allowedAsString ) );
     WQtGui::getSettings().setValue( "qtgui/modules/IgnoreAllowedList", ( m_showThemAll->checkState() == Qt::Checked ) );
     WQtGui::getSettings().setValue( "qtgui/modules/asBlackList", ( m_asBlackList->checkState() == Qt::Checked ) );
-    
-    WQtGui::getSettings().setValue( "qtgui/modules/usePreset", m_usePreset->checkState());
-    WQtGui::getSettings().setValue( "qtgui/modules/selectedPreset", m_selectPresetBlacklist->currentText());
+
+    WQtGui::getSettings().setValue( "qtgui/modules/usePreset", m_usePreset->checkState() );
+    WQtGui::getSettings().setValue( "qtgui/modules/selectedPreset", m_selectPresetBlacklist->currentText() );
 
     // also write the path list
     QList< QVariant > paths;
@@ -469,10 +476,12 @@ void WQtModuleConfig::comboboxItemChanged( QString selectedPreset )
     std::string allowedModules = "";
 
     // read settings
-    if(m_usePreset->isChecked())
+    if( m_usePreset->isChecked() )
     {
         allowedModules = WQtGui::getSettings().value( "qtgui/modules/preset/" + selectedPreset, "" ).toString().toStdString();
-    }else{
+    }
+    else
+    {
         allowedModules = WQtGui::getSettings().value( "qtgui/modules/allowedList", "" ).toString().toStdString();
     }
 

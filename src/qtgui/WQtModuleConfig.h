@@ -138,6 +138,11 @@ private slots:
      */
     void showBlacklistPresetOptions();
 
+    /**
+     * Call this to reset all checkboxes in the list of modules
+     */
+    void resetAllModuleCheckboxes();
+
 protected:
 private:
     /**
@@ -178,11 +183,6 @@ private:
     void saveListToSettings();
 
     /**
-     * Saves the whitelist and the blacklist to the settings.
-     */
-    void resetAllModuleCheckboxes();
-
-    /**
      * This widget contains the allowed module list
      */
     QListWidget* m_list;
@@ -206,7 +206,7 @@ private:
      * Check if you want to use a preset module list
      */
     QCheckBox* m_usePreset;
-    
+
     /**
      * Combobox to select a black list
      */
