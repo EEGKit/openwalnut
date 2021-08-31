@@ -39,7 +39,6 @@
 #include "WCenterlineParameterization.h"
 #include "WIntegrationParameterization.h"
 #include "WMVoxelizer.h"
-#include "WMVoxelizer.xpm"
 #include "WRasterAlgorithm.h"
 #include "core/common/WColor.h"
 #include "core/common/WLogger.h"
@@ -79,11 +78,6 @@ WMVoxelizer::~WMVoxelizer()
 std::shared_ptr< WModule > WMVoxelizer::factory() const
 {
     return std::shared_ptr< WModule >( new WMVoxelizer() );
-}
-
-const char** WMVoxelizer::getXPMIcon() const
-{
-    return voxelizer_xpm;
 }
 
 void WMVoxelizer::properties()
