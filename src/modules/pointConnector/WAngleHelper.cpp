@@ -216,71 +216,28 @@ std::vector< WPosition > WAngleHelper::findSmoothestPath( std::vector< WPosition
         return findSmoothestPath( positions );
     }
 
-    std::vector< WPosition > out;
+    std::vector< WPosition > pos;
     auto posIter = positions.begin();
     auto fibIter = fiber.begin();
-    osg::Vec3* oldFib = nullptr;
 
-    // Selection before fiber
-    if( posIter->z() < fibIter->z() )
+    // intertwine positions and fiber.
+    while( posIter < positions.end() )
     {
-        std::vector< WPosition > pos;
-        while( posIter < positions.end() && posIter->z() < fibIter->z() )
+        if( fibIter >= fiber.end() || posIter->z() < fibIter->z() )
         {
             pos.push_back( *posIter );
             posIter++;
         }
-        pos.push_back( *fibIter );
-        pos = findSmoothestPath( pos );
-        out.insert( out.end(), pos.begin(), pos.end() );
-    }
-
-    // Selection between fiber
-    while( fibIter < fiber.end() && posIter < positions.end() )
-    {
-        if( fibIter->z() == posIter->z() )
+        else if( posIter->z() == fibIter->z() )
         {
             posIter++;
         }
-        else if( fibIter->z() > posIter->z() )
-        {
-            std::vector< WPosition > pos;
-            if( oldFib != nullptr )
-            {
-                pos.push_back( WPosition( *oldFib ) );
-            }
-            while( posIter < positions.end() && posIter->z() < fibIter->z() )
-            {
-                pos.push_back( *posIter );
-                posIter++;
-            }
-            pos.push_back( WPosition( *fibIter ) );
-            pos = findSmoothestPath( pos );
-            out.insert( out.end(), pos.begin(), pos.end() );
-        }
         else
         {
-            oldFib = &( *fibIter );
+            pos.push_back( *fibIter );
             fibIter++;
         }
     }
 
-    // Selection after fiber
-    if( posIter < positions.end() )
-    {
-        std::vector< WPosition > pos;
-        if( oldFib != nullptr )
-        {
-            pos.push_back( WPosition( *oldFib ) );
-        }
-        while( posIter != positions.end() )
-        {
-            pos.push_back( *posIter );
-            posIter++;
-        }
-        pos = findSmoothestPath( pos );
-        out.insert( out.end(), pos.begin(), pos.end() );
-    }
-
-    return out;
+    return findSmoothestPath( pos );
 }
