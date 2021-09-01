@@ -216,6 +216,8 @@ void WMPointRenderer::moduleMain()
         // add geometry to geode
         geode->addDrawable( geometry );
 
+        wge::enableTransparency( geode );
+
         // shader and colormapping
         m_shader->apply( geode );
 
