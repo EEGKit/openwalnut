@@ -25,6 +25,7 @@
 #ifndef WDATASETPOINTS_H
 #define WDATASETPOINTS_H
 
+#include <any>
 #include <memory>
 #include <string>
 #include <utility>
@@ -83,9 +84,9 @@ public:
      *
      * \param vertices the vertices of the points, stored in x1,y1,z1,x2,y2,z2, ..., xn,yn,zn scheme
      * \param colors optional colors of each vertex. Stored as R1,[G1,B1,[A1,]] ... Rn,[Gn,Bn,[An]]
-     * \param valueSet optional extra data per vertex.
+     * \param data optional extra data.
      */
-    WDataSetPoints( VertexArray vertices, ColorArray colors = NULL, WValueSetBase::SPtr valueSet = NULL );
+    WDataSetPoints( VertexArray vertices, ColorArray colors = NULL, std::any data = NULL );
 
     /**
      * Constructs a new set of points. The constructed instance is empty.
@@ -145,10 +146,10 @@ public:
     ColorArray getColors() const;
 
     /**
-     * Getter for the value set
-     * \return The value set
+     * Getter for the data set
+     * \return The data set
      */
-    WValueSetBase::SPtr getValueSet() const;
+    std::any getData() const;
 
     /**
      * Get the bounding box.
@@ -229,9 +230,9 @@ private:
     ColorArray m_colors;
 
     /**
-     * An optional WValueSet for data per vertex.
+     * An optional vector for data per vertex.
      */
-    WValueSetBase::SPtr m_valueSet;
+    std::any m_data;
 
     /**
      * Which colortype do we use in m_colors.

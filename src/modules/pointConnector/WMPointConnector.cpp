@@ -22,11 +22,14 @@
 //
 //---------------------------------------------------------------------------
 
+#define _USE_MATH_DEFINES
+
+#include <cmath>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "WClickHandler.h"
+#include "WAngleHelper.h"
 #include "WConnectorData.h"
 #include "WFiberHandler.h"
 #include "WKeyboardHandler.h"
@@ -83,11 +86,29 @@ void WMPointConnector::connectors()
 void WMPointConnector::properties()
 {
     m_fiberHandler->createProperties( m_properties );
+
+    WPropertyGroup::SPtr assistanceGroup = m_properties->addPropertyGroup( "Assistance", "Property group assistance features." );
+
+    m_enableSAPT = assistanceGroup->addProperty( "Enable SAPT ", "Enable Semi-Automatic-Proton-Tracking", true );
+    m_enableAdaptiveVisibility = assistanceGroup->addProperty( "Enable adaptive visibility", "Enable adaptive visibility using a cone", true,
+                                                                boost::bind( &WMPointConnector::updatePoints, this ) );
+    m_adaptiveVisibilityAngle = assistanceGroup->addProperty( "Adaptive visibility angle", "Adaptive visibility angle", 45.0,
+                                                               boost::bind( &WMPointConnector::updatePoints, this ) );
+    m_adaptiveVisibilityAngle->setMin( 0.0 );
+    m_adaptiveVisibilityAngle->setMax( 90.0 );
+
+    m_hiddenOpacity = assistanceGroup->addProperty( "Hidden point opacity", "Changes the opacity of the hidden points", 0.1,
+                                                     boost::bind( &WMPointConnector::updatePoints, this ) );
+    m_hiddenOpacity->setMin( 0.0 );
+    m_hiddenOpacity->setMax( 1.0 );
+
     WModule::properties();
 }
 
 void WMPointConnector::moduleMain()
 {
+    createHandler();
+
     m_onscreenSelection = std::shared_ptr< WOnscreenSelection >( new WOnscreenSelection() );
     m_onscreenSelection->setOnend( boost::bind( &WMPointConnector::selectionEnd, this,
                                    boost::placeholders::_1, boost::placeholders::_2, boost::placeholders::_3 ) );
@@ -97,7 +118,6 @@ void WMPointConnector::moduleMain()
 
     createPointRenderer();
     createFiberDisplay();
-    createHandler();
 
     ready();
 
@@ -160,8 +180,6 @@ void WMPointConnector::toggleActivationOfModule( WModule::SPtr mod )
 void WMPointConnector::createHandler()
 {
     osg::ref_ptr< osgViewer::View > viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView();
-    osg::ref_ptr< WClickHandler > clickHandler = new WClickHandler( this );
-    viewer->addEventHandler( clickHandler.get() );
 
     osg::ref_ptr< WKeyboardHandler > keyboardHandler = new WKeyboardHandler( this );
     viewer->addEventHandler( keyboardHandler.get() );
@@ -176,7 +194,22 @@ void WMPointConnector::handleInput()
         return;
     }
 
-    std::shared_ptr< WValueSet< size_t > > eventIDs = std::dynamic_pointer_cast< WValueSet< size_t > >( points->getValueSet() );
+    SPFloatVector edeps;
+    SPSizeVector eventIDs;
+
+    if( points->getData().type() == typeid( std::tuple< SPFloatVector > ) )
+    {
+        edeps = std::get< 0 >( std::any_cast< std::tuple< SPFloatVector > >( points->getData() ) );
+    }
+    else if( points->getData().type() == typeid( std::tuple< SPSizeVector > ) )
+    {
+        eventIDs = std::get< 0 >( std::any_cast< std::tuple< SPSizeVector > >( points->getData() ) );
+    }
+    else if( points->getData().type() == typeid( std::tuple< SPFloatVector, SPSizeVector > ) )
+    {
+        edeps = std::get< 0 >( std::any_cast< std::tuple< SPFloatVector, SPSizeVector > >( points->getData() ) );
+        eventIDs = std::get< 1 >( std::any_cast< std::tuple< SPFloatVector, SPSizeVector > >( points->getData() ) );
+    }
 
     m_connectorData->clear();
 
@@ -187,11 +220,11 @@ void WMPointConnector::handleInput()
     for( size_t pointIdx = 0; pointIdx < points->size(); ++pointIdx )
     {
         osg::Vec3 vertex = points->operator[]( pointIdx );
-        m_connectorData->addVertex( vertex, points->getColor( pointIdx ) );
+        m_connectorData->addVertex( vertex, points->getColor( pointIdx ), edeps ? edeps->at( pointIdx ) : 0 );
 
         if( eventIDs )
         {
-            size_t eventID = eventIDs->getScalar( pointIdx );
+            size_t eventID = eventIDs->at( pointIdx );
 
             while( fibers->size() <= eventID )
             {
@@ -253,9 +286,9 @@ void WMPointConnector::updatePoints()
         {
             color = COLOR_SEL_FIBER;
         }
-        if( m_fiberHandler->isPointHidden( vertex ) )
+        else if( m_fiberHandler->isPointHidden( vertex ) || isAdaptivelyHidden( vertex ) )
         {
-            color[3] = 0.1;
+            color[3] = m_hiddenOpacity->get();
         }
 
         colors->push_back( color.x() );
@@ -265,6 +298,35 @@ void WMPointConnector::updatePoints()
     }
 
     m_pointOutput->updateData( WDataSetPoints::SPtr( new WDataSetPoints( vertices, colors ) ) );
+}
+
+bool WMPointConnector::isAdaptivelyHidden( osg::Vec3 vertex )
+{
+    if( !m_enableAdaptiveVisibility->get() )
+    {
+        return false;
+    }
+
+    size_t verIdx = 0;
+    if( !m_connectorData->getSelectedPoint( &verIdx ) )
+    {
+        return false;
+    }
+
+    osg::Vec3 selected = m_connectorData->getVertices()->at( verIdx );
+    WFiberHandler::PCFiber fiber = m_fiberHandler->getFibers()->at( m_fiberHandler->getSelectedFiber() );
+    auto it = std::find( fiber.begin(), fiber.end(), selected );
+    osg::Vec3 before = osg::Vec3( 0.0, 0.0, 1.0 );
+    if( it != fiber.end() && it != fiber.begin() )
+    {
+        before = *( --it );
+    }
+
+    double angle = WAngleHelper::calculateAngle( selected - before, vertex - selected );
+
+    double checkAngle = m_adaptiveVisibilityAngle->get();
+
+    return angle > checkAngle && angle < ( 180.0 - checkAngle );
 }
 
 void WMPointConnector::handleClick( osg::Vec3 cameraPosition, osg::Vec3 direction, bool isLeftClick )
@@ -407,7 +469,7 @@ void WMPointConnector::updateOutput()
 
         if( m_fiberHandler->isHidden( idx ) )
         {
-            color[3] = 0.1;
+            color[3] = m_hiddenOpacity->get();
         }
 
         for( size_t vIdx = 0; vIdx < fiber.size(); vIdx++ )
@@ -456,29 +518,95 @@ WFiberHandler::SPtr WMPointConnector::getFiberHandler()
     return m_fiberHandler;
 }
 
-void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float, float )
+void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float x, float y )
 {
+    // TODO(eschbach): maybe clean up this method. It is pretty long
+    if( !m_onscreenSelection->hasMoved() )
+    {
+        // no movement do raycast.
+        float mouseX = x * 2.0 - 1.0;
+        float mouseY = y * 2.0 - 1.0;
+
+        osg::Camera* camera = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera();
+        osg::Matrix VP = camera->getViewMatrix() * camera->getProjectionMatrix();
+
+        osg::Matrix inverseVP;
+        inverseVP.invert( VP );
+
+        osg::Vec3 nearPoint( mouseX, mouseY, -1.0f );
+        osg::Vec3 farPoint( mouseX, mouseY, 1.0f );
+        nearPoint = nearPoint * inverseVP;
+        farPoint = farPoint * inverseVP;
+
+        osg::Vec3 direction = farPoint - nearPoint;
+        direction.normalize();
+
+        handleClick( nearPoint, direction, m_onscreenSelection->getClickType() );
+        return;
+    }
+
+    std::vector< WPosition > positions;
     for( size_t idx = 0; idx < m_connectorData->getVertices()->size(); idx++ )
     {
         osg::Vec3 vertex = m_connectorData->getVertices()->at( idx );
-        if( m_onscreenSelection->isSelected( vertex.x(), vertex.y(), vertex.z() ) )
+        positions.push_back( WPosition( vertex ) );
+    }
+
+    positions = m_onscreenSelection->isSelected( positions );
+    if( positions.empty() )
+    {
+        return;
+    }
+
+    if( !m_onscreenSelection->getClickType() ) // right click delete
+    {
+        size_t idx = 0;
+        size_t fibIdx = m_fiberHandler->getSelectedFiber();
+        for( auto vertex = positions.begin(); vertex != positions.end(); )
         {
-            if( m_onscreenSelection->getClickType() )
+            if( m_fiberHandler->getFiberOfPoint( *vertex, &idx ) && idx == fibIdx )
             {
-                if( !m_fiberHandler->getFiberOfPoint( vertex ) )
-                {
-                    m_connectorData->deselectPoint();
-                    m_connectorData->selectPoint( idx );
-                    m_fiberHandler->addVertexToFiber( vertex, m_fiberHandler->getSelectedFiber() );
-                }
+                vertex++;
             }
             else
             {
-                m_connectorData->deselectPoint();
-                m_fiberHandler->removeVertexFromFiber( m_connectorData->getVertices()->at( idx ), m_fiberHandler->getSelectedFiber() );
-                m_fiberHandler->selectLastPoint();
+                positions.erase( vertex );
             }
         }
+
+        if( positions.empty() )
+        {
+            return;
+        }
+        m_connectorData->deselectPoint();
+        m_fiberHandler->removeVerticesFromFiber( std::vector< osg::Vec3 >( positions.begin(), positions.end() ), fibIdx );
+        m_fiberHandler->selectLastPoint();
+    }
+    else // left click add
+    {
+        for( auto vertex = positions.begin(); vertex != positions.end(); )
+        {
+            if( m_fiberHandler->getFiberOfPoint( *vertex ) || m_fiberHandler->isPointHidden( *vertex ) || isAdaptivelyHidden( *vertex ) )
+            {
+                positions.erase( vertex );
+            }
+            else
+            {
+                vertex++;
+            }
+        }
+        if( m_enableSAPT->get() )
+        {
+            positions = WAngleHelper::findSmoothestPath( positions, m_fiberHandler->getFibers()->at( m_fiberHandler->getSelectedFiber() ) );
+        }
+
+        if( positions.empty() )
+        {
+            return;
+        }
+        m_connectorData->deselectPoint();
+        m_fiberHandler->addVerticesToFiber( std::vector< osg::Vec3 >( positions.begin(), positions.end() ), m_fiberHandler->getSelectedFiber() );
+        m_fiberHandler->selectLastPoint();
     }
 
     updatePoints();

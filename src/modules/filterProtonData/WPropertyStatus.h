@@ -33,6 +33,7 @@
 #include "propertyHandler/WEventIDLimitationPropertyHandler.h"
 #include "propertyHandler/WFilterPropertyHandler.h"
 #include "propertyHandler/WVisualizationPropertyHandler.h"
+#include "propertyHandler/WOutputPropertyHandler.h"
 
 
 /**
@@ -99,6 +100,18 @@ public:
      */
     void setEventIDLimitationPropertyHandler( WEventIDLimitationPropertyHandler::SPtr eventIDLimitationPropertyHandler );
 
+    /**
+     * getter for m_outputPropertyHandler
+     * \return WOutputPropertyHandler::SPtr m_outputPropertyHandler
+     */
+    WOutputPropertyHandler::SPtr getOutputPropertyHandler();
+
+    /**
+     * setter for m_outputPropertyHandler
+     * \param outputPropertyHandler setter variable for m_outputPropertyHandler
+     */
+    void setOutputPropertyHandler( WOutputPropertyHandler::SPtr outputPropertyHandler );
+
 private:
     /**
      * pointer to group property and the subproperty for columnselection   
@@ -119,5 +132,10 @@ private:
      * pointer to group property and the subproperty for Limitation of eventID
      */
     WEventIDLimitationPropertyHandler::SPtr m_eventIDLimitationPropertyHandler;
+
+    /**
+     * pointer to group property and subproperty for the output
+     */
+    WOutputPropertyHandler::SPtr m_outputPropertyHandler;
 };
 #endif  // WPROPERTYSTATUS_H

@@ -167,7 +167,11 @@ void WMPointRenderer::moduleMain()
             continue;
         }
 
-        std::shared_ptr< WValueSet< float > > valueSet = std::dynamic_pointer_cast< WValueSet< float > >( points->getValueSet() );
+        std::shared_ptr< WValueSet< float > > valueSet;
+        if( points->getData().type() == typeid( std::shared_ptr< WValueSet< float > > ) )
+        {
+            valueSet = std::any_cast< std::shared_ptr< WValueSet< float > > >( points->getData() );
+        }
 
         m_useAttribute->set( valueSet ? true : false );
 

@@ -31,6 +31,8 @@
 #include "WFiberHandler.h"
 #include "action/WFiberActionAddFiber.h"
 #include "action/WFiberActionAddVertex.h"
+#include "action/WFiberActionMultideselect.h"
+#include "action/WFiberActionMultiselect.h"
 #include "action/WFiberActionRemoveFiber.h"
 #include "action/WFiberActionRemoveVertex.h"
 #include "action/WFiberActionToggle.h"
@@ -87,6 +89,40 @@ void WFiberHandler::addVertexToFiber( osg::Vec3 vertex, size_t fiberIdx, bool si
     if( !silent )
     {
         m_actionHandler->pushAction( WFiberActionAddVertex::SPtr( new WFiberActionAddVertex( vertex, fiberIdx, this ) ) );
+    }
+}
+
+void WFiberHandler::addVerticesToFiber( std::vector< osg::Vec3 > vertices, size_t fiberIdx, bool silent )
+{
+    auto fiber = m_fibers->begin() + fiberIdx;
+    for( auto vertex = vertices.begin(); vertex != vertices.end(); vertex++ )
+    {
+        fiber->push_back( *vertex );
+    }
+    sortVertices();
+
+    if( !silent )
+    {
+        m_actionHandler->pushAction( WFiberActionMultiselect::SPtr( new WFiberActionMultiselect( vertices, fiberIdx, this ) ) );
+    }
+}
+
+void WFiberHandler::removeVerticesFromFiber( std::vector< osg::Vec3 > vertices, size_t fiberIdx, bool silent )
+{
+    auto fiber = m_fibers->begin() + fiberIdx;
+
+    for( auto vertex = vertices.begin(); vertex != vertices.end(); vertex++ )
+    {
+        auto it = std::find( fiber->begin(), fiber->end(), *vertex );
+        if( it != fiber->end() )
+        {
+            fiber->erase( it );
+        }
+    }
+
+    if( !silent )
+    {
+        m_actionHandler->pushAction( WFiberActionMultideselect::SPtr( new WFiberActionMultideselect( vertices, fiberIdx, this ) ) );
     }
 }
 
