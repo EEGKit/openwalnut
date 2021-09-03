@@ -632,3 +632,8 @@ std::shared_ptr< WOnscreenSelection > WMPointConnector::getOnscreenSelection()
 {
     return m_onscreenSelection;
 }
+
+WPropPosition WMPointConnector::getScaling()
+{
+    return m_scaling;
+}

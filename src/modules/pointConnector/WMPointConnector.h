@@ -153,6 +153,12 @@ public:
      */
     std::shared_ptr< WOnscreenSelection > getOnscreenSelection();
 
+    /**
+     * 
+     * \return WPropPosition The scaling of this module.
+     */
+    WPropPosition getScaling();
+
 protected:
     /**
      * Entry point after loading the module. Runs in separate thread.
