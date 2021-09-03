@@ -91,16 +91,19 @@ void WMPointConnector::properties()
 
     m_enableSAPT = assistanceGroup->addProperty( "Enable SAPT ", "Enable Semi-Automatic-Proton-Tracking", true );
     m_enableAdaptiveVisibility = assistanceGroup->addProperty( "Enable adaptive visibility", "Enable adaptive visibility using a cone", true,
-                                                                boost::bind( &WMPointConnector::updatePoints, this ) );
+                                                                boost::bind( &WMPointConnector::updateAll, this ) );
     m_adaptiveVisibilityAngle = assistanceGroup->addProperty( "Adaptive visibility angle", "Adaptive visibility angle", 45.0,
-                                                               boost::bind( &WMPointConnector::updatePoints, this ) );
+                                                               boost::bind( &WMPointConnector::updateAll, this ) );
     m_adaptiveVisibilityAngle->setMin( 0.0 );
     m_adaptiveVisibilityAngle->setMax( 90.0 );
 
     m_hiddenOpacity = assistanceGroup->addProperty( "Hidden point opacity", "Changes the opacity of the hidden points", 0.1,
-                                                     boost::bind( &WMPointConnector::updatePoints, this ) );
+                                                     boost::bind( &WMPointConnector::updateAll, this ) );
     m_hiddenOpacity->setMin( 0.0 );
     m_hiddenOpacity->setMax( 1.0 );
+
+    m_scaling = assistanceGroup->addProperty( "Scaling", "Changes the scaling", WPosition( 1.0, 1.0, 1.0 ),
+                                               boost::bind( &WMPointConnector::updateAll, this ) );
 
     WModule::properties();
 }
@@ -248,6 +251,11 @@ void WMPointConnector::handleInput()
 
     m_fiberHandler->sortVertices();
 
+    updateAll();
+}
+
+void WMPointConnector::updateAll()
+{
     updatePoints();
     updateOutput();
 }
@@ -273,9 +281,9 @@ void WMPointConnector::updatePoints()
         osg::Vec3 vertex = m_connectorData->getVertices()->at( idx );
         osg::Vec4 color( 1.0, 1.0, 1.0, 1.0 );
 
-        vertices->push_back( vertex.x() );
-        vertices->push_back( vertex.y() );
-        vertices->push_back( vertex.z() );
+        vertices->push_back( vertex.x() * m_scaling->get().x() );
+        vertices->push_back( vertex.y() * m_scaling->get().y() );
+        vertices->push_back( vertex.z() * m_scaling->get().z() );
 
         size_t tmpIdx;
         if( m_connectorData->getSelectedPoint( &tmpIdx ) && tmpIdx == idx )
@@ -364,8 +372,7 @@ void WMPointConnector::handleClick( osg::Vec3 cameraPosition, osg::Vec3 directio
             m_fiberHandler->selectLastPoint();
         }
 
-        updatePoints();
-        updateOutput();
+        updateAll();
     }
 }
 
@@ -378,6 +385,7 @@ bool WMPointConnector::findClickedPoint( osg::Vec3 cameraPosition, osg::Vec3 dir
     for( size_t idx = 0; idx < m_connectorData->getVertices()->size(); idx++ )
     {
         osg::Vec3 vertex = m_connectorData->getVertices()->at( idx );
+        vertex = osg::Vec3( vertex.x() * m_scaling->get().x(), vertex.y() * m_scaling->get().y(), vertex.z() * m_scaling->get().z() );
 
         float hit = hitVertex( cameraPosition, direction, vertex, size );
         if( hit > 0.0 )
@@ -475,9 +483,9 @@ void WMPointConnector::updateOutput()
         for( size_t vIdx = 0; vIdx < fiber.size(); vIdx++ )
         {
             osg::Vec3 vertex = fiber[vIdx];
-            vertices->push_back( vertex.x() );
-            vertices->push_back( vertex.y() );
-            vertices->push_back( vertex.z() );
+            vertices->push_back( vertex.x() * m_scaling->get().x() );
+            vertices->push_back( vertex.y() * m_scaling->get().y() );
+            vertices->push_back( vertex.z() * m_scaling->get().z() );
 
             colors->push_back( color.x() );
             colors->push_back( color.y() );
@@ -545,17 +553,25 @@ void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float x
         return;
     }
 
-    std::vector< WPosition > positions;
+    std::vector< WPosition > toCheck;
     for( size_t idx = 0; idx < m_connectorData->getVertices()->size(); idx++ )
     {
         osg::Vec3 vertex = m_connectorData->getVertices()->at( idx );
-        positions.push_back( WPosition( vertex ) );
+        toCheck.push_back( WPosition( vertex.x() * m_scaling->get().x(), vertex.y() * m_scaling->get().y(), vertex.z() * m_scaling->get().z() ) );
     }
 
-    positions = m_onscreenSelection->isSelected( positions );
-    if( positions.empty() )
+    toCheck = m_onscreenSelection->isSelected( toCheck );
+    if( toCheck.empty() )
     {
         return;
+    }
+
+    std::vector< WPosition > positions;
+    for( size_t idx = 0; idx < toCheck.size(); idx++ )
+    {
+        WPosition vertex = toCheck.at( idx );
+        vertex = WPosition( vertex.x() / m_scaling->get().x(), vertex.y() / m_scaling->get().y(), vertex.z() / m_scaling->get().z() );
+        positions.push_back( vertex );
     }
 
     if( !m_onscreenSelection->getClickType() ) // right click delete
@@ -609,8 +625,7 @@ void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float x
         m_fiberHandler->selectLastPoint();
     }
 
-    updatePoints();
-    updateOutput();
+    updateAll();
 }
 
 std::shared_ptr< WOnscreenSelection > WMPointConnector::getOnscreenSelection()
