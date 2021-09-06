@@ -71,6 +71,11 @@ private:
      * Whether ctrl is pressed or not.
      */
     bool m_isCtrl = false;
+
+    /**
+     * Whether shift is pressed or not.
+     */
+    bool m_isShift = false;
 };
 
 #endif  // WKEYBOARDHANDLER_H

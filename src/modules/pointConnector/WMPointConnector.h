@@ -132,6 +132,11 @@ public:
     void updateOutput();
 
     /**
+     * Updates all
+     */
+    void updateAll();
+
+    /**
      * \return std::shared_ptr< WConnectorData > The WConnectorData of this module.
      */
     std::shared_ptr< WConnectorData > getConnectorData();
@@ -147,6 +152,12 @@ public:
      * \return shared_ptr< WOnscreenSelection > The WOnscreenSelection of this module.
      */
     std::shared_ptr< WOnscreenSelection > getOnscreenSelection();
+
+    /**
+     * 
+     * \return WPropPosition The scaling of this module.
+     */
+    WPropPosition getScaling();
 
 protected:
     /**
@@ -292,6 +303,11 @@ private:
      * Property to set the opacity of the hidden points.
      */
     WPropDouble m_hiddenOpacity;
+
+    /**
+     * Property for the scaling as Vector.
+     */
+    WPropPosition m_scaling;
 };
 
 #endif  // WMPOINTCONNECTOR_H
