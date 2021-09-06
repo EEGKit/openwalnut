@@ -1090,6 +1090,9 @@ bool WMainWindow::event( QEvent* event )
                                );
                 }
             }
+
+            // Set the manipulator anew after loading to fix some bugs of commands to get passed to the right manipulator.
+            m_mainGLWidget->getViewer()->setCameraManipulator( new WGEZoomTrackballManipulator() );
         }
     }
 
