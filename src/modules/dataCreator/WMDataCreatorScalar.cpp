@@ -48,8 +48,8 @@ WMDataCreatorScalar::WMDataCreatorScalar():
                 "Creator", "A list of all known creators." )
 {
     // add some strategies here
-    m_strategy.addStrategy( WDataCreatorRandom::SPtr( new WDataCreatorRandom() ) );
     m_strategy.addStrategy( WDataCreatorSphere::SPtr( new WDataCreatorSphere() ) );
+    m_strategy.addStrategy( WDataCreatorRandom::SPtr( new WDataCreatorRandom() ) );
     m_strategy.addStrategy( WDataCreatorTangle::SPtr( new WDataCreatorTangle() ) );
     m_strategy.addStrategy( WDataCreatorBreyzel5::SPtr( new WDataCreatorBreyzel5() ) );
     m_strategy.addStrategy( WDataCreatorSphere::SPtr( new WDataCreatorLinearAscent() ) );
