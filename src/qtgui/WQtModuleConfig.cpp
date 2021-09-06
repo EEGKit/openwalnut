@@ -119,6 +119,9 @@ WQtModuleConfig::WQtModuleConfig( QWidget* parent, Qt::WindowFlags f ):
     connect( m_asBlackList, SIGNAL( stateChanged( int ) ), this, SLOT( showBlacklistPresetOptions() ) );
     layoutAllowedModules->addWidget( m_asBlackList );
 
+    QHBoxLayout* blacklistPresetRow = new QHBoxLayout();
+    layoutAllowedModules->addLayout( blacklistPresetRow );
+
     m_usePreset = new QCheckBox( "Use a preset module list", this );
     m_usePreset->setToolTip( "Activate this option if you want to use a preset of preselected "
                                 "modules which may be specific for different research areas." );
@@ -128,7 +131,7 @@ WQtModuleConfig::WQtModuleConfig( QWidget* parent, Qt::WindowFlags f ):
         m_usePreset->setDisabled( false );
     }
     connect( m_usePreset, SIGNAL( stateChanged( int ) ), this, SLOT( resetAllModuleCheckboxes() ) );
-    layoutAllowedModules->addWidget( m_usePreset );
+    blacklistPresetRow->addWidget( m_usePreset );
 
     // Set presets here
     QString presetSIVERT = "Anisotropic Filter,Calculate GFA,Calculate Tensors,Cluster Display,ClusterDisplayVoxels,"
@@ -174,7 +177,7 @@ WQtModuleConfig::WQtModuleConfig( QWidget* parent, Qt::WindowFlags f ):
         m_selectPresetBlacklist->setDisabled( false );
     }
     connect( m_selectPresetBlacklist, SIGNAL( editTextChanged( QString ) ), this, SLOT( comboboxItemChanged( QString ) ) );
-    layoutAllowedModules->addWidget( m_selectPresetBlacklist );
+    blacklistPresetRow->addWidget( m_selectPresetBlacklist );
 
     // create the module list
     m_list = new QListWidget();
