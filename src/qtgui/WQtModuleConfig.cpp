@@ -124,7 +124,8 @@ WQtModuleConfig::WQtModuleConfig( QWidget* parent, Qt::WindowFlags f ):
 
     m_usePreset = new QCheckBox( "Use a preset module list", this );
     m_usePreset->setToolTip( "Activate this option if you want to use a preset of preselected "
-                                "modules which may be specific for different research areas." );
+                                "modules which may be specific for different research areas. "
+                                "To activate this checkbox, you must use the list in black-list mode." );
     m_usePreset->setDisabled( true );
     if( m_asBlackList->checkState() )
     {
@@ -150,7 +151,9 @@ WQtModuleConfig::WQtModuleConfig( QWidget* parent, Qt::WindowFlags f ):
 
     // combobox for black-list presets
     m_selectPresetBlacklist = new QComboBox( this );
-    m_selectPresetBlacklist->setToolTip( "Select a blacklist preset or create a new one." );
+    m_selectPresetBlacklist->setToolTip( "Select a black-list preset or create a new one by selecting modules in the list below "
+                                            "and type in a name here. The selected preset is only active when you've checked the "
+                                            "black-list and the use-preset checkbox!" );
     m_selectPresetBlacklist->setFixedSize( 120, 26 );
     m_selectPresetBlacklist->setEditable( true );
     m_selectPresetBlacklist->setInsertPolicy( QComboBox::InsertAtBottom );
