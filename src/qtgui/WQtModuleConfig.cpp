@@ -181,6 +181,8 @@ WQtModuleConfig::WQtModuleConfig( QWidget* parent, Qt::WindowFlags f ):
     }
     connect( m_selectPresetBlacklist, SIGNAL( editTextChanged( QString ) ), this, SLOT( comboboxItemChanged( QString ) ) );
     blacklistPresetRow->addWidget( m_selectPresetBlacklist );
+    QSpacerItem* horizSpacer = new QSpacerItem( 1, 1, QSizePolicy::Expanding, QSizePolicy::Fixed );
+    blacklistPresetRow->addSpacerItem( horizSpacer );
 
     // create the module list
     m_list = new QListWidget();
