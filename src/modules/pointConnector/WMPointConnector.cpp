@@ -92,7 +92,7 @@ void WMPointConnector::properties()
     m_enableSAPT = assistanceGroup->addProperty( "Enable SAPT ", "Enable Semi-Automatic-Proton-Tracking", true );
     m_enableAdaptiveVisibility = assistanceGroup->addProperty( "Enable adaptive visibility", "Enable adaptive visibility using a cone", true,
                                                                 boost::bind( &WMPointConnector::updatePoints, this ) );
-    m_adaptiveVisibilityAngle = assistanceGroup->addProperty( "Adaptive visibility angle", "Adaptive visibility angle", 45.0,
+    m_adaptiveVisibilityAngle = assistanceGroup->addProperty( "Adaptive visibility angle", "Adaptive visibility angle", 10.0,
                                                                boost::bind( &WMPointConnector::updatePoints, this ) );
     m_adaptiveVisibilityAngle->setMin( 0.0 );
     m_adaptiveVisibilityAngle->setMax( 90.0 );
@@ -324,7 +324,9 @@ bool WMPointConnector::isAdaptivelyHidden( osg::Vec3 vertex )
 
     double angle = WAngleHelper::calculateAngle( selected - before, vertex - selected );
 
-    double checkAngle = m_adaptiveVisibilityAngle->get();
+    double layerDiff = abs( selected.z() - vertex.z() ) / 5.5; // 5.5 is the general layer thickness
+
+    double checkAngle = m_adaptiveVisibilityAngle->get() * layerDiff;
 
     return angle > checkAngle && angle < ( 180.0 - checkAngle );
 }
