@@ -27,6 +27,8 @@
 
 #include <osgGA/TrackballManipulator>
 
+#include "WGEZoomTrackballNodeVisitor.h"
+
 
 /**
  * New OSG manipulator: TrackballManipulator with added mouse wheel zoom.
@@ -118,6 +120,19 @@ public:
      */
     bool getThrow() const;
 
+    /**
+     * Computes the home position.
+     * \param camera The camera from which to compute.
+     * \param useBoundingBox if boundingboxes should be used.
+     */
+    virtual void computeHomePosition( const osg::Camera* camera, bool useBoundingBox );
+
+    /**
+     * Zooms and centers to fit screen.
+     * \param camera The camera to zoom.
+     */
+    void fitToScreen( const osg::Camera* camera );
+
 protected:
 private:
     /**
@@ -133,6 +148,8 @@ private:
     bool m_allowThrow; //!< Do we want the auto-rotation thingy?
 
     int m_paintMode; //!<paint mode
+
+    double m_radius; //!< The radius of the bounding sphere
 };
 
 inline double WGEZoomTrackballManipulator::getZoom() const
