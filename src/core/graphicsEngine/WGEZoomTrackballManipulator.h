@@ -144,6 +144,16 @@ private:
      */
     bool zoom( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
 
+    /**
+     * Performs the middle mouse button click.
+     * \param eventTimeDelta The delta time of the event
+     * \param dx The delta x of the mouse.
+     * \param dy The delta y of the mouse.
+     * \return true It was performed.
+     * \return false It was not performed.
+     */
+    virtual bool performMovementMiddleMouseButton( const double eventTimeDelta, const double dx, const double dy );
+
     double m_zoom; //!< Zoom factor.
     bool m_allowThrow; //!< Do we want the auto-rotation thingy?
 
