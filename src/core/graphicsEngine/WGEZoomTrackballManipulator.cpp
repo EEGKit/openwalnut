@@ -251,3 +251,12 @@ void WGEZoomTrackballManipulator::fitToScreen( const osg::Camera* camera )
     m_zoom = fac;
     setCenter( center );
 }
+
+bool WGEZoomTrackballManipulator::performMovementMiddleMouseButton( const double eventTimeDelta, const double dx, const double dy )
+{
+    // scale panning based on zoom
+    float scale = -0.5 * ( _distance / m_zoom ) * getThrowScale( eventTimeDelta );
+    panModel( dx * scale, dy * scale );
+    return true;
+}
+
