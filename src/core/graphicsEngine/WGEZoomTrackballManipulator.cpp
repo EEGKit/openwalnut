@@ -219,6 +219,8 @@ void WGEZoomTrackballManipulator::fitToScreen( const osg::Camera* camera )
         return;
     }
 
+    computeHomePosition( camera, true );
+
     double radiusFac[] = {
          1,  1,  1,
         -1,  1,  1,
