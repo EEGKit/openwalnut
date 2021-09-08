@@ -41,7 +41,10 @@ void WConditionOneShot::wait() const
     if( !m_isDone )
     {
         std::unique_lock<std::shared_mutex> lock( m_mutex );
-        m_condition.wait( m_mutex, [this]{ return m_isDone.load(); } );
+        m_condition.wait( m_mutex, [this]
+        {
+            return m_isDone.load();
+        } );
     }
 }
 
