@@ -28,42 +28,25 @@ WConditionOneShot::WConditionOneShot()
     : WCondition()
 {
     // initialize members
-    m_lock = std::unique_lock<std::shared_mutex>( m_mutex );
+    m_isDone = false;
 }
 
 WConditionOneShot::~WConditionOneShot()
 {
     // cleanup
-    try
-    {
-        m_lock.unlock();
-    }
-    catch( const std::system_error &e )
-    {
-        // ignore this particular error since it is thrown when the lock is not locked anymore
-    }
 }
 
 void WConditionOneShot::wait() const
 {
-    if( m_lock.owns_lock() )
+    if( !m_isDone )
     {
-        m_condition.wait( m_mutex );
+        std::unique_lock<std::shared_mutex> lock( m_mutex );
+        m_condition.wait( m_mutex, [this]{ return m_isDone.load(); } );
     }
 }
 
 void WConditionOneShot::notify()
 {
-    try
-    {
-        m_lock.unlock();
-    }
-    catch( const std::system_error &e )
-    {
-        // ignore this particular error since it is thrown when the lock is not locked anymore
-        // because the notify was called multiple times
-    }
-
+    m_isDone = true;
     WCondition::notify();
 }
-
