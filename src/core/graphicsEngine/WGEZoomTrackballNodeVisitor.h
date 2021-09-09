@@ -26,9 +26,10 @@
 #define WGEZOOMTRACKBALLNODEVISITOR_H
 
 #include <limits>
+#include <vector>
 
-#include <osg/NodeVisitor>
 #include <osg/BoundingBox>
+#include <osg/NodeVisitor>
 
 /**
  * A visitor that ignores specific nodes that are irrelevant for the trackball.
@@ -79,6 +80,7 @@ public:
 
 private:
     osg::BoundingBox m_bb; //!< The bounding box that is generated.
+    std::vector< osg::Matrix > m_matrixStack; //!< The stack for the matrices.
 };
 
 #endif  // WGEZOOMTRACKBALLNODEVISITOR_H
