@@ -35,7 +35,7 @@
 /**
  * Implements a WCondition, but can be fired only ONCE. This is useful if you want to have a thread waiting for a condition but
  * you can not assure that the thread already waits when you set the condition. This would cause the thread to wait endlessly
- * because he does not know that you already fired it. Implementation is simple. The constructor uses a unique lock (write lock)
+ * because it does not know that you already fired it. Implementation is simple. The constructor uses a unique lock (write lock)
  * on a mutex. All waiting threads try to get a read lock which is not possible as long it is write-locked. The notify method
  * releases the write lock and all waiting threads can continue.
  */
