@@ -28,8 +28,14 @@
 
 static const unsigned int CTRL_DOWN = 65507;
 static const unsigned int CTRL_UP = 16777249;
-static const unsigned int KEY_Z = 90;
+static const unsigned int SHIFT_DOWN = 65505;
+static const unsigned int SHIFT_UP = 16777248;
+
+static const unsigned int KEY_X = 88;
 static const unsigned int KEY_Y = 89;
+static const unsigned int KEY_Z = 90;
+
+static const double SCALING_FACTOR = 2.0;
 
 WKeyboardHandler::WKeyboardHandler( WMPointConnector* connector ):
     m_connector( connector )
@@ -44,6 +50,10 @@ bool WKeyboardHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActio
         {
             m_isCtrl = true;
         }
+        else if( ea.getKey() == SHIFT_DOWN )
+        {
+            m_isShift = true;
+        }
         else if( ea.getKey() == KEY_Z && m_isCtrl )
         {
             m_connector->getFiberHandler()->getActionHandler()->undo();
@@ -54,6 +64,21 @@ bool WKeyboardHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActio
             m_connector->getFiberHandler()->getActionHandler()->redo();
             return true;
         }
+        else if( ea.getKey() == KEY_X )
+        {
+            WPosition pos = m_connector->getScaling()->get();
+            m_connector->getScaling()->set( WPosition( pos.x() * ( m_isShift ? 1.0 / SCALING_FACTOR : SCALING_FACTOR ), pos.y(), pos.z() ) );
+        }
+        else if( ea.getKey() == KEY_Y )
+        {
+            WPosition pos = m_connector->getScaling()->get();
+            m_connector->getScaling()->set( WPosition( pos.x(), pos.y() * ( m_isShift ? 1.0 / SCALING_FACTOR : SCALING_FACTOR ), pos.z() ) );
+        }
+        else if( ea.getKey() == KEY_Z )
+        {
+            WPosition pos = m_connector->getScaling()->get();
+            m_connector->getScaling()->set( WPosition( pos.y(), pos.x(), pos.z() * ( m_isShift ? 1.0 / SCALING_FACTOR : SCALING_FACTOR ) ) );
+        }
     }
 
     if( ea.getEventType() == osgGA::GUIEventAdapter::KEYUP )
@@ -61,6 +86,10 @@ bool WKeyboardHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActio
         if( ea.getKey() == CTRL_UP )
         {
             m_isCtrl = false;
+        }
+        else if( ea.getKey() == SHIFT_UP )
+        {
+            m_isShift = false;
         }
     }
 

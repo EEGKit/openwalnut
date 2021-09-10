@@ -30,14 +30,16 @@
 
 WConnectorData::WConnectorData()
 {
-    m_vertices = osg::ref_ptr< osg::Vec3Array >( new osg::Vec3Array );
-    m_colors = osg::ref_ptr< osg::Vec4Array >( new osg::Vec4Array );
+    m_vertices = osg::ref_ptr< osg::Vec3Array >( new osg::Vec3Array() );
+    m_colors = osg::ref_ptr< osg::Vec4Array >( new osg::Vec4Array() );
+    m_edeps = std::shared_ptr< std::vector< float > >( new std::vector< float >() );
 }
 
 void WConnectorData::clear()
 {
     m_vertices->clear();
     m_colors->clear();
+    m_edeps->clear();
 }
 
 osg::ref_ptr< osg::Vec3Array > WConnectorData::getVertices()
@@ -50,10 +52,17 @@ osg::ref_ptr< osg::Vec4Array > WConnectorData::getColors()
     return m_colors;
 }
 
-void WConnectorData::addVertex( osg::Vec3 vertex, osg::Vec4 color )
+std::shared_ptr< std::vector< float > > WConnectorData::getEdeps()
+{
+    return m_edeps;
+}
+
+
+void WConnectorData::addVertex( osg::Vec3 vertex, osg::Vec4 color, float edep )
 {
     m_vertices->push_back( vertex );
     m_colors->push_back( color );
+    m_edeps->push_back( edep );
 }
 
 void WConnectorData::deselectPoint()

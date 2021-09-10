@@ -82,11 +82,11 @@ uploadAppImage() {
     fi
 }
 
-if [[ "$GIT_BRANCH" == "master" ]]
+if [[ "$GIT_BRANCH" == "main" ]]
 then
     uploadDoc
 else
-    echo "DOC OMMITED: not master branch"
+    echo "DOC OMMITED: not main branch"
 fi
 
 uploadAppImage

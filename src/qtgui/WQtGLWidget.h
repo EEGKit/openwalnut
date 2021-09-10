@@ -190,6 +190,11 @@ public slots:
      */
     void setPresetViewPosterior();
 
+    /**
+     * Zooms and centers the view to fit the viewer.
+     */
+    void setFitScreenPosition();
+
 protected:
     /**
      * The viewer to the scene.

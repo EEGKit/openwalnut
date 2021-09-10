@@ -38,12 +38,12 @@ class WEventIDLimitationPropertyHandler
 {
 public:
     /**
-     * Function variables for updating the data 
+     * shared_ptr that points to itself 
      */
     typedef std::shared_ptr< WEventIDLimitationPropertyHandler > SPtr;
 
     /**
-     * shared_ptr that points to itself 
+     * Function variables for updating the data 
      */
     typedef boost::function< void( ) > CallbackPtr;
 

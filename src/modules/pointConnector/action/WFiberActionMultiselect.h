@@ -22,60 +22,67 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WKEYBOARDHANDLER_H
-#define WKEYBOARDHANDLER_H
+#ifndef WFIBERACTIONMULTISELECT_H
+#define WFIBERACTIONMULTISELECT_H
 
-#include <iostream>
-#include <string>
+#include <vector>
 
+#include <boost/shared_ptr.hpp>
 #include <osg/Geode>
-#include <osg/Viewport>
-#include <osgGA/GUIEventHandler>
-#include <osgViewer/Viewer>
 
-#include "WMPointConnector.h"
+#include "WFiberAction.h"
+#include "../WFiberHandler.h"
 
 
 /**
- * Forward declartion for the WMPointConnector
+ * The action when adding multiple Vertices.
  */
-class WMPointConnector;
-
-/**
- * The keyboard handler for the keyboard events of WMPointConnector
- */
-class WKeyboardHandler : public osgGA::GUIEventHandler
+class WFiberActionMultiselect : public WFiberAction
 {
 public:
     /**
-     * Constructs one WKeyboardHandler.
-     * \param connector The WMPointConnector this handler belongs to.
+     * A shared_ptr to this class.
      */
-    explicit WKeyboardHandler( WMPointConnector* connector );
+    typedef std::shared_ptr< WFiberActionMultiselect > SPtr;
 
     /**
-     * The callback for the event listener.
-     * \param ea The Adapter of the event.
-     * \param aa The Adapter of the action.
-     * \return Whether the event should be passed on.
+     * Creates this action.
+     * \param vertices A vector of vertices to add.
+     * \param fiberIdx The index of the fiber this vertex was added to.
+     * \param fiberHandler The WFiberHandler of the action.
      */
-    bool handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa );
+    WFiberActionMultiselect( std::vector< osg::Vec3 > vertices, size_t fiberIdx, WFiberHandler* fiberHandler );
+
+    /**
+     * Empty destructor.
+     */
+    ~WFiberActionMultiselect();
+
+    /**
+     * Undos this action.
+     */
+    virtual void undo();
+
+    /**
+     * Redos this action.
+     */
+    virtual void redo();
 
 private:
     /**
-     * The WMPointConnector this handler belongs to.
+     * The vertices to add.
      */
-    WMPointConnector* m_connector;
+    std::vector< osg::Vec3 > m_vertices;
 
     /**
-     * Whether ctrl is pressed or not.
+     * The index of the fiber this vertex was added to.
      */
-    bool m_isCtrl = false;
+    size_t m_fiberIdx;
 
     /**
-     * Whether shift is pressed or not.
+     * The WFiberHandler of the action.
      */
-    bool m_isShift = false;
+    WFiberHandler* m_fiberHandler;
 };
 
-#endif  // WKEYBOARDHANDLER_H
+#endif  // WFIBERACTIONMULTISELECT_H

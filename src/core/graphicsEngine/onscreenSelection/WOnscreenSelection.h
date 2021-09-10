@@ -120,6 +120,13 @@ public:
     bool isSelected( float x, float y, float z );
 
     /**
+     * Checks if the positions are selected and only returns those that are.
+     * \param positions The positions to check
+     * \return std::vector< WPosition > A vector of selected positions
+     */
+    std::vector< WPosition > isSelected( std::vector< WPosition> positions );
+
+    /**
      * Sets the current selection type.
      * \param selectionType The selection type to set.
      */
@@ -206,6 +213,12 @@ public:
      */
     bool getClickType();
 
+    /**
+     * \return true The mouse has been moved.
+     * \return false The mouse has not been moved.
+     */
+    bool hasMoved();
+
 private:
     /**
      * Updates the current rendered data.
@@ -227,6 +240,8 @@ private:
     float m_thickness; //!< The thickness of the brush.
 
     bool m_clickType; //!< Whether this is a left click or not.
+
+    bool m_moved; //!< Whether the mouse has been moved.
 
     CallbackType m_onstart; //!< The Callback for the start function.
 

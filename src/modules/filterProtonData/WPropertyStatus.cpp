@@ -68,3 +68,13 @@ void WPropertyStatus::setEventIDLimitationPropertyHandler( WEventIDLimitationPro
 {
     m_eventIDLimitationPropertyHandler = eventIDLimitationPropertyHandler;
 }
+
+WOutputPropertyHandler::SPtr WPropertyStatus::getOutputPropertyHandler()
+{
+    return m_outputPropertyHandler;
+}
+
+void WPropertyStatus::setOutputPropertyHandler( WOutputPropertyHandler::SPtr outputPropertyHandler )
+{
+    m_outputPropertyHandler = outputPropertyHandler;
+}

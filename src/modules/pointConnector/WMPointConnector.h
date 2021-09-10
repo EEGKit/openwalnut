@@ -32,8 +32,6 @@
 
 #include <osg/Geode>
 
-#include "../fiberDisplay/WMFiberDisplay.h"
-#include "../pointRenderer/WMPointRenderer.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
 #include "core/graphicsEngine/onscreenSelection/WOnscreenSelection.h"
@@ -43,6 +41,8 @@
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
 
+#include "../fiberDisplay/WMFiberDisplay.h"
+#include "../pointRenderer/WMPointRenderer.h"
 
 class WClickHandler;
 class WConnectorData;
@@ -61,6 +61,16 @@ class WMPointConnector: public WModuleContainer
     friend class WMPointConnectorTest;
 
 public:
+    /**
+     * represents a std::shared_ptr to a vector containing a vector of floats.
+     */
+    typedef std::shared_ptr< std::vector< float > > SPFloatVector;
+
+    /**
+     * represents a std::shared_ptr to a vector containing a vector of size_t.
+     */
+    typedef std::shared_ptr< std::vector< size_t > > SPSizeVector;
+
     /**
      * A shared_ptr to this class.
      */
@@ -122,6 +132,11 @@ public:
     void updateOutput();
 
     /**
+     * Updates all
+     */
+    void updateAll();
+
+    /**
      * \return std::shared_ptr< WConnectorData > The WConnectorData of this module.
      */
     std::shared_ptr< WConnectorData > getConnectorData();
@@ -137,6 +152,12 @@ public:
      * \return shared_ptr< WOnscreenSelection > The WOnscreenSelection of this module.
      */
     std::shared_ptr< WOnscreenSelection > getOnscreenSelection();
+
+    /**
+     * 
+     * \return WPropPosition The scaling of this module.
+     */
+    WPropPosition getScaling();
 
 protected:
     /**
@@ -181,7 +202,7 @@ private:
     void createFiberDisplay();
 
     /**
-     * Creates the WClickHandler and the WKeyboardHandler and registers them.
+     * Creates the WKeyboardHandler and registers them.
      */
     void createHandler();
 
@@ -214,6 +235,14 @@ private:
      * \param y     The y position of the selection.
      */
     void selectionEnd( WOnscreenSelection::WSelectionType type, float x, float y );
+
+    /**
+     * Checks whether a vertex is adaptively hidden.
+     * \param vertex The vertex to check.
+     * \return true The vertex is hidden.
+     * \return false The vertex is visible.
+     */
+    bool isAdaptivelyHidden( osg::Vec3 vertex );
 
     /**
      * The WMPointRenderer associated with this module.
@@ -254,6 +283,31 @@ private:
      * Enables possibility for multiselection of points.
      */
     std::shared_ptr< WOnscreenSelection > m_onscreenSelection;
+
+    /**
+     * Property to enable the adjusted dijkstra.
+     */
+    WPropBool m_enableSAPT;
+
+    /**
+     * Property to enable adaptive visibility.
+     */
+    WPropBool m_enableAdaptiveVisibility;
+
+    /**
+     * Property to set the angle for the adaptive visibility.
+     */
+    WPropDouble m_adaptiveVisibilityAngle;
+
+    /**
+     * Property to set the opacity of the hidden points.
+     */
+    WPropDouble m_hiddenOpacity;
+
+    /**
+     * Property for the scaling as Vector.
+     */
+    WPropPosition m_scaling;
 };
 
 #endif  // WMPOINTCONNECTOR_H
