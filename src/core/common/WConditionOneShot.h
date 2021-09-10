@@ -25,6 +25,7 @@
 #ifndef WCONDITIONONESHOT_H
 #define WCONDITIONONESHOT_H
 
+#include <atomic>
 #include <shared_mutex>
 
 #include <boost/thread.hpp>
@@ -65,9 +66,9 @@ public:
 
 protected:
     /**
-     * Locked as long the condition was not fired.
+     * Atomic bool whether this conditon has been done or not.
      */
-    std::unique_lock<std::shared_mutex> m_lock;
+    std::atomic< bool > m_isDone;
 
 private:
 };
