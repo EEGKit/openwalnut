@@ -125,6 +125,7 @@ WQtModuleConfig::WQtModuleConfig( QWidget* parent, Qt::WindowFlags f ):
     m_usePreset->setToolTip( "Activate this option if you want to use a list of preselected "
                                 "modules which may be specific for different research areas. " );
     connect( m_usePreset, SIGNAL( stateChanged( int ) ), this, SLOT( refreshModuleCheckboxes() ) );
+    connect( m_usePreset, SIGNAL( stateChanged( int ) ), this, SLOT( toggleComboboxVisibility( int ) ) );
     blacklistPresetRow->addWidget( m_usePreset );
 
     // Set presets here
@@ -144,6 +145,7 @@ WQtModuleConfig::WQtModuleConfig( QWidget* parent, Qt::WindowFlags f ):
 
     // combobox for black-list presets
     m_selectPresetBlacklist = new QComboBox( this );
+    m_selectPresetBlacklist->setDisabled( true );
     m_selectPresetBlacklist->setToolTip( "Select a preset or create a new one by selecting modules in the list below "
                                             "and type in a name here." );
     m_selectPresetBlacklist->setFixedSize( 120, 26 );
@@ -297,28 +299,7 @@ void WQtModuleConfig::loadListsFromSettings( bool defaultModulePaths )
     bool usePreset = WQtGui::getSettings().value( "qtgui/modules/usePreset", false ).toBool();
     m_usePreset->setCheckState( usePreset ? Qt::Checked : Qt::Unchecked );
 
-    std::string allowedModules = "";
-
-    // read settings
-    if( usePreset )
-    {
-        allowedModules = WQtGui::getSettings().value( "qtgui/modules/preset/" + m_selectPresetBlacklist->currentText(), "" ).toString().toStdString();
-    }
-    else
-    {
-        allowedModules = WQtGui::getSettings().value( "qtgui/modules/allowedList", "" ).toString().toStdString();
-    }
-
-    m_allowedModules = string_utils::tokenize( allowedModules, "," );
-
-     // set dialog according to the settings
-    for( AllowedModuleList::const_iterator iter = m_allowedModules.begin(); iter != m_allowedModules.end(); ++iter )
-    {
-        if( m_moduleItemMap.count( *iter ) )
-        {
-            m_moduleItemMap[ *iter ]->setCheckState( Qt::Checked );
-        }
-    }
+    refreshModuleCheckboxes();
 
     if( !defaultModulePaths )
     {
@@ -501,5 +482,18 @@ void WQtModuleConfig::refreshModuleCheckboxes()
         {
             m_moduleItemMap[ *iter ]->setCheckState( Qt::Checked );
         }
+    }
+}
+
+void WQtModuleConfig::toggleComboboxVisibility( int usePresetState )
+{
+    // 0 = checkbox not ticked, 2 = checkbox is ticked
+    if( usePresetState == 0 )
+    {
+        m_selectPresetBlacklist->setDisabled( true );
+    }
+    else
+    {
+        m_selectPresetBlacklist->setDisabled( false );
     }
 }

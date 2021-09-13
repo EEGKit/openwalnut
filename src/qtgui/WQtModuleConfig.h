@@ -138,6 +138,11 @@ private slots:
      */
     void refreshModuleCheckboxes();
 
+    /**
+     * Call this to show or hide the preset combobox 
+     */
+    void toggleComboboxVisibility( int );
+
 protected:
 private:
     /**
