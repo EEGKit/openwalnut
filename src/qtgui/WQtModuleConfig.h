@@ -129,16 +129,14 @@ private slots:
     virtual void pathListSelectionChanged();
 
     /**
-     * Call this to refresh the selected modules when a preset is selected
-     * 
-     * \param selectedPreset the preset which is selected inside of the combobox
-     */
-    void comboboxItemChanged( QString selectedPreset );
-
-    /**
      * Call this to reset all checkboxes in the list of modules
      */
     void resetAllModuleCheckboxes();
+
+    /**
+     * Call this to refresh the list of selected modules, e.g. 
+     */
+    void refreshModuleCheckboxes();
 
 protected:
 private:

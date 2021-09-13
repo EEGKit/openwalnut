@@ -124,7 +124,7 @@ WQtModuleConfig::WQtModuleConfig( QWidget* parent, Qt::WindowFlags f ):
     m_usePreset = new QCheckBox( "Use a preset module list", this );
     m_usePreset->setToolTip( "Activate this option if you want to use a list of preselected "
                                 "modules which may be specific for different research areas. " );
-    connect( m_usePreset, SIGNAL( stateChanged( int ) ), this, SLOT( resetAllModuleCheckboxes() ) );
+    connect( m_usePreset, SIGNAL( stateChanged( int ) ), this, SLOT( refreshModuleCheckboxes() ) );
     blacklistPresetRow->addWidget( m_usePreset );
 
     // Set presets here
@@ -170,7 +170,7 @@ WQtModuleConfig::WQtModuleConfig( QWidget* parent, Qt::WindowFlags f ):
     {
         m_selectPresetBlacklist->setDisabled( false );
     }
-    connect( m_selectPresetBlacklist, SIGNAL( editTextChanged( QString ) ), this, SLOT( comboboxItemChanged( QString ) ) );
+    connect( m_selectPresetBlacklist, SIGNAL( editTextChanged( QString ) ), this, SLOT( refreshModuleCheckboxes() ) );
     blacklistPresetRow->addWidget( m_selectPresetBlacklist );
     QSpacerItem* horizSpacer = new QSpacerItem( 1, 1, QSizePolicy::Expanding, QSizePolicy::Fixed );
     blacklistPresetRow->addSpacerItem( horizSpacer );
@@ -476,14 +476,14 @@ void WQtModuleConfig::resetAllModuleCheckboxes()
     }
 }
 
-void WQtModuleConfig::comboboxItemChanged( QString selectedPreset )
+void WQtModuleConfig::refreshModuleCheckboxes()
 {
     std::string allowedModules = "";
 
     // read settings
     if( m_usePreset->isChecked() )
     {
-        allowedModules = WQtGui::getSettings().value( "qtgui/modules/preset/" + selectedPreset, "" ).toString().toStdString();
+        allowedModules = WQtGui::getSettings().value( "qtgui/modules/preset/" + m_selectPresetBlacklist->currentText(), "" ).toString().toStdString();
     }
     else
     {
