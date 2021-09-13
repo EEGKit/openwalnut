@@ -136,11 +136,6 @@ private slots:
     void comboboxItemChanged( QString selectedPreset );
 
     /**
-     * Call this to show the blacklist preset options
-     */
-    void showBlacklistPresetOptions();
-
-    /**
      * Call this to reset all checkboxes in the list of modules
      */
     void resetAllModuleCheckboxes();

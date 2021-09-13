@@ -116,21 +116,14 @@ WQtModuleConfig::WQtModuleConfig( QWidget* parent, Qt::WindowFlags f ):
 
     m_asBlackList = new QCheckBox( "Use as black-list", this );
     m_asBlackList->setToolTip( "Activate this option if you want all modules to be active in OpenWalnut that are not explicitly deactivated here." );
-    connect( m_asBlackList, SIGNAL( stateChanged( int ) ), this, SLOT( showBlacklistPresetOptions() ) );
     layoutAllowedModules->addWidget( m_asBlackList );
 
     QHBoxLayout* blacklistPresetRow = new QHBoxLayout();
     layoutAllowedModules->addLayout( blacklistPresetRow );
 
     m_usePreset = new QCheckBox( "Use a preset module list", this );
-    m_usePreset->setToolTip( "Activate this option if you want to use a preset of preselected "
-                                "modules which may be specific for different research areas. "
-                                "To activate this checkbox, you must use the list in black-list mode." );
-    m_usePreset->setDisabled( true );
-    if( m_asBlackList->checkState() )
-    {
-        m_usePreset->setDisabled( false );
-    }
+    m_usePreset->setToolTip( "Activate this option if you want to use a list of preselected "
+                                "modules which may be specific for different research areas. " );
     connect( m_usePreset, SIGNAL( stateChanged( int ) ), this, SLOT( resetAllModuleCheckboxes() ) );
     blacklistPresetRow->addWidget( m_usePreset );
 
@@ -151,9 +144,8 @@ WQtModuleConfig::WQtModuleConfig( QWidget* parent, Qt::WindowFlags f ):
 
     // combobox for black-list presets
     m_selectPresetBlacklist = new QComboBox( this );
-    m_selectPresetBlacklist->setToolTip( "Select a black-list preset or create a new one by selecting modules in the list below "
-                                            "and type in a name here. The selected preset is only active when you've checked the "
-                                            "black-list and the use-preset checkbox!" );
+    m_selectPresetBlacklist->setToolTip( "Select a preset or create a new one by selecting modules in the list below "
+                                            "and type in a name here." );
     m_selectPresetBlacklist->setFixedSize( 120, 26 );
     m_selectPresetBlacklist->setEditable( true );
     m_selectPresetBlacklist->setInsertPolicy( QComboBox::InsertAtBottom );
@@ -174,7 +166,6 @@ WQtModuleConfig::WQtModuleConfig( QWidget* parent, Qt::WindowFlags f ):
         m_selectPresetBlacklist->setCurrentIndex( 0 );
     }
 
-    m_selectPresetBlacklist->setDisabled( true );
     if( m_asBlackList->checkState() )
     {
         m_selectPresetBlacklist->setDisabled( false );
@@ -510,19 +501,5 @@ void WQtModuleConfig::comboboxItemChanged( QString selectedPreset )
         {
             m_moduleItemMap[ *iter ]->setCheckState( Qt::Checked );
         }
-    }
-}
-
-void WQtModuleConfig::showBlacklistPresetOptions()
-{
-    if( m_asBlackList->checkState() == Qt::Checked )
-    {
-        m_usePreset->setDisabled( false );
-        m_selectPresetBlacklist->setDisabled( false );
-    }
-    else
-    {
-        m_usePreset->setDisabled( true );
-        m_selectPresetBlacklist->setDisabled( true );
     }
 }
