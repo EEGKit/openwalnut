@@ -28,6 +28,7 @@
 #include <boost/regex.hpp>
 #include <boost/tokenizer.hpp>
 #include <osg/Camera>
+#include <osgGA/TrackballManipulator>
 
 #include "../common/WLogger.h"
 #include "../common/WStringUtils.h"
@@ -206,16 +207,6 @@ void WGEProjectFileIO::done()
                                               "not exist. Ignoring.";
         }
 
-        // did we have a matrix?
-        if( !m_manipulatorMatrices.count( ( *iter ).first ) )
-        {
-            wlog::warn( "Project Loader" ) << "Project file contained a camera \"" << ( *iter ).second << "\" but no proper manipulator matrix. " <<
-                                              "Leaving current matrix untouched.";
-        }
-        else
-        {
-            view->getCameraManipulator()->setByMatrix( m_manipulatorMatrices[ ( *iter ).first ] );
-        }
 
         // home position found?
         if( ( !m_homeEyeVectors.count( ( *iter ).first ) ) ||
@@ -230,8 +221,26 @@ void WGEProjectFileIO::done()
         {
             view->getCameraManipulator()->setHomePosition( m_homeEyeVectors[ ( *iter ).first ],
                                                            m_homeCenterVectors[ ( *iter ).first ],
-                                                           m_homeUpVectors[ ( *iter ).first ]
+                                                           m_homeUpVectors[ ( *iter ).first ],
+                                                           true
             );
+
+            osg::ref_ptr<osgGA::TrackballManipulator> cm = osg::dynamic_pointer_cast<osgGA::TrackballManipulator>( view->getCameraManipulator() );
+            if( cm )
+            {
+                cm->setDistance( ( m_homeCenterVectors[ ( *iter ).first ] - m_homeEyeVectors[ ( *iter ).first ] ).length() );
+            }
+        }
+
+        // did we have a matrix?
+        if( !m_manipulatorMatrices.count( ( *iter ).first ) )
+        {
+            wlog::warn( "Project Loader" ) << "Project file contained a camera \"" << ( *iter ).second << "\" but no proper manipulator matrix. " <<
+                                              "Leaving current matrix untouched.";
+        }
+        else
+        {
+            view->getCameraManipulator()->setByMatrix( m_manipulatorMatrices[ ( *iter ).first ] );
         }
     }
 }

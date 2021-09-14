@@ -1090,10 +1090,7 @@ bool WMainWindow::event( QEvent* event )
                                );
                 }
             }
-
-            // Loading projects loses home position calculation
-            m_mainGLWidget->getViewer()->getCameraManipulator()->setAutoComputeHomePosition( true );
-        }
+      }
     }
 
     return QMainWindow::event( event );
