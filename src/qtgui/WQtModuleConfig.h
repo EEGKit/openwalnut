@@ -178,6 +178,11 @@ private:
     void loadListsFromSettings( bool defaultModulePaths = false );
 
     /**
+     * Call this to refresh the combobox items
+     */
+    void refreshComboboxItems();
+
+    /**
      * Saves the whitelist and the blacklist to the settings.
      */
     void saveListToSettings();

@@ -151,28 +151,14 @@ WQtModuleConfig::WQtModuleConfig( QWidget* parent, Qt::WindowFlags f ):
     m_selectPresetBlacklist->setFixedSize( 120, 26 );
     m_selectPresetBlacklist->setEditable( true );
     m_selectPresetBlacklist->setInsertPolicy( QComboBox::InsertAtBottom );
-    // read preset names from settings
-    QSettings* settings = &WQtGui::getSettings();
-    settings->beginGroup( "qtgui/modules/preset/" );
-    QStringList childKeys = settings->childKeys();
-    m_selectPresetBlacklist->addItems( childKeys );
-    settings->endGroup();
-    int selectedPresetIndex = m_selectPresetBlacklist->findText( WQtGui::getSettings().value( "qtgui/modules/selectedPreset", "" ).toString() );
-    // -1 means selectedPresetIndex not found
-    if( selectedPresetIndex != -1 )
-    {
-        m_selectPresetBlacklist->setCurrentIndex( selectedPresetIndex );
-    }
-    else
-    {
-        m_selectPresetBlacklist->setCurrentIndex( 0 );
-    }
+
+    refreshComboboxItems();
 
     if( m_asBlackList->checkState() )
     {
         m_selectPresetBlacklist->setDisabled( false );
     }
-    connect( m_selectPresetBlacklist, SIGNAL( editTextChanged( QString ) ), this, SLOT( refreshModuleCheckboxes() ) );
+    connect( m_selectPresetBlacklist, SIGNAL( currentIndexChanged( int ) ), this, SLOT( refreshModuleCheckboxes() ) );
     blacklistPresetRow->addWidget( m_selectPresetBlacklist );
     QSpacerItem* horizSpacer = new QSpacerItem( 1, 1, QSizePolicy::Expanding, QSizePolicy::Fixed );
     blacklistPresetRow->addSpacerItem( horizSpacer );
@@ -299,8 +285,6 @@ void WQtModuleConfig::loadListsFromSettings( bool defaultModulePaths )
     bool usePreset = WQtGui::getSettings().value( "qtgui/modules/usePreset", false ).toBool();
     m_usePreset->setCheckState( usePreset ? Qt::Checked : Qt::Unchecked );
 
-    refreshModuleCheckboxes();
-
     if( !defaultModulePaths )
     {
         // now, also fill the list
@@ -385,6 +369,7 @@ QAction* WQtModuleConfig::getConfigureAction() const
 void WQtModuleConfig::accept()
 {
     saveListToSettings();
+    refreshComboboxItems();
     emit updated();
     QDialog::accept();
 }
@@ -459,6 +444,7 @@ void WQtModuleConfig::resetAllModuleCheckboxes()
 
 void WQtModuleConfig::refreshModuleCheckboxes()
 {
+    resetAllModuleCheckboxes();
     std::string allowedModules = "";
 
     // read settings
@@ -472,8 +458,6 @@ void WQtModuleConfig::refreshModuleCheckboxes()
     }
 
     m_allowedModules = string_utils::tokenize( allowedModules, "," );
-
-    resetAllModuleCheckboxes();
 
     // set dialog according to the settings
     for( AllowedModuleList::const_iterator iter = m_allowedModules.begin(); iter != m_allowedModules.end(); ++iter )
@@ -495,5 +479,29 @@ void WQtModuleConfig::toggleComboboxVisibility( int usePresetState )
     else
     {
         m_selectPresetBlacklist->setDisabled( false );
+    }
+}
+
+void WQtModuleConfig::refreshComboboxItems()
+{
+    //Clear list before updating
+    m_selectPresetBlacklist->clear();
+
+    // read preset names from settings
+    QSettings* settings = &WQtGui::getSettings();
+    settings->beginGroup( "qtgui/modules/preset/" );
+    QStringList childKeys = settings->childKeys();
+    m_selectPresetBlacklist->addItems( childKeys );
+    settings->endGroup();
+
+    int selectedPresetIndex = m_selectPresetBlacklist->findText( WQtGui::getSettings().value( "qtgui/modules/selectedPreset", "" ).toString() );
+    // -1 means selectedPresetIndex not found
+    if( selectedPresetIndex != -1 )
+    {
+        m_selectPresetBlacklist->setCurrentIndex( selectedPresetIndex );
+    }
+    else
+    {
+        m_selectPresetBlacklist->setCurrentIndex( 0 );
     }
 }
