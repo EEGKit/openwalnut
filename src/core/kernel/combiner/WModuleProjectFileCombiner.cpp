@@ -446,8 +446,13 @@ void WModuleProjectFileCombiner::save( std::ostream& output )   // NOLINT
             {
                 // as the module is a weak_ptr -> lock and get access to it
                 std::shared_ptr< WModule > theOtherModule = ( *iciter )->m_module.lock();
-                output << "CONNECTION:(" << moduleToIDMap[ ( *iter ) ] << "," << ( *citer )->getName() << ")->(" <<
-                                            moduleToIDMap[ theOtherModule ] << "," << ( *iciter )->getName() << ")" << std::endl;
+
+                // Check if theOtherModule has an ID => if not it is an internal module
+                if( moduleToIDMap.find( theOtherModule ) != moduleToIDMap.end() )
+                {
+                    output << "CONNECTION:(" << moduleToIDMap[ ( *iter ) ] << "," << ( *citer )->getName() << ")->(" <<
+                                                moduleToIDMap[ theOtherModule ] << "," << ( *iciter )->getName() << ")" << std::endl;
+                }
             }
             lock.unlock();
         }

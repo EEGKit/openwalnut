@@ -31,6 +31,8 @@ static const unsigned int CTRL_UP = 16777249;
 static const unsigned int SHIFT_DOWN = 65505;
 static const unsigned int SHIFT_UP = 16777248;
 
+static const unsigned int KEY_A = 65;
+static const unsigned int KEY_T = 84;
 static const unsigned int KEY_X = 88;
 static const unsigned int KEY_Y = 89;
 static const unsigned int KEY_Z = 90;
@@ -46,50 +48,63 @@ bool WKeyboardHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActio
 {
     if( ea.getEventType() == osgGA::GUIEventAdapter::KEYDOWN )
     {
-        if( ea.getKey() == CTRL_DOWN )
+        if( m_isCtrl )
         {
-            m_isCtrl = true;
+            switch( ea.getKey() )
+            {
+                case KEY_Y:
+                    m_connector->getFiberHandler()->getActionHandler()->redo();
+                    return true;
+                case KEY_Z:
+                    m_connector->getFiberHandler()->getActionHandler()->undo();
+                    return true;
+            }
         }
-        else if( ea.getKey() == SHIFT_DOWN )
+
+        if( m_isShift )
         {
-            m_isShift = true;
+            switch( ea.getKey() )
+            {
+                case KEY_A:
+                    m_connector->getFiberHandler()->createNewFiber();
+                    return true;
+                case KEY_T:
+                    m_connector->getFiberHandler()->toggleFiber( m_connector->getFiberHandler()->getSelectedFiber() );
+                    return true;
+            }
         }
-        else if( ea.getKey() == KEY_Z && m_isCtrl )
+
+        WPosition scal = m_connector->getScaling()->get();
+        switch( ea.getKey() )
         {
-            m_connector->getFiberHandler()->getActionHandler()->undo();
-            return true;
-        }
-        else if( ea.getKey() == KEY_Y && m_isCtrl )
-        {
-            m_connector->getFiberHandler()->getActionHandler()->redo();
-            return true;
-        }
-        else if( ea.getKey() == KEY_X )
-        {
-            WPosition pos = m_connector->getScaling()->get();
-            m_connector->getScaling()->set( WPosition( pos.x() * ( m_isShift ? 1.0 / SCALING_FACTOR : SCALING_FACTOR ), pos.y(), pos.z() ) );
-        }
-        else if( ea.getKey() == KEY_Y )
-        {
-            WPosition pos = m_connector->getScaling()->get();
-            m_connector->getScaling()->set( WPosition( pos.x(), pos.y() * ( m_isShift ? 1.0 / SCALING_FACTOR : SCALING_FACTOR ), pos.z() ) );
-        }
-        else if( ea.getKey() == KEY_Z )
-        {
-            WPosition pos = m_connector->getScaling()->get();
-            m_connector->getScaling()->set( WPosition( pos.y(), pos.x(), pos.z() * ( m_isShift ? 1.0 / SCALING_FACTOR : SCALING_FACTOR ) ) );
+            case CTRL_DOWN:
+                m_isCtrl = true;
+                return true;
+            case SHIFT_DOWN:
+                m_isShift = true;
+                return true;
+            case KEY_X:
+                m_connector->getScaling()->set( WPosition( scal.x() * ( m_isShift ? 1.0 / SCALING_FACTOR : SCALING_FACTOR ), scal.y(), scal.z() ) );
+                return true;
+            case KEY_Y:
+                m_connector->getScaling()->set( WPosition( scal.x(), scal.y() * ( m_isShift ? 1.0 / SCALING_FACTOR : SCALING_FACTOR ), scal.z() ) );
+                return true;
+            case KEY_Z:
+                m_connector->getScaling()->set( WPosition( scal.y(), scal.x(), scal.z() * ( m_isShift ? 1.0 / SCALING_FACTOR : SCALING_FACTOR ) ) );
+                return true;
         }
     }
 
     if( ea.getEventType() == osgGA::GUIEventAdapter::KEYUP )
     {
-        if( ea.getKey() == CTRL_UP )
+        switch( ea.getKey() )
         {
-            m_isCtrl = false;
-        }
-        else if( ea.getKey() == SHIFT_UP )
-        {
-            m_isShift = false;
+            case CTRL_UP:
+                m_isCtrl = false;
+                return true;
+            case SHIFT_UP:
+                m_isShift = false;
+                return true;
         }
     }
 
