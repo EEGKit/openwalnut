@@ -359,10 +359,7 @@ void WFiberHandler::updateProperty( WPropertyBase::SPtr property )
     if( property == m_addFiber && m_addFiber->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
     {
         m_addFiber->set( WPVBaseTypes::PV_TRIGGER_READY, false );
-
-        std::string name = "Track " + boost::lexical_cast< std::string >( m_fiberCount );
-        m_fiberCount++;
-        addFiber( name );
+        createNewFiber();
     }
     else if( property == m_removeFiber && m_removeFiber->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
     {
@@ -419,4 +416,11 @@ WActionHandler::SPtr WFiberHandler::getActionHandler()
 void WFiberHandler::setFiberCount( size_t fiberCount )
 {
     this->m_fiberCount = fiberCount;
+}
+
+void WFiberHandler::createNewFiber()
+{
+    std::string name = "Track " + boost::lexical_cast< std::string >( m_fiberCount );
+    m_fiberCount++;
+    addFiber( name );
 }

@@ -159,6 +159,11 @@ public:
     void toggleFiber( size_t idx, bool silent = false );
 
     /**
+     * Creates a new fiber.
+     */
+    void createNewFiber();
+
+    /**
      * Updates the UI selector.
      * 
      * \param idx index of the selected fiber.

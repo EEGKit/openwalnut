@@ -36,7 +36,7 @@
 
 /**
  * Class to encapsulate boost::condition_variable_any. You may use it to efficiently wait for events (a condition comes true). It
- * is a very simple implementation. It might be extended easily. Timed wait functions and so on.
+ * is a very simple implementation. It can be extended easily, e.g. to timed wait functions and so on.
  */
 class WCondition // NOLINT
 {

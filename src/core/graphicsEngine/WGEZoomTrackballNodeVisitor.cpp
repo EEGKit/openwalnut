@@ -39,6 +39,7 @@ WGEZoomTrackballNodeVisitor::WGEZoomTrackballNodeVisitor( TraversalMode traversa
 
 void WGEZoomTrackballNodeVisitor::reset()
 {
+    m_matrixStack.clear();
     m_bb.init();
 }
 
@@ -69,17 +70,37 @@ void WGEZoomTrackballNodeVisitor::apply( osg::Drawable& node ) // NOLINT
     osg::BoundingBox bb = node.getBoundingBox();
     if( bb.valid() )
     {
-        m_bb.expandBy( bb );
+        if( m_matrixStack.empty() )
+        {
+            m_bb.expandBy( bb );
+        }
+        else
+        {
+            osg::Matrix matrix = m_matrixStack.back();
+            m_bb.expandBy( bb.corner( 0 ) * matrix );
+            m_bb.expandBy( bb.corner( 1 ) * matrix );
+            m_bb.expandBy( bb.corner( 2 ) * matrix );
+            m_bb.expandBy( bb.corner( 3 ) * matrix );
+            m_bb.expandBy( bb.corner( 4 ) * matrix );
+            m_bb.expandBy( bb.corner( 5 ) * matrix );
+            m_bb.expandBy( bb.corner( 6 ) * matrix );
+            m_bb.expandBy( bb.corner( 7 ) * matrix );
+        }
     }
 }
 
 void WGEZoomTrackballNodeVisitor::apply( osg::MatrixTransform& node ) // NOLINT
 {
-    // Ignore grids.
-    if( !dynamic_cast< WGEGridNode* >( &node ) )
+    osg::Matrix matrix;
+    if( !m_matrixStack.empty() )
     {
-        traverse( node );
+        matrix = m_matrixStack.back();
     }
+    node.computeLocalToWorldMatrix( matrix, this );
+
+    m_matrixStack.push_back( matrix );
+    traverse( node );
+    m_matrixStack.pop_back();
 }
 
 osg::BoundingBox& WGEZoomTrackballNodeVisitor::getBoundingBox()
