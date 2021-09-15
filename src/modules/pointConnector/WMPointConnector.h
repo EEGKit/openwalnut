@@ -308,6 +308,11 @@ private:
      * Property for the scaling as Vector.
      */
     WPropPosition m_scaling;
+
+    /**
+     * Property to enable the sizes.
+     */
+    WPropBool m_enableSizes;
 };
 
 #endif  // WMPOINTCONNECTOR_H

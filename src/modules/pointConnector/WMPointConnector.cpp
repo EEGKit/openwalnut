@@ -89,7 +89,9 @@ void WMPointConnector::properties()
 
     WPropertyGroup::SPtr assistanceGroup = m_properties->addPropertyGroup( "Assistance", "Property group assistance features." );
 
-    m_enableSAPT = assistanceGroup->addProperty( "Enable SAPT ", "Enable Semi-Automatic-Proton-Tracking", true );
+    m_enableSAPT = assistanceGroup->addProperty( "Enable SAPT", "Enable Semi-Automatic-Proton-Tracking", true );
+    m_enableSizes = assistanceGroup->addProperty( "Enable sizes", "Enables the point size based on the cluster size", false,
+                                                   boost::bind( &WMPointConnector::updateAll, this ) );
     m_enableAdaptiveVisibility = assistanceGroup->addProperty( "Enable adaptive visibility", "Enable adaptive visibility using a cone", true,
                                                                 boost::bind( &WMPointConnector::updateAll, this ) );
     m_adaptiveVisibilityAngle = assistanceGroup->addProperty( "Adaptive visibility angle", "Adaptive visibility angle", 10.0,
@@ -199,6 +201,7 @@ void WMPointConnector::handleInput()
 
     SPFloatVector edeps;
     SPSizeVector eventIDs;
+    std::shared_ptr< WValueSet< float > > clusterSizes;
 
     if( points->getData().type() == typeid( std::tuple< SPFloatVector > ) )
     {
@@ -213,6 +216,10 @@ void WMPointConnector::handleInput()
         edeps = std::get< 0 >( std::any_cast< std::tuple< SPFloatVector, SPSizeVector > >( points->getData() ) );
         eventIDs = std::get< 1 >( std::any_cast< std::tuple< SPFloatVector, SPSizeVector > >( points->getData() ) );
     }
+    else if( points->getData().type() == typeid( std::shared_ptr< WValueSet< float > > ) )
+    {
+        clusterSizes = std::any_cast< std::shared_ptr< WValueSet< float > > >( points->getData() );
+    }
 
     m_connectorData->clear();
 
@@ -223,7 +230,10 @@ void WMPointConnector::handleInput()
     for( size_t pointIdx = 0; pointIdx < points->size(); ++pointIdx )
     {
         osg::Vec3 vertex = points->operator[]( pointIdx );
-        m_connectorData->addVertex( vertex, points->getColor( pointIdx ), edeps ? edeps->at( pointIdx ) : 0 );
+        m_connectorData->addVertex( vertex,
+                                    points->getColor( pointIdx ),
+                                    edeps ? edeps->at( pointIdx ) : 0.0,
+                                    clusterSizes ? clusterSizes->getScalar( pointIdx ) : 0.0 );
 
         if( eventIDs )
         {
@@ -250,6 +260,11 @@ void WMPointConnector::handleInput()
     m_fiberHandler->selectorUpdate( fibers->size() - 1 );
 
     m_fiberHandler->sortVertices();
+
+    if( clusterSizes )
+    {
+        m_connectorData->setHasClusterSize();
+    }
 
     updateAll();
 }
@@ -305,7 +320,13 @@ void WMPointConnector::updatePoints()
         colors->push_back( color.w() );
     }
 
-    m_pointOutput->updateData( WDataSetPoints::SPtr( new WDataSetPoints( vertices, colors ) ) );
+    std::any data = NULL;
+    if( m_connectorData->hasClusterSize() && m_enableSizes->get() )
+    {
+        data = std::shared_ptr< WValueSet< float > >( new WValueSet< float >( 0, 1, m_connectorData->getClusterSizes() ) );
+    }
+
+    m_pointOutput->updateData( WDataSetPoints::SPtr( new WDataSetPoints( vertices, colors, data ) ) );
 }
 
 bool WMPointConnector::isAdaptivelyHidden( osg::Vec3 vertex )
@@ -388,8 +409,13 @@ bool WMPointConnector::findClickedPoint( osg::Vec3 cameraPosition, osg::Vec3 dir
     {
         osg::Vec3 vertex = m_connectorData->getVertices()->at( idx );
         vertex = osg::Vec3( vertex.x() * m_scaling->get().x(), vertex.y() * m_scaling->get().y(), vertex.z() * m_scaling->get().z() );
+        float localSize = size;
+        if( m_connectorData->hasClusterSize() && m_enableSizes->get() )
+        {
+            localSize *= m_connectorData->getClusterSizes()->at( idx );
+        }
 
-        float hit = hitVertex( cameraPosition, direction, vertex, size );
+        float hit = hitVertex( cameraPosition, direction, vertex, localSize );
         if( hit > 0.0 )
         {
             float dis = ( vertex - cameraPosition ).length2();
