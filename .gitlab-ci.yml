@@ -9,7 +9,9 @@ stages:
 create_directory_and_cmake___release:
         stage: Initialization_stage
         cache:
-                key: "CacheRelease"
+                key:
+                        files:
+                                - release.lock
                 paths:
                         - build/release
         image: ladbukkit/openwalnut_build_environment:1.5.2
@@ -26,7 +28,9 @@ create_directory_and_cmake___release:
 create_directory_and_cmake___debug:
         stage: Initialization_stage
         cache:
-                key: "CacheDebug"
+                key:
+                        files:
+                                - debug.lock
                 paths:
                         - build/debug
         image: ladbukkit/openwalnut_build_environment:1.5.2
@@ -43,7 +47,9 @@ create_directory_and_cmake___debug:
 stylecheck_job:
         stage: Stylecheck_doc_stage
         cache:
-                key: "CacheRelease"
+                key:
+                        files:
+                                - release.lock
                 paths:
                         - build/release
         image: ladbukkit/openwalnut_build_environment:1.5.2
@@ -57,7 +63,9 @@ stylecheck_job:
 doc_job:
         stage: Stylecheck_doc_stage
         cache:
-                key: "CacheDebug"
+                key:
+                        files:
+                                - debug.lock
                 paths:
                         - build/debug
         image: ladbukkit/openwalnut_build_environment:1.5.2
@@ -72,7 +80,9 @@ doc_job:
 buildAndTest:
         stage: Build_and_test_release_stage
         cache:
-                key: "CacheRelease"
+                key:
+                        files:
+                                - release.lock
                 paths:
                         - build/release
         image: ladbukkit/openwalnut_build_environment:1.5.2
@@ -87,7 +97,9 @@ buildAndTest:
 buildAndTestDebug:
         stage: Build_and_test_debug_stage
         cache:
-                key: "CacheDebug"
+                key:
+                        files:
+                                - debug.lock
                 paths:
                         - build/debug
         image: ladbukkit/openwalnut_build_environment:1.5.2
@@ -102,7 +114,9 @@ buildAndTestDebug:
 buildAppImage:
         stage: Build_appimage_stage
         cache:
-                key: "CacheAppImage"
+                key:
+                        files:
+                                - appimage.lock
                 paths:
                         - tools/AppImage/AppImageBuild
         image: ladbukkit/openwalnut_build_environment:1.5.2
@@ -117,9 +131,16 @@ buildAppImage:
 uploadArtifacts:
         stage: Upload_artifacts_stage
         cache:
-                key: "CacheAppImage"
-                paths:
+                - key:
+                        files:
+                                - appimage.lock
+                  paths:
                         - tools/AppImage/AppImageBuild
+                - key:
+                        files:
+                                - debug.lock
+                  paths:
+                        - build/debug
         image: ladbukkit/openwalnut_build_environment:1.5.2
         script:
                 - pwd
