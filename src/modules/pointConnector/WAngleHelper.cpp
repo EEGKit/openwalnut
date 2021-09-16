@@ -28,7 +28,11 @@
 #include <cmath>
 #include <limits>
 #include <map>
+#include <queue>
+#include <thread>
 #include <vector>
+
+#include <boost/lockfree/queue.hpp>
 
 #include "WAngleHelper.h"
 
@@ -146,45 +150,89 @@ static WAngleHelper::DJOut dijkstra( std::vector< WAngleHelper::DJLine > lines, 
     return std::make_pair( prev, dist );
 }
 
+/**
+ * Data for the thread handling
+ */
+struct SaptData
+{
+    SaptData( std::map< WPosition, WPosition > prevs, WPosition endPoint, double distance ):
+        prevs( prevs ), endPoint( endPoint ), distance( distance )
+    {
+    }
+
+    std::map< WPosition, WPosition > prevs;
+    WPosition endPoint;
+    double distance;
+};
+
+/**
+ * A queue with data that is threadsafe
+ */
+typedef boost::lockfree::queue< SaptData*, boost::lockfree::fixed_sized< false > > lfr_queue;
+
 std::vector< WPosition > WAngleHelper::findSmoothestPath( std::vector< WPosition > positions )
 {
     std::sort( positions.begin(), positions.end(), compareWPosition );
 
     std::vector< WAngleHelper::DJLine > lines = createLines( positions );
 
-    std::map< WPosition, WPosition > prevs;
-    WPosition ePoint;
-    double eDis = std::numeric_limits< double >::infinity();
+    std::vector< std::thread* > threadList;
+    std::shared_ptr< lfr_queue > data = std::shared_ptr< lfr_queue >( new lfr_queue( 0 ) );
 
     double firstZ = positions.at( 0 ).z();
     double lastZ = positions.at( positions.size() - 1 ).z();
     auto points = positions.begin();
+
+    // Since we use the dijkstra from each point on the first layer we can parallelize it
     while( points->z() == firstZ )
     {
-        DJOut res = dijkstra( lines, positions, *points );
-        double endDis = std::numeric_limits< double >::infinity();
-        WPosition endPoint;
-
-        auto end = positions.end();
-        end--;
-        while( end->z() == lastZ )
+        WPosition start = *points;
+        std::thread* th = new std::thread( [lines, positions, start, lastZ, data]()
         {
-            if( res.second[ *end ] < endDis )
-            {
-                endDis = res.second[ *end ];
-                endPoint = *end;
-            }
+            DJOut res = dijkstra( lines, positions, start );
+            double endDis = std::numeric_limits< double >::infinity();
+            WPosition endPoint;
+
+            auto end = positions.end();
             end--;
-        }
+            while( end->z() == lastZ )
+            {
+                if( res.second[ *end ] < endDis )
+                {
+                    endDis = res.second[ *end ];
+                    endPoint = *end;
+                }
+                end--;
+            }
 
-        if( endDis < eDis )
-        {
-            prevs = res.first;
-            ePoint = endPoint;
-            eDis = endDis;
-        }
-
+            data->push( new SaptData( res.first, endPoint, endDis ) );
+        } );
+        threadList.push_back( th );
         points++;
+    }
+
+    // wait for all threads
+    for( std::thread* th : threadList )
+    {
+        th->join();
+        delete th;
+    }
+
+    std::map< WPosition, WPosition > prevs;
+    WPosition ePoint;
+    double eDis = std::numeric_limits< double >::infinity();
+
+    // Analyze the data of all threads and find the path with the lowest angle deviation among them
+    SaptData* d;
+    while( data->pop( d ) )
+    {
+        if( d->distance < eDis )
+        {
+            prevs = d->prevs;
+            ePoint = d->endPoint;
+            eDis = d->distance;
+        }
+        delete d;
     }
 
     std::vector< WPosition > S;
