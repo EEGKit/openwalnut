@@ -155,14 +155,20 @@ static WAngleHelper::DJOut dijkstra( std::vector< WAngleHelper::DJLine > lines, 
  */
 struct SaptData
 {
+    /**
+     * Creates the sapt data
+     * \param prevs The map of previous points.
+     * \param endPoint The endpoint.
+     * \param distance The distance to the endpoint.
+     */
     SaptData( std::map< WPosition, WPosition > prevs, WPosition endPoint, double distance ):
         prevs( prevs ), endPoint( endPoint ), distance( distance )
     {
     }
 
-    std::map< WPosition, WPosition > prevs;
-    WPosition endPoint;
-    double distance;
+    std::map< WPosition, WPosition > prevs; //!< The map of previous points.
+    WPosition endPoint; //!< The endpoint.
+    double distance; //!< The distance to the endpoint.
 };
 
 /**
