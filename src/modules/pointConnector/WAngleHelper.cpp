@@ -66,6 +66,8 @@ static std::vector< WAngleHelper::DJLine > createLines( std::vector< WPosition >
     std::vector< WPosition > currentPoints;
     double currentZ = positions.at( 0 ).z();
 
+    WPosition vert( 0.0, 0.0, 1.0 );
+
     for( size_t idx = 0; idx < positions.size(); idx++ )
     {
         WPosition point = positions.at( idx );
@@ -79,7 +81,7 @@ static std::vector< WAngleHelper::DJLine > createLines( std::vector< WPosition >
         for( size_t j = 0; j < oldPoints.size(); j++ )
         {
             WPosition p = oldPoints.at( j );
-            lines.push_back( std::make_tuple( p, point, WAngleHelper::calculateAngle( p, point ) ) );
+            lines.push_back( std::make_tuple( p, point, WAngleHelper::calculateAngle( p - vert, point - p ) ) );
         }
         currentPoints.push_back( point );
     }
@@ -291,6 +293,11 @@ std::vector< WPosition > WAngleHelper::findSmoothestPath( std::vector< WPosition
             pos.push_back( *fibIter );
             fibIter++;
         }
+    }
+        
+    if( pos.empty() )
+    {
+        return std::vector< WPosition >();
     }
 
     return findSmoothestPath( pos );
