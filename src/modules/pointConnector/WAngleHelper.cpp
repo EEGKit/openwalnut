@@ -129,12 +129,17 @@ static WAngleHelper::DJOut dijkstra( std::vector< WAngleHelper::DJLine > lines, 
 
             WPosition v = std::get< 1 >( l );
 
-            auto old = std::find_if( lines.begin(), lines.end(),
-                [prev, u]( WAngleHelper::DJLine line )
-                {
-                    return prev.find( u ) != prev.end() && std::get< 0 >( line ) == prev.at( u ) && std::get< 1 >( line ) == u;
-                }
-            );
+            auto old = lines.end();
+            auto pr = prev.end();
+            if( ( pr = prev.find( u ) ) != prev.end() )
+            {
+                old = std::find_if( lines.begin(), lines.end(),
+                    [prev, u, pr]( WAngleHelper::DJLine line )
+                    {
+                        return std::get< 0 >( line ) == pr->second && std::get< 1 >( line ) == u;
+                    }
+                );
+            }
 
             double alt = 0;
             if( old != lines.end() )
@@ -294,7 +299,7 @@ std::vector< WPosition > WAngleHelper::findSmoothestPath( std::vector< WPosition
             fibIter++;
         }
     }
-        
+
     if( pos.empty() )
     {
         return std::vector< WPosition >();
