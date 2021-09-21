@@ -26,15 +26,46 @@
 
 #include <algorithm>
 #include <cmath>
+#include <functional>
 #include <limits>
-#include <map>
+#include <unordered_map>
 #include <queue>
 #include <thread>
 #include <vector>
 
+#include <boost/asio/thread_pool.hpp>
+#include <boost/asio/post.hpp>
 #include <boost/lockfree/queue.hpp>
 
 #include "WAngleHelper.h"
+
+
+/**
+ * Data for the thread handling
+ */
+struct SaptData
+{
+    /**
+     * Creates the sapt data
+     * \param prevs The unordered_map of previous points.
+     * \param endPoint The endpoint.
+     * \param distance The distance to the endpoint.
+     */
+    SaptData( WAngleHelper::PositionMap prevs, WPosition endPoint, double distance ):
+        prevs( prevs ), endPoint( endPoint ), distance( distance )
+    {
+    }
+
+    WAngleHelper::PositionMap prevs; //!< The unordered_map of previous points.
+    WPosition endPoint; //!< The endpoint.
+    double distance; //!< The distance to the endpoint.
+};
+
+/**
+ * A queue with data that is threadsafe
+ */
+typedef boost::lockfree::queue< SaptData*, boost::lockfree::fixed_sized< false > > lfr_queue;
+
 
 static int compareWPosition( WPosition a, WPosition b )
 {
@@ -92,8 +123,8 @@ static std::vector< WAngleHelper::DJLine > createLines( std::vector< WPosition >
 static WAngleHelper::DJOut dijkstra( std::vector< WAngleHelper::DJLine > lines, std::vector< WPosition > points, WPosition start )
 {
     std::vector< WPosition > Q;
-    std::map< WPosition, double > dist;
-    std::map< WPosition, WPosition > prev;
+    WAngleHelper::PositionDoubleMap dist;
+    WAngleHelper::PositionMap prev;
 
     for( size_t idx = 0; idx < points.size(); idx++ )
     {
@@ -157,39 +188,12 @@ static WAngleHelper::DJOut dijkstra( std::vector< WAngleHelper::DJLine > lines, 
     return std::make_pair( prev, dist );
 }
 
-/**
- * Data for the thread handling
- */
-struct SaptData
-{
-    /**
-     * Creates the sapt data
-     * \param prevs The map of previous points.
-     * \param endPoint The endpoint.
-     * \param distance The distance to the endpoint.
-     */
-    SaptData( std::map< WPosition, WPosition > prevs, WPosition endPoint, double distance ):
-        prevs( prevs ), endPoint( endPoint ), distance( distance )
-    {
-    }
-
-    std::map< WPosition, WPosition > prevs; //!< The map of previous points.
-    WPosition endPoint; //!< The endpoint.
-    double distance; //!< The distance to the endpoint.
-};
-
-/**
- * A queue with data that is threadsafe
- */
-typedef boost::lockfree::queue< SaptData*, boost::lockfree::fixed_sized< false > > lfr_queue;
-
 std::vector< WPosition > WAngleHelper::findSmoothestPath( std::vector< WPosition > positions )
 {
     std::sort( positions.begin(), positions.end(), compareWPosition );
 
     std::vector< WAngleHelper::DJLine > lines = createLines( positions );
 
-    std::vector< std::thread* > threadList;
     std::shared_ptr< lfr_queue > data = std::shared_ptr< lfr_queue >( new lfr_queue( 0 ) );
 
     double firstZ = positions.at( 0 ).z();
@@ -197,10 +201,11 @@ std::vector< WPosition > WAngleHelper::findSmoothestPath( std::vector< WPosition
     auto points = positions.begin();
 
     // Since we use the dijkstra from each point on the first layer we can parallelize it
+    boost::asio::thread_pool pool( std::thread::hardware_concurrency() );
     while( points->z() == firstZ )
     {
         WPosition start = *points;
-        std::thread* th = new std::thread( [lines, positions, start, lastZ, data]()
+        boost::asio::post( pool, [lines, positions, start, lastZ, data]()
         {
             DJOut res = dijkstra( lines, positions, start );
             double endDis = std::numeric_limits< double >::infinity();
@@ -220,18 +225,17 @@ std::vector< WPosition > WAngleHelper::findSmoothestPath( std::vector< WPosition
 
             data->push( new SaptData( res.first, endPoint, endDis ) );
         } );
-        threadList.push_back( th );
         points++;
     }
 
     // wait for all threads
-    for( std::thread* th : threadList )
-    {
-        th->join();
-        delete th;
-    }
+    auto start = std::chrono::high_resolution_clock::now();
+    pool.join();
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration< double > elapsed = end - start;
+    std::cout << "JOIN " << elapsed.count() << " seconds" << std::endl;
 
-    std::map< WPosition, WPosition > prevs;
+    WAngleHelper::PositionMap prevs;
     WPosition ePoint;
     double eDis = std::numeric_limits< double >::infinity();
 

@@ -25,7 +25,7 @@
 #ifndef WANGLEHELPER_H
 #define WANGLEHELPER_H
 
-#include <map>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -37,6 +37,34 @@
 namespace WAngleHelper
 {
     /**
+     * Hash function for the unorder map
+     */
+    struct HashFn
+    {
+        /**
+         * Hashes a WPosition object.
+         * \param pos The position.
+         * \return size_t The hash.
+         */
+        size_t operator()( const WPosition& pos ) const
+        {
+            return  ( ( std::hash< double >{}( pos.x() )                    // NOLINT
+                    ^ ( std::hash< double >{}( pos.y() ) << 1 ) ) >> 1 )    // NOLINT
+                    ^ ( std::hash< double >{}( pos.z() ) << 1 );            // NOLINT
+        }
+    };
+
+    /**
+     * An unorderd map from WPosition to WPosition.
+     */
+    typedef std::unordered_map< WPosition, WPosition, HashFn > PositionMap;
+
+    /**
+     * An unorderd map from WPosition to double.
+     */
+    typedef std::unordered_map< WPosition, double, HashFn > PositionDoubleMap;
+
+    /**
      * The lines that are checked by the dijkstra algorithm
      */
     typedef std::tuple< WPosition, WPosition, double > DJLine;
@@ -44,7 +72,7 @@ namespace WAngleHelper
     /**
      * The output of the dijkstra algorithm
      */
-    typedef std::pair< std::map< WPosition, WPosition >, std::map< WPosition, double > > DJOut;
+    typedef std::pair< PositionMap, PositionDoubleMap > DJOut;
 
     /**
      * Determines the path with the smallest angle change
