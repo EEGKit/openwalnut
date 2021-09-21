@@ -105,14 +105,14 @@ static WAngleHelper::DJOut dijkstra( std::vector< WAngleHelper::DJLine > lines, 
 
     while( Q.size() > 0 )
     {
-        std::sort( Q.begin(), Q.end(),
+        auto min = std::min_element( Q.begin(), Q.end(),
             [dist]( WPosition a, WPosition b )
             {
                 return dist.at( a ) < dist.at( b );
             }
         );
-        WPosition u = Q.at( 0 );
-        Q.erase( Q.begin() );
+        WPosition u = *min;
+        Q.erase( min );
 
         if( dist[u] == std::numeric_limits< double >::infinity() )
         {
