@@ -166,7 +166,7 @@ static WAngleHelper::DJOut dijkstra( WAngleHelper::DJLinePair lines, std::vector
         {
             WPosition v = it->first;
             auto pr = prev.find( u );
-            auto old = pr == prev.end() ? prevM.end() : prevM.find( pr->second );   // find the backward connections associated with the 
+            auto old = pr == prev.end() ? prevM.end() : prevM.find( pr->second );   // find the backward connections associated with the
                                                                                     // previous position that has the lowest total distance
 
             double alt = 0; // The 'alternative' total angle (could become the new one)

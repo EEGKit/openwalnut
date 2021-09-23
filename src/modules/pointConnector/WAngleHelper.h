@@ -63,7 +63,7 @@ namespace WAngleHelper
      * An unordered map from WPosition to double.
      */
     typedef std::unordered_map< WPosition, double, HashFn > PositionDoubleMap;
-    
+
     /**
      * An unordered map from WPosition to a PositionDoubleMap
      */
