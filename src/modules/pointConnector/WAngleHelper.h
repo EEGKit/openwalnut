@@ -55,19 +55,24 @@ namespace WAngleHelper
     };
 
     /**
-     * An unorderd map from WPosition to WPosition.
+     * An unordered map from WPosition to WPosition.
      */
     typedef std::unordered_map< WPosition, WPosition, HashFn > PositionMap;
 
     /**
-     * An unorderd map from WPosition to double.
+     * An unordered map from WPosition to double.
      */
     typedef std::unordered_map< WPosition, double, HashFn > PositionDoubleMap;
+    
+    /**
+     * An unordered map from WPosition to a PositionDoubleMap
+     */
+    typedef std::unordered_map< WPosition, PositionDoubleMap, HashFn > PositionLineMap;
 
     /**
-     * The lines that are checked by the dijkstra algorithm
+     * The output of the createLine function
      */
-    typedef std::tuple< WPosition, WPosition, double > DJLine;
+    typedef std::pair< WAngleHelper::PositionLineMap, WAngleHelper::PositionLineMap > DJLinePair;
 
     /**
      * The output of the dijkstra algorithm

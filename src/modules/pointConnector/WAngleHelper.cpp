@@ -83,48 +83,56 @@ double WAngleHelper::calculateAngle( WPosition a, WPosition b )
     return angle;
 }
 
-static std::vector< WAngleHelper::DJLine > createLines( std::vector< WPosition > positions )
+static WAngleHelper::DJLinePair createLines( std::vector< WPosition > positions )
 {
-    std::vector< WAngleHelper::DJLine > lines;
+    WAngleHelper::PositionLineMap prevMap;  // A map containing all the backwards connections of a point
+    WAngleHelper::PositionLineMap postMap;  // A map containing all the forward connections of a point
 
     if( positions.empty() )
     {
-        return lines;
+        return std::make_pair( prevMap, postMap );
     }
 
     std::sort( positions.begin(), positions.end(), compareWPosition );
-    std::vector< WPosition > oldPoints;
-    std::vector< WPosition > currentPoints;
+    std::vector< WPosition > oldPoints;         // holds the points that are on the layer one before the current one
+    std::vector< WPosition > currentPoints;     // holds all the points on the current layer (becomes oldPoints afterwards)
     double currentZ = positions.at( 0 ).z();
 
-    WPosition vert( 0.0, 0.0, 1.0 );
+    WPosition vert( 0.0, 0.0, 1.0 );            // A vertical position used for angle calculation
 
     for( size_t idx = 0; idx < positions.size(); idx++ )
     {
         WPosition point = positions.at( idx );
-        if( point.z() != currentZ )
+        if( point.z() != currentZ )     // A new layer is found
         {
             currentZ = point.z();
             oldPoints.clear();
             oldPoints.insert( oldPoints.end(), currentPoints.begin(), currentPoints.end() );
             currentPoints.clear();
         }
+
+        WAngleHelper::PositionDoubleMap prevM;  // All the backwards connections
         for( size_t j = 0; j < oldPoints.size(); j++ )
         {
             WPosition p = oldPoints.at( j );
-            lines.push_back( std::make_tuple( p, point, WAngleHelper::calculateAngle( p - vert, point - p ) ) );
+            double angle = WAngleHelper::calculateAngle( p - vert, point - p );
+
+            prevM[p] = angle;               // create a backwards connection
+            postMap[p][point] = angle;      // create a forward connection
         }
+        prevMap[point] = prevM;
+        postMap[point] = WAngleHelper::PositionDoubleMap();
         currentPoints.push_back( point );
     }
 
-    return lines;
+    return std::make_pair( prevMap, postMap );
 }
 
-static WAngleHelper::DJOut dijkstra( std::vector< WAngleHelper::DJLine > lines, std::vector< WPosition > points, WPosition start )
+static WAngleHelper::DJOut dijkstra( WAngleHelper::DJLinePair lines, std::vector< WPosition > points, WPosition start )
 {
-    std::vector< WPosition > Q;
-    WAngleHelper::PositionDoubleMap dist;
-    WAngleHelper::PositionMap prev;
+    std::vector< WPosition > Q;             // All positions
+    WAngleHelper::PositionDoubleMap dist;   // A map from position to the lowest distance it would need to get there
+    WAngleHelper::PositionMap prev;         // A map from position to it's previous position
 
     for( size_t idx = 0; idx < points.size(); idx++ )
     {
@@ -136,6 +144,7 @@ static WAngleHelper::DJOut dijkstra( std::vector< WAngleHelper::DJLine > lines, 
 
     while( Q.size() > 0 )
     {
+        // find position with minimum distance
         auto min = std::min_element( Q.begin(), Q.end(),
             [dist]( WPosition a, WPosition b )
             {
@@ -150,34 +159,22 @@ static WAngleHelper::DJOut dijkstra( std::vector< WAngleHelper::DJLine > lines, 
             break;
         }
 
-        for( size_t idx = 0; idx < lines.size(); idx++ )
+        WAngleHelper::PositionDoubleMap prevM = lines.first[u];     // forward connections of that position
+        WAngleHelper::PositionDoubleMap postM = lines.second[u];    // backward connections of that positions
+
+        for( auto it = postM.begin(); it != postM.end(); it++ )     // loop all forward connections
         {
-            WAngleHelper::DJLine l = lines.at( idx );
-            if( std::get< 0 >( l ) != u )
-            {
-                continue;
-            }
+            WPosition v = it->first;
+            auto pr = prev.find( u );
+            auto old = pr == prev.end() ? prevM.end() : prevM.find( pr->second );   // find the backward connections associated with the 
+                                                                                    // previous position that has the lowest total distance
 
-            WPosition v = std::get< 1 >( l );
-
-            auto old = lines.end();
-            auto pr = prev.end();
-            if( ( pr = prev.find( u ) ) != prev.end() )
+            double alt = 0; // The 'alternative' total angle (could become the new one)
+            if( old != prevM.end() )
             {
-                old = std::find_if( lines.begin(), lines.end(),
-                    [prev, u, pr]( WAngleHelper::DJLine line )
-                    {
-                        return std::get< 0 >( line ) == pr->second && std::get< 1 >( line ) == u;
-                    }
-                );
+                alt = dist[u] + abs( it->second - old->second );    // add difference from old to current to the total distance
             }
-
-            double alt = 0;
-            if( old != lines.end() )
-            {
-                alt = dist[u] + abs( std::get< 2 >( l ) - std::get< 2 >( *old ) );
-            }
-            if( alt < dist[v] )
+            if( alt < dist[v] ) // If alternative angle is lower than current total => override
             {
                 dist[v] = alt;
                 prev[v] = u;
@@ -190,10 +187,10 @@ static WAngleHelper::DJOut dijkstra( std::vector< WAngleHelper::DJLine > lines, 
 
 std::vector< WPosition > WAngleHelper::findSmoothestPath( std::vector< WPosition > positions )
 {
-    std::sort( positions.begin(), positions.end(), compareWPosition );
+    // create the lines
+    WAngleHelper::DJLinePair lines = createLines( positions );
 
-    std::vector< WAngleHelper::DJLine > lines = createLines( positions );
-
+    // a queue for all the data that the threads pump out
     std::shared_ptr< lfr_queue > data = std::shared_ptr< lfr_queue >( new lfr_queue( 0 ) );
 
     double firstZ = positions.at( 0 ).z();
@@ -213,8 +210,8 @@ std::vector< WPosition > WAngleHelper::findSmoothestPath( std::vector< WPosition
 
             auto end = positions.end();
             end--;
-            while( end->z() == lastZ )
-            {
+            while( end->z() == lastZ )              // Check the paths from the current first layer point to all last layer points
+            {                                       // And find the one with the lowest total angle
                 if( res.second[ *end ] < endDis )
                 {
                     endDis = res.second[ *end ];
@@ -229,11 +226,7 @@ std::vector< WPosition > WAngleHelper::findSmoothestPath( std::vector< WPosition
     }
 
     // wait for all threads
-    auto start = std::chrono::high_resolution_clock::now();
     pool.join();
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration< double > elapsed = end - start;
-    std::cout << "JOIN " << elapsed.count() << " seconds" << std::endl;
 
     WAngleHelper::PositionMap prevs;
     WPosition ePoint;
