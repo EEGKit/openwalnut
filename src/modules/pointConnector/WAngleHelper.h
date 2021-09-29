@@ -67,7 +67,7 @@ namespace WAngleHelper
     /**
      * An unordered map from WPosition to a PositionDoubleMap
      */
-    typedef std::unordered_map< WPosition, PositionDoubleMap, HashFn > PositionLineMap;
+    typedef std::unordered_map< WPosition, PositionMap, HashFn > PositionLineMap;
 
     /**
      * The output of the createLine function

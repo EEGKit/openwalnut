@@ -98,12 +98,12 @@ static WAngleHelper::DJLinePair createLines( std::vector< WPosition > positions 
     std::vector< WPosition > currentPoints;     // holds all the points on the current layer (becomes oldPoints afterwards)
     double currentZ = positions.at( 0 ).z();
 
-    WPosition vert( 0.0, 0.0, 1.0 );            // A vertical position used for angle calculation
+    // WPosition vert( 0.0, 0.0, 1.0 );            // A vertical position used for angle calculation
 
     for( size_t idx = 0; idx < positions.size(); idx++ )
     {
         WPosition point = positions.at( idx );
-        if( point.z() != currentZ )     // A new layer is found
+        if( point.z() - currentZ > 4.0 )     // A new layer is found
         {
             currentZ = point.z();
             oldPoints.clear();
@@ -111,17 +111,21 @@ static WAngleHelper::DJLinePair createLines( std::vector< WPosition > positions 
             currentPoints.clear();
         }
 
-        WAngleHelper::PositionDoubleMap prevM;  // All the backwards connections
+        WAngleHelper::PositionMap prevM;  // All the backwards connections
         for( size_t j = 0; j < oldPoints.size(); j++ )
         {
             WPosition p = oldPoints.at( j );
-            double angle = WAngleHelper::calculateAngle( p - vert, point - p );
+            // double angle = WAngleHelper::calculateAngle( p - vert, point - p );
+
+            double angleX = -atan2( point.x() - p.x(), point.y() - p.y() ) / M_PI * 180.0 + 180.0;
+            double angleY = asin( ( point.z() - p.z() ) / distance( p, point ) ) / M_PI * 180.0;
+            WPosition angle( angleX, angleY, 0.0 );
 
             prevM[p] = angle;               // create a backwards connection
             postMap[p][point] = angle;      // create a forward connection
         }
         prevMap[point] = prevM;
-        postMap[point] = WAngleHelper::PositionDoubleMap();
+        postMap[point] = WAngleHelper::PositionMap();
         currentPoints.push_back( point );
     }
 
@@ -159,8 +163,8 @@ static WAngleHelper::DJOut dijkstra( WAngleHelper::DJLinePair lines, std::vector
             break;
         }
 
-        WAngleHelper::PositionDoubleMap prevM = lines.first[u];     // forward connections of that position
-        WAngleHelper::PositionDoubleMap postM = lines.second[u];    // backward connections of that positions
+        WAngleHelper::PositionMap prevM = lines.first[u];     // forward connections of that position
+        WAngleHelper::PositionMap postM = lines.second[u];    // backward connections of that positions
 
         for( auto it = postM.begin(); it != postM.end(); it++ )     // loop all forward connections
         {
@@ -172,7 +176,8 @@ static WAngleHelper::DJOut dijkstra( WAngleHelper::DJLinePair lines, std::vector
             double alt = 0; // The 'alternative' total angle (could become the new one)
             if( old != prevM.end() )
             {
-                alt = dist[u] + abs( it->second - old->second );    // add difference from old to current to the total distance
+                WPosition angles = it->second - old->second;
+                alt = dist[u] + abs( angles.x() ) + abs( angles.y() );    // add difference from old to current to the total distance
             }
             if( alt < dist[v] ) // If alternative angle is lower than current total => override
             {
