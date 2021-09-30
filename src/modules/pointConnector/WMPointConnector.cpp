@@ -24,6 +24,7 @@
 
 #define _USE_MATH_DEFINES
 
+#include <chrono>
 #include <cmath>
 #include <memory>
 #include <string>
@@ -615,7 +616,14 @@ void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float x
         }
         if( m_enableSAPT->get() )
         {
+            auto start = std::chrono::high_resolution_clock::now();
+            size_t amount = positions.size();
+
             positions = WAngleHelper::findSmoothestPath( positions, m_fiberHandler->getFibers()->at( m_fiberHandler->getSelectedFiber() ) );
+
+            auto end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration< double > elapsed = end - start;
+            std::cout << "SAPT " << amount << " points in " << elapsed.count() << " seconds" << std::endl;
         }
 
         if( positions.empty() )
