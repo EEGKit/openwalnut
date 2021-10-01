@@ -623,7 +623,7 @@ void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float x
 
             auto end = std::chrono::high_resolution_clock::now();
             std::chrono::duration< double > elapsed = end - start;
-            wlog::debug("PointConnector") << "SAPT " << amount << " points in " << elapsed.count() << " seconds";
+            wlog::debug( "PointConnector" ) << "SAPT " << amount << " points in " << elapsed.count() << " seconds";
         }
 
         if( positions.empty() )
