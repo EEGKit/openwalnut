@@ -47,6 +47,7 @@ WMPointConnector::WMPointConnector():
 {
     m_connectorData = WConnectorData::SPtr( new WConnectorData() );
     m_fiberHandler = WFiberHandler::SPtr( new WFiberHandler( this ) );
+    m_selectionCondition = WCondition::SPtr( new WCondition() );
 }
 
 WMPointConnector::~WMPointConnector()
@@ -119,6 +120,7 @@ void WMPointConnector::moduleMain()
 
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_pointInput->getDataChangedCondition() );
+    m_moduleState.add( m_selectionCondition );
 
     createPointRenderer();
     createFiberDisplay();
@@ -135,7 +137,31 @@ void WMPointConnector::moduleMain()
             break;
         }
 
-        handleInput();
+        std::shared_ptr< WProgress > progressBar( new WProgress( "Calculating SAPT..." ) );
+        m_progress->addSubProgress( progressBar );
+        // Handle queue
+        {
+            std::unique_lock< std::mutex > lock( m_selectionMutex );
+
+            // copy and handle later so concurrent lock calls don't hang the gui thread
+            std::vector< std::function< void() > > qu( m_selectionQueue );
+            m_selectionQueue.clear();
+
+            lock.unlock();
+
+            // Handle every function in the current queue
+            while( !qu.empty() )
+            {
+                qu.back()();
+                qu.pop_back();
+            }
+        }
+        progressBar->finish();
+
+        if( m_pointInput->updated() )
+        {
+            handleInput();
+        }
     }
 
     stop();
@@ -529,30 +555,102 @@ WFiberHandler::SPtr WMPointConnector::getFiberHandler()
     return m_fiberHandler;
 }
 
-void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float x, float y )
+void WMPointConnector::handleClickSelection( bool clickType, double x, double y )
 {
-    // TODO(eschbach): maybe clean up this method. It is pretty long
-    if( !m_onscreenSelection->hasMoved() )
-    {
-        // no movement do raycast.
-        float mouseX = x * 2.0 - 1.0;
-        float mouseY = y * 2.0 - 1.0;
-
         osg::Camera* camera = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera();
         osg::Matrix VP = camera->getViewMatrix() * camera->getProjectionMatrix();
 
         osg::Matrix inverseVP;
         inverseVP.invert( VP );
 
-        osg::Vec3 nearPoint( mouseX, mouseY, -1.0f );
-        osg::Vec3 farPoint( mouseX, mouseY, 1.0f );
+        osg::Vec3 nearPoint( x, y, -1.0f );
+        osg::Vec3 farPoint( x, y, 1.0f );
         nearPoint = nearPoint * inverseVP;
         farPoint = farPoint * inverseVP;
 
         osg::Vec3 direction = farPoint - nearPoint;
         direction.normalize();
 
-        handleClick( nearPoint, direction, m_onscreenSelection->getClickType() );
+        handleClick( nearPoint, direction, clickType );
+}
+
+void WMPointConnector::pushSelectionQueue( std::function< void() > func )
+{
+    std::unique_lock< std::mutex > lock( m_selectionMutex );
+    m_selectionQueue.push_back( func );
+    m_selectionCondition->notify();
+}
+
+void WMPointConnector::handleLeftSelection( std::vector< WPosition > positions )
+{
+    for( auto vertex = positions.begin(); vertex != positions.end(); )
+    {
+        if( m_fiberHandler->getFiberOfPoint( *vertex ) || m_fiberHandler->isPointHidden( *vertex ) || isAdaptivelyHidden( *vertex ) )
+        {
+            positions.erase( vertex );
+        }
+        else
+        {
+            vertex++;
+        }
+    }
+    if( m_enableSAPT->get() )
+    {
+        auto start = std::chrono::high_resolution_clock::now();
+        size_t amount = positions.size();
+
+        positions = WAngleHelper::findSmoothestPath( positions, m_fiberHandler->getFibers()->at( m_fiberHandler->getSelectedFiber() ) );
+
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration< double > elapsed = end - start;
+        wlog::debug( "PointConnector" ) << "SAPT " << amount << " points in " << elapsed.count() << " seconds";
+    }
+
+    if( positions.empty() )
+    {
+        return;
+    }
+    m_connectorData->deselectPoint();
+    m_fiberHandler->addVerticesToFiber( std::vector< osg::Vec3 >( positions.begin(), positions.end() ), m_fiberHandler->getSelectedFiber() );
+    m_fiberHandler->selectLastPoint();
+    updateAll();
+}
+
+void WMPointConnector::handleRightSelection( std::vector< WPosition > positions )
+{
+    size_t idx = 0;
+    size_t fibIdx = m_fiberHandler->getSelectedFiber();
+    for( auto vertex = positions.begin(); vertex != positions.end(); )
+    {
+        if( m_fiberHandler->getFiberOfPoint( *vertex, &idx ) && idx == fibIdx )
+        {
+            vertex++;
+        }
+        else
+        {
+            positions.erase( vertex );
+        }
+    }
+
+    if( positions.empty() )
+    {
+        return;
+    }
+    m_connectorData->deselectPoint();
+    m_fiberHandler->removeVerticesFromFiber( std::vector< osg::Vec3 >( positions.begin(), positions.end() ), fibIdx );
+    m_fiberHandler->selectLastPoint();
+    updateAll();
+}
+
+void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float x, float y )
+{
+    if( !m_onscreenSelection->hasMoved() )
+    {
+        // no movement do raycast.
+        float mouseX = x * 2.0 - 1.0;
+        float mouseY = y * 2.0 - 1.0;
+
+        pushSelectionQueue( std::bind( &WMPointConnector::handleClickSelection, this, m_onscreenSelection->getClickType(), mouseX, mouseY ) );
         return;
     }
 
@@ -577,65 +675,14 @@ void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float x
         positions.push_back( vertex );
     }
 
-    if( !m_onscreenSelection->getClickType() ) // right click delete
+    if( m_onscreenSelection->getClickType() )
     {
-        size_t idx = 0;
-        size_t fibIdx = m_fiberHandler->getSelectedFiber();
-        for( auto vertex = positions.begin(); vertex != positions.end(); )
-        {
-            if( m_fiberHandler->getFiberOfPoint( *vertex, &idx ) && idx == fibIdx )
-            {
-                vertex++;
-            }
-            else
-            {
-                positions.erase( vertex );
-            }
-        }
-
-        if( positions.empty() )
-        {
-            return;
-        }
-        m_connectorData->deselectPoint();
-        m_fiberHandler->removeVerticesFromFiber( std::vector< osg::Vec3 >( positions.begin(), positions.end() ), fibIdx );
-        m_fiberHandler->selectLastPoint();
+        pushSelectionQueue( std::bind( &WMPointConnector::handleLeftSelection, this, positions ) );
     }
-    else // left click add
+    else
     {
-        for( auto vertex = positions.begin(); vertex != positions.end(); )
-        {
-            if( m_fiberHandler->getFiberOfPoint( *vertex ) || m_fiberHandler->isPointHidden( *vertex ) || isAdaptivelyHidden( *vertex ) )
-            {
-                positions.erase( vertex );
-            }
-            else
-            {
-                vertex++;
-            }
-        }
-        if( m_enableSAPT->get() )
-        {
-            auto start = std::chrono::high_resolution_clock::now();
-            size_t amount = positions.size();
-
-            positions = WAngleHelper::findSmoothestPath( positions, m_fiberHandler->getFibers()->at( m_fiberHandler->getSelectedFiber() ) );
-
-            auto end = std::chrono::high_resolution_clock::now();
-            std::chrono::duration< double > elapsed = end - start;
-            wlog::debug("PointConnector") << "SAPT " << amount << " points in " << elapsed.count() << " seconds";
-        }
-
-        if( positions.empty() )
-        {
-            return;
-        }
-        m_connectorData->deselectPoint();
-        m_fiberHandler->addVerticesToFiber( std::vector< osg::Vec3 >( positions.begin(), positions.end() ), m_fiberHandler->getSelectedFiber() );
-        m_fiberHandler->selectLastPoint();
+        pushSelectionQueue( std::bind( &WMPointConnector::handleLeftSelection, this, positions ) );
     }
-
-    updateAll();
 }
 
 std::shared_ptr< WOnscreenSelection > WMPointConnector::getOnscreenSelection()

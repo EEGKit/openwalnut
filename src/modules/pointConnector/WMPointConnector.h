@@ -245,6 +245,32 @@ private:
     bool isAdaptivelyHidden( osg::Vec3 vertex );
 
     /**
+     * Handles a selection with only one click
+     * \param clickType The type of click (true -> left, false -> right).
+     * \param x The x position.
+     * \param y The y position.
+     */
+    void handleClickSelection( bool clickType, double x, double y );
+
+    /**
+     * Handles the selection of a left click.
+     * \param positions The positions in the selection.
+     */
+    void handleLeftSelection( std::vector< WPosition > positions );
+
+    /**
+     * Handles the selection of a right click.
+     * \param positions The positions in the selection.
+     */
+    void handleRightSelection( std::vector< WPosition > positions );
+
+    /**
+     * Pushes a function to the selection queue
+     * \param func The function
+     */
+    void pushSelectionQueue( std::function< void() > func );
+
+    /**
      * The WMPointRenderer associated with this module.
      */
     WModule::SPtr m_pointRenderer;
@@ -283,6 +309,21 @@ private:
      * Enables possibility for multiselection of points.
      */
     std::shared_ptr< WOnscreenSelection > m_onscreenSelection;
+
+    /**
+     * A vector for the selection events.
+     */
+    std::vector< std::function< void() > > m_selectionQueue;
+
+    /**
+     * A mutex for the vector to make it thread-safe.
+     */
+    std::mutex m_selectionMutex;
+
+    /**
+     * A condition notifying when something was added to the selection queue.
+     */
+    WCondition::SPtr m_selectionCondition;
 
     /**
      * Property to enable the adjusted dijkstra.
