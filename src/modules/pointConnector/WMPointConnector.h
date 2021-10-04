@@ -159,6 +159,17 @@ public:
      */
     WPropPosition getScaling();
 
+    /**
+     * Pushes a function to the selection queue
+     * \param func The function
+     */
+    void pushEventQueue( std::function< void() > func );
+
+    /**
+     * Accepts the current prediction.
+     */
+    void acceptPrediction();
+
 protected:
     /**
      * Entry point after loading the module. Runs in separate thread.
@@ -239,10 +250,11 @@ private:
     /**
      * Checks whether a vertex is adaptively hidden.
      * \param vertex The vertex to check.
+     * \param from Optional parameter for vertex to check from.
      * \return true The vertex is hidden.
      * \return false The vertex is visible.
      */
-    bool isAdaptivelyHidden( osg::Vec3 vertex );
+    bool isAdaptivelyHidden( osg::Vec3 vertex, osg::Vec3* from = NULL );
 
     /**
      * Handles a selection with only one click
@@ -265,10 +277,9 @@ private:
     void handleRightSelection( std::vector< WPosition > positions );
 
     /**
-     * Pushes a function to the selection queue
-     * \param func The function
+     * Creates a track continuation prediction.
      */
-    void pushSelectionQueue( std::function< void() > func );
+    void createPrediction();
 
     /**
      * The WMPointRenderer associated with this module.
@@ -311,19 +322,24 @@ private:
     std::shared_ptr< WOnscreenSelection > m_onscreenSelection;
 
     /**
-     * A vector for the selection events.
+     * A vector for the events.
      */
-    std::vector< std::function< void() > > m_selectionQueue;
+    std::vector< std::function< void() > > m_eventQueue;
 
     /**
      * A mutex for the vector to make it thread-safe.
      */
-    std::mutex m_selectionMutex;
+    std::mutex m_eventMutex;
 
     /**
-     * A condition notifying when something was added to the selection queue.
+     * The current prediction.
      */
-    WCondition::SPtr m_selectionCondition;
+    std::vector< WPosition > m_prediction;
+
+    /**
+     * A condition notifying when something was added to the event queue.
+     */
+    WCondition::SPtr m_eventCondition;
 
     /**
      * Property to enable the adjusted dijkstra.
@@ -334,6 +350,11 @@ private:
      * Property to enable adaptive visibility.
      */
     WPropBool m_enableAdaptiveVisibility;
+
+    /**
+     * Enables the prediction.
+     */
+    WPropBool m_enablePrediction;
 
     /**
      * Property to set the angle for the adaptive visibility.

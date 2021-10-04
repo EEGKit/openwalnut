@@ -306,8 +306,7 @@ void WFiberHandler::toggleFiber( size_t idx, bool silent )
     m_possibleFiberSelections->replace( selection, ItemType::create( name, name, "", NULL ) );
     m_fiberSelection->set( m_possibleFiberSelections->getSelector( idx ) );
 
-    m_pointConnector->updatePoints();
-    m_pointConnector->updateOutput();
+    m_pointConnector->updateAll();
 
     if( !silent )
     {
@@ -327,8 +326,7 @@ void WFiberHandler::selectFiber( size_t idx )
 
     selectLastPoint();
 
-    m_pointConnector->updatePoints();
-    m_pointConnector->updateOutput();
+    m_pointConnector->updateAll();
 }
 
 bool WFiberHandler::getFiberOfPoint( osg::Vec3 vertex, size_t* idx )

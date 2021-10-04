@@ -38,6 +38,7 @@
 
 static const osg::Vec4 COLOR_SEL_POINT( 255.0 / 255.0, 190.0 / 255.0,   7.0 / 255.0, 1.0 );
 static const osg::Vec4 COLOR_SEL_FIBER(  30.0 / 255.0, 136.0 / 255.0, 229.0 / 255.0, 1.0 );
+static const osg::Vec4 COLOR_PRE_POINT( 255.0 / 255.0,   0.0 / 255.0,   0.0 / 255.0, 1.0 );
 
 
 W_LOADABLE_MODULE( WMPointConnector )
@@ -47,7 +48,7 @@ WMPointConnector::WMPointConnector():
 {
     m_connectorData = WConnectorData::SPtr( new WConnectorData() );
     m_fiberHandler = WFiberHandler::SPtr( new WFiberHandler( this ) );
-    m_selectionCondition = WCondition::SPtr( new WCondition() );
+    m_eventCondition = WCondition::SPtr( new WCondition() );
 }
 
 WMPointConnector::~WMPointConnector()
@@ -89,23 +90,27 @@ void WMPointConnector::properties()
 {
     m_fiberHandler->createProperties( m_properties );
 
+    auto updateFunction = [this]( auto )
+    {
+        pushEventQueue( std::bind( &WMPointConnector::updateAll, this ) );
+    };
+
     WPropertyGroup::SPtr assistanceGroup = m_properties->addPropertyGroup( "Assistance", "Property group assistance features." );
 
-    m_enableSAPT = assistanceGroup->addProperty( "Enable SAPT ", "Enable Semi-Automatic-Proton-Tracking", true );
+    m_enableSAPT = assistanceGroup->addProperty( "Enable SAPT ", "Enable Semi-Automatic-Particle-Tracking", true );
+    m_enablePrediction = assistanceGroup->addProperty( "Enable prediction", "Enables the prediction of tracks", true, updateFunction );
+
     m_enableAdaptiveVisibility = assistanceGroup->addProperty( "Enable adaptive visibility", "Enable adaptive visibility using a cone", true,
-                                                                boost::bind( &WMPointConnector::updateAll, this ) );
-    m_adaptiveVisibilityAngle = assistanceGroup->addProperty( "Adaptive visibility angle", "Adaptive visibility angle", 10.0,
-                                                               boost::bind( &WMPointConnector::updateAll, this ) );
+                                                                updateFunction );
+    m_adaptiveVisibilityAngle = assistanceGroup->addProperty( "Adaptive visibility angle", "Adaptive visibility angle", 10.0, updateFunction );
     m_adaptiveVisibilityAngle->setMin( 0.0 );
     m_adaptiveVisibilityAngle->setMax( 90.0 );
 
-    m_hiddenOpacity = assistanceGroup->addProperty( "Hidden point opacity", "Changes the opacity of the hidden points", 0.1,
-                                                     boost::bind( &WMPointConnector::updateAll, this ) );
+    m_hiddenOpacity = assistanceGroup->addProperty( "Hidden point opacity", "Changes the opacity of the hidden points", 0.1, updateFunction );
     m_hiddenOpacity->setMin( 0.0 );
     m_hiddenOpacity->setMax( 1.0 );
 
-    m_scaling = assistanceGroup->addProperty( "Scaling", "Changes the scaling", WPosition( 1.0, 1.0, 1.0 ),
-                                               boost::bind( &WMPointConnector::updateAll, this ) );
+    m_scaling = assistanceGroup->addProperty( "Scaling", "Changes the scaling", WPosition( 1.0, 1.0, 1.0 ), updateFunction );
 
     WModule::properties();
 }
@@ -120,7 +125,7 @@ void WMPointConnector::moduleMain()
 
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_pointInput->getDataChangedCondition() );
-    m_moduleState.add( m_selectionCondition );
+    m_moduleState.add( m_eventCondition );
 
     createPointRenderer();
     createFiberDisplay();
@@ -137,15 +142,15 @@ void WMPointConnector::moduleMain()
             break;
         }
 
-        std::shared_ptr< WProgress > progressBar( new WProgress( "Calculating SAPT..." ) );
+        std::shared_ptr< WProgress > progressBar( new WProgress( "Work event queue..." ) );
         m_progress->addSubProgress( progressBar );
         // Handle queue
         {
-            std::unique_lock< std::mutex > lock( m_selectionMutex );
+            std::unique_lock< std::mutex > lock( m_eventMutex );
 
             // copy and handle later so concurrent lock calls don't hang the gui thread
-            std::vector< std::function< void() > > qu( m_selectionQueue );
-            m_selectionQueue.clear();
+            std::vector< std::function< void() > > qu( m_eventQueue );
+            m_eventQueue.clear();
 
             lock.unlock();
 
@@ -281,8 +286,42 @@ void WMPointConnector::handleInput()
     updateAll();
 }
 
+void WMPointConnector::createPrediction()
+{
+    m_prediction.clear();
+
+    if( m_enablePrediction != NULL && !m_enablePrediction->get() )
+    {
+        return;
+    }
+
+    WFiberHandler::PCFiber fiber = m_fiberHandler->getFibers()->at( m_fiberHandler->getSelectedFiber() );
+
+    if( fiber.empty() )
+    {
+        return;
+    }
+
+    for( size_t idx = 0; idx < m_connectorData->getVertices()->size(); idx++ )
+    {
+        osg::Vec3 vertex = m_connectorData->getVertices()->at( idx );
+        double layerDiffFront = ( fiber.front().z() - vertex.z() ) / 5.5;
+        double layerDiffBack = ( vertex.z() - fiber.back().z() ) / 5.5;
+
+        if( ( ( layerDiffFront <= 3 && layerDiffFront > 0 && !isAdaptivelyHidden( vertex, &fiber.front() ) )
+            || ( layerDiffBack <= 3 && layerDiffBack  > 0 && !isAdaptivelyHidden( vertex, &fiber.back() ) ) )
+             && !m_fiberHandler->isPointHidden( vertex ) )
+        {
+            m_prediction.push_back( vertex );
+        }
+    }
+
+    m_prediction = WAngleHelper::findSmoothestPath( m_prediction, fiber );
+}
+
 void WMPointConnector::updateAll()
 {
+    createPrediction();
     updatePoints();
     updateOutput();
 }
@@ -321,6 +360,10 @@ void WMPointConnector::updatePoints()
         {
             color = COLOR_SEL_FIBER;
         }
+        else if( std::find( m_prediction.begin(), m_prediction.end(), WPosition( vertex ) ) != m_prediction.end() )
+        {
+            color = COLOR_PRE_POINT;
+        }
         else if( m_fiberHandler->isPointHidden( vertex ) || isAdaptivelyHidden( vertex ) )
         {
             color[3] = m_hiddenOpacity->get();
@@ -335,20 +378,30 @@ void WMPointConnector::updatePoints()
     m_pointOutput->updateData( WDataSetPoints::SPtr( new WDataSetPoints( vertices, colors ) ) );
 }
 
-bool WMPointConnector::isAdaptivelyHidden( osg::Vec3 vertex )
+bool WMPointConnector::isAdaptivelyHidden( osg::Vec3 vertex, osg::Vec3* from )
 {
     if( !m_enableAdaptiveVisibility->get() )
     {
         return false;
     }
 
-    size_t verIdx = 0;
-    if( !m_connectorData->getSelectedPoint( &verIdx ) )
+    osg::Vec3 selected;
+
+    if( from != NULL )
     {
-        return false;
+        selected = *from;
+    }
+    else
+    {
+        size_t verIdx = 0;
+        if( !m_connectorData->getSelectedPoint( &verIdx ) )
+        {
+            return false;
+        }
+
+        selected = m_connectorData->getVertices()->at( verIdx );
     }
 
-    osg::Vec3 selected = m_connectorData->getVertices()->at( verIdx );
     WFiberHandler::PCFiber fiber = m_fiberHandler->getFibers()->at( m_fiberHandler->getSelectedFiber() );
     auto it = std::find( fiber.begin(), fiber.end(), selected );
     osg::Vec3 before = osg::Vec3( 0.0, 0.0, 1.0 );
@@ -555,6 +608,14 @@ WFiberHandler::SPtr WMPointConnector::getFiberHandler()
     return m_fiberHandler;
 }
 
+void WMPointConnector::acceptPrediction()
+{
+    m_connectorData->deselectPoint();
+    m_fiberHandler->addVerticesToFiber( std::vector< osg::Vec3 >( m_prediction.begin(), m_prediction.end() ), m_fiberHandler->getSelectedFiber() );
+    m_fiberHandler->selectLastPoint();
+    updateAll();
+}
+
 void WMPointConnector::handleClickSelection( bool clickType, double x, double y )
 {
         osg::Camera* camera = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera();
@@ -574,11 +635,11 @@ void WMPointConnector::handleClickSelection( bool clickType, double x, double y 
         handleClick( nearPoint, direction, clickType );
 }
 
-void WMPointConnector::pushSelectionQueue( std::function< void() > func )
+void WMPointConnector::pushEventQueue( std::function< void() > func )
 {
-    std::unique_lock< std::mutex > lock( m_selectionMutex );
-    m_selectionQueue.push_back( func );
-    m_selectionCondition->notify();
+    std::unique_lock< std::mutex > lock( m_eventMutex );
+    m_eventQueue.push_back( func );
+    m_eventCondition->notify();
 }
 
 void WMPointConnector::handleLeftSelection( std::vector< WPosition > positions )
@@ -650,7 +711,7 @@ void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float x
         float mouseX = x * 2.0 - 1.0;
         float mouseY = y * 2.0 - 1.0;
 
-        pushSelectionQueue( std::bind( &WMPointConnector::handleClickSelection, this, m_onscreenSelection->getClickType(), mouseX, mouseY ) );
+        pushEventQueue( std::bind( &WMPointConnector::handleClickSelection, this, m_onscreenSelection->getClickType(), mouseX, mouseY ) );
         return;
     }
 
@@ -677,11 +738,11 @@ void WMPointConnector::selectionEnd( WOnscreenSelection::WSelectionType, float x
 
     if( m_onscreenSelection->getClickType() )
     {
-        pushSelectionQueue( std::bind( &WMPointConnector::handleLeftSelection, this, positions ) );
+        pushEventQueue( std::bind( &WMPointConnector::handleLeftSelection, this, positions ) );
     }
     else
     {
-        pushSelectionQueue( std::bind( &WMPointConnector::handleLeftSelection, this, positions ) );
+        pushEventQueue( std::bind( &WMPointConnector::handleRightSelection, this, positions ) );
     }
 }
 
