@@ -83,7 +83,13 @@ void WFiberHandler::sortVertices()
 
 void WFiberHandler::addVertexToFiber( osg::Vec3 vertex, size_t fiberIdx, bool silent )
 {
-    m_fibers->at( fiberIdx ).push_back( vertex );
+    auto fiber = m_fibers->begin() + fiberIdx;
+    if( std::find( fiber->begin(), fiber->end(), vertex ) != fiber->end() )
+    {
+        return;
+    }
+
+    fiber->push_back( vertex );
     sortVertices();
 
     if( !silent )
@@ -95,6 +101,20 @@ void WFiberHandler::addVertexToFiber( osg::Vec3 vertex, size_t fiberIdx, bool si
 void WFiberHandler::addVerticesToFiber( std::vector< osg::Vec3 > vertices, size_t fiberIdx, bool silent )
 {
     auto fiber = m_fibers->begin() + fiberIdx;
+    for( auto vertex = fiber->begin(); vertex != fiber->end(); vertex++ )
+    {
+        auto it = std::find( vertices.begin(), vertices.end(), *vertex );
+        if( it != vertices.end() )
+        {
+            vertices.erase( it );
+        }
+    }
+
+    if( vertices.empty() )
+    {
+        return;
+    }
+
     for( auto vertex = vertices.begin(); vertex != vertices.end(); vertex++ )
     {
         fiber->push_back( *vertex );
