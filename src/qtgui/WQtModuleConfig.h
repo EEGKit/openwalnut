@@ -129,21 +129,19 @@ private slots:
     virtual void pathListSelectionChanged();
 
     /**
-     * Call this to refresh the selected modules when a preset is selected
-     * 
-     * \param selectedPreset the preset which is selected inside of the combobox
-     */
-    void comboboxItemChanged( QString selectedPreset );
-
-    /**
-     * Call this to show the blacklist preset options
-     */
-    void showBlacklistPresetOptions();
-
-    /**
      * Call this to reset all checkboxes in the list of modules
      */
     void resetAllModuleCheckboxes();
+
+    /**
+     * Call this to refresh the list of selected modules, e.g. 
+     */
+    void refreshModuleCheckboxes();
+
+    /**
+     * Call this to show or hide the preset combobox 
+     */
+    void toggleComboboxVisibility( int );
 
 protected:
 private:
@@ -178,6 +176,11 @@ private:
      * \param defaultModulePaths if true, the module path list is set to default too.
      */
     void loadListsFromSettings( bool defaultModulePaths = false );
+
+    /**
+     * Call this to refresh the combobox items
+     */
+    void refreshComboboxItems();
 
     /**
      * Saves the whitelist and the blacklist to the settings.
