@@ -302,6 +302,12 @@ std::vector< WPosition > WAngleHelper::findSmoothestPath( std::vector< WPosition
         }
     }
 
+    while( fibIter < fiber.end() )
+    {
+        pos.push_back( *fibIter );
+        fibIter++;
+    }
+
     if( pos.empty() )
     {
         return std::vector< WPosition >();
