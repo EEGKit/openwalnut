@@ -403,6 +403,11 @@ bool WMPointConnector::isAdaptivelyHidden( osg::Vec3 vertex, osg::Vec3* from )
     }
 
     WFiberHandler::PCFiber fiber = m_fiberHandler->getFibers()->at( m_fiberHandler->getSelectedFiber() );
+    if( fiber.size() < 2 )
+    {
+        return false;
+    }
+
     auto it = std::find( fiber.begin(), fiber.end(), selected );
     osg::Vec3 before = osg::Vec3( 0.0, 0.0, 1.0 );
     if( it != fiber.end() && it != fiber.begin() )
