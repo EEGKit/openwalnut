@@ -31,6 +31,19 @@
 "Filter Proton Data"
 {
   icon="proton_module_icon.png";
+
+  website = "http://www.openwalnut.org";
+
+  description = "Converts csv data to point and fiber data. Also allows to filter it in specific ways.";
+
+  author = "OpenWalnut Project";
+
+  "OpenWalnut Project"
+  {
+    url="http://www.openwalnut.org";
+    email="contact@openwalnut.org";
+    what="Design, Development and Bug fixing";
+  };
 };
 
 "common"

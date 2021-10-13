@@ -48,7 +48,7 @@ const std::string WMFilterProtonData::getName() const
 
 const std::string WMFilterProtonData::getDescription() const
 {
-    return "Converter CSV-data To WDataSetPoints and WDataSetFibers";
+    return "";
 }
 
 std::shared_ptr< WModule > WMFilterProtonData::factory() const
