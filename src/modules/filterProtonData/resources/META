@@ -2,7 +2,7 @@
 //
 // Project: OpenWalnut ( http://www.openwalnut.org )
 //
-// Copyright 2013 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
+// Copyright 2021 OpenWalnut Community, Hochschule Worms
 // For more information see http://www.openwalnut.org/copying
 //
 // This file is part of OpenWalnut.
@@ -34,14 +34,14 @@
 
   website = "http://www.openwalnut.org";
 
-  description = "Converts csv data to point and fiber data. Also allows to filter it in specific ways.";
+  description = "Converts CSV data to point and fiber (track) data. Also allows to filter it in specific ways.";
 
   author = "OpenWalnut Project";
 
-  "OpenWalnut Project"
+  "SIVERT project @ Hochschule Worms"
   {
-    url="http://www.openwalnut.org";
-    email="contact@openwalnut.org";
+    url="https://sivert.info/";
+    email="info@sivert.info";
     what="Design, Development and Bug fixing";
   };
 };
