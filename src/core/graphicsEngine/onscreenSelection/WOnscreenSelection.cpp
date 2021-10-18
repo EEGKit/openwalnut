@@ -22,6 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
+#include <vector>
+
 #include "WOnscreenSelection.h"
 
 WOnscreenSelection::WOnscreenSelection():
@@ -52,6 +54,7 @@ void WOnscreenSelection::start( float x, float y )
     clear();
 
     m_isSelecting = true;
+    m_moved = false;
     WPosition pos( x, y, 0 );
 
     m_line.push_back( pos );
@@ -101,6 +104,8 @@ void WOnscreenSelection::move( float x, float y )
     {
         return;
     }
+
+    m_moved = true;
 
     WPosition pos( x, y, 0 );
     switch( m_selectionType )
@@ -279,7 +284,6 @@ bool WOnscreenSelection::isSelected( float x, float y, float z )
         return false;
     }
 
-    // TODO(eschbach): selection checks
     switch( m_selectionType )
     {
         case WSelectionType::BRUSH:
@@ -292,6 +296,22 @@ bool WOnscreenSelection::isSelected( float x, float y, float z )
             return false;
     }
 }
+
+std::vector< WPosition > WOnscreenSelection::isSelected( std::vector< WPosition> positions )
+{
+    std::vector< WPosition > out;
+    for( size_t i = 0; i < positions.size(); i++ )
+    {
+        WPosition pos = positions.at( i );
+        if( isSelected( pos.x(), pos.y(), pos.z() ) )
+        {
+            out.push_back( pos );
+        }
+    }
+
+    return out;
+}
+
 
 bool WOnscreenSelection::boxCheck( float x, float y )
 {
@@ -406,4 +426,9 @@ void WOnscreenSelection::setClickType( bool clickType )
 bool WOnscreenSelection::getClickType()
 {
     return m_clickType;
+}
+
+bool WOnscreenSelection::hasMoved()
+{
+    return m_moved;
 }

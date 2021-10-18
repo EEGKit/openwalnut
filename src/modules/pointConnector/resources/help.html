@@ -2,16 +2,17 @@
 <body>
     <h1>Usage</h1>
     <p>
-        The point connector takes point data and sends out fiber data.<br>
-        To connect points you have to add them to the same fiber via clicking on them.<br>
-        The fiber is selected with the properties.
+        The point connector takes point data and sends out fiber (track) data.<br>
+        To connect points you have to add them to the same fiber via shift-clicking in the 3D view on them.<br>
+        Different fiber can be selected in the properties tab.<br>
+        You can also shift-drag in the 3D view to select multiple points at once.
     </p>
 
     <h1>Shortcuts</h1>
     <table>
-        <tr class="header">
-            <td>Shortcut</td>
-            <td>Description</td>
+        <tr>
+            <th>Shortcut</th>
+            <th>Description</th>
         </tr>
         <tr>
             <td>strg + z</td>
@@ -21,7 +22,33 @@
             <td>strg + y</td>
             <td>Redos the last action</td>
         </tr>
+        <tr>
+            <td>shift + a</td>
+            <td>Adds a new track</td>
+        </tr>
+        <tr>
+            <td>shift + t</td>
+            <td>Toggles the visibility of the track</td>
+        </tr>
+        <tr>
+            <td>(shift) + x</td>
+            <td>Doubles the scale of the x axis (pressing shift halves it)</td>
+        </tr>
+        <tr>
+            <td>(shift) + y</td>
+            <td>Doubles the scale of the y axis (pressing shift halves it)</td>
+        </tr>
+        <tr>
+            <td>(shift) + z</td>
+            <td>Doubles the scale of the z axis (pressing shift halves it)</td>
+        </tr>
+        <tr>
+            <td>shift + c</td>
+            <td>Confirms the current prediction</td>
+        </tr>
     </table>
+
+    Further information can be found <a target="_blank" href="https://bsvgit.informatik.uni-leipzig.de/openwalnut/openwalnut/-/wikis/How-to-use-OpenWalnut-for-SIVERT#24-manually-create-track-data">here</a>.
 </body>
 </html>
 
@@ -51,7 +78,7 @@ td
     padding: 5px 10px;
 }
 
-.header
+th
 {
     color: #FFF;
     background-color: #2980B9 !important;

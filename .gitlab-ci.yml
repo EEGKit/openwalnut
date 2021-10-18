@@ -6,13 +6,17 @@ stages:
         - Build_appimage_stage
         - Upload_artifacts_stage
 
+cache:
+        key: $CI_COMMIT_REF_SLUG
+        paths:
+                - build/release
+                - build/debug
+                - tools/AppImage/AppImageBuild
+                - doc
+
 create_directory_and_cmake___release:
         stage: Initialization_stage
-        cache:
-                key: "CacheRelease"
-                paths:
-                        - build/release
-        image: ladbukkit/openwalnut_build_environment:1.5
+        image: ladbukkit/openwalnut_build_environment:1.5.2
         script:
                 - ls
                 - mkdir -p build
@@ -25,11 +29,7 @@ create_directory_and_cmake___release:
                 
 create_directory_and_cmake___debug:
         stage: Initialization_stage
-        cache:
-                key: "CacheDebug"
-                paths:
-                        - build/debug
-        image: ladbukkit/openwalnut_build_environment:1.5
+        image: ladbukkit/openwalnut_build_environment:1.5.2
         script:
                 - ls
                 - mkdir -p build
@@ -42,11 +42,7 @@ create_directory_and_cmake___debug:
 
 stylecheck_job:
         stage: Stylecheck_doc_stage
-        cache:
-                key: "CacheRelease"
-                paths:
-                        - build/release
-        image: ladbukkit/openwalnut_build_environment:1.5
+        image: ladbukkit/openwalnut_build_environment:1.5.2
         script:
                 - pwd
                 - cd build/release
@@ -56,11 +52,7 @@ stylecheck_job:
 
 doc_job:
         stage: Stylecheck_doc_stage
-        cache:
-                key: "CacheDebug"
-                paths:
-                        - build/debug
-        image: ladbukkit/openwalnut_build_environment:1.5
+        image: ladbukkit/openwalnut_build_environment:1.5.2
         script:
                 - doxygen --version
                 - pwd
@@ -71,11 +63,7 @@ doc_job:
 
 buildAndTest:
         stage: Build_and_test_release_stage
-        cache:
-                key: "CacheRelease"
-                paths:
-                        - build/release
-        image: ladbukkit/openwalnut_build_environment:1.5
+        image: ladbukkit/openwalnut_build_environment:1.5.2
         script:
                 - pwd
                 - cd build/release
@@ -86,11 +74,7 @@ buildAndTest:
                 
 buildAndTestDebug:
         stage: Build_and_test_debug_stage
-        cache:
-                key: "CacheDebug"
-                paths:
-                        - build/debug
-        image: ladbukkit/openwalnut_build_environment:1.5
+        image: ladbukkit/openwalnut_build_environment:1.5.2
         script:
                 - pwd
                 - cd build/debug
@@ -101,11 +85,7 @@ buildAndTestDebug:
 
 buildAppImage:
         stage: Build_appimage_stage
-        cache:
-                key: "CacheAppImage"
-                paths:
-                        - tools/AppImage/AppImageBuild
-        image: ladbukkit/openwalnut_build_environment:1.5
+        image: ladbukkit/openwalnut_build_environment:1.5.2
         script:
                 - pwd
                 - cd tools/AppImage
@@ -116,11 +96,7 @@ buildAppImage:
 
 uploadArtifacts:
         stage: Upload_artifacts_stage
-        cache:
-                key: "CacheAppImage"
-                paths:
-                        - tools/AppImage/AppImageBuild
-        image: ladbukkit/openwalnut_build_environment:1.5
+        image: ladbukkit/openwalnut_build_environment:1.5.2
         script:
                 - pwd
                 - cd tools/upload

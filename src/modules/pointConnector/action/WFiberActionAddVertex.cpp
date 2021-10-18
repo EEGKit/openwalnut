@@ -44,8 +44,7 @@ void WFiberActionAddVertex::undo()
     m_fiberHandler->getPointConnector()->getConnectorData()->deselectPoint();
     m_fiberHandler->selectLastPoint();
 
-    m_fiberHandler->getPointConnector()->updatePoints();
-    m_fiberHandler->getPointConnector()->updateOutput();
+    m_fiberHandler->getPointConnector()->updateAll();
 }
 
 void WFiberActionAddVertex::redo()
@@ -55,6 +54,5 @@ void WFiberActionAddVertex::redo()
     m_fiberHandler->getPointConnector()->getConnectorData()->deselectPoint();
     m_fiberHandler->selectLastPoint();
 
-    m_fiberHandler->getPointConnector()->updatePoints();
-    m_fiberHandler->getPointConnector()->updateOutput();
+    m_fiberHandler->getPointConnector()->updateAll();
 }

@@ -22,34 +22,39 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WConditionOneShot.h"
+#include <vector>
 
-WConditionOneShot::WConditionOneShot()
-    : WCondition()
+#include "../WConnectorData.h"
+#include "WFiberActionMultideselect.h"
+
+
+WFiberActionMultideselect::WFiberActionMultideselect( std::vector< osg::Vec3 > vertices, size_t fiberIdx, WFiberHandler* fiberHandler ):
+    m_vertices( vertices ),
+    m_fiberIdx( fiberIdx ),
+    m_fiberHandler( fiberHandler )
 {
-    // initialize members
-    m_isDone = false;
 }
 
-WConditionOneShot::~WConditionOneShot()
+WFiberActionMultideselect::~WFiberActionMultideselect()
 {
-    // cleanup
 }
 
-void WConditionOneShot::wait() const
+void WFiberActionMultideselect::undo()
 {
-    if( !m_isDone )
-    {
-        std::unique_lock<std::shared_mutex> lock( m_mutex );
-        m_condition.wait( m_mutex, [this]
-        {
-            return m_isDone.load();
-        } );
-    }
+    m_fiberHandler->addVerticesToFiber( m_vertices, m_fiberIdx, true );
+
+    m_fiberHandler->getPointConnector()->getConnectorData()->deselectPoint();
+    m_fiberHandler->selectLastPoint();
+
+    m_fiberHandler->getPointConnector()->updateAll();
 }
 
-void WConditionOneShot::notify()
+void WFiberActionMultideselect::redo()
 {
-    m_isDone = true;
-    WCondition::notify();
+    m_fiberHandler->removeVerticesFromFiber( m_vertices, m_fiberIdx, true );
+
+    m_fiberHandler->getPointConnector()->getConnectorData()->deselectPoint();
+    m_fiberHandler->selectLastPoint();
+
+    m_fiberHandler->getPointConnector()->updateAll();
 }

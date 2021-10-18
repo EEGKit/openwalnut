@@ -2,7 +2,7 @@
 //
 // Project: OpenWalnut ( http://www.openwalnut.org )
 //
-// Copyright 2021 OpenWalnut Community, Hochschule Worms
+// Copyright 2021 OpenWalnut Community
 // For more information see http://www.openwalnut.org/copying
 //
 // This file is part of OpenWalnut.
@@ -22,21 +22,14 @@
 //
 //---------------------------------------------------------------------------
 
-"Point Connector"
+// Provide additional material and descriptions for your module. You can
+// provide this for multiple modules if you like.
+
+// NOTE: everything but the module name is optional, even if this makes no
+//       sense at all.
+
+"Voxelizer"
 {
-  icon = "icon.png";
-
-  website = "http://www.openwalnut.org";
-
-  description = "Allows user to manually connect points to fibers (tracks).";
-
-  author = "SIVERT project @ Hochschule Worms";
-
-  "OpenWalnut Project"
-  {
-    url="https://sivert.info/";
-    email="info@sivert.info";
-    what="Design, Development and Bug fixing";
-  };
+  icon="WMVoxelizer.png";
 };
 

@@ -2,7 +2,7 @@
 //
 // Project: OpenWalnut ( http://www.openwalnut.org )
 //
-// Copyright 2021 OpenWalnut Community, Hochschule Worms
+// Copyright 2013 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
 // For more information see http://www.openwalnut.org/copying
 //
 // This file is part of OpenWalnut.
@@ -22,21 +22,19 @@
 //
 //---------------------------------------------------------------------------
 
-"Point Connector"
+// Provide additional material and descriptions for your module. You can
+// provide this for multiple modules if you like.
+
+// NOTE: everything but the module name is optional, even if this makes no
+//       sense at all.
+
+"Filter Proton Data"
 {
-  icon = "icon.png";
+  icon="proton_module_icon2.png";
+};
 
-  website = "http://www.openwalnut.org";
-
-  description = "Allows user to manually connect points to fibers (tracks).";
-
-  author = "SIVERT project @ Hochschule Worms";
-
-  "OpenWalnut Project"
-  {
-    url="https://sivert.info/";
-    email="info@sivert.info";
-    what="Design, Development and Bug fixing";
-  };
+"common"
+{
+    pdgnames = "PDGEncodingNameMap.txt"; 
 };
 

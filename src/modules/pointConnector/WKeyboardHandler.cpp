@@ -28,8 +28,17 @@
 
 static const unsigned int CTRL_DOWN = 65507;
 static const unsigned int CTRL_UP = 16777249;
-static const unsigned int KEY_Z = 90;
+static const unsigned int SHIFT_DOWN = 65505;
+static const unsigned int SHIFT_UP = 16777248;
+
+static const unsigned int KEY_A = 65;
+static const unsigned int KEY_C = 67;
+static const unsigned int KEY_T = 84;
+static const unsigned int KEY_X = 88;
 static const unsigned int KEY_Y = 89;
+static const unsigned int KEY_Z = 90;
+
+static const double SCALING_FACTOR = 2.0;
 
 WKeyboardHandler::WKeyboardHandler( WMPointConnector* connector ):
     m_connector( connector )
@@ -40,27 +49,66 @@ bool WKeyboardHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActio
 {
     if( ea.getEventType() == osgGA::GUIEventAdapter::KEYDOWN )
     {
-        if( ea.getKey() == CTRL_DOWN )
+        if( m_isCtrl )
         {
-            m_isCtrl = true;
+            switch( ea.getKey() )
+            {
+                case KEY_Y:
+                    m_connector->pushEventQueue( std::bind( &WActionHandler::redo, m_connector->getFiberHandler()->getActionHandler() ) );
+                    return true;
+                case KEY_Z:
+                    m_connector->pushEventQueue( std::bind( &WActionHandler::undo, m_connector->getFiberHandler()->getActionHandler() ) );
+                    return true;
+            }
         }
-        else if( ea.getKey() == KEY_Z && m_isCtrl )
+
+        if( m_isShift )
         {
-            m_connector->getFiberHandler()->getActionHandler()->undo();
-            return true;
+            switch( ea.getKey() )
+            {
+                case KEY_A:
+                    m_connector->getFiberHandler()->createNewFiber();
+                    return true;
+                case KEY_C:
+                    m_connector->pushEventQueue( std::bind( &WMPointConnector::acceptPrediction, m_connector ) );
+                    return true;
+                case KEY_T:
+                    m_connector->getFiberHandler()->toggleFiber( m_connector->getFiberHandler()->getSelectedFiber() );
+                    return true;
+            }
         }
-        else if( ea.getKey() == KEY_Y && m_isCtrl )
+
+        WPosition scal = m_connector->getScaling()->get();
+        switch( ea.getKey() )
         {
-            m_connector->getFiberHandler()->getActionHandler()->redo();
-            return true;
+            case CTRL_DOWN:
+                m_isCtrl = true;
+                return true;
+            case SHIFT_DOWN:
+                m_isShift = true;
+                return true;
+            case KEY_X:
+                m_connector->getScaling()->set( WPosition( scal.x() * ( m_isShift ? 1.0 / SCALING_FACTOR : SCALING_FACTOR ), scal.y(), scal.z() ) );
+                return true;
+            case KEY_Y:
+                m_connector->getScaling()->set( WPosition( scal.x(), scal.y() * ( m_isShift ? 1.0 / SCALING_FACTOR : SCALING_FACTOR ), scal.z() ) );
+                return true;
+            case KEY_Z:
+                m_connector->getScaling()->set( WPosition( scal.y(), scal.x(), scal.z() * ( m_isShift ? 1.0 / SCALING_FACTOR : SCALING_FACTOR ) ) );
+                return true;
         }
     }
 
     if( ea.getEventType() == osgGA::GUIEventAdapter::KEYUP )
     {
-        if( ea.getKey() == CTRL_UP )
+        switch( ea.getKey() )
         {
-            m_isCtrl = false;
+            case CTRL_UP:
+                m_isCtrl = false;
+                return true;
+            case SHIFT_UP:
+                m_isShift = false;
+                return true;
         }
     }
 

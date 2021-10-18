@@ -31,6 +31,8 @@
 #include "WFiberHandler.h"
 #include "action/WFiberActionAddFiber.h"
 #include "action/WFiberActionAddVertex.h"
+#include "action/WFiberActionMultideselect.h"
+#include "action/WFiberActionMultiselect.h"
 #include "action/WFiberActionRemoveFiber.h"
 #include "action/WFiberActionRemoveVertex.h"
 #include "action/WFiberActionToggle.h"
@@ -81,12 +83,66 @@ void WFiberHandler::sortVertices()
 
 void WFiberHandler::addVertexToFiber( osg::Vec3 vertex, size_t fiberIdx, bool silent )
 {
-    m_fibers->at( fiberIdx ).push_back( vertex );
+    auto fiber = m_fibers->begin() + fiberIdx;
+    if( std::find( fiber->begin(), fiber->end(), vertex ) != fiber->end() )
+    {
+        return;
+    }
+
+    fiber->push_back( vertex );
     sortVertices();
 
     if( !silent )
     {
         m_actionHandler->pushAction( WFiberActionAddVertex::SPtr( new WFiberActionAddVertex( vertex, fiberIdx, this ) ) );
+    }
+}
+
+void WFiberHandler::addVerticesToFiber( std::vector< osg::Vec3 > vertices, size_t fiberIdx, bool silent )
+{
+    auto fiber = m_fibers->begin() + fiberIdx;
+    for( auto vertex = fiber->begin(); vertex != fiber->end(); vertex++ )
+    {
+        auto it = std::find( vertices.begin(), vertices.end(), *vertex );
+        if( it != vertices.end() )
+        {
+            vertices.erase( it );
+        }
+    }
+
+    if( vertices.empty() )
+    {
+        return;
+    }
+
+    for( auto vertex = vertices.begin(); vertex != vertices.end(); vertex++ )
+    {
+        fiber->push_back( *vertex );
+    }
+    sortVertices();
+
+    if( !silent )
+    {
+        m_actionHandler->pushAction( WFiberActionMultiselect::SPtr( new WFiberActionMultiselect( vertices, fiberIdx, this ) ) );
+    }
+}
+
+void WFiberHandler::removeVerticesFromFiber( std::vector< osg::Vec3 > vertices, size_t fiberIdx, bool silent )
+{
+    auto fiber = m_fibers->begin() + fiberIdx;
+
+    for( auto vertex = vertices.begin(); vertex != vertices.end(); vertex++ )
+    {
+        auto it = std::find( fiber->begin(), fiber->end(), *vertex );
+        if( it != fiber->end() )
+        {
+            fiber->erase( it );
+        }
+    }
+
+    if( !silent )
+    {
+        m_actionHandler->pushAction( WFiberActionMultideselect::SPtr( new WFiberActionMultideselect( vertices, fiberIdx, this ) ) );
     }
 }
 
@@ -270,8 +326,7 @@ void WFiberHandler::toggleFiber( size_t idx, bool silent )
     m_possibleFiberSelections->replace( selection, ItemType::create( name, name, "", NULL ) );
     m_fiberSelection->set( m_possibleFiberSelections->getSelector( idx ) );
 
-    m_pointConnector->updatePoints();
-    m_pointConnector->updateOutput();
+    m_pointConnector->updateAll();
 
     if( !silent )
     {
@@ -291,8 +346,7 @@ void WFiberHandler::selectFiber( size_t idx )
 
     selectLastPoint();
 
-    m_pointConnector->updatePoints();
-    m_pointConnector->updateOutput();
+    m_pointConnector->updateAll();
 }
 
 bool WFiberHandler::getFiberOfPoint( osg::Vec3 vertex, size_t* idx )
@@ -323,10 +377,7 @@ void WFiberHandler::updateProperty( WPropertyBase::SPtr property )
     if( property == m_addFiber && m_addFiber->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
     {
         m_addFiber->set( WPVBaseTypes::PV_TRIGGER_READY, false );
-
-        std::string name = "Track " + boost::lexical_cast< std::string >( m_fiberCount );
-        m_fiberCount++;
-        addFiber( name );
+        createNewFiber();
     }
     else if( property == m_removeFiber && m_removeFiber->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
     {
@@ -383,4 +434,11 @@ WActionHandler::SPtr WFiberHandler::getActionHandler()
 void WFiberHandler::setFiberCount( size_t fiberCount )
 {
     this->m_fiberCount = fiberCount;
+}
+
+void WFiberHandler::createNewFiber()
+{
+    std::string name = "Track " + boost::lexical_cast< std::string >( m_fiberCount );
+    m_fiberCount++;
+    addFiber( name );
 }

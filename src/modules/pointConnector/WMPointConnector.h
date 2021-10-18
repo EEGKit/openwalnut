@@ -32,8 +32,6 @@
 
 #include <osg/Geode>
 
-#include "../fiberDisplay/WMFiberDisplay.h"
-#include "../pointRenderer/WMPointRenderer.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/dataHandler/WDataSetPoints.h"
 #include "core/graphicsEngine/onscreenSelection/WOnscreenSelection.h"
@@ -43,6 +41,8 @@
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
 
+#include "../fiberDisplay/WMFiberDisplay.h"
+#include "../pointRenderer/WMPointRenderer.h"
 
 class WClickHandler;
 class WConnectorData;
@@ -61,6 +61,16 @@ class WMPointConnector: public WModuleContainer
     friend class WMPointConnectorTest;
 
 public:
+    /**
+     * represents a std::shared_ptr to a vector containing a vector of floats.
+     */
+    typedef std::shared_ptr< std::vector< float > > SPFloatVector;
+
+    /**
+     * represents a std::shared_ptr to a vector containing a vector of size_t.
+     */
+    typedef std::shared_ptr< std::vector< size_t > > SPSizeVector;
+
     /**
      * A shared_ptr to this class.
      */
@@ -122,6 +132,11 @@ public:
     void updateOutput();
 
     /**
+     * Updates all
+     */
+    void updateAll();
+
+    /**
      * \return std::shared_ptr< WConnectorData > The WConnectorData of this module.
      */
     std::shared_ptr< WConnectorData > getConnectorData();
@@ -137,6 +152,23 @@ public:
      * \return shared_ptr< WOnscreenSelection > The WOnscreenSelection of this module.
      */
     std::shared_ptr< WOnscreenSelection > getOnscreenSelection();
+
+    /**
+     * 
+     * \return WPropPosition The scaling of this module.
+     */
+    WPropPosition getScaling();
+
+    /**
+     * Pushes a function to the selection queue
+     * \param func The function
+     */
+    void pushEventQueue( std::function< void() > func );
+
+    /**
+     * Accepts the current prediction.
+     */
+    void acceptPrediction();
 
 protected:
     /**
@@ -181,7 +213,7 @@ private:
     void createFiberDisplay();
 
     /**
-     * Creates the WClickHandler and the WKeyboardHandler and registers them.
+     * Creates the WKeyboardHandler and registers them.
      */
     void createHandler();
 
@@ -214,6 +246,40 @@ private:
      * \param y     The y position of the selection.
      */
     void selectionEnd( WOnscreenSelection::WSelectionType type, float x, float y );
+
+    /**
+     * Checks whether a vertex is adaptively hidden.
+     * \param vertex The vertex to check.
+     * \param from Optional parameter for vertex to check from.
+     * \return true The vertex is hidden.
+     * \return false The vertex is visible.
+     */
+    bool isAdaptivelyHidden( osg::Vec3 vertex, osg::Vec3* from = NULL );
+
+    /**
+     * Handles a selection with only one click
+     * \param clickType The type of click (true -> left, false -> right).
+     * \param x The x position.
+     * \param y The y position.
+     */
+    void handleClickSelection( bool clickType, double x, double y );
+
+    /**
+     * Handles the selection of a left click.
+     * \param positions The positions in the selection.
+     */
+    void handleLeftSelection( std::vector< WPosition > positions );
+
+    /**
+     * Handles the selection of a right click.
+     * \param positions The positions in the selection.
+     */
+    void handleRightSelection( std::vector< WPosition > positions );
+
+    /**
+     * Creates a track continuation prediction.
+     */
+    void createPrediction();
 
     /**
      * The WMPointRenderer associated with this module.
@@ -254,6 +320,61 @@ private:
      * Enables possibility for multiselection of points.
      */
     std::shared_ptr< WOnscreenSelection > m_onscreenSelection;
+
+    /**
+     * A vector for the events.
+     */
+    std::vector< std::function< void() > > m_eventQueue;
+
+    /**
+     * A mutex for the vector to make it thread-safe.
+     */
+    std::mutex m_eventMutex;
+
+    /**
+     * The current prediction.
+     */
+    std::vector< WPosition > m_prediction;
+
+    /**
+     * A condition notifying when something was added to the event queue.
+     */
+    WCondition::SPtr m_eventCondition;
+
+    /**
+     * Property to enable the adjusted dijkstra.
+     */
+    WPropBool m_enableSAPT;
+
+    /**
+     * Property to enable adaptive visibility.
+     */
+    WPropBool m_enableAdaptiveVisibility;
+
+    /**
+     * Enables the prediction.
+     */
+    WPropBool m_enablePrediction;
+
+    /**
+     * Property to set the angle for the adaptive visibility.
+     */
+    WPropDouble m_adaptiveVisibilityAngle;
+
+    /**
+     * Property to set the opacity of the hidden points.
+     */
+    WPropDouble m_hiddenOpacity;
+
+    /**
+     * Property for the scaling as Vector.
+     */
+    WPropPosition m_scaling;
+
+    /**
+     * Property to enable the sizes.
+     */
+    WPropBool m_enableSizes;
 };
 
 #endif  // WMPOINTCONNECTOR_H

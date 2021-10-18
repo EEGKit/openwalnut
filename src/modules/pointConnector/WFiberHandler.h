@@ -93,6 +93,14 @@ public:
     void addVertexToFiber( osg::Vec3 vertex, size_t fiberIdx, bool silent = false );
 
     /**
+     * Adds multiple vertices to the currently selected fiber.
+     * \param vertices The vertices to add.
+     * \param fiberIdx The index of the fiber to add the vertex to.
+     * \param silent Whether or not this should add to the undo stack.
+     */
+    void addVerticesToFiber( std::vector< osg::Vec3 > vertices, size_t fiberIdx, bool silent = false );
+
+    /**
      * Adds a vertex to the currently selected fiber.
      * \param vertex The vertex to add.
      * \param fiberIdx The index of the fiber to add the vertex to.
@@ -108,6 +116,14 @@ public:
      * \param silent Whether or not this should add to the undo stack.
      */
     void removeVertexFromFiber( osg::Vec3 vertex, size_t fiberIdx, bool silent = false );
+
+    /**
+     * Removes multiple vertices from the currently selected fiber.
+     * \param vertices The vertices to remove.
+     * \param fiberIdx The index of the fiber to remove the vertex from.
+     * \param silent Whether or not this should add to the undo stack.
+     */
+    void removeVerticesFromFiber( std::vector< osg::Vec3 > vertices, size_t fiberIdx, bool silent = false );
 
     /**
      * Adds a new fiber.
@@ -141,6 +157,11 @@ public:
      * \param silent Whether or not this should add to the undo stack.
      */
     void toggleFiber( size_t idx, bool silent = false );
+
+    /**
+     * Creates a new fiber.
+     */
+    void createNewFiber();
 
     /**
      * Updates the UI selector.
