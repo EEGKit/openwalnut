@@ -590,14 +590,14 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
             }
         }
 
-        //get all OpenVR tracking information
+        // get all OpenVR tracking information
         for ( uint32_t i = 0; i < vr::k_unMaxTrackedDeviceCount; ++i )
         {
             m_module->m_poses[i].bPoseIsValid = false;
         }
         vr::VRCompositor()->WaitGetPoses( m_module->m_poses, vr::k_unMaxTrackedDeviceCount, NULL, 0 );
 
-        //handle controller events
+        // handle controller events
         vr::VREvent_t vrEvent;
         while ( m_module->m_vrSystem->PollNextEvent( &vrEvent, sizeof( vr::VREvent_t ) ) )
             m_module->handleVREvent( vrEvent );
@@ -634,10 +634,11 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
 
         m_lastQuaternion = m_currentQuaternion;
 
-        //adjust Scene according to inputs
+        // adjust Scene according to inputs
         vr::TrackedDevicePose_t controllerPose;
         osg::ref_ptr<osgGA::TrackballManipulator> tm_MainView;
         osg::ref_ptr<osgGA::TrackballManipulator> tm_LeftView;
+        osg::ref_ptr<osgGA::TrackballManipulator> tm_RightView;
 
         if ( m_module->m_grabber != vr::k_unTrackedDeviceIndexInvalid )
         {
@@ -650,7 +651,10 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
         tm_LeftView = osg::dynamic_pointer_cast<osgGA::TrackballManipulator>( 
             WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )->getCameraManipulator() );
 
-        //apply controller rotation to views
+        tm_RightView = osg::dynamic_pointer_cast<osgGA::TrackballManipulator>(
+            WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName("Right Eye View")->getCameraManipulator());
+
+        // apply controller rotation to views
         if ( m_module->m_grabber != vr::k_unTrackedDeviceIndexInvalid )
         {
             double angle = sqrt( 
@@ -689,6 +693,18 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
                 osg::Quat rotTo = rotFrom * rotBy;
                 tm_LeftView->setRotation( rotTo );
             }
+            if ( tm_RightView )
+            {
+                osg::Quat rotFrom = tm_RightView->getRotation();
+                osg::Quat rotBy = tm_RightView->getRotation();
+                rotBy.makeRotate(
+                    angle,
+                    -controllerPose.vAngularVelocity.v[0],
+                    controllerPose.vAngularVelocity.v[2],
+                    -controllerPose.vAngularVelocity.v[1]);
+                osg::Quat rotTo = rotFrom * rotBy;
+                tm_RightView->setRotation( rotTo );
+            }
         }
 
         //apply hmd rotation to viewss
@@ -705,6 +721,12 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
                 osg::Quat rotFrom = tm_LeftView->getRotation();
                 osg::Quat rotTo = rotFrom * m_rotDifference;
                 tm_LeftView->setRotation( rotTo );
+            }
+            if ( tm_RightView )
+            {
+                osg::Quat rotFrom = tm_RightView->getRotation();
+                osg::Quat rotTo = rotFrom * m_rotDifference;
+                tm_RightView->setRotation( rotTo );
             }
         }
     }
