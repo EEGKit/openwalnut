@@ -571,7 +571,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
         {
             unsigned int leftContextID = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )
             ->getCamera()->getGraphicsContext()->getState()->getContextID();
-            
+
             unsigned int rightContextID = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )
             ->getCamera()->getGraphicsContext()->getState()->getContextID();
 
