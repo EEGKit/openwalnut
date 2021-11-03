@@ -101,6 +101,7 @@ public:
      */
     void handleControllerEvent( vr::VREvent_t vrEvent );
 
+
 protected:
     /**
      * Entry point after loading the module. Runs in separate thread.
@@ -181,6 +182,21 @@ private:
         unsigned int m_frameCounter = 0;
 
         /**
+         * current rotation
+         */
+        osg::Quat m_currentQuaternion;
+
+        /**
+         * rotation saved for use in one frame later
+         */
+        osg::Quat m_lastQuaternion;
+
+        /**
+         * rotation difference calculated fromn last and current frame
+         */
+        osg::Quat m_rotDifference;
+
+        /**
          * Denotes whether the update callback is called the first time. It is especially useful
          * to set some initial value even if the property has not yet changed.
          */
@@ -196,14 +212,24 @@ private:
     WPropBool m_vrOn;
 
     /**
-     * A trigger for taking a screenshot of both Eyes.
+     * A trigger for debugging the FPS while VR module is running.
      */
-    WPropTrigger  m_debugTrigger1;
+    WPropTrigger  m_VR_fpsTrigger;
+
+    /**
+     * A trigger for debugging camera manipulators of Left/Right view of VR module.
+     */
+    WPropTrigger  m_VR_logCameraManipulators;
 
     /**
      * A trigger for taking a screenshot from the framebuffer.
      */
-    WPropTrigger  m_debugTrigger2;
+    WPropTrigger  m_VR_screenshotTrigger;
+
+    /**
+     * A trigger for applieing the main view camera manipulation to left/right view of VR module.
+     */
+    WPropTrigger  m_VR_cameraManipTrigger;
 
     /**
      * This modules root node mostly for cameras
