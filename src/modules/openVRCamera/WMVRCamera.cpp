@@ -468,7 +468,7 @@ void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent )
     {
     case vr::VREvent_ButtonPress:
         debugLog() << "Pressed:" << vrEvent.data.controller.button;
-        if( 
+        if(
             vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_Grip ||
             vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_SteamVR_Trigger )
         {
@@ -477,7 +477,7 @@ void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent )
         break;
     case vr::VREvent_ButtonUnpress:
         debugLog() << "Unpressed:" << vrEvent.data.controller.button;
-        if( 
+        if(
             vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_Grip ||
             vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_SteamVR_Trigger )
         {
@@ -569,8 +569,11 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
     {
         if( !m_initialUpdate )
         {
-            unsigned int leftContextID = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )->getCamera()->getGraphicsContext()->getState()->getContextID();
-            unsigned int rightContextID = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )->getCamera()->getGraphicsContext()->getState()->getContextID();
+            unsigned int leftContextID = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )
+            ->getCamera()->getGraphicsContext()->getState()->getContextID();
+            
+            unsigned int rightContextID = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )
+            ->getCamera()->getGraphicsContext()->getState()->getContextID();
 
             vr::Texture_t leftEyeTexture = {
                ( void * )( uintptr_t )m_module->m_textureColorLeft->getTextureObject( leftContextID )->id(),
@@ -652,12 +655,12 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
             WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )->getCameraManipulator() );
 
         tm_RightView = osg::dynamic_pointer_cast<osgGA::TrackballManipulator>(
-            WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )->getCameraManipulator() );         
+            WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )->getCameraManipulator() );
 
         // apply controller rotation to views
         if( m_module->m_grabber != vr::k_unTrackedDeviceIndexInvalid )
         {
-            double angle = sqrt( 
+            double angle = sqrt(
                                controllerPose.vAngularVelocity.v[0] * controllerPose.vAngularVelocity.v[0] +
                                controllerPose.vAngularVelocity.v[1] * controllerPose.vAngularVelocity.v[1] +
                                controllerPose.vAngularVelocity.v[2] * controllerPose.vAngularVelocity.v[2] ) *
@@ -669,7 +672,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
 
                 osg::Quat rotFrom = tm_MainView->getRotation();
                 osg::Quat rotBy = tm_MainView->getRotation();
-                rotBy.makeRotate( 
+                rotBy.makeRotate(
                     angle,
                     -controllerPose.vAngularVelocity.v[0],
                     controllerPose.vAngularVelocity.v[2],
@@ -685,7 +688,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
             {
                 osg::Quat rotFrom = tm_LeftView->getRotation();
                 osg::Quat rotBy = tm_LeftView->getRotation();
-                rotBy.makeRotate( 
+                rotBy.makeRotate(
                     angle,
                     -controllerPose.vAngularVelocity.v[0],
                     controllerPose.vAngularVelocity.v[2],
@@ -701,11 +704,10 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
                     angle,
                     -controllerPose.vAngularVelocity.v[0],
                     controllerPose.vAngularVelocity.v[2],
-                    -controllerPose.vAngularVelocity.v[1]);
+                    -controllerPose.vAngularVelocity.v[1] );
                 osg::Quat rotTo = rotFrom * rotBy;
                 tm_RightView->setRotation( rotTo );
             }
-
         }
 
         //apply hmd rotation to viewss
