@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //
-// Project: OpenWalnut (  http://www.openwalnut.org  )
+// Project: OpenWalnut(   http://www.openwalnut.org   )
 //
 // Copyright 2009 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
 // For more information see http://www.openwalnut.org/copying
@@ -10,7 +10,7 @@
 // OpenWalnut is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
-// ( at your option ) any later version.
+//(  at your option  ) any later version.
 //
 // OpenWalnut is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -26,7 +26,7 @@
 //  * Ordering:
 //    * C Headers
 //    * C++ Standard headers
-//    * External Lib headers ( like OSG or Boost headers )
+//    * External Lib headers(  like OSG or Boost headers  )
 //    * headers of other classes inside OpenWalnut
 //    * your own header file
 
@@ -57,7 +57,7 @@
 #include "WMVRCamera.xpm"
 
 // This line is needed by the module loader to actually find your module.
-W_LOADABLE_MODULE( WMVRCamera )
+W_LOADABLE_MODULE(  WMVRCamera )
 
 WMVRCamera::WMVRCamera() : WModule()
 {
@@ -128,7 +128,7 @@ void WMVRCamera::requirements()
 bool WMVRCamera::setupVRInterface()
 {
     // Exit if we do not have an HMD present
-    if ( !vr::VR_IsHmdPresent() )
+    if( !vr::VR_IsHmdPresent() )
     {
         errorLog() << "No valid HMD present!" << std::endl;
         return false;
@@ -139,7 +139,7 @@ bool WMVRCamera::setupVRInterface()
     vr::EVRInitError eError = vr::VRInitError_None;
     m_vrSystem = vr::VR_Init( &eError, vr::VRApplication_Scene );
 
-    if ( eError != vr::VRInitError_None )
+    if( eError != vr::VRInitError_None )
     {
         m_vrSystem = nullptr;
         errorLog()
@@ -149,7 +149,7 @@ bool WMVRCamera::setupVRInterface()
         //requestStop();
     }
 
-    if ( !vr::VRCompositor() )
+    if( !vr::VRCompositor() )
     {
         m_vrSystem = nullptr;
         vr::VR_Shutdown();
@@ -158,9 +158,9 @@ bool WMVRCamera::setupVRInterface()
         //requestStop();
     }
 
-    m_vrRenderModels = ( vr::IVRRenderModels * )vr::VR_GetGenericInterface( vr::IVRRenderModels_Version, &eError );
+    m_vrRenderModels =( vr::IVRRenderModels * )vr::VR_GetGenericInterface( vr::IVRRenderModels_Version, &eError );
 
-    if ( m_vrRenderModels == nullptr )
+    if( m_vrRenderModels == nullptr )
     {
         m_vrSystem = nullptr;
         vr::VR_Shutdown();
@@ -230,7 +230,7 @@ void WMVRCamera::moduleMain()
     // HMD Setup
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    if ( setupVRInterface() )
+    if( setupVRInterface() )
     {
         debugLog() << "OpenVR initialized successfully";
         m_vrIsInitialized = true;
@@ -278,14 +278,14 @@ void WMVRCamera::moduleMain()
     // Offscreen render pipeline setup
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    osg::ref_ptr<WGEOffscreenRenderNode> offscreenRenderLeft( 
-        new WGEOffscreenRenderNode( 
+    osg::ref_ptr<WGEOffscreenRenderNode> offscreenRenderLeft(
+        new WGEOffscreenRenderNode(
             leftEyeView->getCamera(),
             m_vrRenderWidth,
             m_vrRenderHeight,
             true ) );
-    osg::ref_ptr<WGEOffscreenRenderNode> offscreenRenderRight( 
-        new WGEOffscreenRenderNode( 
+    osg::ref_ptr<WGEOffscreenRenderNode> offscreenRenderRight(
+        new WGEOffscreenRenderNode(
             rightEyeView->getCamera(),
             m_vrRenderWidth,
             m_vrRenderHeight,
@@ -298,9 +298,9 @@ void WMVRCamera::moduleMain()
         offscreenRenderRight->addGeometryRenderPass( m_rightEyeGeometryNode, "GeometryPassRight" );
 
     //Add a texture processing step to render pipeline
-    osg::ref_ptr<WGEOffscreenTexturePass> texturePassLeft = offscreenRenderLeft->addTextureProcessingPass( 
+    osg::ref_ptr<WGEOffscreenTexturePass> texturePassLeft = offscreenRenderLeft->addTextureProcessingPass(
         new WGEShader( "WMVRCameraTestShader", m_localPath ), "TexturePassLeft" );
-    osg::ref_ptr<WGEOffscreenTexturePass> texturePassRight = offscreenRenderRight->addTextureProcessingPass( 
+    osg::ref_ptr<WGEOffscreenTexturePass> texturePassRight = offscreenRenderRight->addTextureProcessingPass(
         new WGEShader( "WMVRCameraTestShader2", m_localPath ), "TexturePassRight" );
 
     //And a final pass
@@ -333,48 +333,48 @@ void WMVRCamera::moduleMain()
     finalPassLeft->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
     finalPassRight->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
 
-    osg::ref_ptr<osg::Node> plane_left = wge::genFinitePlane( 
+    osg::ref_ptr<osg::Node> plane_left = wge::genFinitePlane(
         osg::Vec3( -100.0, 0.0, -100.0 ), // base
         osg::Vec3( 200.0, 0.0, 0.0 ),     // spanning vector a
         osg::Vec3( 0.0, 0.0, 200.0 ),     // spanning vector b
         WColor( 0.0, 1.0, 0.0, 1.0 )      // a color.
      );
-    osg::ref_ptr<osg::Node> plane_right = wge::genFinitePlane( 
+    osg::ref_ptr<osg::Node> plane_right = wge::genFinitePlane(
         osg::Vec3( -100.0, 0.0, -100.0 ), // base
         osg::Vec3( 200.0, 0.0, 0.0 ),     // spanning vector a
         osg::Vec3( 0.0, 0.0, 200.0 ),     // spanning vector b
         WColor( 0.0, 0.0, 1.0, 1.0 )      // a color.
      );
 
-    osg::ref_ptr<osg::Node> plane_left2 = wge::genFinitePlane( 
+    osg::ref_ptr<osg::Node> plane_left2 = wge::genFinitePlane(
         osg::Vec3( -200.0, 0.0, -200.0 ), // base
         osg::Vec3( 100.0, 0.0, 0.0 ),     // spanning vector a
         osg::Vec3( 0.0, 0.0, 100.0 ),     // spanning vector b
         WColor( 0.0, 1.0, 0.0, 1.0 )      // a color.
      );
-    osg::ref_ptr<osg::Node> plane_right2 = wge::genFinitePlane( 
+    osg::ref_ptr<osg::Node> plane_right2 = wge::genFinitePlane(
         osg::Vec3( -200.0, 0.0, -200.0 ), // base
         osg::Vec3( 100.0, 0.0, 0.0 ),     // spanning vector a
         osg::Vec3( 0.0, 0.0, 100.0 ),     // spanning vector b
         WColor( 0.0, 0.0, 1.0, 1.0 )      // a color.
      );
 
-    osg::ref_ptr<osg::Node> plane_main = wge::genFinitePlane( 
+    osg::ref_ptr<osg::Node> plane_main = wge::genFinitePlane(
         osg::Vec3( -100.0, 0.0, -100.0 ), // base
         osg::Vec3( 200.0, 0.0, 0.0 ),     // spanning vector a
         osg::Vec3( 0.0, 0.0, 200.0 ),     // spanning vector b
         WColor( 1.0, 0.0, 0.0, 1.0 )      // a color.
      );
 
-    /*m_leftEyeGeometryNode->addChild( plane_left );
-    m_rightEyeGeometryNode->addChild( plane_right );
-    m_leftEyeGeometryNode->addChild( plane_left2 );
-    m_rightEyeGeometryNode->addChild( plane_right2 );
-    m_rootnode->addChild( plane_main );*/
+    /*m_leftEyeGeometryNode->addChild(  plane_left  );
+    m_rightEyeGeometryNode->addChild(  plane_right  );
+    m_leftEyeGeometryNode->addChild(  plane_left2  );
+    m_rightEyeGeometryNode->addChild(  plane_right2  );
+    m_rootnode->addChild(  plane_main  );*/
 
-    m_leftEyeGeometryNode->addChild( dynamic_cast<osg::Node *>( 
+    m_leftEyeGeometryNode->addChild( dynamic_cast<osg::Node *>(
         WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone( osg::CopyOp::DEEP_COPY_ALL ) ) );
-    m_rightEyeGeometryNode->addChild( dynamic_cast<osg::Node *>( 
+    m_rightEyeGeometryNode->addChild( dynamic_cast<osg::Node *>(
         WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone( osg::CopyOp::DEEP_COPY_ALL ) ) );
 
     leftEyeView->getScene()->insert( offscreenRenderLeft );
@@ -388,10 +388,10 @@ void WMVRCamera::moduleMain()
     m_rootnode->addUpdateCallback( new SafeUpdateCallback( this ) );
 
     // loop until the module container requests the module to quit
-    while ( !m_shutdownFlag() )
+    while( !m_shutdownFlag() )
     {
         // woke up since the module is requested to finish
-        if ( m_shutdownFlag() )
+        if( m_shutdownFlag() )
         {
             break;
         }
@@ -416,8 +416,8 @@ void WMVRCamera::moduleMain()
 void WMVRCamera::activate()
 {
     // This method gets called, whenever the m_active property changes. Your module should always handle this if you do not use the
-    // WGEManagedGroupNode for your scene. The user can ( de- )activate modules in his GUI and you can handle this case here:
-    if ( m_active->get() )
+    // WGEManagedGroupNode for your scene. The user can(  de-  )activate modules in his GUI and you can handle this case here:
+    if( m_active->get() )
     {
         debugLog() << "Activate.";
     }
@@ -435,7 +435,7 @@ void WMVRCamera::activate()
 std::string WMVRCamera::getDeviceProperty( vr::TrackedDeviceProperty prop )
 {
     uint32_t bufferLen = m_vrSystem->GetStringTrackedDeviceProperty( vr::k_unTrackedDeviceIndex_Hmd, prop, NULL, 0 );
-    if ( bufferLen == 0 )
+    if( bufferLen == 0 )
     {
         return "";
     }
@@ -450,7 +450,7 @@ std::string WMVRCamera::getDeviceProperty( vr::TrackedDeviceProperty prop )
 void WMVRCamera::handleVREvent( vr::VREvent_t vrEvent )
 {
     vr::ETrackedDeviceClass deviceClass = m_vrSystem->GetTrackedDeviceClass( vrEvent.trackedDeviceIndex );
-    switch ( deviceClass )
+    switch( deviceClass )
     {
     case vr::TrackedDeviceClass_Controller:
         handleControllerEvent( vrEvent );
@@ -464,11 +464,11 @@ void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent )
 {
     //debugLog() << "Trigger is:" << vr::EVRButtonId::k_EButton_SteamVR_Trigger;
     //debugLog() << "Grip is:" << vr::EVRButtonId::k_EButton_Grip;
-    switch ( vrEvent.eventType )
+    switch( vrEvent.eventType )
     {
     case vr::VREvent_ButtonPress:
         debugLog() << "Pressed:" << vrEvent.data.controller.button;
-        if ( 
+        if( 
             vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_Grip ||
             vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_SteamVR_Trigger )
         {
@@ -477,7 +477,7 @@ void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent )
         break;
     case vr::VREvent_ButtonUnpress:
         debugLog() << "Unpressed:" << vrEvent.data.controller.button;
-        if ( 
+        if( 
             vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_Grip ||
             vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_SteamVR_Trigger )
         {
@@ -492,21 +492,21 @@ void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent )
 void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisitor *nv )
 {
     std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-    double elapsedSeconds = ( now - m_lastFrame ).count() / 1000000000.0;
+    double elapsedSeconds =( now - m_lastFrame ).count() / 1000000000.0;
     m_lastFrame = now;
     m_lastFrames[m_frameCounter++] = elapsedSeconds;
-    if ( m_frameCounter >= 120 )
+    if( m_frameCounter >= 120 )
     {
         m_frameCounter = 0;
     }
     double elapsedSecondsSum = 0;
-    for ( int i = 0; i <= 119; i++ )
+    for( int i = 0; i <= 119; i++ )
     {
         elapsedSecondsSum += m_lastFrames[i];
     }
     double averageElapsedSeconds = elapsedSecondsSum / 120.0;
 
-    if ( m_module->m_VR_fpsTrigger->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
+    if( m_module->m_VR_fpsTrigger->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
     {
         m_module->debugLog() << elapsedSeconds << " sec since last Frame | " << 1 / elapsedSeconds << " fps";
         m_module->debugLog() << averageElapsedSeconds << " sec average Frametiming | " << 1 / averageElapsedSeconds << " fps";
@@ -514,7 +514,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
         m_module->m_VR_fpsTrigger->set( WPVBaseTypes::PV_TRIGGER_READY, false );
     }
 
-    if ( m_module->m_VR_logCameraManipulators->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
+    if( m_module->m_VR_logCameraManipulators->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
     {
         std::shared_ptr<WGEViewer> leftEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" );
         m_module->debugLog() << "Left Eye Camera Manipulator matrix: " << leftEyeView->getCameraManipulator()->getMatrix();
@@ -525,7 +525,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
         m_module->m_VR_logCameraManipulators->set( WPVBaseTypes::PV_TRIGGER_READY, false );
     }
 
-    if ( m_module->m_VR_screenshotTrigger->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
+    if( m_module->m_VR_screenshotTrigger->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
     {
         osg::ref_ptr<osg::Image> mainImage = new osg::Image();
         mainImage->readPixels( 0, 0, m_module->m_vrRenderWidth, m_module->m_vrRenderHeight, GL_RGBA, GL_UNSIGNED_BYTE );
@@ -541,7 +541,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
         m_module->m_VR_screenshotTrigger->set( WPVBaseTypes::PV_TRIGGER_READY, false );
     }
 
-    if ( m_module->m_VR_cameraManipTrigger->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
+    if( m_module->m_VR_cameraManipTrigger->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
     {
         std::shared_ptr<WGEViewer> leftEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" );
         std::shared_ptr<WGEViewer> rightEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" );
@@ -553,9 +553,9 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
         m_module->m_VR_cameraManipTrigger->set( WPVBaseTypes::PV_TRIGGER_READY, false );
     }
 
-    if ( m_module->m_vrOn->changed( true ) )
+    if( m_module->m_vrOn->changed( true ) )
     {
-        if ( m_module->m_vrOn->get() )
+        if( m_module->m_vrOn->get() )
         {
             m_module->debugLog() << "Start submitting frames to OpenVR";
         }
@@ -565,33 +565,33 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
         }
     }
 
-    if ( m_module->m_vrOn->get() && m_module->m_vrIsInitialized )
+    if( m_module->m_vrOn->get() && m_module->m_vrIsInitialized )
     {
-        if ( !m_initialUpdate )
+        if( !m_initialUpdate )
         {
             unsigned int leftContextID = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )->getCamera()->getGraphicsContext()->getState()->getContextID();
             unsigned int rightContextID = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )->getCamera()->getGraphicsContext()->getState()->getContextID();
 
             vr::Texture_t leftEyeTexture = {
-                ( void * )( uintptr_t )m_module->m_textureColorLeft->getTextureObject( leftContextID )->id(),
+               ( void * )( uintptr_t )m_module->m_textureColorLeft->getTextureObject( leftContextID )->id(),
                 vr::TextureType_OpenGL,
                 vr::ColorSpace_Gamma};
             vr::Texture_t rightEyeTexture = {
-                ( void * )( uintptr_t )m_module->m_textureColorRight->getTextureObject( rightContextID )->id(),
+               ( void * )( uintptr_t )m_module->m_textureColorRight->getTextureObject( rightContextID )->id(),
                 vr::TextureType_OpenGL,
                 vr::ColorSpace_Gamma};
 
             vr::EVRCompositorError lError = vr::VRCompositor()->Submit( vr::Eye_Left, &leftEyeTexture );
             vr::EVRCompositorError rError = vr::VRCompositor()->Submit( vr::Eye_Right, &rightEyeTexture );
 
-            if ( lError != vr::VRCompositorError_None || rError != vr::VRCompositorError_None )
+            if( lError != vr::VRCompositorError_None || rError != vr::VRCompositorError_None )
             {
                 m_module->errorLog() << "Links:" << lError << "|Rechts:" << rError << std::endl;
             }
         }
 
         // get all OpenVR tracking information
-        for ( uint32_t i = 0; i < vr::k_unMaxTrackedDeviceCount; ++i )
+        for( uint32_t i = 0; i < vr::k_unMaxTrackedDeviceCount; ++i )
         {
             m_module->m_poses[i].bPoseIsValid = false;
         }
@@ -599,7 +599,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
 
         // handle controller events
         vr::VREvent_t vrEvent;
-        while ( m_module->m_vrSystem->PollNextEvent( &vrEvent, sizeof( vr::VREvent_t ) ) )
+        while( m_module->m_vrSystem->PollNextEvent( &vrEvent, sizeof( vr::VREvent_t ) ) )
             m_module->handleVREvent( vrEvent );
 
         vr::TrackedDevicePose_t trackedDevicePose;
@@ -623,7 +623,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
         bool rotDiffSet = false;
         rotDiffSet = false;
 
-        if ( m_frameCounter > 0 )
+        if( m_frameCounter > 0 )
         {
             m_rotDifference = m_currentQuaternion * m_lastQuaternion.inverse();
             rotDiffSet = true;
@@ -640,22 +640,22 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
         osg::ref_ptr<osgGA::TrackballManipulator> tm_LeftView;
         osg::ref_ptr<osgGA::TrackballManipulator> tm_RightView;
 
-        if ( m_module->m_grabber != vr::k_unTrackedDeviceIndexInvalid )
+        if( m_module->m_grabber != vr::k_unTrackedDeviceIndexInvalid )
         {
             controllerPose = m_module->m_poses[m_module->m_grabber];
         }
 
-        tm_MainView = osg::dynamic_pointer_cast<osgGA::TrackballManipulator>( 
+        tm_MainView = osg::dynamic_pointer_cast<osgGA::TrackballManipulator>(
             WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCameraManipulator() );
 
-        tm_LeftView = osg::dynamic_pointer_cast<osgGA::TrackballManipulator>( 
+        tm_LeftView = osg::dynamic_pointer_cast<osgGA::TrackballManipulator>(
             WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )->getCameraManipulator() );
 
         tm_RightView = osg::dynamic_pointer_cast<osgGA::TrackballManipulator>(
-            WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName("Right Eye View")->getCameraManipulator());
+            WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )->getCameraManipulator() );         
 
         // apply controller rotation to views
-        if ( m_module->m_grabber != vr::k_unTrackedDeviceIndexInvalid )
+        if( m_module->m_grabber != vr::k_unTrackedDeviceIndexInvalid )
         {
             double angle = sqrt( 
                                controllerPose.vAngularVelocity.v[0] * controllerPose.vAngularVelocity.v[0] +
@@ -663,7 +663,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
                                controllerPose.vAngularVelocity.v[2] * controllerPose.vAngularVelocity.v[2] ) *
                            elapsedSeconds;
 
-            if ( tm_MainView )
+            if( tm_MainView )
             {
                 // Controller rotation
 
@@ -681,7 +681,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
                 rotTo = m_rotDifference * rotFrom;
                 tm_MainView->setRotation( rotTo );
             }
-            if ( tm_LeftView )
+            if( tm_LeftView )
             {
                 osg::Quat rotFrom = tm_LeftView->getRotation();
                 osg::Quat rotBy = tm_LeftView->getRotation();
@@ -693,7 +693,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
                 osg::Quat rotTo = rotFrom * rotBy;
                 tm_LeftView->setRotation( rotTo );
             }
-            if ( tm_RightView )
+            if( tm_RightView )
             {
                 osg::Quat rotFrom = tm_RightView->getRotation();
                 osg::Quat rotBy = tm_RightView->getRotation();
@@ -705,24 +705,25 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
                 osg::Quat rotTo = rotFrom * rotBy;
                 tm_RightView->setRotation( rotTo );
             }
+
         }
 
         //apply hmd rotation to viewss
-        if ( rotDiffSet )
+        if( rotDiffSet )
         {
-            if ( tm_MainView )
+            if( tm_MainView )
             {
                 osg::Quat rotFrom = tm_MainView->getRotation();
                 osg::Quat rotTo = rotFrom * m_rotDifference;
                 tm_MainView->setRotation( rotTo );
             }
-            if ( tm_LeftView )
+            if( tm_LeftView )
             {
                 osg::Quat rotFrom = tm_LeftView->getRotation();
                 osg::Quat rotTo = rotFrom * m_rotDifference;
                 tm_LeftView->setRotation( rotTo );
             }
-            if ( tm_RightView )
+            if( tm_RightView )
             {
                 osg::Quat rotFrom = tm_RightView->getRotation();
                 osg::Quat rotTo = rotFrom * m_rotDifference;
