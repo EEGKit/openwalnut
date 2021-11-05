@@ -98,7 +98,6 @@ protected:
     virtual void properties();
 
 private:
-
     WPropInt m_nbVertices; //!< Info-property showing the number of vertices in the data set.
 
     /**

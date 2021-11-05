@@ -345,4 +345,3 @@ private:
 };
 
 #endif  // WMFIBERDISPLAY_H
-

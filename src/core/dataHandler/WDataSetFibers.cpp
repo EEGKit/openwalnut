@@ -957,4 +957,3 @@ double WFiberSegmentsIterator::length() const
 {
     return distance( *start(), *end() );
 }
-

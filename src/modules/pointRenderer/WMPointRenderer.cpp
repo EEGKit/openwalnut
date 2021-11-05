@@ -22,6 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
+#include <limits>
 #include <memory>
 #include <string>
 
@@ -237,4 +238,3 @@ void WMPointRenderer::moduleMain()
     // it is important to always remove the modules again
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( postNode );
 }
-
