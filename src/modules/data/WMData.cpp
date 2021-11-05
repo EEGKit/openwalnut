@@ -438,6 +438,12 @@ void WMData::cleanUp()
 
 void WMData::load()
 {
+    // remove old properties
+    if( m_dataSet )
+    {
+        m_infoProperties->removeProperty( m_dataSet->getInformationProperties() );
+    }
+
     // Get the input
     WDataModuleInputFile::SPtr inputFile = getInputAs< WDataModuleInputFile >();
     if( !inputFile )
@@ -597,6 +603,5 @@ void WMData::load()
     // done. close file and report finish
     progress1->finish();
 
-    m_infoProperties->removeProperty( m_dataSet->getInformationProperties() );
     m_infoProperties->addProperty( m_dataSet->getInformationProperties() );
 }
