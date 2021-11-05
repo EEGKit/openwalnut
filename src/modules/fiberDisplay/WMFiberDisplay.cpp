@@ -96,6 +96,13 @@ void WMFiberDisplay::properties()
 {
     m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
+    // Info properties
+    m_nbVertices = m_infoProperties->addProperty( "Points", "The number of points in the visualized data set.", 0 );
+    m_nbVertices->setMax( std::numeric_limits< int >::max() );
+    m_nbFibers = m_infoProperties->addProperty( "Fibers", "The number of fibers in the visualized data set.", 0 );
+    m_nbFibers->setMax( std::numeric_limits< int >::max() );
+
+    // Other roperties
     m_roiFiltering = m_properties->addProperty( "ROI Filtering", "When active, you can use the ROI mechanism to filter fibers.", true );
     m_roiFilterColors = m_properties->addProperty( "ROI Coloring", "When active, you will see the coloring specified by the ROI branches.", true );
 
@@ -370,6 +377,9 @@ void WMFiberDisplay::moduleMain()
                 // get a new fiber selector
                 m_fiberSelector = std::shared_ptr<WFiberSelector>( new WFiberSelector( fibers ) );
             }
+
+            m_nbFibers->set( m_fibers->size() );
+            m_nbVertices->set( m_fibers->getNbVertices() );
 
             // update the prop observer if new data is available
             m_coloringGroup->removeProperty( m_fibProps );

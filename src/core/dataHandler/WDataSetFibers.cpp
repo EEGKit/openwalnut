@@ -24,6 +24,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <numeric>
 #include <string>
 #include <utility>
 #include <vector>
@@ -233,6 +234,11 @@ std::shared_ptr< WPrototyped > WDataSetFibers::getPrototype()
 WDataSetFibers::VertexArray WDataSetFibers::getVertices() const
 {
     return m_vertices;
+}
+
+size_t WDataSetFibers::getNbVertices() const
+{
+    return std::accumulate( m_lineLengths->begin(), m_lineLengths->end(), 0 );
 }
 
 WDataSetFibers::IndexArray WDataSetFibers::getLineStartIndexes() const

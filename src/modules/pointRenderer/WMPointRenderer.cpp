@@ -85,6 +85,10 @@ void WMPointRenderer::connectors()
 
 void WMPointRenderer::properties()
 {
+    // Info properties
+    m_nbVertices = m_infoProperties->addProperty( "Points", "The number of points in the visualized data set.", 0 );
+    m_nbVertices->setMax( std::numeric_limits< int >::max() );
+
     // some properties need to trigger an update
     m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
@@ -166,6 +170,8 @@ void WMPointRenderer::moduleMain()
             postNode->clear();
             continue;
         }
+
+        m_nbVertices->set( points->size() );
 
         std::shared_ptr< WValueSet< float > > valueSet;
         if( points->getData().type() == typeid( std::shared_ptr< WValueSet< float > > ) )
