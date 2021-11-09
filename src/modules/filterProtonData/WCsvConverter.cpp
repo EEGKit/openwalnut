@@ -95,7 +95,8 @@ void WCsvConverter::setOutputFromCSV( )
         {
             float edep = stringToDouble( dataRow->at( m_indexes->getEdep() ) );
 
-            if( getClusterSize( edep ) < 1.0 || getClusterSize( edep ) > 35.0 )
+            if( m_propertyStatus->getVisualizationPropertyHandler()->getEnableClusterSize()->get() &&
+                ( getClusterSize( edep ) < 1.0 || getClusterSize( edep ) > 35.0 ) )
             {
                 continue;
             }
@@ -143,14 +144,16 @@ void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArra
 
         setTransferFunction( data );
 
-        float maxClusterSize = getClusterSize( maxEdep );
-        float minClusterSize = getClusterSize( minEdep );
+        bool clusterEnabled = m_propertyStatus->getVisualizationPropertyHandler()->getEnableClusterSize()->get();
+
+        float maxClusterSize = clusterEnabled ? getClusterSize( maxEdep ) : maxEdep;
+        float minClusterSize = clusterEnabled ? getClusterSize( minEdep ) : minEdep;
 
         for( std::vector< float >::iterator currentEdep = edeps->begin();
             currentEdep != edeps->end();
             currentEdep++ )
         {
-            float clusterSizeNormalized = getClusterSize( *currentEdep ) / maxClusterSize;
+            float clusterSizeNormalized = ( clusterEnabled ? getClusterSize( *currentEdep ) : *currentEdep ) / maxClusterSize;
 
             m_vectors->getSizes()->push_back( clusterSizeNormalized );
 

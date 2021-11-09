@@ -207,6 +207,7 @@ void WMFilterProtonData::properties()
     groupRename->addProperty( "Select particle", "Select the particle type to be renamed.", std::string( "" ), renameNotifier, false );
     groupRename->addProperty( "Apply Changes", "Save", std::string( "" ), renameNotifier, false );
 
+    groupVisual->addProperty( "Enable cluster size", "Enables the edep to clustersize conversion", std::string( "" ), visualNotifier, false );
     groupVisual->addProperty( "Size by energy deposition", "Scale track and point sizes based on energy deposition.", std::string( "" ),
                             visualNotifier, false );
     groupVisual->addProperty( "Color by energy deposition", "Colorize tracks and points based on energy deposition.", std::string( "" ),
