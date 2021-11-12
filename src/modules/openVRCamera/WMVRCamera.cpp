@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //
-// Project: OpenWalnut(http://www.openwalnut.org)
+// Project: OpenWalnut ( http://www.openwalnut.org )
 //
 // Copyright 2009 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
 // For more information see http://www.openwalnut.org/copying
@@ -10,7 +10,7 @@
 // OpenWalnut is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
-//(at your option) any later version.
+// (at your option) any later version.
 //
 // OpenWalnut is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -223,8 +223,8 @@ void WMVRCamera::moduleMain()
     rightEyeView->reset();
 
     // disable camera manipulators to directly manipulate view matrix
-    leftEyeView->setCameraManipulator(NULL);
-    rightEyeView->setCameraManipulator(NULL);
+    leftEyeView->setCameraManipulator( NULL );
+    rightEyeView->setCameraManipulator( NULL );
 
     // Now, we can mark the module ready.
     ready();
@@ -642,22 +642,24 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
         m_lastQuaternion = m_currentQuaternion;
 
         // does not run on the first frame
-        if ( rotDiffSet )
+        if( rotDiffSet )
         {
             // apply HMD rotation to eye views
-            osg::Matrixd leftEyeMatrix = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )->getCamera()->getViewMatrix();
-            osg::Matrixd rightEyeMatrix = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )->getCamera()->getViewMatrix();
+            osg::Matrixd leftEyeMatrix = WKernel::getRunningKernel()->getGraphicsEngine()
+                ->getViewerByName( "Left Eye View" )->getCamera()->getViewMatrix();
+            osg::Matrixd rightEyeMatrix = WKernel::getRunningKernel()->getGraphicsEngine()
+                ->getViewerByName( "Right Eye View" )->getCamera()->getViewMatrix();
 
-            leftEyeMatrix.setRotate(m_rotDifference * leftEyeMatrix.getRotate() );
-            rightEyeMatrix.setRotate(m_rotDifference * rightEyeMatrix.getRotate() );
+            leftEyeMatrix.setRotate( m_rotDifference * leftEyeMatrix.getRotate() );
+            rightEyeMatrix.setRotate( m_rotDifference * rightEyeMatrix.getRotate() );
 
             WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )->getCamera()->setViewMatrix( leftEyeMatrix );
             WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )->getCamera()->setViewMatrix( rightEyeMatrix );
 
             // removing camera manipulator of main view to apply HMD transformation there aswell => just for debugging/demonstration purposes
-            WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->setCameraManipulator(NULL);
+            WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->setCameraManipulator( NULL );
             osg::Matrixd mainViewMatrix = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->getViewMatrix();
-            mainViewMatrix.setRotate(m_rotDifference * mainViewMatrix.getRotate() );
+            mainViewMatrix.setRotate( m_rotDifference * mainViewMatrix.getRotate() );
             WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->setViewMatrix( mainViewMatrix );
         }
     }

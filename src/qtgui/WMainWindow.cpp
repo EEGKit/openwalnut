@@ -437,7 +437,6 @@ void WMainWindow::setupGUI()
 
             addDockWidget( Qt::LeftDockWidgetArea, m_widgetRightEye.get(), Qt::Vertical );
         }
-
     }
 
     // create the show/hide actions using the selection manager's props
