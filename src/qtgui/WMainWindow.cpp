@@ -429,16 +429,15 @@ void WMainWindow::setupGUI()
         {
             m_widgetLeftEye = std::shared_ptr< WQtGLDockWidget >( new WQtGLDockWidget( "Left Eye View", "Left Eye View",
                                                                     this, WGECamera::ProjectionMode::PERSPECTIVE, m_mainGLWidget ) );
-            m_widgetLeftEye->getGLWidget()->setCameraManipulator( WQtGLWidget::CameraManipulators::TRACKBALL );
 
             addDockWidget( Qt::LeftDockWidgetArea, m_widgetLeftEye.get(), Qt::Vertical );
 
             m_widgetRightEye = std::shared_ptr< WQtGLDockWidget >( new WQtGLDockWidget( "Right Eye View", "Right Eye View",
                                                                     this, WGECamera::ProjectionMode::PERSPECTIVE, m_mainGLWidget ) );
-            m_widgetRightEye->getGLWidget()->setCameraManipulator( WQtGLWidget::CameraManipulators::TRACKBALL );
 
             addDockWidget( Qt::LeftDockWidgetArea, m_widgetRightEye.get(), Qt::Vertical );
         }
+
     }
 
     // create the show/hide actions using the selection manager's props

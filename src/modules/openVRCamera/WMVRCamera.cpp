@@ -107,11 +107,11 @@ void WMVRCamera::properties()
                                        false );
     m_VR_fpsTrigger = m_properties->addProperty( "Log Fps", "Now",
                                                 WPVBaseTypes::PV_TRIGGER_READY );
-    m_VR_logCameraManipulators = m_properties->addProperty( "Log Camera Manipulators", "Now",
+    m_VR_logCameraManipulators = m_properties->addProperty( "Log Camera View Matrix", "Now",
                                                            WPVBaseTypes::PV_TRIGGER_READY );
     m_VR_screenshotTrigger = m_properties->addProperty( "Screenshot Main", "Speichern.",
                                                        WPVBaseTypes::PV_TRIGGER_READY );
-    m_VR_cameraManipTrigger = m_properties->addProperty( "Apply MainView Camera Manipulation", "Apply",
+    m_VR_cameraManipTrigger = m_properties->addProperty( "Apply MainView View Matrix", "Apply",
                                                         WPVBaseTypes::PV_TRIGGER_READY );
 
     WModule::properties();
@@ -221,6 +221,10 @@ void WMVRCamera::moduleMain()
     rightEyeView->setScene( m_rightEyeNode );
     leftEyeView->reset();
     rightEyeView->reset();
+
+    // disable camera manipulators to directly manipulate view matrix
+    leftEyeView->setCameraManipulator(NULL);
+    rightEyeView->setCameraManipulator(NULL);
 
     // Now, we can mark the module ready.
     ready();
@@ -517,11 +521,10 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
     if( m_module->m_VR_logCameraManipulators->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
     {
         std::shared_ptr<WGEViewer> leftEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" );
-        m_module->debugLog() << "Left Eye Camera Manipulator matrix: " << leftEyeView->getCameraManipulator()->getMatrix();
+        m_module->debugLog() << "Left Eye Camera view matrix: " << leftEyeView->getCamera()->getViewMatrix();
 
         std::shared_ptr<WGEViewer> rightEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" );
-        m_module->debugLog() << "Right Eye Camera Manipulator matrix: " << rightEyeView->getCameraManipulator()->getMatrix();
-
+        m_module->debugLog() << "Right Eye Camera view matrix: " << rightEyeView->getCamera()->getViewMatrix();
         m_module->m_VR_logCameraManipulators->set( WPVBaseTypes::PV_TRIGGER_READY, false );
     }
 
@@ -545,10 +548,13 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
     {
         std::shared_ptr<WGEViewer> leftEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" );
         std::shared_ptr<WGEViewer> rightEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" );
-        osg::Matrixd mainViewMatrix = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCameraManipulator()->getMatrix();
 
-        leftEyeView->getCameraManipulator()->setByMatrix( mainViewMatrix );
-        rightEyeView->getCameraManipulator()->setByMatrix( mainViewMatrix );
+        osg::Matrixd mainViewMatrix = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->getViewMatrix();
+
+        leftEyeView->getCamera()->setViewMatrix( mainViewMatrix );
+        rightEyeView->getCamera()->setViewMatrix( mainViewMatrix );
+
+        m_module->debugLog() << "Set Left/Right view matrix to main view matrix.";
 
         m_module->m_VR_cameraManipTrigger->set( WPVBaseTypes::PV_TRIGGER_READY, false );
     }
@@ -613,6 +619,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
 
         poseMatrix = trackedDevicePose.mDeviceToAbsoluteTracking;
 
+        // calculate rotation quaternion from poseMatrix
         doubleQuat[3] = sqrt( fmax( 0, 1 + poseMatrix.m[0][0] + poseMatrix.m[1][1] + poseMatrix.m[2][2] ) ) / 2;
         doubleQuat[0] = sqrt( fmax( 0, 1 + poseMatrix.m[0][0] - poseMatrix.m[1][1] - poseMatrix.m[2][2] ) ) / 2;
         doubleQuat[1] = sqrt( fmax( 0, 1 - poseMatrix.m[0][0] + poseMatrix.m[1][1] - poseMatrix.m[2][2] ) ) / 2;
@@ -630,107 +637,28 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
         {
             m_rotDifference = m_currentQuaternion * m_lastQuaternion.inverse();
             rotDiffSet = true;
-
-            m_module->debugLog() << "current: " << m_currentQuaternion.asVec4();
-            m_module->debugLog() << "last: " << m_lastQuaternion.asVec4();
         }
 
         m_lastQuaternion = m_currentQuaternion;
 
-        // adjust Scene according to inputs
-        vr::TrackedDevicePose_t controllerPose;
-        osg::ref_ptr<osgGA::TrackballManipulator> tm_MainView;
-        osg::ref_ptr<osgGA::TrackballManipulator> tm_LeftView;
-        osg::ref_ptr<osgGA::TrackballManipulator> tm_RightView;
-
-        if( m_module->m_grabber != vr::k_unTrackedDeviceIndexInvalid )
+        // does not run on the first frame
+        if ( rotDiffSet )
         {
-            controllerPose = m_module->m_poses[m_module->m_grabber];
-        }
+            // apply HMD rotation to eye views
+            osg::Matrixd leftEyeMatrix = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )->getCamera()->getViewMatrix();
+            osg::Matrixd rightEyeMatrix = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )->getCamera()->getViewMatrix();
 
-        tm_MainView = osg::dynamic_pointer_cast<osgGA::TrackballManipulator>(
-            WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCameraManipulator() );
+            leftEyeMatrix.setRotate(m_rotDifference * leftEyeMatrix.getRotate() );
+            rightEyeMatrix.setRotate(m_rotDifference * rightEyeMatrix.getRotate() );
 
-        tm_LeftView = osg::dynamic_pointer_cast<osgGA::TrackballManipulator>(
-            WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )->getCameraManipulator() );
+            WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )->getCamera()->setViewMatrix( leftEyeMatrix );
+            WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )->getCamera()->setViewMatrix( rightEyeMatrix );
 
-        tm_RightView = osg::dynamic_pointer_cast<osgGA::TrackballManipulator>(
-            WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )->getCameraManipulator() );
-
-        // apply controller rotation to views
-        if( m_module->m_grabber != vr::k_unTrackedDeviceIndexInvalid )
-        {
-            double angle = sqrt(
-                               controllerPose.vAngularVelocity.v[0] * controllerPose.vAngularVelocity.v[0] +
-                               controllerPose.vAngularVelocity.v[1] * controllerPose.vAngularVelocity.v[1] +
-                               controllerPose.vAngularVelocity.v[2] * controllerPose.vAngularVelocity.v[2] ) *
-                           elapsedSeconds;
-
-            if( tm_MainView )
-            {
-                // Controller rotation
-
-                osg::Quat rotFrom = tm_MainView->getRotation();
-                osg::Quat rotBy = tm_MainView->getRotation();
-                rotBy.makeRotate(
-                    angle,
-                    -controllerPose.vAngularVelocity.v[0],
-                    controllerPose.vAngularVelocity.v[2],
-                    -controllerPose.vAngularVelocity.v[1] );
-                osg::Quat rotTo = rotFrom * rotBy;
-                tm_MainView->setRotation( rotTo );
-
-                rotFrom = tm_MainView->getRotation();
-                rotTo = m_rotDifference * rotFrom;
-                tm_MainView->setRotation( rotTo );
-            }
-            if( tm_LeftView )
-            {
-                osg::Quat rotFrom = tm_LeftView->getRotation();
-                osg::Quat rotBy = tm_LeftView->getRotation();
-                rotBy.makeRotate(
-                    angle,
-                    -controllerPose.vAngularVelocity.v[0],
-                    controllerPose.vAngularVelocity.v[2],
-                    -controllerPose.vAngularVelocity.v[1] );
-                osg::Quat rotTo = rotFrom * rotBy;
-                tm_LeftView->setRotation( rotTo );
-            }
-            if( tm_RightView )
-            {
-                osg::Quat rotFrom = tm_RightView->getRotation();
-                osg::Quat rotBy = tm_RightView->getRotation();
-                rotBy.makeRotate(
-                    angle,
-                    -controllerPose.vAngularVelocity.v[0],
-                    controllerPose.vAngularVelocity.v[2],
-                    -controllerPose.vAngularVelocity.v[1] );
-                osg::Quat rotTo = rotFrom * rotBy;
-                tm_RightView->setRotation( rotTo );
-            }
-        }
-
-        //apply hmd rotation to viewss
-        if( rotDiffSet )
-        {
-            if( tm_MainView )
-            {
-                osg::Quat rotFrom = tm_MainView->getRotation();
-                osg::Quat rotTo = rotFrom * m_rotDifference;
-                tm_MainView->setRotation( rotTo );
-            }
-            if( tm_LeftView )
-            {
-                osg::Quat rotFrom = tm_LeftView->getRotation();
-                osg::Quat rotTo = rotFrom * m_rotDifference;
-                tm_LeftView->setRotation( rotTo );
-            }
-            if( tm_RightView )
-            {
-                osg::Quat rotFrom = tm_RightView->getRotation();
-                osg::Quat rotTo = rotFrom * m_rotDifference;
-                tm_RightView->setRotation( rotTo );
-            }
+            // removing camera manipulator of main view to apply HMD transformation there aswell => just for debugging/demonstration purposes
+            WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->setCameraManipulator(NULL);
+            osg::Matrixd mainViewMatrix = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->getViewMatrix();
+            mainViewMatrix.setRotate(m_rotDifference * mainViewMatrix.getRotate() );
+            WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->setViewMatrix( mainViewMatrix );
         }
     }
 
