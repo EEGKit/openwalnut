@@ -33,8 +33,8 @@
 #include <QtCore/QTimer>
 
 #ifdef OW_QT6_GLWIDGET
-    #include <QSurfaceFormat>
-    #include <QOpenGLWidget>
+    #include <QSurfaceFormat> // NOLINT
+    #include <QOpenGLWidget> // NOLINT
 #else
     #include <QtOpenGL/QGLFormat>
     #include <QtOpenGL/QGLWidget>

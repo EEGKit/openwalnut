@@ -24,7 +24,7 @@
 
 #include <string>
 
-#include <QActionGroup>
+#include <QActionGroup> // NOLINT
 #include <QMessageBox>
 
 #include "WMainWindow.h"
