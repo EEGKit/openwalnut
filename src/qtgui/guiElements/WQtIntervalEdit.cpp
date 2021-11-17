@@ -39,7 +39,7 @@ WQtIntervalEditBase::WQtIntervalEditBase( QWidget* parent ):
     m_layout( this )
 {
     // initialize members
-    m_layout.setMargin( WGLOBAL_MARGIN );
+    m_layout.setContentsMargins( WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN );
     m_layout.setSpacing( WGLOBAL_SPACING );
 
     m_layout.addWidget( &m_minLabel, 0, 0 );

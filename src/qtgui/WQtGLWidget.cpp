@@ -52,17 +52,27 @@
 #include "events/WRenderedFrameEvent.h"
 
 WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::ProjectionMode projectionMode, const QWidget* shareWidget ):
+#ifdef OW_QT6_GLWIDGET
+    QOpenGLWidget( parent ),
+#else
     QGLWidget( getDefaultFormat(), parent, dynamic_cast< const QGLWidget* >( shareWidget ) ),
+#endif
       m_nameOfViewer( nameOfViewer ),
       m_firstPaint( true )
 {
+#ifdef OW_QT6_GLWIDGET
+    setFormat( getDefaultFormat() );
+#endif
     m_initialProjectionMode = projectionMode;
 
     setSizePolicy( QSizePolicy( QSizePolicy::QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding ) );
 
-    // required
+    // This causes QOpenGLWidget to freeze so only use with qt5 and below
+#ifndef OW_QT6_GLWIDGET
     setAttribute( Qt::WA_PaintOnScreen );
     setAttribute( Qt::WA_NoSystemBackground );
+#endif
+
     setFocusPolicy( Qt::ClickFocus );
     setMouseTracking( true );
 
@@ -73,7 +83,11 @@ WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::
     m_Viewer = WKernel::getRunningKernel()->getGraphicsEngine()->createViewer(
         m_nameOfViewer, wdata, x(), y(), width(), height(), m_initialProjectionMode );
 
+#ifdef OW_QT6_GLWIDGET
+    connect( &m_Timer, SIGNAL( timeout() ), this, SLOT( update() ) );
+#else
     connect( &m_Timer, SIGNAL( timeout() ), this, SLOT( updateGL() ) );
+#endif
     m_Timer.start( 33 );
 
     m_Viewer->isFrameRendered()->getCondition()->subscribeSignal( boost::bind( &WQtGLWidget::notifyFirstRenderedFrame, this ) );
@@ -91,6 +105,44 @@ WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::
     // so the user may get confused. It is also not a good idea to take letters as they might be used by OpenSceneGraph widget ( like "S" for
     // statistics ).
     // By additionally adding the action to the main window, we ensure the action can be triggered even if the menu bar is hidden.
+#ifdef OW_QT6_MODIFIER_ADD
+    QAction* tmpAction = m_cameraPresetMenu->addAction( WQtGui::getIconManager()->getIcon( "sagittal icon" ), "Left", this,
+                                                        SLOT( setPresetViewLeft() ),
+                                                        QKeySequence( Qt::CTRL | Qt::SHIFT | Qt::Key_L ) );
+    tmpAction->setIconVisibleInMenu( true );
+    m_cameraPresetResetMenu->addAction( tmpAction );
+    tmpAction = m_cameraPresetMenu->addAction( WQtGui::getIconManager()->getIcon( "sagittal icon" ), "Right", this,
+                                               SLOT( setPresetViewRight() ),
+                                               QKeySequence( Qt::CTRL | Qt::SHIFT | Qt::Key_R ) );
+    tmpAction->setIconVisibleInMenu( true );
+    m_cameraPresetResetMenu->addAction( tmpAction );
+    tmpAction = m_cameraPresetMenu->addAction( WQtGui::getIconManager()->getIcon( "axial icon" ), "Superior", this,
+                                               SLOT( setPresetViewSuperior() ),
+                                               QKeySequence( Qt::CTRL | Qt::SHIFT | Qt::Key_S ) );
+    tmpAction->setIconVisibleInMenu( true );
+    m_cameraPresetResetMenu->addAction( tmpAction );
+    tmpAction = m_cameraPresetMenu->addAction( WQtGui::getIconManager()->getIcon( "axial icon" ), "Inferior", this,
+                                               SLOT( setPresetViewInferior() ),
+                                               QKeySequence( Qt::CTRL | Qt::SHIFT | Qt::Key_I ) );
+    tmpAction->setIconVisibleInMenu( true );
+    m_cameraPresetResetMenu->addAction( tmpAction );
+    tmpAction = m_cameraPresetMenu->addAction( WQtGui::getIconManager()->getIcon( "coronal icon" ), "Anterior", this,
+                                               SLOT( setPresetViewAnterior() ),
+                                               QKeySequence( Qt::CTRL | Qt::SHIFT | Qt::Key_A ) );
+    tmpAction->setIconVisibleInMenu( true );
+    m_cameraPresetResetMenu->addAction( tmpAction );
+    tmpAction = m_cameraPresetMenu->addAction( WQtGui::getIconManager()->getIcon( "coronal icon" ), "Posterior", this,
+                                               SLOT( setPresetViewPosterior() ),
+                                               QKeySequence( Qt::CTRL | Qt::SHIFT | Qt::Key_P ) );
+    tmpAction->setIconVisibleInMenu( true );
+    m_cameraPresetResetMenu->addAction( tmpAction );
+
+    tmpAction = m_cameraPresetMenu->addAction( WQtGui::getIconManager()->getIcon( "center icon" ), "Fit screen", this,
+                                               SLOT( setFitScreenPosition() ),
+                                               QKeySequence( Qt::CTRL | Qt::SHIFT | Qt::Key_F ) );
+    tmpAction->setIconVisibleInMenu( true );
+    m_cameraPresetResetMenu->addAction( tmpAction );
+#else
     QAction* tmpAction = m_cameraPresetMenu->addAction( WQtGui::getIconManager()->getIcon( "sagittal icon" ), "Left", this,
                                                         SLOT( setPresetViewLeft() ),
                                                         QKeySequence( Qt::CTRL + Qt::SHIFT + Qt::Key_L ) );
@@ -127,6 +179,7 @@ WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::
                                                QKeySequence( Qt::CTRL + Qt::SHIFT + Qt::Key_F ) );
     tmpAction->setIconVisibleInMenu( true );
     m_cameraPresetResetMenu->addAction( tmpAction );
+#endif
 }
 
 WQtGLWidget::~WQtGLWidget()

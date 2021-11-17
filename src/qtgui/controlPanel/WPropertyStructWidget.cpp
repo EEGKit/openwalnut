@@ -53,7 +53,7 @@ WPropertyStructWidget::WPropertyStructWidget( WPropertyGroupBase::SPtr property,
     }
 
     // layout both against each other
-    m_layout.setMargin( WGLOBAL_MARGIN );
+    m_layout.setContentsMargins( WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN );
     m_layout.setSpacing( WGLOBAL_SPACING );
     m_parameterWidgets.setLayout( &m_layout );
 

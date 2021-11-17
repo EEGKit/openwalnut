@@ -55,9 +55,9 @@ WPropertyIntWidget::WPropertyIntWidget( WPropInt property, QGridLayout* property
     m_layout.addWidget( &m_slider );
 
     m_layout.addWidget( &m_edit );
-    m_layout.setMargin( WGLOBAL_MARGIN );
+    m_layout.setContentsMargins( WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN );
     m_layout.setSpacing( WGLOBAL_SPACING );
-    m_vLayout.setMargin( WGLOBAL_MARGIN );
+    m_vLayout.setContentsMargins( WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN );
     m_vLayout.setSpacing( WGLOBAL_SPACING );
 
     m_edit.setMinimumHeight( WMIN_WIDGET_HEIGHT );
@@ -79,7 +79,7 @@ WPropertyIntWidget::WPropertyIntWidget( WPropInt property, QGridLayout* property
 
     // Information Output ( Property Purpose = PV_PURPOSE_INFORMATION )
     m_infoLayout.addWidget( &m_asText );
-    m_infoLayout.setMargin( WGLOBAL_MARGIN );
+    m_infoLayout.setContentsMargins( WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN );
     m_infoLayout.setSpacing( WGLOBAL_SPACING );
     m_informationWidgets.setLayout( &m_infoLayout );
 

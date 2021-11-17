@@ -24,6 +24,7 @@
 
 #include <string>
 
+#include <QActionGroup>
 #include <QMessageBox>
 
 #include "WMainWindow.h"

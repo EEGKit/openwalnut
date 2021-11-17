@@ -57,7 +57,7 @@ void WQtDockTitleWidget::construct()
 {
     // create titlebar widget and its layout
     QHBoxLayout* titleWidgetLayout = new QHBoxLayout( this );
-    titleWidgetLayout->setMargin( 0 );
+    titleWidgetLayout->setContentsMargins( 0, 0, 0, 0 );
     titleWidgetLayout->setSpacing( 0 );
     setSizePolicy( QSizePolicy( QSizePolicy::Ignored, QSizePolicy::Fixed ) );
 
@@ -80,7 +80,7 @@ void WQtDockTitleWidget::construct()
     m_toolsLayout = new QHBoxLayout( m_tools );
     m_tools->setLayout( m_toolsLayout );
     m_tools->setSizePolicy( QSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed ) );
-    m_toolsLayout->setMargin( 0 );
+    m_toolsLayout->setContentsMargins( 0, 0, 0, 0 );
     m_toolsLayout->setSpacing( 0 );
     m_tools->setContentsMargins( 0, 0, 0, 0 );
     m_tools->setMinimumSize( 1, MagicWidgetMinSize );
@@ -89,7 +89,7 @@ void WQtDockTitleWidget::construct()
     m_toolsMenu = new QWidget( this );
     m_toolsMenuLayout = new QHBoxLayout( m_toolsMenu );
     m_toolsMenu->setLayout( m_toolsMenuLayout );
-    m_toolsMenuLayout->setMargin( 0 );
+    m_toolsMenuLayout->setContentsMargins( 0, 0, 0, 0 );
     m_toolsMenuLayout->setSpacing( 0 );
     m_toolsMenu->setContentsMargins( 0, 0, 0, 0 );
 

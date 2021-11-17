@@ -73,7 +73,7 @@ WPropertySelectionWidget::WPropertySelectionWidget( WPropSelection property, QGr
     // initialize members
     m_combo = NULL;
     m_list = NULL;
-    m_layout.setMargin( WGLOBAL_MARGIN );
+    m_layout.setContentsMargins( WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN );
     m_layout.setSpacing( WGLOBAL_SPACING );
 
     // initialize the proper widget

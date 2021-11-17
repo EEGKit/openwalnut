@@ -178,7 +178,7 @@ WQtControlPanel::WQtControlPanel( WMainWindow* parent )
     treeWidgetContainer->setLayout( treeWidgetContainerLayout );
     QLabel* treeWidgetDeprecation = new QLabel( "<h1><b><font color=#f00>The module tree is deprecated.</font></b></h1>"
                                                 "Use the tab \"Modules\" instead. This will be removed in the next release." );
-    treeWidgetDeprecation->setMargin( 25 );
+    treeWidgetDeprecation->setContentsMargins( 25, 25, 25, 25 );
     treeWidgetDeprecation->setWordWrap( true );
 
     treeWidgetContainerLayout->addWidget( treeWidgetDeprecation );

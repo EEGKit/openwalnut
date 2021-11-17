@@ -76,7 +76,7 @@ WPropertyWidget::WPropertyWidget(  std::shared_ptr< WPropertyBase > property, QG
     if( m_useLabel )
     {
         // initialize members
-        m_label.setMargin( 0 );
+        m_label.setContentsMargins( 0, 0, 0, 0 );
         m_label.addAdditionalWidth( 8 );    // a 4 px margin around the label
         m_label.setText( property->getName().c_str() );
 

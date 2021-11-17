@@ -26,13 +26,15 @@
 #include <vector>
 #include <iostream>
 
-#ifdef OW_FORCE_WEBKIT
-    #include <QWebView>
-    #include <QWebFrame>
-    #include <QWebPage>
-#else
-    #include <QWebEngineView> //NOLINT
-    #include <QWebEnginePage> //NOLINT
+#ifndef OW_QT6_NO_WEBENGINE
+    #ifdef OW_FORCE_WEBKIT
+        #include <QWebView>
+        #include <QWebFrame>
+        #include <QWebPage>
+    #else
+        #include <QWebEngineView> //NOLINT
+        #include <QWebEnginePage> //NOLINT
+    #endif
 #endif
 #include <QVBoxLayout>
 #include <QToolBar>
@@ -215,22 +217,23 @@ WQtModuleMetaInfo::WQtModuleMetaInfo( WModule::SPtr module, QWidget* parent ):
     layout->setSpacing( 0 );
     layout->setContentsMargins( 0, 0, 0, 0 );
 
-#ifdef OW_FORCE_WEBKIT
-    // create the QT webview
-    QWebView* view = new QWebView( this );
+#ifndef OW_QT6_NO_WEBENGINE
+    #ifdef OW_FORCE_WEBKIT
+        // create the QT webview
+        QWebView* view = new QWebView( this );
 
-    // create a webpage and add it to the view
-    QWebPage* page = new QWebPage( this );
-    page->setLinkDelegationPolicy( QWebPage::DelegateExternalLinks );
-    m_frame = page->mainFrame();
-#else
-    // create the QT webview
-    QWebEngineView* view = new QWebEngineView( this );
+        // create a webpage and add it to the view
+        QWebPage* page = new QWebPage( this );
+        page->setLinkDelegationPolicy( QWebPage::DelegateExternalLinks );
+        m_frame = page->mainFrame();
+    #else
+        // create the QT webview
+        QWebEngineView* view = new QWebEngineView( this );
 
-    // create a webpage and add it to the view
-    QWebEnginePage* page = new QWebEnginePage( this );
-    m_page = page;
-#endif
+        // create a webpage and add it to the view
+        QWebEnginePage* page = new QWebEnginePage( this );
+        m_page = page;
+    #endif
     view->setPage( page );
 
     // add a toolbar for basic navigation
@@ -250,16 +253,21 @@ WQtModuleMetaInfo::WQtModuleMetaInfo( WModule::SPtr module, QWidget* parent ):
     homeBtn->setToolButtonStyle( Qt::ToolButtonTextBesideIcon );
 
     QToolButton* backBtn = new QToolButton( toolbar );
-#ifdef OW_FORCE_WEBKIT
-    backBtn->setDefaultAction( page->action( QWebPage::Back ) );
-#else
-    backBtn->setDefaultAction( page->action( QWebEnginePage::Back ) );
+#ifndef OW_QT6_NO_WEBENGINE
+    #ifdef OW_FORCE_WEBKIT
+        backBtn->setDefaultAction( page->action( QWebPage::Back ) );
+    #else
+        backBtn->setDefaultAction( page->action( QWebEnginePage::Back ) );
+    #endif
 #endif
+
+#ifndef OW_QT6_NO_WEBENGINE
     QToolButton* fwdBtn = new QToolButton( toolbar );
-#ifdef OW_FORCE_WEBKIT
-    fwdBtn->setDefaultAction( page->action( QWebPage::Forward ) );
-#else
-    fwdBtn->setDefaultAction( page->action( QWebEnginePage::Forward ) );
+    #ifdef OW_FORCE_WEBKIT
+        fwdBtn->setDefaultAction( page->action( QWebPage::Forward ) );
+    #else
+        fwdBtn->setDefaultAction( page->action( QWebEnginePage::Forward ) );
+    #endif
 #endif
 
     tbLayout->addWidget( backBtn );
@@ -278,6 +286,7 @@ WQtModuleMetaInfo::WQtModuleMetaInfo( WModule::SPtr module, QWidget* parent ):
 
     // the home action triggers reseContent
     connect( homeAction, SIGNAL( triggered() ), this, SLOT( resetContent() ) );
+#endif
 }
 
 WQtModuleMetaInfo::~WQtModuleMetaInfo()
@@ -293,9 +302,12 @@ void WQtModuleMetaInfo::resetContent()
 
     // set content
     std::string processedContent = htmlify( m_module->getMetaInformation() );
-#ifdef OW_FORCE_WEBKIT
-    m_frame->setHtml( processedContent.c_str(), QUrl( locationURL ) );
-#else
-    m_page->setHtml( processedContent.c_str(), QUrl( locationURL ) );
+
+#ifndef OW_QT6_NO_WEBENGINE
+    #ifdef OW_FORCE_WEBKIT
+        m_frame->setHtml( processedContent.c_str(), QUrl( locationURL ) );
+    #else
+        m_page->setHtml( processedContent.c_str(), QUrl( locationURL ) );
+    #endif
 #endif
 }

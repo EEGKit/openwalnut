@@ -55,12 +55,12 @@ WQtPropertyGroupWidget::WQtPropertyGroupWidget( WPropertyGroupBase::SPtr group, 
     // note: never do layouts as none pointers
     // on destruction of a widget it will try to delete them which will cause crashes
     m_pageLayout = new QVBoxLayout();
-    m_pageLayout->setMargin( WGLOBAL_MARGIN );
+    m_pageLayout->setContentsMargins( WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN );
     m_pageLayout->setSpacing( WGLOBAL_SPACING );
     m_pageLayout->setAlignment( Qt::AlignTop );
 
     m_controlLayout = new QGridLayout();
-    m_controlLayout->setMargin( WGLOBAL_MARGIN );
+    m_controlLayout->setContentsMargins( WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN );
     m_controlLayout->setSpacing( WGLOBAL_SPACING );
     m_controlLayout->setAlignment( Qt::AlignTop );
 
@@ -189,7 +189,7 @@ QWidget* WQtPropertyGroupWidget::createPropertyGroupBox( QWidget* widget, bool a
     QGridLayout* grid = new QGridLayout();
     grid->setAlignment( Qt::AlignTop );
     grid->addWidget( widget, 0, 0 );
-    grid->setMargin( WGLOBAL_MARGIN );
+    grid->setContentsMargins( WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN );
     grid->setSpacing( WGLOBAL_SPACING );
 
     group->setLayout( grid );
@@ -208,7 +208,7 @@ QWidget* WQtPropertyGroupWidget::createPropertyGroupBox( QWidget* widget, bool a
     box->setObjectName( "PropertyGroupBox" );
     box->setContentsMargins( 0, 0, 0, 0 );
     QGridLayout* boxLayout = new QGridLayout();
-    boxLayout->setMargin( 0 );
+    boxLayout->setContentsMargins( 0, 0, 0, 0 );
     boxLayout->setSpacing( 0 );
     box->setLayout( boxLayout );
 
@@ -233,7 +233,7 @@ QWidget* WQtPropertyGroupWidget::createPropertyGroupBox( QWidget* widget, bool a
     boxContent->setObjectName( "PropertyGroupBoxContent" );
     QGridLayout* boxContentLayout = new QGridLayout();
     boxContent->setLayout( boxContentLayout );
-    boxContentLayout->setMargin( 0 );
+    boxContentLayout->setContentsMargins( 0, 0, 0, 0 );
     boxContentLayout->setSpacing( 0 );
     boxLayout->addWidget( boxContent, 1, 0 );
 
@@ -251,7 +251,7 @@ QWidget* WQtPropertyGroupWidget::createPropertyGroupBox( QWidget* widget, bool a
     // content layout
     QGridLayout* contentLayout = new QGridLayout();
     content->setLayout( contentLayout );
-    contentLayout->setMargin( 0 );
+    contentLayout->setContentsMargins( 0, 0, 0, 0 );
     contentLayout->setSpacing( 0 );
 
     // some styling
@@ -316,7 +316,12 @@ QWidget* WQtPropertyGroupWidget::createPropertyGroupBox( QWidget* widget, bool a
     QSignalMapper* signalMapper = new QSignalMapper( box );
     signalMapper->setMapping( boxTitle, boxContent );
     connect( boxTitle, SIGNAL( released() ), signalMapper, SLOT( map() ) );
+
+#ifdef OW_QT6_SIGNALMAPPER
+    connect( signalMapper, SIGNAL( mappedObject( QObject* ) ), WQtGui::getMainWindow(), SLOT( switchVisibility( QObject* ) ) );
+#else
     connect( signalMapper, SIGNAL( mapped( QWidget* ) ), WQtGui::getMainWindow(), SLOT( switchVisibility( QWidget* ) ) );
+#endif
 
     // create a body widget
     if( asScrollArea )

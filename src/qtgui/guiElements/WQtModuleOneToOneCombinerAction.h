@@ -29,6 +29,7 @@
 #include <string>
 
 #include <QAction>
+#include <QWidget>
 
 #include "../WIconManager.h"
 #include "core/kernel/WModule.h"

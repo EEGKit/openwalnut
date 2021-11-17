@@ -43,12 +43,12 @@ WQtDataModuleInput::WQtDataModuleInput( WDataModule::SPtr module, QWidget* paren
 {
     setContentsMargins( QMargins( 0, 0, 0, 0 ) );
     m_layout = new QVBoxLayout();
-    m_layout->setMargin( 0 );
+    m_layout->setContentsMargins( 0, 0, 0, 0 );
     m_layout->setContentsMargins( QMargins( 0, 0, 0, 0 ) );
     setLayout( m_layout );
 
     m_mainLayout = new QHBoxLayout();
-    m_mainLayout->setMargin( 0 );
+    m_mainLayout->setContentsMargins( 0, 0, 0, 0 );
     m_mainLayout->setContentsMargins( QMargins( 0, 0, 0, 0 ) );
 
     m_mainWidget = new QWidget();

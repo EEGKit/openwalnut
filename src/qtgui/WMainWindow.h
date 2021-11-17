@@ -404,7 +404,11 @@ public slots:
      *
      * \param who the widget to switch
      */
+#ifdef OW_QT6_SIGNALMAPPER
+    void switchVisibility( QObject* who );
+#else
     void switchVisibility( QWidget* who );
+#endif
 
 private:
     /**

@@ -26,6 +26,7 @@
 #define WQTPROPERTYBOOLACTION_H
 
 #include <QAction>
+#include <QWidget>
 
 #include "core/common/WPropertyVariable.h"
 

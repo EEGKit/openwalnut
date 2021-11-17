@@ -27,6 +27,10 @@
 
 #include <QApplication>
 
+#ifdef OW_QT6_REGEXP
+    typedef QRegularExpression QRegExp;
+#endif
+
 class WMainWindow;
 
 /**

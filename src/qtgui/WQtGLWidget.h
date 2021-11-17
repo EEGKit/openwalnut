@@ -31,8 +31,15 @@
 #include <QMenu>
 #include <QWidget>
 #include <QtCore/QTimer>
-#include <QtOpenGL/QGLFormat>
-#include <QtOpenGL/QGLWidget>
+
+#ifdef OW_QT6_GLWIDGET
+    #include <QSurfaceFormat>
+    #include <QOpenGLWidget>
+#else
+    #include <QtOpenGL/QGLFormat>
+    #include <QtOpenGL/QGLWidget>
+#endif
+
 #include <boost/signals2/signal.hpp>
 
 #include "WQtGLScreenCapture.h"
@@ -42,7 +49,12 @@
 
 class WSettingAction;
 
-typedef QGLWidget WQtGLWidgetParent;
+#ifdef OW_QT6_GLWIDGET
+    typedef QOpenGLWidget WQtGLWidgetParent;
+    typedef QSurfaceFormat QGLFormat;
+#else
+    typedef QGLWidget WQtGLWidgetParent;
+#endif
 
 /**
  * A widget containing an open gl display area. This initializes OpenGL context and adds a view to the

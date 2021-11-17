@@ -58,14 +58,14 @@ WPropertyPositionWidget::WPropertyPositionWidget( WPropPosition property, QGridL
     m_layout.addWidget( &m_editX );
     m_layout.addWidget( &m_editY );
     m_layout.addWidget( &m_editZ );
-    m_layout.setMargin( WGLOBAL_MARGIN );
+    m_layout.setContentsMargins( WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN );
     m_layout.setSpacing( WGLOBAL_SPACING );
 
     m_parameterWidgets.setLayout( &m_layout );
 
     // Information Output ( Property Purpose = PV_PURPOSE_INFORMATION )
     m_infoLayout.addWidget( &m_asText );
-    m_infoLayout.setMargin( WGLOBAL_MARGIN );
+    m_infoLayout.setContentsMargins( WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN, WGLOBAL_MARGIN );
     m_infoLayout.setSpacing( WGLOBAL_SPACING );
     m_informationWidgets.setLayout( &m_infoLayout );
 
