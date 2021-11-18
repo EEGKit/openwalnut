@@ -51,6 +51,7 @@
 #include <map>
 #include <memory>
 #include <queue>
+#include <random>
 #include <string>
 #include <utility>
 #include <vector>
@@ -2409,6 +2410,9 @@ void WMHierchClustDisplay::clusterSelection()
 
 void WMHierchClustDisplay::colorAction()
 {
+    std::random_device rd;
+    std::mt19937 g( rd() );
+
     m_labelsDirty = true;
     bool doUpdateSelection( true );
     std::map<size_t, WColor >::iterator clustIter( m_selectionColors.find( m_propSubselectedCluster->get( true ) ) );
@@ -2425,7 +2429,7 @@ void WMHierchClustDisplay::colorAction()
             {
                 shuffledColors.push_back( cIter->second );
             }
-            std::random_shuffle( shuffledColors.begin(), shuffledColors.end() );
+            std::shuffle( shuffledColors.begin(), shuffledColors.end(), g );
             size_t i( 0 );
             for( std::map<size_t, WColor>::iterator cIter( m_selectionColorsBackup.begin() ); cIter != m_selectionColorsBackup.end(); ++cIter )
             {
