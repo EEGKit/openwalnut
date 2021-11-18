@@ -996,7 +996,20 @@ bool WMainWindow::event( QEvent* event )
         WLogEvent* e1 = dynamic_cast< WLogEvent* >( event );     // NOLINT
         if( e1 && getMessageDock() )
         {
-            getMessageDock()->addLogMessage( e1->getEntry() );
+            QString title = "Log message from " + QString::fromStdString( e1->getEntry().getSource() );
+            QString message = QString::fromStdString( e1->getEntry().getMessage() );
+            switch( e1->getEntry().getLogLevel() )
+            {
+                case LogLevel::LL_WARNING:
+                    reportWarning( this, title, message );
+                    break;
+                case LogLevel::LL_ERROR:
+                    reportError( this, title, message );
+                    break;
+                default:
+                    getMessageDock()->addLogMessage( e1->getEntry() );
+                    break;
+            }
         }
     }
 
