@@ -22,7 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
 
 /**
  * Intensity of effect
@@ -32,7 +32,7 @@ uniform float u_vignetteIntensity = 0.5;
 /**
  * Pixel position in [0,1]
  */
-varying vec2 v_pos;
+in vec2 v_pos;
 
 void main()
 {

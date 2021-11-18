@@ -22,7 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
 
 // A standard shader. Nothing interesint here. Just transport texture coordinates to the fragment shader.
 

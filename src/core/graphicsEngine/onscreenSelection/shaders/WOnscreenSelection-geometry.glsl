@@ -22,7 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
-#version 150
+#version 150 core
 
 layout( lines_adjacency ) in;
 layout( triangle_strip, max_vertices = 4 ) out;

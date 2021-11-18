@@ -22,7 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
 
 #include "WGETextureTools.glsl"
 #include "WGETransformationTools.glsl"

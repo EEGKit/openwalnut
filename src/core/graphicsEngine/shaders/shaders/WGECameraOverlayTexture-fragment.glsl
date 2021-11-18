@@ -22,7 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
 
 /**
  * Overlay texture
@@ -87,7 +87,7 @@ uniform float u_overlayBlendOutDuration;
 /**
  * Pixel position in [0,1]
  */
-varying vec2 v_pos;
+in vec2 v_pos;
 
 void main()
 {

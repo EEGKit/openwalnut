@@ -25,7 +25,7 @@
 #ifndef WGECOLORMAPSIMPROVED_GLSL
 #define WGECOLORMAPSIMPROVED_GLSL
 
-#version 120
+//#version 150 core
 
 #include "WGEUtils.glsl"
 

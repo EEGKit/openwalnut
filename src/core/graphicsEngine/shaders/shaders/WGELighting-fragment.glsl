@@ -22,16 +22,20 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#extension GL_GOOGLE_include_directive : require // TODO(glsl)
 
 #include "WGEShadingTools.glsl"
 
 // The surface normal
-varying vec3 v_normal;
+in vec3 v_normal;
+
+in vec4 v_color;
 
 void main()
 {
-    vec4 col = gl_Color;
+    vec4 col = v_color;
 
     // do light
     float light = blinnPhongIlluminationIntensity( normalize( viewAlign( v_normal ) ) );

@@ -25,7 +25,7 @@
 #ifndef WGEPOSTPROCESSOR_VERTEX_GLSL
 #define WGEPOSTPROCESSOR_VERTEX_GLSL
 
-#version 120
+#version 150 core
 
 #include "WGEPostprocessorUtils-vertex.glsl"
 

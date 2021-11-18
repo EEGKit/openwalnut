@@ -25,7 +25,9 @@
 #ifndef WGESHADINGTOOLS_GLSL
 #define WGESHADINGTOOLS_GLSL
 
-#version 120
+uniform vec4 ow_lightsource;
+
+//#version 150 core
 
 /**
  * A struct containing the needed light and material parameters commonly used in most shaders.
@@ -59,7 +61,7 @@ wge_LightIntensityParameter wge_DefaultLightIntensity = wge_LightIntensityParame
     250.0,                           // material shininess
     1.0,                             // light diffuse
     1.0,                             // light ambient
-    gl_LightSource[0].position.xyz,  // light position
+    ow_lightsource.xyz,  // light position
     vec3( 0.0, 0.0, 1.0 )            // view direction
 );
 
@@ -74,7 +76,7 @@ wge_LightIntensityParameter wge_DefaultLightIntensityFullDiffuse = wge_LightInte
     250.0,                           // material shininess
     1.0,                             // light diffuse
     1.0,                             // light ambient
-    gl_LightSource[0].position.xyz,  // light position
+    ow_lightsource.xyz,  // light position
     vec3( 0.0, 0.0, 1.0 )            // view direction
 );
 
@@ -89,7 +91,7 @@ wge_LightIntensityParameter wge_DefaultLightIntensityLessDiffuse = wge_LightInte
     250.0,                           // material shininess
     1.0,                             // light diffuse
     1.0,                             // light ambient
-    gl_LightSource[0].position.xyz,  // light position
+    ow_lightsource.xyz,  // light position
     vec3( 0.0, 0.0, 1.0 )            // view direction
 );
 

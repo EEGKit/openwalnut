@@ -22,7 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
 
 // For lighting functionality.
 #include "WGEShadingTools.glsl"

@@ -22,7 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
 
 #include "WGEColormapping-fragment.glsl"
 #include "WGETextureTools.glsl"

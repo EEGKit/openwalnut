@@ -22,7 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
 #extension GL_ARB_gpu_shader5 : enable  // for inverse()
 
 // include some utility functions

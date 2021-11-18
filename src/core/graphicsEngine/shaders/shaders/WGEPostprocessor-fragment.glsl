@@ -22,11 +22,12 @@
 //
 //---------------------------------------------------------------------------
 
+#version 150 core
+
+#extension GL_GOOGLE_include_directive : require // TODO(glsl)
+
 #ifndef WGEPOSTPROCESSOR_FRAGMENT_GLSL
 #define WGEPOSTPROCESSOR_FRAGMENT_GLSL
-
-#version 120
-#extension GL_EXT_gpu_shader4 : enable
 
 #include "WGEShadingTools.glsl"
 #include "WGETextureTools.glsl"

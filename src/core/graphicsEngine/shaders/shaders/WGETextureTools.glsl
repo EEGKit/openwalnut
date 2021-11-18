@@ -25,7 +25,7 @@
 #ifndef WGETEXTURETOOLS_GLSL
 #define WGETEXTURETOOLS_GLSL
 
-#version 120
+// #version 150 core
 
 #include "WGEUtils.glsl"
 

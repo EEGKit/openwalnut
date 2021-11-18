@@ -22,7 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
 
 // This is needed if the modulo operator % is required
 #extension GL_EXT_gpu_shader4 : enable

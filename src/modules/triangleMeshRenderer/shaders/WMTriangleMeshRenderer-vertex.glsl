@@ -22,7 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
 
 #include "WGEColormapping-vertex.glsl"
 #include "WGETransformationTools.glsl"

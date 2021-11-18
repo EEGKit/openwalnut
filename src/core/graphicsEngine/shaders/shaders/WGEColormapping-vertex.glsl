@@ -22,13 +22,52 @@
 //
 //---------------------------------------------------------------------------
 
+#version 150 core
+
 #ifndef WGECOLORMAPPING_VERTEX_GLSL
 #define WGECOLORMAPPING_VERTEX_GLSL
 
-#version 120
-
 #include "WGEColormapping-uniforms.glsl"
-#include "WGEColormapping-varyings.glsl"
+
+/**
+ * The texture coordinate in local texture space.
+ */
+out vec3 v_colormap0TexCoord;
+
+/**
+ * The texture coordinate in local texture space.
+ */
+out vec3 v_colormap1TexCoord;
+
+/**
+ * The texture coordinate in local texture space.
+ */
+out vec3 v_colormap2TexCoord;
+
+/**
+ * The texture coordinate in local texture space.
+ */
+out vec3 v_colormap3TexCoord;
+
+/**
+ * The texture coordinate in local texture space.
+ */
+out vec3 v_colormap4TexCoord;
+
+/**
+ * The texture coordinate in local texture space.
+ */
+out vec3 v_colormap5TexCoord;
+
+/**
+ * The texture coordinate in local texture space.
+ */
+out vec3 v_colormap6TexCoord;
+
+/**
+ * The texture coordinate in local texture space.
+ */
+out vec3 v_colormap7TexCoord;
 
 /**
  * This method prepares some needed internal variables. Please call this in your vertex shader.

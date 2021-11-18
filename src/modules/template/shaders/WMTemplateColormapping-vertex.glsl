@@ -22,7 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
 
 // Include the colormapper code:
 #include "WGEColormapping-vertex.glsl"

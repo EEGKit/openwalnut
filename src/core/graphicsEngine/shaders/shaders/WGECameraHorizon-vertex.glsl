@@ -22,19 +22,23 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+uniform mat4 osg_ModelViewProjectionMatrix;
+
+in vec4 osg_Vertex;
+in vec4 osg_MultiTexCoord0;
 
 /**
  * Pixel position in [0,1]
  */
-varying vec2 v_pos;
+out vec2 v_pos;
 
 void main()
 {
-    v_pos = gl_MultiTexCoord0.st;
+    v_pos = osg_MultiTexCoord0.st;
 
     // apply standard pipeline
-    gl_FrontColor = gl_Color;
-    gl_Position = ftransform();
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }
 

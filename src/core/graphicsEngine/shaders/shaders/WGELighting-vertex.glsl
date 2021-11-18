@@ -22,25 +22,37 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#extension GL_GOOGLE_include_directive : require // TODO(glsl)
 
 #include "WGETransformationTools.glsl"
 
+uniform mat3 osg_NormalMatrix;
+
+in vec4 osg_Vertex;
+in vec3 osg_Normal;
+in vec4 osg_Color;
+
 // The surface normal
-varying vec3 v_normal;
+out vec3 v_normal;
+
+out vec4 v_color;
 
 void main()
 {
     // prepare light
-    v_normal = gl_NormalMatrix * gl_Normal;
+    v_normal = osg_NormalMatrix * osg_Normal;
 
-#ifdef USE_MATERIAL_DIFFUSE
-    vec4 color = gl_FrontMaterial.diffuse;
-#else
-    vec4 color = gl_Color;
-#endif
-    gl_FrontColor = color;
-    gl_BackColor = color;
-    gl_Position = ftransform();
+// OSG materials mechanism is outdated
+// #ifdef USE_MATERIAL_DIFFUSE
+//     vec4 color = gl_FrontMaterial.diffuse;
+// #else
+//     vec4 color = gl_Color;
+// #endif
+//     gl_FrontColor = color;
+//     gl_BackColor = color;
+    v_color = osg_Color;
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }
 

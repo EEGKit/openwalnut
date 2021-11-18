@@ -31,7 +31,7 @@
 // Please note that you need a basic understanding of GLSL to understand this rather simple example.
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#version 120
+#version 150 core
 
 // For lighting functionality.
 #include "WGEShadingTools.glsl"

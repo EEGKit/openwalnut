@@ -33,7 +33,7 @@
 
 // Define the version you like. But be aware that older hardware often does not support a version >120. The core shaders
 // of OpenWalnut all use 120.
-#version 120
+#version 150 core
 
 // You already know this from C/C++. Technically, GLSL does NOT support inclusion this way. But WGEShaders implements
 // a text-replacement based mechanism to allow this though. You are not required to add any paths here. Just ensure the

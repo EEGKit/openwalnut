@@ -25,7 +25,10 @@
 #ifndef WGETRANSFORMATIONTOOLS_GLSL
 #define WGETRANSFORMATIONTOOLS_GLSL
 
-#version 120
+//#version 150 core
+
+uniform mat4 osg_ModelViewProjectionMatrix;
+uniform mat4 osg_ModelViewMatrix;
 
 /**
  * Projects a given point to screen-space, where (0,0) is the lower left corner and (1,1) the upper right. The Depth
@@ -38,7 +41,7 @@
 vec3 project( vec4 point )
 {
     // 1: project
-    vec4 pointProjected = gl_ModelViewProjectionMatrix * point;
+    vec4 pointProjected = osg_ModelViewProjectionMatrix * point;
 
     // 2: scale to screen space and [0,1]
     pointProjected.x /= pointProjected.w;
@@ -63,7 +66,7 @@ vec3 projectVector( vec4 vector )
     vec4 vec = vector;
     vec.w = 0.0;    // ensure w is zero
 
-    vec4 vecP = gl_ModelViewProjectionMatrix * vec;
+    vec4 vecP = osg_ModelViewProjectionMatrix * vec;
 
     return vecP.xyz;
 }
@@ -108,7 +111,7 @@ vec3 project( vec3 point )
  */
 vec4 worldToLocal( vec4 point )
 {
-    return gl_ModelViewMatrixInverse * point;
+    return inverse( osg_ModelViewMatrix ) * point;
 }
 
 /**
@@ -165,7 +168,8 @@ vec4 worldToLocal( vec3 point1, vec3 point2 )
  */
 float getModelViewScale()
 {
-    return length( ( gl_ModelViewMatrix * normalize( vec4( 1.0, 1.0, 1.0, 0.0 ) ) ).xyz );
+    return length( ( osg_ModelViewMatrix * normalize( vec4( 1.0, 1.0, 1.0, 0.0 ) ) ).xyz );
 }
 
 #endif // WGETRANSFORMATIONTOOLS_GLSL
+
