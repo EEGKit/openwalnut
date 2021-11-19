@@ -30,5 +30,5 @@ varying vec3 v_normal;
 void main()
 {
     float light = blinnPhongIlluminationIntensity( normalize( v_normal ) );
-    gl_FragColor = vec4( gl_Color.xyz * light, gl_Color.a );
+    gl_FragColor = vec4( osg_Color.xyz * light, osg_Color.a );
 }

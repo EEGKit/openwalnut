@@ -54,13 +54,13 @@
 void main()
 {
     // for easy access to texture coordinates
-    gl_TexCoord[0] = gl_MultiTexCoord0;
-    gl_TexCoord[1] = gl_MultiTexCoord1;
+    gl_TexCoord[0] = osg_MultiTexCoord0;
+    gl_TexCoord[1] = osg_MultiTexCoord1;
 
-    v_normal = gl_Normal;
+    v_normal = osg_Normal;
 
     // in texture space, the starting point simply is the current surface point in texture space
-    v_rayStart = gl_TexCoord[0].xyz; // this equals gl_Vertex!
+    v_rayStart = gl_TexCoord[0].xyz; // this equals osg_Vertex!
 
     // transform the ray direction to texture space, which equals object space
     // Therefore use two points, as we transform a vector
@@ -73,7 +73,7 @@ void main()
     v_lightSource = worldToLocal( lpos ).xyz;
 
     // Simply project the vertex
-    gl_Position = ftransform();
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
     gl_FrontColor = gl_FrontMaterial.diffuse;
     gl_BackColor = gl_BackMaterial.diffuse;
 }

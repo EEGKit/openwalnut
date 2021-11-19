@@ -31,7 +31,7 @@ varying vec3 normal;
 void main()
 {
     // prepare colormapping
-    normal = /*gl_NormalMatrix */ gl_Normal;
+    normal = /*osg_NormalMatrix */ osg_Normal;
     colormapping();
-    gl_Position = ftransform();
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }

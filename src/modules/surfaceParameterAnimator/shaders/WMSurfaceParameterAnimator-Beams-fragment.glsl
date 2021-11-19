@@ -296,7 +296,7 @@ void main()
             // traceInv = traceInv % 50;
 
             // original surface color
-            vec4 ocol = light * gl_Color;
+            vec4 ocol = light * osg_Color;
             ocol.a = u_alpha;
 
             // apply animation color

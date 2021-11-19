@@ -27,20 +27,29 @@
 
 #version 150 core
 
+uniform mat4 osg_ModelViewProjectionMatrix;
+uniform mat4 ow_TextureMatrix0;
+
+in vec4 osg_Vertex;
+in vec4 osg_Color;
+in vec4 osg_MultiTexCoord0;
+
+out vec4 v_TexCoord;
+out vec4 v_color;
+
 /**
  * Does transfer the quad to image space.
  */
 void main()
 {
     // pass the color to the fragment shader
-    gl_FrontColor = gl_Color;
-    gl_BackColor =  gl_Color;
+    v_color = osg_Color;
 
     // pass tex coordinates
-    gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;
+    v_TexCoord = ow_TextureMatrix0 * osg_MultiTexCoord0;
 
     // transform position
-    gl_Position = ftransform();
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }
 
 #endif // WGEPOSTPROCESSORCOMBINER_VERTEX_GLSL

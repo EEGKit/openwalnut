@@ -22,11 +22,10 @@
 //
 //---------------------------------------------------------------------------
 
-#version 150 core
-
 #ifndef WGECOLORMAPPING_FRAGMENT_GLSL
 #define WGECOLORMAPPING_FRAGMENT_GLSL
 
+#version 150 core
 
 #include "WGEColorMapsImproved.glsl"
 

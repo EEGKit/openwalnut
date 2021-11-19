@@ -69,7 +69,7 @@ void main()
     // use clipping planes to cut away parts
     v_clip = 0.0;
     // TODO(ebaum): implement this using proper clip-plane implementation
-    // v_clip = float( ( gl_Vertex.x > 500.0 ) || ( gl_Vertex.y>500.0 ) );
+    // v_clip = float( ( osg_Vertex.x > 500.0 ) || ( osg_Vertex.y>500.0 ) );
 
 #ifdef USE_ATTRIBUTE_ENABLED
     v_pointSize = a_pointSize * u_pointSize;
@@ -79,9 +79,9 @@ void main()
 #endif
 
     // forward to geometry shader
-    v_colorIn = gl_Color;
-    gl_Position = gl_ModelViewMatrix * gl_Vertex;
+    v_colorIn = osg_Color;
+    gl_Position = osg_ModelViewMatrix * osg_Vertex;
 
-    v_worldCenterVertex = gl_Vertex;
+    v_worldCenterVertex = osg_Vertex;
 }
 

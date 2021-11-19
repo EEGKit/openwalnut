@@ -41,7 +41,7 @@
 //  * Set a fragment zoom factor. This represents the zoom of your modelview matrix. It is needed by some post-processors to provide
 //    zoom-invariant effects.
 //    * Needs to be scaled by 0.1
-//    * Can be calculated this way: wge_FragZoom = 0.1 * length( ( gl_ModelViewMatrix * normalize( vec4( 1.0, 1.0, 1.0, 0.0 ) ) ).xyz );
+//    * Can be calculated this way: wge_FragZoom = 0.1 * length( ( osg_ModelViewMatrix * normalize( vec4( 1.0, 1.0, 1.0, 0.0 ) ) ).xyz );
 //    * Simpler: call wge_FragZoom = 0.1 * getModelViewScale();
 
 #ifdef WGE_POSTPROCESSING_ENABLED

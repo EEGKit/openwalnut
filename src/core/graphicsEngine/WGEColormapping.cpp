@@ -38,7 +38,7 @@
 std::shared_ptr< WGEColormapping > WGEColormapping::m_instance = std::shared_ptr< WGEColormapping >();
 
 /**
- * This functions simply sets some defines to a shader. It sets the texture unit and gl_MultiTexCoord variable names properly.
+ * This functions simply sets some defines to a shader. It sets the texture unit and osg_MultiTexCoord variable names properly.
  *
  * \param shader the shader where to add the defines
  * \param start the start index of the unit for colormap0
@@ -52,7 +52,7 @@ void setDefines( osg::ref_ptr< WGEShader > shader, size_t start = 0 )
         if( unit < wge::getMaxTexUnits() - start )
         {
             shader->setDefine( "Colormap" + string_utils::toString( unit ) + "Enabled", true );
-            shader->setDefine( "Colormap" + string_utils::toString( unit ) + "Unit", start + unit );
+            shader->setDefine( "Colormap" + string_utils::toString( unit ) + "Unit", start + unit ); // TODO(glsl)
         }
     }
 }

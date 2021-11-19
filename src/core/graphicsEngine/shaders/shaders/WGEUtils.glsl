@@ -25,7 +25,7 @@
 #ifndef WGEUTILS_GLSL
 #define WGEUTILS_GLSL
 
-//#version 150 core
+#version 150 core
 
 /**
  *

@@ -53,7 +53,7 @@ uniform int u_renderingType;
 
 void main()
 {
-    vec4 col = gl_Color;
+    vec4 col = osg_Color;
     //col.rgb = vec3( .7);
     float widthHalf = u_parameterWidth / 2.0;
     vec2 param = col.rg;

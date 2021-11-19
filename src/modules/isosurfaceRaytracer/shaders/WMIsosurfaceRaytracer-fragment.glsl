@@ -193,7 +193,7 @@ void main()
             // Therefore, the complete standard pipeline is reproduced here:
 
             // 1: transfer to world space and right after it, to eye space
-            vec4 curPointProjected = gl_ModelViewProjectionMatrix * vec4( curPoint, 1.0 );
+            vec4 curPointProjected = osg_ModelViewProjectionMatrix * vec4( curPoint, 1.0 );
 
             // 2: scale to screen space and [0,1]
             // -> x and y is not needed
@@ -210,7 +210,7 @@ void main()
             // 4: Shading
 
             // find a proper normal for a headlight in world-space
-            vec3 normal = ( gl_ModelViewMatrix * vec4( getNormal( curPoint ), 0.0 ) ).xyz;
+            vec3 normal = ( osg_ModelViewMatrix * vec4( getNormal( curPoint ), 0.0 ) ).xyz;
 #ifdef WGE_POSTPROCESSING_ENABLED
             wge_FragNormal = textureNormalize( normal );
 #endif
@@ -228,7 +228,7 @@ void main()
             // mix color with colormap
             vec4 color = mix(
                 colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y * u_texture0SizeY, curPoint.z * u_texture0SizeZ, 1.0 ) ),
-                vec4( gl_Color.rgb, u_alpha ),
+                vec4( osg_Color.rgb, u_alpha ),
                 1.0 - u_colormapRatio );
             // 5: the final color construction
             wge_FragColor = vec4( light * color.rgb, color.a );

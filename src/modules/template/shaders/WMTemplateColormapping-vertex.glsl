@@ -36,9 +36,9 @@ void main()
     colormapping();
 
     // wow. Thats easy right? But there is more. This method is flexible. You can define your own vertex coordinates and transformations. This is
-    // especially useful if your gl_ModelviewMatrix * gl_Vertex is NOT the final world space coordinate!
+    // especially useful if your osg_ModelViewMatrix * osg_Vertex is NOT the final world space coordinate!
 
     // prepare light
-    v_normal = gl_NormalMatrix * gl_Normal;
-    gl_Position = ftransform();
+    v_normal = osg_NormalMatrix * osg_Normal;
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }

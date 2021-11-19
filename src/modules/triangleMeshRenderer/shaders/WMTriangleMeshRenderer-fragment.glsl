@@ -54,7 +54,7 @@ varying float v_worldScale;
 
 void main()
 {
-    vec4 col = gl_Color;
+    vec4 col = osg_Color;
 
 #ifdef COLORMAPPING_ENABLED
     col = mix( colormapping(), col, u_colormapRatio );

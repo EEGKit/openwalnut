@@ -52,7 +52,7 @@ void main()
 #ifdef BUMPMAPPING_ENABLED
     // Simplest bump-mapping. Make it look really ... like glibber
     vec2 grad = getGradient( u_textureSampler, v_normalizedVertex.xy, 1.0 / u_textureSizeX * 2 );
-    vec3 normal = gl_NormalMatrix * vec3( grad, -1.0 );
+    vec3 normal = osg_NormalMatrix * vec3( grad, -1.0 );
     light = blinnPhongIlluminationIntensity( normalize( viewAlign( normal ) ) );
 #endif
 
@@ -74,6 +74,6 @@ void main()
 #endif
 
     // finally set the color and depth
-    gl_FragColor = vec4( mix( gl_Color.rgb, col.rgb, col.a ), finalAlpha );
+    gl_FragColor = vec4( mix( osg_Color.rgb, col.rgb, col.a ), finalAlpha );
 }
 

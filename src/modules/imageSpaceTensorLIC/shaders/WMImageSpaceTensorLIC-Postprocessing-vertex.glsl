@@ -24,20 +24,28 @@
 
 #version 150 core
 
-varying vec3 v_normalizedVertex;
+uniform mat4 osg_ModelViewProjectionMatrix;
+uniform mat4 osg_TextureMatrix0;
+
+in vec4 osg_Vertex;
+in vec4 osg_MultiTexCoord0;
+
+out vec4 ow_texCoord;
+
+out vec3 v_normalizedVertex;
 
 void main()
 {
     // pass the color to the fragment shader
-    gl_FrontColor = gl_Color;
-    gl_BackColor =  gl_Color;
+    // gl_FrontColor = osg_Color;
+    // gl_BackColor =  osg_Color;
 
     // pass tex coordinates
-    gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;
+    ow_texCoord = osg_TextureMatrix0 * osg_MultiTexCoord0;
 
-    v_normalizedVertex = gl_TexCoord[0].xyz;
+    v_normalizedVertex = ow_texCoord.xyz;
 
     // transform position
-    gl_Position = ftransform();
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }
 

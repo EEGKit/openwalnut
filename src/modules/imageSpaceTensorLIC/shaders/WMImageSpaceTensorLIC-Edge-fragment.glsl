@@ -24,6 +24,8 @@
 
 #version 150 core
 
+in vec4 ow_texCoord;
+
 /**
  * The texture Unit for the depth field
  */
@@ -64,7 +66,7 @@ void main()
     float offsetW = 2.0 / u_texture0SizeX;
     float offsetH = 2.0 / u_texture0SizeY;
 
-    vec2 texCoord = gl_TexCoord[0].st;
+    vec2 texCoord = ow_texCoord.st;
     vec4 c  = texture2D( u_texture0Sampler, texCoord );
     vec4 bl = texture2D( u_texture0Sampler, texCoord + vec2( -offsetW, -offsetH ) );
     vec4 l  = texture2D( u_texture0Sampler, texCoord + vec2( -offsetW,     0.0  ) );

@@ -34,6 +34,6 @@ varying vec3 v_normal;
 void main()
 {
     // prepare light
-    v_normal = gl_NormalMatrix * gl_Normal;
-    gl_Position = ftransform();
+    v_normal = osg_NormalMatrix * osg_Normal;
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }

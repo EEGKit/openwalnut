@@ -55,7 +55,7 @@ varying vec3 v_normalizedVertex;
 
 void main()
 {
-    vec4 col = gl_Color;
+    vec4 col = osg_Color;
 
     // Use a utility function to get the gradient for us
     vec3 grad = getGradient( u_noiseSampler, v_normalizedVertex, 1.0 / u_noiseSizeX );

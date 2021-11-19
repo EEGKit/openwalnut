@@ -24,8 +24,6 @@
 
 #version 150 core
 
-#extension GL_GOOGLE_include_directive : require // TODO(glsl)
-
 #include "WGETransformationTools.glsl"
 
 uniform mat3 osg_NormalMatrix;
@@ -48,7 +46,7 @@ void main()
 // #ifdef USE_MATERIAL_DIFFUSE
 //     vec4 color = gl_FrontMaterial.diffuse;
 // #else
-//     vec4 color = gl_Color;
+//     vec4 color = osg_Color;
 // #endif
 //     gl_FrontColor = color;
 //     gl_BackColor = color;

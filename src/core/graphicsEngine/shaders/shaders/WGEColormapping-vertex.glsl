@@ -22,10 +22,13 @@
 //
 //---------------------------------------------------------------------------
 
-#version 150 core
 
 #ifndef WGECOLORMAPPING_VERTEX_GLSL
 #define WGECOLORMAPPING_VERTEX_GLSL
+
+#version 150 core
+
+in vec4 osg_Vertex;
 
 #include "WGEColormapping-uniforms.glsl"
 
@@ -73,7 +76,7 @@ out vec3 v_colormap7TexCoord;
  * This method prepares some needed internal variables. Please call this in your vertex shader.
  * Be aware that this only works with the WGEColormapping class.
  *
- * \param texMatrix this additional matrix allows further modification of gl_Vertex to meet the requirements of WGEColormapping.
+ * \param texMatrix this additional matrix allows further modification of osg_Vertex to meet the requirements of WGEColormapping.
  * \param point the point inside the volume.
  */
 void colormapping( mat4 texMatrix, vec4 point )
@@ -111,11 +114,11 @@ void colormapping( mat4 texMatrix, vec4 point )
  * This method prepares some needed internal variables. Please call this in your vertex shader.
  * Be aware that this only works with the WGEColormapping class.
  *
- * \param texMatrix this additional matrix allows further modification of gl_Vertex to meet the requirements of WGEColormapping.
+ * \param texMatrix this additional matrix allows further modification of osg_Vertex to meet the requirements of WGEColormapping.
  */
 void colormapping( mat4 texMatrix )
 {
-    colormapping( texMatrix, gl_Vertex );
+    colormapping( texMatrix, osg_Vertex );
 }
 
 /**

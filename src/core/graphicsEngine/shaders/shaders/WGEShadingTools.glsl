@@ -27,7 +27,7 @@
 
 uniform vec4 ow_lightsource;
 
-//#version 150 core
+#version 150 core
 
 /**
  * A struct containing the needed light and material parameters commonly used in most shaders.

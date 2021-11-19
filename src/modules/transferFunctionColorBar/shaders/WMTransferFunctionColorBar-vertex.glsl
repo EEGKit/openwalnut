@@ -54,10 +54,10 @@ varying float v_value;
  */
 void main()
 {
-    v_value = gl_MultiTexCoord0.y;
+    v_value = osg_MultiTexCoord0.y;
 
     // Simply project the vertex
-    gl_Position = ftransform();
-    gl_FrontColor = vec4( 1., 1., 1., 1. ); // gl_Color;
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
+    gl_FrontColor = vec4( 1., 1., 1., 1. ); // osg_Color;
 }
 

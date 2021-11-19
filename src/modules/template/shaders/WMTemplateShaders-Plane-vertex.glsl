@@ -37,12 +37,12 @@ varying vec3 v_normalizedVertex;
 void main()
 {
     // prepare light
-    v_normal = gl_NormalMatrix * gl_Normal;
-    v_normalizedVertex = gl_Vertex.xyz / 100.0;
+    v_normal = osg_NormalMatrix * osg_Normal;
+    v_normalizedVertex = osg_Vertex.xyz / 100.0;
 
     // for easy access to texture coordinates
-    gl_TexCoord[0] = gl_MultiTexCoord0;
+    gl_TexCoord[0] = osg_MultiTexCoord0;
 
     gl_FrontColor = u_planeColor;
-    gl_Position = ftransform();
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }

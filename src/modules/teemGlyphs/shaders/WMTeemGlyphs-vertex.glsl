@@ -29,8 +29,8 @@ varying vec3 v_normal;
 
 void main()
 {
-    v_normal = gl_NormalMatrix * gl_Normal;
+    v_normal = osg_NormalMatrix * osg_Normal;
 
-    gl_FrontColor = gl_Color;
-    gl_Position = ftransform();
+    gl_FrontColor = osg_Color;
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }

@@ -27,6 +27,8 @@
 #include "WGEUtils.glsl"
 #include "WGEShadingTools.glsl"
 
+in vec4 ow_texCoord;
+
 /**
  * The texture Unit for the advection texture
  */
@@ -87,7 +89,7 @@ uniform bool u_useHighContrast;
  */
 void main()
 {
-    vec2 texCoord = gl_TexCoord[0].st;
+    vec2 texCoord = ow_texCoord.st;
     float edge  = texture2D( u_texture1Sampler, texCoord ).r * ( u_useEdges ? 1.0 : 0.0 );
     float light  = texture2D( u_texture1Sampler, texCoord ).a * ( u_useLight ? 1.0 : 0.0 );
     float depth  = texture2D( u_texture1Sampler, texCoord ).g;

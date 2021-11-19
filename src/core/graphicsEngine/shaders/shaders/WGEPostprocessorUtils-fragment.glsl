@@ -25,7 +25,9 @@
 #ifndef WGEPOSTPROCESSORUTILS_FRAGMENT_GLSL
 #define WGEPOSTPROCESSORUTILS_FRAGMENT_GLSL
 
-// #version 150 core
+#version 150 core
+
+in vec4 v_TexCoord;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Input-Texture Uniforms
@@ -115,7 +117,7 @@ uniform int u_texture5SizeY;
 /**
  * The coordinate of the current pixel for texture lookup
  */
-vec2 pixelCoord = gl_TexCoord[0].st;
+vec2 pixelCoord = v_TexCoord.st;
 
 /**
  * This is needed for some swizzle tricks

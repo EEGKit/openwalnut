@@ -90,7 +90,7 @@ void main()
     // Done. The remaining code is standard GLSL.
 
     // For easy access to texture coordinates
-    gl_TexCoord[0] = gl_MultiTexCoord0;
+    gl_TexCoord[0] = osg_MultiTexCoord0;
 
     // Now, we can add a code block which is turned on by a property. We defined this at C++ side
     float dimmer = 1.0;
@@ -107,10 +107,10 @@ void main()
     #endif
 
     // Prepare light
-    v_normal = gl_NormalMatrix * gl_Normal;
-    v_normalizedVertex = gl_Vertex.xyz / 20.0; // trick a bit... looks cooler later
+    v_normal = osg_NormalMatrix * osg_Normal;
+    v_normalizedVertex = osg_Vertex.xyz / 20.0; // trick a bit... looks cooler later
 
     // Push color and position forward through the pipeline
     gl_FrontColor = vec4( u_spheresColor.rgb * dimmer, 1.0 );
-    gl_Position = gl_ModelViewProjectionMatrix * vec4( gl_Vertex.xyz * u_sphereScaler, 1.0 );
+    gl_Position = osg_ModelViewProjectionMatrix * vec4( osg_Vertex.xyz * u_sphereScaler, 1.0 );
 }

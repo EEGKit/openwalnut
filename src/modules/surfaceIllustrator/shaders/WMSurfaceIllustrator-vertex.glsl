@@ -34,10 +34,10 @@ varying vec4 verpos;
 void main()
 {
     // get normal
-    v_normal = gl_NormalMatrix * gl_Normal;
+    v_normal = osg_NormalMatrix * osg_Normal;
 
     // apply standard pipeline
-    gl_FrontColor = gl_Color;
-    verpos = gl_Vertex;
-    gl_Position = ftransform();
+    gl_FrontColor = osg_Color;
+    verpos = osg_Vertex;
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }

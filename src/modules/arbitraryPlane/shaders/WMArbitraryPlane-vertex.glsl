@@ -26,10 +26,12 @@
 
 #include "WGEColormapping-vertex.glsl"
 
+uniform mat4 osg_ModelViewProjectionMatrix;
+
 void main()
 {
     // prepare colormapping
     colormapping();
-    gl_Position = ftransform();
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }
 

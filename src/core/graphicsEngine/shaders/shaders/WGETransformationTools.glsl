@@ -25,7 +25,7 @@
 #ifndef WGETRANSFORMATIONTOOLS_GLSL
 #define WGETRANSFORMATIONTOOLS_GLSL
 
-//#version 150 core
+#version 150 core
 
 uniform mat4 osg_ModelViewProjectionMatrix;
 uniform mat4 osg_ModelViewMatrix;

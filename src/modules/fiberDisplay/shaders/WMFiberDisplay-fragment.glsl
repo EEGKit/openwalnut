@@ -30,7 +30,64 @@
 #include "WGETextureTools.glsl"
 #include "WGEPostprocessing.glsl"
 
-#include "WMFiberDisplay-varyings.glsl"
+in vec4 v_color;
+
+/////////////////////////////////////////////////////////////////////////////
+// Varyings
+/////////////////////////////////////////////////////////////////////////////
+
+#ifdef CLIPPLANE_ENABLED
+/**
+ * The distance to the plane
+ */
+in float v_dist;
+#endif
+
+/**
+ * The surface normal. Needed for nice lighting.
+ */
+in vec3 v_normal;
+
+/**
+ * The line tangent.
+ */
+in vec3 v_tangent;
+
+/**
+ * The normal parameterizing the surface in orthogonal tangent direction.
+ */
+in vec3 v_biNormal;
+
+/**
+ * The actual, corrected vertex.
+ */
+in vec4 v_vertex;
+
+/**
+ * The diameter of the tube in world-space.
+ */
+in float v_diameter;
+
+/**
+ * This is the interpolated surface parameter describing the surface orthogonal to the tangent. 0 is the center of the strip and -1 and 1 the
+ * borders.
+ */
+in float v_surfaceParam;
+
+/**
+ * The scaling component of the modelview matrix.
+ */
+in float v_worldScale;
+
+/**
+ * This varying carries the current cluster color.
+ */
+in vec4 v_clusterColor;
+
+/**
+ * Varying defines wether to discard the fragments or not.
+ */
+in float v_discard;
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
@@ -120,7 +177,7 @@ void main()
     vec3 v = v_vertex.xyz + normal * v_diameter * ( 1.0 - abs( v_surfaceParam ) );
 
     // apply standard projection:
-    vec4 vProj = gl_ProjectionMatrix * vec4( v.xyz, 1.0 );
+    vec4 vProj = osg_ProjectionMatrix * vec4( v.xyz, 1.0 );
     depth = ( 0.5 * vProj.z / vProj.w ) + 0.5;
 
 #endif  // RIBBON_ENABLED
@@ -138,12 +195,12 @@ void main()
 #endif
 
     // apply colormapping to the input color
-    vec4 finalColor = gl_Color;
+    vec4 finalColor = v_color;
 
     // use secondary color only if bitfield filtering is active
 #ifdef BITFIELD_ENABLED
 #ifdef SECONDARY_COLORING_ENABLED
-    finalColor = mix( v_clusterColor, gl_Color, u_roiFilterColorOverride );
+    finalColor = mix( v_clusterColor, v_color, u_roiFilterColorOverride );
 #endif
 #endif
 

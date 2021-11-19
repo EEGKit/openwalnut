@@ -24,8 +24,6 @@
 
 #version 150 core
 
-#extension GL_GOOGLE_include_directive : require // TODO(glsl)
-
 #include "WGEShadingTools.glsl"
 
 /**

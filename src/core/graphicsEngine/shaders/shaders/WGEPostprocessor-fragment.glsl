@@ -22,12 +22,10 @@
 //
 //---------------------------------------------------------------------------
 
-#version 150 core
-
-#extension GL_GOOGLE_include_directive : require // TODO(glsl)
-
 #ifndef WGEPOSTPROCESSOR_FRAGMENT_GLSL
 #define WGEPOSTPROCESSOR_FRAGMENT_GLSL
+
+#version 150 core
 
 #include "WGEShadingTools.glsl"
 #include "WGETextureTools.glsl"

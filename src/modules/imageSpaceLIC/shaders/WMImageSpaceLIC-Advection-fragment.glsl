@@ -26,6 +26,8 @@
 
 #include "WGEUtils.glsl"
 
+in vec4 ow_texCoord;
+
 /**
  * The texture Unit for the projected vectors
  */
@@ -90,7 +92,7 @@ float getNoise( in vec2 pos )
  */
 void main()
 {
-    vec2 texCoord = gl_TexCoord[0].st;
+    vec2 texCoord = ow_texCoord.st;
 
     // get some needed values
     float edge  = texture2D( u_texture1Sampler, texCoord ).r;
@@ -100,9 +102,9 @@ void main()
 
     // simply iterate along the line using the vector at each point
     vec2 lastVec1 = vec;
-    vec2 lastPos1 = gl_TexCoord[0].st;
+    vec2 lastPos1 = ow_texCoord.st;
     vec2 lastVec2 = vec;
-    vec2 lastPos2 = gl_TexCoord[0].st;
+    vec2 lastPos2 = ow_texCoord.st;
     float sum = 0.0;
     int m = 2 * u_numIter;
     for( int i = 0; i < u_numIter; ++i )

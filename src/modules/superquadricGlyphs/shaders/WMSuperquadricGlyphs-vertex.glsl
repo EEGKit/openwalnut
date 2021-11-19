@@ -43,9 +43,9 @@ void main()
     /////////////////////////////////////////////////////////////////////////////////////////////
 
     // aquire texture data
-    gl_TexCoord[0] = gl_MultiTexCoord0;
-    gl_TexCoord[1] = gl_MultiTexCoord1;
-    gl_TexCoord[2] = gl_MultiTexCoord2;
+    gl_TexCoord[0] = osg_MultiTexCoord0;
+    gl_TexCoord[1] = osg_MultiTexCoord1;
+    gl_TexCoord[2] = osg_MultiTexCoord2;
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     // 2: aquire tensor data, calculate eigen system
@@ -160,7 +160,7 @@ void main()
                                    0.0, 0.0, 0.0, 1.0 );
 
     gl_TexCoord[0].w = 0.0;
-    gl_Position = gl_ModelViewProjectionMatrix * ( gl_Vertex + glyphSystem * glyphScale * gl_TexCoord[0] );
+    gl_Position = osg_ModelViewProjectionMatrix * ( osg_Vertex + glyphSystem * glyphScale * gl_TexCoord[0] );
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     // 5: Transform light and plane as well as ray back to glyph space
@@ -171,7 +171,7 @@ void main()
     // also build its inverse, Remember:
     //  * (AB)^-1 = B^-1 * A^-1
     //  * (A^T)^-1 = (A^-1)^T
-    v_glyphToWorld = gl_ModelViewMatrix * transpose( inverse( glyphSystem ) ) * glyphScale;
+    v_glyphToWorld = osg_ModelViewMatrix * transpose( inverse( glyphSystem ) ) * glyphScale;
 
     // calculate light direction once per quadric
     v_lightDir.xyz = normalize( ( worldToGlyph * gl_LightSource[0].position ).xyz );

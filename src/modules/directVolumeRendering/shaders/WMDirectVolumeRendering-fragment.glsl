@@ -25,7 +25,7 @@
 #version 150 core
 
 // This is needed if the modulo operator % is required
-#extension GL_EXT_gpu_shader4 : enable
+// #extension GL_EXT_gpu_shader4 : enable
 
 #ifdef LOCALILLUMINATION_PHONG
 #include "WGEShadingTools.glsl"
@@ -33,11 +33,23 @@
 
 #include "WGEUtils.glsl"
 
+uniform mat4 osg_ModelViewMatrix;
+
 /////////////////////////////////////////////////////////////////////////////
 // Varyings
 /////////////////////////////////////////////////////////////////////////////
 
-#include "WMDirectVolumeRendering-varyings.glsl"
+// The ray's starting point in texture space
+in vec3 v_rayStart;
+
+// The ray direction in texture space, normalized
+in vec3 v_ray;
+
+// The sampling distance
+in float v_sampleDistance;
+
+// The steps in relation to a default number of steps of 128.
+in float v_relativeSampleDistance;
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
@@ -165,7 +177,7 @@ vec4 localIllumination( in vec3 position, in vec4 color )
 #ifdef LOCALILLUMINATION_PHONG
     // get a gradient and get it to world-space
     vec3 g = getGradient( position );
-    vec3 worldNormal = ( gl_ModelViewMatrix * vec4( g, 0.0 ) ).xyz;
+    vec3 worldNormal = ( osg_ModelViewMatrix * vec4( g, 0.0 ) ).xyz;
     if( length( g ) < 0.01 )
     {
         return vec4( 0.0 ); //vec4( g.x, g.y, g.z, 1.0 );
@@ -186,7 +198,7 @@ vec4 localIllumination( in vec3 position, in vec4 color )
             vec3( 1.0, 1.0, 1.0 ),                        // light ambient
             normalize( worldNormal ),                     // normal
             vec3( 0.0, 0.0, 1.0 ),                        // view direction  // in world space, this always is the view-dir
-            gl_LightSource[0].position.xyz                // light source position
+            ow_lightsource.position.xyz                // light source position
     );
     light.a = color.a;
     return light;

@@ -81,6 +81,7 @@ void WGEOffscreenTexturePass::setup()
     m_texMat = new osg::TexMat;
     m_texMat->setMatrix( osg::Matrixd::identity() );
     state->setTextureAttributeAndModes( 0, m_texMat, osg::StateAttribute::ON );
+    state->addUniform( new osg::Uniform( "ow_TextureMatrix0", m_texMat->getMatrix() ) );
 }
 
 void WGEOffscreenTexturePass::TextureMatrixUpdateCallback::operator()( osg::Node* node, osg::NodeVisitor* nv )
