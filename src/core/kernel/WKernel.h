@@ -31,6 +31,7 @@
 
 
 #include "../common/WTimer.h"
+#include "WSelectionManager.h"
 #include "../graphicsEngine/WGraphicsEngine.h"
 #include "../scripting/WScriptEngine.h"
 #include "WBatchLoader.h"
@@ -41,7 +42,6 @@ class WModule;
 class WModuleContainer;
 class WModuleFactory;
 class WROIManager;
-class WSelectionManager;
 class WThreadedRunner;
 
 /**
