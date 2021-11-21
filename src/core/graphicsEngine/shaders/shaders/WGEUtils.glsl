@@ -27,6 +27,8 @@
 
 #version 150 core
 
+#include "WGEShader-uniforms.glsl"
+
 /**
  *
  * This makes threshold lying between min and max to lie between 0 and 1 where 0 corresponds to min and 1 to max

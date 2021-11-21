@@ -27,6 +27,8 @@
 
 #version 150 core
 
+#include "WGEShader-uniforms.glsl"
+
 in vec4 v_TexCoord;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -85,7 +87,7 @@ vec2 pixelCoord = v_TexCoord.st;
  */
 vec4 getColor( in vec2 where, in float lod )
 {
-    return texture2DLod( u_colorSampler, where, lod );
+    return textureLod( u_colorSampler, where, lod );
 }
 
 /**
@@ -97,7 +99,7 @@ vec4 getColor( in vec2 where, in float lod )
  */
 vec4 getColor( in vec2 where )
 {
-    return texture2D( u_colorSampler, where );
+    return texture( u_colorSampler, where );
 }
 
 /**
@@ -109,7 +111,7 @@ vec4 getColor( in vec2 where )
  */
 float getDepth( in vec2 where )
 {
-    return texture2D( u_depthSampler, where ).r;
+    return texture( u_depthSampler, where ).r;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

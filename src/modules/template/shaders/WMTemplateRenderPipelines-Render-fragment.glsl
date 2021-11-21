@@ -24,11 +24,13 @@
 
 #version 150 core
 
+#include "WGEShader-uniforms.glsl"
+
 // For lighting functionality.
 #include "WGEShadingTools.glsl"
 
 // The surface normal
-varying vec3 v_normal;
+in vec3 v_normal;
 
 void main()
 {

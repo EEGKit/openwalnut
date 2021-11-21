@@ -48,7 +48,7 @@ uniform int sagittalBottom;
 
 uniform float earlyRayTerminationAlpha;
 
-varying vec3 normal;
+in vec3 normal;
 
 void doMIP( vec3 initialPosition, int direction, float maxSize )
 {
@@ -56,16 +56,16 @@ void doMIP( vec3 initialPosition, int direction, float maxSize )
     for( float n = 0.0; n < 1.0; n += 1.0/maxSize )
     {
         initialPosition[direction] = n;
-        if( texture3D( u_colormap0Sampler, initialPosition ).r > maxColor )
-            maxColor = texture3D( u_colormap0Sampler, initialPosition ).r;
+        if( texture( u_colormap0Sampler, initialPosition ).r > maxColor )
+            maxColor = texture( u_colormap0Sampler, initialPosition ).r;
     }
     gl_FragColor = vec4( maxColor, maxColor, maxColor, 1.0 );
 }
 
 void doCompositingF2B( vec3 initialPosition, int direction, float maxSize )
 {
-    vec3 finalColor = texture1D( u_transferFunctionSampler, texture3D( u_colormap0Sampler, initialPosition ).r ).rgb;
-    float finalAlpha = texture1D( u_transferFunctionSampler, texture3D( u_colormap0Sampler, initialPosition ).r ).a;
+    vec3 finalColor = texture( u_transferFunctionSampler, texture( u_colormap0Sampler, initialPosition ).r ).rgb;
+    float finalAlpha = texture( u_transferFunctionSampler, texture( u_colormap0Sampler, initialPosition ).r ).a;
 
     bool front = initialPosition[direction] == 0.0;
     float n;
@@ -82,7 +82,7 @@ void doCompositingF2B( vec3 initialPosition, int direction, float maxSize )
     while( run )
     {
         initialPosition[direction] = n;
-        vec4 nextPlane = texture1D( u_transferFunctionSampler, texture3D( u_colormap0Sampler, initialPosition ).r );
+        vec4 nextPlane = texture( u_transferFunctionSampler, texture( u_colormap0Sampler, initialPosition ).r );
         nextPlane = vec4( nextPlane.rgb*nextPlane.a, nextPlane.a );
 
         // C_out = ( 1 - a_in )*C + C_in
@@ -135,12 +135,12 @@ void doCompositingB2F( vec3 initialPosition, int direction, float maxSize )
         n = 1.0/maxSize;
     }
 
-    finalColor = texture1D( u_transferFunctionSampler, texture3D( u_colormap0Sampler, initialPosition ).r ).rgb;
+    finalColor = texture( u_transferFunctionSampler, texture( u_colormap0Sampler, initialPosition ).r ).rgb;
 
     while( run )
     {
         initialPosition[direction] = n;
-        vec4 nextPlane = texture1D( u_transferFunctionSampler, texture3D( u_colormap0Sampler, initialPosition ).r );
+        vec4 nextPlane = texture( u_transferFunctionSampler, texture( u_colormap0Sampler, initialPosition ).r );
 
         // C_out = ( 1 - a )*C_in + C*a; with C_in = C_out in the next step
         finalColor = nextPlane.rgb * nextPlane.a + finalColor * ( 1 - nextPlane.a );

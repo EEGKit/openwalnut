@@ -24,13 +24,12 @@
 
 #version 150 core
 
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
 #include "WGETransformationTools.glsl"
 
-uniform mat3 osg_NormalMatrix;
 
-in vec4 osg_Vertex;
-in vec3 osg_Normal;
-in vec4 osg_Color;
 
 // The surface normal
 out vec3 v_normal;

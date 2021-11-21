@@ -108,9 +108,7 @@ def processShader( file, folder ):
     if res != "":
         res = res.split("\n", 1)[1].strip()
         print( f"{bcolors.FAIL}{res}" )
-    if result.returncode != 0:
-        exit()
-    else:
+    if result.returncode == 0:
         print( f"{bcolors.OKGREEN}Ok." )
     print(" ")
 

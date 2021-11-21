@@ -82,7 +82,7 @@ WGEViewer::WGEViewer( std::string name, osg::ref_ptr<osg::Referenced> wdata, int
         m_View->getCamera()->getGraphicsContext()->getState()->setUseModelViewAndProjectionUniforms( true );
         m_View->getCamera()->getGraphicsContext()->getState()->setUseVertexAttributeAliasing( true );
 
-        m_View->getCamera()->getOrCreateStateSet()->addUniform( new osg::Uniform( "ow_lightsource", osg::Vec4( 0.0, 0.0, 0.0, 1.0 ) ) );
+        m_View->getCamera()->getOrCreateStateSet()->addUniform( new osg::Uniform( "ow_lightsource", osg::Vec4( 0.0, 0.0, 1.0, 1.0 ) ) );
 
         m_mouseLocationHandler = new WMouseLocationHandler( name );
         m_View->addEventHandler( m_mouseLocationHandler );

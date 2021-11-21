@@ -27,6 +27,8 @@
 
 #version 150 core
 
+#include "WGEShader-uniforms.glsl"
+
 // All the uniforms needed. These uniforms get set by the WGEColormapping class for your Node.
 
 

@@ -24,6 +24,10 @@
 
 #version 150 core
 
+#include "WGEShader-uniforms.glsl"
+
+in vec4 v_texCoord;
+
 /**
  * The texture Unit for the colors
  */
@@ -35,8 +39,8 @@ uniform sampler2D u_texture0Sampler;
 void main()
 {
     // Get input
-    vec2 texCoord = gl_TexCoord[0].st;
-    vec4 c = texture2D( u_texture0Sampler, gl_TexCoord[0].st );
+    vec2 texCoord = v_texCoord.st;
+    vec4 c = texture( u_texture0Sampler, v_texCoord.st );
 
     // Reduce colors and output again.
     float samples = 3;

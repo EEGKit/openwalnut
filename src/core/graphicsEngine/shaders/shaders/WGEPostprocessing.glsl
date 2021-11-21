@@ -27,6 +27,8 @@
 
 #version 150 core
 
+#include "WGEShader-uniforms.glsl"
+
 // This defines some stuff needed to enable your shader to allow the result to be post-processed.
 // You'll need to do the following:
 //  * Set a fragment-depth! If you render simple geometry, this is done by your GPU automatically. If you do ray-tracing or similar, where the

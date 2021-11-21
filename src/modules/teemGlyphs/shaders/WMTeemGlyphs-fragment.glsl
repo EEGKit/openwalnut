@@ -25,10 +25,12 @@
 #include "WGEShadingTools.glsl"
 
 // the Surface normal at this point
-varying vec3 v_normal;
+in vec3 v_normal;
+
+in vec4 v_color;
 
 void main()
 {
     float light = blinnPhongIlluminationIntensity( normalize( v_normal ) );
-    gl_FragColor = vec4( osg_Color.xyz * light, osg_Color.a );
+    gl_FragColor = vec4( v_color.xyz * light, v_color.a );
 }

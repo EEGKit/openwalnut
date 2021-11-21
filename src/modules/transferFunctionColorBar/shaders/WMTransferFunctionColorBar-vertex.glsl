@@ -24,6 +24,9 @@
 
 #version 150 core
 
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
 /////////////////////////////////////////////////////////////////////////////
 // Varyings
 /////////////////////////////////////////////////////////////////////////////
@@ -31,7 +34,7 @@
 /**
  * The value along the bar.
  */
-varying float v_value;
+out float v_value;
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
@@ -58,6 +61,6 @@ void main()
 
     // Simply project the vertex
     gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
-    gl_FrontColor = vec4( 1., 1., 1., 1. ); // osg_Color;
+    // gl_FrontColor = vec4( 1., 1., 1., 1. ); // osg_Color;
 }
 

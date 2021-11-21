@@ -24,16 +24,14 @@
 
 #version 150 core
 
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
 #include "WGEColormapping-vertex.glsl"
 
 #include "WGETransformationTools.glsl"
 
-uniform mat3 osg_NormalMatrix;
-uniform mat4 osg_TextureMatrix0;
 
-in vec3 osg_Normal;
-
-in vec4 ow_lightsource;
 out vec4 ow_texCoord;
 
 /**
@@ -134,7 +132,7 @@ void main()
     // for easy access to texture coordinates
     // NOTE: The vertex is specified in ow-scene-space. The texture matrix was set by WGEDataTexture for the dataset and transforms the vertex in
     // ow-scene-space to the textures space.
-    ow_texCoord = osg_TextureMatrix0 * vertex;
+    ow_texCoord = ow_TextureMatrix0 * vertex;
 
     // some light precalculations
     v_normal = osg_NormalMatrix * osg_Normal;

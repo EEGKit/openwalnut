@@ -24,19 +24,13 @@
 
 #version 150 core
 
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
 #include "WGEColormapping-vertex.glsl"
 
 #include "WGETransformationTools.glsl"
 
-uniform mat3 osg_NormalMatrix;
-
-in vec3 osg_Normal;
-
-uniform mat4 ow_TextureMatrix0;
-uniform mat4 ow_TextureMatrix1;
-uniform mat4 ow_TextureMatrix2;
-
-in vec4 ow_lightsource;
 
 out vec4 ow_texCoord0;
 out vec4 ow_texCoord1;

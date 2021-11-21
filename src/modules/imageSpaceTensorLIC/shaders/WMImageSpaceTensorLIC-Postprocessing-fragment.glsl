@@ -24,11 +24,12 @@
 
 #version 150 core
 
+#include "WGEShader-uniforms.glsl"
+
 #include "WGEUtils.glsl"
 #include "WGEShadingTools.glsl"
 #include "WGETextureTools.glsl"
 
-uniform mat3 osg_NormalMatrix;
 
 in vec4 ow_texCoord;
 
@@ -113,17 +114,17 @@ in vec3 v_normalizedVertex;
 void main()
 {
     vec2 texCoord = ow_texCoord.st;
-    float edge  = texture2D( u_texture1Sampler, texCoord ).r * ( u_useEdges ? 1.0 : 0.0 );
-    float noise  = texture2D( u_texture1Sampler, texCoord ).b;
-    float light  = texture2D( u_texture3Sampler, texCoord ).r * ( u_useLight ? 1.0 : 0.0 );
-    float depth  = texture2D( u_texture3Sampler, texCoord ).b;
-    float occupied  = texture2D( u_texture3Sampler, texCoord ).a;
-    float advected1  = texture2D( u_texture0Sampler, texCoord ).r;
-    float advected2  = texture2D( u_texture0Sampler, texCoord ).g;
-    vec3 cmap = texture2D( u_texture2Sampler, texCoord ).rgb;
-    float evDiff  = texture2D( u_texture4Sampler, texCoord ).r;
-    float fa  = texture2D( u_texture4Sampler, texCoord ).g;
-    vec3 mesh = texture2D( u_texture5Sampler, texCoord ).rgb;
+    float edge  = texture( u_texture1Sampler, texCoord ).r * ( u_useEdges ? 1.0 : 0.0 );
+    float noise  = texture( u_texture1Sampler, texCoord ).b;
+    float light  = texture( u_texture3Sampler, texCoord ).r * ( u_useLight ? 1.0 : 0.0 );
+    float depth  = texture( u_texture3Sampler, texCoord ).b;
+    float occupied  = texture( u_texture3Sampler, texCoord ).a;
+    float advected1  = texture( u_texture0Sampler, texCoord ).r;
+    float advected2  = texture( u_texture0Sampler, texCoord ).g;
+    vec3 cmap = texture( u_texture2Sampler, texCoord ).rgb;
+    float evDiff  = texture( u_texture4Sampler, texCoord ).r;
+    float fa  = texture( u_texture4Sampler, texCoord ).g;
+    vec3 mesh = texture( u_texture5Sampler, texCoord ).rgb;
 
 
     vec2 grad = getGradient( u_texture5Sampler, v_normalizedVertex.xy, 1.0 / u_texture5SizeX * 2 );

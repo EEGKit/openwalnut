@@ -27,6 +27,9 @@
 
 #version 150 core
 
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
 #include "WGEPostprocessorUtils-vertex.glsl"
 
 #endif // WGEPOSTPROCESSOR_VERTEX_GLSL

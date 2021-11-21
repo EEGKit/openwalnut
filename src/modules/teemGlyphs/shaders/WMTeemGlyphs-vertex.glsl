@@ -24,13 +24,19 @@
 
 #version 150 core
 
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
 // the Surface normal at this point
-varying vec3 v_normal;
+out vec3 v_normal;
+
+out vec4 v_color;
 
 void main()
 {
     v_normal = osg_NormalMatrix * osg_Normal;
 
-    gl_FrontColor = osg_Color;
+    // gl_FrontColor = osg_Color;
+    v_color = osg_Color;
     gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }

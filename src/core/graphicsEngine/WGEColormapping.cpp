@@ -52,7 +52,7 @@ void setDefines( osg::ref_ptr< WGEShader > shader, size_t start = 0 )
         if( unit < wge::getMaxTexUnits() - start )
         {
             shader->setDefine( "Colormap" + string_utils::toString( unit ) + "Enabled", true );
-            shader->setDefine( "Colormap" + string_utils::toString( unit ) + "Unit", start + unit ); // TODO(glsl)
+            shader->setDefine( "Colormap" + string_utils::toString( unit ) + "Unit", "ow_TextureMatrix" + string_utils::toString( start + unit ) );
         }
     }
 }

@@ -24,6 +24,9 @@
 
 #version 150 core
 
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
 /**
  * Main. Shrink box to zero size.
  */

@@ -22,23 +22,25 @@
 //
 //---------------------------------------------------------------------------
 
-/////////////////////////////////////////////////////////////////////////////
-// Varyings
-// Used in vertex and fragment shader
-/////////////////////////////////////////////////////////////////////////////
+#ifndef WGESHADERUNIFORMS_GLSL
+#define WGESHADERUNIFORMS_GLSL
 
-// The ray's starting point in texture space
-varying vec3 v_rayStart;
+// defines global attributes set by openwalnut and openscenegraph
 
-// The ray direction in texture space
-varying vec3 v_ray;
+uniform mat4 osg_ModelViewMatrix;
+uniform mat4 osg_ProjectionMatrix;
+uniform mat4 osg_ModelViewProjectionMatrix;
+uniform mat3 osg_NormalMatrix;
 
-// the Surface normal at this point
-varying vec3 v_normal;
+uniform vec4 ow_lightsource;
 
-// The isovalue scaled using texture scaling information to [0,1]
-varying float v_isovalue;
+uniform mat4 ow_TextureMatrix0;
+uniform mat4 ow_TextureMatrix1;
+uniform mat4 ow_TextureMatrix2;
+uniform mat4 ow_TextureMatrix3;
+uniform mat4 ow_TextureMatrix4;
+uniform mat4 ow_TextureMatrix5;
+uniform mat4 ow_TextureMatrix6;
+uniform mat4 ow_TextureMatrix7;
 
-// The scaling component of the modelview matrix.
-varying float v_worldScale;
-
+#endif  // WGESHADERUNIFORMS_GLSL

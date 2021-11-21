@@ -24,10 +24,10 @@
 
 #version 150 core
 
-uniform mat4 osg_ModelViewProjectionMatrix;
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
 
-in vec4 osg_Vertex;
-in vec4 osg_MultiTexCoord0;
+
 
 /////////////////////////////////////////////////////////////////////////////
 // Varyings

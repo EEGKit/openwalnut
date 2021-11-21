@@ -27,8 +27,7 @@
 
 #version 150 core
 
-uniform mat4 osg_ModelViewProjectionMatrix;
-uniform mat4 osg_ModelViewMatrix;
+#include "WGEShader-uniforms.glsl"
 
 /**
  * Projects a given point to screen-space, where (0,0) is the lower left corner and (1,1) the upper right. The Depth

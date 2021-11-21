@@ -24,6 +24,8 @@
 
 #version 150 core
 
+#include "WGEShader-uniforms.glsl"
+
 #include "WGEColormapping-fragment.glsl"
 
 #include "WGEShadingTools.glsl"
@@ -32,11 +34,13 @@
 uniform int u_opacity;
 
 // The surface normal
-varying vec3 v_normal;
+in vec3 v_normal;
+
+in vec4 v_color;
 
 void main()
 {
-    vec4 col = osg_Color;
+    vec4 col = v_color;
 
 #ifdef COLORMAPPING_ENABLED
     col = colormapping();

@@ -24,16 +24,14 @@
 
 #version 150 core
 
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
 #include "WGEColormapping-vertex.glsl"
 
 #include "WGETransformationTools.glsl"
 
-uniform mat4 osg_ProjectionMatrix;
 
-in vec3 osg_Normal;
-in vec4 osg_Color;
-in vec4 osg_SecondaryColor;
-in vec4 osg_MultiTexCoord0;
 
 out vec4 v_color;
 
@@ -121,7 +119,7 @@ uniform float u_tubeSize;
  * This vertex attribute is the bitmask denoting whether to show the fiber or not
  */
 #ifdef BITFIELD_ENABLED
-    attribute float a_bitfield;
+    in float a_bitfield;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////

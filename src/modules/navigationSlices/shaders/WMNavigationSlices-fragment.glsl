@@ -24,6 +24,8 @@
 
 #version 150 core
 
+#include "WGEShader-uniforms.glsl"
+
 #include "WGEColormapping-fragment.glsl"
 
 // this color is used if currently picking the slice

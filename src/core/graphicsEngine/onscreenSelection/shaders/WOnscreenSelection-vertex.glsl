@@ -24,7 +24,9 @@
 
 #version 150 core
 
-in vec4 osg_Vertex;
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
 
 void main()
 {

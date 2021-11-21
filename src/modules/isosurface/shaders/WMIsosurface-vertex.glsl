@@ -24,14 +24,19 @@
 
 #version 150 core
 
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
 #include "WGEColormapping-vertex.glsl"
 #include "WGETransformationTools.glsl"
 
 // The surface normal
-varying vec3 v_normal;
+out vec3 v_normal;
 
 // modelview matrix' scaling factor
-varying float v_worldScale;
+out float v_worldScale;
+
+out vec4 v_color;
 
 void main()
 {
@@ -44,6 +49,7 @@ void main()
     // Calc the scaling factor in the MV matrix
     v_worldScale = getModelViewScale();
 
-    gl_FrontColor = osg_Color;
+    // gl_FrontColor = osg_Color;
+    v_color = osg_Color;
     gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }

@@ -24,9 +24,11 @@
 
 #version 150 core
 
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
 #include "WGETransformationTools.glsl"
 
-in vec4 osg_Vertex;
 
 /////////////////////////////////////////////////////////////////////////////
 // Varyings

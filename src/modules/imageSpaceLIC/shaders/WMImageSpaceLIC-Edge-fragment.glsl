@@ -24,6 +24,8 @@
 
 #version 150 core
 
+#include "WGEShader-uniforms.glsl"
+
 in vec4 ow_texCoord;
 
 /**
@@ -72,22 +74,22 @@ void main()
     float offsetH = 2.0 / u_texture0SizeY;
 
     vec2 texCoord = ow_texCoord.st;
-    vec4 c  = texture2D( u_texture0Sampler, texCoord );
-    vec4 bl = texture2D( u_texture0Sampler, texCoord + vec2( -offsetW, -offsetH ) );
-    vec4 l  = texture2D( u_texture0Sampler, texCoord + vec2( -offsetW,     0.0  ) );
-    vec4 tl = texture2D( u_texture0Sampler, texCoord + vec2( -offsetW,  offsetH ) );
-    vec4 t  = texture2D( u_texture0Sampler, texCoord + vec2(     0.0,   offsetH ) );
-    vec4 tr = texture2D( u_texture0Sampler, texCoord + vec2(  offsetW,  offsetH ) );
-    vec4 r  = texture2D( u_texture0Sampler, texCoord + vec2(  offsetW,     0.0  ) );
-    vec4 br = texture2D( u_texture0Sampler, texCoord + vec2(  offsetW,  offsetH ) );
-    vec4 b  = texture2D( u_texture0Sampler, texCoord + vec2(     0.0,  -offsetH ) );
+    vec4 c  = texture( u_texture0Sampler, texCoord );
+    vec4 bl = texture( u_texture0Sampler, texCoord + vec2( -offsetW, -offsetH ) );
+    vec4 l  = texture( u_texture0Sampler, texCoord + vec2( -offsetW,     0.0  ) );
+    vec4 tl = texture( u_texture0Sampler, texCoord + vec2( -offsetW,  offsetH ) );
+    vec4 t  = texture( u_texture0Sampler, texCoord + vec2(     0.0,   offsetH ) );
+    vec4 tr = texture( u_texture0Sampler, texCoord + vec2(  offsetW,  offsetH ) );
+    vec4 r  = texture( u_texture0Sampler, texCoord + vec2(  offsetW,     0.0  ) );
+    vec4 br = texture( u_texture0Sampler, texCoord + vec2(  offsetW,  offsetH ) );
+    vec4 b  = texture( u_texture0Sampler, texCoord + vec2(     0.0,  -offsetH ) );
 
 #ifdef NOISE3D_ENABLED
-    float noise = texture2D( u_texture2Sampler, texCoord ).a;
+    float noise = texture( u_texture2Sampler, texCoord ).a;
 #else
-    float noise = texture2D( u_texture1Sampler, texCoord ).r;
+    float noise = texture( u_texture1Sampler, texCoord ).r;
 #endif
-    float light = texture2D( u_texture2Sampler, texCoord ).b;
+    float light = texture( u_texture2Sampler, texCoord ).b;
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     // LAPLACE

@@ -25,9 +25,9 @@
 #ifndef WGESHADINGTOOLS_GLSL
 #define WGESHADINGTOOLS_GLSL
 
-uniform vec4 ow_lightsource;
-
 #version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 /**
  * A struct containing the needed light and material parameters commonly used in most shaders.
@@ -353,20 +353,20 @@ float kruegerNonLinearIllumination( in vec3 normal, in float alpha )
 /**
  * Calculates the gradient inside a luminance 3D texture at the specified position.
  *
- * \param sampler the texture sampler to use
+ * \param sampl the texture sampl to use
  * \param pos where in the texture
  * \param stepsize the offset used in the kernel. Should be related to the nb. of voxels.
  *
  * \return the gradient
  */
-vec3 getGradient( in sampler3D sampler, in vec3 pos, in float stepsize )
+vec3 getGradient( in sampler3D sampl, in vec3 pos, in float stepsize )
 {
-    float valueXP = texture3D( sampler, pos + vec3( stepsize, 0.0, 0.0 ) ).r;
-    float valueXM = texture3D( sampler, pos - vec3( stepsize, 0.0, 0.0 ) ).r;
-    float valueYP = texture3D( sampler, pos + vec3( 0.0, stepsize, 0.0 ) ).r;
-    float valueYM = texture3D( sampler, pos - vec3( 0.0, stepsize, 0.0 ) ).r;
-    float valueZP = texture3D( sampler, pos + vec3( 0.0, 0.0, stepsize ) ).r;
-    float valueZM = texture3D( sampler, pos - vec3( 0.0, 0.0, stepsize ) ).r;
+    float valueXP = texture( sampl, pos + vec3( stepsize, 0.0, 0.0 ) ).r;
+    float valueXM = texture( sampl, pos - vec3( stepsize, 0.0, 0.0 ) ).r;
+    float valueYP = texture( sampl, pos + vec3( 0.0, stepsize, 0.0 ) ).r;
+    float valueYM = texture( sampl, pos - vec3( 0.0, stepsize, 0.0 ) ).r;
+    float valueZP = texture( sampl, pos + vec3( 0.0, 0.0, stepsize ) ).r;
+    float valueZM = texture( sampl, pos - vec3( 0.0, 0.0, stepsize ) ).r;
 
     return vec3( valueXP - valueXM, valueYP - valueYM, valueZP - valueZM );
 }
@@ -374,32 +374,32 @@ vec3 getGradient( in sampler3D sampler, in vec3 pos, in float stepsize )
 /**
  * Calculates the gradient inside a luminance 3D texture at the specified position.
  *
- * \param sampler the texture sampler to use
+ * \param sampl the texture sampl to use
  * \param pos where in the texture
  *
  * \return the gradient
  */
-vec3 getGradient( in sampler3D sampler, in vec3 pos )
+vec3 getGradient( in sampler3D sampl, in vec3 pos )
 {
     // unfortunately the ATI driver does not allow default values for function arguments
-    return getGradient( sampler, pos, 0.005 );
+    return getGradient( sampl, pos, 0.005 );
 }
 
 /**
  * Calculates the gradient inside a luminance 2D texture at the specified position.
  *
- * \param sampler the texture sampler to use
+ * \param sampl the texture sampl to use
  * \param pos where in the texture
  * \param stepsize the offset used in the kernel. Should be related to the nb. of voxels.
  *
  * \return the gradient
  */
-vec2 getGradient( in sampler2D sampler, in vec2 pos, in float stepsize )
+vec2 getGradient( in sampler2D sampl, in vec2 pos, in float stepsize )
 {
-    float valueXP = texture2D( sampler, pos + vec2( stepsize, 0.0 ) ).r;
-    float valueXM = texture2D( sampler, pos - vec2( stepsize, 0.0 ) ).r;
-    float valueYP = texture2D( sampler, pos + vec2( 0.0, stepsize ) ).r;
-    float valueYM = texture2D( sampler, pos - vec2( 0.0, stepsize ) ).r;
+    float valueXP = texture( sampl, pos + vec2( stepsize, 0.0 ) ).r;
+    float valueXM = texture( sampl, pos - vec2( stepsize, 0.0 ) ).r;
+    float valueYP = texture( sampl, pos + vec2( 0.0, stepsize ) ).r;
+    float valueYM = texture( sampl, pos - vec2( 0.0, stepsize ) ).r;
 
     return vec2( valueXP - valueXM, valueYP - valueYM );
 }
@@ -407,31 +407,31 @@ vec2 getGradient( in sampler2D sampler, in vec2 pos, in float stepsize )
 /**
  * Calculates the gradient inside a luminance 2D texture at the specified position.
  *
- * \param sampler the texture sampler to use
+ * \param sampl the texture sampl to use
  * \param pos where in the texture
  *
  * \return the gradient
  */
-vec2 getGradient( in sampler2D sampler, in vec2 pos )
+vec2 getGradient( in sampler2D sampl, in vec2 pos )
 {
     // unfortunately the ATI driver does not allow default values for function arguments
-    return getGradient( sampler, pos, 0.005 );
+    return getGradient( sampl, pos, 0.005 );
 }
 
 /**
  * Calculates the gradient in a luminance 3D texture at the specified position. Unlike getGradient, this switches the orientation of the gradient
  * according to the viewing direction. This ensures, that the gradient always points towards the camera and therefore is useful as a normal.
  *
- * \param sampler the texture sampler to use
+ * \param sampl the texture sampl to use
  * \param pos where in the texture
  * \param viewDir the direction from the camera to pos
  * \param stepsize the offset used in the kernel. Should be related to the nb. of voxels.
  *
  * \return the gradient
  */
-vec3 getGradientViewAligned( in sampler3D sampler, in vec3 pos, in vec3 viewDir, in float stepsize )
+vec3 getGradientViewAligned( in sampler3D sampl, in vec3 pos, in vec3 viewDir, in float stepsize )
 {
-    vec3 grad = getGradient( sampler, pos, stepsize );
+    vec3 grad = getGradient( sampl, pos, stepsize );
     return  sign( dot( grad, -viewDir ) ) * grad;
 }
 
@@ -439,16 +439,16 @@ vec3 getGradientViewAligned( in sampler3D sampler, in vec3 pos, in vec3 viewDir,
  * Calculates the gradient in a luminance 3D texture at the specified position. Unlike getGradient, this switches the orientation of the gradient
  * according to the viewing direction. This ensures, that the gradient always points towards the camera and therefore is useful as a normal.
  *
- * \param sampler the texture sampler to use
+ * \param sampl the texture sampl to use
  * \param pos where in the texture
  * \param viewDir the direction from the camera to pos
  *
  * \return the gradient
  */
-vec3 getGradientViewAligned( in sampler3D sampler, in vec3 pos, in vec3 viewDir )
+vec3 getGradientViewAligned( in sampler3D sampl, in vec3 pos, in vec3 viewDir )
 {
     // unfortunately the ATI driver does not allow default values for function arguments
-    return getGradientViewAligned( sampler, pos, viewDir, 0.005 );
+    return getGradientViewAligned( sampl, pos, viewDir, 0.005 );
 }
 
 /**

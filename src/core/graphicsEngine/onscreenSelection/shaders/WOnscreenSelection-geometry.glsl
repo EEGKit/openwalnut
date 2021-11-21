@@ -24,6 +24,8 @@
 
 #version 150 core
 
+#include "WGEShader-uniforms.glsl"
+
 layout( lines_adjacency ) in;
 layout( triangle_strip, max_vertices = 4 ) out;
 

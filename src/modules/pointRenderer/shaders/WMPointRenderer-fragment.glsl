@@ -24,6 +24,8 @@
 
 #version 150 core
 
+#include "WGEShader-uniforms.glsl"
+
 #include "WGEShadingTools.glsl"
 #include "WGETextureTools.glsl"
 #include "WGEPostprocessing.glsl"
@@ -43,57 +45,57 @@
 /**
  * The normal in world-space
  */
-varying vec3 v_normalWorld;
+in vec3 v_normalWorld;
 
 /**
  * The vertex coordinate in world-space
  */
-varying vec3 v_vertex;
+in vec3 v_vertex;
 
 /**
  * The texture coordinates in [-1,1]
  */
-varying vec3 v_texCoord;
+in vec3 v_texCoord;
 
 /**
  * The scaling component of the modelview matrix.
  */
-varying float v_worldScale;
+in float v_worldScale;
 
 /**
  * The radius of a sphere in world-space
  */
-varying float v_worldSpaceRadius;
+in float v_worldSpaceRadius;
 
 /**
  * The center point of the sphere
  */
-varying vec3 v_centerPoint;
+in vec3 v_centerPoint;
 
 /**
  * Vertex in world space.
  */
-varying vec4 v_worldVertex;
+in vec4 v_worldVertex;
 
 /**
  * Depth of the center point
  */
-varying float v_centerVertexDepth;
+in float v_centerVertexDepth;
 
 /**
  * Deptj of the neareast point on the sphere towards the camera
  */
-varying float v_nearestVertexDepth;
+in float v_nearestVertexDepth;
 
 /**
  * Difference between nearest depth and center point depth
  */
-varying float v_vertexDepthDiff;
+in float v_vertexDepthDiff;
 
 /**
  * The color passed over from the geometry shader
  */
-varying vec4 v_colorOut;
+in vec4 v_colorOut;
 
 /////////////////////////////////////////////////////////////////////////////
 // Variables

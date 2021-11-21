@@ -24,11 +24,12 @@
 
 #version 150 core
 
+#include "WGEShader-uniforms.glsl"
+
 #include "WGEShadingTools.glsl"
 #include "WGETextureTools.glsl"
 #include "WGEPostprocessing.glsl"
 
-uniform mat4 osg_ProjectionMatrix;
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms

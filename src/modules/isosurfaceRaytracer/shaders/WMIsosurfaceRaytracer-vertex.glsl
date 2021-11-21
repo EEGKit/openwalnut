@@ -24,6 +24,9 @@
 
 #version 150 core
 
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
 #include "WGEColormapping-vertex.glsl"
 
 #include "WGETransformationTools.glsl"
@@ -32,7 +35,23 @@
 // Varyings
 /////////////////////////////////////////////////////////////////////////////
 
-#include "WMIsosurfaceRaytracer-varyings.glsl"
+// The ray's starting point in texture space
+out vec3 v_rayStart;
+
+// The ray direction in texture space
+out vec3 v_ray;
+
+// the Surface normal at this point
+out vec3 v_normal;
+
+// The isovalue scaled using texture scaling information to [0,1]
+out float v_isovalue;
+
+// The scaling component of the modelview matrix.
+out float v_worldScale;
+
+out vec4 v_color;
+
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
@@ -70,11 +89,11 @@ void main()
     v_isovalue = ( u_isovalue - u_texture0Min ) / u_texture0Scale;
 
     // for easy access to texture coordinates
-    gl_TexCoord[0] = osg_MultiTexCoord0;
+    // gl_TexCoord[0] = osg_MultiTexCoord0;
     v_normal = osg_Normal;
 
     // in texture space, the starting point simply is the current surface point in texture space
-    v_rayStart = gl_TexCoord[0].xyz; // this equals osg_Vertex!
+    v_rayStart = osg_MultiTexCoord0.xyz; // this equals osg_Vertex!
 
     // transform the ray direction to texture space, which equals object space
     // Therefore use two points, as we transform a vector
@@ -88,6 +107,6 @@ void main()
 
     // Simply project the vertex
     gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
-    gl_FrontColor = osg_Color;
+    v_color = osg_Color;
 }
 

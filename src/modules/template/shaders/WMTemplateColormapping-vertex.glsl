@@ -24,11 +24,14 @@
 
 #version 150 core
 
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
 // Include the colormapper code:
 #include "WGEColormapping-vertex.glsl"
 
 // The surface normal
-varying vec3 v_normal;
+out vec3 v_normal;
 
 void main()
 {

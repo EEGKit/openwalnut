@@ -24,10 +24,9 @@
 
 #version 150 core
 
-in vec4 osg_Vertex;
-in vec3 osg_Normal;
-in vec4 osg_Color;
-in vec4 osg_SecondaryColor;
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
@@ -41,7 +40,7 @@ in vec4 osg_SecondaryColor;
  * This vertex attribute is the bitmask denoting whether to show the fiber or not
  */
 #ifdef BITFIELD_ENABLED
-    attribute float a_bitfield;
+    in float a_bitfield;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////

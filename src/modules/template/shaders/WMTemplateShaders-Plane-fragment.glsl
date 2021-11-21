@@ -24,9 +24,13 @@
 
 #version 150 core
 
+#include "WGEShader-uniforms.glsl"
+
 // For lighting functionality.
 #include "WGEShadingTools.glsl"
 #include "WGETextureTools.glsl"
+
+in vec4 v_color;
 
 // This is updated by a callback:
 uniform int u_animation;
@@ -38,14 +42,14 @@ uniform int u_textureSizeX;
 uniform int u_textureSizeY;
 
 // The surface normal
-varying vec3 v_normal;
+in vec3 v_normal;
 
 // Normalized coordinate in the bounding volume of the sphere
-varying vec3 v_normalizedVertex;
+in vec3 v_normalizedVertex;
 
 void main()
 {
-    vec4 col = texture2D( u_textureSampler, v_normalizedVertex.xy );
+    vec4 col = texture( u_textureSampler, v_normalizedVertex.xy );
 
     // Now handle the different modes whe defined at C++ side
     float light = 1.0;
@@ -74,6 +78,6 @@ void main()
 #endif
 
     // finally set the color and depth
-    gl_FragColor = vec4( mix( osg_Color.rgb, col.rgb, col.a ), finalAlpha );
+    gl_FragColor = vec4( mix( v_color.rgb, col.rgb, col.a ), finalAlpha );
 }
 

@@ -24,6 +24,8 @@
 
 #version 150 core
 
+#include "WGEShader-uniforms.glsl"
+
 #include "WGEColormapping-fragment.glsl"
 
 #include "WGEShadingTools.glsl"
@@ -307,15 +309,15 @@ void main()
 #endif
 
     // if we have a 3D noise texture, use it.
-    float noise = texture2D( u_texture3Sampler, noiseTexCoords.xy ).r;
+    float noise = texture( u_texture3Sampler, noiseTexCoords.xy ).r;
 
     // get the current vector at this position
-    vec3 evec1 = normalize( texture3DUnscaled( u_texture0Sampler, ow_texCoord0.xyz, u_texture0Min, u_texture0Scale ).rgb );
-    vec3 evec2 = normalize( texture3DUnscaled( u_texture1Sampler, ow_texCoord1.xyz, u_texture1Min, u_texture1Scale ).rgb );
+    vec3 evec1 = normalize( textureUnscaled( u_texture0Sampler, ow_texCoord0.xyz, u_texture0Min, u_texture0Scale ).rgb );
+    vec3 evec2 = normalize( textureUnscaled( u_texture1Sampler, ow_texCoord1.xyz, u_texture1Min, u_texture1Scale ).rgb );
     evec1 *= sign( evec1.x );
     evec2 *= sign( evec2.x );
 
-    vec3 evals = 1000. * texture3DUnscaled( u_texture2Sampler, ow_texCoord2.xyz, u_texture2Min, u_texture2Scale ).rgb;
+    vec3 evals = 1000. * textureUnscaled( u_texture2Sampler, ow_texCoord2.xyz, u_texture2Min, u_texture2Scale ).rgb;
     //evec1 *= evals.r;
     //evec2 *= evals.g;
     float fa = getFA( evals );

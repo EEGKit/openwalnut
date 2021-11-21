@@ -24,11 +24,8 @@
 
 #version 150 core
 
-uniform mat4 osg_ModelViewProjectionMatrix;
-uniform mat4 osg_TextureMatrix0;
-
-in vec4 osg_Vertex;
-in vec4 osg_MultiTexCoord0;
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
 
 out vec4 ow_texCoord;
 
@@ -39,7 +36,7 @@ void main()
     // gl_BackColor =  osg_Color;
 
     // pass tex coordinates
-    ow_texCoord = osg_TextureMatrix0 * osg_MultiTexCoord0;
+    ow_texCoord = ow_TextureMatrix0 * osg_MultiTexCoord0;
 
     // transform position
     gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;

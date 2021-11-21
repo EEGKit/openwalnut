@@ -24,12 +24,16 @@
 
 #version 150 core
 
-varying vec4 verpos;
+#include "WGEShader-uniforms.glsl"
+
+in vec4 verpos;
 
 /**
  * The normal.
  */
-varying vec3 v_normal;
+in vec3 v_normal;
+
+in vec4 v_color;
 
 /**
  * The opacity specified by the user in [0,100]
@@ -53,7 +57,7 @@ uniform int u_renderingType;
 
 void main()
 {
-    vec4 col = osg_Color;
+    vec4 col = v_color;
     //col.rgb = vec3( .7);
     float widthHalf = u_parameterWidth / 2.0;
     vec2 param = col.rg;

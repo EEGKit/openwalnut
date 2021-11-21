@@ -35,6 +35,9 @@
 // of OpenWalnut all use 120.
 #version 150 core
 
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
 // You already know this from C/C++. Technically, GLSL does NOT support inclusion this way. But WGEShaders implements
 // a text-replacement based mechanism to allow this though. You are not required to add any paths here. Just ensure the
 // shaders are somewhere in THIS shader's search path.
@@ -74,10 +77,12 @@ uniform int u_noiseSizeZ;
 // VARYINGS
 
 // The surface normal
-varying vec3 v_normal;
+out vec3 v_normal;
 
 // Normalized coordinate in the bounding volume of the sphere
-varying vec3 v_normalizedVertex;
+out vec3 v_normalizedVertex;
+
+out vec4 v_color;
 
 // NOTE: We encourage you to use the "u_" prefix and "v_" prefix for your uniforms and varyings. This makes it easier to
 // distinguish them in the code.
@@ -90,7 +95,7 @@ void main()
     // Done. The remaining code is standard GLSL.
 
     // For easy access to texture coordinates
-    gl_TexCoord[0] = osg_MultiTexCoord0;
+    // gl_TexCoord[0] = osg_MultiTexCoord0;
 
     // Now, we can add a code block which is turned on by a property. We defined this at C++ side
     float dimmer = 1.0;
@@ -111,6 +116,7 @@ void main()
     v_normalizedVertex = osg_Vertex.xyz / 20.0; // trick a bit... looks cooler later
 
     // Push color and position forward through the pipeline
-    gl_FrontColor = vec4( u_spheresColor.rgb * dimmer, 1.0 );
+    // gl_FrontColor = vec4( u_spheresColor.rgb * dimmer, 1.0 );
+    v_color = vec4( u_spheresColor.rgb * dimmer, 1.0 );
     gl_Position = osg_ModelViewProjectionMatrix * vec4( osg_Vertex.xyz * u_sphereScaler, 1.0 );
 }

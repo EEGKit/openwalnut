@@ -22,19 +22,25 @@
 //
 //---------------------------------------------------------------------------
 
-/////////////////////////////////////////////////////////////////////////////
-// Varyings
-// Used in vertex and fragment shader
-/////////////////////////////////////////////////////////////////////////////
+#ifndef WGESHADERATTRIBUTES_GLSL
+#define WGESHADERATTRIBUTES_GLSL
 
-// The ray's starting point in texture space
-varying vec3 v_rayStart;
+// defines global attributes set by openwalnut and openscenegraph
 
-// The ray direction in texture space
-varying vec3 v_ray;
+in vec4 osg_Vertex;
+in vec3 osg_Normal;
+in vec4 osg_Color;
+in vec4 osg_SecondaryColor;
+in vec4 osg_FogCoord;
 
-// the Surface normal at this point
-varying vec3 v_normal;
+in vec4 osg_MultiTexCoord0;
+in vec4 osg_MultiTexCoord1;
+in vec4 osg_MultiTexCoord2;
+in vec4 osg_MultiTexCoord3;
+in vec4 osg_MultiTexCoord4;
+in vec4 osg_MultiTexCoord5;
+in vec4 osg_MultiTexCoord6;
+in vec4 osg_MultiTexCoord7;
 
-// The light source in local coordinates
-varying vec3 v_lightSource;
+
+#endif  // WGESHADERATTRIBUTES_GLSL

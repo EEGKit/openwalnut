@@ -33,9 +33,13 @@
 
 #version 150 core
 
+#include "WGEShader-uniforms.glsl"
+
 // For lighting functionality.
 #include "WGEShadingTools.glsl"
 #include "WGETextureTools.glsl"
+
+in vec4 v_color;
 
 // This is updated by a callback:
 uniform int u_animation;
@@ -48,14 +52,14 @@ uniform int u_noiseSizeY;
 uniform int u_noiseSizeZ;
 
 // The surface normal
-varying vec3 v_normal;
+in vec3 v_normal;
 
 // Normalized coordinate in the bounding volume of the sphere
-varying vec3 v_normalizedVertex;
+in vec3 v_normalizedVertex;
 
 void main()
 {
-    vec4 col = osg_Color;
+    vec4 col = v_color;
 
     // Use a utility function to get the gradient for us
     vec3 grad = getGradient( u_noiseSampler, v_normalizedVertex, 1.0 / u_noiseSizeX );

@@ -24,12 +24,15 @@
 
 #version 150 core
 
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
 #include "WGETransformationTools.glsl"
 
 // Now you are in the vertex shader of the first pass. All the shaders for each pass are nothing special. They are standard GLSL shaders.
 
 // The surface normal
-varying vec3 v_normal;
+out vec3 v_normal;
 
 void main()
 {

@@ -24,13 +24,10 @@
 
 #version 150 core
 
-uniform mat4 osg_ModelViewProjectionMatrix;
-uniform mat3 osg_NormalMatrix;
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
 
-in vec4 osg_Vertex;
-in vec3 osg_Normal;
-in vec4 osg_Color;
-in vec4 osg_MultiTexCoord0;
+
 
 /**
  * The normal.

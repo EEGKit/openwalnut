@@ -27,6 +27,8 @@
 
 #version 150 core
 
+#include "WGEShader-uniforms.glsl"
+
 // (c) 2007 by Mario Hlawitschka
 
 // tensors have to be stored in the following way:

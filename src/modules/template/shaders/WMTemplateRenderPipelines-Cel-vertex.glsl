@@ -24,16 +24,21 @@
 
 #version 150 core
 
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
+out vec4 v_texCoord;
+
 // A standard shader. Nothing interesint here. Just transport texture coordinates to the fragment shader.
 
 void main()
 {
     // pass the color to the fragment shader
-    gl_FrontColor = osg_Color;
-    gl_BackColor =  osg_Color;
+    // gl_FrontColor = osg_Color;
+    // gl_BackColor =  osg_Color;
 
     // pass tex coordinates
-    gl_TexCoord[0] = gl_TextureMatrix[0] * osg_MultiTexCoord0;
+    v_texCoord = ow_TextureMatrix0 * osg_MultiTexCoord0;
 
     // transform position
     gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;

@@ -24,6 +24,8 @@
 
 #version 150 core
 
+#include "WGEShader-uniforms.glsl"
+
 // Bottom Gradient
 uniform vec4 u_bottom1Color = vec4( 0.65 );
 uniform vec4 u_bottom2Color = vec4( 1.0 );
