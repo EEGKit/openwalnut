@@ -43,6 +43,8 @@ void WVisualizationPropertyHandler::createProperties()
     WPropertyBase::PropertyChangeNotifierType notifier = boost::bind(
         &WVisualizationPropertyHandler::propertyCallback, this, boost::placeholders::_1 );
 
+    m_enabledClusterSize = m_visualizationGroup->addProperty( "Enable cluster size", "Enables the edep to clustersize conversion", true, notifier );
+
     m_sizesFromEdep = m_visualizationGroup->addProperty( "Size by energy deposition", "Scale track and point sizes based on energy deposition.",
                                                     true, notifier );
     m_colorFromEdep = m_visualizationGroup->addProperty( "Color by energy deposition", "Colorize tracks and points based on energy deposition.",
@@ -68,6 +70,7 @@ void WVisualizationPropertyHandler::updateProperty()
     {
         m_sizesFromEdep->setHidden( false );
         m_colorFromEdep->setHidden( false );
+        m_enabledClusterSize->setHidden( false );
         toggleColorProperties();
     }
     else
@@ -76,6 +79,7 @@ void WVisualizationPropertyHandler::updateProperty()
         m_colorFromEdep->setHidden( true );
         m_gradient->setHidden( true );
         m_applyGradient->setHidden( true );
+        m_enabledClusterSize->setHidden( true );
         m_colorSelection->setHidden( false );
     }
 }
@@ -116,6 +120,11 @@ WPropBool WVisualizationPropertyHandler::getColorFromEdep()
 WPropBool WVisualizationPropertyHandler::getSizesFromEdep()
 {
     return m_sizesFromEdep;
+}
+
+WPropBool WVisualizationPropertyHandler::getEnableClusterSize()
+{
+    return m_enabledClusterSize;
 }
 
 WPropColor WVisualizationPropertyHandler::getColorSelection()

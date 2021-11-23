@@ -87,6 +87,14 @@ public:
      */
     WPropBool getSizesFromEdep();
 
+
+    /**
+     * Getter
+     * 
+     * \return WPropBool switch to enable cluster size conversion.
+     */
+    WPropBool getEnableClusterSize();
+
     /**
      * Getter
      *
@@ -143,6 +151,11 @@ private:
      * Decides whether to scale the points sizes according to their deposited energy.
      */
     WPropBool m_sizesFromEdep;
+
+    /**
+     * En-/Disables the clustersize conversion.
+     */
+    WPropBool m_enabledClusterSize;
 
     /**
      * Property that holds the current selected color when not coloring points based on their deposited energy.
