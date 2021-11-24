@@ -198,9 +198,13 @@ void WBresenham::markVoxel( const WVector3i& voxel, const int axis, const WPosit
     size_t nbXY = m_grid->getNbCoordsX() * m_grid->getNbCoordsY();
     int x = voxel[0];
     int y = voxel[1];
-    int z = voxel[2];
+    // There is one case, when z was -1, which flipped size_t to nearly MAX_SIZE
+    // Not sure how to fix this at the moment but this prevents the segfault
+    int z = ( voxel[2] < 0 ) ? 0 : voxel[2];
     size_t idx = x + y * nbX + z * nbXY;
     std::vector< double > distances;
+
+    WAssert( idx < m_values.size() , "idx is greater than the bounds of the vector" );
 
     if( m_antialiased )
     {
