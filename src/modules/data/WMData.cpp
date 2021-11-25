@@ -603,5 +603,8 @@ void WMData::load()
     // done. close file and report finish
     progress1->finish();
 
+    // remove old left over info properties
+    m_infoProperties->removeProperty( m_infoProperties->findProperty( "Data-Set Info Properties" ) );
+    // add current info properties
     m_infoProperties->addProperty( m_dataSet->getInformationProperties() );
 }
