@@ -171,7 +171,16 @@ void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArra
         m_colorBar->getProperties()->getProperty( "Max scale value" )->set( 0.0 );
         m_colorBar->getProperties()->getProperty( "Max scale value" )->set( maxClusterSize );
         m_colorBar->getProperties()->getProperty( "Min scale value" )->set( minClusterSize );
-        m_colorBar->getProperties()->getProperty( "Description" )->set( std::string( "Clustersize " ) );
+
+        if( clusterEnabled )
+        {
+            m_colorBar->getProperties()->getProperty( "Description" )->set( std::string( "Clustersize " ) );
+        }
+        else
+        {
+            std::string columnName = m_protonData->getCSVHeader()->at( 0 ).at( m_indexes->getEdep() );
+            m_colorBar->getProperties()->getProperty( "Description" )->set( columnName + " " );
+        }
 
         bool activated = m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get();
 
