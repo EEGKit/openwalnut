@@ -99,12 +99,14 @@ std::shared_ptr< WDataSetCSV > WReaderCSV::read()
 std::vector< std::string > WReaderCSV::transformLineToVector( std::string line )
 {
     std::string cell;
-    std::vector< std::string >  row;
+    std::vector< std::string > row;
 
-    std::istringstream inLine( line );
-    while( std::getline( inLine, cell, ',' ) )
+    size_t pos = 0;
+    while( ( pos = line.find( ',' ) ) != std::string::npos )
     {
+        cell = line.substr( 0, pos );
         row.push_back( cell );
+        line.erase( 0, pos + 1 );
     }
 
     return row;
