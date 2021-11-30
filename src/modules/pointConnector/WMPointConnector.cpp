@@ -100,7 +100,7 @@ void WMPointConnector::properties()
     m_enableSAPT = assistanceGroup->addProperty( "Enable SAPT ", "Enable Semi-Automatic-Particle-Tracking", true );
     m_enablePrediction = assistanceGroup->addProperty( "Enable prediction", "Enables the prediction of tracks", true, updateFunction );
     m_enableSizes = assistanceGroup->addProperty( "Enable sizes", "Enables the point size based on the cluster size", false,
-                                                   boost::bind( &WMPointConnector::updateAll, this ) );
+                                                   updateFunction );
     m_enableAdaptiveVisibility = assistanceGroup->addProperty( "Enable adaptive visibility", "Enable adaptive visibility using a cone", true,
                                                                 updateFunction );
     m_adaptiveVisibilityAngle = assistanceGroup->addProperty( "Adaptive visibility angle", "Adaptive visibility angle", 10.0, updateFunction );
@@ -304,14 +304,19 @@ void WMPointConnector::createPrediction()
 {
     m_prediction.clear();
 
-    if( m_enablePrediction != NULL && !m_enablePrediction->get() )
+    if( m_enableAdaptiveVisibility == NULL || m_enablePrediction == NULL )
+    {
+        return;
+    }
+
+    if( !m_enableAdaptiveVisibility->get() || !m_enablePrediction->get() )
     {
         return;
     }
 
     WFiberHandler::PCFiber fiber = m_fiberHandler->getFibers()->at( m_fiberHandler->getSelectedFiber() );
 
-    if( fiber.empty() )
+    if( fiber.size() < 2 )
     {
         return;
     }
