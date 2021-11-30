@@ -43,7 +43,7 @@ void WVisualizationPropertyHandler::createProperties()
     WPropertyBase::PropertyChangeNotifierType notifier = boost::bind(
         &WVisualizationPropertyHandler::propertyCallback, this, boost::placeholders::_1 );
 
-    m_enabledClusterSize = m_visualizationGroup->addProperty( "Enable cluster size", "Enables the edep to clustersize conversion", true, notifier );
+    m_enabledClusterSize = m_visualizationGroup->addProperty( "Enable cluster size", "Enables the edep to clustersize conversion", false, notifier );
 
     m_sizesFromEdep = m_visualizationGroup->addProperty( "Size by energy deposition", "Scale track and point sizes based on energy deposition.",
                                                     true, notifier );
