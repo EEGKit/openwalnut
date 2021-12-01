@@ -39,7 +39,7 @@ WReaderCSV::~WReaderCSV() throw()
 }
 
 
-static std::istream& safeGetLine( std::istream& is, std::string& t )
+static std::istream& safeGetLine( std::istream& is, std::string& t ) // NOLINT
 {
     // reads a line with a non specific line ending
     t.clear();
@@ -60,7 +60,7 @@ static std::istream& safeGetLine( std::istream& is, std::string& t )
                 }
                 return is;
             default:
-                t.push_back( (char) c );
+                t.push_back( c );
         }
     }
 
