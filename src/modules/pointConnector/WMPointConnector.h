@@ -47,6 +47,7 @@
 class WClickHandler;
 class WConnectorData;
 class WFiberHandler;
+class WKeyboardHandler;
 
 /**
  * This module connects the points in a point dataset.
@@ -340,6 +341,11 @@ private:
      * A condition notifying when something was added to the event queue.
      */
     WCondition::SPtr m_eventCondition;
+
+    /**
+     * The keyboard handler for this point connector.
+     */
+    osg::ref_ptr< WKeyboardHandler > m_keyboardHandler;
 
     /**
      * Property to enable the adjusted dijkstra.
