@@ -170,6 +170,8 @@ void WMPointConnector::moduleMain()
         }
     }
 
+    WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView()->removeEventHandler( m_keyboardHandler.get() );
+
     stop();
 }
 
@@ -217,8 +219,8 @@ void WMPointConnector::createHandler()
 {
     osg::ref_ptr< osgViewer::View > viewer = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView();
 
-    osg::ref_ptr< WKeyboardHandler > keyboardHandler = new WKeyboardHandler( this );
-    viewer->addEventHandler( keyboardHandler.get() );
+    m_keyboardHandler = new WKeyboardHandler( this );
+    viewer->addEventHandler( m_keyboardHandler.get() );
 }
 
 void WMPointConnector::handleInput()
