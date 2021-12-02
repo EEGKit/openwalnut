@@ -159,7 +159,7 @@ void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArra
 
             if( m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
             {
-                clusterSizeNormalized = static_cast< int >( 49 * clusterSizeNormalized );
+                clusterSizeNormalized = fmax( static_cast< int >( 49 * clusterSizeNormalized ), 0 );
 
                 for( int i = 0; i < 4; i++ )
                 {
