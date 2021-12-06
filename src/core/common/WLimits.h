@@ -59,7 +59,10 @@ namespace wlimits
 
     inline extern const size_t LOWEST_SIZE_T = std::numeric_limits< size_t >::lowest(); //!< Lowest/Minimum size value (equivalent to MIN_SIZE_T)
 
-    inline extern const int32_t LOWEST_INT32_T = std::numeric_limits< int32_t >::lowest(); //!< Lowest/Minimum int32_t value (equivalent to MIN_INT32_T)
+    /**
+     * Lowest/Minimum int32_t value (equivalent to MIN_INT32_T)
+     */
+    inline extern const int32_t LOWEST_INT32_T = std::numeric_limits< int32_t >::lowest();
 
     /**
      * Smallest double such: 1.0 + DBL_EPS == 1.0 is still true.

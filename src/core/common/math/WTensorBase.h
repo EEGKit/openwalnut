@@ -1180,7 +1180,6 @@ public:
      * \param data Components in same ordering as the components of the TensorBase class.
      */
     explicit WTensorFunc( const WValue< Data_T >& data );
-
 };
 
 template< template< std::size_t, std::size_t, typename > class TensorBase_T, std::size_t order, std::size_t dim, typename Data_T >
