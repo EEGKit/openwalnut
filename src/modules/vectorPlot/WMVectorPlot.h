@@ -39,6 +39,7 @@
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
+#include "core/kernel/WSelectionManager.h"
 
 /**
  * Show an glyph plot (in this case the glyphs are arrows) of a vector data set.

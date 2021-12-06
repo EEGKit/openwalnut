@@ -237,6 +237,10 @@ ENDFUNCTION( SETUP_SHADERS )
 # _CheckFiles the list of files to check
 # _Excludes a list of exclusion rules. These are regular expressions.
 FUNCTION( SETUP_STYLECHECKER _TargetName _CheckFiles _Excludes )
+    # MSVC can't call the bash script so return
+    IF( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
+        RETURN()
+    ENDIF()
 
     # to exlude some files, check each file against each exlusion rule
     FOREACH( filename ${_CheckFiles} )
@@ -702,6 +706,11 @@ FUNCTION( SETUP_MODULE _MODULE_NAME _MODULE_SOURCE_DIR _MODULE_DEPENDENCIES _MOD
     SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${MODULE_TARGET_DIR} )
     SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${MODULE_TARGET_DIR} )
     SET( MODULE_SOURCE_DIR ${_MODULE_SOURCE_DIR} )
+
+    # set specific output for the targets so multitarget architectures don't use subfolders
+    SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${MODULE_TARGET_DIR} )
+    SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${MODULE_TARGET_DIR} )
+    SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${MODULE_TARGET_DIR} )
 
     # -----------------------------------------------------------------------------------------------------------------------------------------------
     # Add sources as target

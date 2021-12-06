@@ -48,12 +48,17 @@ IF( OW_GUI_FORCE_QT4 )
     FIND_PACKAGE( Qt4 REQUIRED QtGui QtOpenGL QtWebKit )
     SET( QT_Link_Libs Qt4::QtGui Qt4::QtOpenGL Qt4::QtWebKit )
 ELSEIF( OW_GUI_FORCE_QT6 )
-    FIND_PACKAGE( Qt6 COMPONENTS Gui Widgets OpenGLWidgets REQUIRED )
-    
-    # Sadly there is no WebEngineWidget support for mingw (Chromium does not compile in mingw) and WebKit has been removed
-    # Windows can only use it with msvc (which openwalnut does not support)
-    # Maybe switch WebEngineWidget to WebView, which is not based on chromium
-    ADD_DEFINITIONS( "-DOW_QT6_NO_WEBENGINE" )
+    FIND_PACKAGE( Qt6 REQUIRED COMPONENTS Gui Widgets OpenGLWidgets OPTIONAL_COMPONENTS WebEngineWidgets )
+    SET( QT_Link_Libs )
+
+    IF( NOT Qt6WebEngineWidgets_FOUND )
+        # Sadly there is no WebEngineWidget support for mingw (Chromium does not compile in mingw) and WebKit has been removed
+        # Windows can only use it with msvc (which openwalnut does not support)
+        # Maybe switch WebEngineWidget to WebView, which is not based on chromium
+        ADD_DEFINITIONS( "-DOW_QT6_NO_WEBENGINE" )
+    ELSE()
+        LIST( APPEND QT_Link_Libs Qt6::WebEngineWidgets )
+    ENDIF()
 
     # Using '+' to concatenate keys for a key sequence is deprecated
     # For modifiers like SHIFT or CTRL it has already been removed -> use '|' now
@@ -68,7 +73,7 @@ ELSEIF( OW_GUI_FORCE_QT6 )
     # There is no signal mapping for QWidget anymore
     ADD_DEFINITIONS( "-DOW_QT6_SIGNALMAPPER" )
 
-    SET( QT_Link_Libs Qt6::Gui Qt6::Widgets Qt6::OpenGLWidgets )
+    LIST( APPEND QT_Link_Libs Qt6::Gui Qt6::Widgets Qt6::OpenGLWidgets )
 ELSE()
     IF( OW_GUI_QT5_WebKit )
         ADD_DEFINITIONS( "-DOW_FORCE_WEBKIT" )

@@ -181,7 +181,7 @@ namespace string_utils
      *  - <tt>\\t</tt> tab
      *  - <tt>' '</tt> space
      */
-    extern const std::string WHITESPACE;
+    inline extern const std::string WHITESPACE = "\r\n\t "; //!< These characters are regarded as whitespaces
 
     /**
      * Trims any occurence of each character given in parameter t from the end
@@ -192,7 +192,7 @@ namespace string_utils
      * \return A copy of the trimmed string
      */
 
-    std::string rTrim( const std::string& source, const std::string& t = WHITESPACE );
+    std::string rTrim( const std::string& source, const std::string& t = string_utils::WHITESPACE );
 
     /**
      * Trims any occurence of each character given in parameter t from the
@@ -202,8 +202,7 @@ namespace string_utils
      * \param t String representing a set containg all trimmable characters
      * \return A copy of the trimmed string
      */
-    std::string lTrim( const std::string& source, const std::string& t =
-            WHITESPACE );
+    std::string lTrim( const std::string& source, const std::string& t = string_utils::WHITESPACE );
 
     /**
      * Trims any occurence of each character given in parameter t from both
@@ -213,7 +212,7 @@ namespace string_utils
      * \param t String representing a set containg all trimmable characters
      * \return A copy of the trimmed string
      */
-    std::string trim( const std::string& source, const std::string& t = WHITESPACE );
+    std::string trim( const std::string& source, const std::string& t = string_utils::WHITESPACE );
 
     /**
      * Transforms all characters in the given string into upper case

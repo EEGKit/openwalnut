@@ -225,6 +225,11 @@ SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OW_RUNTIME_DIR} )
 SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OW_LIBRARY_DIR} )
 SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OW_ARCHIVE_DIR} )
 
+# set specific output for the targets so multitarget architectures don't use subfolders
+SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${OW_RUNTIME_DIR} )
+SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${OW_RUNTIME_DIR} )
+SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${OW_RUNTIME_DIR} )
+
 # ---------------------------------------------------------------------------------------------------------------------------------------------------
 #
 # Basic Build Setup Helpers
@@ -234,22 +239,35 @@ SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OW_ARCHIVE_DIR} )
 # This method configures the needed compiler flags and system specific options. You probably do not need to call this explciitly. It is done in
 # BUILD_SYSTEM_SETUP
 FUNCTION( BUILD_SYSTEM_COMPILER )
-    # Unfortunately libstdc++'s header files don't work with mingw in ansi mode (basically libstdc++'s fault)
-    IF( CMAKE_HOST_SYSTEM MATCHES "Windows" )
-        SET( CMAKE_CXX_FLAGS "-frtti -fopenmp -pedantic -std=c++17 -Wall -Wno-long-long -Wextra " CACHE STRING "" FORCE )
+    IF( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
+        # Use /w and not /Wall since msvc throws a lot of warnings due to the port
+        SET( CMAKE_CXX_FLAGS "/GR /openmp /std:c++17 /EHsc /w" CACHE STRING "" FORCE )
+
+        # MSVC sadly does not add the win definitions
+        # It also by default defines min and max as macros which we don't want
+        ADD_DEFINITIONS( "/DWIN32" )
+        ADD_DEFINITIONS( "/D_WIN32" )
+        ADD_DEFINITIONS( "/D__WIN32__" )
+        ADD_DEFINITIONS( "/DNOMINMAX" )
     ELSE()
         SET( CMAKE_CXX_FLAGS "-frtti -fopenmp -pedantic -std=c++17 -Wall -Wno-long-long -Wextra " CACHE STRING "" FORCE )
     ENDIF()
 
-    # Darwin's ld isn't GNU and doesn't like the following
-    IF( NOT CMAKE_SYSTEM_NAME MATCHES "Darwin" )
-        ## The following allows us to prevent cyclic dependencies even on linux
-        SET( CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined -Wl,--allow-shlib-undefined,--as-needed" CACHE STRING "" FORCE )
-        SET( CMAKE_EXE_LINKER_FLAGS "-Wl,--as-needed" CACHE STRING "" FORCE )
+    IF( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
+        SET( CMAKE_CXX_FLAGS_RELEASE "/O2" CACHE STRING "" FORCE )
+        SET( CMAKE_CXX_FLAGS_DEBUG "/Zi /D \"DEBUG\" /Od" CACHE STRING "" FORCE )
+        SET( CMAKE_CXX_FLAGS_RELWITHDEBINFO "/Zi /D \"DEBUG\" /O2" CACHE STRING "" FORCE )
+    ELSE()
+        # Darwin's ld isn't GNU and doesn't like the following
+        IF( NOT CMAKE_SYSTEM_NAME MATCHES "Darwin" )
+            ## The following allows us to prevent cyclic dependencies even on linux
+            SET( CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined -Wl,--allow-shlib-undefined,--as-needed" CACHE STRING "" FORCE )
+            SET( CMAKE_EXE_LINKER_FLAGS "-Wl,--as-needed" CACHE STRING "" FORCE )
+        ENDIF()
+        SET( CMAKE_CXX_FLAGS_RELEASE "-O3" CACHE STRING "" FORCE )
+        SET( CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG -O0" CACHE STRING "" FORCE )
+        SET( CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -DDEBUG -O2" CACHE STRING "" FORCE )
     ENDIF()
-    SET( CMAKE_CXX_FLAGS_RELEASE "-O3" CACHE STRING "" FORCE )
-    SET( CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG -O0" CACHE STRING "" FORCE )
-    SET( CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -DDEBUG -O2" CACHE STRING "" FORCE )
 
     # Allow injection of other flags
     # NOTE: do not set these variables somewhere in cmake. They are intended to be used when calling CMake from the command line.
@@ -274,10 +292,13 @@ ENDFUNCTION( BUILD_SYSTEM_COMPILER )
 
 # GCC 4.7 requires us to explicitly link against libstdc++ and libm. CMake offers a variable for this called "CMAKE_STANDARD_LIBRARIES".
 # Unfortunately, this variable is empty. We fill it here and hopefully this is fixed in the near future.
-LIST( APPEND CMAKE_STANDARD_LIBRARIES "stdc++" "m" )
+# On msvc this fix causes a bug as windows does not have the stdc++ and m libraries
+IF( NOT CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
+    LIST( APPEND CMAKE_STANDARD_LIBRARIES "stdc++" "m" )
+ENDIF()
 
 IF( CMAKE_HOST_SYSTEM MATCHES "Windows" )
-	link_libraries( bcrypt )
+    link_libraries( bcrypt )
 ENDIF()
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------

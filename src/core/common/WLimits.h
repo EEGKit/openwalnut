@@ -28,6 +28,7 @@
 #include <stdint.h>
 
 #include <cstddef>
+#include <limits>
 
 #include <boost/math/special_functions/fpclassify.hpp> // isnan, isinf
 
@@ -36,39 +37,39 @@
  */
 namespace wlimits
 {
-    extern const double MAX_DOUBLE; //!< Maximum double value
+    inline extern const double MAX_DOUBLE = std::numeric_limits< double >::max(); //!< Maximum double value
 
-    extern const float MAX_FLOAT; //!< Maximum float value
+    inline extern const float MAX_FLOAT = std::numeric_limits< float >::max(); //!< Maximum float value
 
-    extern const size_t MAX_SIZE_T; //!< Maximum size value
+    inline extern const size_t MAX_SIZE_T = std::numeric_limits< size_t >::max(); //!< Maximum size value
 
-    extern const int32_t MAX_INT32_T; //!< Maximum int32_t value
+    inline extern const int32_t MAX_INT32_T = std::numeric_limits< int32_t >::max(); //!< Maximum int32_t value
 
-    extern const double MIN_DOUBLE; //!< Positive minimum double value
+    inline extern const double MIN_DOUBLE = std::numeric_limits< double >::min(); //!< Positive minimum double value
 
-    extern const float MIN_FLOAT; //!< Positive minimum float value
+    inline extern const float MIN_FLOAT = std::numeric_limits< float >::min(); //!< Positive minimum float value
 
-    extern const size_t MIN_SIZE_T; //!< Lowest/Minimum size value (equivalent to LOWEST_SIZE_T)
+    inline extern const size_t MIN_SIZE_T = std::numeric_limits< size_t >::min(); //!< Lowest/Minimum size value (equivalent to LOWEST_SIZE_T)
 
-    extern const int32_t MIN_INT32_T; //!< Lowest/Minimum int32_t value (equivalent to LOWEST_INT32_T)
+    inline extern const int32_t MIN_INT32_T = std::numeric_limits< int32_t >::min(); //!< Lowest/Minimum int32_t value (equivalent to LOWEST_INT32_T)
 
-    extern const double LOWEST_DOUBLE; //!< Minimum double value
+    inline extern const double LOWEST_DOUBLE = std::numeric_limits< double >::lowest(); //!< Minimum double value
 
-    extern const float LOWEST_FLOAT; //!< Minimum float value
+    inline extern const float LOWEST_FLOAT = std::numeric_limits< float >::lowest(); //!< Minimum float value
 
-    extern const size_t LOWEST_SIZE_T; //!< Lowest/Minimum size value (equivalent to MIN_SIZE_T)
+    inline extern const size_t LOWEST_SIZE_T = std::numeric_limits< size_t >::lowest(); //!< Lowest/Minimum size value (equivalent to MIN_SIZE_T)
 
-    extern const int32_t LOWEST_INT32_T; //!< Lowest/Minimum int32_t value (equivalent to MIN_INT32_T)
+    inline extern const int32_t LOWEST_INT32_T = std::numeric_limits< int32_t >::lowest(); //!< Lowest/Minimum int32_t value (equivalent to MIN_INT32_T)
 
     /**
      * Smallest double such: 1.0 + DBL_EPS == 1.0 is still true.
      */
-    extern const double DBL_EPS;
+    inline extern const double DBL_EPS = std::numeric_limits< double >::epsilon();
 
     /**
      * Smallest float such: 1.0 + FLT_EPS == 1.0 is still true.
      */
-    extern const float FLT_EPS;
+    inline extern const float FLT_EPS = std::numeric_limits< float >::epsilon();
 
     /**
      * Determines if a number is considered as NaN (aka Not a Number) or not.

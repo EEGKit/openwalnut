@@ -131,4 +131,4 @@ short eep_byteswap_2_safe(short);
  **************************/
 double eep_byteswap_8_double_safe(double arg);
 
-#endif
+#endif  // EEPIO_H

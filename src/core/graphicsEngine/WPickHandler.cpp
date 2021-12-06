@@ -27,8 +27,6 @@
 #include "WPickHandler.h"
 #include "../common/WAssert.h"
 
-const std::string WPickHandler::unpickString = "unpick";
-
 WPickHandler::WPickHandler()
     : m_hitResult( WPickInfo() ),
       m_startPick( WPickInfo() ),

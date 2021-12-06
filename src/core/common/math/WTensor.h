@@ -102,7 +102,7 @@ public:
 
 template< std::size_t order, std::size_t dim, typename Data_T >
 WTensor< order, dim, Data_T >::WTensor()
-    : WTensorFunc< WTensorBase, order, dim, Data_T >()
+    : WTensorFunc< ::WTensorBase, order, dim, Data_T >()
 {
 }
 

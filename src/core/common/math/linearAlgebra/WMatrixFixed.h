@@ -971,7 +971,7 @@ public:
      */
     ValueT& operator[]( size_t row ) throw()
     {
-        BOOST_STATIC_ASSERT( Cols == 1 );
+        //BOOST_STATIC_ASSERT( Cols == 1 );
         return m_values( row, 0 );
     }
 

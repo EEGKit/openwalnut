@@ -101,7 +101,7 @@ public:
      */
     void setPaintMode( bool paintMode );
 
-    static const std::string unpickString; //!< The string indicating picking has stopped.
+    inline static const std::string unpickString = "unpick"; //!< The string indicating picking has stopped.
 
 protected:
     /**
