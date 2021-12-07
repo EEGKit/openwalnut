@@ -26,16 +26,17 @@
 #include <vector>
 #include <iostream>
 
-#ifndef OW_QT6_NO_WEBENGINE
-    #ifdef OW_FORCE_WEBKIT
-        #include <QWebView>
-        #include <QWebFrame>
-        #include <QWebPage>
-    #else
-        #include <QWebEngineView> //NOLINT
-        #include <QWebEnginePage> //NOLINT
-    #endif
+#ifdef OW_QT6_NO_WEBENGINE
+    #include <QTextBrowser> // NOLINT
+#elif defined OW_FORCE_WEBKIT
+    #include <QWebView>
+    #include <QWebFrame>
+    #include <QWebPage>
+#else
+    #include <QWebEngineView> //NOLINT
+    #include <QWebEnginePage> //NOLINT
 #endif
+
 #include <QVBoxLayout>
 #include <QToolBar>
 #include <QToolButton>
@@ -76,24 +77,25 @@ std::string htmlify( WModuleMetaInformation::ConstSPtr meta )
     // the website URL is the module dir -> so we need to explicitly specify the src for icons
     std::string iconPath = WPathHelper::getSharePath().string() + "/qtgui/";
 
-    ss << "<div style='font-family:sans-serif;'>"
+    ss << "<table  cellspacing='0' width='100%' style='font-family:sans-serif;'>"
     // The title
-       << "  <div style='padding:10px; border:0px solid #000; border-bottom-width: 10px;color:#fff;background:#0c67a8;'>"
-       << "    <h1>"
+       << "  <tr><td style='padding:20px;color:#fff;background:#0c67a8;'>"
+       << "    <h1 style='margin:0;'>"
        <<        meta->getName()
        << "    </h1>"
-       << "  </div>";
+       << "  </td></tr>"
+       << "  <tr><td style='background-color:#000;height:10px;'></td></tr>";
 
     // Description
-    ss << "  <div style='padding:10px; background:#ddd;'>"
+    ss << "  <tr><td style='padding:10px; background:#ddd;'>"
        << "    <h3>DESCRIPTION</h3>"
        << "    <p align='justify'>"
        <<        description
        << "    </p>"
-       << "  </div>";
+       << "  </td></tr>";
 
     // this div contains tags, help, website and authors
-    ss << "  <div style='padding:10px;background:#f3f3f3;'>";
+    ss << "  <tr><td style='padding:10px;background:#f3f3f3;'>";
     // Taglist
     if( !tags.empty() )
     {
@@ -148,12 +150,12 @@ std::string htmlify( WModuleMetaInformation::ConstSPtr meta )
     }
 
     // thats it. No more authors, help and similar
-    ss << "  </div>";
+    ss << "  </td></tr>";
 
     // The online resources
     if( !online.empty() )
     {
-        ss << "  <div style='padding:10px;background:#fff;'>"
+        ss << "  <tr><td style='padding:10px;background:#fff;'>"
            << "    <h3>ONLINE RESOURCES</h3>"
            << "    <table width='100%' style='padding:10px'>";
 
@@ -174,13 +176,13 @@ std::string htmlify( WModuleMetaInformation::ConstSPtr meta )
         }
 
         ss << "    </table>"
-           << "  </div>";
+           << "  </td></tr>";
     }
 
     // screenshots
     if( !screenshots.empty() )
     {
-        ss << "  <div  style='padding:10px;background:#f5f5f5;'>"
+        ss << "  <tr><td  style='padding:10px;background:#f5f5f5;'>"
            << "    <h3>SCREENSHOTS</h3>"
            << "    <table width='100%' style='padding:10px'>";
 
@@ -201,9 +203,9 @@ std::string htmlify( WModuleMetaInformation::ConstSPtr meta )
         }
 
         ss << "    </table>"
-           << "  </div>"
-           << "</div>";
+           << "  </td></tr>";
     }
+    ss << "</table>";
     return ss.str();
 }
 
@@ -235,6 +237,12 @@ WQtModuleMetaInfo::WQtModuleMetaInfo( WModule::SPtr module, QWidget* parent ):
         m_page = page;
     #endif
     view->setPage( page );
+#else
+    // create the QT textbrowser
+    QTextBrowser *view = new QTextBrowser( this );
+    view->setOpenExternalLinks( true );
+    m_textBrowser = view;
+#endif
 
     // add a toolbar for basic navigation
     QWidget* toolbar = new QWidget( this );
@@ -253,22 +261,24 @@ WQtModuleMetaInfo::WQtModuleMetaInfo( WModule::SPtr module, QWidget* parent ):
     homeBtn->setToolButtonStyle( Qt::ToolButtonTextBesideIcon );
 
     QToolButton* backBtn = new QToolButton( toolbar );
-#ifndef OW_QT6_NO_WEBENGINE
-    #ifdef OW_FORCE_WEBKIT
+    #ifdef OW_QT6_NO_WEBENGINE
+        backBtn->setVisible( false );   // Disable the backBtn because setHtml does not work with the history of the QTextBrowser
+        backBtn->setEnabled( false );
+    #elif defined OW_FORCE_WEBKIT
         backBtn->setDefaultAction( page->action( QWebPage::Back ) );
     #else
         backBtn->setDefaultAction( page->action( QWebEnginePage::Back ) );
     #endif
-#endif
 
-#ifndef OW_QT6_NO_WEBENGINE
     QToolButton* fwdBtn = new QToolButton( toolbar );
-    #ifdef OW_FORCE_WEBKIT
+    #ifdef OW_QT6_NO_WEBENGINE
+        fwdBtn->setVisible( false );   // Disable the fwdBtn because setHtml does not work with the history of the QTextBrowser
+        fwdBtn->setEnabled( false );
+    #elif defined OW_FORCE_WEBKIT
         fwdBtn->setDefaultAction( page->action( QWebPage::Forward ) );
     #else
         fwdBtn->setDefaultAction( page->action( QWebEnginePage::Forward ) );
     #endif
-#endif
 
     tbLayout->addWidget( backBtn );
     tbLayout->addWidget( fwdBtn );
@@ -286,7 +296,6 @@ WQtModuleMetaInfo::WQtModuleMetaInfo( WModule::SPtr module, QWidget* parent ):
 
     // the home action triggers reseContent
     connect( homeAction, SIGNAL( triggered() ), this, SLOT( resetContent() ) );
-#endif
 }
 
 WQtModuleMetaInfo::~WQtModuleMetaInfo()
@@ -298,16 +307,17 @@ void WQtModuleMetaInfo::resetContent()
 {
     // we use the module resource path as search URL
     std::string moduleLocation( m_module->getLocalPath().string() );
-    QString locationURL( QString( "file://" ) + QString::fromStdString( moduleLocation ) + "/" );
+    QString locationURL( QString( "file:///" ) + QString::fromStdString( moduleLocation ) + "/" );
 
     // set content
     std::string processedContent = htmlify( m_module->getMetaInformation() );
 
-#ifndef OW_QT6_NO_WEBENGINE
-    #ifdef OW_FORCE_WEBKIT
+    #ifdef OW_QT6_NO_WEBENGINE
+        m_textBrowser->document()->setMetaInformation( QTextDocument::DocumentUrl, locationURL );
+        m_textBrowser->setHtml( processedContent.c_str() );
+    #elif defined OW_FORCE_WEBKIT
         m_frame->setHtml( processedContent.c_str(), QUrl( locationURL ) );
     #else
         m_page->setHtml( processedContent.c_str(), QUrl( locationURL ) );
     #endif
-#endif
 }

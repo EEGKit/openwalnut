@@ -25,12 +25,12 @@
 #ifndef WQTMODULEMETAINFO_H
 #define WQTMODULEMETAINFO_H
 
-#ifndef OW_QT6_NO_WEBENGINE
-    #ifdef OW_FORCE_WEBKIT
-        #include <QWebFrame> //NOLINT
-    #else
-        #include <QWebEnginePage> //NOLINT
-    #endif
+#ifdef OW_QT6_NO_WEBENGINE
+    #include <QTextBrowser> // NOLINT
+#elif defined OW_FORCE_WEBKIT
+    #include <QWebFrame> //NOLINT
+#else
+    #include <QWebEnginePage> //NOLINT
 #endif
 #include <QWidget>
 
@@ -67,16 +67,16 @@ private:
      */
     WModule::SPtr m_module;
 
-#ifndef OW_QT6_NO_WEBENGINE
     /**
      * The frame containing the module meta info
      */
-    #ifdef OW_FORCE_WEBKIT
+    #ifdef OW_QT6_NO_WEBENGINE
+        QTextBrowser* m_textBrowser;
+    #elif defined OW_FORCE_WEBKIT
         QWebFrame* m_frame;
     #else
         QWebEnginePage* m_page;
     #endif
-#endif
 };
 
 #endif  // WQTMODULEMETAINFO_H
