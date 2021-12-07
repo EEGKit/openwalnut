@@ -101,6 +101,20 @@ public:
      */
     void handleControllerEvent( vr::VREvent_t vrEvent );
 
+    /**
+     * Fetch and save transformation information of HMD in current frame.
+     */
+    void updateHMDPose();
+
+    /**
+     * Converts vr::HmdMatrix34_t to osg::Matrix.
+     */
+    osg::Matrix convertHmdMatrixToOSG( const vr::HmdMatrix34_t &mat34 );
+
+    /**
+     * Converts vr::HmdMatrix44_t to osg::Matrix.
+     */
+    osg::Matrix convertHmdMatrixToOSG( const vr::HmdMatrix44_t &mat44 );
 
 protected:
     /**
@@ -180,21 +194,6 @@ private:
          * current position in m_lastFrames for saving the next timestamp
          */
         unsigned int m_frameCounter = 0;
-
-        /**
-         * current rotation
-         */
-        osg::Quat m_currentQuaternion;
-
-        /**
-         * rotation saved for use in one frame later
-         */
-        osg::Quat m_lastQuaternion;
-
-        /**
-         * rotation difference calculated fromn last and current frame
-         */
-        osg::Quat m_rotDifference;
 
         /**
          * Denotes whether the update callback is called the first time. It is especially useful
@@ -319,6 +318,41 @@ private:
      * OpenVR current grabbing device
      */
     vr::TrackedDeviceIndex_t m_grabber;
+
+    /**
+     * current position of HMD device
+     */
+    osg::Vec3d m_HMD_position;
+
+    /**
+     * cached position of HMD device from previous frame
+     */
+    osg::Vec3d m_HMD_positionLastFrame;
+
+     /**
+     * position difference calculated fromn last and current frame
+     */
+    osg::Vec3d m_HMD_positionDifference;
+
+    /**
+     * current rotation of HMD device
+     */
+    osg::Quat m_HMD_rotation;
+
+    /**
+     * cached rotation of HMD device from previous frame
+     */
+    osg::Quat m_HMD_rotationLastFrame;
+
+     /**
+     * rotation difference calculated fromn last and current frame
+     */
+    osg::Quat m_HMD_rotationDifference;
+
+    /**
+     * is set true once rotation and position of previous frame is cached
+     */
+    bool m_HMD_transformDifferenceIsSet = false;
 };
 
 #endif  // WMVRCAMERA_H

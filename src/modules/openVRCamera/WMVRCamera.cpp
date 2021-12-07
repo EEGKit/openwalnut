@@ -193,6 +193,7 @@ void WMVRCamera::moduleMain()
     // View Setup
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    
     // create a root node for this module
     m_rootnode = osg::ref_ptr<WGEManagedGroupNode>( new WGEManagedGroupNode( m_active ) );
 
@@ -219,12 +220,8 @@ void WMVRCamera::moduleMain()
     std::shared_ptr<WGEViewer> rightEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" );
     leftEyeView->setScene( m_leftEyeNode );
     rightEyeView->setScene( m_rightEyeNode );
-    leftEyeView->reset();
-    rightEyeView->reset();
-
-    // disable camera manipulators to directly manipulate view matrix
-    leftEyeView->setCameraManipulator( NULL );
-    rightEyeView->setCameraManipulator( NULL );
+    //leftEyeView->reset();
+    //rightEyeView->reset();
 
     // Now, we can mark the module ready.
     ready();
@@ -250,21 +247,21 @@ void WMVRCamera::moduleMain()
     // Render to Texture Setup
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    leftEyeView->getCamera()->setClearMask( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    /*leftEyeView->getCamera()->setClearMask( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     leftEyeView->getCamera()->setRenderTargetImplementation( osg::Camera::FRAME_BUFFER_OBJECT );
     leftEyeView->getCamera()->setRenderOrder( osg::Camera::PRE_RENDER, vr::Eye_Left );
     leftEyeView->getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
-    //leftEyeView->getCamera()->setNearFarRatio(  0.000001  ); Not exactly sure what this does
+    leftEyeView->getCamera()->setNearFarRatio(  0.000001  ); Not exactly sure what this does
     leftEyeView->getCamera()->setViewport( 0, 0, m_vrRenderWidth, m_vrRenderHeight );
-    leftEyeView->getCamera()->setCullMask( vrNodeMask );
+    leftEyeView->getCamera()->setCullMask( vrNodeMask );*/
 
-    rightEyeView->getCamera()->setClearMask( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    /*rightEyeView->getCamera()->setClearMask( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     rightEyeView->getCamera()->setRenderTargetImplementation( osg::Camera::FRAME_BUFFER_OBJECT );
     rightEyeView->getCamera()->setRenderOrder( osg::Camera::PRE_RENDER, vr::Eye_Right );
     rightEyeView->getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
-    //rightEyeView->getCamera()->setNearFarRatio(  0.000001  ); Not exactly sure what this does
+    rightEyeView->getCamera()->setNearFarRatio(  0.000001  );
     rightEyeView->getCamera()->setViewport( 0, 0, m_vrRenderWidth, m_vrRenderHeight );
-    rightEyeView->getCamera()->setCullMask( vrNodeMask );
+    rightEyeView->getCamera()->setCullMask( vrNodeMask );*/
 
     m_leftTexture = new osg::Texture2D;
     m_leftTexture->setTextureSize( m_vrRenderWidth, m_vrRenderHeight );
@@ -381,8 +378,8 @@ void WMVRCamera::moduleMain()
     m_rightEyeGeometryNode->addChild( dynamic_cast<osg::Node *>(
         WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone( osg::CopyOp::DEEP_COPY_ALL ) ) );
 
-    leftEyeView->getScene()->insert( offscreenRenderLeft );
-    rightEyeView->getScene()->insert( offscreenRenderRight );
+    /*leftEyeView->getScene()->insert( offscreenRenderLeft );
+    rightEyeView->getScene()->insert( offscreenRenderRight );*/
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Main loop
@@ -553,7 +550,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
 
         leftEyeView->getCamera()->setViewMatrix( mainViewMatrix );
         rightEyeView->getCamera()->setViewMatrix( mainViewMatrix );
-
+        
         m_module->debugLog() << "Set Left/Right view matrix to main view matrix.";
 
         m_module->m_VR_cameraManipTrigger->set( WPVBaseTypes::PV_TRIGGER_READY, false );
@@ -574,7 +571,7 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
     if( m_module->m_vrOn->get() && m_module->m_vrIsInitialized )
     {
         if( !m_initialUpdate )
-        {
+        {/*
             unsigned int leftContextID = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )
             ->getCamera()->getGraphicsContext()->getState()->getContextID();
 
@@ -596,75 +593,103 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
             if( lError != vr::VRCompositorError_None || rError != vr::VRCompositorError_None )
             {
                 m_module->errorLog() << "Links:" << lError << "|Rechts:" << rError << std::endl;
-            }
+            }*/
         }
-
-        // get all OpenVR tracking information
-        for( uint32_t i = 0; i < vr::k_unMaxTrackedDeviceCount; ++i )
-        {
-            m_module->m_poses[i].bPoseIsValid = false;
-        }
-        vr::VRCompositor()->WaitGetPoses( m_module->m_poses, vr::k_unMaxTrackedDeviceCount, NULL, 0 );
-
-        // handle controller events
-        vr::VREvent_t vrEvent;
-        while( m_module->m_vrSystem->PollNextEvent( &vrEvent, sizeof( vr::VREvent_t ) ) )
-            m_module->handleVREvent( vrEvent );
-
-        vr::TrackedDevicePose_t trackedDevicePose;
-        vr::HmdMatrix34_t poseMatrix;
-        double doubleQuat[4];
-
-        vr::VRSystem()->GetDeviceToAbsoluteTrackingPose( vr::TrackingUniverseStanding, 0, &trackedDevicePose, 1 );
-
-        poseMatrix = trackedDevicePose.mDeviceToAbsoluteTracking;
-
-        // calculate rotation quaternion from poseMatrix
-        doubleQuat[3] = sqrt( fmax( 0, 1 + poseMatrix.m[0][0] + poseMatrix.m[1][1] + poseMatrix.m[2][2] ) ) / 2;
-        doubleQuat[0] = sqrt( fmax( 0, 1 + poseMatrix.m[0][0] - poseMatrix.m[1][1] - poseMatrix.m[2][2] ) ) / 2;
-        doubleQuat[1] = sqrt( fmax( 0, 1 - poseMatrix.m[0][0] + poseMatrix.m[1][1] - poseMatrix.m[2][2] ) ) / 2;
-        doubleQuat[2] = sqrt( fmax( 0, 1 - poseMatrix.m[0][0] - poseMatrix.m[1][1] + poseMatrix.m[2][2] ) ) / 2;
-        doubleQuat[0] = copysign( doubleQuat[0], poseMatrix.m[2][1] - poseMatrix.m[1][2] );
-        doubleQuat[1] = copysign( doubleQuat[1], poseMatrix.m[0][2] - poseMatrix.m[2][0] );
-        doubleQuat[2] = copysign( doubleQuat[2], poseMatrix.m[1][0] - poseMatrix.m[0][1] );
-
-        m_currentQuaternion.set( doubleQuat[0], doubleQuat[1], doubleQuat[2], doubleQuat[3] );
-
-        bool rotDiffSet = false;
-        rotDiffSet = false;
-
-        if( m_frameCounter > 0 )
-        {
-            m_rotDifference = m_currentQuaternion * m_lastQuaternion.inverse();
-            rotDiffSet = true;
-        }
-
-        m_lastQuaternion = m_currentQuaternion;
+        m_module->updateHMDPose();
 
         // does not run on the first frame
-        if( rotDiffSet )
+        if( m_module->m_HMD_transformDifferenceIsSet )
         {
-            // apply HMD rotation to eye views
+            WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )->setCameraManipulator( NULL );
+            WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )->setCameraManipulator( NULL );
+
             osg::Matrixd leftEyeMatrix = WKernel::getRunningKernel()->getGraphicsEngine()
                 ->getViewerByName( "Left Eye View" )->getCamera()->getViewMatrix();
             osg::Matrixd rightEyeMatrix = WKernel::getRunningKernel()->getGraphicsEngine()
                 ->getViewerByName( "Right Eye View" )->getCamera()->getViewMatrix();
 
-            leftEyeMatrix.setRotate( m_rotDifference * leftEyeMatrix.getRotate() );
-            rightEyeMatrix.setRotate( m_rotDifference * rightEyeMatrix.getRotate() );
+            // Apply HMD translation
+            osg::Vec3d leftEyePosition = leftEyeMatrix.getTrans();
+            leftEyePosition += m_module->m_HMD_positionDifference;
+
+            osg::Vec3d rightEyePosition = rightEyeMatrix.getTrans();
+            rightEyePosition += m_module->m_HMD_positionDifference;
+
+            leftEyeMatrix.setTrans( leftEyePosition );
+            rightEyeMatrix.setTrans( rightEyePosition );
+
+            // Apply HMD rotation 
+            leftEyeMatrix.setRotate( m_module->m_HMD_rotationDifference * leftEyeMatrix.getRotate() );
+            rightEyeMatrix.setRotate( m_module->m_HMD_rotationDifference * rightEyeMatrix.getRotate() );
 
             WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )->getCamera()->setViewMatrix( leftEyeMatrix );
             WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )->getCamera()->setViewMatrix( rightEyeMatrix );
-
-            // removing camera manipulator of main view to apply HMD transformation there aswell => just for debugging/demonstration purposes
-            WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->setCameraManipulator( NULL );
-            osg::Matrixd mainViewMatrix = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->getViewMatrix();
-            mainViewMatrix.setRotate( m_rotDifference * mainViewMatrix.getRotate() );
-            WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->setViewMatrix( mainViewMatrix );
         }
     }
 
     m_initialUpdate = false;
 
     traverse( node, nv );
+}
+
+void WMVRCamera::updateHMDPose()
+{
+    // get all OpenVR tracking information
+    for ( uint32_t i = 0; i < vr::k_unMaxTrackedDeviceCount; ++i )
+    {
+        m_poses[i].bPoseIsValid = false;
+    }
+    vr::VRCompositor()->WaitGetPoses( m_poses, vr::k_unMaxTrackedDeviceCount, NULL, 0 );
+
+    // handle controller events
+    vr::VREvent_t vrEvent;
+    while ( m_vrSystem->PollNextEvent( &vrEvent, sizeof( vr::VREvent_t ) ) )
+        handleVREvent( vrEvent );
+
+    vr::TrackedDevicePose_t trackedDevicePose;
+
+    vr::VRSystem()->GetDeviceToAbsoluteTrackingPose( vr::TrackingUniverseStanding, 0, &trackedDevicePose, 1 );
+
+    // pose calculation
+    osg::Matrix matrix = convertHmdMatrixToOSG( trackedDevicePose.mDeviceToAbsoluteTracking );
+    osg::Matrix poseTransform = osg::Matrix::inverse( matrix );
+
+    m_HMD_position = poseTransform.getTrans();
+    m_HMD_rotation = poseTransform.getRotate();
+
+    if ( m_HMD_transformDifferenceIsSet )
+    {
+        m_HMD_rotationDifference = m_HMD_rotation * m_HMD_rotationLastFrame.inverse();
+        m_HMD_positionDifference = m_HMD_position - m_HMD_positionLastFrame;
+    }
+
+    // save rot/trans difference calculation on next frame
+    m_HMD_rotationLastFrame = m_HMD_rotation;
+    m_HMD_positionLastFrame = m_HMD_position;
+
+    m_HMD_transformDifferenceIsSet = true;
+}
+
+// Converts vr::HmdMatrix34_t to osg::Matrix.
+osg::Matrix WMVRCamera::convertHmdMatrixToOSG( const vr::HmdMatrix34_t &mat34 )
+{
+	osg::Matrix matrix(
+		mat34.m[0][0], mat34.m[1][0], mat34.m[2][0], 0.0,
+		mat34.m[0][1], mat34.m[1][1], mat34.m[2][1], 0.0,
+		mat34.m[0][2], mat34.m[1][2], mat34.m[2][2], 0.0,
+		mat34.m[0][3], mat34.m[1][3], mat34.m[2][3], 1.0f
+		);
+	return matrix;
+}
+
+// Converts vr::HmdMatrix44_t to osg::Matrix.
+osg::Matrix WMVRCamera::convertHmdMatrixToOSG( const vr::HmdMatrix44_t &mat44 )
+{
+	osg::Matrix matrix(
+		mat44.m[0][0], mat44.m[1][0], mat44.m[2][0], mat44.m[3][0],
+		mat44.m[0][1], mat44.m[1][1], mat44.m[2][1], mat44.m[3][1],
+		mat44.m[0][2], mat44.m[1][2], mat44.m[2][2], mat44.m[3][2],
+		mat44.m[0][3], mat44.m[1][3], mat44.m[2][3], mat44.m[3][3]
+		);
+	return matrix;
 }
