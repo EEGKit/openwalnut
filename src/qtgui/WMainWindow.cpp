@@ -1237,14 +1237,14 @@ void WMainWindow::showWelcomeDialog( bool force )
     #else
         QWebEngineView *view = new QWebEngineView( this );
     #endif
-    
+
     view->setHtml( QString::fromStdString( content ) );
     #ifdef OW_FORCE_WEBKIT
         view->page()->setLinkDelegationPolicy( QWebPage::DelegateExternalLinks );
     #endif
     view->setMinimumWidth( 640 );
     w = view;
-    
+
     WQtMessageDialog* msgDia = new WQtMessageDialog( msgID, "Welcome to OpenWalnut", w, getSettings(), this );
     msgDia->show( force );
 }
