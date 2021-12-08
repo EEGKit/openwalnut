@@ -107,6 +107,11 @@ public:
     void updateHMDPose();
 
     /**
+     * Set eye view's matrices to main view matrix; also applies HMD eye offset
+     */
+    void setupEyeViewsFromMainView();
+
+    /**
      * Converts vr::HmdMatrix34_t to osg::Matrix.
      */
     osg::Matrix convertHmdMatrixToOSG( const vr::HmdMatrix34_t &mat34 );
