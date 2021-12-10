@@ -62,7 +62,7 @@ const char** WMDataCreatorFibers::getXPMIcon() const
 
 const std::string WMDataCreatorFibers::getName() const
 {
-    return "Fiber Data Creator";
+    return "Data Creator Fibers";
 }
 
 const std::string WMDataCreatorFibers::getDescription() const
