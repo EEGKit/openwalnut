@@ -37,6 +37,7 @@
 #include "core/dataHandler/WDataSet.h"
 #include "core/graphicsEngine/WGEGroupNode.h"
 #include "core/graphicsEngine/geodes/WGEGridNode.h"
+#include "core/graphicsEngine/shaders/WGEShader.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 
@@ -136,6 +137,8 @@ private:
      * The currently handled data.
      */
     WDataSet::SPtr m_dataSetOld;
+
+    osg::ref_ptr< WGEShader > m_shader;
 
     /**
      * Handles updates in properties.
