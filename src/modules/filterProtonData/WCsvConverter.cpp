@@ -81,8 +81,8 @@ void WCsvConverter::setOutputFromCSV( )
     m_vectors->clear();
     m_indexes->update( m_protonData );
 
-    float maxEdep = 0.0;
-    float minEdep = 1.0;
+    float maxEdep = wlimits::MIN_FLOAT;
+    float minEdep = wlimits::MAX_FLOAT;
 
     for( WDataSetCSV::Content::iterator dataRow = data->begin(); dataRow < data->end(); dataRow++ )
     {
@@ -153,7 +153,8 @@ void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArra
             currentEdep != edeps->end();
             currentEdep++ )
         {
-            float clusterSizeNormalized = ( clusterEnabled ? getClusterSize( *currentEdep ) : *currentEdep ) / maxClusterSize;
+            float clusterSizeNormalized = clusterEnabled ? getClusterSize( *currentEdep ) : *currentEdep;
+            clusterSizeNormalized = ( clusterSizeNormalized - minClusterSize ) / ( maxClusterSize - minClusterSize );
 
             m_vectors->getSizes()->push_back( clusterSizeNormalized );
 
