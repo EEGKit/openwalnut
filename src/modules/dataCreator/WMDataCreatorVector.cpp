@@ -68,7 +68,7 @@ const char** WMDataCreatorVector::getXPMIcon() const
 
 const std::string WMDataCreatorVector::getName() const
 {
-    return "Vector Data Creator";
+    return "Data Creator Vector";
 }
 
 const std::string WMDataCreatorVector::getDescription() const

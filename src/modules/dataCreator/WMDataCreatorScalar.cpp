@@ -75,7 +75,7 @@ const char** WMDataCreatorScalar::getXPMIcon() const
 
 const std::string WMDataCreatorScalar::getName() const
 {
-    return "Scalar Data Creator";
+    return "Data Creator Scalar";
 }
 
 const std::string WMDataCreatorScalar::getDescription() const
