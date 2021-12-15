@@ -138,6 +138,9 @@ private:
      */
     WDataSet::SPtr m_dataSetOld;
 
+    /**
+     * The shader for the grid renderer.
+     */
     osg::ref_ptr< WGEShader > m_shader;
 
     /**

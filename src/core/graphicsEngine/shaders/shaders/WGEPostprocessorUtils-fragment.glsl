@@ -141,10 +141,10 @@ const vec2 zeroOneList = vec2( 1.0, 0.0 );
  *
  * \return color.
  */
-vec4 textureLodAdapter( sampler2D texture, vec2 where, float lod )
+vec4 textureLodAdapter( sampler2D txt, vec2 where, float lod )
 {
     // TODO(ebaum): find a solution
-    return textureLod( texture, where, lod );
+    return textureLod( txt, where, lod );
 }
 
 /**
@@ -161,9 +161,9 @@ vec4 textureLodAdapter( sampler2D texture, vec2 where, float lod )
  *
  * \return the value at the given point
  */
-vec4 textureUnscaledLOD( sampler2D texture, vec2 point, float minimum, float scale, float lod )
+vec4 textureUnscaledLOD( sampler2D txt, vec2 point, float minimum, float scale, float lod )
 {
-    return ( scale * textureLodAdapter( texture, point, lod ) ) + vec4( minimum );
+    return ( scale * textureLodAdapter( txt, point, lod ) ) + vec4( minimum );
 }
 
 /**
@@ -414,5 +414,5 @@ vec3 getNoiseAsVector()
     return getNoiseAsVector( pixelCoord );
 }
 
-#endif // WGEPOSTPROCESSORUTILS_FRAGMENT_GLSL
+#endif  // WGEPOSTPROCESSORUTILS_FRAGMENT_GLSL
 
