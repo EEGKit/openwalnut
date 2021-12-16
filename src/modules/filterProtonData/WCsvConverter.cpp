@@ -156,11 +156,13 @@ void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArra
             float clusterSizeNormalized = clusterEnabled ? getClusterSize( *currentEdep ) : *currentEdep;
             clusterSizeNormalized = ( clusterSizeNormalized - minClusterSize ) / ( maxClusterSize - minClusterSize );
 
+            WAssert( clusterSizeNormalized >= 0 && clusterSizeNormalized <= 1, "The normalized energy deposition must be between 0 and 1" );
+
             m_vectors->getSizes()->push_back( clusterSizeNormalized );
 
             if( m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
             {
-                clusterSizeNormalized = fmax( static_cast< int >( 49 * clusterSizeNormalized ), 0 );
+                clusterSizeNormalized = static_cast< int >( 49 * clusterSizeNormalized );
 
                 for( int i = 0; i < 4; i++ )
                 {
