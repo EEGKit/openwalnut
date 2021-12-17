@@ -44,8 +44,10 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // texture containing the data
-uniform sampler3D u_volumeSampler;
-uniform sampler1D u_transferFunctionSampler;
+uniform sampler3D u_volume_ds1Sampler;
+uniform sampler3D u_volume_ds2Sampler;
+uniform sampler1D u_transferFunction_ds1Sampler;
+uniform sampler1D u_transferFunction_ds2Sampler;
 uniform sampler3D u_gradientsSampler;
 uniform sampler2D u_jitterSampler;
 uniform int       u_jitterSizeX;
@@ -101,20 +103,35 @@ vec3 findRayEnd( in vec3 rayStart, out float d )
  *
  * \return the gradient, NOT normalized
  */
-vec3 getGradient( in vec3 position )
+vec3 getGradient( in vec3 position, int volume )
 {
 #ifdef GRADIENTTEXTURE_ENABLED
     return ( 2.0 * texture3D( u_gradientsSampler, position ).rgb ) + vec3( -1.0 );
 #else
     float s = 0.02;
-    float valueXP = texture3D( u_volumeSampler, position + vec3( s, 0.0, 0.0 ) ).r;
-    float valueXM = texture3D( u_volumeSampler, position - vec3( s, 0.0, 0.0 ) ).r;
-    float valueYP = texture3D( u_volumeSampler, position + vec3( 0.0, s, 0.0 ) ).r;
-    float valueYM = texture3D( u_volumeSampler, position - vec3( 0.0, s, 0.0 ) ).r;
-    float valueZP = texture3D( u_volumeSampler, position + vec3( 0.0, 0.0, s ) ).r;
-    float valueZM = texture3D( u_volumeSampler, position - vec3( 0.0, 0.0, s ) ).r;
+    if( volume == 0 )
+    {
+        float valueXP = texture3D( u_volume_ds1Sampler, position + vec3( s, 0.0, 0.0 ) ).r;
+        float valueXM = texture3D( u_volume_ds1Sampler, position - vec3( s, 0.0, 0.0 ) ).r;
+        float valueYP = texture3D( u_volume_ds1Sampler, position + vec3( 0.0, s, 0.0 ) ).r;
+        float valueYM = texture3D( u_volume_ds1Sampler, position - vec3( 0.0, s, 0.0 ) ).r;
+        float valueZP = texture3D( u_volume_ds1Sampler, position + vec3( 0.0, 0.0, s ) ).r;
+        float valueZM = texture3D( u_volume_ds1Sampler, position - vec3( 0.0, 0.0, s ) ).r;
 
-    return vec3( valueXP - valueXM, valueYP - valueYM, valueZP - valueZM );
+        return vec3( valueXP - valueXM, valueYP - valueYM, valueZP - valueZM );
+    }
+    else if( volume == 1 )
+    {
+        float valueXP = texture3D( u_volume_ds2Sampler, position + vec3( s, 0.0, 0.0 ) ).r;
+        float valueXM = texture3D( u_volume_ds2Sampler, position - vec3( s, 0.0, 0.0 ) ).r;
+        float valueYP = texture3D( u_volume_ds2Sampler, position + vec3( 0.0, s, 0.0 ) ).r;
+        float valueYM = texture3D( u_volume_ds2Sampler, position - vec3( 0.0, s, 0.0 ) ).r;
+        float valueZP = texture3D( u_volume_ds2Sampler, position + vec3( 0.0, 0.0, s ) ).r;
+        float valueZM = texture3D( u_volume_ds2Sampler, position - vec3( 0.0, 0.0, s ) ).r;
+
+        return vec3( valueXP - valueXM, valueYP - valueYM, valueZP - valueZM );
+    }
+
 #endif
 }
 
@@ -125,10 +142,17 @@ vec3 getGradient( in vec3 position )
  *
  * \return the color.
  */
-vec4 transferFunction( float value )
+vec4 transferFunction( int type, float value )
 {
 #ifdef TRANSFERFUNCTION_ENABLED
-    return texture1D( u_transferFunctionSampler, value );
+    if( type == 0 )
+    {
+        return texture1D( u_transferFunction_ds1Sampler, value );
+    }
+    else
+    {
+        return texture1D( u_transferFunction_ds2Sampler, value );
+    }
 #else
     // Example TF
     if( isZero( value - 0.5, 0.00005  ) )
@@ -160,11 +184,19 @@ vec4 transferFunction( float value )
  *
  * \return the light color
  */
-vec4 localIllumination( in vec3 position, in vec4 color )
+vec4 localIllumination( in vec3 position, in vec4 color, int volume )
 {
 #ifdef LOCALILLUMINATION_PHONG
     // get a gradient and get it to world-space
-    vec3 g = getGradient( position );
+    if( volume == 0 )
+    {
+        vec3 g = getGradient( position, 0 );
+    }
+    else
+    {
+        vec3 g = getGradient( position, 1 );
+    }
+
     vec3 worldNormal = ( gl_ModelViewMatrix * vec4( g, 0.0 ) ).xyz;
     if( length( g ) < 0.01 )
     {
@@ -242,7 +274,8 @@ void main()
     {
         // get current value, classify and illuminate
         vec3 rayPoint = rayStart + ( currentDistance * v_ray );
-        float alpha = transferFunction( texture3D( u_volumeSampler, rayPoint ).r ).a;
+        float alpha = ( transferFunction( 0, texture3D( u_volume_ds1Sampler, rayPoint ).r ).a
+                        * transferFunction( 1, texture3D( u_volume_ds2Sampler, rayPoint ).r ).a );
         if( alpha > maxalpha )
         {
             maxRayPoint = rayPoint;
@@ -258,7 +291,8 @@ void main()
     // both depth projection and mip need this information.
     if( maxdist > 0.0 )
     {
-       dst = localIllumination( maxRayPoint, transferFunction( texture3D( u_volumeSampler, maxRayPoint ).r ) );
+       dst = ( localIllumination( maxRayPoint, transferFunction( 0, texture3D( u_volume_ds1Sampler, maxRayPoint ).r ), 0 ) *
+                localIllumination( maxRayPoint, transferFunction( 1, texture3D( u_volume_ds2Sampler, maxRayPoint ).r ), 1 ) );
        dst.a = 1.0;
     }
 #ifdef DEPTH_PROJECTION_ENABLED
@@ -279,7 +313,8 @@ void main()
         // {
         //     dst = vec4( 2.* ( 0.5-normval ), normval, 0., 1. );
         // }
-        dst = vec4( texture1D( u_transferFunctionSampler, normval ).rgb, 1.0 );
+        dst = vec4( texture1D( u_transferFunction_ds1Sampler, normval ).rgb, 1.0 )
+                * vec4( texture1D( u_transferFunction_ds2Sampler, normval ).rgb, 1.0 );
     }
     else
     {
@@ -296,7 +331,8 @@ void main()
         {
             // get current value, classify and illuminate
             vec3 rayPoint = rayStart + ( currentDistance * v_ray );
-            vec4 src = localIllumination( rayPoint, transferFunction( texture3D( u_volumeSampler, rayPoint ).r ) );
+            vec4 src = ( localIllumination( rayPoint, transferFunction( 0, texture3D( u_volume_ds1Sampler, rayPoint ).r ), 0 ) *
+                            localIllumination( rayPoint, transferFunction( 1, texture3D( u_volume_ds2Sampler, rayPoint ).r ), 1 ) );
             // associated colors needed
             src.rgb *= src.a;
 
@@ -320,7 +356,8 @@ void main()
                 for( int aoS = 0; aoS < 16; ++aoS )
                 {
                     vec3 samplePoint = rayPoint + ( dir * v_sampleDistance * float(aoI+1) );
-                vec4 sampleColor = transferFunction( texture3D( u_volumeSampler, samplePoint ).r );
+                vec4 sampleColor = (transferFunction( 0, texture3D( u_volume_ds1Sampler, samplePoint ).r ) *
+                                        transferFunction( 0, texture3D( u_volume_ds2Sampler, samplePoint ).r ) );
                 aoFactor += sampleColor.a;// * ( 1.0 / 16.0 );
             }
 */
@@ -340,10 +377,10 @@ void main()
 
     // have we hit something which was classified not to be transparent?
     // This is, visually, not needed but useful if volume renderer is used in conjunction with other geometry.
-    // if( isZero( dst.a ) )
-    // {
-    //    discard;
-    // }
+    if( isZero( dst.a ) )
+    {
+        discard;
+    }
 
     // get depth ... currently the frag depth.
     float depth = gl_FragCoord.z;

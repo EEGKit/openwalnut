@@ -110,9 +110,19 @@ private:
     std::shared_ptr< WModuleInputData< WDataSetSingle > > m_transferFunction_ds1;
 
     /**
+    * The transfer function as an input data set
+    */
+    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_transferFunction_ds2;
+
+    /**
      * An input connector used to get datasets from other modules. The connection management between connectors must not be handled by the module.
      */
     std::shared_ptr< WModuleInputData< WDataSetScalar > > m_input_ds1;
+
+    /**
+     * An input connector used to get datasets from other modules. The connection management between connectors must not be handled by the module.
+     */
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_input_ds2;
 
     /**
      * The gradient field input
@@ -182,7 +192,12 @@ private:
     /**
      * the main geometry node
      */
-    osg::ref_ptr< osg::Node > cube;
+    osg::ref_ptr< osg::Node > cube_ds1;
+
+    /**
+     * the main geometry node
+     */
+    osg::ref_ptr< osg::Node > cube_ds2;
 };
 
 #endif  // WMDIRECTVOLUMERENDERING2TF_H
