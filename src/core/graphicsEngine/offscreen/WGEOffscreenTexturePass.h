@@ -30,6 +30,7 @@
 #include <osg/Geode>
 #include <osg/TexMat>
 
+#include "core/graphicsEngine/callbacks/WGETexMatUniformCallback.h"
 #include "WGEOffscreenRenderPass.h"
 
 class WGETextureHud;
@@ -109,35 +110,6 @@ private:
          * The pass used in conjunction with this callback.
          */
         WGEOffscreenTexturePass* m_pass;
-    };
-
-    /**
-     * Callback for the texture matrix.
-     */
-    class TexMatCallback: public osg::Uniform::Callback
-    {
-    public: // NOLINT
-        /**
-         * Constructor.
-         * 
-         * \param texMat the texture matrix this callback is applied to.
-         */
-        explicit TexMatCallback( osg::TexMat* texMat ): m_texMat( texMat )
-        {
-        };
-
-        /**
-         * operator () - called during the traversal
-         * 
-         * \param uniform the uniform
-         * \param nv the node visitor
-         */
-        void operator()( osg::Uniform* uniform, osg::NodeVisitor* nv );
-
-        /**
-         * The texture matrix this callback is applied to.
-         */
-        osg::TexMat* m_texMat;
     };
 };
 

@@ -38,6 +38,8 @@
 
 #include "shaders/WGEPropertyUniform.h"
 #include "callbacks/WGEPropertyTransformationCallback.h"
+#include "callbacks/WGETexMatUniformCallback.h"
+
 
 template < typename T > class WGETexture;
 class WDataTexture3D;
@@ -195,8 +197,11 @@ void wge::bindTexture( osg::ref_ptr< osg::Node > node, osg::ref_ptr< WGETexture<
     // use a callback to update the tex matrix if needed according to transformation property of texture
     texMat->setUpdateCallback( new WGEPropertyTransformationCallback< osg::StateAttribute, osg::TexMat >( texture->transformation() ) );
     node->getOrCreateStateSet()->setTextureAttributeAndModes( unit, texMat, osg::StateAttribute::ON );
-    node->getOrCreateStateSet()->addUniform(
-        new osg::Uniform( ( "ow_TextureMatrix" + string_utils::toString( unit ) ).c_str(), texMat->getMatrix() ) );
+
+    osg::ref_ptr< osg::Uniform > uniform = new osg::Uniform(
+        osg::Uniform::FLOAT_MAT4, ( "ow_TextureMatrix" + string_utils::toString( unit ) ).c_str() );
+    uniform->setUpdateCallback( new WGETexMatUniformCallback( texMat ) );
+    node->getOrCreateStateSet()->addUniform( uniform );
 
     // add some additional uniforms containing scaling information
     texture->applyUniforms( prefix, node->getOrCreateStateSet() );
