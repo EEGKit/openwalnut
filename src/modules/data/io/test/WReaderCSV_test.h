@@ -127,6 +127,97 @@ public:
         // compare last data rows
         TS_ASSERT_EQUALS( tmpCsvReader.read()->getData()->back(), testDataLastRow->front() );
     }
+
+    
+    /**
+     * check \r line endings
+     */
+    void testCRLineEnding()
+    {
+        std::string fileName = W_FIXTURE_PATH + "CSVs/cr.csv";
+        std::cout << std::endl << "Test loading of " << fileName << "." << std::endl;
+
+
+        WDataSetCSV::ContentSPtr testHeader = WDataSetCSV::ContentSPtr( new WDataSetCSV::Content() );
+        WDataSetCSV::ContentSPtr testDataFirstRow = WDataSetCSV::ContentSPtr( new WDataSetCSV::Content() );
+        testHeader->push_back(
+            {
+                "header1", "header2", "header3"
+            }
+        );
+        testDataFirstRow->push_back(
+            {
+                "1", "2", "3"
+            }
+        );
+
+        WReaderCSV tmpCsvReader( fileName );
+        TS_ASSERT_THROWS_NOTHING( tmpCsvReader.read() );
+        // compare headers
+        TS_ASSERT_EQUALS( tmpCsvReader.read()->getHeader()->front(), testHeader->front() );
+        // compare first data rows
+        TS_ASSERT_EQUALS( tmpCsvReader.read()->getData()->front(), testDataFirstRow->front() );
+    }
+
+    /**
+     * check \n line endings
+     */
+    void testLFLineEnding()
+    {
+        std::string fileName = W_FIXTURE_PATH + "CSVs/lf.csv";
+        std::cout << std::endl << "Test loading of " << fileName << "." << std::endl;
+
+
+        WDataSetCSV::ContentSPtr testHeader = WDataSetCSV::ContentSPtr( new WDataSetCSV::Content() );
+        WDataSetCSV::ContentSPtr testDataFirstRow = WDataSetCSV::ContentSPtr( new WDataSetCSV::Content() );
+        testHeader->push_back(
+            {
+                "header1", "header2", "header3"
+            }
+        );
+        testDataFirstRow->push_back(
+            {
+                "1", "2", "3"
+            }
+        );
+
+        WReaderCSV tmpCsvReader( fileName );
+        TS_ASSERT_THROWS_NOTHING( tmpCsvReader.read() );
+        // compare headers
+        TS_ASSERT_EQUALS( tmpCsvReader.read()->getHeader()->front(), testHeader->front() );
+        // compare first data rows
+        TS_ASSERT_EQUALS( tmpCsvReader.read()->getData()->front(), testDataFirstRow->front() );
+    }
+
+    /**
+     * check \r\n line endings
+     */
+    void testCRLFLineEnding()
+    {
+        std::string fileName = W_FIXTURE_PATH + "CSVs/crlf.csv";
+        std::cout << std::endl << "Test loading of " << fileName << "." << std::endl;
+
+
+        WDataSetCSV::ContentSPtr testHeader = WDataSetCSV::ContentSPtr( new WDataSetCSV::Content() );
+        WDataSetCSV::ContentSPtr testDataFirstRow = WDataSetCSV::ContentSPtr( new WDataSetCSV::Content() );
+        testHeader->push_back(
+            {
+                "header1", "header2", "header3"
+            }
+        );
+        testDataFirstRow->push_back(
+            {
+                "1", "2", "3"
+            }
+        );
+
+        WReaderCSV tmpCsvReader( fileName );
+        TS_ASSERT_THROWS_NOTHING( tmpCsvReader.read() );
+        // compare headers
+        TS_ASSERT_EQUALS( tmpCsvReader.read()->getHeader()->front(), testHeader->front() );
+        // compare first data rows
+        TS_ASSERT_EQUALS( tmpCsvReader.read()->getData()->front(), testDataFirstRow->front() );
+    }
 };
 
 #endif  // WREADERCSV_TEST_H
