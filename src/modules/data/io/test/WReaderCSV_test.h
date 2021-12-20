@@ -128,9 +128,8 @@ public:
         TS_ASSERT_EQUALS( tmpCsvReader.read()->getData()->back(), testDataLastRow->front() );
     }
 
-    
     /**
-     * check \r line endings
+     * check \\r line endings
      */
     void testCRLineEnding()
     {
@@ -160,7 +159,7 @@ public:
     }
 
     /**
-     * check \n line endings
+     * check \\n line endings
      */
     void testLFLineEnding()
     {
@@ -190,7 +189,7 @@ public:
     }
 
     /**
-     * check \r\n line endings
+     * check \\r\\n line endings
      */
     void testCRLFLineEnding()
     {
@@ -208,6 +207,36 @@ public:
         testDataFirstRow->push_back(
             {
                 "1", "2", "3"
+            }
+        );
+
+        WReaderCSV tmpCsvReader( fileName );
+        TS_ASSERT_THROWS_NOTHING( tmpCsvReader.read() );
+        // compare headers
+        TS_ASSERT_EQUALS( tmpCsvReader.read()->getHeader()->front(), testHeader->front() );
+        // compare first data rows
+        TS_ASSERT_EQUALS( tmpCsvReader.read()->getData()->front(), testDataFirstRow->front() );
+    }
+
+    /**
+     * Empty columns should not prevent the reader from reading all columns
+     */
+    void testEmptyColumns()
+    {
+        std::string fileName = W_FIXTURE_PATH + "CSVs/emptyColumns.csv";
+        std::cout << std::endl << "Test loading of " << fileName << "." << std::endl;
+
+
+        WDataSetCSV::ContentSPtr testHeader = WDataSetCSV::ContentSPtr( new WDataSetCSV::Content() );
+        WDataSetCSV::ContentSPtr testDataFirstRow = WDataSetCSV::ContentSPtr( new WDataSetCSV::Content() );
+        testHeader->push_back(
+            {
+                "header1", "header2", "header3"
+            }
+        );
+        testDataFirstRow->push_back(
+            {
+                "", "", ""
             }
         );
 

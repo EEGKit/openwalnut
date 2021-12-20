@@ -145,10 +145,7 @@ std::vector< std::string > WReaderCSV::transformLineToVector( std::string line )
         line.erase( 0, pos + 1 );
     }
 
-    if( !line.empty() )
-    {
-        row.push_back( line );
-    }
+    row.push_back( line );
 
     return row;
 }
