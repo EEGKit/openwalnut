@@ -91,18 +91,18 @@ const std::string WMDirectVolumeRendering2TF::getDescription() const
 void WMDirectVolumeRendering2TF::connectors()
 {
     // DVR needs one input: the scalar dataset
-    m_input_ds1 = WModuleInputData< WDataSetScalar >::createAndAdd( shared_from_this(), "scalar data data set 1", "The scalar dataset." );
+    m_input_ds0 = WModuleInputData< WDataSetScalar >::createAndAdd( shared_from_this(), "scalar data data set 1", "The scalar dataset." );
 
     // optional: second input for a second scalar dataset
-    m_input_ds2 = WModuleInputData< WDataSetScalar >::createAndAdd( shared_from_this(), "scalar data data set 2", "The scalar dataset." );
+    m_input_ds1 = WModuleInputData< WDataSetScalar >::createAndAdd( shared_from_this(), "scalar data data set 2", "The scalar dataset." );
 
     // The transfer function for our DVR
-    m_transferFunction_ds1 = WModuleInputData< WDataSetSingle >::createAndAdd( shared_from_this(),
+    m_transferFunction_ds0 = WModuleInputData< WDataSetSingle >::createAndAdd( shared_from_this(),
                                                                               "transfer function data set 1",
                                                                               "The 1D transfer function for the first data set." );
 
     // The transfer function for our DVR
-    m_transferFunction_ds2 = WModuleInputData< WDataSetSingle >::createAndAdd( shared_from_this(),
+    m_transferFunction_ds1 = WModuleInputData< WDataSetSingle >::createAndAdd( shared_from_this(),
                                                                               "transfer function data set 2",
                                                                               "The 1D transfer function for the second data set." );
 
@@ -219,18 +219,18 @@ void WMDirectVolumeRendering2TF::moduleMain()
     WGEShaderDefineSwitch::SPtr depthProjectionEnabledDefine = m_shader->setDefine( "DEPTH_PROJECTION_ENABLED" );
 
     // the texture used for the transfer function
+    osg::ref_ptr< osg::Texture1D > tfTexture_ds0 = new osg::Texture1D();
+    osg::ref_ptr< osg::Image > tfImage_ds0 = new osg::Image();
     osg::ref_ptr< osg::Texture1D > tfTexture_ds1 = new osg::Texture1D();
     osg::ref_ptr< osg::Image > tfImage_ds1 = new osg::Image();
-    osg::ref_ptr< osg::Texture1D > tfTexture_ds2 = new osg::Texture1D();
-    osg::ref_ptr< osg::Image > tfImage_ds2 = new osg::Image();
     bool updateTF = false;  // if true, update of TF is enforced
 
     // let the main loop awake if the data changes or the properties changed.
     m_moduleState.setResetable( true, true );
+    m_moduleState.add( m_transferFunction_ds0->getDataChangedCondition() );
     m_moduleState.add( m_transferFunction_ds1->getDataChangedCondition() );
-    m_moduleState.add( m_transferFunction_ds2->getDataChangedCondition() );
+    m_moduleState.add( m_input_ds0->getDataChangedCondition() );
     m_moduleState.add( m_input_ds1->getDataChangedCondition() );
-    m_moduleState.add( m_input_ds2->getDataChangedCondition() );
     m_moduleState.add( m_gradients->getDataChangedCondition() );
     m_moduleState.add( m_propCondition );
 
@@ -257,9 +257,9 @@ void WMDirectVolumeRendering2TF::moduleMain()
         }
 
         // was there an update?
-        bool dataUpdated = m_input_ds1->updated() || m_input_ds2 || m_gradients->updated();
-        std::shared_ptr< WDataSetScalar > dataSet1 = m_input_ds1->getData();
-        std::shared_ptr< WDataSetScalar > dataSet2 = m_input_ds2->getData();
+        bool dataUpdated = m_input_ds0->updated() || m_input_ds1 || m_gradients->updated();
+        std::shared_ptr< WDataSetScalar > dataSet1 = m_input_ds0->getData();
+        std::shared_ptr< WDataSetScalar > dataSet2 = m_input_ds1->getData();
         bool dataValid   = ( dataSet1 != NULL ) && ( dataSet2 != NULL );
         bool propUpdated = m_localIlluminationAlgo->changed() || m_stochasticJitterEnabled->changed() ||  m_opacityCorrectionEnabled->changed() ||
             m_maximumIntensityProjectionEnabled->changed() || m_depthProjectionEnabled->changed();
@@ -268,8 +268,7 @@ void WMDirectVolumeRendering2TF::moduleMain()
         // reset module in case of invalid data. This accounts only for the scalar field input
         if( !dataValid )
         {
-            cube_ds1.release();
-            cube_ds2.release();
+            cube.release();
             debugLog() << "Resetting.";
             rootNode->clear();
             continue;
@@ -284,54 +283,44 @@ void WMDirectVolumeRendering2TF::moduleMain()
             rootNode->clear();
 
             // First, grab the grids of both data sets
-            std::shared_ptr< WGridRegular3D > grid_ds1 = std::dynamic_pointer_cast< WGridRegular3D >( dataSet1->getGrid() );
-            std::shared_ptr< WGridRegular3D > grid_ds2 = std::dynamic_pointer_cast< WGridRegular3D >( dataSet2->getGrid() );
+            std::shared_ptr< WGridRegular3D > grid_ds0 = std::dynamic_pointer_cast< WGridRegular3D >( dataSet1->getGrid() );
+            std::shared_ptr< WGridRegular3D > grid_ds1 = std::dynamic_pointer_cast< WGridRegular3D >( dataSet2->getGrid() );
 
-            if( !grid_ds1 || !grid_ds2 )
+            if( !grid_ds0 || !grid_ds1 )
             {
                 errorLog() << "The dataset does not provide a regular grid. Ignoring dataset.";
                 continue;
             }
 
             // use the OSG Shapes, create unit cube
-            WBoundingBox bb_ds1( WPosition( 0.0, 0.0, 0.0 ),
-                                WPosition( grid_ds1->getNbCoordsX() - 1, grid_ds1->getNbCoordsY() - 1, grid_ds1->getNbCoordsZ() - 1 ) );
-            WBoundingBox bb_ds2( WPosition( 0.0, 0.0, 0.0 ),
-                             WPosition( grid_ds2->getNbCoordsX() - 1, grid_ds2->getNbCoordsY() - 1, grid_ds2->getNbCoordsZ() - 1 ) );
-            cube_ds1 = wge::generateSolidBoundingBoxNode( bb_ds1, WColor( 1.0, 1.0, 1.0, 1.0 ) );
-            cube_ds2 = wge::generateSolidBoundingBoxNode( bb_ds2, WColor( 1.0, 1.0, 1.0, 1.0 ) );
+            WBoundingBox bb_ds0( WPosition( 0.0, 0.0, 0.0 ),
+                                WPosition( grid_ds0->getNbCoordsX() - 1, grid_ds0->getNbCoordsY() - 1, grid_ds0->getNbCoordsZ() - 1 ) );
+            cube = wge::generateSolidBoundingBoxNode( bb_ds0, WColor( 1.0, 1.0, 1.0, 1.0 ) );
 
-            cube_ds1->asTransform()->getChild( 0 )->setName( "_DVR Proxy Cube Data Set 1" ); // Be aware that this name is used in the pick handler.
-            cube_ds2->asTransform()->getChild( 0 )->setName( "_DVR Proxy Cube Data Set 2" ); // Be aware that this name is used in the pick handler.
+            cube->asTransform()->getChild( 0 )->setName( "_DVR Proxy Cube Data Set 1" ); // Be aware that this name is used in the pick handler.
 
             // because of the underscore in front it won't be picked
             // we also set the grid's transformation here
-            rootNode->setMatrix( static_cast< WMatrix4d >( grid_ds1->getTransform() ) );
-            rootNode->setMatrix( static_cast< WMatrix4d >( grid_ds2->getTransform() ) );
+            rootNode->setMatrix( static_cast< WMatrix4d >( grid_ds0->getTransform() ) );
 
 
-            m_shader->apply( cube_ds1 );
-            m_shader->apply( cube_ds2 );
+            m_shader->apply( cube );
 
 
             // bind the texture to the node
-            osg::ref_ptr< WDataTexture3D > texture3D_ds1 = dataSet1->getTexture();
-            wge::bindTexture( cube_ds1, texture3D_ds1, 0, "u_volume_ds1" );
-            osg::ref_ptr< WDataTexture3D > texture3D_ds2 = dataSet2->getTexture();
-            wge::bindTexture( cube_ds2, texture3D_ds2, 0, "u_volume_ds2" );
+            osg::ref_ptr< WDataTexture3D > texture3D_ds0 = dataSet1->getTexture();
+            wge::bindTexture( cube, texture3D_ds0, 0, "u_volume_ds0" );
+            osg::ref_ptr< WDataTexture3D > texture3D_ds1 = dataSet2->getTexture();
+            wge::bindTexture( cube, texture3D_ds1, 0, "u_volume_ds1" );
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////
             // setup illumination
             ////////////////////////////////////////////////////////////////////////////////////////////////////
 
             // enable transparency
-            osg::StateSet* rootState_ds1 = cube_ds1->getOrCreateStateSet();
-            rootState_ds1->setMode( GL_BLEND, osg::StateAttribute::ON );
-            rootState_ds1->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
-
-            osg::StateSet* rootState_ds2 = cube_ds2->getOrCreateStateSet();
-            rootState_ds2->setMode( GL_BLEND, osg::StateAttribute::ON );
-            rootState_ds2->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
+            osg::StateSet* rootState_ds0 = cube->getOrCreateStateSet();
+            rootState_ds0->setMode( GL_BLEND, osg::StateAttribute::ON );
+            rootState_ds0->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
 
             // set proper illumination define
             illuminationAlgoDefines->activateOption( m_localIlluminationAlgo->get( true ).getItemIndexOfSelected( 0 ) );
@@ -345,8 +334,8 @@ void WMDirectVolumeRendering2TF::moduleMain()
 
                 // bind the texture to the node
                 osg::ref_ptr< WDataTexture3D > gradTexture3D = gradients->getTexture();
-                wge::bindTexture( cube_ds1, gradTexture3D, 1, "u_gradients" );
-                wge::bindTexture( cube_ds2, gradTexture3D, 1, "u_gradients_ds2" );
+                wge::bindTexture( cube, gradTexture3D, 1, "u_gradients" );
+                //wge::bindTexture( cube, gradTexture3D, 1, "u_gradients_ds1" );
                 gradTexEnableDefine->setActive( true );
             }
             else
@@ -367,8 +356,8 @@ void WMDirectVolumeRendering2TF::moduleMain()
                 osg::ref_ptr< WGETexture2D > randTexture = new WGETexture2D( genWhiteNoise( size ) );
                 randTexture->setFilterMinMag( osg::Texture2D::NEAREST );
                 randTexture->setWrapSTR( osg::Texture2D::REPEAT );
-                wge::bindTexture( cube_ds1, randTexture, 2, "u_jitter" );
-                wge::bindTexture( cube_ds2, randTexture, 2, "u_jitter_ds2" );
+                wge::bindTexture( cube, randTexture, 2, "u_jitter" );
+                //wge::bindTexture( cube, randTexture, 2, "u_jitter_ds1" );
                 jitterSamplerDefine->setActive( true );
                 jitterEnable->setActive( true );
                 jitterSizeXDefine->setValue( size );
@@ -378,14 +367,25 @@ void WMDirectVolumeRendering2TF::moduleMain()
             // transfer function texture
             ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+            osg::ref_ptr< osg::Texture1D > tfTexture_ds0 = new osg::Texture1D();
+            tfTexture_ds0->setDataVariance( osg::Object::DYNAMIC );
+
             osg::ref_ptr< osg::Texture1D > tfTexture_ds1 = new osg::Texture1D();
             tfTexture_ds1->setDataVariance( osg::Object::DYNAMIC );
-
-            osg::ref_ptr< osg::Texture1D > tfTexture_ds2 = new osg::Texture1D();
-            tfTexture_ds2->setDataVariance( osg::Object::DYNAMIC );
             // create some ramp as default
             {
                 int resX = 32;
+                tfImage_ds0->allocateImage( resX, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE );
+                unsigned char *data_ds0 = tfImage_ds0->data();  // should be 4 megs
+                for( int x = 0; x < resX; x++ )
+                {
+                    unsigned char r = ( unsigned char )( 0.1 * 255.0 * static_cast< float >( x ) / static_cast< float >( resX ) );
+                    data_ds0[ 4 * x + 0 ] = 255;
+                    data_ds0[ 4 * x + 1 ] = 255;
+                    data_ds0[ 4 * x + 2 ] = 255;
+                    data_ds0[ 4 * x + 3 ] = r;
+                }
+
                 tfImage_ds1->allocateImage( resX, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE );
                 unsigned char *data_ds1 = tfImage_ds1->data();  // should be 4 megs
                 for( int x = 0; x < resX; x++ )
@@ -396,23 +396,12 @@ void WMDirectVolumeRendering2TF::moduleMain()
                     data_ds1[ 4 * x + 2 ] = 255;
                     data_ds1[ 4 * x + 3 ] = r;
                 }
-
-                tfImage_ds2->allocateImage( resX, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE );
-                unsigned char *data_ds2 = tfImage_ds1->data();  // should be 4 megs
-                for( int x = 0; x < resX; x++ )
-                {
-                    unsigned char r = ( unsigned char )( 0.1 * 255.0 * static_cast< float >( x ) / static_cast< float >( resX ) );
-                    data_ds2[ 4 * x + 0 ] = 255;
-                    data_ds2[ 4 * x + 1 ] = 255;
-                    data_ds2[ 4 * x + 2 ] = 255;
-                    data_ds2[ 4 * x + 3 ] = r;
-                }
             }
 
+            tfTexture_ds0->setImage( tfImage_ds0 );
             tfTexture_ds1->setImage( tfImage_ds1 );
-            tfTexture_ds2->setImage( tfImage_ds2 );
-            wge::bindTexture( cube_ds1, tfTexture_ds1, 3, "u_transferFunction_ds1" );
-            wge::bindTexture( cube_ds2, tfTexture_ds2, 3, "u_transferFunction_ds2" );
+            wge::bindTexture( cube, tfTexture_ds0, 3, "u_transferFunction_ds0" );
+            wge::bindTexture( cube, tfTexture_ds1, 3, "u_transferFunction_ds1" );
             // permanently enable the TF texture. As we have no alternative way to set the TF, always use a TF texture
             tfTexEnableDefine->setActive( true );
 
@@ -459,7 +448,7 @@ void WMDirectVolumeRendering2TF::moduleMain()
             // setup all those uniforms
             ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            rootState_ds1->addUniform( new WGEPropertyUniform< WPropInt >( "u_samples", m_samples ) );
+            rootState_ds0->addUniform( new WGEPropertyUniform< WPropInt >( "u_samples", m_samples ) );
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////
             // build spatial search structure
@@ -467,8 +456,7 @@ void WMDirectVolumeRendering2TF::moduleMain()
 
             // update node
             debugLog() << "Adding new rendering.";
-            rootNode->insert( cube_ds1 );
-            rootNode->insert( cube_ds2 );
+            rootNode->insert( cube );
 
             // insert root node if needed. This way, we ensure that the root node gets added only if the proxy cube has been added AND the bbox
             // can be calculated properly by the OSG to ensure the proxy cube is centered in the scene if no other item has been added earlier.
@@ -485,12 +473,12 @@ void WMDirectVolumeRendering2TF::moduleMain()
         // load transfer function
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        if( ( updateTF || propUpdated || m_transferFunction_ds1->updated() || m_transferFunction_ds2->updated() )
-                && dataValid && cube_ds1 && cube_ds2 )
+        if( ( updateTF || propUpdated || m_transferFunction_ds0->updated() || m_transferFunction_ds1->updated() )
+                && dataValid && cube )
         {
             updateTF = false;
-            std::shared_ptr< WDataSetSingle > dataSet1 = m_transferFunction_ds1->getData();
-            std::shared_ptr< WDataSetSingle > dataSet2 = m_transferFunction_ds2->getData();
+            std::shared_ptr< WDataSetSingle > dataSet1 = m_transferFunction_ds0->getData();
+            std::shared_ptr< WDataSetSingle > dataSet2 = m_transferFunction_ds1->getData();
 
             if( !dataSet1 || !dataSet2 )
             {
@@ -501,21 +489,27 @@ void WMDirectVolumeRendering2TF::moduleMain()
                 WAssert( dataSet1, "data set1" );
                 std::shared_ptr< WValueSetBase > valueSet1 = dataSet1->getValueSet();
                 WAssert( valueSet1, "value set1" );
-                std::shared_ptr< WValueSet< unsigned char > > valueSet_ds1( std::dynamic_pointer_cast<WValueSet< unsigned char> >( valueSet1 ) );
+                std::shared_ptr< WValueSet< unsigned char > > valueSet_ds0( std::dynamic_pointer_cast<WValueSet< unsigned char> >( valueSet1 ) );
 
                 WAssert( dataSet2, "data set2" );
                 std::shared_ptr< WValueSetBase > valueSet2 = dataSet2->getValueSet();
                 WAssert( valueSet2, "value set2" );
-                std::shared_ptr< WValueSet< unsigned char > > valueSet_ds2( std::dynamic_pointer_cast<WValueSet< unsigned char> >( valueSet2 ) );
-                if( !valueSet_ds1 && !valueSet_ds2 )
+                std::shared_ptr< WValueSet< unsigned char > > valueSet_ds1( std::dynamic_pointer_cast<WValueSet< unsigned char> >( valueSet2 ) );
+                if( !valueSet_ds0 && !valueSet_ds1 )
                 {
                     debugLog() << "invalid type";
                 }
                 else
                 {
+                    size_t tfsize_ds0 = valueSet_ds0->rawSize();
                     size_t tfsize_ds1 = valueSet_ds1->rawSize();
-                    size_t tfsize_ds2 = valueSet_ds2->rawSize();
 
+
+                    // create image and copy the TF
+                    tfImage_ds0->allocateImage( tfsize_ds0 / 4, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE );
+                    tfImage_ds0->setInternalTextureFormat( GL_RGBA );
+                    unsigned char* data_ds0 = reinterpret_cast< unsigned char* >( tfImage_ds0->data() );
+                    std::copy( valueSet_ds0->rawData(), &valueSet_ds0->rawData()[ tfsize_ds0 ], data_ds0 );
 
                     // create image and copy the TF
                     tfImage_ds1->allocateImage( tfsize_ds1 / 4, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE );
@@ -523,15 +517,9 @@ void WMDirectVolumeRendering2TF::moduleMain()
                     unsigned char* data_ds1 = reinterpret_cast< unsigned char* >( tfImage_ds1->data() );
                     std::copy( valueSet_ds1->rawData(), &valueSet_ds1->rawData()[ tfsize_ds1 ], data_ds1 );
 
-                    // create image and copy the TF
-                    tfImage_ds2->allocateImage( tfsize_ds2 / 4, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE );
-                    tfImage_ds2->setInternalTextureFormat( GL_RGBA );
-                    unsigned char* data_ds2 = reinterpret_cast< unsigned char* >( tfImage_ds2->data() );
-                    std::copy( valueSet_ds2->rawData(), &valueSet_ds2->rawData()[ tfsize_ds2 ], data_ds2 );
-
                     // force OpenGl to use the new texture
+                    tfTexture_ds0->dirtyTextureObject();
                     tfTexture_ds1->dirtyTextureObject();
-                    tfTexture_ds2->dirtyTextureObject();
                 }
             }
         }

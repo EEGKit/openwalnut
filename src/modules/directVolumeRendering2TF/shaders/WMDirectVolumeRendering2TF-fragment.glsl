@@ -44,10 +44,10 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // texture containing the data
+uniform sampler3D u_volume_ds0Sampler;
 uniform sampler3D u_volume_ds1Sampler;
-uniform sampler3D u_volume_ds2Sampler;
+uniform sampler1D u_transferFunction_ds0Sampler;
 uniform sampler1D u_transferFunction_ds1Sampler;
-uniform sampler1D u_transferFunction_ds2Sampler;
 uniform sampler3D u_gradientsSampler;
 uniform sampler2D u_jitterSampler;
 uniform int       u_jitterSizeX;
@@ -111,23 +111,23 @@ vec3 getGradient( in vec3 position, int volume )
     float s = 0.02;
     if( volume == 0 )
     {
+        float valueXP = texture3D( u_volume_ds0Sampler, position + vec3( s, 0.0, 0.0 ) ).r;
+        float valueXM = texture3D( u_volume_ds0Sampler, position - vec3( s, 0.0, 0.0 ) ).r;
+        float valueYP = texture3D( u_volume_ds0Sampler, position + vec3( 0.0, s, 0.0 ) ).r;
+        float valueYM = texture3D( u_volume_ds0Sampler, position - vec3( 0.0, s, 0.0 ) ).r;
+        float valueZP = texture3D( u_volume_ds0Sampler, position + vec3( 0.0, 0.0, s ) ).r;
+        float valueZM = texture3D( u_volume_ds0Sampler, position - vec3( 0.0, 0.0, s ) ).r;
+
+        return vec3( valueXP - valueXM, valueYP - valueYM, valueZP - valueZM );
+    }
+    else if( volume == 1 )
+    {
         float valueXP = texture3D( u_volume_ds1Sampler, position + vec3( s, 0.0, 0.0 ) ).r;
         float valueXM = texture3D( u_volume_ds1Sampler, position - vec3( s, 0.0, 0.0 ) ).r;
         float valueYP = texture3D( u_volume_ds1Sampler, position + vec3( 0.0, s, 0.0 ) ).r;
         float valueYM = texture3D( u_volume_ds1Sampler, position - vec3( 0.0, s, 0.0 ) ).r;
         float valueZP = texture3D( u_volume_ds1Sampler, position + vec3( 0.0, 0.0, s ) ).r;
         float valueZM = texture3D( u_volume_ds1Sampler, position - vec3( 0.0, 0.0, s ) ).r;
-
-        return vec3( valueXP - valueXM, valueYP - valueYM, valueZP - valueZM );
-    }
-    else if( volume == 1 )
-    {
-        float valueXP = texture3D( u_volume_ds2Sampler, position + vec3( s, 0.0, 0.0 ) ).r;
-        float valueXM = texture3D( u_volume_ds2Sampler, position - vec3( s, 0.0, 0.0 ) ).r;
-        float valueYP = texture3D( u_volume_ds2Sampler, position + vec3( 0.0, s, 0.0 ) ).r;
-        float valueYM = texture3D( u_volume_ds2Sampler, position - vec3( 0.0, s, 0.0 ) ).r;
-        float valueZP = texture3D( u_volume_ds2Sampler, position + vec3( 0.0, 0.0, s ) ).r;
-        float valueZM = texture3D( u_volume_ds2Sampler, position - vec3( 0.0, 0.0, s ) ).r;
 
         return vec3( valueXP - valueXM, valueYP - valueYM, valueZP - valueZM );
     }
@@ -147,11 +147,11 @@ vec4 transferFunction( int type, float value )
 #ifdef TRANSFERFUNCTION_ENABLED
     if( type == 0 )
     {
-        return texture1D( u_transferFunction_ds1Sampler, value );
+        return texture1D( u_transferFunction_ds0Sampler, value );
     }
     else
     {
-        return texture1D( u_transferFunction_ds2Sampler, value );
+        return texture1D( u_transferFunction_ds1Sampler, value );
     }
 #else
     // Example TF
@@ -274,8 +274,8 @@ void main()
     {
         // get current value, classify and illuminate
         vec3 rayPoint = rayStart + ( currentDistance * v_ray );
-        float alpha = ( transferFunction( 0, texture3D( u_volume_ds1Sampler, rayPoint ).r ).a
-                        * transferFunction( 1, texture3D( u_volume_ds2Sampler, rayPoint ).r ).a );
+        float alpha = ( transferFunction( 0, texture3D( u_volume_ds0Sampler, rayPoint ).r ).a
+                        * transferFunction( 1, texture3D( u_volume_ds1Sampler, rayPoint ).r ).a );
         if( alpha > maxalpha )
         {
             maxRayPoint = rayPoint;
@@ -291,8 +291,8 @@ void main()
     // both depth projection and mip need this information.
     if( maxdist > 0.0 )
     {
-       dst = ( localIllumination( maxRayPoint, transferFunction( 0, texture3D( u_volume_ds1Sampler, maxRayPoint ).r ), 0 ) *
-                localIllumination( maxRayPoint, transferFunction( 1, texture3D( u_volume_ds2Sampler, maxRayPoint ).r ), 1 ) );
+       dst = ( localIllumination( maxRayPoint, transferFunction( 0, texture3D( u_volume_ds0Sampler, maxRayPoint ).r ), 0 ) *
+                localIllumination( maxRayPoint, transferFunction( 1, texture3D( u_volume_ds1Sampler, maxRayPoint ).r ), 1 ) );
        dst.a = 1.0;
     }
 #ifdef DEPTH_PROJECTION_ENABLED
@@ -313,8 +313,8 @@ void main()
         // {
         //     dst = vec4( 2.* ( 0.5-normval ), normval, 0., 1. );
         // }
-        dst = vec4( texture1D( u_transferFunction_ds1Sampler, normval ).rgb, 1.0 )
-                * vec4( texture1D( u_transferFunction_ds2Sampler, normval ).rgb, 1.0 );
+        dst = vec4( texture1D( u_transferFunction_ds0Sampler, normval ).rgb, 1.0 )
+                * vec4( texture1D( u_transferFunction_ds1Sampler, normval ).rgb, 1.0 );
     }
     else
     {
@@ -331,8 +331,8 @@ void main()
         {
             // get current value, classify and illuminate
             vec3 rayPoint = rayStart + ( currentDistance * v_ray );
-            vec4 src = ( localIllumination( rayPoint, transferFunction( 0, texture3D( u_volume_ds1Sampler, rayPoint ).r ), 0 ) *
-                            localIllumination( rayPoint, transferFunction( 1, texture3D( u_volume_ds2Sampler, rayPoint ).r ), 1 ) );
+            vec4 src = ( localIllumination( rayPoint, transferFunction( 0, texture3D( u_volume_ds0Sampler, rayPoint ).r ), 0 ) *
+                            localIllumination( rayPoint, transferFunction( 1, texture3D( u_volume_ds1Sampler, rayPoint ).r ), 1 ) );
             // associated colors needed
             src.rgb *= src.a;
 
@@ -356,8 +356,8 @@ void main()
                 for( int aoS = 0; aoS < 16; ++aoS )
                 {
                     vec3 samplePoint = rayPoint + ( dir * v_sampleDistance * float(aoI+1) );
-                vec4 sampleColor = (transferFunction( 0, texture3D( u_volume_ds1Sampler, samplePoint ).r ) *
-                                        transferFunction( 0, texture3D( u_volume_ds2Sampler, samplePoint ).r ) );
+                vec4 sampleColor = (transferFunction( 0, texture3D( u_volume_ds0Sampler, samplePoint ).r ) *
+                                        transferFunction( 0, texture3D( u_volume_ds1Sampler, samplePoint ).r ) );
                 aoFactor += sampleColor.a;// * ( 1.0 / 16.0 );
             }
 */
