@@ -45,7 +45,8 @@ WDataCreatorFiberSpiral::~WDataCreatorFiberSpiral()
     // cleanup
 }
 
-void WDataCreatorFiberSpiral::operator()( WProgress::SPtr progress,
+void WDataCreatorFiberSpiral::operator()( int seed,
+                                          WProgress::SPtr progress,
                                           const WColor& color,
                                           size_t numFibers,
                                           size_t numVertsPerFiber,
@@ -57,7 +58,7 @@ void WDataCreatorFiberSpiral::operator()( WProgress::SPtr progress,
                                           WDataSetFibers::IndexArray fibIdxVertexMap,
                                           WDataSetFibers::ColorArray colors )
 {
-    std::srand( time( 0 ) );
+    std::srand( seed );
 
     WPosition originOffset = origin / 2.0;
     double spiralRadius = std::min( size.x(), size.y() );

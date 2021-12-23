@@ -22,11 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WDATACREATORFIBERSPIRAL_H
-#define WDATACREATORFIBERSPIRAL_H
-
-#include <memory>
-
+#ifndef WDATACREATORFIBERPARALLEL_H
+#define WDATACREATORFIBERPARALLEL_H
 
 #include "WDataSetFibersCreatorInterface.h"
 #include "core/common/WObjectNDIP.h"
@@ -34,28 +31,28 @@
 /**
  * Create a fiber spiral
  */
-class WDataCreatorFiberSpiral: public WObjectNDIP< WDataSetFibersCreatorInterface >
+class WDataCreatorFiberParallel: public WObjectNDIP< WDataSetFibersCreatorInterface >
 {
 public:
     /**
      * Abbreviate shared_ptr
      */
-    typedef std::shared_ptr< WDataCreatorFiberSpiral > SPtr;
+    typedef std::shared_ptr< WDataCreatorFiberParallel > SPtr;
 
     /**
      * Abbreviate const shared_ptr
      */
-    typedef std::shared_ptr< const WDataCreatorFiberSpiral > ConstSPtr;
+    typedef std::shared_ptr< const WDataCreatorFiberParallel > ConstSPtr;
 
     /**
      * Default constructor.
      */
-    WDataCreatorFiberSpiral();
+    WDataCreatorFiberParallel();
 
     /**
      * Destructor.
      */
-    virtual ~WDataCreatorFiberSpiral();
+    virtual ~WDataCreatorFiberParallel();
 
     /**
      * Create the dataset. This needs to be implemented by all the creators you write.
@@ -88,15 +85,9 @@ public:
 protected:
 private:
     /**
-     * Number of rotations to do.
+     * The direction of the parallel lines
      */
-    WPropInt m_numRotations;
-
-    /**
-     * The radius of a tube (consisting of multiple fibers
-     */
-    WPropDouble m_tubeRadius;
+    WPropPosition m_direction;
 };
 
-#endif  // WDATACREATORFIBERSPIRAL_H
-
+#endif  // WDATACREATORFIBERPARALLEL_H

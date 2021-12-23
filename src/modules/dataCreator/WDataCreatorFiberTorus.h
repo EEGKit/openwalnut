@@ -22,11 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WDATACREATORFIBERSPIRAL_H
-#define WDATACREATORFIBERSPIRAL_H
-
-#include <memory>
-
+#ifndef WDATACREATORFIBERTORUS_H
+#define WDATACREATORFIBERTORUS_H
 
 #include "WDataSetFibersCreatorInterface.h"
 #include "core/common/WObjectNDIP.h"
@@ -34,28 +31,28 @@
 /**
  * Create a fiber spiral
  */
-class WDataCreatorFiberSpiral: public WObjectNDIP< WDataSetFibersCreatorInterface >
+class WDataCreatorFiberTorus: public WObjectNDIP< WDataSetFibersCreatorInterface >
 {
 public:
     /**
      * Abbreviate shared_ptr
      */
-    typedef std::shared_ptr< WDataCreatorFiberSpiral > SPtr;
+    typedef std::shared_ptr< WDataCreatorFiberTorus > SPtr;
 
     /**
      * Abbreviate const shared_ptr
      */
-    typedef std::shared_ptr< const WDataCreatorFiberSpiral > ConstSPtr;
+    typedef std::shared_ptr< const WDataCreatorFiberTorus > ConstSPtr;
 
     /**
      * Default constructor.
      */
-    WDataCreatorFiberSpiral();
+    WDataCreatorFiberTorus();
 
     /**
      * Destructor.
      */
-    virtual ~WDataCreatorFiberSpiral();
+    virtual ~WDataCreatorFiberTorus();
 
     /**
      * Create the dataset. This needs to be implemented by all the creators you write.
@@ -88,15 +85,29 @@ public:
 protected:
 private:
     /**
-     * Number of rotations to do.
+     * The inner radius of the torus.
      */
-    WPropInt m_numRotations;
+    WPropDouble m_innerRadius;
 
     /**
-     * The radius of a tube (consisting of multiple fibers
+     * Property whether inner fibers should be created.
      */
-    WPropDouble m_tubeRadius;
+    WPropBool m_generateInner;
+
+    /**
+     * The rotation angle for the x axis.
+     */
+    WPropDouble m_rotateX;
+
+    /**
+     * The rotation angle for the x axis.
+     */
+    WPropDouble m_rotateY;
+
+    /**
+     * The rotation angle for the x axis.
+     */
+    WPropDouble m_rotateZ;
 };
 
-#endif  // WDATACREATORFIBERSPIRAL_H
-
+#endif  // WDATACREATORFIBERTORUS_H

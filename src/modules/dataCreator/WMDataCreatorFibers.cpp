@@ -26,7 +26,11 @@
 #include <memory>
 #include <string>
 
+#include "WDataCreatorFiberParallel.h"
+#include "WDataCreatorFiberRandom.h"
 #include "WDataCreatorFiberSpiral.h"
+#include "WDataCreatorFiberStar.h"
+#include "WDataCreatorFiberTorus.h"
 #include "WMDataCreatorFibers.h"
 #include "WMDataCreatorFibers.xpm"
 #include "core/common/WAssert.h"
@@ -41,7 +45,11 @@ WMDataCreatorFibers::WMDataCreatorFibers():
                 "Creator", "A list of all known creators." )
 {
     // add some strategies here
+    m_strategy.addStrategy( WDataCreatorFiberParallel::SPtr( new WDataCreatorFiberParallel() ) );
+    m_strategy.addStrategy( WDataCreatorFiberRandom::SPtr( new WDataCreatorFiberRandom() ) );
     m_strategy.addStrategy( WDataCreatorFiberSpiral::SPtr( new WDataCreatorFiberSpiral() ) );
+    m_strategy.addStrategy( WDataCreatorFiberStar::SPtr( new WDataCreatorFiberStar() ) );
+    m_strategy.addStrategy( WDataCreatorFiberTorus::SPtr( new WDataCreatorFiberTorus() ) );
 }
 
 WMDataCreatorFibers::~WMDataCreatorFibers()
@@ -87,6 +95,9 @@ void WMDataCreatorFibers::properties()
     m_origin = m_properties->addProperty( "Origin", "Coordinate of the origin (voxel 0,0,0).", WPosition( 0.0, 0.0, 0.0 ), m_propCondition );
     m_size = m_properties->addProperty( "Size", "The size of the dataset along the X,Y, and Z axis in the OpenWalnut coordinate system.",
                                         WPosition( 128.0, 128.0, 128.0 ), m_propCondition );
+
+    // the seed
+    m_seed = m_properties->addProperty( "Seed", "The seed for the random numbers to create.", 0, m_propCondition );
 
     // how much fibs and verts?
     m_numFibers = m_properties->addProperty( "Num Fibers", "The number of fibers to create.", 500, m_propCondition );
@@ -141,7 +152,9 @@ void WMDataCreatorFibers::moduleMain()
         colors->reserve( numVerts * 3 );
 
         // get the current strategy
-        m_strategy()->operator()( progress, m_fibColor->get(),
+        m_strategy()->operator()( m_seed->get(),
+                                            progress,
+                                            m_fibColor->get(),
                                             numFibers,
                                             numVertsPerFiber,
                                             m_origin->get(),
