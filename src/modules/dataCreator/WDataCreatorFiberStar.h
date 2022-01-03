@@ -29,7 +29,7 @@
 #include "core/common/WObjectNDIP.h"
 
 /**
- * Create a fiber spiral
+ * Create a fiber star
  */
 class WDataCreatorFiberStar: public WObjectNDIP< WDataSetFibersCreatorInterface >
 {

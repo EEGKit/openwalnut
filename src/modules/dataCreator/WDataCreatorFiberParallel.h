@@ -29,7 +29,7 @@
 #include "core/common/WObjectNDIP.h"
 
 /**
- * Create a fiber spiral
+ * Create parallel fibers
  */
 class WDataCreatorFiberParallel: public WObjectNDIP< WDataSetFibersCreatorInterface >
 {

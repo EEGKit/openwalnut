@@ -22,21 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
-#include <memory>
+#include "WDataSetPointsCreatorInterface.h"
 
-
-#include "WMDataCreator.h"
-#include "WMDataCreatorFibers.h"
-#include "WMDataCreatorPoints.h"
-#include "WMDataCreatorScalar.h"
-#include "WMDataCreatorVector.h"
-#include "core/kernel/WModule.h"
-
-extern "C" void WLoadModule( WModuleList& m )  // NOLINT
+WDataSetPointsCreatorInterface::~WDataSetPointsCreatorInterface()
 {
-    m.push_back( std::shared_ptr< WModule >( new WMDataCreatorScalar ) );
-    m.push_back( std::shared_ptr< WModule >( new WMDataCreatorVector ) );
-    m.push_back( std::shared_ptr< WModule >( new WMDataCreatorFibers ) );
-    m.push_back( std::shared_ptr< WModule >( new WMDataCreatorPoints ) );
+    // cleanup
 }
-

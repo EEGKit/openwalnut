@@ -22,92 +22,60 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WDATACREATORFIBERTORUS_H
-#define WDATACREATORFIBERTORUS_H
+#ifndef WDATACREATORPOINTSRANDOM_H
+#define WDATACREATORPOINTSRANDOM_H
 
-#include "WDataSetFibersCreatorInterface.h"
+#include "WDataSetPointsCreatorInterface.h"
 #include "core/common/WObjectNDIP.h"
 
 /**
  * Create a fiber spiral
  */
-class WDataCreatorFiberTorus: public WObjectNDIP< WDataSetFibersCreatorInterface >
+class WDataCreatorPointsRandom: public WObjectNDIP< WDataSetPointsCreatorInterface >
 {
 public:
     /**
      * Abbreviate shared_ptr
      */
-    typedef std::shared_ptr< WDataCreatorFiberTorus > SPtr;
+    typedef std::shared_ptr< WDataCreatorPointsRandom > SPtr;
 
     /**
      * Abbreviate const shared_ptr
      */
-    typedef std::shared_ptr< const WDataCreatorFiberTorus > ConstSPtr;
+    typedef std::shared_ptr< const WDataCreatorPointsRandom > ConstSPtr;
 
     /**
      * Default constructor.
      */
-    WDataCreatorFiberTorus();
+    WDataCreatorPointsRandom();
 
     /**
      * Destructor.
      */
-    virtual ~WDataCreatorFiberTorus();
+    virtual ~WDataCreatorPointsRandom();
 
     /**
      * Create the dataset. This needs to be implemented by all the creators you write.
      *
      * \param seed the seed for the random values.
      * \param progress progress indicator
-     * \param color color of all fibers
-     * \param numFibers number of fibers
-     * \param numVertsPerFiber number of vertices per fiber
+     * \param color color of all points
+     * \param numPoints number of points
      * \param origin origin of the bbox
      * \param size size of the bounding box
      * \param vertices the vertex array. Fill this.
-     * \param fibIdx the fiber index array. Fill this.
-     * \param lengths the lengths array. Fill this.
-     * \param fibIdxVertexMap inverse map. Fill this.
      * \param colors the color array. Fill this.
      */
     virtual void operator()( int seed,
                              WProgress::SPtr progress,
                              const WColor& color,
-                             size_t numFibers,
-                             size_t numVertsPerFiber,
+                             size_t numPoints,
                              const WPosition& origin,
                              const WPosition& size,
-                             WDataSetFibers::VertexArray vertices,
-                             WDataSetFibers::IndexArray fibIdx,
-                             WDataSetFibers::LengthArray lengths,
-                             WDataSetFibers::IndexArray fibIdxVertexMap,
-                             WDataSetFibers::ColorArray colors );
+                             WDataSetPoints::VertexArray vertices,
+                             WDataSetPoints::ColorArray colors );
 protected:
 private:
-    /**
-     * The inner radius of the torus.
-     */
-    WPropDouble m_innerRadius;
-
-    /**
-     * Property whether inner fibers should be created.
-     */
-    WPropBool m_generateInner;
-
-    /**
-     * The rotation angle for the x axis.
-     */
-    WPropDouble m_rotateX;
-
-    /**
-     * The rotation angle for the x axis.
-     */
-    WPropDouble m_rotateY;
-
-    /**
-     * The rotation angle for the x axis.
-     */
-    WPropDouble m_rotateZ;
 };
 
-#endif  // WDATACREATORFIBERTORUS_H
+#endif  // WDATACREATORPOINTSRANDOM_H
