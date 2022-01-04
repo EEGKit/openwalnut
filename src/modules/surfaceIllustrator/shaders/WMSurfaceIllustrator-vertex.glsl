@@ -27,6 +27,8 @@
 #include "WGEShader-attributes.glsl"
 #include "WGEShader-uniforms.glsl"
 
+#include "WGEColormapping-vertex.glsl"
+
 /**
  * The normal.
  */
@@ -38,6 +40,11 @@ out vec4 v_color;
 
 void main()
 {
+#ifdef COLORMAPPING_ENABLED
+    // prepare colormapping
+    colormapping();
+#endif
+
     // get normal
     v_normal = osg_NormalMatrix * osg_Normal;
 

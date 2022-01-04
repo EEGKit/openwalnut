@@ -303,10 +303,13 @@ void WMTriangleMeshRenderer::moduleMain()
 
     // load the GLSL shader:
     m_shader = new WGEShader( "WMTriangleMeshRenderer", m_localPath );
-    m_colorMapTransformation = new osg::Uniform( "u_colorMapTransformation", osg::Matrixd::identity() );
+    m_colorMapTransformation = new osg::Uniform( osg::Uniform::FLOAT_MAT4, "u_colorMapTransformation" );
+    m_textureMatrix = new osg::TexMat();
+    m_textureMatrix->setMatrix( osg::Matrixd::identity() );
     m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
         new WGEShaderPropertyDefineOptions< WPropBool >( m_colormap, "COLORMAPPING_DISABLED", "COLORMAPPING_ENABLED" ) )
     );
+    m_colorMapTransformation->setUpdateCallback( new WGETexMatUniformCallback( m_textureMatrix ) );
 
     // set the opacity and material color property as GLSL uniforms:
     moduleNodeState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_opacity", m_opacity ) );
@@ -510,7 +513,7 @@ void WMTriangleMeshRenderer::updateTransformation()
                                 matrixTranslate;
 
         m_moduleNode->setMatrix( matrixComplete );
-        m_colorMapTransformation->set( matrixComplete );
+        m_textureMatrix->setMatrix( matrixComplete );
     }
 }
 

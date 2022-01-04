@@ -26,6 +26,9 @@
 
 #include "WGEShader-uniforms.glsl"
 
+#include "WGEColormapping-fragment.glsl"
+#include "WGEShadingTools.glsl"
+
 in vec4 verpos;
 
 /**
@@ -53,11 +56,13 @@ uniform float u_parameterWidth;
  */
 uniform int u_renderingType;
 
-#include "WGEShadingTools.glsl"
-
 void main()
 {
     vec4 col = v_color;
+
+#ifdef COLORMAPPING_ENABLED
+    col = colormapping();
+#endif
     //col.rgb = vec3( .7);
     float widthHalf = u_parameterWidth / 2.0;
     vec2 param = col.rg;
