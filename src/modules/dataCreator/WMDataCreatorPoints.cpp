@@ -26,68 +26,66 @@
 #include <memory>
 #include <string>
 
-#include "WDataCreatorFiberParallel.h"
-#include "WDataCreatorFiberRandom.h"
-#include "WDataCreatorFiberSpiral.h"
-#include "WDataCreatorFiberStar.h"
 #include "WDataCreatorTorus.h"
-#include "WMDataCreatorFibers.h"
-#include "WMDataCreatorFibers.xpm"
+#include "WMDataCreatorPoints.h"
+#include "WDataCreatorPointsRandom.h"
+// #include "WMDataCreatorFibers.xpm"
 #include "core/common/WAssert.h"
 #include "core/common/WProgress.h"
 #include "core/common/WStrategyHelper.h"
 #include "core/dataHandler/WDataSetFibers.h"
 #include "core/kernel/WKernel.h"
 
-WMDataCreatorFibers::WMDataCreatorFibers():
+WMDataCreatorPoints::WMDataCreatorPoints():
     WModule(),
     m_strategy( "Dataset Creators", "Select one of the dataset creators and configure it to your needs.", NULL,
                 "Creator", "A list of all known creators." )
 {
     // add some strategies here
-    m_strategy.addStrategy( WDataCreatorFiberParallel::SPtr( new WDataCreatorFiberParallel() ) );
-    m_strategy.addStrategy( WDataCreatorFiberRandom::SPtr( new WDataCreatorFiberRandom() ) );
-    m_strategy.addStrategy( WDataCreatorFiberSpiral::SPtr( new WDataCreatorFiberSpiral() ) );
-    m_strategy.addStrategy( WDataCreatorFiberStar::SPtr( new WDataCreatorFiberStar() ) );
-    m_strategy.addStrategy( WDataCreatorFibersTorus::SPtr( new WDataCreatorFibersTorus() ) );
+    m_strategy.addStrategy( WDataCreatorPointsRandom::SPtr( new WDataCreatorPointsRandom() ) );
+    // m_strategy.addStrategy( WDataCreatorFiberRandom::SPtr( new WDataCreatorFiberRandom() ) );
+    // m_strategy.addStrategy( WDataCreatorFiberSpiral::SPtr( new WDataCreatorFiberSpiral() ) );
+    // m_strategy.addStrategy( WDataCreatorFiberStar::SPtr( new WDataCreatorFiberStar() ) );
+    m_strategy.addStrategy( WDataCreatorPointsTorus::SPtr( new WDataCreatorPointsTorus() ) );
 }
 
-WMDataCreatorFibers::~WMDataCreatorFibers()
+WMDataCreatorPoints::~WMDataCreatorPoints()
 {
     // cleanup
     removeConnectors();
 }
 
-std::shared_ptr< WModule > WMDataCreatorFibers::factory() const
+std::shared_ptr< WModule > WMDataCreatorPoints::factory() const
 {
-    return std::shared_ptr< WModule >( new WMDataCreatorFibers() );
+    return std::shared_ptr< WModule >( new WMDataCreatorPoints() );
 }
 
-const char** WMDataCreatorFibers::getXPMIcon() const
+const char** WMDataCreatorPoints::getXPMIcon() const
 {
-    return datacreator_xpm;
+    return NULL;
+    // return datacreator_xpm;
 }
 
-const std::string WMDataCreatorFibers::getName() const
+const std::string WMDataCreatorPoints::getName() const
 {
-    return "Data Creator Fibers";
+    return "Data Creator Points";
 }
 
-const std::string WMDataCreatorFibers::getDescription() const
+const std::string WMDataCreatorPoints::getDescription() const
 {
     return "Allows the user to create fiber data sets providing a bunch of data creation schemes.";
 }
 
-void WMDataCreatorFibers::connectors()
+void WMDataCreatorPoints::connectors()
 {
     // initialize connectors
-    m_output = WModuleOutputData< WDataSetFibers >::createAndAdd( shared_from_this(), "out", "The data that has been created" );
+    m_output = WModuleOutputData< WDataSetPoints >::createAndAdd( shared_from_this(), "out", "The data that has been created" );
 
     // call WModule's initialization
     WModule::connectors();
 }
 
-void WMDataCreatorFibers::properties()
+void WMDataCreatorPoints::properties()
 {
     m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
@@ -100,14 +98,11 @@ void WMDataCreatorFibers::properties()
     m_seed = m_properties->addProperty( "Seed", "The seed for the random numbers to create.", 0, m_propCondition );
 
     // how much fibs and verts?
-    m_numFibers = m_properties->addProperty( "Num Fibers", "The number of fibers to create.", 500, m_propCondition );
-    m_numFibers->setMin( 1 );
-    m_numFibers->setMax( 10000 );
-    m_numVertsPerFiber = m_properties->addProperty( "Num Vertices", "Vertices per fiber.", 1000, m_propCondition );
-    m_numVertsPerFiber->setMin( 1 );
-    m_numVertsPerFiber->setMax( 10000 );
+    m_numPoints = m_properties->addProperty( "Num Points", "The number of points to create.", 500, m_propCondition );
+    m_numPoints->setMin( 1 );
+    m_numPoints->setMax( 1000000 );
 
-    m_fibColor = m_properties->addProperty( "Color", "Color for the fibers.", defaultColor::WHITE, m_propCondition );
+    m_pointColor = m_properties->addProperty( "Color", "Color for the points.", defaultColor::WHITE, m_propCondition );
 
     // now, setup the strategy helper.
     m_properties->addProperty( m_strategy.getProperties() );
@@ -116,7 +111,7 @@ void WMDataCreatorFibers::properties()
     WModule::properties();
 }
 
-void WMDataCreatorFibers::moduleMain()
+void WMDataCreatorPoints::moduleMain()
 {
     // let the main loop awake if the data changes or the properties changed.
     m_moduleState.setResetable( true, true );
@@ -132,41 +127,31 @@ void WMDataCreatorFibers::moduleMain()
     {
         debugLog() << "Creating dataset";
 
-        WProgress::SPtr progress( new WProgress( "Creating Dataset", m_numFibers->get() ) );
+        WProgress::SPtr progress( new WProgress( "Creating Dataset", m_numPoints->get() ) );
         m_progress->addSubProgress( progress );
 
         // build structures for keeping the data
-        size_t numFibers = m_numFibers->get();
-        size_t numVertsPerFiber = m_numVertsPerFiber->get();
-        size_t numVerts = numVertsPerFiber * numFibers;
+        size_t numPoints = m_numPoints->get();
 
-        WDataSetFibers::VertexArray vertices = WDataSetFibers::VertexArray( new WDataSetFibers::VertexArray::element_type() );
-        WDataSetFibers::IndexArray fibIdx  = WDataSetFibers::IndexArray( new WDataSetFibers::IndexArray::element_type() );
-        WDataSetFibers::LengthArray lengths = WDataSetFibers::LengthArray( new WDataSetFibers::LengthArray::element_type() );
-        WDataSetFibers::IndexArray fibIdxVertexMap = WDataSetFibers::IndexArray( new WDataSetFibers::IndexArray::element_type() );
-        WDataSetFibers::ColorArray colors = WDataSetFibers::ColorArray( new WDataSetFibers::ColorArray::element_type() );
-        vertices->reserve( numVerts * 3 );
-        fibIdx->reserve( numFibers );
-        lengths->reserve( numFibers );
-        fibIdxVertexMap->reserve( numVerts );
-        colors->reserve( numVerts * 3 );
+        WDataSetPoints::VertexArray vertices = WDataSetPoints::VertexArray( new WDataSetPoints::VertexArray::element_type() );
+        WDataSetPoints::ColorArray colors = WDataSetPoints::ColorArray( new WDataSetPoints::ColorArray::element_type() );
+        vertices->reserve( numPoints * 3 );
+        colors->reserve( numPoints * 3 );
 
         // get the current strategy
         m_strategy()->operator()( m_seed->get(),
                                             progress,
-                                            m_fibColor->get(),
-                                            numFibers,
-                                            numVertsPerFiber,
+                                            m_pointColor->get(),
+                                            numPoints,
                                             m_origin->get(),
                                             m_size->get(),
-                                            vertices, fibIdx, lengths, fibIdxVertexMap, colors );
+                                            vertices, colors );
 
         // build the dataset
-        WDataSetFibers::SPtr ds = WDataSetFibers::SPtr( new WDataSetFibers( vertices, fibIdx, lengths, fibIdxVertexMap ) );
-        ds->addColorScheme( colors, "Fiber Creator", "The color from Fiber Creator." );
+        WDataSetPoints::SPtr ds = WDataSetPoints::SPtr( new WDataSetPoints( vertices, colors ) );
 
         // done. Notify user.
-        debugLog() << "Created dataset with " << m_numFibers->get() << " fibers.";
+        debugLog() << "Created dataset with " << m_numPoints->get() << " points.";
         progress->finish();
         m_progress->removeSubProgress( progress );
 

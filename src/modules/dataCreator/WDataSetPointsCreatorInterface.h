@@ -22,81 +22,48 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WDATACREATORFIBERSPIRAL_H
-#define WDATACREATORFIBERSPIRAL_H
+#ifndef WDATASETPOINTSCREATORINTERFACE_H
+#define WDATASETPOINTSCREATORINTERFACE_H
 
-#include <memory>
-
-
-#include "WDataSetFibersCreatorInterface.h"
-#include "core/common/WObjectNDIP.h"
+#include <core/common/WProgress.h>
+#include <core/common/math/linearAlgebra/WMatrixFixed.h>
+#include <core/dataHandler/WDataSetPoints.h>
 
 /**
- * Create a fiber spiral
+ * Define the interface which is injected into an \ref WObjectNDIP. Remember that \ref WObjectNDIP is a template class deriving from its
+ * template type. This way we can inject methods into the base class. It avoids derivation from \ref WObjectNDIP.
+ *
+ * This class is especially useful for all dataset types that are WDataSetPoints types.
  */
-class WDataCreatorFiberSpiral: public WObjectNDIP< WDataSetFibersCreatorInterface >
+class WDataSetPointsCreatorInterface
 {
 public:
-    /**
-     * Abbreviate shared_ptr
-     */
-    typedef std::shared_ptr< WDataCreatorFiberSpiral > SPtr;
-
-    /**
-     * Abbreviate const shared_ptr
-     */
-    typedef std::shared_ptr< const WDataCreatorFiberSpiral > ConstSPtr;
-
-    /**
-     * Default constructor.
-     */
-    WDataCreatorFiberSpiral();
-
-    /**
-     * Destructor.
-     */
-    virtual ~WDataCreatorFiberSpiral();
-
     /**
      * Create the dataset. This needs to be implemented by all the creators you write.
      *
      * \param seed the seed for the random values.
      * \param progress progress indicator
-     * \param color color of all fibers
-     * \param numFibers number of fibers
-     * \param numVertsPerFiber number of vertices per fiber
+     * \param color color of all points
+     * \param numPoints number of points
      * \param origin origin of the bbox
      * \param size size of the bounding box
      * \param vertices the vertex array. Fill this.
-     * \param fibIdx the fiber index array. Fill this.
-     * \param lengths the lengths array. Fill this.
-     * \param fibIdxVertexMap inverse map. Fill this.
      * \param colors the color array. Fill this.
      */
     virtual void operator()( int seed,
                              WProgress::SPtr progress,
                              const WColor& color,
-                             size_t numFibers,
-                             size_t numVertsPerFiber,
+                             size_t numPoints,
                              const WPosition& origin,
                              const WPosition& size,
-                             WDataSetFibers::VertexArray vertices,
-                             WDataSetFibers::IndexArray fibIdx,
-                             WDataSetFibers::LengthArray lengths,
-                             WDataSetFibers::IndexArray fibIdxVertexMap,
-                             WDataSetFibers::ColorArray colors );
-protected:
-private:
-    /**
-     * Number of rotations to do.
-     */
-    WPropInt m_numRotations;
+                             WDataSetPoints::VertexArray vertices,
+                             WDataSetPoints::ColorArray colors ) = 0;
 
     /**
-     * The radius of a tube (consisting of multiple fibers
+     * Destructor
      */
-    WPropDouble m_tubeRadius;
+    virtual ~WDataSetPointsCreatorInterface();
 };
 
-#endif  // WDATACREATORFIBERSPIRAL_H
+#endif  // WDATASETPOINTSCREATORINTERFACE_H
 

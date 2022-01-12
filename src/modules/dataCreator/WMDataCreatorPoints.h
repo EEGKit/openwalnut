@@ -22,36 +22,36 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WMDATACREATORFIBERS_H
-#define WMDATACREATORFIBERS_H
+#ifndef WMDATACREATORPOINTS_H
+#define WMDATACREATORPOINTS_H
 
 #include <memory>
 #include <string>
 
-#include "WDataSetFibersCreatorInterface.h"
+#include "WDataSetPointsCreatorInterface.h"
 #include "core/common/WObjectNDIP.h"
 #include "core/common/WStrategyHelper.h"
-#include "core/dataHandler/WDataSetFibers.h"
+#include "core/dataHandler/WDataSetPoints.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleOutputData.h"
 
 /**
- * Module which utilizes the strategy pattern to provide a multitude of dataset creation algorithms for fiber data.
+ * Module which utilizes the strategy pattern to provide a multitude of dataset creation algorithms for point data.
  *
  * \ingroup modules
  */
-class WMDataCreatorFibers: public WModule
+class WMDataCreatorPoints: public WModule
 {
 public:
     /**
      * Standard constructor.
      */
-    WMDataCreatorFibers();
+    WMDataCreatorPoints();
 
     /**
      * Destructor.
      */
-    ~WMDataCreatorFibers();
+    ~WMDataCreatorPoints();
 
     /**
      * Gives back the name of this module.
@@ -101,17 +101,12 @@ private:
      */
     std::shared_ptr< WCondition > m_propCondition;
 
-    std::shared_ptr< WModuleOutputData< WDataSetFibers > > m_output; //!< The only output of this module.
+    std::shared_ptr< WModuleOutputData< WDataSetPoints > > m_output; //!< The only output of this module.
 
     /**
-     * Number of fibers.
+     * Number of points.
      */
-    WPropInt m_numFibers;
-
-    /**
-     * Number of vertices per fiber.
-     */
-    WPropInt m_numVertsPerFiber;
+    WPropInt m_numPoints;
 
     /**
      * The seed for the random.
@@ -119,12 +114,12 @@ private:
     WPropInt m_seed;
 
     /**
-     * Fiber color.
+     * Point color.
      */
-    WPropColor m_fibColor;
+    WPropColor m_pointColor;
 
     /**
-     * Size of the fiber bounding box.
+     * Size of the point bounding box.
      */
     WPropPosition m_size;
 
@@ -133,7 +128,7 @@ private:
      */
     WPropPosition m_origin;
 
-    WStrategyHelper< WObjectNDIP< WDataSetFibersCreatorInterface > > m_strategy; //!< the strategy currently active.
+    WStrategyHelper< WObjectNDIP< WDataSetPointsCreatorInterface > > m_strategy; //!< the strategy currently active.
 };
 
-#endif  // WMDATACREATORFIBERS_H
+#endif  // WMDATACREATORPOINTS_H
