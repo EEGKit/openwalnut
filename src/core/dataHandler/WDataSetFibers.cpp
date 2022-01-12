@@ -267,6 +267,8 @@ void WDataSetFibers::addColorScheme( WDataSetFibers::ColorArray colors, std::str
 
     // number of verts is needed to distinguish color mode.
     size_t verts = m_vertices->size() / 3;
+    WAssert( verts != 0, "If there is color there has to be vertices!" );
+
     size_t cols  = colors->size();
     if( cols / verts == 3 )
     {

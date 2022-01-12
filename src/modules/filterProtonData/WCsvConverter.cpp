@@ -334,6 +334,12 @@ void WCsvConverter::calculateFibers()
     }
 
     m_fibers = newDS->toWDataSetFibers();
+    if( m_fibers->getVertices()->size() == 0 )
+    {
+        // This is so it doesn't generate colors when there are no fibers, which would result in a module crash.
+        return;
+    }
+
     m_fibers->addColorScheme( cols, "Energy deposition", "Color fibers based on their energy." );
     m_fibers->setSelectedColorScheme( 3 );
 
