@@ -126,6 +126,8 @@ void WMTransferFunctionColorBar::moduleMain()
     m_moduleState.add( m_input->getDataChangedCondition() );
     m_moduleState.add( m_propCondition );
 
+    m_customScale = false;
+
     osg::ref_ptr< WGEShader > colormapShader = osg::ref_ptr< WGEShader > ( new WGEShader( "WMTransferFunctionColorBar", m_localPath ) );
 
     // signal ready state
@@ -217,7 +219,6 @@ void WMTransferFunctionColorBar::moduleMain()
                 m_scaleLabels->addUpdateCallback( new WGEFunctorCallback< osg::Node >(
                     boost::bind( &WMTransferFunctionColorBar::updateColorbarScale, this, boost::placeholders::_1 )
                 ) );
-
                 // set some callbacks
                 colorBarBorder->addUpdateCallback( new WGENodeMaskCallback( m_colorBarBorder ) );
                 labels->addUpdateCallback( new WGENodeMaskCallback( m_colorBarName ) );
@@ -229,8 +230,15 @@ void WMTransferFunctionColorBar::moduleMain()
                 matrix->addChild( labels );
                 m_barProjection->addChild( matrix );
 
-                m_valueMin = dataSet->getTexture()->minimum()->get();
-                m_valueScale = dataSet->getTexture()->scale()->get();
+                if( !m_customScale )
+                {
+                    m_valueMin = dataSet->getTexture()->minimum()->get();
+                    m_valueScale = dataSet->getTexture()->scale()->get();
+                }
+
+                int labelCount = m_colorBarLabels->get( false );
+                m_colorBarLabels->set( 0 );
+                m_colorBarLabels->set( labelCount );
 
                 // add
                 WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_barProjection );
@@ -253,10 +261,12 @@ void WMTransferFunctionColorBar::updateColorbarScale( osg::Node* scaleLabels )
     if( m_minScaleValue->changed( false ) )
     {
         m_valueMin = m_minScaleValue->get();
+        m_customScale = true;
     }
     if( m_maxScaleValue->changed( false ) )
     {
         m_valueScale = m_maxScaleValue->get();
+        m_customScale = true;
     }
 
     if( m_colorBarLabels->changed( true ) || m_minScaleValue->changed( true ) || m_maxScaleValue->changed( true ) )
