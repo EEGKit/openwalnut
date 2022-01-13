@@ -193,13 +193,12 @@ WDataCreatorTorus< T >::~WDataCreatorTorus()
 }
 
 template< class T >
-WMatrix4d WDataCreatorTorus< T >::calculateTransform( const WPosition& origin, const WPosition& size )
+WMatrix4d WDataCreatorTorus< T >::calculateTransform( const WPosition& /*origin*/, const WPosition& size )
 {
     return WMatrix4d(
-        osg::Matrixd::rotate(
-            m_rotateX->get(), osg::Vec3d( 1, 0, 0 ), m_rotateY->get(), osg::Vec3d( 0, 1, 0 ), m_rotateZ->get(), osg::Vec3d( 0, 0, 1 ) ) *
         osg::Matrixd::scale( size.x() / 2.0, size.y() / 2.0, size.z() / 2.0 ) *
-        osg::Matrixd::translate( origin.x(), origin.y(), origin.z() )
+        osg::Matrixd::rotate(
+            m_rotateX->get(), osg::Vec3d( 1, 0, 0 ), m_rotateY->get(), osg::Vec3d( 0, 1, 0 ), m_rotateZ->get(), osg::Vec3d( 0, 0, 1 ) )
     );
 }
 
@@ -251,7 +250,10 @@ void WDataCreatorTorus< T >::operator()( int seed,
         for( size_t vidx = 0; vidx < numVertsPerFiber; ++vidx )
         {
             WVector4d vec = calculateTorusVertex( 1.0 - innerRadius, irad, angleParam * vidx, iangle );
-            vec = transform * vec;
+            vec = transform * vec;  // for whatever reason the translation inside the matrix does not work, so we do it manually
+            vec = WVector4d( vec.x() + origin.x() + size.x() / 2.0,
+                             vec.y() + origin.y() + size.y() / 2.0,
+                             vec.z() + origin.z() + size.z() / 2.0, 1.0 );
 
             vertices->push_back( vec.x() );
             vertices->push_back( vec.y() );
