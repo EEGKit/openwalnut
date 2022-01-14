@@ -60,8 +60,9 @@ void WDataCreatorFiberSpiral::operator()( int seed,
 {
     std::srand( seed );
 
-    WPosition originOffset = origin / 2.0;
-    double spiralRadius = std::min( size.x(), size.y() );
+    WPosition originOffset = origin + size / 2.0;
+    originOffset.z() = origin.z();
+    double spiralRadius = std::min( size.x(), size.y() ) / 2.0;
     double tubeRadius = m_tubeRadius->get();
     double height = size.z();
     double numRotations = m_numRotations->get();

@@ -29,7 +29,7 @@
 #include "WDataCreatorTorus.h"
 #include "WMDataCreatorPoints.h"
 #include "WDataCreatorPointsRandom.h"
-// #include "WMDataCreatorFibers.xpm"
+#include "WMDataCreatorPoints.xpm"
 #include "core/common/WAssert.h"
 #include "core/common/WProgress.h"
 #include "core/common/WStrategyHelper.h"
@@ -62,8 +62,7 @@ std::shared_ptr< WModule > WMDataCreatorPoints::factory() const
 
 const char** WMDataCreatorPoints::getXPMIcon() const
 {
-    return NULL;
-    // return datacreator_xpm;
+    return datacreatorpoints_xpm;
 }
 
 const std::string WMDataCreatorPoints::getName() const
@@ -73,7 +72,7 @@ const std::string WMDataCreatorPoints::getName() const
 
 const std::string WMDataCreatorPoints::getDescription() const
 {
-    return "Allows the user to create fiber data sets providing a bunch of data creation schemes.";
+    return "Allows the user to create point data sets providing a bunch of data creation schemes.";
 }
 
 void WMDataCreatorPoints::connectors()
