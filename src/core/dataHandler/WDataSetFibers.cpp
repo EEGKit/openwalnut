@@ -353,6 +353,10 @@ const WPropSelection WDataSetFibers::getColorSchemeProperty() const
 
 WDataSetFibers::VertexParemeterArray WDataSetFibers::getVertexParameters( size_t parameterIndex ) const
 {
+    if( m_vertexParameters.empty() )
+    {
+        return NULL;
+    }
     return m_vertexParameters[ parameterIndex ];
 }
 
