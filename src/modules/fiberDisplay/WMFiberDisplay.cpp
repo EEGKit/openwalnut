@@ -166,9 +166,11 @@ void enableTransparency( osg::StateSet* state )
 
     // Conversely, disable writing to depth buffer so that a transparent polygon will allow polygons behind it to shine through.
     // OSG renders transparent polygons after opaque ones.
-    osg::Depth* depth = new osg::Depth;
-    depth->setWriteMask( false );
-    state->setAttributeAndModes( depth, osg::StateAttribute::ON );
+
+    // This code is commented out so the postprecessing filters work (They need depth write)
+    // osg::Depth* depth = new osg::Depth;
+    // depth->setWriteMask( false );
+    // state->setAttributeAndModes( depth, osg::StateAttribute::ON );
 
     // disable light for this geode as lines can't be lit properly
     state->setMode( GL_LIGHTING, osg::StateAttribute::OFF | osg::StateAttribute::PROTECTED );
