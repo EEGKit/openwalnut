@@ -166,6 +166,11 @@ private:
     osg::ref_ptr< osg::Geode > m_scaleLabels;
 
     /**
+     * Whether a custom min max was set.
+     */
+    bool m_customScale;
+
+    /**
      * Callback which adds/removes scale labels to the colorbar.
      *
      * \param scaleLabels the geode containing the labels.

@@ -46,8 +46,7 @@ void WFiberActionMultiselect::undo()
     m_fiberHandler->getPointConnector()->getConnectorData()->deselectPoint();
     m_fiberHandler->selectLastPoint();
 
-    m_fiberHandler->getPointConnector()->updatePoints();
-    m_fiberHandler->getPointConnector()->updateOutput();
+    m_fiberHandler->getPointConnector()->updateAll();
 }
 
 void WFiberActionMultiselect::redo()
@@ -57,6 +56,5 @@ void WFiberActionMultiselect::redo()
     m_fiberHandler->getPointConnector()->getConnectorData()->deselectPoint();
     m_fiberHandler->selectLastPoint();
 
-    m_fiberHandler->getPointConnector()->updatePoints();
-    m_fiberHandler->getPointConnector()->updateOutput();
+    m_fiberHandler->getPointConnector()->updateAll();
 }

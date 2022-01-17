@@ -114,6 +114,11 @@ private:
     WPropInt m_numVertsPerFiber;
 
     /**
+     * The seed for the random.
+     */
+    WPropInt m_seed;
+
+    /**
      * Fiber color.
      */
     WPropColor m_fibColor;

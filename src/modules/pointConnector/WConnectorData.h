@@ -68,12 +68,18 @@ public:
     std::shared_ptr< std::vector< float > > getEdeps();
 
     /**
+     * \return std::shared_ptr< std::vector< float > > The cluster size in this data.
+     */
+    std::shared_ptr< std::vector< float > > getClusterSizes();
+
+    /**
      * Adds a vertex with its color to the currently selected fiber.
      * \param vertex The vertex to add.
      * \param color The color of the vertex.
      * \param edep The energy deposition of the vertex.
+     * \param clusterSize The cluster size of the vertex.
      */
-    void addVertex( osg::Vec3 vertex, osg::Vec4 color, float edep );
+    void addVertex( osg::Vec3 vertex, osg::Vec4 color, float edep = 0.0, float clusterSize = 0.0 );
 
     /**
      * Selects a point by its index in m_vertices.
@@ -100,6 +106,18 @@ public:
      */
     bool getSelectedPoint( size_t* idx );
 
+    /**
+     * \return true Cluster size should be used.
+     * \return false Cluster size should not be used.
+     */
+    bool hasClusterSize();
+
+    /**
+     * Sets whether the cluster size should be used.
+     * \param clusterSize 
+     */
+    void setHasClusterSize( bool clusterSize = true );
+
 private:
     /**
      * The vertices that are drawn.
@@ -117,6 +135,11 @@ private:
     std::shared_ptr< std::vector< float > > m_edeps;
 
     /**
+     * The cluster size of the vertices.
+     */
+    std::shared_ptr< std::vector< float > > m_clusterSizes;
+
+    /**
      * The index of the selected vertex.
      */
     size_t m_selectedIndex;
@@ -125,6 +148,11 @@ private:
      * Whether a selection has been done or not.
      */
     bool m_hasSelected = false;
+
+    /**
+     * Whether cluster size should be used.
+     */
+    bool m_hasClusterSize = false;
 };
 
 #endif  // WCONNECTORDATA_H

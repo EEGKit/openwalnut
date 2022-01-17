@@ -83,7 +83,13 @@ void WFiberHandler::sortVertices()
 
 void WFiberHandler::addVertexToFiber( osg::Vec3 vertex, size_t fiberIdx, bool silent )
 {
-    m_fibers->at( fiberIdx ).push_back( vertex );
+    auto fiber = m_fibers->begin() + fiberIdx;
+    if( std::find( fiber->begin(), fiber->end(), vertex ) != fiber->end() )
+    {
+        return;
+    }
+
+    fiber->push_back( vertex );
     sortVertices();
 
     if( !silent )
@@ -95,6 +101,20 @@ void WFiberHandler::addVertexToFiber( osg::Vec3 vertex, size_t fiberIdx, bool si
 void WFiberHandler::addVerticesToFiber( std::vector< osg::Vec3 > vertices, size_t fiberIdx, bool silent )
 {
     auto fiber = m_fibers->begin() + fiberIdx;
+    for( auto vertex = fiber->begin(); vertex != fiber->end(); vertex++ )
+    {
+        auto it = std::find( vertices.begin(), vertices.end(), *vertex );
+        if( it != vertices.end() )
+        {
+            vertices.erase( it );
+        }
+    }
+
+    if( vertices.empty() )
+    {
+        return;
+    }
+
     for( auto vertex = vertices.begin(); vertex != vertices.end(); vertex++ )
     {
         fiber->push_back( *vertex );
@@ -306,8 +326,7 @@ void WFiberHandler::toggleFiber( size_t idx, bool silent )
     m_possibleFiberSelections->replace( selection, ItemType::create( name, name, "", NULL ) );
     m_fiberSelection->set( m_possibleFiberSelections->getSelector( idx ) );
 
-    m_pointConnector->updatePoints();
-    m_pointConnector->updateOutput();
+    m_pointConnector->updateAll();
 
     if( !silent )
     {
@@ -327,8 +346,7 @@ void WFiberHandler::selectFiber( size_t idx )
 
     selectLastPoint();
 
-    m_pointConnector->updatePoints();
-    m_pointConnector->updateOutput();
+    m_pointConnector->updateAll();
 }
 
 bool WFiberHandler::getFiberOfPoint( osg::Vec3 vertex, size_t* idx )

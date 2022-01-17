@@ -88,10 +88,10 @@ public:
         t.flag = false;
         t.c = &c;
 
-        // start a thread
+        // Start a thread
         boost::thread thread = boost::thread( boost::bind( &CallableHelperCl::threadMain, &t ) );
 
-        // wait for condition
+        // Wait for condition
         c.wait();
 
         TS_ASSERT( t.flag );

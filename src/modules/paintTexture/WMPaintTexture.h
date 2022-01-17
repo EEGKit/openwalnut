@@ -35,14 +35,16 @@
 #include "core/dataHandler/WDataSetScalar.h"
 #include "core/dataHandler/WValueSet.h"
 #include "core/graphicsEngine/WGETexture.h"
+#include "core/graphicsEngine/WPickInfo.h"
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
 
+
 /**
  * Forward declaration of WPickInfo.
  */
-class WPickInfo;
+//class WPickInfo;
 
 /**
  * This module allows mark areas in a 3D texture by "painting"

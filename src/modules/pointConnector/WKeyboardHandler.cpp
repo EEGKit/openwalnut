@@ -32,6 +32,7 @@ static const unsigned int SHIFT_DOWN = 65505;
 static const unsigned int SHIFT_UP = 16777248;
 
 static const unsigned int KEY_A = 65;
+static const unsigned int KEY_C = 67;
 static const unsigned int KEY_T = 84;
 static const unsigned int KEY_X = 88;
 static const unsigned int KEY_Y = 89;
@@ -53,10 +54,10 @@ bool WKeyboardHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActio
             switch( ea.getKey() )
             {
                 case KEY_Y:
-                    m_connector->getFiberHandler()->getActionHandler()->redo();
+                    m_connector->pushEventQueue( std::bind( &WActionHandler::redo, m_connector->getFiberHandler()->getActionHandler() ) );
                     return true;
                 case KEY_Z:
-                    m_connector->getFiberHandler()->getActionHandler()->undo();
+                    m_connector->pushEventQueue( std::bind( &WActionHandler::undo, m_connector->getFiberHandler()->getActionHandler() ) );
                     return true;
             }
         }
@@ -67,6 +68,9 @@ bool WKeyboardHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActio
             {
                 case KEY_A:
                     m_connector->getFiberHandler()->createNewFiber();
+                    return true;
+                case KEY_C:
+                    m_connector->pushEventQueue( std::bind( &WMPointConnector::acceptPrediction, m_connector ) );
                     return true;
                 case KEY_T:
                     m_connector->getFiberHandler()->toggleFiber( m_connector->getFiberHandler()->getSelectedFiber() );
