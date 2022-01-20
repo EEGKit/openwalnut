@@ -2,7 +2,7 @@
 //
 // Project: OpenWalnut ( http://www.openwalnut.org )
 //
-// Copyright 2009 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
+// Copyright 2009-2022 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
 // For more information see http://www.openwalnut.org/copying
 //
 // This file is part of OpenWalnut.
@@ -56,9 +56,9 @@ namespace boost
  * \par
  * http://www.openwalnut.org
  * \par
- * Copyright 2009-2021 The OpenWalnut Community,
- *           2015-2021 Hochschule Worms
- *           2009-2021 BSV at Universitaet Leipzig,
+ * Copyright 2009-2022 The OpenWalnut Community,
+ *           2015-2022 Hochschule Worms
+ *           2009-2022 BSV at Universitaet Leipzig,
  *           2012-2017 Nemtics & Sebastian Eichelbaum
  *           2009-2013 MPI CBS, Leipzig, Germany.
  * For more information see http://www.openwalnut.org/copying
@@ -71,9 +71,9 @@ void printVersion()
               << std::endl;
 
     std::cout <<
-    "Copyright 2009-2021 The OpenWalnut Community\n"
-    "          2015-2021 Hochschule Worms\n"
-    "          2009-2021 BSV at Universitaet Leipzig\n"
+    "Copyright 2009-2022 The OpenWalnut Community\n"
+    "          2015-2022 Hochschule Worms\n"
+    "          2009-2022 BSV at Universitaet Leipzig\n"
     "          2012-2017 Nemtics & Sebastian Eichelbaum\n"
     "          2009-2013 MPI CBS, Leipzig, Germany\n"
     "For more information see http://www.openwalnut.org/copying\n"
