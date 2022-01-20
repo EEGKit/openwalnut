@@ -257,7 +257,7 @@ void WMDirectVolumeRendering2TF::moduleMain()
         }
 
         // was there an update?
-        bool dataUpdated = m_input_ds0->updated() || m_input_ds1 || m_gradients->updated();
+        bool dataUpdated = m_input_ds0->updated() || m_input_ds1->updated() || m_gradients->updated();
         std::shared_ptr< WDataSetScalar > dataSet0= m_input_ds0->getData();
         std::shared_ptr< WDataSetScalar > dataSet1 = m_input_ds1->getData();
         bool dataValid   = ( dataSet0 != NULL ) && ( dataSet1 != NULL );
@@ -282,11 +282,10 @@ void WMDirectVolumeRendering2TF::moduleMain()
             // there are several updates. Clear the root node and later on insert the new rendering.
             rootNode->clear();
 
-            // First, grab the grids of both data sets
+            // First, grab the grid
             std::shared_ptr< WGridRegular3D > grid_ds0 = std::dynamic_pointer_cast< WGridRegular3D >( dataSet0->getGrid() );
-            std::shared_ptr< WGridRegular3D > grid_ds1 = std::dynamic_pointer_cast< WGridRegular3D >( dataSet1->getGrid() );
 
-            if( !grid_ds0 || !grid_ds1 )
+            if( !grid_ds0 )
             {
                 errorLog() << "The dataset does not provide a regular grid. Ignoring dataset.";
                 continue;
