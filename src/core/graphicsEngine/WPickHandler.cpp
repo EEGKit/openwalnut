@@ -259,8 +259,15 @@ void WPickHandler::pick( osgViewer::View* view, const osgGA::GUIEventAdapter& ea
         while( hitr != intersections.end() )
         {
             std::string nodeName = extractSuitableName( hitr );
+            WAssert( nodeName.size() > 2, "Geode name too short for picking." );
+
+            // now we skip everything that starts with two underscores
+            if(  nodeName[0] == '_' && nodeName[1] == '_' )
+            {
+                ++hitr;
+            }
             // now we skip everything that starts with an underscore if not in paint mode
-            if(  nodeName[0] == '_' && ( !m_paintMode ) )
+            else if(  nodeName[0] == '_' && ( !m_paintMode ) )
             {
                 ++hitr;
             }
