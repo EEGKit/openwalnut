@@ -353,7 +353,9 @@ void WMSurfaceIllustrator::renderMesh( std::shared_ptr< WTriangleMesh > mesh )
     WGEColormapping::apply( geode, m_shader );
 
     // done. Set the new drawable
+
     geode->addDrawable( geometry );
+    geode->setName( "Surface Illustrator Geode" );
     m_moduleNode->clear();
     m_moduleNode->insert( geode );
     debugLog() << "Rendering Mesh done";

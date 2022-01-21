@@ -86,6 +86,7 @@ osg::ref_ptr< osg::Geode > wge::generateBoundingBoxGeode( const WBoundingBox& bb
     geometry->setColorArray( colors );
     geometry->setColorBinding( osg::Geometry::BIND_OVERALL );
     osg::ref_ptr< osg::Geode > geode = osg::ref_ptr< osg::Geode >( new osg::Geode );
+    geode->setName( "Bounding Box Geode" );
     geode->addDrawable( geometry );
 
     // disable light for this geode as lines can't be lit properly
@@ -650,6 +651,7 @@ osg::ref_ptr< osg::Geode > wge::genFinitePlane( double xSize, double ySize, cons
     geometry->setStateSet( stateset );
 
     osg::ref_ptr< osg::Geode > geode = osg::ref_ptr< osg::Geode >( new osg::Geode );
+    geode->setName( "Finite Plane Geode" );
     geode->addDrawable( geometry );
 
     if( border )
@@ -708,6 +710,7 @@ osg::ref_ptr< osg::Geode > wge::genFinitePlane( osg::Vec3 const& base, osg::Vec3
     geometry->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::QUADS, 0, 4 ) );
 
     osg::ref_ptr< osg::Geode > geode = new osg::Geode();
+    geode->setName( "Finite Plane" );
     geode->addDrawable( geometry );
     return geode;
 }
