@@ -207,6 +207,8 @@ private:
         bool m_initialUpdate;
     };
 
+    void render();
+
     //! A condition for property updates.
     std::shared_ptr<WCondition> m_propCondition;
 
@@ -353,6 +355,9 @@ private:
      * rotation difference calculated fromn last and current frame
      */
     osg::Quat m_HMD_rotationDifference;
+
+    osg::Quat m_startRot;
+    osg::Vec3d m_startTrans;
 
     /**
      * is set true once rotation and position of previous frame is cached

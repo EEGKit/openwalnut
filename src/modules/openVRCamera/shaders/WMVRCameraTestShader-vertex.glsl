@@ -31,6 +31,8 @@ varying vec3 v_normal;
 
 void main()
 {
+    gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;
+
     // prepare light
     v_normal = gl_NormalMatrix * gl_Normal;
     gl_Position = ftransform();
