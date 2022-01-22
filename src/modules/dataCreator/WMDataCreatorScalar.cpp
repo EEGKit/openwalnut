@@ -25,6 +25,8 @@
 #include <algorithm>
 #include <memory>
 #include <string>
+#include <thread>
+#include <chrono>
 
 #include "WDataCreatorBreyzel5.h"
 #include "WDataCreatorConstant.h"
@@ -112,6 +114,11 @@ void WMDataCreatorScalar::properties()
     m_size = m_properties->addProperty( "Size", "The size of the dataset along the X,Y, and Z axis in the OpenWalnut coordinate system.",
                                         WPosition( 128.0, 128.0, 128.0 ), m_propCondition );
 
+    m_timeDependent = m_properties->addProperty( "Time dependent (experimental)",
+                                                 "Vary data over time. This feature is <b>experimental</b>.",
+                                                 false,
+                                                 m_propCondition );
+
     // now, setup the strategy helper.
     m_properties->addProperty( m_strategy.getProperties() );
 
@@ -162,6 +169,12 @@ void WMDataCreatorScalar::moduleMain()
 
         // done. update output
         m_output->updateData( ds );
+
+        if( m_timeDependent->get() )
+        {
+            m_size->set( WVector3d( m_size->get()[0], m_size->get()[1], static_cast<int>( m_size->get()[2] + 10 ) % 1000 ) );
+            std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
+        }
 
         // Now, the moduleState variable comes into play. The module can wait for the condition, which gets fired whenever the input receives data
         // or an property changes. The main loop now waits until something happens.

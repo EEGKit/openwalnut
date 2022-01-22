@@ -112,6 +112,8 @@ private:
     WPropPosition m_origin; //!< where to put the origin
     WPropPosition m_size; //!< where to put the origin
 
+    WPropBool m_timeDependent; //!< Use time dependent variation of data (experimental).
+
     WPropSelection m_valueType; //!< the datatype of the valueset
     WPropSelection m_structuralType; //!< select between scalar, vector and other structural types
 

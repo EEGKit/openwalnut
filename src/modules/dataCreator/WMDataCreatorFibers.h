@@ -118,6 +118,8 @@ private:
      */
     WPropInt m_seed;
 
+    WPropBool m_timeDependent; //!< Use time dependent variation of data (experimental).
+
     /**
      * Fiber color.
      */
