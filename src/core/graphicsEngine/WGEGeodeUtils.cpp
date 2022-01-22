@@ -693,6 +693,12 @@ osg::ref_ptr< osg::Geode > wge::genFinitePlane( osg::Vec3 const& base, osg::Vec3
     bNorm.normalize();
 
     normals->push_back( aCrossB );
+    normals->push_back( aCrossB );
+    normals->push_back( aCrossB );
+    normals->push_back( aCrossB );
+    colors->push_back( color );
+    colors->push_back( color );
+    colors->push_back( color );
     colors->push_back( color );
     texcoords0->push_back( osg::Vec3( 0.0, 0.0, 0.0 ) );
     texcoords0->push_back( aNorm );
@@ -704,9 +710,7 @@ osg::ref_ptr< osg::Geode > wge::genFinitePlane( osg::Vec3 const& base, osg::Vec3
     geometry->setVertexArray( vertices );
     geometry->setTexCoordArray( 0, texcoords0 );
     geometry->setNormalArray( normals );
-    geometry->setNormalBinding( osg::Geometry::BIND_OVERALL );
     geometry->setColorArray( colors );
-    geometry->setColorBinding( osg::Geometry::BIND_OVERALL );
     geometry->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::QUADS, 0, 4 ) );
 
     osg::ref_ptr< osg::Geode > geode = new osg::Geode();
