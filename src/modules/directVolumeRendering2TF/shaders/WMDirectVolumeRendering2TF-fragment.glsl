@@ -333,8 +333,8 @@ void main()
             vec3 rayPoint = rayStart + ( currentDistance * v_ray );
             // We multiply the alpha values of both transfer functions, but only use the color of the first connected TF
             // src: State of the Art in Transfer Functions for Direct Volume Rendering (2016) - Ljung et. al - page 5
-            float alpha = ( localIllumination( rayPoint, transferFunction( 0, texture3D( u_volume_ds0Sampler, rayPoint ).r ), 0).a *
-            localIllumination( rayPoint, transferFunction( 1, texture3D( u_volume_ds1Sampler, rayPoint ).r ), 1 ).a);
+            float alpha = ( localIllumination( rayPoint, transferFunction( 0, texture3D( u_volume_ds0Sampler, rayPoint ).r ), 0 ).a *
+            localIllumination( rayPoint, transferFunction( 1, texture3D( u_volume_ds1Sampler, rayPoint ).r ), 1 ).a );
             vec4 src = vec4( localIllumination( rayPoint, transferFunction( 0, texture3D( u_volume_ds0Sampler, rayPoint ).r ), 0 ).rgb, alpha );
             // associated colors needed
             src.rgb *= src.a;
