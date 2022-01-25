@@ -513,13 +513,13 @@ void WMDirectVolumeRendering2TF::moduleMain()
                     tfImage_ds0->allocateImage( tfsize_ds0 / 4, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE );
                     tfImage_ds0->setInternalTextureFormat( GL_RGBA );
                     unsigned char* data_ds0 = reinterpret_cast< unsigned char* >( tfImage_ds0->data() );
-                    //std::copy( valueSet_ds0->rawData(), &valueSet_ds0->rawData()[ tfsize_ds0 ], data_ds0 );
+                    std::copy( valueSet_ds0->rawData(), &valueSet_ds0->rawData()[ tfsize_ds0 ], data_ds0 );
 
                     // create image and copy the TF
                     tfImage_ds1->allocateImage( tfsize_ds1 / 4, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE );
                     tfImage_ds1->setInternalTextureFormat( GL_RGBA );
                     unsigned char* data_ds1 = reinterpret_cast< unsigned char* >( tfImage_ds1->data() );
-                    //std::copy( valueSet_ds1->rawData(), &valueSet_ds1->rawData()[ tfsize_ds1 ], data_ds1 );
+                    std::copy( valueSet_ds1->rawData(), &valueSet_ds1->rawData()[ tfsize_ds1 ], data_ds1 );
 
                     //create image for 2D TF
                     tfImage2D->allocateImage( tfsize_ds0 / 4, tfsize_ds1 / 4, 1, GL_RGBA, GL_UNSIGNED_BYTE );
