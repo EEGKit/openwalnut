@@ -303,7 +303,8 @@ void main()
             {
                 // get current value, classify and illuminate
                 vec3 rayPoint = rayStart + ( currentDistance * v_ray );
-                vec4 src = localIllumination( rayPoint, transferFunction( texture3D( u_volume_ds0Sampler, rayPoint ).r, texture3D( u_volume_ds1Sampler, rayPoint ).r ) );
+                vec4 src = localIllumination( rayPoint, transferFunction( texture3D( u_volume_ds0Sampler, rayPoint ).r,
+                                                texture3D( u_volume_ds1Sampler, rayPoint ).r ) );
                 // associated colors needed
                 src.rgb *= src.a;
 

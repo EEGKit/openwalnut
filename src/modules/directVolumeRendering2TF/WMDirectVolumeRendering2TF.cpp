@@ -543,7 +543,6 @@ void WMDirectVolumeRendering2TF::moduleMain()
 
                     // force OpenGl to use the new texture
                     tfTexture2D->dirtyTextureObject();
-
                 }
             }
         }
