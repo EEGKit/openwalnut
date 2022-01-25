@@ -219,10 +219,11 @@ void WMDirectVolumeRendering2TF::moduleMain()
     WGEShaderDefineSwitch::SPtr depthProjectionEnabledDefine = m_shader->setDefine( "DEPTH_PROJECTION_ENABLED" );
 
     // the texture used for the transfer function
-    osg::ref_ptr< osg::Texture1D > tfTexture_ds0 = new osg::Texture1D();
     osg::ref_ptr< osg::Image > tfImage_ds0 = new osg::Image();
-    osg::ref_ptr< osg::Texture1D > tfTexture_ds1 = new osg::Texture1D();
     osg::ref_ptr< osg::Image > tfImage_ds1 = new osg::Image();
+
+    osg::ref_ptr< osg::Texture2D > tfTexture2D = new osg::Texture2D();
+    osg::ref_ptr< osg::Image > tfImage2D = new osg::Image();
     bool updateTF = false;  // if true, update of TF is enforced
 
     // let the main loop awake if the data changes or the properties changed.
@@ -397,10 +398,15 @@ void WMDirectVolumeRendering2TF::moduleMain()
                 }
             }
 
+            osg::ref_ptr< osg::Texture2D > tfTexture2D = new osg::Texture2D();
+            tfTexture2D->setDataVariance( osg::Object::DYNAMIC );
+
             tfTexture_ds0->setImage( tfImage_ds0 );
             tfTexture_ds1->setImage( tfImage_ds1 );
-            wge::bindTexture( cube, tfTexture_ds0, 4, "u_transferFunction_ds0" );
-            wge::bindTexture( cube, tfTexture_ds1, 5, "u_transferFunction_ds1" );
+            tfTexture2D->setImage( tfImage2D );
+
+            wge::bindTexture( cube, tfTexture2D, 4, "u_transferFunction2D" );
+
             // permanently enable the TF texture. As we have no alternative way to set the TF, always use a TF texture
             tfTexEnableDefine->setActive( true );
 
@@ -503,22 +509,41 @@ void WMDirectVolumeRendering2TF::moduleMain()
                     size_t tfsize_ds0 = valueSet_ds0->rawSize();
                     size_t tfsize_ds1 = valueSet_ds1->rawSize();
 
-
                     // create image and copy the TF
                     tfImage_ds0->allocateImage( tfsize_ds0 / 4, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE );
                     tfImage_ds0->setInternalTextureFormat( GL_RGBA );
                     unsigned char* data_ds0 = reinterpret_cast< unsigned char* >( tfImage_ds0->data() );
-                    std::copy( valueSet_ds0->rawData(), &valueSet_ds0->rawData()[ tfsize_ds0 ], data_ds0 );
+                    //std::copy( valueSet_ds0->rawData(), &valueSet_ds0->rawData()[ tfsize_ds0 ], data_ds0 );
 
                     // create image and copy the TF
                     tfImage_ds1->allocateImage( tfsize_ds1 / 4, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE );
                     tfImage_ds1->setInternalTextureFormat( GL_RGBA );
                     unsigned char* data_ds1 = reinterpret_cast< unsigned char* >( tfImage_ds1->data() );
-                    std::copy( valueSet_ds1->rawData(), &valueSet_ds1->rawData()[ tfsize_ds1 ], data_ds1 );
+                    //std::copy( valueSet_ds1->rawData(), &valueSet_ds1->rawData()[ tfsize_ds1 ], data_ds1 );
+
+                    //create image for 2D TF
+                    tfImage2D->allocateImage( tfsize_ds0 / 4, tfsize_ds1 / 4, 1, GL_RGBA, GL_UNSIGNED_BYTE );
+                    tfImage2D->setInternalTextureFormat( GL_RGBA );
+
+                    // Combine two 1D Transfer Functions to a 2D Transfer Function via the Tensor Product
+                    for( int row = 0; row < tfImage2D->s(); ++row )
+                    {
+                        for( int col = 0; col < tfImage2D->t(); ++col )
+                        {
+                            tfImage2D->data( col, row )[ 0 ] = ( tfImage_ds0->data( row, 0 )[ 0 ]
+                                                                * tfImage_ds1->data( col, 0 )[ 0 ] ) / 255.0;
+                            tfImage2D->data( col, row )[ 1 ] = ( tfImage_ds0->data( row, 0 )[ 1 ]
+                                                                * tfImage_ds1->data( col, 0 )[ 1 ] ) / 255.0;
+                            tfImage2D->data( col, row )[ 2 ] = ( tfImage_ds0->data( row, 0 )[ 2 ]
+                                                                * tfImage_ds1->data( col, 0 )[ 2 ] ) / 255.0;
+                            tfImage2D->data( col, row )[ 3 ] = ( tfImage_ds0->data( row, 0 )[ 3 ]
+                                                                * tfImage_ds1->data( col, 0 )[ 3 ] ) / 255.0;
+                        }
+                    }
 
                     // force OpenGl to use the new texture
-                    tfTexture_ds0->dirtyTextureObject();
-                    tfTexture_ds1->dirtyTextureObject();
+                    tfTexture2D->dirtyTextureObject();
+
                 }
             }
         }
