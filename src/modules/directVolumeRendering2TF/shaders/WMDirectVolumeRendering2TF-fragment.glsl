@@ -46,8 +46,7 @@
 // texture containing the data
 uniform sampler3D u_volume_ds0Sampler;
 uniform sampler3D u_volume_ds1Sampler;
-uniform sampler1D u_transferFunction_ds0Sampler;
-uniform sampler1D u_transferFunction_ds1Sampler;
+uniform sampler2D u_transferFunction2DSampler;
 uniform sampler3D u_gradientsSampler;
 uniform sampler2D u_jitterSampler;
 uniform int       u_jitterSizeX;
@@ -103,14 +102,13 @@ vec3 findRayEnd( in vec3 rayStart, out float d )
  *
  * \return the gradient, NOT normalized
  */
-vec3 getGradient( in vec3 position, int volume )
+vec3 getGradient( in vec3 position )
 {
     #ifdef GRADIENTTEXTURE_ENABLED
-    return ( 2.0 * texture3D( u_gradientsSampler, position ).rgb ) + vec3( -1.0 );
+        return ( 2.0 * texture3D( u_gradientsSampler, position ).rgb ) + vec3( -1.0 );
     #else
-    float s = 0.02;
-    if( volume == 0 )
-    {
+        float s = 0.02;
+
         float valueXP = texture3D( u_volume_ds0Sampler, position + vec3( s, 0.0, 0.0 ) ).r;
         float valueXM = texture3D( u_volume_ds0Sampler, position - vec3( s, 0.0, 0.0 ) ).r;
         float valueYP = texture3D( u_volume_ds0Sampler, position + vec3( 0.0, s, 0.0 ) ).r;
@@ -119,22 +117,9 @@ vec3 getGradient( in vec3 position, int volume )
         float valueZM = texture3D( u_volume_ds0Sampler, position - vec3( 0.0, 0.0, s ) ).r;
 
         return vec3( valueXP - valueXM, valueYP - valueYM, valueZP - valueZM );
-    }
-    else if( volume == 1 )
-    {
-        float valueXP = texture3D( u_volume_ds1Sampler, position + vec3( s, 0.0, 0.0 ) ).r;
-        float valueXM = texture3D( u_volume_ds1Sampler, position - vec3( s, 0.0, 0.0 ) ).r;
-        float valueYP = texture3D( u_volume_ds1Sampler, position + vec3( 0.0, s, 0.0 ) ).r;
-        float valueYM = texture3D( u_volume_ds1Sampler, position - vec3( 0.0, s, 0.0 ) ).r;
-        float valueZP = texture3D( u_volume_ds1Sampler, position + vec3( 0.0, 0.0, s ) ).r;
-        float valueZM = texture3D( u_volume_ds1Sampler, position - vec3( 0.0, 0.0, s ) ).r;
 
-        return vec3( valueXP - valueXM, valueYP - valueYM, valueZP - valueZM );
-    }
-
-        #endif
+    #endif
 }
-
 /**
  * Emulates the transfer function. This will be removed and replaced by a texture lookup.
  *
@@ -142,37 +127,31 @@ vec3 getGradient( in vec3 position, int volume )
  *
  * \return the color.
  */
-vec4 transferFunction( int type, float value )
+vec4 transferFunction( float value_ds1, float value_ds2 )
 {
     #ifdef TRANSFERFUNCTION_ENABLED
-    if( type == 0 )
-    {
-        return texture1D( u_transferFunction_ds0Sampler, value );
-    }
-    else
-    {
-        return texture1D( u_transferFunction_ds1Sampler, value );
-    }
-        #else
-    // Example TF
-    if( isZero( value - 0.5, 0.00005  ) )
-    return vec4( 0.0 );
-    vec4 c = vec4( 0.0 );
-    if( value <= 0.5 )
-    {
-        c = vec4( 0.0, 0.37, 1.0, 2.0 * ( 0.5 - value ) );
-    }
-    else
-    {
-        vec4 cols[2];
-        cols[0] = vec4( 1.0, 0.34, 0.34, 0.25 );
-        cols[1] = vec4( 1.0, 0.75, 0.0, 0.25 );
+        return texture2D( u_transferFunction2DSampler, vec2( value_ds1, value_ds2 ) );
+    #else
+        // Example TF
+        //TODO(Kai): Example 2D lookup
+        if( isZero( value - 0.5, 0.00005  ) )
+        return vec4( 0.0 );
+        vec4 c = vec4( 0.0 );
+        if( value <= 0.5 )
+        {
+            c = vec4( 0.0, 0.37, 1.0, 2.0 * ( 0.5 - value ) );
+        }
+        else
+        {
+            vec4 cols[2];
+            cols[0] = vec4( 1.0, 0.34, 0.34, 0.25 );
+            cols[1] = vec4( 1.0, 0.75, 0.0, 0.25 );
 
-        int i = int( 2.0 * ( value - 0.5 ) * 2.0 * 15.0 );
-        int imod = i % 2;
-        c = cols[ imod ];
-    }
-    return c;
+            int i = int( 2.0 * ( value - 0.5 ) * 2.0 * 15.0 );
+            int imod = i % 2;
+            c = cols[ imod ];
+        }
+        return c;
     #endif
 }
 
@@ -184,46 +163,39 @@ vec4 transferFunction( int type, float value )
  *
  * \return the light color
  */
-vec4 localIllumination( in vec3 position, in vec4 color, int volume )
+vec4 localIllumination( in vec3 position, in vec4 color )
 {
     #ifdef LOCALILLUMINATION_PHONG
-    // get a gradient and get it to world-space
-    if( volume == 0 )
-    {
-        vec3 g = getGradient( position, 0 );
-    }
-    else
-    {
-        vec3 g = getGradient( position, 1 );
-    }
+        // get a gradient and get it to world-space
+        vec3 g = getGradient( position );
 
-    vec3 worldNormal = ( gl_ModelViewMatrix * vec4( g, 0.0 ) ).xyz;
-    if( length( g ) < 0.01 )
-    {
-        return vec4( 0.0 ); //vec4( g.x, g.y, g.z, 1.0 );
-    }
+        vec3 worldNormal = ( gl_ModelViewMatrix * vec4( g, 0.0 ) ).xyz;
+        if( length( g ) < 0.01 )
+        {
+            return vec4( 0.0 ); //vec4( g.x, g.y, g.z, 1.0 );
+        }
 
-    // let the normal point towards the viewer. Technically this would be:
-    // worldNormal *= sign( dot( worldNormal, vec3( 0.0, 0.0, 1.0 ) ) );
-    // but as most of the components in the view vector are 0 we can use:
-    worldNormal *= sign( worldNormal.z );
+        // let the normal point towards the viewer. Technically this would be:
+        // worldNormal *= sign( dot( worldNormal, vec3( 0.0, 0.0, 1.0 ) ) );
+        // but as most of the components in the view vector are 0 we can use:
+        worldNormal *= sign( worldNormal.z );
 
-    // Phong:
-    vec4 light = blinnPhongIllumination(
-    0.1 * color.rgb,                              // material ambient
-    1.0 * color.rgb,                                    // material diffuse
-    0.5 * color.rgb,                              // material specular
-    100.0,                                         // shinines
-    vec3( 1.0, 1.0, 1.0 ),                        // light diffuse
-    vec3( 1.0, 1.0, 1.0 ),                        // light ambient
-    normalize( worldNormal ),                     // normal
-    vec3( 0.0, 0.0, 1.0 ),                        // view direction  // in world space, this always is the view-dir
-    gl_LightSource[0].position.xyz                // light source position
-    );
-    light.a = color.a;
-    return light;
+        // Phong:
+        vec4 light = blinnPhongIllumination(
+        0.1 * color.rgb,                              // material ambient
+        1.0 * color.rgb,                                    // material diffuse
+        0.5 * color.rgb,                              // material specular
+        100.0,                                         // shinines
+        vec3( 1.0, 1.0, 1.0 ),                        // light diffuse
+        vec3( 1.0, 1.0, 1.0 ),                        // light ambient
+        normalize( worldNormal ),                     // normal
+        vec3( 0.0, 0.0, 1.0 ),                        // view direction  // in world space, this always is the view-dir
+        gl_LightSource[0].position.xyz                // light source position
+        );
+        light.a = color.a;
+        return light;
     #else
-    return color;   // no illumination. In this case, no performance overhead is needed as functions get inlined.
+        return color;   // no illumination. In this case, no performance overhead is needed as functions get inlined.
     #endif
 }
 
@@ -252,131 +224,127 @@ void main()
     float currentDistance = 0.02;   // accumulated distance along the ray
 
     #ifdef JITTERTEXTURE_ENABLED
-    // stochastic jittering can help to void these ugly wood-grain artifacts with larger sampling distances but might
-    // introduce some noise artifacts.
-    float jitter = 0.5 - texture2D( u_jitterSampler, gl_FragCoord.xy / float( u_jitterSizeX ) ).r;
-    vec3 rayStart = v_rayStart + ( v_ray * v_sampleDistance * jitter );
+        // stochastic jittering can help to void these ugly wood-grain artifacts with larger sampling distances but might
+        // introduce some noise artifacts.
+        float jitter = 0.5 - texture2D( u_jitterSampler, gl_FragCoord.xy / float( u_jitterSizeX ) ).r;
+        vec3 rayStart = v_rayStart + ( v_ray * v_sampleDistance * jitter );
     #else
-    vec3 rayStart = v_rayStart;
+        vec3 rayStart = v_rayStart;
     #endif
 
     vec3 rayEnd = findRayEnd( rayStart, totalDistance );
 
     #ifdef MIP_ENABLED
-    // There is no nice early ray termination, so this will slow things
-    // down a bit.
-    float maxdist = -1.0;
-    float maxalpha = 0.0;
-    // walk along the ray
-    vec4 dst = vec4( 0.0 );
-    vec3 maxRayPoint;
-    while( currentDistance <= ( totalDistance - 0.02 )  )
-    {
-        // get current value, classify and illuminate
-        vec3 rayPoint = rayStart + ( currentDistance * v_ray );
-        float alpha = ( transferFunction( 0, texture3D( u_volume_ds0Sampler, rayPoint ).r ).a
-        * transferFunction( 1, texture3D( u_volume_ds1Sampler, rayPoint ).r ).a );
-        if( alpha > maxalpha )
-        {
-            maxRayPoint = rayPoint;
-            maxdist = currentDistance;
-            maxalpha = alpha;
-        }
-
-        // go to next value
-        currentDistance += v_sampleDistance;
-    }
-
-    // Get color at brightest point taken from alpha value of texture
-    // both depth projection and mip need this information.
-    if( maxdist > 0.0 )
-    {
-        dst = ( localIllumination( maxRayPoint, transferFunction( 0, texture3D( u_volume_ds0Sampler, maxRayPoint ).r ), 0 ) *
-        localIllumination( maxRayPoint, transferFunction( 1, texture3D( u_volume_ds1Sampler, maxRayPoint ).r ), 1 ) );
-        dst.a = 1.0;
-    }
-        #ifdef DEPTH_PROJECTION_ENABLED
-    // FIXME: This is technically not correct as our ray starts at the boundary of the volume and not
-    // in the view plane. Therefore, we get artifacts showing the edges and corners of the box.
-
-    // map depth value to color
-    if( maxdist > 0.0 )
-    {
-        const float MAX_DISTANCE = 1.1; // FIXME: estimate reasonable maximum value here
-        float normval = maxdist/MAX_DISTANCE;
-
-        // if( normval > 0.5 )
-        // {
-        //     dst = vec4( 0., normval-0.5, ( normval - 0.5 )*2.0, 1. );
-        // }
-        // else
-        // {
-        //     dst = vec4( 2.* ( 0.5-normval ), normval, 0., 1. );
-        // }
-        dst = vec4( texture1D( u_transferFunction_ds0Sampler, normval ).rgb, 1.0 )
-        * vec4( texture1D( u_transferFunction_ds1Sampler, normval ).rgb, 1.0 );
-    }
-    else
-    {
-        dst = vec4( 0., 0., 0., 0. );
-    }
-        #endif
-        #else
-    // walk along the ray
-    vec4 dst = vec4( 0.0 );
-    while( currentDistance <= ( totalDistance - 0.02 )  )
-    {
-        // do not dynamically branch every cycle for early-ray termination, so do n steps before checking alpha value
-        for( int i = 0; i < 10; ++i )
+        // There is no nice early ray termination, so this will slow things
+        // down a bit.
+        float maxdist = -1.0;
+        float maxalpha = 0.0;
+        // walk along the ray
+        vec4 dst = vec4( 0.0 );
+        vec3 maxRayPoint;
+        while( currentDistance <= ( totalDistance - 0.02 )  )
         {
             // get current value, classify and illuminate
             vec3 rayPoint = rayStart + ( currentDistance * v_ray );
-            // We multiply the alpha values of both transfer functions, but only use the color of the first connected TF
-            // src: State of the Art in Transfer Functions for Direct Volume Rendering (2016) - Ljung et. al - page 5
-            float alpha = ( localIllumination( rayPoint, transferFunction( 0, texture3D( u_volume_ds0Sampler, rayPoint ).r ), 0 ).a *
-            localIllumination( rayPoint, transferFunction( 1, texture3D( u_volume_ds1Sampler, rayPoint ).r ), 1 ).a );
-            vec4 src = vec4( localIllumination( rayPoint, transferFunction( 0, texture3D( u_volume_ds0Sampler, rayPoint ).r ), 0 ).rgb, alpha );
-            // associated colors needed
-            src.rgb *= src.a;
-
-            #ifdef OPACITYCORRECTION_ENABLED
-            // opacity correction
-            src.r = 1.0 - fastpow( 1.0 - src.r, v_relativeSampleDistance );
-            src.g = 1.0 - fastpow( 1.0 - src.g, v_relativeSampleDistance );
-            src.b = 1.0 - fastpow( 1.0 - src.b, v_relativeSampleDistance );
-            src.a = 1.0 - fastpow( 1.0 - src.a, v_relativeSampleDistance );
-            #endif
-
-            /*        vec3 planeNorm = -v_ray;
-
-                    vec3 pSphere[16] = vec3[](vec3(0.53812504, 0.18565957, -0.43192),vec3(0.13790712, 0.24864247, 0.44301823),vec3(0.33715037, 0.56794053, -0.005789503),vec3(-0.6999805, -0.04511441, -0.0019965635),vec3(0.06896307, -0.15983082, -0.85477847),vec3(0.056099437, 0.006954967, -0.1843352),vec3(-0.014653638, 0.14027752, 0.0762037),vec3(0.010019933, -0.1924225, -0.034443386),vec3(-0.35775623, -0.5301969, -0.43581226),vec3(-0.3169221, 0.106360726, 0.015860917),vec3(0.010350345, -0.58698344, 0.0046293875),vec3(-0.08972908, -0.49408212, 0.3287904),vec3(0.7119986, -0.0154690035, -0.09183723),vec3(-0.053382345, 0.059675813, -0.5411899),vec3(0.035267662, -0.063188605, 0.54602677),vec3(-0.47761092, 0.2847911, -0.0271716));
-                    float aoFactor = 0.0;
-                    vec3 g = getGradient( rayPoint );
-
-                    for( int aoI = 0; aoI < 16; ++aoI )
-                    {
-                        vec3 dir = reflect( pSphere[aoI], g );
-                        for( int aoS = 0; aoS < 16; ++aoS )
-                        {
-                            vec3 samplePoint = rayPoint + ( dir * v_sampleDistance * float(aoI+1) );
-                        vec4 sampleColor = (transferFunction( 0, texture3D( u_volume_ds0Sampler, samplePoint ).r ) *
-                                                transferFunction( 0, texture3D( u_volume_ds1Sampler, samplePoint ).r ) );
-                        aoFactor += sampleColor.a;// * ( 1.0 / 16.0 );
-                    }
-        */
-            // apply front-to-back compositing
-            dst = ( 1.0 - dst.a ) * src + dst;
-            //dst.rgb *= 0.15*aoFactor;
+            float alpha = ( transferFunction( 0, texture3D( u_volume_ds0Sampler, rayPoint ).r ).a
+            * transferFunction( 1, texture3D( u_volume_ds1Sampler, rayPoint ).r ).a );
+            if( alpha > maxalpha )
+            {
+                maxRayPoint = rayPoint;
+                maxdist = currentDistance;
+                maxalpha = alpha;
+            }
 
             // go to next value
             currentDistance += v_sampleDistance;
         }
 
-        // early ray-termination
-        if( dst.a >= 0.999 )
-        break;
-    }
+        // Get color at brightest point taken from alpha value of texture
+        // both depth projection and mip need this information.
+        if( maxdist > 0.0 )
+        {
+            dst = ( localIllumination( maxRayPoint, transferFunction( 0, texture3D( u_volume_ds0Sampler, maxRayPoint ).r ), 0 ) *
+            localIllumination( maxRayPoint, transferFunction( 1, texture3D( u_volume_ds1Sampler, maxRayPoint ).r ), 1 ) );
+            dst.a = 1.0;
+        }
+        #ifdef DEPTH_PROJECTION_ENABLED
+            // FIXME: This is technically not correct as our ray starts at the boundary of the volume and not
+            // in the view plane. Therefore, we get artifacts showing the edges and corners of the box.
+
+            // map depth value to color
+            if( maxdist > 0.0 )
+            {
+                const float MAX_DISTANCE = 1.1; // FIXME: estimate reasonable maximum value here
+                float normval = maxdist/MAX_DISTANCE;
+
+                // if( normval > 0.5 )
+                // {
+                //     dst = vec4( 0., normval-0.5, ( normval - 0.5 )*2.0, 1. );
+                // }
+                // else
+                // {
+                //     dst = vec4( 2.* ( 0.5-normval ), normval, 0., 1. );
+                // }
+                dst = vec4( texture1D( u_transferFunction_ds0Sampler, normval ).rgb, 1.0 )
+                * vec4( texture1D( u_transferFunction_ds1Sampler, normval ).rgb, 1.0 );
+            }
+            else
+            {
+                dst = vec4( 0., 0., 0., 0. );
+            }
         #endif
+    #else
+        // walk along the ray
+        vec4 dst = vec4( 0.0 );
+        while( currentDistance <= ( totalDistance - 0.02 )  )
+        {
+            // do not dynamically branch every cycle for early-ray termination, so do n steps before checking alpha value
+            for( int i = 0; i < 10; ++i )
+            {
+                // get current value, classify and illuminate
+                vec3 rayPoint = rayStart + ( currentDistance * v_ray );
+                vec4 src = localIllumination( rayPoint, transferFunction( texture3D( u_volume_ds0Sampler, rayPoint ).r, texture3D( u_volume_ds1Sampler, rayPoint ).r ) );
+                // associated colors needed
+                src.rgb *= src.a;
+
+                #ifdef OPACITYCORRECTION_ENABLED
+                    // opacity correction
+                    src.r = 1.0 - fastpow( 1.0 - src.r, v_relativeSampleDistance );
+                    src.g = 1.0 - fastpow( 1.0 - src.g, v_relativeSampleDistance );
+                    src.b = 1.0 - fastpow( 1.0 - src.b, v_relativeSampleDistance );
+                    src.a = 1.0 - fastpow( 1.0 - src.a, v_relativeSampleDistance );
+                #endif
+
+                /*        vec3 planeNorm = -v_ray;
+
+                        vec3 pSphere[16] = vec3[](vec3(0.53812504, 0.18565957, -0.43192),vec3(0.13790712, 0.24864247, 0.44301823),vec3(0.33715037, 0.56794053, -0.005789503),vec3(-0.6999805, -0.04511441, -0.0019965635),vec3(0.06896307, -0.15983082, -0.85477847),vec3(0.056099437, 0.006954967, -0.1843352),vec3(-0.014653638, 0.14027752, 0.0762037),vec3(0.010019933, -0.1924225, -0.034443386),vec3(-0.35775623, -0.5301969, -0.43581226),vec3(-0.3169221, 0.106360726, 0.015860917),vec3(0.010350345, -0.58698344, 0.0046293875),vec3(-0.08972908, -0.49408212, 0.3287904),vec3(0.7119986, -0.0154690035, -0.09183723),vec3(-0.053382345, 0.059675813, -0.5411899),vec3(0.035267662, -0.063188605, 0.54602677),vec3(-0.47761092, 0.2847911, -0.0271716));
+                        float aoFactor = 0.0;
+                        vec3 g = getGradient( rayPoint );
+
+                        for( int aoI = 0; aoI < 16; ++aoI )
+                        {
+                            vec3 dir = reflect( pSphere[aoI], g );
+                            for( int aoS = 0; aoS < 16; ++aoS )
+                            {
+                                vec3 samplePoint = rayPoint + ( dir * v_sampleDistance * float(aoI+1) );
+                            vec4 sampleColor = (transferFunction( 0, texture3D( u_volume_ds0Sampler, samplePoint ).r ) *
+                                                    transferFunction( 0, texture3D( u_volume_ds1Sampler, samplePoint ).r ) );
+                            aoFactor += sampleColor.a;// * ( 1.0 / 16.0 );
+                        }
+            */
+                // apply front-to-back compositing
+                dst = ( 1.0 - dst.a ) * src + dst;
+                //dst.rgb *= 0.15*aoFactor;
+
+                // go to next value
+                currentDistance += v_sampleDistance;
+            }
+
+            // early ray-termination
+            if( dst.a >= 0.999 )
+            break;
+        }
+    #endif
 
     // have we hit something which was classified not to be transparent?
     // This is, visually, not needed but useful if volume renderer is used in conjunction with other geometry.
