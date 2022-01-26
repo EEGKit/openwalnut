@@ -332,29 +332,9 @@ private:
     osg::Vec3d m_HMD_position;
 
     /**
-     * cached position of HMD device from previous frame
-     */
-    osg::Vec3d m_HMD_positionLastFrame;
-
-     /**
-     * position difference calculated fromn last and current frame
-     */
-    osg::Vec3d m_HMD_positionDifference;
-
-    /**
      * current rotation of HMD device
      */
     osg::Quat m_HMD_rotation;
-
-    /**
-     * cached rotation of HMD device from previous frame
-     */
-    osg::Quat m_HMD_rotationLastFrame;
-
-     /**
-     * rotation difference calculated fromn last and current frame
-     */
-    osg::Quat m_HMD_rotationDifference;
 
     osg::Quat m_startRot;
     osg::Vec3d m_startTrans;

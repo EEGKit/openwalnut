@@ -346,45 +346,6 @@ void WMVRCamera::moduleMain()
     // finalPassLeft->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
     // finalPassRight->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
 
-    osg::ref_ptr<osg::Node> plane_left = wge::genFinitePlane(
-        osg::Vec3( -100.0, 0.0, -100.0 ), // base
-        osg::Vec3( 200.0, 0.0, 0.0 ),     // spanning vector a
-        osg::Vec3( 0.0, 0.0, 200.0 ),     // spanning vector b
-        WColor( 0.0, 1.0, 0.0, 1.0 )      // a color.
-     );
-    osg::ref_ptr<osg::Node> plane_right = wge::genFinitePlane(
-        osg::Vec3( -100.0, 0.0, -100.0 ), // base
-        osg::Vec3( 200.0, 0.0, 0.0 ),     // spanning vector a
-        osg::Vec3( 0.0, 0.0, 200.0 ),     // spanning vector b
-        WColor( 0.0, 0.0, 1.0, 1.0 )      // a color.
-     );
-
-    osg::ref_ptr<osg::Node> plane_left2 = wge::genFinitePlane(
-        osg::Vec3( -200.0, 0.0, -200.0 ), // base
-        osg::Vec3( 100.0, 0.0, 0.0 ),     // spanning vector a
-        osg::Vec3( 0.0, 0.0, 100.0 ),     // spanning vector b
-        WColor( 0.0, 1.0, 0.0, 1.0 )      // a color.
-     );
-    osg::ref_ptr<osg::Node> plane_right2 = wge::genFinitePlane(
-        osg::Vec3( -200.0, 0.0, -200.0 ), // base
-        osg::Vec3( 100.0, 0.0, 0.0 ),     // spanning vector a
-        osg::Vec3( 0.0, 0.0, 100.0 ),     // spanning vector b
-        WColor( 0.0, 0.0, 1.0, 1.0 )      // a color.
-     );
-
-    osg::ref_ptr<osg::Node> plane_main = wge::genFinitePlane(
-        osg::Vec3( -100.0, 0.0, -100.0 ), // base
-        osg::Vec3( 200.0, 0.0, 0.0 ),     // spanning vector a
-        osg::Vec3( 0.0, 0.0, 200.0 ),     // spanning vector b
-        WColor( 1.0, 0.0, 0.0, 1.0 )      // a color.
-     );
-
-    /*m_leftEyeGeometryNode->addChild(  plane_left  );
-    m_rightEyeGeometryNode->addChild(  plane_right  );
-    m_leftEyeGeometryNode->addChild(  plane_left2  );
-    m_rightEyeGeometryNode->addChild(  plane_right2  );
-    m_rootnode->addChild(  plane_main  );*/
-
     leftEyeView->getScene()->insert( offscreenRenderLeft );
     rightEyeView->getScene()->insert( offscreenRenderRight );
 
@@ -668,16 +629,6 @@ void WMVRCamera::updateHMDPose()
     double help = m_HMD_position.y();
     m_HMD_position.y() = -m_HMD_position.z();
     m_HMD_position.z() = help;
-
-    if ( m_HMD_transformDifferenceIsSet )
-    {
-        m_HMD_rotationDifference = m_HMD_rotation * m_HMD_rotationLastFrame.inverse();
-        m_HMD_positionDifference = (m_HMD_positionLastFrame - m_HMD_position);
-    }
-
-    // save rot/trans difference calculation on next frame
-    m_HMD_rotationLastFrame = m_HMD_rotation;
-    m_HMD_positionLastFrame = m_HMD_position;
 
     m_HMD_transformDifferenceIsSet = true;
 }
