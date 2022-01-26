@@ -109,7 +109,7 @@ public:
     /**
      * Set eye view's matrices to main view matrix; also applies HMD eye offset
      */
-    void setupEyeViewsFromMainView();
+    void ResetHMDPosition();
 
     /**
      * Converts vr::HmdMatrix34_t to osg::Matrix.
@@ -233,9 +233,9 @@ private:
     WPropTrigger  m_VR_screenshotTrigger;
 
     /**
-     * A trigger for applieing the main view camera manipulation to left/right view of VR module.
+     * A trigger for resetting the camera to the seated zero position of the HMD device.
      */
-    WPropTrigger  m_VR_cameraManipTrigger;
+    WPropTrigger  m_VR_resetHMDPosition;
 
     /**
      * This modules root node mostly for cameras

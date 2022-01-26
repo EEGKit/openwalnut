@@ -109,9 +109,9 @@ void WMVRCamera::properties()
                                                 WPVBaseTypes::PV_TRIGGER_READY );
     m_VR_logCameraManipulators = m_properties->addProperty( "Log Camera View Matrix", "Now",
                                                            WPVBaseTypes::PV_TRIGGER_READY );
-    m_VR_screenshotTrigger = m_properties->addProperty( "Screenshot Main", "Speichern.",
+    m_VR_screenshotTrigger = m_properties->addProperty( "Screenshot Main", "Save.",
                                                        WPVBaseTypes::PV_TRIGGER_READY );
-    m_VR_cameraManipTrigger = m_properties->addProperty( "Apply MainView View Matrix", "Apply",
+    m_VR_resetHMDPosition = m_properties->addProperty( "Reset position", "Reset",
                                                         WPVBaseTypes::PV_TRIGGER_READY );
 
     WModule::properties();
@@ -507,11 +507,11 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
         m_module->m_VR_screenshotTrigger->set( WPVBaseTypes::PV_TRIGGER_READY, false );
     }
 
-    if( m_module->m_VR_cameraManipTrigger->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
+    if( m_module->m_VR_resetHMDPosition->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
     {
-        m_module->setupEyeViewsFromMainView();
+        m_module->ResetHMDPosition();
 
-        m_module->m_VR_cameraManipTrigger->set( WPVBaseTypes::PV_TRIGGER_READY, false );
+        m_module->m_VR_resetHMDPosition->set( WPVBaseTypes::PV_TRIGGER_READY, false );
     }
 
     if( m_module->m_vrOn->changed( true ) )
@@ -633,26 +633,12 @@ void WMVRCamera::updateHMDPose()
     m_HMD_transformDifferenceIsSet = true;
 }
 
-void WMVRCamera::setupEyeViewsFromMainView()
+void WMVRCamera::ResetHMDPosition()
 {
-    std::shared_ptr<WGEViewer> leftEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" );
-    std::shared_ptr<WGEViewer> rightEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" );
+    m_vrSystem->ResetSeatedZeroPose();
 
-    osg::Matrixd mainViewMatrix = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->getViewMatrix();
-
-    // Calculate and apply eye to head distances
-    osg::Matrixd leftEyeOffsetMat = convertHmdMatrixToOSG( m_vrSystem->GetEyeToHeadTransform( vr::Eye_Left ) );
-    osg::Matrixd leftViewMatrix = mainViewMatrix;
-    leftViewMatrix = leftViewMatrix * leftEyeOffsetMat;
-    
-    osg::Matrixd rightEyeOffsetMat = convertHmdMatrixToOSG( m_vrSystem->GetEyeToHeadTransform( vr::Eye_Right ) );
-    osg::Matrixd rightViewMatrix = mainViewMatrix;
-    rightViewMatrix = rightViewMatrix * rightEyeOffsetMat;
-
-    leftEyeView->getCamera()->setViewMatrix( leftViewMatrix );
-    rightEyeView->getCamera()->setViewMatrix( rightViewMatrix );
-
-    debugLog() << "Set Left/Right view matrix to main view matrix.";
+    m_startRot = m_HMD_rotation;
+    m_startTrans = m_HMD_position;
 }
 
 osg::Matrix WMVRCamera::convertHmdMatrixToOSG( const vr::HmdMatrix34_t &mat34 )
