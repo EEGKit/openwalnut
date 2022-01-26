@@ -286,6 +286,13 @@ public:
     /**
      * Helper converts this instance to its native type.
      *
+     * \return the property as transfer function property
+     */
+    WPropTransferFunction2D toPropTransferFunction2D();
+
+    /**
+     * Helper converts this instance to its native type.
+     *
      * \return the property as group
      */
     WPropGroup toPropGroup();

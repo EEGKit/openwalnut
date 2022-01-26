@@ -178,6 +178,11 @@ WPropTransferFunction WPropertyBase::toPropTransferFunction()
     return std::dynamic_pointer_cast< WPVTransferFunction >( shared_from_this() );
 }
 
+WPropTransferFunction2D WPropertyBase::toPropTransferFunction2D()
+{
+    return std::dynamic_pointer_cast< WPVTransferFunction2D >( shared_from_this() );
+}
+
 std::shared_ptr< WCondition > WPropertyBase::getUpdateCondition() const
 {
     return m_updateCondition;

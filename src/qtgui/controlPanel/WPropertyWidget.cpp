@@ -42,6 +42,7 @@
 #include "WPropertyStringWidget.h"
 #include "WPropertyStructWidget.h"
 #include "WPropertyTransferFunctionWidget.h"
+#include "WPropertyTransferFunction2DWidget.h"
 #include "WPropertyTriggerWidget.h"
 #include "WPropertyWidget.h"
 #include "WQtPropertyGroupWidget.h"
@@ -251,6 +252,9 @@ WPropertyWidget* WPropertyWidget::construct( WPropertyBase::SPtr property, QGrid
             break;
         case PV_TRANSFERFUNCTION:
             return new WPropertyTransferFunctionWidget( property->toPropTransferFunction(), propertyGrid, parent  );
+            break;
+        case PV_TRANSFERFUNCTION2D:
+            return new WPropertyTransferFunction2DWidget( property->toPropTransferFunction2D(), propertyGrid, parent  );
             break;
         case PV_INTERVAL:
             return new WPropertyIntervalWidget( property->toPropInterval(), propertyGrid, parent );
