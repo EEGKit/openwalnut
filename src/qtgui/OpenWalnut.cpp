@@ -84,7 +84,7 @@ void printVersion()
     "along with OpenWalnut. If not, see <http://www.gnu.org/licenses/>." << std::endl;
     std::cout << std::endl;  // Create new line after message for clarity.
 
-    std::cout << "Written by the OpenWalnut Community, Nemtics, BSV@Uni-Leipzig and CNCF@MPI-CBS." << std::endl;
+    std::cout << "Written by the OpenWalnut Community, Hochschule Worms, Nemtics, BSV@Uni-Leipzig and CNCF@MPI-CBS." << std::endl;
 }
 
 /**
