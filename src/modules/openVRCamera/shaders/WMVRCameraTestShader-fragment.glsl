@@ -26,13 +26,28 @@
 
 #include "WGEShadingTools.glsl"
 
+/**
+ * The texture Unit for the original color field
+ */
 uniform sampler2D u_texture0Sampler;
+#define u_colorSampler u_texture0Sampler
+
+/**
+ * The depth texture
+ */
+uniform sampler2D u_texture1Sampler;
+#define u_depthSampler u_texture1Sampler
 
 vec2 pixelCoord = gl_TexCoord[0].st;
 
 vec4 getColor( in vec2 where )
 {
-    return texture2D( u_texture0Sampler, where );
+    return texture2D( u_colorSampler, where );
+}
+
+float getDepth( in vec2 where )
+{
+    return texture2D( u_depthSampler, where ).r;
 }
 
 
@@ -41,7 +56,7 @@ varying vec3 v_normal;
 
 void main()
 {
-    //float light = blinnPhongIlluminationIntensity( normalize( viewAlign( v_normal ) ) );
+    // float light = blinnPhongIlluminationIntensity( normalize( viewAlign( v_normal ) ) );
     // finally set the color and depth
     // NOTE: you should remember that, when outputting to more than one texture (if you attached multiple color outputs), you need to use
     // gl_FragData instead of gl_FragColor!
@@ -51,6 +66,13 @@ void main()
 
     vec4 finalColor = getColor( pixelCoord );
 
+    float depth = getDepth( pixelCoord );
+    if( depth > 0.99 )
+    {
+       finalColor = vec4( 1.0, 1.0, 1.0, 1.0 );
+    }
+
     gl_FragColor = finalColor;
+    gl_FragDepth = depth;
 }
 

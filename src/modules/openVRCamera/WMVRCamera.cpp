@@ -260,7 +260,7 @@ void WMVRCamera::moduleMain()
     //leftEyeView->getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
     //leftEyeView->getCamera()->setNearFarRatio(  0.000001  );
     leftEyeView->getCamera()->setViewport( 0, 0, m_vrRenderWidth, m_vrRenderHeight );
-    leftEyeView->getCamera()->setProjectionMatrix( convertHmdMatrixToOSG( m_vrSystem->GetProjectionMatrix( vr::Eye_Left, 1.0, 100.0 ) ) );
+    leftEyeView->getCamera()->setProjectionMatrix( convertHmdMatrixToOSG( m_vrSystem->GetProjectionMatrix( vr::Eye_Left, 1.0, 1000.0 ) ) );
     //leftEyeView->getCamera()->setCullMask( vrNodeMask );
 
 
@@ -272,7 +272,7 @@ void WMVRCamera::moduleMain()
     //rightEyeView->getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
     //rightEyeView->getCamera()->setNearFarRatio(  0.000001  );
     rightEyeView->getCamera()->setViewport( 0, 0, m_vrRenderWidth, m_vrRenderHeight );
-    rightEyeView->getCamera()->setProjectionMatrix( convertHmdMatrixToOSG( m_vrSystem->GetProjectionMatrix( vr::Eye_Right, 1.0, 100.0 ) ) );
+    rightEyeView->getCamera()->setProjectionMatrix( convertHmdMatrixToOSG( m_vrSystem->GetProjectionMatrix( vr::Eye_Right, 1.0, 1000.0 ) ) );
     //rightEyeView->getCamera()->setCullMask( vrNodeMask );
 
     m_leftTexture = new osg::Texture2D;
