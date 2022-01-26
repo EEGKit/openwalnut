@@ -635,8 +635,6 @@ void WMVRCamera::updateHMDPose()
 
 void WMVRCamera::ResetHMDPosition()
 {
-    m_vrSystem->ResetSeatedZeroPose();
-
     m_startRot = m_HMD_rotation;
     m_startTrans = m_HMD_position;
 }
