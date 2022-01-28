@@ -47,6 +47,7 @@ class WPropertyVariable;
 class WPropertyGroup;
 
 class WTransferFunction;
+class WTransferFunction2D;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 // NOTE: If you add new types here, please also add corresponding addProperty methods to WPropertyGroup
@@ -112,7 +113,7 @@ namespace WPVBaseTypes
     typedef WColor                                          PV_COLOR;                //!< base type used for every WPVColor
     typedef WMatrix4d                                       PV_MATRIX4X4;            //!< base type used for every WPVMatrix4X4
     typedef WTransferFunction                               PV_TRANSFERFUNCTION;     //!< base type for every transfer function
-    typedef WTransferFunction                               PV_TRANSFERFUNCTION2D;   //!< base type for every transfer function
+    typedef WTransferFunction2D                             PV_TRANSFERFUNCTION2D;   //!< base type for every transfer function
     typedef WIntervalDouble                                 PV_INTERVAL;             //!< base type used for every PV_INTERVAL
 
     /**
@@ -694,6 +695,51 @@ namespace PROPERTY_TYPE_HELPER
          * \return the string representation
          */
         std::string asString( const WPVBaseTypes::PV_TRANSFERFUNCTION& tf );
+    };
+
+    /**
+     * Class helping to adapt types specified as template parameter into an enum.
+     */
+    template<>
+    class WTypeIdentifier< WPVBaseTypes::PV_TRANSFERFUNCTION2D >
+    {
+    public:
+        /**
+         * Get type identifier of the template type T.
+         *
+         * \return type identifier-
+         */
+        PROPERTY_TYPE getType()
+        {
+            return PV_TRANSFERFUNCTION2D;
+        }
+    };
+
+    /**
+     * Class helping to create a new instance of the property content from an old one. Selections need this special care since they contain not
+     * serializable content which needs to be acquired from its predecessor instance.
+     */
+    template<>
+    class WStringConversion< WPVBaseTypes::PV_TRANSFERFUNCTION2D >
+    {
+    public:
+        /**
+         * Creates a new instance of the type from a given string. Some classes need a predecessor which is also specified here.
+         *
+         * \param str the new value as string
+         *
+         * \return the new instance
+         */
+        WPVBaseTypes::PV_TRANSFERFUNCTION2D create( const WPVBaseTypes::PV_TRANSFERFUNCTION2D& /*old*/, const std::string str );
+
+        /**
+         * Creates a string from the specified value.
+         *
+         * \param tf the value to convert
+         *
+         * \return the string representation
+         */
+        std::string asString( const WPVBaseTypes::PV_TRANSFERFUNCTION2D& tf );
     };
 
     /**

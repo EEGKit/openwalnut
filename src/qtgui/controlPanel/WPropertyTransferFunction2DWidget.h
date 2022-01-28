@@ -33,13 +33,13 @@
 
 #include "WPropertyWidget.h"
 
-#include "transferFunction/WTransferFunctionWidget.h"
-#include "core/common/WTransferFunction.h"
+#include "transferFunction2D/WTransferFunction2DWidget.h"
+#include "core/common/WTransferFunction2D.h"
 
 /**
  * Implements a property widget for WPropDouble.
  */
-class WPropertyTransferFunction2DWidget: public WPropertyWidget, public WTransferFunctionGuiNotificationClass
+class WPropertyTransferFunction2DWidget: public WPropertyWidget, public WTransferFunction2DGuiNotificationClass
 {
     Q_OBJECT
 public:
@@ -50,7 +50,7 @@ public:
      * \param parent the parent widget.
      * \param propertyGrid the grid used to layout the labels and property widgets
      */
-    WPropertyTransferFunction2DWidget( WPropTransferFunction property, QGridLayout* propertyGrid, QWidget* parent = 0 );
+    WPropertyTransferFunction2DWidget( WPropTransferFunction2D property, QGridLayout* propertyGrid, QWidget* parent = 0 );
 
     /**
      * Destructor.
@@ -62,7 +62,7 @@ protected:
     * Called when the gui has new data
     * \param tf New transfer function
     */
-    virtual void guiUpdate( const WTransferFunction& tf );
+    virtual void guiUpdate( const WTransferFunction2D& tf );
 
     /**
      * Called whenever the widget should update.
@@ -73,7 +73,7 @@ protected:
      * The integer property represented by this widget.
      */
     //WPropDouble m_doubleProperty;
-    WPropTransferFunction m_transferFunctionProperty;
+    WPropTransferFunction2D m_transferFunctionProperty;
 
     /**
      * The slider allowing modification of the integer value
@@ -111,10 +111,10 @@ protected:
     QHBoxLayout m_infoLayout;
 
     /** the current transfer function */
-    WTransferFunctionWidget m_transferFunction;
+    WTransferFunction2DWidget m_transferFunction;
 
     /** the previously used transfer function */
-    WTransferFunction lastTransferFunction;
+    WTransferFunction2D lastTransferFunction;
 
     /**
      * internal synchronization flag

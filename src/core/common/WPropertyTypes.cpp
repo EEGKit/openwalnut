@@ -28,6 +28,8 @@
 #include "WStringUtils.h"
 #include "WPropertyTypes.h"
 #include "WTransferFunction.h"
+#include "WTransferFunction2D.h"
+
 
 std::ostream& WPVBaseTypes::operator<<( std::ostream& out, const WPVBaseTypes::PV_TRIGGER& c )
 {
@@ -132,5 +134,14 @@ namespace PROPERTY_TYPE_HELPER
             }
         }
         return out.str();
+    }
+
+    WPVBaseTypes::PV_TRANSFERFUNCTION2D WStringConversion< WPVBaseTypes::PV_TRANSFERFUNCTION2D >::create(
+            const WPVBaseTypes::PV_TRANSFERFUNCTION2D& /*old*/, const std::string str )
+    {
+    }
+
+    std::string WStringConversion< WPVBaseTypes::PV_TRANSFERFUNCTION2D >::asString( const WPVBaseTypes::PV_TRANSFERFUNCTION2D& tf )
+    {
     }
 }

@@ -29,9 +29,8 @@
 #include <QPaintEngine>
 
 #include "core/common/WTransferFunction.h"
-#include "WTransferFunctionBackground.h"
-#include "WTransferFunctionColorPoint.h"
-#include "WTransferFunctionScene.h"
+#include "qtgui/controlPanel/transferFunction2D/WTransferFunction2DBackground.h"
+#include "qtgui/controlPanel/transferFunction2D/WTransferFunction2DScene.h"
 #include "WTransferFunction2DWidget.h"
 
 WTransferFunction2DWidget::WTransferFunction2DWidget( QWidget* qparent, WTransferFunction2DGuiNotificationClass* parent ):
@@ -50,7 +49,7 @@ WTransferFunction2DWidget::WTransferFunction2DWidget( QWidget* qparent, WTransfe
     setMinimumSize( xMax-xMin+20, yMax - yMin + 30 );
     this->setViewportUpdateMode( QGraphicsView::FullViewportUpdate );
 
-    scene = new WTransferFunctionScene( this );
+    scene = new WTransferFunction2DScene( this );
     scene->setItemIndexMethod( QGraphicsScene::NoIndex );
     scene->setSceneRect( xMin, yMin, xMax, yMax );
     this->setScene( scene );
@@ -62,44 +61,7 @@ WTransferFunction2DWidget::WTransferFunction2DWidget( QWidget* qparent, WTransfe
     //this->setResizeAnchor( AnchorViewCenter );
 
     // insert background and histogram items
-    scene->addItem( background = new WTransferFunctionBackground(  ) );
-
-    // // insert first and last alpha point
-    // first = new WTransferFunctionPoint( this );
-    // last = new WTransferFunctionPoint( this );
-    //
-    // first->setRight( last );
-    // last->setLeft( first );
-    //
-    // scene->addItem( first );
-    // scene->addItem( last );
-    //
-    // first->setPos( QPointF( xMin, yMax/3*2 ) );
-    // last->setPos( QPointF( xMax, yMax/8 ) );
-
-    // // connect points by a line
-    // WTransferFunctionLine* line = new WTransferFunctionLine();
-    // line->setLeft( first );
-    // line->setRight( last );
-    // first->setLine( line );
-    //
-    // scene->addItem( line );
-    //
-    // // create the control points for the color points
-    // cfirst = new WTransferFunctionColorPoint( this );
-    // clast  = new WTransferFunctionColorPoint( this );
-    //
-    // cfirst->setRight( clast );
-    // clast->setLeft( cfirst );
-    //
-    // cfirst->colorSelected( Qt::black );
-    // clast->colorSelected( Qt::white );
-    //
-    // cfirst->setPos( xMin, 0 );
-    // clast->setPos( xMax, 0 );
-    //
-    // scene->addItem( cfirst );
-    //scene->addItem( clast );
+    scene->addItem( background = new WTransferFunction2DBackground(this) );
 
     initialized = true;
     // initialize the color map (aka. background)
@@ -124,6 +86,15 @@ void WTransferFunction2DWidget::setMyBackground()
 
     if( background )
     {
+        for( int i = 0; i < transferFunctionSize; ++i )
+        {
+            texturearray[ i*4 + 2 ] = i;
+            texturearray[ i*4 + 1 ] = i+128;
+            texturearray[ i*4 + 0 ] = i+128;
+            texturearray[ i*4 + 3 ] = 255;
+
+        }
+
         QImage image( texturearray, transferFunctionSize, 1, QImage::Format_ARGB32 );
         QPixmap pixmap( transferFunctionSize, 1 );
 #if( QT_VERSION >= 0x040700 )

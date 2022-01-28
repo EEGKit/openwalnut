@@ -31,7 +31,7 @@
 
 
 class QGraphicsScene;
-class WTransferFunctionBackground;
+class WTransferFunction2DBackground;
 
 /**
  * The class managing the widget that wants to receive updates whenever
@@ -130,7 +130,7 @@ private:
     /** our scene */
     QGraphicsScene *scene;
 
-    WTransferFunctionBackground *background; //! background that displays the color map
+    WTransferFunction2DBackground *background; //! background that displays the color map
 
     bool initialized; //< set to true after initialization
 };

@@ -106,7 +106,13 @@ private:
      * An input connector used to get datasets from other modules. The connection management between co
 nnectors must not be handled by the module.
      */
-    WModuleInputData< WDataSetSingle >::SPtr m_input;
+    WModuleInputData< WDataSetSingle >::SPtr m_inputDataSet0;
+
+    /**
+     * An input connector used to get datasets from other modules. The connection management between co
+nnectors must not be handled by the module.
+     */
+    WModuleInputData< WDataSetSingle >::SPtr m_inputDataSet1;
 
     /**
      * The output connector used to provide the calculated data to other modules.
@@ -122,16 +128,6 @@ nnectors must not be handled by the module.
      * Resolution of the transfer function.
      */
     WPropInt m_resolution;
-
-    /**
-     * Histogram bin size
-     */
-    WPropDouble m_opacityScale;
-
-    /**
-     * Histogram bin size
-     */
-    WPropInt m_binSize;
 
     /**
      * The transfer function property

@@ -33,6 +33,7 @@
 #include "WPropertyGroupBase.h"
 #include "WPropertyVariable.h"
 #include "WTransferFunction.h"
+#include "WTransferFunction2D.h"
 #include "exceptions/WPropertyNameMalformed.h"
 
 WPropertyBase::WPropertyBase( std::string name, std::string description ):

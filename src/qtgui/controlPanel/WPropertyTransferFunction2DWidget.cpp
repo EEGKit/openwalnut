@@ -30,12 +30,12 @@
 
 #include "core/common/WLogger.h"
 #include "core/common/WPropertyVariable.h"
-#include "core/common/WTransferFunction.h"
+#include "core/common/WTransferFunction2D.h"
 #include "../WGuiConsts.h"
 
 #include "WPropertyTransferFunction2DWidget.h"
 
-WPropertyTransferFunction2DWidget::WPropertyTransferFunction2DWidget( WPropTransferFunction property, QGridLayout* propertyGrid, QWidget* parent ):
+WPropertyTransferFunction2DWidget::WPropertyTransferFunction2DWidget( WPropTransferFunction2D property, QGridLayout* propertyGrid, QWidget* parent ):
     WPropertyWidget( property, propertyGrid, parent ),
     m_transferFunctionProperty( property ),
     m_layout( &m_parameterWidgets ),
@@ -90,7 +90,7 @@ void WPropertyTransferFunction2DWidget::update()
 {
 }
 
-void WPropertyTransferFunction2DWidget::guiUpdate( const WTransferFunction& tf )
+void WPropertyTransferFunction2DWidget::guiUpdate( const WTransferFunction2D& tf )
 {
 }
 
