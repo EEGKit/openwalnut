@@ -67,7 +67,7 @@ void main()
     vec4 finalColor = getColor( pixelCoord );
 
     float depth = getDepth( pixelCoord );
-    if( depth > 0.99 )
+    if( finalColor.a == 0.0 )
     {
        finalColor = vec4( 1.0, 1.0, 1.0, 1.0 );
     }

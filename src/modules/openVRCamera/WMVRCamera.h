@@ -157,7 +157,7 @@ private:
     /**
      * Callback which submits the textures to OpenVR SDK.
      */
-    class SafeUpdateCallback : public osg::NodeCallback
+    class SafeUpdateCallback : public osg::GraphicsContext::SwapCallback
     {
     public: // NOLINT
         /**
@@ -169,13 +169,7 @@ private:
         {
         };
 
-        /**
-         * operator () - called during the update traversal.
-         *
-         * \param node the osg node
-         * \param nv the node visitor
-         */
-        virtual void operator()( osg::Node* node, osg::NodeVisitor* nv );
+        void swapBuffersImplementation( osg::GraphicsContext* gc );
 
         /**
          * Pointer used to access members of the module to modify the node.

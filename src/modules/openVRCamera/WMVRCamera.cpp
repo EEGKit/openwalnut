@@ -207,12 +207,12 @@ void WMVRCamera::moduleMain()
     m_rightEyeNode->insert( m_rightEyeGeometryNode );
     m_rootnode->insert( m_leftEyeNode );
     m_rootnode->insert( m_rightEyeNode );
-    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_rootnode );
+    //WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_rootnode );
 
     //Set Nodemask so this modules Node are culled in the Mainview
-    osg::Node::NodeMask vrNodeMask = 0x10000000;
+    /*osg::Node::NodeMask vrNodeMask = 0x10000000;
     WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->setCullMask( ~vrNodeMask );
-    m_rootnode->setNodeMask( vrNodeMask );
+    m_rootnode->setNodeMask( vrNodeMask );*/
 
     // get side-views
     std::shared_ptr<WGEViewer> leftEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" );
@@ -243,10 +243,10 @@ void WMVRCamera::moduleMain()
         m_vrIsInitialized = false;
     }
 
-    m_leftEyeGeometryNode->addChild( dynamic_cast<osg::Node *>(
-        WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone( osg::CopyOp::DEEP_COPY_ALL ) ) );
-    m_rightEyeGeometryNode->addChild( dynamic_cast<osg::Node *>(
-        WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->clone( osg::CopyOp::DEEP_COPY_ALL ) ) );
+    m_leftEyeGeometryNode->addChild( /*dynamic_cast<osg::Node *>(*/
+        WKernel::getRunningKernel()->getGraphicsEngine()->getScene()/*->clone( osg::CopyOp::DEEP_COPY_ALL ) )*/ );
+    m_rightEyeGeometryNode->addChild( /*dynamic_cast<osg::Node *>(*/
+        WKernel::getRunningKernel()->getGraphicsEngine()->getScene()/*->clone( osg::CopyOp::DEEP_COPY_ALL ) )*/ );
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Render to Texture Setup
@@ -257,7 +257,7 @@ void WMVRCamera::moduleMain()
     leftEyeView->getCamera()->setReferenceFrame( osg::Transform::RELATIVE_RF );
     leftEyeView->getCamera()->setRenderTargetImplementation( osg::Camera::FRAME_BUFFER_OBJECT );
     leftEyeView->getCamera()->setRenderOrder( osg::Camera::PRE_RENDER, 0 );
-    //leftEyeView->getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
+    // leftEyeView->getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
     //leftEyeView->getCamera()->setNearFarRatio(  0.000001  );
     leftEyeView->getCamera()->setViewport( 0, 0, m_vrRenderWidth, m_vrRenderHeight );
     leftEyeView->getCamera()->setProjectionMatrix( convertHmdMatrixToOSG( m_vrSystem->GetProjectionMatrix( vr::Eye_Left, 1.0, 1000.0 ) ) );
@@ -269,7 +269,7 @@ void WMVRCamera::moduleMain()
     rightEyeView->getCamera()->setReferenceFrame( osg::Transform::RELATIVE_RF );
     rightEyeView->getCamera()->setRenderTargetImplementation( osg::Camera::FRAME_BUFFER_OBJECT );
     rightEyeView->getCamera()->setRenderOrder( osg::Camera::PRE_RENDER, 1 );
-    //rightEyeView->getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
+    // rightEyeView->getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
     //rightEyeView->getCamera()->setNearFarRatio(  0.000001  );
     rightEyeView->getCamera()->setViewport( 0, 0, m_vrRenderWidth, m_vrRenderHeight );
     rightEyeView->getCamera()->setProjectionMatrix( convertHmdMatrixToOSG( m_vrSystem->GetProjectionMatrix( vr::Eye_Right, 1.0, 1000.0 ) ) );
@@ -354,7 +354,9 @@ void WMVRCamera::moduleMain()
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // updatecallback for submitting frames
-    m_rootnode->addUpdateCallback( new SafeUpdateCallback( this ) );
+    osg::GraphicsContext* gc = leftEyeView->getCamera()->getGraphicsContext();
+    gc->setSwapCallback( new SafeUpdateCallback( this ) );
+    // m_rootnode->addUpdateCallback( new SafeUpdateCallback( this ) );
 
     // loop until the module container requests the module to quit
     while( !m_shutdownFlag() )
@@ -369,6 +371,8 @@ void WMVRCamera::moduleMain()
         m_moduleState.wait();
     }
 
+    gc->setSwapCallback( nullptr );
+
     // Shut down OpenVR
     m_vrSystem = nullptr;
     vr::VR_Shutdown();
@@ -377,9 +381,9 @@ void WMVRCamera::moduleMain()
     debugLog() << "Shutting down openVRCamera";
 
     //Reset CullMask
-    WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->setCullMask( 0xFFFFFFFF );
+    // WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->setCullMask( 0xFFFFFFFF );
 
-    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_rootnode );
+    // WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove( m_rootnode );
 }
 
 void WMVRCamera::activate()
@@ -456,7 +460,7 @@ void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent )
     }
 }
 
-void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisitor *nv )
+void WMVRCamera::SafeUpdateCallback::swapBuffersImplementation( osg::GraphicsContext* gc )
 {
     std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
     double elapsedSeconds =( now - m_lastFrame ).count() / 1000000000.0;
@@ -599,7 +603,8 @@ void WMVRCamera::SafeUpdateCallback::operator()( osg::Node *node, osg::NodeVisit
 
     m_initialUpdate = false;
 
-    traverse( node, nv );
+    // traverse( node, nv );
+    gc->swapBuffersImplementation();
 }
 
 void WMVRCamera::updateHMDPose()
