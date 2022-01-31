@@ -523,8 +523,7 @@ void WMVRCamera::SafeUpdateCallback::swapBuffersImplementation( osg::GraphicsCon
         if( m_module->m_vrOn->get() )
         {
             m_module->debugLog() << "Start submitting frames to OpenVR";
-            m_module->m_startRot = m_module->m_HMD_rotation;
-            m_module->m_startTrans = m_module->m_HMD_position;
+            vr::VRChaperone()->ResetZeroPose( vr::TrackingUniverseSeated );
         }
         else
         {
@@ -564,41 +563,38 @@ void WMVRCamera::SafeUpdateCallback::swapBuffersImplementation( osg::GraphicsCon
 
         m_module->updateHMDPose();
 
-        // does not run on the first frame
-        if( m_module->m_HMD_transformDifferenceIsSet )
-        {
-            WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )->setCameraManipulator( NULL );
-            WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )->setCameraManipulator( NULL );
+        WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )->setCameraManipulator( NULL );
+        WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )->setCameraManipulator( NULL );
 
-            osg::ref_ptr< WGEZoomTrackballManipulator > cm = osg::dynamic_pointer_cast< WGEZoomTrackballManipulator >(
-                WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCameraManipulator() );
-            osg::Matrixd mainViewMatrix = cm ? cm->getMatrixWithoutZoom() :
-                                               WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->getViewMatrix();
+        osg::ref_ptr< WGEZoomTrackballManipulator > cm = osg::dynamic_pointer_cast< WGEZoomTrackballManipulator >(
+            WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCameraManipulator() );
+        osg::Matrixd mainViewMatrix = cm ? cm->getMatrixWithoutZoom() :
+                                            WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->getViewMatrix();
 
-            osg::Vec3d center = WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->getBound().center();
-            osg::Vec3d ndir = center - mainViewMatrix.getTrans();
-            osg::Vec3d camdir( 0.0, 0.0, -1.0 );
-            osg::Vec3d normal = ndir ^ camdir;
-            double w = sqrt( ndir.length2() * camdir.length2() ) + ndir * camdir;
-            osg::Vec4d qt( normal.x(), normal.y(), normal.z(), w );
-            qt.normalize();
+        osg::Vec3d center = WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->getBound().center();
+        osg::Vec3d ndir = center - mainViewMatrix.getTrans();
+        osg::Vec3d camdir( 0.0, 0.0, -1.0 );
+        osg::Vec3d normal = ndir ^ camdir;
+        double w = sqrt( ndir.length2() * camdir.length2() ) + ndir * camdir;
+        osg::Vec4d qt( normal.x(), normal.y(), normal.z(), w );
+        qt.normalize();
 
-            osg::Quat rot = osg::Quat( qt ) * ( m_module->m_HMD_rotation * m_module->m_startRot.inverse() );
-            osg::Vec3d trans = mainViewMatrix.getTrans() + ( m_module->m_HMD_position - m_module->m_startTrans );
+        osg::Quat q = m_module->m_HMD_rotation;
+        osg::Quat rot = osg::Quat( qt ) * q;
+        osg::Vec3d trans = mainViewMatrix.getTrans() + m_module->m_HMD_position;
 
-            osg::Matrixd complete = osg::Matrixd::translate( -trans ) * osg::Matrixd::rotate( rot );
-            osg::Matrixd leftEyeMatrix = complete;
-            osg::Matrixd rightEyeMatrix = complete;
+        osg::Matrixd complete = osg::Matrixd::translate( -trans ) * osg::Matrixd::rotate( rot );
+        osg::Matrixd leftEyeMatrix = complete;
+        osg::Matrixd rightEyeMatrix = complete;
 
-            WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )->getCamera()->setViewMatrix( leftEyeMatrix );
-            WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )->getCamera()->setViewMatrix( rightEyeMatrix );
+        WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )->getCamera()->setViewMatrix( leftEyeMatrix );
+        WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )->getCamera()->setViewMatrix( rightEyeMatrix );
 
 
-            // Matrix reihenfolge:
-            // ROT-MainView (Daten Rotieren) [Grade weggelassen]
-            // In die Kamera rein translieren
-            // ROT-Kopf (Kamera Rotieren)
-        }
+        // Matrix reihenfolge:
+        // ROT-MainView (Daten Rotieren) [Grade weggelassen]
+        // In die Kamera rein translieren
+        // ROT-Kopf (Kamera Rotieren)
     }
 
     m_initialUpdate = false;
@@ -622,26 +618,30 @@ void WMVRCamera::updateHMDPose()
 
     vr::TrackedDevicePose_t trackedDevicePose = m_poses[vr::k_unTrackedDeviceIndex_Hmd];
 
+    if( !trackedDevicePose.bPoseIsValid )
+    {
+        return;
+    }
+
     // vr::VRSystem()->GetDeviceToAbsoluteTrackingPose( vr::TrackingUniverseStanding, 0, &trackedDevicePose, 1 );
 
     // pose calculation
     osg::Matrix poseTransform = convertHmdMatrixToOSG( trackedDevicePose.mDeviceToAbsoluteTracking );
 
-    m_HMD_position = poseTransform.getTrans() * 100.0;
+    osg::Vec3 position = poseTransform.getTrans() * 100.0;
     m_HMD_rotation = poseTransform.getRotate().inverse();
 
     // switch y and z axis as openvr has different coordinate system.
-    double help = m_HMD_position.y();
-    m_HMD_position.y() = -m_HMD_position.z();
-    m_HMD_position.z() = help;
+    double help = position.y();
+    position.y() = -position.z();
+    position.z() = help;
 
-    m_HMD_transformDifferenceIsSet = true;
+    m_HMD_position = position;
 }
 
 void WMVRCamera::ResetHMDPosition()
 {
-    m_startRot = m_HMD_rotation;
-    m_startTrans = m_HMD_position;
+    vr::VRChaperone()->ResetZeroPose( vr::TrackingUniverseSeated );
 }
 
 osg::Matrix WMVRCamera::convertHmdMatrixToOSG( const vr::HmdMatrix34_t &mat34 )
