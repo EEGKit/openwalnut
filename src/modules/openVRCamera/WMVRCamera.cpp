@@ -583,9 +583,12 @@ void WMVRCamera::SafeUpdateCallback::swapBuffersImplementation( osg::GraphicsCon
         osg::Quat rot = osg::Quat( qt ) * q;
         osg::Vec3d trans = mainViewMatrix.getTrans() + m_module->m_HMD_position;
 
+        osg::Matrixd leftEyeOffsetMatrix = m_module->convertHmdMatrixToOSG( m_module->m_vrSystem->GetEyeToHeadTransform( vr::Eye_Left ) );
+        osg::Matrixd rightEyeOffsetMatrix = m_module->convertHmdMatrixToOSG( m_module->m_vrSystem->GetEyeToHeadTransform( vr::Eye_Right ) );
+
         osg::Matrixd complete = osg::Matrixd::translate( -trans ) * osg::Matrixd::rotate( rot );
-        osg::Matrixd leftEyeMatrix = complete;
-        osg::Matrixd rightEyeMatrix = complete;
+        osg::Matrixd leftEyeMatrix = complete * osg::Matrixd::translate( leftEyeOffsetMatrix.getTrans() * -100 );
+        osg::Matrixd rightEyeMatrix = complete * osg::Matrixd::translate( rightEyeOffsetMatrix.getTrans() * -100 );
 
         WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )->getCamera()->setViewMatrix( leftEyeMatrix );
         WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )->getCamera()->setViewMatrix( rightEyeMatrix );
