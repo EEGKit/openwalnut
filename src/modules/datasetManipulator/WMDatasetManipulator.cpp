@@ -225,7 +225,7 @@ std::shared_ptr< WDataSet > WMDatasetManipulator::transformData( WMatrixFixed< d
             p->operator[] ( k + 2 ) = vec[ 2 ];
         }
 
-        return std::shared_ptr< WDataSetPoints >( new WDataSetPoints( p, asPoints->getColors() ) );
+        return std::shared_ptr< WDataSetPoints >( new WDataSetPoints( p, asPoints->getColors(), asPoints->getData() ) );
     }
 
     return std::shared_ptr< WDataSet >();
