@@ -157,7 +157,7 @@ void WMMergePoints::moduleMain()
 
         if( dataValid && dataUpdated )
         {
-            WProgress::SPtr progress = WProgress::SPtr( new WProgress( "Creating Points from Fibers." ) );
+            WProgress::SPtr progress = WProgress::SPtr( new WProgress( "Merging points." ) );
             m_progress->addSubProgress( progress );
 
             debugLog() << "Merging " << dataSet1->size() << " with " << dataSet2->size() << " points.";

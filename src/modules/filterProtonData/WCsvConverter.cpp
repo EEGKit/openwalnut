@@ -81,8 +81,8 @@ void WCsvConverter::setOutputFromCSV( )
     m_vectors->clear();
     m_indexes->update( m_protonData );
 
-    float maxEdep = 0.0;
-    float minEdep = 1.0;
+    float maxEdep = wlimits::MIN_FLOAT;
+    float minEdep = wlimits::MAX_FLOAT;
 
     for( WDataSetCSV::Content::iterator dataRow = data->begin(); dataRow < data->end(); dataRow++ )
     {
@@ -95,7 +95,8 @@ void WCsvConverter::setOutputFromCSV( )
         {
             float edep = stringToDouble( dataRow->at( m_indexes->getEdep() ) );
 
-            if( getClusterSize( edep ) < 1.0 || getClusterSize( edep ) > 35.0 )
+            if( m_propertyStatus->getVisualizationPropertyHandler()->getEnableClusterSize()->get() &&
+                ( getClusterSize( edep ) < 1.0 || getClusterSize( edep ) > 35.0 ) )
             {
                 continue;
             }
@@ -143,14 +144,19 @@ void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArra
 
         setTransferFunction( data );
 
-        float maxClusterSize = getClusterSize( maxEdep );
-        float minClusterSize = getClusterSize( minEdep );
+        bool clusterEnabled = m_propertyStatus->getVisualizationPropertyHandler()->getEnableClusterSize()->get();
+
+        float maxClusterSize = clusterEnabled ? getClusterSize( maxEdep ) : maxEdep;
+        float minClusterSize = clusterEnabled ? getClusterSize( minEdep ) : minEdep;
 
         for( std::vector< float >::iterator currentEdep = edeps->begin();
             currentEdep != edeps->end();
             currentEdep++ )
         {
-            float clusterSizeNormalized = getClusterSize( *currentEdep ) / maxClusterSize;
+            float clusterSizeNormalized = clusterEnabled ? getClusterSize( *currentEdep ) : *currentEdep;
+            clusterSizeNormalized = ( clusterSizeNormalized - minClusterSize ) / ( maxClusterSize - minClusterSize );
+
+            WAssert( clusterSizeNormalized >= 0 && clusterSizeNormalized <= 1, "The normalized energy deposition must be between 0 and 1" );
 
             m_vectors->getSizes()->push_back( clusterSizeNormalized );
 
@@ -168,7 +174,16 @@ void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArra
         m_colorBar->getProperties()->getProperty( "Max scale value" )->set( 0.0 );
         m_colorBar->getProperties()->getProperty( "Max scale value" )->set( maxClusterSize );
         m_colorBar->getProperties()->getProperty( "Min scale value" )->set( minClusterSize );
-        m_colorBar->getProperties()->getProperty( "Description" )->set( std::string( "Clustersize " ) );
+
+        if( clusterEnabled )
+        {
+            m_colorBar->getProperties()->getProperty( "Description" )->set( std::string( "Clustersize " ) );
+        }
+        else
+        {
+            std::string columnName = m_protonData->getCSVHeader()->at( 0 ).at( m_indexes->getEdep() );
+            m_colorBar->getProperties()->getProperty( "Description" )->set( columnName + " " );
+        }
 
         bool activated = m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get();
 
@@ -319,6 +334,12 @@ void WCsvConverter::calculateFibers()
     }
 
     m_fibers = newDS->toWDataSetFibers();
+    if( m_fibers->getVertices()->size() == 0 )
+    {
+        // This is so it doesn't generate colors when there are no fibers, which would result in a module crash.
+        return;
+    }
+
     m_fibers->addColorScheme( cols, "Energy deposition", "Color fibers based on their energy." );
     m_fibers->setSelectedColorScheme( 3 );
 

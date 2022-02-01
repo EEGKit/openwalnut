@@ -74,59 +74,76 @@ void WMFilterProtonData::moduleMain()
     {
         m_moduleState.wait();
 
-        if( m_input->getData() == NULL )
+        if( m_input->updated() )
         {
-            continue;
-        }
+            if( m_input->getData() == NULL )
+            {
+                continue;
+            }
 
-        std::shared_ptr< WProgress > progressBar( new WProgress( "Preparing..." ) );
-        m_progress->addSubProgress( progressBar );
+            std::shared_ptr< WProgress > progressBar( new WProgress( "Preparing..." ) );
+            m_progress->addSubProgress( progressBar );
 
-        if( m_protonData == NULL )
-        {
-            m_protonData = WProtonData::SPtr( new WProtonData(  m_input->getData()->getHeader(),  m_input->getData()->getData() ) );
+            if( m_protonData == NULL )
+            {
+                m_protonData = WProtonData::SPtr( new WProtonData(  m_input->getData()->getHeader(),  m_input->getData()->getData() ) );
 
-            m_propertyStatus->setColumnPropertyHandler( WColumnPropertyHandler::SPtr( new WColumnPropertyHandler( m_protonData, m_properties,
-                boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
+                m_propertyStatus->setColumnPropertyHandler( WColumnPropertyHandler::SPtr( new WColumnPropertyHandler( m_protonData, m_properties,
+                    boost::bind( &WConditionSet::notify, &m_moduleState ) ) ) );
 
-            m_propertyStatus->setFilterPropertyHandler( WFilterPropertyHandler::SPtr( new WFilterPropertyHandler( m_protonData, m_properties,
-                boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
+                m_propertyStatus->setFilterPropertyHandler( WFilterPropertyHandler::SPtr( new WFilterPropertyHandler( m_protonData, m_properties,
+                    boost::bind( &WConditionSet::notify, &m_moduleState ) ) ) );
 
-            m_propertyStatus->setVisualizationPropertyHandler( WVisualizationPropertyHandler::SPtr(
-                new WVisualizationPropertyHandler( m_protonData, m_properties, boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
+                m_propertyStatus->setVisualizationPropertyHandler( WVisualizationPropertyHandler::SPtr(
+                    new WVisualizationPropertyHandler( m_protonData, m_properties, boost::bind( &WConditionSet::notify, &m_moduleState ) ) ) );
 
-            m_propertyStatus->setEventIDLimitationPropertyHandler( WEventIDLimitationPropertyHandler::SPtr(
-                new WEventIDLimitationPropertyHandler( m_protonData, m_properties, boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
+                m_propertyStatus->setEventIDLimitationPropertyHandler( WEventIDLimitationPropertyHandler::SPtr(
+                    new WEventIDLimitationPropertyHandler( m_protonData, m_properties, boost::bind( &WConditionSet::notify, &m_moduleState ) ) ) );
 
-            m_propertyStatus->getColumnPropertyHandler()->setSelectionEventMethod( boost::bind( &WMFilterProtonData::updateProperty, this ) );
+                m_propertyStatus->getColumnPropertyHandler()->setSelectionEventMethod( boost::bind( &WMFilterProtonData::updateProperty, this ) );
 
-            m_propertyStatus->setOutputPropertyHandler( WOutputPropertyHandler::SPtr( new WOutputPropertyHandler( m_protonData, m_properties,
-                boost::bind( &WMFilterProtonData::setOutputFromCSV, this ) ) ) );
+                m_propertyStatus->setOutputPropertyHandler( WOutputPropertyHandler::SPtr( new WOutputPropertyHandler( m_protonData, m_properties,
+                    boost::bind( &WConditionSet::notify, &m_moduleState ) ) ) );
+            }
+            else
+            {
+                m_protonData->setCSVHeader( m_input->getData()->getHeader() );
+                m_protonData->setCSVData( m_input->getData()->getData() );
+            }
+            m_propertyStatus->getFilterPropertyHandler()->createPDGMap(
+                ( m_localPath / getMetaInformation()->query< std::string >( "common/pdgnames" , "NoFile" ) ).string() );
+
+            clearProperties();
+            m_propertyStatus->getColumnPropertyHandler()->createProperties();
+            m_propertyStatus->getFilterPropertyHandler()->createProperties();
+            m_propertyStatus->getVisualizationPropertyHandler()->createProperties();
+            m_propertyStatus->getEventIDLimitationPropertyHandler()->createProperties();
+            m_propertyStatus->getOutputPropertyHandler()->createProperties();
+
+            if( m_colorBar == NULL )
+            {
+                createColorBar();
+            }
+            setToLoadedProperties();
+
+            setOutputFromCSV();
+
+            progressBar->finish();
         }
         else
         {
-            m_protonData->setCSVHeader( m_input->getData()->getHeader() );
-            m_protonData->setCSVData( m_input->getData()->getData() );
+            if( m_input->getData() == NULL )
+            {
+                continue;
+            }
+
+            std::shared_ptr< WProgress > progressBar( new WProgress( "Updating output..." ) );
+            m_progress->addSubProgress( progressBar );
+
+            setOutputFromCSV();
+
+            progressBar->finish();
         }
-        m_propertyStatus->getFilterPropertyHandler()->createPDGMap(
-            ( m_localPath / getMetaInformation()->query< std::string >( "common/pdgnames" , "NoFile" ) ).string() );
-
-        clearProperties();
-        m_propertyStatus->getColumnPropertyHandler()->createProperties();
-        m_propertyStatus->getFilterPropertyHandler()->createProperties();
-        m_propertyStatus->getVisualizationPropertyHandler()->createProperties();
-        m_propertyStatus->getEventIDLimitationPropertyHandler()->createProperties();
-        m_propertyStatus->getOutputPropertyHandler()->createProperties();
-
-        if( m_colorBar == NULL )
-        {
-            createColorBar();
-        }
-        setToLoadedProperties();
-
-        setOutputFromCSV( );
-
-        progressBar->finish();
     }
     stop();
 }
@@ -207,6 +224,7 @@ void WMFilterProtonData::properties()
     groupRename->addProperty( "Select particle", "Select the particle type to be renamed.", std::string( "" ), renameNotifier, false );
     groupRename->addProperty( "Apply Changes", "Save", std::string( "" ), renameNotifier, false );
 
+    groupVisual->addProperty( "Enable cluster size", "Enables the edep to clustersize conversion", std::string( "" ), visualNotifier, false );
     groupVisual->addProperty( "Size by energy deposition", "Scale track and point sizes based on energy deposition.", std::string( "" ),
                             visualNotifier, false );
     groupVisual->addProperty( "Color by energy deposition", "Colorize tracks and points based on energy deposition.", std::string( "" ),

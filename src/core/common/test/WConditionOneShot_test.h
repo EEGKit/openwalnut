@@ -55,7 +55,7 @@ public:
     {
         flag = true;
 
-        // let the test's thread reach its "wait" call first
+        // Let the test's thread reach its "wait" call first
         boost::this_thread::sleep( boost::posix_time::seconds( 1 ) );
         c->notify();
     };
@@ -68,7 +68,7 @@ class WConditionOneShotTest : public CxxTest::TestSuite
 {
 public:
     /**
-     * An instantiation should never throw an exception, as well as tear down.
+     * An instantiation as well as tear down should never throw an exception.
      */
     void testInstantiation( void )
     {
@@ -88,18 +88,18 @@ public:
         t.flag = false;
         t.c = &c;
 
-        // start a thread
+        // Start a thread
         boost::thread thread = boost::thread( boost::bind( &CallableHelper::threadMain, &t ) );
 
-        // wait for condition
+        // Wait for condition
         c.wait();
 
-        // since it is a one shot condition -> another wait will not cause a freeze
+        // Since it is a one shot condition -> another wait will not cause a freeze
         c.wait();
 
         TS_ASSERT( t.flag );
 
-        // notifying twice should not cause exceptions (boost::lock_error)
+        // Notifying twice should not cause exceptions (boost::lock_error)
         TS_ASSERT_THROWS_NOTHING( c.notify() );
     }
 };

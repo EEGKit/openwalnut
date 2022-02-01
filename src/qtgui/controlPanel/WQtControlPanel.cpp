@@ -1004,7 +1004,7 @@ void WQtControlPanel::setActiveModule( WModule::SPtr module, bool forceUpdate )
     createCompatibleButtons( module );
 
     // disable delete action for tree items that have children.
-    if( m_moduleTreeWidget->selectedItems().at( 0 )->childCount() != 0 )
+    if( m_moduleTreeWidget->selectedItems().at( 0 )->childCount() != 0 || module->isCrashed() )
     {
         m_deleteModuleAction->setEnabled( false );
     }
@@ -1243,9 +1243,11 @@ void WQtControlPanel::deleteModule()
             if( ( m_moduleTreeWidget->selectedItems().at( 0 )->type() == MODULE ) ||
                     ( m_moduleTreeWidget->selectedItems().at( 0 )->type() == DATASET ) )
             {
-                // deleting crashed modules is not really save as we do not know the internal state of it
+                // deleting crashed modules is not really safe as we do not know the internal state of it
                 if( static_cast< WQtTreeItem* >( m_moduleTreeWidget->selectedItems().at( 0 ) )->getModule()->isCrashed() )
                 {
+                    WLogger::getLogger()->addLogMessage( "Deleting crashed modules is unsafe as the internal state is unlcear. It is not supported.",
+                                             "ControlPanel", LL_WARNING );
                     return;
                 }
 
@@ -1410,4 +1412,3 @@ void WQtControlPanel::clearAndDeleteTabs()
     }
     m_tabWidget->setEnabled( true );
 }
-

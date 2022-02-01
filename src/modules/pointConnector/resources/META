@@ -28,7 +28,7 @@
 
   website = "http://www.openwalnut.org";
 
-  description = "Allows user to manually connect points to fibers (tracks).";
+  description = "Allows user to manually connect points to fibers (tracks). One application is semi-automatic particle tracking (SAPT).";
 
   author = "SIVERT project @ Hochschule Worms";
 

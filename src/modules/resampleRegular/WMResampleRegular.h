@@ -97,11 +97,8 @@ protected:
 
 private:
     std::shared_ptr< WModuleInputData< WDataSetScalar > > m_original;  //!< Connector providing original input data.
+    std::shared_ptr< WModuleInputData< WDataSetScalar > > m_target;  //!< Connector providing target grid.
     std::shared_ptr< WModuleOutputData< WDataSetScalar > > m_resampled; //!< Connector yielding resampled data.
-
-    size_t resampleStepSize; //!< Use every resampleStepSize-th value in each coordinate direction
-
-    WPropBool m_preserverBoundingBox; //!< Optionally presever bounding box of dataset.
 
     /**
      * A condition used to notify about changes in several properties.

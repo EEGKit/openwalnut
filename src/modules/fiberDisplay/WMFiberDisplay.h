@@ -132,6 +132,10 @@ private:
      */
     WDataSetFiberClustering::SPtr m_fiberClustering;
 
+
+    WPropInt m_nbVertices; //!< Info-property showing the number of vertices in the fiber data set.
+    WPropInt m_nbFibers; //!< Info-property showing the number of fibers in the fiber data set.
+
     /**
      * A condition used to notify about changes in several properties.
      */
@@ -341,4 +345,3 @@ private:
 };
 
 #endif  // WMFIBERDISPLAY_H
-

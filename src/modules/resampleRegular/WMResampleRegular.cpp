@@ -27,6 +27,7 @@
 #include <vector>
 
 #include "WMResampleRegular.h"
+#include "core/common/WProgress.h"
 #include "core/dataHandler/WGridTransformOrtho.h"
 #include "core/kernel/WKernel.h"
 
@@ -34,8 +35,7 @@
 W_LOADABLE_MODULE( WMResampleRegular )
 
 WMResampleRegular::WMResampleRegular():
-    WModule(),
-    resampleStepSize( 2 )
+    WModule()
 {
 }
 
@@ -67,6 +67,11 @@ void WMResampleRegular::connectors()
                                                "The dataset to resample." ) );
     addConnector( m_original );
 
+    m_target = std::shared_ptr<WModuleInputData<WDataSetScalar> >(
+        new WModuleInputData<WDataSetScalar> ( shared_from_this(), "Target",
+                                               "The original dataset is resamples to the grid of this dataset." ) );
+    addConnector( m_target );
+
     m_resampled = std::shared_ptr<WModuleOutputData<WDataSetScalar> >(
         new WModuleOutputData<WDataSetScalar> ( shared_from_this(), "Resampled",
                                                 "The resampled data set." ) );
@@ -79,11 +84,6 @@ void WMResampleRegular::properties()
 {
     m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
-    m_preserverBoundingBox = m_properties->addProperty( "Preserve Bounding Box",
-                                                        "Scale the voxel distance to preserve the original dataset size (bounding box).",
-                                                        false,
-                                                        m_propCondition );
-
     WModule::properties();
 }
 
@@ -95,6 +95,7 @@ void WMResampleRegular::requirements()
 void WMResampleRegular::moduleMain()
 {
     m_moduleState.add( m_original->getDataChangedCondition() );
+    m_moduleState.add( m_target->getDataChangedCondition() );
     m_moduleState.add( m_propCondition );
 
     // signal ready state
@@ -113,46 +114,39 @@ void WMResampleRegular::moduleMain()
         }
 
         std::shared_ptr< WDataSetScalar > originalData = m_original->getData();
+        std::shared_ptr< WDataSetScalar > targetData = m_target->getData();
 
         // If no data found go into waiting state again.
-        if( !originalData )
+        if( !originalData || !targetData )
         {
             continue;
         }
 
 
-        std::shared_ptr<WGridRegular3D> grid = std::dynamic_pointer_cast< WGridRegular3D >( originalData->getGrid() );
-
-        size_t nX = grid->getNbCoordsX();
-        size_t nY = grid->getNbCoordsY();
-        size_t nZ = grid->getNbCoordsZ();
-
-
-        WGridTransformOrthoTemplate<double> transformation( 1.0, 1.0, 1.0 );
-        if( m_preserverBoundingBox->get(true) )
-        {
-            // TODO(wiebel): adapt transformation above
-            std::cout << "BLUB" << std::endl;
-            transformation = WGridTransformOrthoTemplate<double>( resampleStepSize, resampleStepSize, resampleStepSize );
-        }
-
-        std::shared_ptr< WGrid > resampledGrid;
-        resampledGrid = std::shared_ptr< WGridRegular3D >(
-            new WGridRegular3D( nY/resampleStepSize, nY/resampleStepSize, nZ/resampleStepSize, transformation ) );
+        std::shared_ptr< WGridRegular3D > resampledGrid = std::dynamic_pointer_cast< WGridRegular3D >( targetData->getGrid() );
 
         std::shared_ptr<WValueSetBase> vals;
         vals = std::dynamic_pointer_cast<WValueSetBase >( originalData->getValueSet() );
 
         std::shared_ptr< std::vector< float > > theValues;
-        theValues =  std::shared_ptr< std::vector< float > >( new std::vector<float>() );
+        theValues =  std::make_shared< std::vector< float > >();
 
-        for( size_t idZ = 1; idZ < nZ; idZ += resampleStepSize )
+        size_t nX = resampledGrid->getNbCoordsX();
+        size_t nY = resampledGrid->getNbCoordsY();
+        size_t nZ = resampledGrid->getNbCoordsZ();
+
+        std::shared_ptr< WProgress > progress( new WProgress( "Resampling", nZ ) );
+        m_progress->addSubProgress( progress );
+
+        for( size_t idZ = 0; idZ < nZ; ++idZ )
         {
-            for( size_t idY = 1; idY < nY; idY += resampleStepSize )
+            ++*progress;
+            for( size_t idY = 0; idY < nY; ++idY )
             {
-                for( size_t idX = 1; idX < nX; idX += resampleStepSize )
+                for( size_t idX = 0; idX < nX; ++idX )
                 {
-                    theValues->push_back( static_cast<float>( originalData->getValueAt( idX, idY, idZ ) ) );
+                    bool valid;
+                    theValues->push_back( static_cast<float>( originalData->interpolate( resampledGrid->getPosition( idX, idY, idZ ), &valid ) ) );
                 }
             }
         }
@@ -161,5 +155,6 @@ void WMResampleRegular::moduleMain()
         newValueSet = std::shared_ptr< WValueSet< float > >( new WValueSet<float>( vals->order(), vals->dimension(), theValues ) );
 
         m_resampled->updateData( std::shared_ptr<WDataSetScalar>( new WDataSetScalar( newValueSet, resampledGrid ) ) );
+        progress->finish();
     }
 }

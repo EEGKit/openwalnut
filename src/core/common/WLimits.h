@@ -25,7 +25,7 @@
 #ifndef WLIMITS_H
 #define WLIMITS_H
 
-#include <stdint.h> // since <cstdint> is part of c++0x upcoming standard
+#include <stdint.h>
 
 #include <cstddef>
 

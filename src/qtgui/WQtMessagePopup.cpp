@@ -31,6 +31,7 @@
 #include <QHideEvent>
 #include <QShowEvent>
 #include <QMessageBox>
+#include <QTimer>
 
 #include "core/common/WLogger.h"
 
@@ -224,6 +225,12 @@ void WQtMessagePopup::showMessage()
             QMessageBox::information( this, m_title, m_message );
             break;
     }
+}
+
+void WQtMessagePopup::show()
+{
+    QWidget::show();
+    QTimer::singleShot( 2000, this, SLOT( close() ) );
 }
 
 void WQtMessagePopup::setAutoClose( bool autoClose )

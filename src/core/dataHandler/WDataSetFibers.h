@@ -296,6 +296,12 @@ public:
     VertexArray getVertices() const;
 
     /**
+     * Getter for the total number of vertices over all lines
+     * \return Overall number of vertices
+     */
+    size_t getNbVertices() const;
+
+    /**
      * Return the indices that indicate at which vertex ID each line begins in the vertex array.
      * \return The start indices of the lines
      */
@@ -398,7 +404,7 @@ public:
 
     /**
      * Sets the selected color scheme.
-     * 
+     *
      * \param idx the index
      */
     void setSelectedColorScheme( size_t idx );

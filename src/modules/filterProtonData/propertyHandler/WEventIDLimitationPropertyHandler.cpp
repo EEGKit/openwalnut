@@ -22,6 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
+#include "core/common/WLimits.h"
 #include "WEventIDLimitationPropertyHandler.h"
 
 
@@ -82,8 +83,8 @@ void WEventIDLimitationPropertyHandler::determineMinMaxEventID()
         return;
     }
 
-    int minCap = std::stoi( m_protonData->getCSVData()->front().at( eventIDIndex ) );
-    int maxCap = maxCap;
+    int minCap = wlimits::MAX_INT32_T;
+    int maxCap = wlimits::MIN_INT32_T;
     for( auto iter = m_protonData->getCSVData()->begin(); iter != m_protonData->getCSVData()->end(); iter++ )
     {
         int calc = std::stoi( ( *iter ).at( eventIDIndex ) );

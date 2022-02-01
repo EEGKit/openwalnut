@@ -22,6 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
+#include <limits>
 #include <memory>
 #include <string>
 #include <vector>
@@ -96,6 +97,13 @@ void WMFiberDisplay::properties()
 {
     m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
+    // Info properties
+    m_nbVertices = m_infoProperties->addProperty( "Points", "The number of points in the visualized data set.", 0 );
+    m_nbVertices->setMax( std::numeric_limits< int >::max() );
+    m_nbFibers = m_infoProperties->addProperty( "Fibers", "The number of fibers in the visualized data set.", 0 );
+    m_nbFibers->setMax( std::numeric_limits< int >::max() );
+
+    // Other roperties
     m_roiFiltering = m_properties->addProperty( "ROI Filtering", "When active, you can use the ROI mechanism to filter fibers.", true );
     m_roiFilterColors = m_properties->addProperty( "ROI Coloring", "When active, you will see the coloring specified by the ROI branches.", true );
 
@@ -158,9 +166,11 @@ void enableTransparency( osg::StateSet* state )
 
     // Conversely, disable writing to depth buffer so that a transparent polygon will allow polygons behind it to shine through.
     // OSG renders transparent polygons after opaque ones.
-    osg::Depth* depth = new osg::Depth;
-    depth->setWriteMask( false );
-    state->setAttributeAndModes( depth, osg::StateAttribute::ON );
+
+    // This code is commented out so the postprecessing filters work (They need depth write)
+    // osg::Depth* depth = new osg::Depth;
+    // depth->setWriteMask( false );
+    // state->setAttributeAndModes( depth, osg::StateAttribute::ON );
 
     // disable light for this geode as lines can't be lit properly
     state->setMode( GL_LIGHTING, osg::StateAttribute::OFF | osg::StateAttribute::PROTECTED );
@@ -370,6 +380,9 @@ void WMFiberDisplay::moduleMain()
                 // get a new fiber selector
                 m_fiberSelector = std::shared_ptr<WFiberSelector>( new WFiberSelector( fibers ) );
             }
+
+            m_nbFibers->set( m_fibers->size() );
+            m_nbVertices->set( m_fibers->getNbVertices() );
 
             // update the prop observer if new data is available
             m_coloringGroup->removeProperty( m_fibProps );
