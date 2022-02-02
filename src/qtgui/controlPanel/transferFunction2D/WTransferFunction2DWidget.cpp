@@ -32,6 +32,8 @@
 #include "qtgui/controlPanel/transferFunction2D/WTransferFunction2DBackground.h"
 #include "qtgui/controlPanel/transferFunction2D/WTransferFunction2DScene.h"
 #include "WTransferFunction2DWidget.h"
+#include "core/common/WHistogram2D.h"
+#include "core/common/WLogger.h"
 
 WTransferFunction2DWidget::WTransferFunction2DWidget( QWidget* qparent, WTransferFunction2DGuiNotificationClass* parent ):
         BaseClass( qparent ),
@@ -43,7 +45,7 @@ WTransferFunction2DWidget::WTransferFunction2DWidget( QWidget* qparent, WTransfe
     const int xMin( 0 );
     const int yMin( 0 );
     const int xMax( 300 );
-    const int yMax( 100 );
+    const int yMax( 300 );
 
     // set up the scene and the parameters that define how we paint things
     setMinimumSize( xMax-xMin+20, yMax - yMin + 30 );
@@ -61,7 +63,7 @@ WTransferFunction2DWidget::WTransferFunction2DWidget( QWidget* qparent, WTransfe
     //this->setResizeAnchor( AnchorViewCenter );
 
     // insert background and histogram items
-    scene->addItem( background = new WTransferFunction2DBackground(this) );
+    scene->addItem( background = new WTransferFunction2DBackground( this ) );
 
     initialized = true;
     // initialize the color map (aka. background)
@@ -81,31 +83,69 @@ WTransferFunction2DWidget::~WTransferFunction2DWidget()
 
 void WTransferFunction2DWidget::setMyBackground()
 {
-    const int transferFunctionSize = 100;
-    static unsigned char texturearray[ 4*transferFunctionSize ];
-
     if( background )
     {
-        for( int i = 0; i < transferFunctionSize; ++i )
-        {
-            texturearray[ i*4 + 2 ] = i;
-            texturearray[ i*4 + 1 ] = i+128;
-            texturearray[ i*4 + 0 ] = i+128;
-            texturearray[ i*4 + 3 ] = 255;
+        WHistogram2D* hist = new WHistogram2D( 0.0, 1.0, 0.0, 1.0, 10, 10 );
+        hist->insert( 0.5, 0.4 );
+        hist->insert( 0.1, 0.4 );
+        hist->insert( 0.1, 0.7 );
+        hist->insert( 0.2, 0.5 );
+        hist->insert( 0.2, 0.5 );
+        hist->insert( 0.2, 0.5 );
+        hist->insert( 0.2, 0.5 );
+        hist->insert( 0.2, 0.5 );
+        hist->insert( 0.2, 0.5 );
+        hist->insert( 0.2, 0.5 );
+        hist->insert( 0.2, 0.5 );
+        hist->insert( 0.2, 0.5 );
+        hist->insert( 0.2, 0.5 );
+        hist->insert( 0.2, 0.5 );
+        hist->insert( 0.2, 0.5 );
+        hist->insert( 0.2, 0.5 );
+        hist->insert( 0.4, 0.1 );
+        hist->insert( 0.4, 0.1 );
+        hist->insert( 0.4, 0.4 );
+        hist->insert( 0.4, 0.4 );
+        hist->insert( 0.4, 0.4 );
+        hist->insert( 0.4, 0.4 );
+        hist->insert( 0.4, 0.4 );
+        hist->insert( 0.4, 0.7 );
+        hist->insert( 0.7, 0.1 );
+        hist->insert( 0.7, 0.4 );
+        hist->insert( 0.7, 0.4 );
+        hist->insert( 0.7, 0.4 );
+        hist->insert( 0.7, 0.4 );
+        hist->insert( 0.7, 0.4 );
+        hist->insert( 0.7, 0.4 );
+        hist->insert( 0.7, 0.4 );
+        hist->insert( 0.7, 0.4 );
+        hist->insert( 0.7, 0.4 );
+        hist->insert( 0.7, 0.4 );
+        hist->insert( 0.7, 0.7 );
+        hist->insert( 0.7, 0.7 );
 
+        unsigned char * data = hist->getRawTexture();
+
+        if( data == NULL )
+        {
+            wlog::debug( "2DTRANS" ) << "Data is null";
+            return;
         }
 
-        QImage image( texturearray, transferFunctionSize, 1, QImage::Format_ARGB32 );
-        QPixmap pixmap( transferFunctionSize, 1 );
-#if( QT_VERSION >= 0x040700 )
-        pixmap.convertFromImage( image );
-#else
+        int imageWidth = hist->getBucketsX();
+        int imageHeight = hist->getBucketsY();
+
+        QImage* image = new QImage( data, imageWidth, imageHeight, QImage::Format_RGBA8888 );
+        QPixmap pixmap;
+
+    #if( QT_VERSION >= 0x040700 )
+        pixmap.convertFromImage( *image );
+    #else
         // older versions have convertFromImage in Qt3Support
         // to avoid linking to that one, we use the slower version
         // here, which creates a copy, first.
         pixmap = QPixmap::fromImage( image );
-#endif
-
+    #endif
         background->setMyPixmap( pixmap );
     }
 }
@@ -128,14 +168,6 @@ void WTransferFunction2DWidget::forceRedraw()
     QRectF viewport( scene->sceneRect() );
     scene->invalidate( viewport );
     this->update();
-}
-
-namespace
-{
-    WColor toWColor( const QColor& q )
-    {
-        return WColor( q.redF(), q.greenF(), q.blueF(), q.alphaF() );
-    }
 }
 
 

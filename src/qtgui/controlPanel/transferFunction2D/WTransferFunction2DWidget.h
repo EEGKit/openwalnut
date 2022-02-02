@@ -33,6 +33,7 @@
 class QGraphicsScene;
 class WTransferFunction2DBackground;
 
+
 /**
  * The class managing the widget that wants to receive updates whenever
  * a change occurrs. This is only here to provide an interface and a better
@@ -80,7 +81,6 @@ public:
      * Redraw the widget
      */
     void forceRedraw();
-
 
 public slots:
 

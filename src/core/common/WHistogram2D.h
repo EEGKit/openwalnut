@@ -131,11 +131,32 @@ public:
     WGETexture2D::RPtr getTexture();
 
     /**
+     * Copy-convert this into a texture.
+     *
+     * \return \c return raw texture of the histogram
+     */
+    unsigned char* getRawTexture();
+
+    /**
      * Copy-convert this into a spherical texture. \e Spherical means hereby, that buckets representing areas near the poles have scaled counters.
      *
      * \return \c osg::ref_ptr to the two-dimensional spherical texture.
      */
     WGETexture2D::RPtr getSphereTexture();
+
+    /**
+     * Return image size in x-direction
+     *
+     * \return \c size_t in histogram y-direction
+    */
+    size_t getBucketsX();
+
+    /**
+     * Return image size in X direction
+     *
+     * \return \c size_t in histogram y-direction
+    */
+    size_t getBucketsY();
 
 protected:
 private:

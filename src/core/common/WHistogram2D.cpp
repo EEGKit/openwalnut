@@ -153,6 +153,56 @@ WGETexture2D::RPtr WHistogram2D::getTexture()
     return WGETexture2D::RPtr( new WGETexture2D( image ) );
 }
 
+size_t WHistogram2D::getBucketsX()
+{
+    return m_buckets[ 0 ];
+}
+
+size_t WHistogram2D::getBucketsY()
+{
+    return m_buckets[ 1 ];
+}
+
+unsigned char* WHistogram2D::getRawTexture()
+{
+    size_t imageWidth = m_buckets[ 0 ];
+    size_t imageHeight = m_buckets[ 1 ];
+    float maxCount = 0;
+
+    for( size_t j = 0; j < imageHeight; ++j ) // get max bin for scaling
+    {
+        for( size_t i = 0; i < imageWidth; ++i )
+        {
+            if( m_bins( i, j ) > maxCount )
+            {
+                maxCount = static_cast< float >( m_bins( i, j ) );
+            }
+        }
+    }
+
+    unsigned char* data = new unsigned char[ 4 * imageWidth * imageHeight ];
+
+    for( size_t i = 0; i < imageWidth; ++i )
+    {
+        for( size_t j = 0; j < imageHeight; ++j )
+        {
+            // wlog::debug("2DHIST - Values") << 10 * 255 * static_cast< float >( (m_bins(i,j) / maxCount) );
+            // using 8 bit grayscale yields a different outcome than usind RGBA8888
+            // data[ imageWidth * i + j + 0 ] = ( unsigned char )( 255 * m_bins( i, j ) / maxCount ) ;
+            data[ 4 * imageWidth * i + 4 * j + 0 ] = ( unsigned char )( 255 * m_bins( i, j ) / maxCount );
+            data[ 4 * imageWidth * i + 4 * j + 1 ] = ( unsigned char )( 255 * m_bins( i, j ) / maxCount );
+            data[ 4 * imageWidth * i + 4 * j + 2 ] = ( unsigned char )( 255 * m_bins( i, j ) / maxCount );
+            data[ 4 * imageWidth * i + 4 * j + 3 ] = ( unsigned char ) 255;
+        }
+    }
+//    for( int k = 0; k < imageHeight * imageWidth; k++)
+//    {
+//        wlog::debug( "Hist2D" ) << static_cast< float >( data[ k ] );
+//    }
+
+    return data;
+}
+
 /**
  * Unnamed namespace for helper functions keeping the code DRY as possible.
  */
