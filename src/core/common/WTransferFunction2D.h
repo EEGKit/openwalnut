@@ -92,7 +92,6 @@ public:
     bool operator!=( const WTransferFunction2D &rhs ) const;
 
 private:
-
     /**
      * The smallest used iso value of the first data set.
      */

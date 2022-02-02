@@ -28,9 +28,9 @@
 #include <QtCore/QUrl>
 #include <QGraphicsSceneDragDropEvent>
 
-#include "core/common/WTransferFunction.h"
 #include "WTransferFunction2DScene.h"
 #include "WTransferFunction2DWidget.h"
+#include "core/common/WTransferFunction2D.h"
 
 WTransferFunction2DScene::WTransferFunction2DScene( QObject*parent )
         : BaseClass( parent ),
@@ -47,25 +47,9 @@ void WTransferFunction2DScene::dragMoveEvent( QGraphicsSceneDragDropEvent* event
 {
 }
 
-namespace
-{
-    inline QColor toQColor( const WColor &color )
-    {
-        QColor tmp;
-        tmp.setRgbF( color[0],
-                     color[1],
-                     color[2],
-                     color[3] );
-
-        return tmp;
-    }
-}
-
-
-void do_update( const WTransferFunction& tf, WTransferFunction2DWidget* m_transferFunction )
+void do_update( const WTransferFunction2D& tf, WTransferFunction2DWidget* m_transferFunction )
 {
 }
-
 
 void WTransferFunction2DScene::dropEvent( QGraphicsSceneDragDropEvent* event )
 {

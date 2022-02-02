@@ -40,24 +40,6 @@ bool WTransferFunction2D::operator!=( const WTransferFunction2D &rhs ) const
     return false;
 }
 
-namespace
-{
-    //! linear blend between two colors in rgb space if ta = 1.-tb
-    WColor blend( const WColor&a, double ta, const WColor &b, double tb )
-    {
-        return WColor(
-                ta*a[ 0 ]+tb*b[ 0 ],
-                ta*a[ 1 ]+tb*b[ 1 ],
-                ta*a[ 2 ]+tb*b[ 2 ], 1. );
-    }
-
-    //! linear blend between two variables
-    double ablend( const double a, const double ta, const double b, const double tb )
-    {
-        return a*ta + b*tb;
-    }
-} // namespace
-
 std::ostream& operator << ( std::ostream& out, const WTransferFunction2D& tf )
 {
     out << "";
