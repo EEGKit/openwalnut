@@ -89,7 +89,6 @@ void WMTransferFunction2D::connectors()
 
 void WMTransferFunction2D::properties()
 {
-
     m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
     WTransferFunction2D tf;
     m_transferFunction = m_properties->addProperty( "2D Transfer Function", "The 2D transfer function editor.", tf, m_propCondition, false );
@@ -102,7 +101,6 @@ void WMTransferFunction2D::properties()
     m_resolution->setMin( 4 );
     m_resolution->setMax( 1024 );
     WModule::properties();
-
 }
 
 void WMTransferFunction2D::requirements()
@@ -133,7 +131,7 @@ void WMTransferFunction2D::moduleMain()
             std::shared_ptr< WDataSetSingle > dataSet0 = m_inputDataSet0->getData();
             std::shared_ptr< WDataSetSingle > dataSet1 = m_inputDataSet1->getData();
 
-            bool dataValid = ( dataSet0 != NULL && dataSet1 != NULL);
+            bool dataValid = ( dataSet0 != NULL && dataSet1 != NULL );
             if( !dataValid )
             {
             }

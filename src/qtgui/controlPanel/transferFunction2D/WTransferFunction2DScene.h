@@ -79,5 +79,5 @@ private:
     WTransferFunction2DWidget *myparent;
 };
 
-#endif  // WTRANSFERFUNCTIONSCENE_H
+#endif  // WTRANSFERFUNCTION2DSCENE_H
 
