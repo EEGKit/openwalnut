@@ -330,8 +330,8 @@ private:
      */
     osg::Quat m_HMD_rotation;
 
-    osg::Quat m_startRot;
-    osg::Vec3d m_startTrans;
+    osg::ref_ptr< WGECamera > m_leftEyeCamera;
+    osg::ref_ptr< WGECamera > m_rightEyeCamera;
 
     /**
      * is set true once rotation and position of previous frame is cached

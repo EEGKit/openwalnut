@@ -205,9 +205,9 @@ void WMVRCamera::moduleMain()
     // insert the created nodes
     m_leftEyeNode->insert( m_leftEyeGeometryNode );
     m_rightEyeNode->insert( m_rightEyeGeometryNode );
-    m_rootnode->insert( m_leftEyeNode );
-    m_rootnode->insert( m_rightEyeNode );
-    //WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_rootnode );
+    // m_rootnode->insert( m_leftEyeNode );
+    // m_rootnode->insert( m_rightEyeNode );
+    // WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_rootnode );
 
     //Set Nodemask so this modules Node are culled in the Mainview
     /*osg::Node::NodeMask vrNodeMask = 0x10000000;
@@ -215,12 +215,12 @@ void WMVRCamera::moduleMain()
     m_rootnode->setNodeMask( vrNodeMask );*/
 
     // get side-views
-    std::shared_ptr<WGEViewer> leftEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" );
-    std::shared_ptr<WGEViewer> rightEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" );
-    leftEyeView->setScene( m_leftEyeNode );
-    rightEyeView->setScene( m_rightEyeNode );
-    leftEyeView->reset();
-    rightEyeView->reset();
+    // std::shared_ptr<WGEViewer> leftEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" );
+    // std::shared_ptr<WGEViewer> rightEyeView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" );
+    // leftEyeView->setScene( m_leftEyeNode );
+    // rightEyeView->setScene( m_rightEyeNode );
+    // leftEyeView->reset();
+    // rightEyeView->reset();
 
     // Now, we can mark the module ready.
     ready();
@@ -252,27 +252,38 @@ void WMVRCamera::moduleMain()
     // Render to Texture Setup
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    leftEyeView->getCamera()->setClearColor( osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
-    leftEyeView->getCamera()->setClearMask( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    leftEyeView->getCamera()->setReferenceFrame( osg::Transform::RELATIVE_RF );
-    leftEyeView->getCamera()->setRenderTargetImplementation( osg::Camera::FRAME_BUFFER_OBJECT );
-    leftEyeView->getCamera()->setRenderOrder( osg::Camera::PRE_RENDER, 0 );
+
+    osg::View* mainView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView();
+    osg::GraphicsContext* gc = mainView->getCamera()->getGraphicsContext();
+    m_leftEyeCamera = new WGECamera();
+    m_rightEyeCamera = new WGECamera();
+
+    mainView->addSlave( m_leftEyeCamera, false );
+    mainView->addSlave( m_rightEyeCamera, false );
+
+    m_leftEyeCamera->setClearColor( osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
+    m_leftEyeCamera->setClearMask( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    m_leftEyeCamera->setReferenceFrame( osg::Transform::ABSOLUTE_RF );
+    m_leftEyeCamera->setRenderTargetImplementation( osg::Camera::FRAME_BUFFER_OBJECT );
+    m_leftEyeCamera->setRenderOrder( osg::Camera::PRE_RENDER, 0 );
     // leftEyeView->getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
     //leftEyeView->getCamera()->setNearFarRatio(  0.000001  );
-    leftEyeView->getCamera()->setViewport( 0, 0, m_vrRenderWidth, m_vrRenderHeight );
-    leftEyeView->getCamera()->setProjectionMatrix( convertHmdMatrixToOSG( m_vrSystem->GetProjectionMatrix( vr::Eye_Left, 1.0, 1000.0 ) ) );
+    m_leftEyeCamera->setViewport( 0, 0, m_vrRenderWidth, m_vrRenderHeight );
+    m_leftEyeCamera->setProjectionMatrix( convertHmdMatrixToOSG( m_vrSystem->GetProjectionMatrix( vr::Eye_Left, 1.0, 1000.0 ) ) );
+    m_leftEyeCamera->setGraphicsContext( gc );
     //leftEyeView->getCamera()->setCullMask( vrNodeMask );
 
 
-    rightEyeView->getCamera()->setClearColor( osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
-    rightEyeView->getCamera()->setClearMask( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    rightEyeView->getCamera()->setReferenceFrame( osg::Transform::RELATIVE_RF );
-    rightEyeView->getCamera()->setRenderTargetImplementation( osg::Camera::FRAME_BUFFER_OBJECT );
-    rightEyeView->getCamera()->setRenderOrder( osg::Camera::PRE_RENDER, 1 );
+    m_rightEyeCamera->setClearColor( osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
+    m_rightEyeCamera->setClearMask( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    m_rightEyeCamera->setReferenceFrame( osg::Transform::ABSOLUTE_RF );
+    m_rightEyeCamera->setRenderTargetImplementation( osg::Camera::FRAME_BUFFER_OBJECT );
+    m_rightEyeCamera->setRenderOrder( osg::Camera::PRE_RENDER, 1 );
     // rightEyeView->getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
     //rightEyeView->getCamera()->setNearFarRatio(  0.000001  );
-    rightEyeView->getCamera()->setViewport( 0, 0, m_vrRenderWidth, m_vrRenderHeight );
-    rightEyeView->getCamera()->setProjectionMatrix( convertHmdMatrixToOSG( m_vrSystem->GetProjectionMatrix( vr::Eye_Right, 1.0, 1000.0 ) ) );
+    m_rightEyeCamera->setViewport( 0, 0, m_vrRenderWidth, m_vrRenderHeight );
+    m_rightEyeCamera->setProjectionMatrix( convertHmdMatrixToOSG( m_vrSystem->GetProjectionMatrix( vr::Eye_Right, 1.0, 1000.0 ) ) );
+    m_rightEyeCamera->setGraphicsContext( gc );
     //rightEyeView->getCamera()->setCullMask( vrNodeMask );
 
     m_leftTexture = new osg::Texture2D;
@@ -293,16 +304,16 @@ void WMVRCamera::moduleMain()
 
     osg::ref_ptr<WGEOffscreenRenderNode> offscreenRenderLeft(
         new WGEOffscreenRenderNode(
-            leftEyeView->getCamera(),
+            m_leftEyeCamera,
             m_vrRenderWidth,
             m_vrRenderHeight,
-            false ) );
+            true ) );
     osg::ref_ptr<WGEOffscreenRenderNode> offscreenRenderRight(
         new WGEOffscreenRenderNode(
-            rightEyeView->getCamera(),
+            m_rightEyeCamera,
             m_vrRenderWidth,
             m_vrRenderHeight,
-            false ) );
+            true ) );
 
     //Add Geometry to render pipeline
     osg::ref_ptr<WGEOffscreenRenderPass> geometryPassLeft =
@@ -346,15 +357,17 @@ void WMVRCamera::moduleMain()
     // finalPassLeft->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
     // finalPassRight->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
 
-    leftEyeView->getScene()->insert( offscreenRenderLeft );
-    rightEyeView->getScene()->insert( offscreenRenderRight );
+    m_leftEyeNode->insert( offscreenRenderLeft );
+    m_rightEyeNode->insert( offscreenRenderRight );
+
+    m_leftEyeCamera->addChild( m_leftEyeNode );
+    m_rightEyeCamera->addChild( m_rightEyeNode );
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Main loop
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // updatecallback for submitting frames
-    osg::GraphicsContext* gc = leftEyeView->getCamera()->getGraphicsContext();
     gc->setSwapCallback( new SafeUpdateCallback( this ) );
     // m_rootnode->addUpdateCallback( new SafeUpdateCallback( this ) );
 
@@ -535,18 +548,14 @@ void WMVRCamera::SafeUpdateCallback::swapBuffersImplementation( osg::GraphicsCon
     {
         if( !m_initialUpdate )
         {
-            unsigned int leftContextID = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )
-            ->getCamera()->getGraphicsContext()->getState()->getContextID();
-
-            unsigned int rightContextID = WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )
-            ->getCamera()->getGraphicsContext()->getState()->getContextID();
+            unsigned int ctxID = m_module->m_leftEyeCamera->getGraphicsContext()->getState()->getContextID();
 
             vr::Texture_t leftEyeTexture = {
-               ( void * )( uintptr_t )m_module->m_textureColorLeft->getTextureObject( leftContextID )->id(),
+               ( void * )( uintptr_t )m_module->m_textureColorLeft->getTextureObject( ctxID )->id(),
                 vr::TextureType_OpenGL,
                 vr::ColorSpace_Gamma};
             vr::Texture_t rightEyeTexture = {
-               ( void * )( uintptr_t )m_module->m_textureColorRight->getTextureObject( rightContextID )->id(),
+               ( void * )( uintptr_t )m_module->m_textureColorRight->getTextureObject( ctxID )->id(),
                 vr::TextureType_OpenGL,
                 vr::ColorSpace_Gamma};
 
@@ -563,8 +572,8 @@ void WMVRCamera::SafeUpdateCallback::swapBuffersImplementation( osg::GraphicsCon
 
         m_module->updateHMDPose();
 
-        WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )->setCameraManipulator( NULL );
-        WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )->setCameraManipulator( NULL );
+        // WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )->setCameraManipulator( NULL );
+        // WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )->setCameraManipulator( NULL );
 
         osg::ref_ptr< WGEZoomTrackballManipulator > cm = osg::dynamic_pointer_cast< WGEZoomTrackballManipulator >(
             WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCameraManipulator() );
@@ -590,8 +599,8 @@ void WMVRCamera::SafeUpdateCallback::swapBuffersImplementation( osg::GraphicsCon
         osg::Matrixd leftEyeMatrix = complete * osg::Matrixd::translate( leftEyeOffsetMatrix.getTrans() * -100 );
         osg::Matrixd rightEyeMatrix = complete * osg::Matrixd::translate( rightEyeOffsetMatrix.getTrans() * -100 );
 
-        WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Left Eye View" )->getCamera()->setViewMatrix( leftEyeMatrix );
-        WKernel::getRunningKernel()->getGraphicsEngine()->getViewerByName( "Right Eye View" )->getCamera()->setViewMatrix( rightEyeMatrix );
+        m_module->m_leftEyeCamera->setViewMatrix( leftEyeMatrix );
+        m_module->m_rightEyeCamera->setViewMatrix( rightEyeMatrix );
 
 
         // Matrix reihenfolge:
