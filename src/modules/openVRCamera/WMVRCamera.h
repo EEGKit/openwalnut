@@ -26,13 +26,13 @@
 #define WMVRCAMERA_H
 
 #include <string>
-#include <vector>
 
-#include <boost/thread.hpp>
+#include <openvr.h> // NOLINT
 
-#include "core/kernel/WModuleInputData.h"
-#include "core/kernel/WModuleOutputData.h"
 #include "core/kernel/WModule.h"
+
+#include "WRTTCamera.h"
+#include "WSwapUpdateCallback.h"
 
 /**
  * Module starting and connecting to an OpenVR session
@@ -44,6 +44,11 @@ class WMVRCamera : public WModule
      * Only UnitTests may be friends.
      */
     friend class WMVRCameraTest;
+
+    /**
+     * The SwapUpdateCallback needs access to the private fields.
+     */
+    friend class WSwapUpdateCallback;
 
 public:
     /**
@@ -113,11 +118,15 @@ public:
 
     /**
      * Converts vr::HmdMatrix34_t to osg::Matrix.
+     * \param mat34 The HMD Matrix.
+     * \return osg::Matrix The OSG Matrix.
      */
     osg::Matrix convertHmdMatrixToOSG( const vr::HmdMatrix34_t &mat34 );
 
     /**
-     * Converts vr::HmdMatrix44_t to osg::Matrix.
+     * Converts vr::HmdMatrix34_t to osg::Matrix.
+     * \param mat44 The HMD Matrix.
+     * \return osg::Matrix The OSG Matrix.
      */
     osg::Matrix convertHmdMatrixToOSG( const vr::HmdMatrix44_t &mat44 );
 
@@ -138,11 +147,6 @@ protected:
     virtual void properties();
 
     /**
-     * Initialize requirements for this module.
-     */
-    virtual void requirements();
-
-    /**
      * Callback for m_active. Overwrite this in your modules to handle m_active changes separately.
      */
     virtual void activate();
@@ -154,189 +158,31 @@ protected:
     bool setupVRInterface();
 
 private:
-    /**
-     * Callback which submits the textures to OpenVR SDK.
-     */
-    class SafeUpdateCallback : public osg::GraphicsContext::SwapCallback
-    {
-    public: // NOLINT
-        /**
-         * Constructor.
-         *
-         * \param module just set the creating module as pointer for later reference.
-         */
-        explicit SafeUpdateCallback( WMVRCamera* module ): m_module( module ), m_initialUpdate( true )
-        {
-        };
+    std::shared_ptr< WCondition > m_propCondition; //!< A condition for property updates.
 
-        void swapBuffersImplementation( osg::GraphicsContext* gc );
+    WPropBool m_vrOn; //!< A feature toggle for submitting frames to OpenVR SDK
+    WPropTrigger m_VR_fpsTrigger; //!< A trigger for debugging the FPS while VR module is running.
+    WPropTrigger m_VR_logCameraViewMatrix; //!< A trigger for debugging camera matrix of VR module.
+    WPropTrigger m_VR_resetHMDPosition; //!< A trigger for resetting the camera to the seated zero position of the HMD device.
 
-        /**
-         * Pointer used to access members of the module to modify the node.
-         * Please do not use shared_ptr here as this would prevent deletion of the module as the callback contains
-         * a reference to it. It is safe to use a simple pointer here as callback get deleted before the module.
-         */
-        WMVRCamera* m_module;
-
-        /**
-         * timestamp of the last frame
-         */
-        std::chrono::_V2::system_clock::time_point m_lastFrame;
-
-
-        /**
-         * timestamps of the last 120 frames
-         */
-        double m_lastFrames[120];
-
-        /**
-         * current position in m_lastFrames for saving the next timestamp
-         */
-        unsigned int m_frameCounter = 0;
-
-        /**
-         * Denotes whether the update callback is called the first time. It is especially useful
-         * to set some initial value even if the property has not yet changed.
-         */
-        bool m_initialUpdate;
-    };
-
-    void render();
-
-    //! A condition for property updates.
-    std::shared_ptr<WCondition> m_propCondition;
-
-    /**
-     * A feature toggle for submitting frames to OpenVR SDK
-     */
-    WPropBool m_vrOn;
-
-    /**
-     * A trigger for debugging the FPS while VR module is running.
-     */
-    WPropTrigger  m_VR_fpsTrigger;
-
-    /**
-     * A trigger for debugging camera manipulators of Left/Right view of VR module.
-     */
-    WPropTrigger  m_VR_logCameraManipulators;
-
-    /**
-     * A trigger for taking a screenshot from the framebuffer.
-     */
-    WPropTrigger  m_VR_screenshotTrigger;
-
-    /**
-     * A trigger for resetting the camera to the seated zero position of the HMD device.
-     */
-    WPropTrigger  m_VR_resetHMDPosition;
-
-    /**
-     * This modules root node mostly for cameras
-     */
-    osg::ref_ptr<WGEManagedGroupNode> m_rootnode;
-
-    /**
-     * A node for applying left Eye tracking
-     */
-    osg::ref_ptr<WGEGroupNode> m_leftEyeNode;
-
-    /**
-     * A node for applying right Eye tracking
-     */
-    osg::ref_ptr<WGEGroupNode> m_rightEyeNode;
-
-    /**
-     * A node for holding left Eye geometry
-     */
-    osg::ref_ptr<WGEGroupNode> m_leftEyeGeometryNode;
-
-    /**
-     * A node for holding right Eye geometry
-     */
-    osg::ref_ptr<WGEGroupNode> m_rightEyeGeometryNode;
-
-    /**
-     * The OpenVR SDK Interface
-     */
-    vr::IVRSystem *m_vrSystem;
-
-    /**
-     * Denotes whether the OpenVR SDK was initialized successfully
-     */
-    bool m_vrIsInitialized;
-
-    /**
-     * The OpenVR RenderModel Interface
-     */
-    vr::IVRRenderModels *m_vrRenderModels;
-
-    /**
-     * texture to submit to left Eye
-     */
-    osg::ref_ptr<osg::Texture2D> m_leftTexture;
-
-    /**
-     * texture to submit to right Eye
-     */
-    osg::ref_ptr<osg::Texture2D> m_rightTexture;
-    /**
-     * texture to submit to left Eye
-     */
-    osg::ref_ptr<osg::Texture2D> m_geometryColorLeft;
-
-    /**
-     * texture to submit to right Eye
-     */
-    osg::ref_ptr<osg::Texture2D> m_geometryColorRight;
-
-    /**
-     * texture to submit to left Eye
-     */
-    osg::ref_ptr<osg::Texture2D> m_textureColorLeft;
-
-    /**
-     * texture to submit to right Eye
-     */
-    osg::ref_ptr<osg::Texture2D> m_textureColorRight;
-
-    /**
-     * The recommended texture width from vr_system
-     */
-    uint32_t m_vrRenderWidth;
-
-    /**
-     * The recommended texture height from vr_system
-     */
-    uint32_t m_vrRenderHeight;
+    vr::IVRSystem *m_vrSystem; //!< The OpenVR SDK Interface.
+    vr::IVRRenderModels *m_vrRenderModels; //!< The OpenVR RenderModel Interface.
+    
+    bool m_vrIsInitialized; //!< Denotes whether the OpenVR SDK was initialized successfully.
+    uint32_t m_vrRenderWidth; //!< The recommended texture width from vr_system.
+    uint32_t m_vrRenderHeight; //!< The recommended texture height from vr_system.
 
     /**
      * OpenVR tracking information
      */
     vr::TrackedDevicePose_t m_poses[vr::k_unMaxTrackedDeviceCount];         // NOLINT: the size is constant
+    vr::TrackedDeviceIndex_t m_grabber; //!< OpenVR current grabbing device.
 
-    /**
-     * OpenVR current grabbing device
-     */
-    vr::TrackedDeviceIndex_t m_grabber;
+    osg::Vec3d m_HMD_position; //!< current position of HMD device.
+    osg::Quat m_HMD_rotation; //!< current rotation of HMD device.
 
-    /**
-     * current position of HMD device
-     */
-    osg::Vec3d m_HMD_position;
-
-    /**
-     * current rotation of HMD device
-     */
-    osg::Quat m_HMD_rotation;
-
-    osg::ref_ptr< WGECamera > m_leftEyeCamera;
-    osg::ref_ptr< WGECamera > m_rightEyeCamera;
-
-    /**
-     * is set true once rotation and position of previous frame is cached
-     */
-    bool m_HMD_transformDifferenceIsSet = false;
+    osg::ref_ptr< WRTTCamera > m_leftEyeCamera; //!< The camera for the left eye of the VR system.
+    osg::ref_ptr< WRTTCamera > m_rightEyeCamera; //!< The camera for the right eye of the VR system.
 };
 
 #endif  // WMVRCAMERA_H
