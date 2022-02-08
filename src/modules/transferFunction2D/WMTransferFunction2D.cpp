@@ -81,8 +81,8 @@ void WMTransferFunction2D::connectors()
                                                                          "histogram input data set 1", "The data set used to display a histogram." );
 
     // an output connector for the transfer function created
-    m_output = WModuleOutputData < WDataSetSingle >::createAndAdd( shared_from_this(),
-            "TransferFunction2D", "The selected transfer function" );
+    //m_output = WModuleOutputData < WDataSetSingle >::createAndAdd( shared_from_this(),
+    //        "TransferFunction2D", "The selected transfer function" );
 
     WModule::connectors();
 }
@@ -137,13 +137,34 @@ void WMTransferFunction2D::moduleMain()
             }
             else
             {
+                std::shared_ptr< WValueSetBase > values0 = dataSet0->getValueSet();
+                std::shared_ptr< WValueSetBase > values1 = dataSet1->getValueSet();
+
+                wlog::debug( "WMTransFunc2D" ) << values0->getMinimumValue();
+                wlog::debug( "WMTransFunc2D" ) << values0->getMaximumValue();
+                wlog::debug( "WMTransFunc2D" ) << values1->getMinimumValue();
+                wlog::debug( "WMTransFunc2D" ) << values1->getMaximumValue();
+
+                // At the moment we equal sized data sets
+                // Bucket size is equal to our texture size defined in WTransferFunction2DWidget
+                WHistogram2D histogram( values0->getMinimumValue(),
+                                                          values0->getMaximumValue(),
+                                                          values1->getMinimumValue(),
+                                                          values1->getMaximumValue(),
+                                                          300,
+                                                          300 );
+
+                for( size_t i = 0; i < values0->size(); ++i )
+                {
+                    histogram.insert( values0->getScalarDouble( i ), values1->getScalarDouble( i ) );
+                }
+
+                // We need a copy of the data here, because of the way how the data is handled in WTransferFunction2D
+                WHistogram2D vhistogram( histogram );
+                tf.setHistogram( vhistogram );
             }
             // either way, we changed the data and want to update the TF
             m_transferFunction->set( tf );
-        }
-
-        if( m_resolution->changed() || tfChanged )
-        {
         }
     }
 }

@@ -28,6 +28,7 @@
 #include <vector>
 
 #include "QGraphicsView"
+#include "core/common/WHistogram2D.h"
 
 
 class QGraphicsScene;
@@ -47,6 +48,12 @@ struct WTransferFunction2DGuiNotificationClass
     virtual ~WTransferFunction2DGuiNotificationClass()
     {
     }
+
+    /**
+     * update the gui
+     * \param tf the new transfer function
+     */
+    virtual void guiUpdate( const WTransferFunction2D& tf ) = 0;
 };
 
 /**
@@ -81,6 +88,12 @@ public:
      * Redraw the widget
      */
     void forceRedraw();
+
+    /**
+     * Redraw the widget
+     */
+    void setHistogram( WHistogram2D newHistogram );
+
 
 public slots:
 
@@ -117,6 +130,11 @@ protected:
     //virtual void mousePressEvent( QMouseEvent *event );
 
     /**
+     * Updates the transfer function.
+     */
+    void updateTransferFunction();
+
+    /**
      * Internal helper function to update the QGraphicsPixmapItem that holds a representation
      * of the current color map and displays it as a background of the widget.
      * This function samples the texture into a QPixmap and updates the QGraphicsPixmapItem.
@@ -130,7 +148,8 @@ private:
     /** our scene */
     QGraphicsScene *scene;
 
-    WTransferFunction2DBackground *background; //! background that displays the color map
+    WTransferFunction2DBackground *background; //! background that displays the histogram
+    WHistogram2D *hist = NULL; //! histogram which is displayed on the background
 
     bool initialized; //< set to true after initialization
 };

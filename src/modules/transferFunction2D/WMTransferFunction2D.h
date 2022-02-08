@@ -117,7 +117,7 @@ nnectors must not be handled by the module.
     /**
      * The output connector used to provide the calculated data to other modules.
      */
-    WModuleOutputData< WDataSetSingle >::SPtr m_output;
+    //WModuleOutputData< WDataSetSingle >::SPtr m_output;
 
     /**
      * A condition used to notify about changes in several properties.

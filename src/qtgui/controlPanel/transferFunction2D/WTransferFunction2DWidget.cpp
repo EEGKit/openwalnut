@@ -34,6 +34,7 @@
 #include "WTransferFunction2DWidget.h"
 #include "core/common/WHistogram2D.h"
 #include "core/common/WLogger.h"
+#include "core/common/WTransferFunction2D.h"
 
 WTransferFunction2DWidget::WTransferFunction2DWidget( QWidget* qparent, WTransferFunction2DGuiNotificationClass* parent ):
         BaseClass( qparent ),
@@ -83,62 +84,34 @@ WTransferFunction2DWidget::~WTransferFunction2DWidget()
 
 void WTransferFunction2DWidget::setMyBackground()
 {
-    if( background )
+    if( background && hist != NULL )
     {
-        WHistogram2D* hist = new WHistogram2D( 0.0, 1.0, 0.0, 1.0, 10, 10 );
-        hist->insert( 0.5, 0.4 );
-        hist->insert( 0.1, 0.4 );
-        hist->insert( 0.1, 0.7 );
-        hist->insert( 0.2, 0.5 );
-        hist->insert( 0.2, 0.5 );
-        hist->insert( 0.2, 0.5 );
-        hist->insert( 0.2, 0.5 );
-        hist->insert( 0.2, 0.5 );
-        hist->insert( 0.2, 0.5 );
-        hist->insert( 0.2, 0.5 );
-        hist->insert( 0.2, 0.5 );
-        hist->insert( 0.2, 0.5 );
-        hist->insert( 0.2, 0.5 );
-        hist->insert( 0.2, 0.5 );
-        hist->insert( 0.2, 0.5 );
-        hist->insert( 0.2, 0.5 );
-        hist->insert( 0.4, 0.1 );
-        hist->insert( 0.4, 0.1 );
-        hist->insert( 0.4, 0.4 );
-        hist->insert( 0.4, 0.4 );
-        hist->insert( 0.4, 0.4 );
-        hist->insert( 0.4, 0.4 );
-        hist->insert( 0.4, 0.4 );
-        hist->insert( 0.4, 0.7 );
-        hist->insert( 0.7, 0.1 );
-        hist->insert( 0.7, 0.4 );
-        hist->insert( 0.7, 0.4 );
-        hist->insert( 0.7, 0.4 );
-        hist->insert( 0.7, 0.4 );
-        hist->insert( 0.7, 0.4 );
-        hist->insert( 0.7, 0.4 );
-        hist->insert( 0.7, 0.4 );
-        hist->insert( 0.7, 0.4 );
-        hist->insert( 0.7, 0.4 );
-        hist->insert( 0.7, 0.4 );
-        hist->insert( 0.7, 0.7 );
-        hist->insert( 0.7, 0.7 );
-
+        wlog::debug( "WTransferFunction2DWidget" ) << "::setMyBackground()";
         unsigned char * data = hist->getRawTexture();
 
-        if( data == NULL )
-        {
-            wlog::debug( "2DTRANS" ) << "Data is null";
-            return;
-        }
+//        if( data == NULL || data == (unsigned char*)0 )
+//        {
+//            wlog::debug( "WTransferFunction2DWidget" ) << "Data is null";
+//            return;
+//        }
 
-        int imageWidth = hist->getBucketsX();
-        int imageHeight = hist->getBucketsY();
+        size_t imageWidth = hist->getBucketsX();
+        size_t imageHeight = hist->getBucketsY();
+
+//        int cnt = 0;
+//        wlog::debug("WTransferFunction2DWidget") << "Height * Width * 4: " << imageHeight*imageWidth*4;
+//        for( size_t i = 0; i < imageHeight*imageWidth*4; ++i )
+//        {
+//            wlog::debug("WTransferFunction2DWidget") << static_cast< float >( data[ i ] );
+//            cnt++;
+//        }
+//        wlog::debug("WTransferFunction2DWidget") << "Elements: " << cnt;
+
 
         QImage* image = new QImage( data, imageWidth, imageHeight, QImage::Format_RGBA8888 );
         QPixmap pixmap;
 
-    #if( QT_VERSION >= 0x040700 )
+#if( QT_VERSION >= 0x040700 )
         pixmap.convertFromImage( *image );
     #else
         // older versions have convertFromImage in Qt3Support
@@ -159,6 +132,13 @@ void WTransferFunction2DWidget::drawBackground( QPainter *painter, const QRectF 
     // painter->drawRect( rect );
 }
 
+void WTransferFunction2DWidget::setHistogram( WHistogram2D newHistogram )
+{
+    hist = &newHistogram;
+    this->updateTransferFunction();
+    forceRedraw();
+}
+
 void WTransferFunction2DWidget::forceRedraw()
 {
     if( !initialized )
@@ -168,6 +148,18 @@ void WTransferFunction2DWidget::forceRedraw()
     QRectF viewport( scene->sceneRect() );
     scene->invalidate( viewport );
     this->update();
+    this->setMyBackground();
 }
 
-
+void WTransferFunction2DWidget::updateTransferFunction()
+{
+    WTransferFunction2D tf;
+    {
+        // this part does not trigger qt rendering updates
+        tf.setHistogram( *hist ); // get the data back because we need this for comparison
+    }
+    if( parent )
+    {
+        parent->guiUpdate( tf );
+    }
+}

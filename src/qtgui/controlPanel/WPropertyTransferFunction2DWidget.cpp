@@ -55,6 +55,7 @@ WPropertyTransferFunction2DWidget::WPropertyTransferFunction2DWidget( WPropTrans
     m_infoLayout.setSpacing( WGLOBAL_SPACING );
     m_informationWidgets.setLayout( &m_infoLayout );
 
+    update();
 
     //connect the modification signal of the edit and slider with our callback
     //connect( &m_slider, SIGNAL( valueChanged( int ) ), this, SLOT( sliderChanged( int ) ) );
@@ -68,29 +69,43 @@ WPropertyTransferFunction2DWidget::~WPropertyTransferFunction2DWidget()
     // std::cout << "cleanup." << std::endl;
 }
 
-namespace
-{
-    QColor toQColor( const WColor &color )
-    {
-        QColor tmp;
-        tmp.setRgbF( color[0],
-                     color[1],
-                     color[2],
-                     color[3] );
-
-        return tmp;
-    }
-}
-
 // this function is more complex than it should be because of the way
 // the widget handles mouse input which interferes with adding points the same way
 // because points are updated immediately and I don't know whether and how I can
 // block the update routine while still inserting points into the scene
 void WPropertyTransferFunction2DWidget::update()
 {
+    modifying = true;
+    std::cout << "Widget update" << std::endl;
+    WTransferFunction2D tf( m_transferFunctionProperty->get() );
+
+    if( tf != lastTransferFunction )
+    {
+        std::cout << "tf updated" << std::endl;
+        m_transferFunction.setHistogram( tf.getHistogram() );
+    }
+    else
+    {
+        std::cout << "update blocked because nothing changed" << std::endl;
+    }
+    modifying = false;
 }
 
 void WPropertyTransferFunction2DWidget::guiUpdate( const WTransferFunction2D& tf )
 {
+    // store old setup in lastTransferFunction because we have to avoid
+    // repainting because of conversion errors between the widget's storage in
+    // screen space and WTransferFunction's storage in normalized space
+    lastTransferFunction = tf;
+    if( !modifying )
+    {
+        std::cout << "guiUpdate(...)" << std::endl;
+        m_transferFunctionProperty->set( tf );
+        std::cout << "end guiUpdate(...)" << std::endl;
+    }
+    else
+    {
+        std::cout << "guiUpdate(...) blocked" << std::endl;
+    }
 }
 
