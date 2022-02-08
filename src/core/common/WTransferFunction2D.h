@@ -29,6 +29,8 @@
 #include <vector>
 
 #include "WColor.h"
+#include "WHistogram2D.h"
+#include "core/dataHandler/WValueSetBase.h"
 
 /**
  * A class that stores a 1D transfer function which consists
@@ -40,9 +42,8 @@ public:
     /**
      * Default constructor of a meaningless transfer function
      */
-    WTransferFunction2D() : m_isominDataSet0( 0. ), m_isomaxDataSet0( 0. ),
-                            m_isominDataSet1( 0. ), m_isomaxDataSet1( 0. ),
-                            m_opacityScale( 1.0 )
+    WTransferFunction2D() : m_opacityScale( 1.0 ),
+                            m_histogram( 0.0, 1.0, 0.0, 1.0, 1, 1 )
     {
     }
 
@@ -52,9 +53,8 @@ public:
      * \param rhs the value to histogram
      */
     WTransferFunction2D( const WTransferFunction2D &rhs )
-            : m_isominDataSet0( rhs.m_isominDataSet0 ), m_isomaxDataSet0( rhs.m_isomaxDataSet0 )
-            , m_isominDataSet1( rhs.m_isominDataSet1 ), m_isomaxDataSet1( rhs.m_isomaxDataSet1 )
-            , m_opacityScale( 1.0 )
+            : m_opacityScale( 1.0 ),
+              m_histogram( rhs.m_histogram )
     {
     }
 
@@ -67,10 +67,8 @@ public:
      */
     WTransferFunction2D& operator=( const WTransferFunction2D &rhs )
     {
-        this->m_isominDataSet0 = rhs.m_isominDataSet0;
-        this->m_isomaxDataSet0 = rhs.m_isomaxDataSet0;
-        this->m_isominDataSet1 = rhs.m_isominDataSet1;
-        this->m_isomaxDataSet1 = rhs.m_isomaxDataSet1;
+        this->m_histogram = rhs.m_histogram;
+        this->m_opacityScale = rhs.m_opacityScale;
         return ( *this );
     }
 
@@ -91,33 +89,32 @@ public:
      */
     bool operator!=( const WTransferFunction2D &rhs ) const;
 
+    /**
+     * Set the histogram going along with the transfer function
+     *
+     * \param data the histogram data between m_isomin and m_isomax
+     */
+    void setHistogram( const WHistogram2D &histogram );
+
+    /**
+     * Set the histogram going along with the transfer function
+     *
+     * \param data the histogram data between m_isomin and m_isomax
+     */
+    const WHistogram2D& getHistogram( ) const
+    {
+        return m_histogram;
+    }
+
 private:
-    /**
-     * The smallest used iso value of the first data set.
-     */
-    double m_isominDataSet0;
-
-    /**
-     * The largest used iso value of the first data set.
-     */
-    double m_isomaxDataSet0;
-
-    /**
-     * The smallest used iso value of the second data set.
-     */
-    double m_isominDataSet1;
-
-    /**
-     * The largest used iso value of the seocond data set.
-     */
-    double m_isomaxDataSet1;
-
     /**
      * Factor by which the output opacity is scaled
      * to allow for easier specification of very small
      * opacity values.
      */
     double m_opacityScale;
+
+    WHistogram2D m_histogram;
 
     friend std::ostream& operator << ( std::ostream& out, const WTransferFunction2D& tf );
 };
