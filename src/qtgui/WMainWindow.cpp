@@ -151,13 +151,6 @@ void WMainWindow::setupGUI()
                                                                false,
                                                                true    // this requires a restart
                                                        );
-    WSettingAction* showVRWidgets = new WSettingAction( this, "qtgui/showVREyeWidgets",
-                                                               "Show VR Eye Views",
-                                                               "Disables the eye views completely. This can lead to a speed-up and is "
-                                                               "recommended for those who do not need them.",
-                                                               false,
-                                                               true    // this requires a restart
-                                                       );
     m_sliderMinMaxEditSetting = new WSettingAction( this, std::string( "qtgui/" ) +  std::string( "sliderMinMaxEdit" ),
                                                     "Slider Min/Max Editing",
                                                     "If enabled, the maximum and minimum values of slider can be edited.",
@@ -359,7 +352,6 @@ void WMainWindow::setupGUI()
     m_viewMenu->addAction( hideMenuAction );
     m_viewMenu->addSeparator();
     m_viewMenu->addAction( showNavWidgets );
-    m_viewMenu->addAction( showVRWidgets );
     m_viewMenu->addSeparator();
     m_viewMenu->addMenu( m_permanentToolBar->getStyleMenu() );
     m_settingsMenu->addAction( m_sliderMinMaxEditSetting );
@@ -423,22 +415,6 @@ void WMainWindow::setupGUI()
         }
     }
 
-    // initially 2 vr eye views
-    {
-        if( showVRWidgets->get() )
-        {
-            m_widgetLeftEye = std::shared_ptr< WQtGLDockWidget >( new WQtGLDockWidget( "Left Eye View", "Left Eye View",
-                                                                    this, WGECamera::ProjectionMode::PERSPECTIVE, m_mainGLWidget ) );
-
-            addDockWidget( Qt::LeftDockWidgetArea, m_widgetLeftEye.get(), Qt::Vertical );
-
-            m_widgetRightEye = std::shared_ptr< WQtGLDockWidget >( new WQtGLDockWidget( "Right Eye View", "Right Eye View",
-                                                                    this, WGECamera::ProjectionMode::PERSPECTIVE, m_mainGLWidget ) );
-
-            addDockWidget( Qt::LeftDockWidgetArea, m_widgetRightEye.get(), Qt::Vertical );
-        }
-    }
-
     // create the show/hide actions using the selection manager's props
     WQtPropertyBoolAction* showAxial = new WQtPropertyBoolAction( WKernel::getRunningKernel()->getSelectionManager()->getPropAxialShow(),
                                                                   m_permanentToolBar );
@@ -458,18 +434,6 @@ void WMainWindow::setupGUI()
     showSagittal->setText( "Toggle Sagittal Slice" );
     showSagittal->setIcon( m_iconManager.getIcon( "sagittal icon" ) );
 
-    WQtPropertyBoolAction* showLeftEye = new WQtPropertyBoolAction( WKernel::getRunningKernel()->getSelectionManager()->getPropSagittalShow(),
-                                                                     m_permanentToolBar );
-    showLeftEye->setToolTip( "Toggle left eye" );
-    showLeftEye->setText( "Toggle left eye" );
-    showLeftEye->setIcon( m_iconManager.getIcon( "sagittal icon" ) );
-
-    WQtPropertyBoolAction* showRightEye = new WQtPropertyBoolAction( WKernel::getRunningKernel()->getSelectionManager()->getPropSagittalShow(),
-                                                                     m_permanentToolBar );
-    showRightEye->setToolTip( "Toggle right eye" );
-    showRightEye->setText( "Toggle right eye" );
-    showRightEye->setIcon( m_iconManager.getIcon( "sagittal icon" ) );
-
     // setup permanent toolbar
     m_permanentToolBar->addAction( m_newAction );
     m_permanentToolBar->addAction( m_loadButton );
@@ -480,8 +444,6 @@ void WMainWindow::setupGUI()
     m_permanentToolBar->addAction( showAxial );
     m_permanentToolBar->addAction( showCoronal );
     m_permanentToolBar->addAction( showSagittal );
-    m_permanentToolBar->addAction( showLeftEye );
-    m_permanentToolBar->addAction( showRightEye );
     m_permanentToolBar->addSeparator();
 
     // set the according actions to the toolbars
@@ -971,14 +933,6 @@ void WMainWindow::closeEvent( QCloseEvent* e )
         {
             m_navSagittal->close();
         }
-        if( m_widgetLeftEye )
-        {
-            m_widgetLeftEye->close();
-        }
-        if( m_widgetRightEye )
-        {
-            m_widgetRightEye->close();
-        }
 
         // finally close
         e->accept();
@@ -1195,14 +1149,6 @@ void WMainWindow::restoreSavedState()
     if( m_navSagittal )
     {
         m_navSagittal->restoreSettings();
-    }
-    if( m_widgetLeftEye )
-    {
-        m_widgetLeftEye->restoreSettings();
-    }
-    if( m_widgetRightEye )
-    {
-        m_widgetRightEye->restoreSettings();
     }
 }
 
