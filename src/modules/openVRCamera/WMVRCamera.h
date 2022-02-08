@@ -167,7 +167,7 @@ private:
 
     vr::IVRSystem *m_vrSystem; //!< The OpenVR SDK Interface.
     vr::IVRRenderModels *m_vrRenderModels; //!< The OpenVR RenderModel Interface.
-    
+
     bool m_vrIsInitialized; //!< Denotes whether the OpenVR SDK was initialized successfully.
     uint32_t m_vrRenderWidth; //!< The recommended texture width from vr_system.
     uint32_t m_vrRenderHeight; //!< The recommended texture height from vr_system.
