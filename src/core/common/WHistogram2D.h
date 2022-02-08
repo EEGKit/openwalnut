@@ -90,6 +90,24 @@ public:
     virtual size_t operator()( size_t i, size_t j ) const;
 
     /**
+     * Convenience function to compare two 2D histograms.
+     *
+     * \param i X-index
+     *
+     * \return elements in the bucket.
+     */
+    virtual bool operator==( const WHistogram2D &rhs ) const;
+
+    /**
+     * Convenience function to compare two 2D histograms.
+     *
+     * \param i X-index
+     *
+     * \return elements in the bucket.
+     */
+    virtual bool operator!=( const WHistogram2D &rhs ) const;
+
+    /**
      * Return the measure of one specific bucket. For one dimensional Histograms this is the width of the bucket, for two
      * dimensions this is the area, for three dims this is the volume, etc.
      *

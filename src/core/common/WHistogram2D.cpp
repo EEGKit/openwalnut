@@ -51,7 +51,11 @@ WHistogram2D::~WHistogram2D()
 WHistogram2D::WHistogram2D( const WHistogram2D& other )
     : WHistogramND( other )
 {
+    m_min = other.m_min;
+    m_max = other.m_max;
+    m_nbBuckets = other.m_nbBuckets;
     m_bins = other.m_bins;
+    m_intervalWidth = other.m_intervalWidth;
 }
 
 size_t WHistogram2D::operator()( SizeArray index ) const
@@ -64,6 +68,33 @@ size_t WHistogram2D::operator()( size_t i, size_t j ) const
     SizeArray index = {{ i, j }};
     return operator()( index );
 }
+
+bool WHistogram2D::operator==( const WHistogram2D &rhs ) const
+{
+    if( this->m_bins.size() == rhs.m_bins.size() &&
+        this->m_min == rhs.m_min &&
+        this->m_max == rhs.m_max &&
+        this->m_buckets == rhs.m_buckets &&
+        this->m_intervalWidth == rhs.m_intervalWidth &&
+        this->m_nbBuckets == rhs.m_nbBuckets )
+    {
+        // We need to make sure that the dimensions of m_bins is the same
+        // when comparing them
+        if( this->m_bins.isApprox( rhs.m_bins ) )
+        {
+            wlog::debug( "Histogram2D" ) << "hists are equal";
+            return true;
+        }
+    }
+    wlog::debug( "Histogram2D" ) << "hists are not equal";
+    return false;
+}
+
+bool WHistogram2D::operator!=( const WHistogram2D &rhs ) const
+{
+    return !( *this == rhs );
+}
+
 
 double WHistogram2D::getBucketSize( SizeArray /* index */ ) const
 {
@@ -167,6 +198,7 @@ unsigned char* WHistogram2D::getRawTexture()
 {
     size_t imageWidth = m_buckets[ 0 ];
     size_t imageHeight = m_buckets[ 1 ];
+    wlog::debug( "WHistogram2D" ) << "Texturesize width * height: " << m_buckets[0] << " * " << m_buckets[1];
     float maxCount = 0;
 
     for( size_t j = 0; j < imageHeight; ++j ) // get max bin for scaling
@@ -180,8 +212,7 @@ unsigned char* WHistogram2D::getRawTexture()
         }
     }
 
-    unsigned char* data = new unsigned char[ 4 * imageWidth * imageHeight ];
-
+    unsigned char * data = new unsigned char[ 4 * imageWidth * imageHeight ];
     for( size_t i = 0; i < imageWidth; ++i )
     {
         for( size_t j = 0; j < imageHeight; ++j )
@@ -199,7 +230,6 @@ unsigned char* WHistogram2D::getRawTexture()
 //    {
 //        wlog::debug( "Hist2D" ) << static_cast< float >( data[ k ] );
 //    }
-
     return data;
 }
 
