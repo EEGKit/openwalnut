@@ -43,12 +43,12 @@ class WMTransferFunction2D: public WModule
 {
 public:
     /**
-     *
+     * Constructor
      */
     WMTransferFunction2D();
 
     /**
-     *
+     * Destructor
      */
     virtual ~WMTransferFunction2D();
 

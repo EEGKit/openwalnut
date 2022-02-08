@@ -92,18 +92,18 @@ public:
     /**
      * Convenience function to compare two 2D histograms.
      *
-     * \param i X-index
+     * \param rhs Histogram to compare with
      *
-     * \return elements in the bucket.
+     * \return true if equal, false if not equal.
      */
     virtual bool operator==( const WHistogram2D &rhs ) const;
 
     /**
      * Convenience function to compare two 2D histograms.
      *
-     * \param i X-index
+     * \param rhs Histogram to compare with
      *
-     * \return elements in the bucket.
+     * \return true if equal, false if not equal.
      */
     virtual bool operator!=( const WHistogram2D &rhs ) const;
 

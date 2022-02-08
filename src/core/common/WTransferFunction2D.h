@@ -92,14 +92,14 @@ public:
     /**
      * Set the histogram going along with the transfer function
      *
-     * \param data the histogram data between m_isomin and m_isomax
+     * \param histogram the histogram
      */
     void setHistogram( const WHistogram2D &histogram );
 
     /**
-     * Set the histogram going along with the transfer function
+     * Get the histogram going along with the transfer function
      *
-     * \param data the histogram data between m_isomin and m_isomax
+     * \returns the stored histogram
      */
     const WHistogram2D& getHistogram( ) const
     {
@@ -114,6 +114,9 @@ private:
      */
     double m_opacityScale;
 
+    /**
+     * Holds a reference to the histogram to be rendered
+     */
     WHistogram2D m_histogram;
 
     friend std::ostream& operator << ( std::ostream& out, const WTransferFunction2D& tf );

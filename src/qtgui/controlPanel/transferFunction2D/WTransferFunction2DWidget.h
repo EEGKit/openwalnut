@@ -90,7 +90,9 @@ public:
     void forceRedraw();
 
     /**
-     * Redraw the widget
+     * Sets the histogram
+     *
+     * \param newHistogram is the histogram which is to be set here
      */
     void setHistogram( WHistogram2D newHistogram );
 
@@ -148,10 +150,12 @@ private:
     /** our scene */
     QGraphicsScene *scene;
 
-    WTransferFunction2DBackground *background; //! background that displays the histogram
-    WHistogram2D *hist = NULL; //! histogram which is displayed on the background
-
-    bool initialized; //< set to true after initialization
+    /** background that displays the histogram */
+    WTransferFunction2DBackground *background;
+    /** histogram which is displayed on the background */
+    WHistogram2D *hist = NULL;
+    /** set to true after initialization */
+    bool initialized;
 };
 
 #endif  // WTRANSFERFUNCTION2DWIDGET_H
