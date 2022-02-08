@@ -29,17 +29,30 @@
 
 #include "WAssert.h"
 #include "WTransferFunction2D.h"
+#include "WLogger.h"
 
 bool WTransferFunction2D::operator==( const WTransferFunction2D &rhs ) const
 {
+    if( m_histogram == rhs.m_histogram )
+    {
+        //wlog::debug("WTransferFunction2D") << "== true";
+        return true;
+    }
+    //wlog::debug("WTransferFunction2D") << "== false";
     return false;
 }
 
 bool WTransferFunction2D::operator!=( const WTransferFunction2D &rhs ) const
 {
-    return false;
+    //wlog::debug("WTransferFunction2D") << "op != :" << (!( ( *this ) == rhs ));
+    return !( ( *this ) == rhs );
 }
-
+void WTransferFunction2D::setHistogram( const WHistogram2D &histogram )
+{
+    //wlog::debug("WTransferFunction2D") << "setHistogram";
+    if( histogram != m_histogram )
+        m_histogram = histogram;
+}
 std::ostream& operator << ( std::ostream& out, const WTransferFunction2D& tf )
 {
     out << "";
