@@ -52,7 +52,7 @@ void WDataCreatorFiberParallel::operator()( int seed,
 {
     WAssert( length2( m_direction->get() ) != 0, "The direction should not be (0, 0, 0)!" );
 
-    std::uniform_real_distribution< double > unif( -0.5, 0.5 );
+    std::uniform_real_distribution< double > unif( 0.0, 1.0 );
     std::default_random_engine re;
     re.seed( seed );
 
@@ -66,12 +66,12 @@ void WDataCreatorFiberParallel::operator()( int seed,
 
         // parameter of ray to calculate the intersection points
         double tmin, tmax, tymin, tymax, tzmin, tzmax;
-        tmin  = ( -0.5 * size.x() - x ) / dir.x();
-        tmax  = (  0.5 * size.x() - x ) / dir.x();
-        tymin = ( -0.5 * size.y() - y ) / dir.y();
-        tymax = (  0.5 * size.y() - y ) / dir.y();
-        tzmin = ( -0.5 * size.z() - z ) / dir.z();
-        tzmax = (  0.5 * size.z() - z ) / dir.z();
+        tmin  = ( 0.0 * size.x() - x ) / dir.x();
+        tmax  = ( 1.0 * size.x() - x ) / dir.x();
+        tymin = ( 0.0 * size.y() - y ) / dir.y();
+        tymax = ( 1.0 * size.y() - y ) / dir.y();
+        tzmin = ( 0.0 * size.z() - z ) / dir.z();
+        tzmax = ( 1.0 * size.z() - z ) / dir.z();
         tmin = fmax( fmax( tmin, tymin ), tzmin );
         tmax = fmin( fmin( tmax, tymax ), tzmax );
 

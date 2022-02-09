@@ -49,7 +49,7 @@ void WDataCreatorFiberRandom::operator()( int seed,
                                         WDataSetFibers::IndexArray fibIdxVertexMap,
                                         WDataSetFibers::ColorArray colors )
 {
-    std::uniform_real_distribution< double > unif( -0.5, 0.5 );
+    std::uniform_real_distribution< double > unif( 0.0, 1.0 );
     std::default_random_engine re;
     re.seed( seed );
 

@@ -171,6 +171,7 @@ void WMTransferFunctionColorBar::moduleMain()
 
                 // create a colorbar geode
                 m_colorBar = wge::genFinitePlane( osg::Vec3( 0.025, 0.1, 0.0 ), osg::Vec3( 0.025, 0.0, 0.0 ), osg::Vec3( 0.0, 0.8, 0.0 ) );
+                m_colorBar->setName( "Transfer Function Color Bar" );
                 osg::ref_ptr< osg::Geode > colorBarBorder = wge::genFinitePlane( osg::Vec3( 0.025 - borderWidth, 0.1 - borderWidth, -0.1 ),
                                                                                  osg::Vec3( 0.025 + 2.0 * borderWidth, 0.0, -0.1 ),
                                                                                  osg::Vec3( 0.0, 0.8 + 2.0 * borderWidth, -0.1 ) );

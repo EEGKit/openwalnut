@@ -63,6 +63,7 @@ WGEViewerEffect::WGEViewerEffect( std::string name, std::string description, con
     m_geode = wge::genFinitePlane( osg::Vec3( 0.0, 0.0, 0.0 ),
                                    osg::Vec3( 1.0, 0.0, 0.0 ),
                                    osg::Vec3( 0.0, 1.0, 0.0 ) );
+    m_geode->setName( "__Viewer Effect Plane" ); // Two underscores to be ignore during picking
 
     // add the slice to the geode
     addChild( m_geode );

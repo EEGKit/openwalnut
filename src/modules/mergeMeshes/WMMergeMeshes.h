@@ -22,38 +22,34 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WMDATACREATORSCALAR_H
-#define WMDATACREATORSCALAR_H
+#ifndef WMMERGEMESHES_H
+#define WMMERGEMESHES_H
 
 #include <memory>
 #include <string>
 
-#include "WDataSetSingleCreatorInterface.h"
-#include "core/common/WObjectNDIP.h"
-#include "core/common/WStrategyHelper.h"
-#include "core/dataHandler/WDataHandlerEnums.h"
-#include "core/dataHandler/WDataSetScalar.h"
-#include "core/dataHandler/WValueSetBase.h"
+#include "core/graphicsEngine/WTriangleMesh.h"
 #include "core/kernel/WModule.h"
+#include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
 
 /**
- * Module which utilizes the strategy pattern to provide a multitude of dataset creation algorithms for scalar data.
+ * This modules takes some mesh data and merges them into one new mesh dataset
  *
  * \ingroup modules
  */
-class WMDataCreatorScalar: public WModule
+class WMMergeMeshes: public WModule
 {
 public:
     /**
-     * Standard constructor.
+     * Default constructor.
      */
-    WMDataCreatorScalar();
+    WMMergeMeshes();
 
     /**
      * Destructor.
      */
-    ~WMDataCreatorScalar();
+    virtual ~WMMergeMeshes();
 
     /**
      * Gives back the name of this module.
@@ -63,7 +59,7 @@ public:
 
     /**
      * Gives back a description of this module.
-     * \return description of module.
+     * \return description to module.
      */
     virtual const std::string getDescription() const;
 
@@ -99,25 +95,25 @@ protected:
 
 private:
     /**
+     * The first input data.
+     */
+    std::shared_ptr< WModuleInputData< WTriangleMesh > > m_meshInput1;
+
+    /**
+     * The second input data.
+     */
+    std::shared_ptr< WModuleInputData< WTriangleMesh > > m_meshInput2;
+
+    /**
+     * The output connector used to provide the calculated mesh data to other modules.
+     */
+    std::shared_ptr< WModuleOutputData< WTriangleMesh > > m_meshOutput;
+
+    /**
      * A condition used to notify about changes in several properties.
      */
     std::shared_ptr< WCondition > m_propCondition;
-
-    std::shared_ptr< WModuleOutputData< WDataSetScalar > > m_output; //!< The only output of this module.
-
-    WPropInt m_nbVoxelsX; //!< number of voxels in x direction
-    WPropInt m_nbVoxelsY; //!< number of voxels in y direction
-    WPropInt m_nbVoxelsZ; //!< number of voxels in z direction
-
-    WPropPosition m_origin; //!< where to put the origin
-    WPropPosition m_size; //!< where to put the origin
-
-    WPropBool m_timeDependent; //!< Use time dependent variation of data (experimental).
-
-    WPropSelection m_valueType; //!< the datatype of the valueset
-    WPropSelection m_structuralType; //!< select between scalar, vector and other structural types
-
-    WStrategyHelper< WObjectNDIP< WDataSetSingleCreatorInterface > > m_strategy; //!< the strategy currently active.
 };
 
-#endif  // WMDATACREATORSCALAR_H
+#endif  // WMMERGEMESHES_H
+

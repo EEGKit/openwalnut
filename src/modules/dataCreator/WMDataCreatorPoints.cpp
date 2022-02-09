@@ -2,7 +2,7 @@
 //
 // Project: OpenWalnut ( http://www.openwalnut.org )
 //
-// Copyright 2009 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
+// Copyright 2022 OpenWalnut Community, BSV@Uni-Leipzig and CNCF@MPI-CBS
 // For more information see http://www.openwalnut.org/copying
 //
 // This file is part of OpenWalnut.
@@ -25,11 +25,13 @@
 #include <algorithm>
 #include <memory>
 #include <string>
+#include <thread>
+#include <chrono>
 
 #include "WDataCreatorTorus.h"
 #include "WMDataCreatorPoints.h"
 #include "WDataCreatorPointsRandom.h"
-// #include "WMDataCreatorFibers.xpm"
+#include "WMDataCreatorPoints.xpm"
 #include "core/common/WAssert.h"
 #include "core/common/WProgress.h"
 #include "core/common/WStrategyHelper.h"
@@ -62,8 +64,7 @@ std::shared_ptr< WModule > WMDataCreatorPoints::factory() const
 
 const char** WMDataCreatorPoints::getXPMIcon() const
 {
-    return NULL;
-    // return datacreator_xpm;
+    return datacreatorpoints_xpm;
 }
 
 const std::string WMDataCreatorPoints::getName() const
@@ -73,7 +74,7 @@ const std::string WMDataCreatorPoints::getName() const
 
 const std::string WMDataCreatorPoints::getDescription() const
 {
-    return "Allows the user to create fiber data sets providing a bunch of data creation schemes.";
+    return "Allows the user to create point data sets providing a bunch of data creation schemes.";
 }
 
 void WMDataCreatorPoints::connectors()
@@ -94,13 +95,16 @@ void WMDataCreatorPoints::properties()
     m_size = m_properties->addProperty( "Size", "The size of the dataset along the X,Y, and Z axis in the OpenWalnut coordinate system.",
                                         WPosition( 128.0, 128.0, 128.0 ), m_propCondition );
 
-    // the seed
     m_seed = m_properties->addProperty( "Seed", "The seed for the random numbers to create.", 0, m_propCondition );
 
-    // how much fibs and verts?
     m_numPoints = m_properties->addProperty( "Num Points", "The number of points to create.", 500, m_propCondition );
     m_numPoints->setMin( 1 );
     m_numPoints->setMax( 1000000 );
+
+    m_timeDependent = m_properties->addProperty( "Time dependent (experimental)",
+                                                 "Vary data over time. This feature is <b>experimental</b>.",
+                                                 false,
+                                                 m_propCondition );
 
     m_pointColor = m_properties->addProperty( "Color", "Color for the points.", defaultColor::WHITE, m_propCondition );
 
@@ -161,7 +165,13 @@ void WMDataCreatorPoints::moduleMain()
         // Now, the moduleState variable comes into play. The module can wait for the condition, which gets fired whenever the input receives data
         // or an property changes. The main loop now waits until something happens.
         debugLog() << "Waiting ...";
+
+        if( m_timeDependent->get() )
+        {
+            m_size->set( WVector3d( m_size->get()[0], m_size->get()[1], static_cast<int>( m_size->get()[2] + 10 ) % 1000 ) );
+            std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
+        }
+
         m_moduleState.wait();
     }
 }
-

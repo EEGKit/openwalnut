@@ -58,7 +58,7 @@ void WDataCreatorFiberStar::operator()( int seed,
         WVector3d dir( unif( re ), unif( re ), unif( re ) );
         dir = normalize( dir );
 
-        WVector3d ray( dir.x() * size.x(), dir.y() * size.y(), dir.z() * size.z() );
+        WVector3d ray( dir.x() * ( size.x() / 2.0 ), dir.y() * ( size.y() / 2.0 ), dir.z() * ( size.z() / 2.0 ) );
         ray /= numVertsPerFiber;
 
         fibIdx->push_back( fidx * numVertsPerFiber );
@@ -68,9 +68,9 @@ void WDataCreatorFiberStar::operator()( int seed,
         {
             WVector3d vec = ray * vidx;
 
-            vertices->push_back( origin.x() + vec.x() );
-            vertices->push_back( origin.y() + vec.y() );
-            vertices->push_back( origin.z() + vec.z() );
+            vertices->push_back( origin.x() + vec.x() + size.x() / 2.0 );
+            vertices->push_back( origin.y() + vec.y() + size.y() / 2.0 );
+            vertices->push_back( origin.z() + vec.z() + size.z() / 2.0 );
 
             colors->push_back( color.x() );
             colors->push_back( color.y() );

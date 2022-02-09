@@ -25,6 +25,8 @@
 #include <algorithm>
 #include <memory>
 #include <string>
+#include <thread>
+#include <chrono>
 
 #include "WDataCreatorFiberParallel.h"
 #include "WDataCreatorFiberRandom.h"
@@ -107,6 +109,11 @@ void WMDataCreatorFibers::properties()
     m_numVertsPerFiber->setMin( 1 );
     m_numVertsPerFiber->setMax( 10000 );
 
+    m_timeDependent = m_properties->addProperty( "Time dependent (experimental)",
+                                                 "Vary data over time. This feature is <b>experimental</b>.",
+                                                 false,
+                                                 m_propCondition );
+
     m_fibColor = m_properties->addProperty( "Color", "Color for the fibers.", defaultColor::WHITE, m_propCondition );
 
     // now, setup the strategy helper.
@@ -172,6 +179,12 @@ void WMDataCreatorFibers::moduleMain()
 
         // done. update output
         m_output->updateData( ds );
+
+        if( m_timeDependent->get() )
+        {
+            m_size->set( WVector3d( m_size->get()[0], m_size->get()[1], static_cast<int>( m_size->get()[2] + 10 ) % 1000 ) );
+            std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
+        }
 
         // Now, the moduleState variable comes into play. The module can wait for the condition, which gets fired whenever the input receives data
         // or an property changes. The main loop now waits until something happens.
