@@ -30,6 +30,7 @@
 #include <boost/utility.hpp>
 
 #include "WProgressCombiner.h"
+#include <mutex>
 
 WProgressCombiner::WProgressCombiner( std::string name ):
     WProgress( name, 1 ),

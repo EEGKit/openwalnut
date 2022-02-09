@@ -23,6 +23,7 @@
 //---------------------------------------------------------------------------
 
 #include "WConditionOneShot.h"
+#include <mutex>
 
 WConditionOneShot::WConditionOneShot()
     : WCondition()

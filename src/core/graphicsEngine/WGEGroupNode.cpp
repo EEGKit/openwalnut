@@ -30,6 +30,7 @@
 #include <osg/ShapeDrawable>
 
 #include "WGEGroupNode.h"
+#include <mutex>
 
 WGEGroupNode::WGEGroupNode():
     osg::MatrixTransform(),

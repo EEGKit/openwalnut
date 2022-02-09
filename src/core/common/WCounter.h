@@ -28,6 +28,7 @@
 #include <shared_mutex>
 
 #include <boost/thread.hpp>
+#include <mutex>
 
 /**
  * This is a simple but thread-safe counter. Use it to handle counting between multiple threads. When used as static member, you can utilized

@@ -23,6 +23,7 @@
 //---------------------------------------------------------------------------
 
 #include "WCondition.h"
+#include <mutex>
 
 WCondition::WCondition()
 {

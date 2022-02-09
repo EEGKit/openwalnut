@@ -25,6 +25,7 @@
 #include <memory>
 
 #include "WConditionSet.h"
+#include <mutex>
 
 WConditionSet::WConditionSet():
     WCondition(),
