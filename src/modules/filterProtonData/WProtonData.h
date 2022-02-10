@@ -37,7 +37,7 @@
 
 
 /**
- * Holds the csv data.
+ * Holds the SCV data.
  */
 class WProtonData
 {
