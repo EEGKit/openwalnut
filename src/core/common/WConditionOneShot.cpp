@@ -22,8 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WConditionOneShot.h"
 #include <mutex>
+
+#include "WConditionOneShot.h"
 
 WConditionOneShot::WConditionOneShot()
     : WCondition()
