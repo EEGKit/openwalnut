@@ -113,22 +113,22 @@ protected:
      */
     virtual void drawBackground( QPainter *painter, const QRectF &rect );
 
-    /**
-     * Interactions implemented so far:
-     * right click: insert new object (Ctrl+left click or two-finger tap on OSX)
-     * left click on objects: (handled by individual objects) move control points and select
-     *     object
-     * double click on objects: (handled by individual objects) open parameter dialog, e.g.,
-     *     to change the color
-     * "Delete" or "Backspace": delete selected itom
-     * \param event the event to handle
-     */
+//    /**
+//     * Interactions implemented so far:
+//     * right click: insert new object (Ctrl+left click or two-finger tap on OSX)
+//     * left click on objects: (handled by individual objects) move control points and select
+//     *     object
+//     * double click on objects: (handled by individual objects) open parameter dialog, e.g.,
+//     *     to change the color
+//     * "Delete" or "Backspace": delete selected itom
+//     * \param event the event to handle
+//     */
     //virtual void keyPressEvent( QKeyEvent *event );
-
-    /**
-     * For a documentation of the implemented actions confer the keyPressEvent documentation.
-     * \param event the event to handle
-     */
+//
+//    /**
+//     * For a documentation of the implemented actions confer the keyPressEvent documentation.
+//     * \param event the event to handle
+//     */
     //virtual void mousePressEvent( QMouseEvent *event );
 
     /**
