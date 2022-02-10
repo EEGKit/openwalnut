@@ -148,7 +148,9 @@ void WMData::properties()
     m_matrixSelectionsList->addItem( "sform", "" );
     m_matrixSelectionsList->addItem( "qform", "" );
 
-    m_matrixSelection = m_properties->addProperty( "Transformation matrix",  "matrix",
+    m_matrixSelection = m_properties->addProperty( "Transformation matrix",
+                                                   "Describes the way the voxels are transformed to coordinates in space. "\
+                                                   "See the \"Information\" tab for the values.",
             m_matrixSelectionsList->getSelectorFirst(), m_propCondition );
     WPropertyHelper::PC_SELECTONLYONE::addTo( m_matrixSelection );
 
