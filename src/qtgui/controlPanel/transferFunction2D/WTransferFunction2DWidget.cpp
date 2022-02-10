@@ -35,6 +35,7 @@
 #include "core/common/WHistogram2D.h"
 #include "core/common/WLogger.h"
 #include "core/common/WTransferFunction2D.h"
+#include "WTransferFunction2DQuadTool.h"
 
 WTransferFunction2DWidget::WTransferFunction2DWidget( QWidget* qparent, WTransferFunction2DGuiNotificationClass* parent ):
         BaseClass( qparent ),
@@ -65,6 +66,9 @@ WTransferFunction2DWidget::WTransferFunction2DWidget( QWidget* qparent, WTransfe
 
     // insert background and histogram items
     scene->addItem( background = new WTransferFunction2DBackground( this ) );
+
+    WTransferFunction2DQuadTool* square = new WTransferFunction2DQuadTool( background );
+    scene->addItem( square );
 
     initialized = true;
     // initialize the color map (aka. background)
