@@ -60,7 +60,6 @@
 #include "io/WReaderVTK.h"
 
 #include "WMData.h"
-#include "WMData.xpm"
 
 
 WMData::WMData():
@@ -83,11 +82,6 @@ std::shared_ptr< WModule > WMData::factory() const
     return std::shared_ptr< WModule >( new WMData() );
 }
 
-const char** WMData::getXPMIcon() const
-{
-    return WMData_xpm;
-}
-
 const std::string WMData::getName() const
 {
     return "Data Module";
@@ -95,7 +89,7 @@ const std::string WMData::getName() const
 
 const std::string WMData::getDescription() const
 {
-    return "This module encapsulates data.";
+    return ""; // see META file
 }
 
 std::vector< WDataModuleInputFilter::ConstSPtr > WMData::getInputFilter() const
