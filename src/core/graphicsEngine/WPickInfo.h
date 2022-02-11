@@ -85,7 +85,8 @@ public:
                       modifierKey modKey,
                       WMouseButton mButton = WPickInfo::MOUSE_LEFT,
                       WVector3d pickNormal = WVector3d(),
-                      int32_t wheelValue = 0 );
+                      int32_t wheelValue = 0,
+                      std::string pickPath = "" );
 
     /**
      * Creates an object with the empty name, zero position and no modkey.
@@ -125,6 +126,27 @@ public:
      * \return object name
      */
     inline std::string getName() const;
+
+    /**
+     * Get name of all picked objects in ray.
+     *
+     * \return Names
+     */
+    inline std::string getPickPath() const;
+
+    /**
+     * Set pick path string.
+     *
+     * \param path String representing the pick path
+     */
+    inline void setPickPath( std::string path );
+
+    /**
+     * Add object to pick path.
+     *
+     * \param name Name of new object in path.
+     */
+    inline void appendToPickPath( std::string name );
 
     /**
      * Get name of the viewer.
@@ -197,7 +219,8 @@ WPickInfo::WPickInfo( std::string name,
                       modifierKey modKey,
                       WMouseButton mButton,
                       WVector3d pickNormal,
-                      int32_t wheelValue ) :
+                      int32_t wheelValue,
+                      std::string pickPath ) :
     m_name( name ),
     m_viewerName( viewerName ),
     m_pickPosition( pickPosition ),
@@ -205,7 +228,8 @@ WPickInfo::WPickInfo( std::string name,
     m_modKey( modKey ),
     m_mouseButton( mButton ),
     m_pickNormal( pickNormal ),
-    m_scrollValue( wheelValue )
+    m_scrollValue( wheelValue ),
+    m_pickPath( pickPath )
 {
 }
 
@@ -216,7 +240,8 @@ WPickInfo::WPickInfo() :
     m_pixelCoords( std::make_pair( 0.0, 0.0 ) ),
     m_modKey( WPickInfo::NONE ),
     m_mouseButton( WPickInfo::MOUSE_LEFT ),
-    m_scrollValue( 0 )
+    m_scrollValue( 0 ),
+    m_pickPath( "" )
 {
 }
 
@@ -243,6 +268,21 @@ void WPickInfo::setMouseButton( const WMouseButton& mButton )
 std::string WPickInfo::getName() const
 {
     return m_name;
+}
+
+std::string WPickInfo::getPickPath() const
+{
+    return m_pickPath;
+}
+
+void WPickInfo::setPickPath( std::string path )
+{
+     m_pickPath = path;
+}
+
+void WPickInfo::appendToPickPath( std::string name )
+{
+     m_pickPath += " -- " + name + "\n ";
 }
 
 std::string WPickInfo::getViewerName() const
