@@ -312,7 +312,7 @@ void WPickHandler::pick( osgViewer::View* view, const osgGA::GUIEventAdapter& ea
         }
 
         // if we have a previous pick we search for it in the list
-        if( m_startPick.getName() != ""  && m_startPick.getName() != WPickHandler::unpickString )
+        if( m_startPick.getName() != "" && m_startPick.getName() != WPickHandler::unpickString )
         {
             while( ( hitr != intersections.end() ) && !startPickIsStillInList )
             {
@@ -328,7 +328,7 @@ void WPickHandler::pick( osgViewer::View* view, const osgGA::GUIEventAdapter& ea
     } // end of if( intersetionsExist )
     else
     {
-        // if we found no intersection and we have noting picked before
+        // If we found no intersection and we have noting picked before
         // we want to return "nothing" in order to provide the pixel coordinates
         // even though we did not hit anything.
         if(  m_startPick.getName() == "" )

@@ -202,14 +202,15 @@ public:
 
 protected:
 private:
-    std::string m_name; //!< name of picked object.
-    std::string m_viewerName; //!< name of the viewer
-    WPosition m_pickPosition; //!< position where object was hit.
+    std::string m_name; //!< Name of picked object.
+    std::string m_viewerName; //!< Name of the viewer
+    WPosition m_pickPosition; //!< Position where object was hit.
     std::pair< float, float > m_pixelCoords; //!< Pixel coordinates of the mouse.
-    modifierKey m_modKey; //!< modifier key associated with the pick
-    WMouseButton m_mouseButton; //!< which mouse button was used for the pick
-    WVector3d m_pickNormal; //!< normal at position where object was hit.
-    int32_t m_scrollValue; //!< the scroll wheel value.
+    modifierKey m_modKey; //!< Modifier key associated with the pick
+    WMouseButton m_mouseButton; //!< Which mouse button was used for the pick
+    WVector3d m_pickNormal; //!< Normal at position where object was hit.
+    int32_t m_scrollValue; //!< The scroll wheel value.
+    std::string m_pickPath; //!< Name of all picked objects along path.
 };
 
 WPickInfo::WPickInfo( std::string name,
