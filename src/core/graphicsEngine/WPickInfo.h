@@ -77,6 +77,7 @@ public:
      * \param mButton mouse button that initiated the pick
      * \param pickNormal normal at position where object was hit. (0,0,0) means not set.
      * \param wheelValue the value of the scroll wheel
+     * \param pickPath Names of objects hit in pick
      */
     inline WPickInfo( std::string name,
                       std::string viewerName,
