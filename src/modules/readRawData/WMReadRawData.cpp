@@ -98,13 +98,13 @@ void WMReadRawData::properties()
 
     m_X = m_properties->addProperty( "X", "Data sample in X direction.", 256, m_propCondition );
     m_X->setMin( 0 );
-    m_X->setMax( 1024 );
+    m_X->setMax( 4096 );
     m_Y = m_properties->addProperty( "Y", "Data sample in Y direction.", 256, m_propCondition );
     m_Y->setMin( 0 );
-    m_Y->setMax( 1024 );
+    m_Y->setMax( 4096 );
     m_Z = m_properties->addProperty( "Z", "Data sample in Z direction.", 256, m_propCondition );
     m_Z->setMin( 0 );
-    m_Z->setMax( 1024 );
+    m_Z->setMax( 4096 );
 
     m_xScale = m_properties->addProperty( "X Scale", "Data scaling in X direction.", 1.0, m_propCondition );
     m_xScale->setMin( 0 );

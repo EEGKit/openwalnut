@@ -140,9 +140,9 @@ std::list< std::tuple < float, float, float, size_t > > WMWriteCSV::getListOfInt
     size_t vertexCounter = 0;
     size_t reverseCounter = 0;
 
-    float vertexX;
-    float vertexY;
-    float vertexZ;
+    float vertexX = 0; // initialized to quiet avoid warning
+    float vertexY = 0; // initialized to quiet avoid warning
+    float vertexZ = 0; // initialized to quiet avoid warning
 
     for( size_t idx = 0; idx <= vertices->size(); idx++ )
     {
@@ -282,5 +282,3 @@ void WMWriteCSV::writeToFile()
 
     newCSVFile.close();
 }
-
-

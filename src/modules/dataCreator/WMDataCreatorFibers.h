@@ -114,6 +114,13 @@ private:
     WPropInt m_numVertsPerFiber;
 
     /**
+     * The seed for the random.
+     */
+    WPropInt m_seed;
+
+    WPropBool m_timeDependent; //!< Use time dependent variation of data (experimental).
+
+    /**
      * Fiber color.
      */
     WPropColor m_fibColor;

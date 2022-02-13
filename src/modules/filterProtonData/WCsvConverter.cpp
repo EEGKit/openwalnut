@@ -81,8 +81,8 @@ void WCsvConverter::setOutputFromCSV( )
     m_vectors->clear();
     m_indexes->update( m_protonData );
 
-    float maxEdep = 0.0;
-    float minEdep = 1.0;
+    float maxEdep = wlimits::MIN_FLOAT;
+    float minEdep = wlimits::MAX_FLOAT;
 
     for( WDataSetCSV::Content::iterator dataRow = data->begin(); dataRow < data->end(); dataRow++ )
     {
@@ -153,13 +153,16 @@ void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArra
             currentEdep != edeps->end();
             currentEdep++ )
         {
-            float clusterSizeNormalized = ( clusterEnabled ? getClusterSize( *currentEdep ) : *currentEdep ) / maxClusterSize;
+            float clusterSizeNormalized = clusterEnabled ? getClusterSize( *currentEdep ) : *currentEdep;
+            clusterSizeNormalized = ( clusterSizeNormalized - minClusterSize ) / ( maxClusterSize - minClusterSize );
+
+            WAssert( clusterSizeNormalized >= 0 && clusterSizeNormalized <= 1, "The normalized energy deposition must be between 0 and 1" );
 
             m_vectors->getSizes()->push_back( clusterSizeNormalized );
 
             if( m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
             {
-                clusterSizeNormalized = fmax( static_cast< int >( 49 * clusterSizeNormalized ), 0 );
+                clusterSizeNormalized = static_cast< int >( 49 * clusterSizeNormalized );
 
                 for( int i = 0; i < 4; i++ )
                 {
@@ -331,6 +334,12 @@ void WCsvConverter::calculateFibers()
     }
 
     m_fibers = newDS->toWDataSetFibers();
+    if( m_fibers->getVertices()->size() == 0 )
+    {
+        // This is so it doesn't generate colors when there are no fibers, which would result in a module crash.
+        return;
+    }
+
     m_fibers->addColorScheme( cols, "Energy deposition", "Color fibers based on their energy." );
     m_fibers->setSelectedColorScheme( 3 );
 

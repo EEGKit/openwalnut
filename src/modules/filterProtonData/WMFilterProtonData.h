@@ -88,7 +88,7 @@ public:
     virtual const std::string getName() const;
 
     /**
-     * Retruns the description of this module.
+     * Returns the description of this module.
      * \return description of the module.
      */
     virtual const std::string getDescription() const;
@@ -165,12 +165,12 @@ private:
     std::shared_ptr< WModuleOutputData< WDataSetPoints > > m_output_points_eventIds;
 
     /**
-     * Stores information of the input-csv-data
+     * Stores information of the input-CSV-data
      */
     std::shared_ptr< WDataSetCSV > m_dataset;
 
     /**
-     * Contains all property-groups and the subproperties 
+     * Contains all property-groups and the subproperties
      */
     std::shared_ptr < WPropertyStatus > m_propertyStatus;
 
@@ -195,7 +195,7 @@ private:
     void setOutputFromCSV( );
 
     /**
-     * update added group property and subproperty    
+     * Update added group property and subproperty
      */
     void updateProperty();
 

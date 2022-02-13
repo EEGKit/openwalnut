@@ -365,6 +365,7 @@ void WMTriangleMeshRenderer::renderMesh( std::shared_ptr< WTriangleMesh > mesh )
     debugLog() << "Start rendering Mesh";
     osg::ref_ptr< osg::Geometry > geometry;
     osg::ref_ptr< osg::Geode > geode( new osg::Geode );
+    geode->setName( "Triangle Mesh Renderer Geode" );
     geode->getOrCreateStateSet()->addUniform( m_colorMapTransformation );
     geode->getOrCreateStateSet()->addUniform( new WGEPropertyUniform< WPropDouble >( "u_colormapRatio", m_colormapRatio ) );
 

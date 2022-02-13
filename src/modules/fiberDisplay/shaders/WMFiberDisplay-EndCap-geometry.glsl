@@ -35,6 +35,7 @@ layout( triangle_strip, max_vertices = 4 ) out;
 // Uniforms
 /////////////////////////////////////////////////////////////////////////////
 
+uniform mat4 osg_ProjectionMatrix;
 
 /**
  * A point on the plane.

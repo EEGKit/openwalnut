@@ -89,6 +89,11 @@ public:
      */
     MessageType getType() const;
 
+    /**
+     * Reimplement show from QWidget to be able to auto-close it.
+     */
+    void show();
+
 signals:
     /**
      * Called when closing the popup
@@ -147,4 +152,3 @@ private:
 };
 
 #endif  // WQTMESSAGEPOPUP_H
-

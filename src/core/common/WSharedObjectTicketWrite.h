@@ -27,6 +27,7 @@
 
 #include <memory>
 #include <shared_mutex>
+#include <mutex>
 
 
 #include "WCondition.h"

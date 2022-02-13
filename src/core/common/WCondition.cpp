@@ -22,6 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
+#include <mutex>
+
 #include "WCondition.h"
 
 WCondition::WCondition()
@@ -51,4 +53,3 @@ boost::signals2::connection WCondition::subscribeSignal( t_ConditionNotifierType
 {
     return signal_ConditionFired.connect( notifier );
 }
-

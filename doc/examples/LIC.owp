@@ -1,0 +1,93 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Modules and Properties
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+MODULE:0:Data Creator Vector
+// Property Group: Properties
+    PROPERTY:(0,Name)=Data Creator Vector
+    PROPERTY:(0,active)=1
+    PROPERTY:(0,Voxels X)=128
+    PROPERTY:(0,Voxels Y)=128
+    PROPERTY:(0,Voxels Z)=128
+    PROPERTY:(0,Origin)=0;0;0;
+    PROPERTY:(0,Size)=128;128;128;
+    // Property Group: Dataset Creators
+        PROPERTY:(0,Dataset Creators/Creator)=0
+        // Property Group: Random
+            PROPERTY:(0,Dataset Creators/Random/Range Min)=0
+            PROPERTY:(0,Dataset Creators/Random/Range Max)=1
+        // Property Group END: Random
+        // Property Group: Single direction.
+            PROPERTY:(0,Dataset Creators/Single direction./Direction)=0;0;0;
+        // Property Group END: Single direction.
+    // Property Group END: Dataset Creators
+// Property Group END: Properties
+
+MODULE:1:Image Space LIC
+// Property Group: Properties
+    PROPERTY:(1,Name)=Image Space LIC
+    PROPERTY:(1,active)=1
+    // Property Group: Geometry
+        PROPERTY:(1,Geometry/Use Slices)=1
+        // Property Group: Slices
+            PROPERTY:(1,Geometry/Slices/Show Sagittal)=1
+            PROPERTY:(1,Geometry/Slices/Show Coronal)=1
+            PROPERTY:(1,Geometry/Slices/Show Axial)=1
+            PROPERTY:(1,Geometry/Slices/Sagittal Position)=62
+            PROPERTY:(1,Geometry/Slices/Coronal Position)=86
+            PROPERTY:(1,Geometry/Slices/Axial Position)=66
+        // Property Group END: Slices
+    // Property Group END: Geometry
+    // Property Group: LIC
+        PROPERTY:(1,LIC/Use Light)=0
+        PROPERTY:(1,LIC/Light Intensity)=1
+        PROPERTY:(1,LIC/Edges)=1
+        PROPERTY:(1,LIC/Edge Color)=1 1 1 1
+        PROPERTY:(1,LIC/Edge Step)=1
+        PROPERTY:(1,LIC/High Contrast)=0
+        PROPERTY:(1,LIC/Depth Cueing)=0
+        PROPERTY:(1,LIC/Ratio Colormap to LIC)=0.5
+    // Property Group END: LIC
+    // Property Group: Advanced
+        PROPERTY:(1,Advanced/Show HUD)=0
+        PROPERTY:(1,Advanced/Use 3D noise)=1
+        PROPERTY:(1,Advanced/3D Noise Resolution)=1.5
+        PROPERTY:(1,Advanced/3D Noise Auto-Resolution)=1
+        PROPERTY:(1,Advanced/Number of Iterations)=30
+        PROPERTY:(1,Advanced/Projection Angle Threshold)=90
+    // Property Group END: Advanced
+// Property Group END: Properties
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Connections
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+CONNECTION:(0,out)->(1,vectors)
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ROI Structure
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Camera definitions
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+CAMERA:0:Main View
+//Camera Matrices: "Main View"
+    MANIPULATOR:(0,Matrix)=-0.8153;-0.621603;0.00944012;0;0.187895;-0.231547;0.980956;0;-0.5926;0.781786;0.298043;0;-0.575457;149.191;96.4776;1
+    MANIPULATOR:(0,HomeEye)=64;-47.7241;64
+    MANIPULATOR:(0,HomeCenter)=64;64;64
+    MANIPULATOR:(0,HomeUp)=0;0;1
+//Camera Matrices END: "Main View"
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// QtGUI Network Information
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+QT5GUI_NETWORK:0=0;0
+QT5GUI_NETWORK_Flags:0=0;0
+QT5GUI_NETWORK:1=0;1
+QT5GUI_NETWORK_Flags:1=1;0
+QT5GUI_NETWORK_Scale:0.657516
+

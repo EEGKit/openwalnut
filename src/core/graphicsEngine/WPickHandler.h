@@ -126,16 +126,16 @@ private:
     boost::signals2::signal< void( WPickInfo ) > m_pickSignal; //!< One can register to this signal to receive pick events.
 
     WPickInfo m_hitResult; //!< Textual representation of the result of a pick.
-    WPickInfo m_startPick; //!< indicates what was first picked. Should be "" after unpick.
-    bool m_shift; //!< is shift pressed?
-    bool m_ctrl; //!< is ctrl pressed?
-    std::string m_viewerName; //!< which viewer sends the signal
-    bool m_paintMode; //!< the paint mode
-    WPickInfo::WMouseButton m_mouseButton; //!< stores mouse button that initiated the pick
+    WPickInfo m_startPick; //!< Indicates what was first picked. Should be "" after unpick.
+    bool m_shift; //!< Is shift pressed?
+    bool m_ctrl; //!< Is ctrl pressed?
+    std::string m_viewerName; //!< Which viewer sends the signal
+    bool m_paintMode; //!< The paint mode
+    WPickInfo::WMouseButton m_mouseButton; //!< Stores mouse button that initiated the pick
 
-    bool m_inPickMode;  //!< if true, the pick handler currently is in pick mode.
+    bool m_inPickMode;  //!< If true, the pick handler currently is in pick mode.
 
-    int32_t m_scrollWheel; //!< the virtual value of the scrollwheel
+    int32_t m_scrollWheel; //!< The virtual value of the scrollwheel
 };
 
 #endif  // WPICKHANDLER_H

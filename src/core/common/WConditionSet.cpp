@@ -23,6 +23,7 @@
 //---------------------------------------------------------------------------
 
 #include <memory>
+#include <mutex>
 
 #include "WConditionSet.h"
 
