@@ -22,7 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 /////////////////////////////////////////////////////////////////////////////
 // Varyings
@@ -31,7 +33,7 @@
 /**
  * The value along the bar.
  */
-varying float v_value;
+in float v_value;
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
@@ -59,7 +61,7 @@ uniform sampler1D u_transferFunction;
  */
 void main()
 {
-    vec4 col = texture1D( u_transferFunction, v_value );
+    vec4 col = texture( u_transferFunction, v_value );
     gl_FragColor = col;
 }
 

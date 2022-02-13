@@ -22,19 +22,15 @@
 //
 //---------------------------------------------------------------------------
 
-/////////////////////////////////////////////////////////////////////////////
-// Varyings
-// Used in vertex and fragment shader
-/////////////////////////////////////////////////////////////////////////////
+#version 150
 
-// The ray's starting point in texture space
-varying vec3 v_rayStart;
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
 
-// The ray direction in texture space
-varying vec3 v_ray;
+out vec4 v_color;
 
-// the Surface normal at this point
-varying vec3 v_normal;
-
-// The light source in local coordinates
-varying vec3 v_lightSource;
+void main()
+{
+    v_color = osg_Color;
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
+}

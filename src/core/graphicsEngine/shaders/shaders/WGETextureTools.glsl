@@ -25,7 +25,9 @@
 #ifndef WGETEXTURETOOLS_GLSL
 #define WGETEXTURETOOLS_GLSL
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 #include "WGEUtils.glsl"
 
@@ -41,9 +43,9 @@
  *
  * \return the value at the given point
  */
-vec4 texture3DUnscaled( sampler3D texture, vec3 point, float minimum, float scale )
+vec4 textureUnscaled( sampler3D txt, vec3 point, float minimum, float scale )
 {
-    return ( scale * texture3D( texture, point ) ) + vec4( minimum );
+    return ( scale * texture( txt, point ) ) + vec4( minimum );
 }
 
 /**
@@ -58,9 +60,9 @@ vec4 texture3DUnscaled( sampler3D texture, vec3 point, float minimum, float scal
  *
  * \return the value at the given point
  */
-vec4 texture2DUnscaled( sampler2D texture, vec2 point, float minimum, float scale )
+vec4 textureUnscaled( sampler2D txt, vec2 point, float minimum, float scale )
 {
-    return ( scale * texture2D( texture, point ) ) + vec4( minimum );
+    return ( scale * texture( txt, point ) ) + vec4( minimum );
 }
 
 /**
@@ -75,9 +77,9 @@ vec4 texture2DUnscaled( sampler2D texture, vec2 point, float minimum, float scal
  *
  * \return the value at the given point
  */
-vec4 texture1DUnscaled( sampler1D texture, float point, float minimum, float scale )
+vec4 textureUnscaled( sampler1D txt, float point, float minimum, float scale )
 {
-    return ( scale * texture1D( texture, point ) ) + vec4( minimum );
+    return ( scale * texture( txt, point ) ) + vec4( minimum );
 }
 
 /**

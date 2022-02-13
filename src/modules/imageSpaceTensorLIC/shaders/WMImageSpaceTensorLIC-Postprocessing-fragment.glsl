@@ -22,11 +22,16 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 #include "WGEUtils.glsl"
 #include "WGEShadingTools.glsl"
 #include "WGETextureTools.glsl"
+
+
+in vec4 ow_texCoord;
 
 /**
  * The texture Unit for the advection texture
@@ -101,29 +106,29 @@ uniform float u_cmapRatio;
  */
 uniform bool u_useHighContrast;
 
-varying vec3 v_normalizedVertex;
+in vec3 v_normalizedVertex;
 
 /**
  * Main. Clips and Blends the final image space rendering with the previously acquired 3D information
  */
 void main()
 {
-    vec2 texCoord = gl_TexCoord[0].st;
-    float edge  = texture2D( u_texture1Sampler, texCoord ).r * ( u_useEdges ? 1.0 : 0.0 );
-    float noise  = texture2D( u_texture1Sampler, texCoord ).b;
-    float light  = texture2D( u_texture3Sampler, texCoord ).r * ( u_useLight ? 1.0 : 0.0 );
-    float depth  = texture2D( u_texture3Sampler, texCoord ).b;
-    float occupied  = texture2D( u_texture3Sampler, texCoord ).a;
-    float advected1  = texture2D( u_texture0Sampler, texCoord ).r;
-    float advected2  = texture2D( u_texture0Sampler, texCoord ).g;
-    vec3 cmap = texture2D( u_texture2Sampler, texCoord ).rgb;
-    float evDiff  = texture2D( u_texture4Sampler, texCoord ).r;
-    float fa  = texture2D( u_texture4Sampler, texCoord ).g;
-    vec3 mesh = texture2D( u_texture5Sampler, texCoord ).rgb;
+    vec2 texCoord = ow_texCoord.st;
+    float edge  = texture( u_texture1Sampler, texCoord ).r * ( u_useEdges ? 1.0 : 0.0 );
+    float noise  = texture( u_texture1Sampler, texCoord ).b;
+    float light  = texture( u_texture3Sampler, texCoord ).r * ( u_useLight ? 1.0 : 0.0 );
+    float depth  = texture( u_texture3Sampler, texCoord ).b;
+    float occupied  = texture( u_texture3Sampler, texCoord ).a;
+    float advected1  = texture( u_texture0Sampler, texCoord ).r;
+    float advected2  = texture( u_texture0Sampler, texCoord ).g;
+    vec3 cmap = texture( u_texture2Sampler, texCoord ).rgb;
+    float evDiff  = texture( u_texture4Sampler, texCoord ).r;
+    float fa  = texture( u_texture4Sampler, texCoord ).g;
+    vec3 mesh = texture( u_texture5Sampler, texCoord ).rgb;
 
 
     vec2 grad = getGradient( u_texture5Sampler, v_normalizedVertex.xy, 1.0 / u_texture5SizeX * 2 );
-    vec3 normal = gl_NormalMatrix * vec3( grad, -1.0 );
+    vec3 normal = osg_NormalMatrix * vec3( grad, -1.0 );
     float phongBumplight = blinnPhongIlluminationIntensity( normalize( viewAlign( normal ) ) );
     vec3 outColorBump = vec3( phongBumplight * mesh );
     vec3 outColorRibbon = ( mesh.r + mesh.g ) * vec3( mesh.r * phongBumplight, mesh.g * phongBumplight, 0.0 );

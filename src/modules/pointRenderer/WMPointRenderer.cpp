@@ -144,7 +144,7 @@ void WMPointRenderer::moduleMain()
     );
 
     // register attribute
-    m_shader->addBindAttribLocation( "a_pointSize", 6 );
+    m_shader->addBindAttribLocation( "a_pointSize", 15 );
 
     // signal ready state. The module is now ready to be used.
     ready();
@@ -217,7 +217,7 @@ void WMPointRenderer::moduleMain()
         geometry->setColorBinding( osg::Geometry::BIND_PER_VERTEX );
         if( valueSet )
         {
-            geometry->setVertexAttribArray( 6, sizes, osg::Array::BIND_PER_VERTEX );
+            geometry->setVertexAttribArray( 15, sizes, osg::Array::BIND_PER_VERTEX );
         }
 
         // add geometry to geode

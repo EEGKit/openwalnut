@@ -232,6 +232,7 @@ WGETextureHud::WGETextureHudEntry::WGETextureHudEntry( osg::ref_ptr< osg::Textur
     m_texMat = new osg::TexMat;
     m_texMat->setMatrix( osg::Matrixd::identity() );
     state->setTextureAttributeAndModes( 0, m_texMat, osg::StateAttribute::ON );
+    state->addUniform( new osg::Uniform( "ow_TextureMatrix0", m_texMat->getMatrix() ) );
 
     // This disables colorblending of the texture with the underlying quad
     // osg::TexEnv* decalState = new osg::TexEnv();

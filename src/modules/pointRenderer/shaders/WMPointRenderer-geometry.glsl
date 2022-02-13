@@ -22,9 +22,11 @@
 //
 //---------------------------------------------------------------------------
 
-#version 150
+#version 150 core
 
-#include "WGETransformationTools-geometry.glsl"
+#include "WGEShader-uniforms.glsl"
+
+#include "WGETransformationTools.glsl"
 
 layout( points ) in;
 layout( triangle_strip, max_vertices = 4 ) out;
@@ -33,7 +35,6 @@ layout( triangle_strip, max_vertices = 4 ) out;
 // Uniforms
 /////////////////////////////////////////////////////////////////////////////
 
-uniform mat4 osg_ProjectionMatrix;
 
 /////////////////////////////////////////////////////////////////////////////
 // Attributes

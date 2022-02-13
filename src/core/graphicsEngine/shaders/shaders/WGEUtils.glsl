@@ -25,7 +25,9 @@
 #ifndef WGEUTILS_GLSL
 #define WGEUTILS_GLSL
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 /**
  *

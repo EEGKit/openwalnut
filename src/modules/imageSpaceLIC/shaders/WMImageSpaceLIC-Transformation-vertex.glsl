@@ -22,13 +22,50 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
 
 #include "WGEColormapping-vertex.glsl"
 
 #include "WGETransformationTools.glsl"
 
-#include "WMImageSpaceLIC-Transformation-varyings.glsl"
+
+out vec4 ow_texCoord;
+
+/**
+ * The normal interpolated
+ */
+out vec3 v_normal;
+
+/**
+ * Normal in object space
+ */
+out vec3 v_normalObject;
+
+/**
+ * The normal interpolated and projected to screenspace
+ */
+out vec3 v_normalProjected;
+
+/**
+ * The light source in local coordinates
+ */
+out vec3 v_lightSource;
+
+/**
+ * The light source in local coordinates
+ */
+out vec3 v_viewDir;
+
+/**
+ * The factor which scales the 3d noise texture to a proper size according to screen size.
+ */
+#ifdef NOISE3D_ENABLED
+out vec3 v_noiseScaleFactor;
+#endif
+
 
 /**
  * How much should the slice be moved along u_vertexShiftDirection?
@@ -83,10 +120,10 @@ uniform float u_noise3DResoultuion = 3.0;
 void main()
 {
     // Calculate the real vertex coordinate in openwalnut-scene-space
-    vec4 vertex = gl_Vertex;
+    vec4 vertex = osg_Vertex;
 #ifdef VERTEXSHIFT_ENABLED
     // Calculate the real vertex coordinate in openwalnut-scene-space
-    vertex = ( vec4( u_vertexShiftDirection.xyz, 0.0 ) * u_vertexShift ) + gl_Vertex;
+    vertex = ( vec4( u_vertexShiftDirection.xyz, 0.0 ) * u_vertexShift ) + osg_Vertex;
 #endif
 
     // Allow the colormapper to do some precalculations with the real vertex coordinate in ow-scene-space
@@ -95,11 +132,11 @@ void main()
     // for easy access to texture coordinates
     // NOTE: The vertex is specified in ow-scene-space. The texture matrix was set by WGEDataTexture for the dataset and transforms the vertex in
     // ow-scene-space to the textures space.
-    gl_TexCoord[0] = gl_TextureMatrix[0] * vertex;
+    ow_texCoord = ow_TextureMatrix0 * vertex;
 
     // some light precalculations
-    v_normal = gl_NormalMatrix * gl_Normal;
-    v_normalObject = gl_Normal;
+    v_normal = osg_NormalMatrix * osg_Normal;
+    v_normalObject = osg_Normal;
 
     // NOTE: we normalize the vec here although we need to normalize it again in the fragment shader since the projected vector might be very
     // small and we want to avoid numerical issues when interpolating.
@@ -112,12 +149,12 @@ void main()
                       float( u_texture0SizeZ ) / float( u_texture1SizeZ ), 0.0 );
     v_noiseScaleFactor = vec1.xyz;
 #ifdef NOISE3DAUTORES_ENABLED
-    vec4 vecMV = gl_ModelViewMatrix * vec4( vec3( 1.0 ), 0.0 ); // if the resolution should be modified, use the scaling info from the MV matrix
+    vec4 vecMV = osg_ModelViewMatrix * vec4( vec3( 1.0 ), 0.0 ); // if the resolution should be modified, use the scaling info from the MV matrix
     v_noiseScaleFactor *= u_noise3DResoultuion * length( vecMV.xyz );
 #endif
 #endif
     // also get the coordinates of the light
-    vec4 lpos = gl_LightSource[0].position; // this simply doesn't work well with OSG
+    vec4 lpos = ow_lightsource; // this simply doesn't work well with OSG
     lpos = vec4( 0.0, 0.0, 1000.0, 1.0 );
     v_lightSource = worldToLocal( lpos ).xyz;
 
@@ -127,6 +164,6 @@ void main()
     v_viewDir = worldToLocal( camPos ).xyz;
 
     // transform position
-    gl_Position = gl_ModelViewProjectionMatrix * vertex;
+    gl_Position = osg_ModelViewProjectionMatrix * vertex;
 }
 

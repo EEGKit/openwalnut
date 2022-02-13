@@ -25,7 +25,9 @@
 #ifndef WGECOLORMAPSIMPROVED_GLSL
 #define WGECOLORMAPSIMPROVED_GLSL
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 #include "WGEUtils.glsl"
 

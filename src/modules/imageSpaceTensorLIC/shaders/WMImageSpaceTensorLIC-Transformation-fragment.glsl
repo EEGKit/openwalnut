@@ -22,7 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 #include "WGEColormapping-fragment.glsl"
 
@@ -31,7 +33,45 @@
 #include "WGETransformationTools.glsl"
 #include "WGEUtils.glsl"
 
-#include "WMImageSpaceTensorLIC-Transformation-varyings.glsl"
+in vec4 ow_texCoord0;
+in vec4 ow_texCoord1;
+in vec4 ow_texCoord2;
+
+/**
+ * The normal interpolated
+ */
+in vec3 v_normal;
+
+/**
+ * The vertex
+ */
+in vec3 v_vertex;
+
+/**
+ * Normal in object space
+ */
+in vec3 v_normalObject;
+
+/**
+ * The normal interpolated and projected to screenspace
+ */
+in vec3 v_normalProjected;
+
+/**
+ * The light source in local coordinates
+ */
+in vec3 v_lightSource;
+
+/**
+ * The light source in local coordinates
+ */
+in vec3 v_viewDir;
+
+/**
+ * The factor which scales the 3d noise texture to a proper size according to screen size.
+ */
+in vec3 v_noiseScaleFactor;
+
 
 /**
  * The texture unit sampler: evec1
@@ -269,15 +309,15 @@ void main()
 #endif
 
     // if we have a 3D noise texture, use it.
-    float noise = texture2D( u_texture3Sampler, noiseTexCoords.xy ).r;
+    float noise = texture( u_texture3Sampler, noiseTexCoords.xy ).r;
 
     // get the current vector at this position
-    vec3 evec1 = normalize( texture3DUnscaled( u_texture0Sampler, gl_TexCoord[0].xyz, u_texture0Min, u_texture0Scale ).rgb );
-    vec3 evec2 = normalize( texture3DUnscaled( u_texture1Sampler, gl_TexCoord[1].xyz, u_texture1Min, u_texture1Scale ).rgb );
+    vec3 evec1 = normalize( textureUnscaled( u_texture0Sampler, ow_texCoord0.xyz, u_texture0Min, u_texture0Scale ).rgb );
+    vec3 evec2 = normalize( textureUnscaled( u_texture1Sampler, ow_texCoord1.xyz, u_texture1Min, u_texture1Scale ).rgb );
     evec1 *= sign( evec1.x );
     evec2 *= sign( evec2.x );
 
-    vec3 evals = 1000. * texture3DUnscaled( u_texture2Sampler, gl_TexCoord[2].xyz, u_texture2Min, u_texture2Scale ).rgb;
+    vec3 evals = 1000. * textureUnscaled( u_texture2Sampler, ow_texCoord2.xyz, u_texture2Min, u_texture2Scale ).rgb;
     //evec1 *= evals.r;
     //evec2 *= evals.g;
     float fa = getFA( evals );

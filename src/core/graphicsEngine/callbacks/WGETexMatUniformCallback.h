@@ -22,50 +22,37 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WGECOLORMAPPING_VARYINGS_GLSL
-#define WGECOLORMAPPING_VARYINGS_GLSL
+#ifndef WGETEXMATUNIFORMCALLBACK_H
+#define WGETEXMATUNIFORMCALLBACK_H
 
-#version 120
-
-/**
- * The texture coordinate in local texture space.
- */
-varying vec3 v_colormap0TexCoord;
+#include <osg/TexMat>
+#include <osg/Uniform>
 
 /**
- * The texture coordinate in local texture space.
+ * Callback for the texture matrix.
  */
-varying vec3 v_colormap1TexCoord;
+class WGETexMatUniformCallback: public osg::Uniform::Callback
+{
+public: // NOLINT
+    /**
+     * Constructor.
+     * 
+     * \param texMat the texture matrix this callback is applied to.
+     */
+    explicit WGETexMatUniformCallback( osg::TexMat* texMat );
 
-/**
- * The texture coordinate in local texture space.
- */
-varying vec3 v_colormap2TexCoord;
+    /**
+     * operator () - called during the traversal
+     * 
+     * \param uniform the uniform
+     * \param nv the node visitor
+     */
+    void operator()( osg::Uniform* uniform, osg::NodeVisitor* nv );
 
-/**
- * The texture coordinate in local texture space.
- */
-varying vec3 v_colormap3TexCoord;
+    /**
+     * The texture matrix this callback is applied to.
+     */
+    osg::TexMat* m_texMat;
+};
 
-/**
- * The texture coordinate in local texture space.
- */
-varying vec3 v_colormap4TexCoord;
-
-/**
- * The texture coordinate in local texture space.
- */
-varying vec3 v_colormap5TexCoord;
-
-/**
- * The texture coordinate in local texture space.
- */
-varying vec3 v_colormap6TexCoord;
-
-/**
- * The texture coordinate in local texture space.
- */
-varying vec3 v_colormap7TexCoord;
-
-#endif // WGECOLORMAPPING_VARYINGS_GLSL
-
+#endif  // WGETEXMATUNIFORMCALLBACK_H

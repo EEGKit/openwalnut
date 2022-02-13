@@ -22,22 +22,30 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
+
 
 /**
  * The normal.
  */
-varying vec3 v_normal;
+out vec3 v_normal;
+
+out vec4 v_color;
+out vec4 v_texcoord;
 
 void main()
 {
     // parameterizes the cylinder's surface
-    gl_TexCoord[0] = gl_MultiTexCoord0;
+    v_texcoord = osg_MultiTexCoord0;
 
     // get normal
-    v_normal = gl_NormalMatrix * gl_Normal;
+    v_normal = osg_NormalMatrix * osg_Normal;
 
     // apply standard pipeline
-    gl_FrontColor = gl_Color;
-    gl_Position = ftransform();
+    v_color = osg_Color;
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }

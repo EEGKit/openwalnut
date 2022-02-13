@@ -22,7 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 /**
  * Overlay texture
@@ -87,7 +89,7 @@ uniform float u_overlayBlendOutDuration;
 /**
  * Pixel position in [0,1]
  */
-varying vec2 v_pos;
+in vec2 v_pos;
 
 void main()
 {
@@ -119,7 +121,7 @@ void main()
     float valid = float( ( coord.x >= 0.0 ) && ( coord.x <= 1.0 ) && ( coord.y >= 0.0 ) && ( coord.y <= 1.0 ) );
 
     // overlay texture
-    vec4 tex = texture2D( u_overlay, coord );
+    vec4 tex = texture( u_overlay, coord );
 
     // auto blend out?
     float aSec = float( u_blendOutTimer ) / 100.0;

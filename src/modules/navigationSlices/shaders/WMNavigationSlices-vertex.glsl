@@ -22,12 +22,15 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
 
 #include "WGEColormapping-vertex.glsl"
 
 /**
- * The matrix describes the transformation of gl_Vertex to OpenWalnut Scene Space
+ * The matrix describes the transformation of osg_Vertex to OpenWalnut Scene Space
  */
 uniform mat4 u_WorldTransform;
 
@@ -37,9 +40,9 @@ uniform mat4 u_WorldTransform;
 void main()
 {
     // Allow the colormapper to do some precalculations with the real vertex coordinate in ow-scene-space
-    colormapping( u_WorldTransform * gl_Vertex );
+    colormapping( u_WorldTransform * osg_Vertex );
 
     // transform position
-    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }
 

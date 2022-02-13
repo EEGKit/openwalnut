@@ -50,3 +50,5 @@ openwalnut.log
 
 # AppImage
 tools/AppImage/AppImageBuild
+
+tmp.glsl

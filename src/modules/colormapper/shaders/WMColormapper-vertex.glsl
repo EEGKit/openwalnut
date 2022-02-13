@@ -22,7 +22,12 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
+
 
 /////////////////////////////////////////////////////////////////////////////
 // Varyings
@@ -31,7 +36,7 @@
 /**
  * The value along the bar.
  */
-varying float v_value;
+out float v_value;
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
@@ -54,10 +59,10 @@ varying float v_value;
  */
 void main()
 {
-    v_value = gl_MultiTexCoord0.y;
+    v_value = osg_MultiTexCoord0.y;
 
     // Simply project the vertex
-    gl_Position = ftransform();
-    gl_FrontColor = gl_Color;
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
+    // gl_FrontColor = osg_Color;
 }
 

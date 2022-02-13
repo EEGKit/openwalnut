@@ -22,7 +22,11 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
+
+in vec4 v_texCoord;
 
 /**
  * The texture Unit for the depth field
@@ -59,16 +63,16 @@ void main()
     float offsetW = 2.0 / u_texture0SizeX;
     float offsetH = 2.0 / u_texture0SizeY;
 
-    vec2 texCoord = gl_TexCoord[0].st;
-    vec4 c  = texture2D( u_texture0Sampler, texCoord );
-    vec4 bl = texture2D( u_texture0Sampler, texCoord + vec2( -offsetW, -offsetH ) );
-    vec4 l  = texture2D( u_texture0Sampler, texCoord + vec2( -offsetW,     0.0  ) );
-    vec4 tl = texture2D( u_texture0Sampler, texCoord + vec2( -offsetW,  offsetH ) );
-    vec4 t  = texture2D( u_texture0Sampler, texCoord + vec2(     0.0,   offsetH ) );
-    vec4 tr = texture2D( u_texture0Sampler, texCoord + vec2(  offsetW,  offsetH ) );
-    vec4 r  = texture2D( u_texture0Sampler, texCoord + vec2(  offsetW,     0.0  ) );
-    vec4 br = texture2D( u_texture0Sampler, texCoord + vec2(  offsetW,  offsetH ) );
-    vec4 b  = texture2D( u_texture0Sampler, texCoord + vec2(     0.0,  -offsetH ) );
+    vec2 texCoord = v_texCoord.st;
+    vec4 c  = texture( u_texture0Sampler, texCoord );
+    vec4 bl = texture( u_texture0Sampler, texCoord + vec2( -offsetW, -offsetH ) );
+    vec4 l  = texture( u_texture0Sampler, texCoord + vec2( -offsetW,     0.0  ) );
+    vec4 tl = texture( u_texture0Sampler, texCoord + vec2( -offsetW,  offsetH ) );
+    vec4 t  = texture( u_texture0Sampler, texCoord + vec2(     0.0,   offsetH ) );
+    vec4 tr = texture( u_texture0Sampler, texCoord + vec2(  offsetW,  offsetH ) );
+    vec4 r  = texture( u_texture0Sampler, texCoord + vec2(  offsetW,     0.0  ) );
+    vec4 br = texture( u_texture0Sampler, texCoord + vec2(  offsetW,  offsetH ) );
+    vec4 b  = texture( u_texture0Sampler, texCoord + vec2(     0.0,  -offsetH ) );
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     // LAPLACE

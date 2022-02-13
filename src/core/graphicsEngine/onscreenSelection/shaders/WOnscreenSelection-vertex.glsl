@@ -22,11 +22,15 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
 
 void main()
 {
-    gl_Position = gl_Vertex;
+    gl_Position = osg_Vertex;
     gl_Position.x = gl_Position.x * 2 - 1;
     gl_Position.y = gl_Position.y * 2 - 1;
 }

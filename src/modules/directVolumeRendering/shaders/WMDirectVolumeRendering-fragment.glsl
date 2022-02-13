@@ -22,10 +22,12 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 // This is needed if the modulo operator % is required
-#extension GL_EXT_gpu_shader4 : enable
+// #extension GL_EXT_gpu_shader4 : enable
 
 #ifdef LOCALILLUMINATION_PHONG
 #include "WGEShadingTools.glsl"
@@ -37,7 +39,17 @@
 // Varyings
 /////////////////////////////////////////////////////////////////////////////
 
-#include "WMDirectVolumeRendering-varyings.glsl"
+// The ray's starting point in texture space
+in vec3 v_rayStart;
+
+// The ray direction in texture space, normalized
+in vec3 v_ray;
+
+// The sampling distance
+in float v_sampleDistance;
+
+// The steps in relation to a default number of steps of 128.
+in float v_relativeSampleDistance;
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
@@ -104,15 +116,15 @@ vec3 findRayEnd( in vec3 rayStart, out float d )
 vec3 getGradient( in vec3 position )
 {
 #ifdef GRADIENTTEXTURE_ENABLED
-    return ( 2.0 * texture3D( u_gradientsSampler, position ).rgb ) + vec3( -1.0 );
+    return ( 2.0 * texture( u_gradientsSampler, position ).rgb ) + vec3( -1.0 );
 #else
     float s = 0.02;
-    float valueXP = texture3D( u_volumeSampler, position + vec3( s, 0.0, 0.0 ) ).r;
-    float valueXM = texture3D( u_volumeSampler, position - vec3( s, 0.0, 0.0 ) ).r;
-    float valueYP = texture3D( u_volumeSampler, position + vec3( 0.0, s, 0.0 ) ).r;
-    float valueYM = texture3D( u_volumeSampler, position - vec3( 0.0, s, 0.0 ) ).r;
-    float valueZP = texture3D( u_volumeSampler, position + vec3( 0.0, 0.0, s ) ).r;
-    float valueZM = texture3D( u_volumeSampler, position - vec3( 0.0, 0.0, s ) ).r;
+    float valueXP = texture( u_volumeSampler, position + vec3( s, 0.0, 0.0 ) ).r;
+    float valueXM = texture( u_volumeSampler, position - vec3( s, 0.0, 0.0 ) ).r;
+    float valueYP = texture( u_volumeSampler, position + vec3( 0.0, s, 0.0 ) ).r;
+    float valueYM = texture( u_volumeSampler, position - vec3( 0.0, s, 0.0 ) ).r;
+    float valueZP = texture( u_volumeSampler, position + vec3( 0.0, 0.0, s ) ).r;
+    float valueZM = texture( u_volumeSampler, position - vec3( 0.0, 0.0, s ) ).r;
 
     return vec3( valueXP - valueXM, valueYP - valueYM, valueZP - valueZM );
 #endif
@@ -128,7 +140,7 @@ vec3 getGradient( in vec3 position )
 vec4 transferFunction( float value )
 {
 #ifdef TRANSFERFUNCTION_ENABLED
-    return texture1D( u_transferFunctionSampler, value );
+    return texture( u_transferFunctionSampler, value );
 #else
     // Example TF
     if( isZero( value - 0.5, 0.00005  ) )
@@ -165,7 +177,7 @@ vec4 localIllumination( in vec3 position, in vec4 color )
 #ifdef LOCALILLUMINATION_PHONG
     // get a gradient and get it to world-space
     vec3 g = getGradient( position );
-    vec3 worldNormal = ( gl_ModelViewMatrix * vec4( g, 0.0 ) ).xyz;
+    vec3 worldNormal = ( osg_ModelViewMatrix * vec4( g, 0.0 ) ).xyz;
     if( length( g ) < 0.01 )
     {
         return vec4( 0.0 ); //vec4( g.x, g.y, g.z, 1.0 );
@@ -186,7 +198,7 @@ vec4 localIllumination( in vec3 position, in vec4 color )
             vec3( 1.0, 1.0, 1.0 ),                        // light ambient
             normalize( worldNormal ),                     // normal
             vec3( 0.0, 0.0, 1.0 ),                        // view direction  // in world space, this always is the view-dir
-            gl_LightSource[0].position.xyz                // light source position
+            ow_lightsource.xyz                // light source position
     );
     light.a = color.a;
     return light;
@@ -222,7 +234,7 @@ void main()
 #ifdef JITTERTEXTURE_ENABLED
     // stochastic jittering can help to void these ugly wood-grain artifacts with larger sampling distances but might
     // introduce some noise artifacts.
-    float jitter = 0.5 - texture2D( u_jitterSampler, gl_FragCoord.xy / float( u_jitterSizeX ) ).r;
+    float jitter = 0.5 - texture( u_jitterSampler, gl_FragCoord.xy / float( u_jitterSizeX ) ).r;
     vec3 rayStart = v_rayStart + ( v_ray * v_sampleDistance * jitter );
 #else
     vec3 rayStart = v_rayStart;
@@ -242,7 +254,7 @@ void main()
     {
         // get current value, classify and illuminate
         vec3 rayPoint = rayStart + ( currentDistance * v_ray );
-        float alpha = transferFunction( texture3D( u_volumeSampler, rayPoint ).r ).a;
+        float alpha = transferFunction( texture( u_volumeSampler, rayPoint ).r ).a;
         if( alpha > maxalpha )
         {
             maxRayPoint = rayPoint;
@@ -258,7 +270,7 @@ void main()
     // both depth projection and mip need this information.
     if( maxdist > 0.0 )
     {
-       dst = localIllumination( maxRayPoint, transferFunction( texture3D( u_volumeSampler, maxRayPoint ).r ) );
+       dst = localIllumination( maxRayPoint, transferFunction( texture( u_volumeSampler, maxRayPoint ).r ) );
        dst.a = 1.0;
     }
 #ifdef DEPTH_PROJECTION_ENABLED
@@ -279,7 +291,7 @@ void main()
         // {
         //     dst = vec4( 2.* ( 0.5-normval ), normval, 0., 1. );
         // }
-        dst = vec4( texture1D( u_transferFunctionSampler, normval ).rgb, 1.0 );
+        dst = vec4( texture( u_transferFunctionSampler, normval ).rgb, 1.0 );
     }
     else
     {
@@ -296,7 +308,7 @@ void main()
         {
             // get current value, classify and illuminate
             vec3 rayPoint = rayStart + ( currentDistance * v_ray );
-            vec4 src = localIllumination( rayPoint, transferFunction( texture3D( u_volumeSampler, rayPoint ).r ) );
+            vec4 src = localIllumination( rayPoint, transferFunction( texture( u_volumeSampler, rayPoint ).r ) );
             // associated colors needed
             src.rgb *= src.a;
 
@@ -320,7 +332,7 @@ void main()
                 for( int aoS = 0; aoS < 16; ++aoS )
                 {
                     vec3 samplePoint = rayPoint + ( dir * v_sampleDistance * float(aoI+1) );
-                vec4 sampleColor = transferFunction( texture3D( u_volumeSampler, samplePoint ).r );
+                vec4 sampleColor = transferFunction( texture( u_volumeSampler, samplePoint ).r );
                 aoFactor += sampleColor.a;// * ( 1.0 / 16.0 );
             }
 */

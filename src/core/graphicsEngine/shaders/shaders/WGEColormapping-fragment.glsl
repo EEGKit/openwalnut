@@ -25,19 +25,60 @@
 #ifndef WGECOLORMAPPING_FRAGMENT_GLSL
 #define WGECOLORMAPPING_FRAGMENT_GLSL
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 #include "WGEColorMapsImproved.glsl"
 
 #include "WGEColormapping-uniforms.glsl"
-#include "WGEColormapping-varyings.glsl"
+
+/**
+ * The texture coordinate in local texture space.
+ */
+in vec3 v_colormap0TexCoord;
+
+/**
+ * The texture coordinate in local texture space.
+ */
+in vec3 v_colormap1TexCoord;
+
+/**
+ * The texture coordinate in local texture space.
+ */
+in vec3 v_colormap2TexCoord;
+
+/**
+ * The texture coordinate in local texture space.
+ */
+in vec3 v_colormap3TexCoord;
+
+/**
+ * The texture coordinate in local texture space.
+ */
+in vec3 v_colormap4TexCoord;
+
+/**
+ * The texture coordinate in local texture space.
+ */
+in vec3 v_colormap5TexCoord;
+
+/**
+ * The texture coordinate in local texture space.
+ */
+in vec3 v_colormap6TexCoord;
+
+/**
+ * The texture coordinate in local texture space.
+ */
+in vec3 v_colormap7TexCoord;
 
 /**
  * This method applies a colormap to the specified value an mixes it with the specified color. It uses the proper colormap and is able to
  * unscale values if needed. It uses real compositing.
  *
  * \param color this color gets mixed using alpha value with the new colormap color
- * \param sampler the texture sampler to use
+ * \param sampl the texture sampl to use
  * \param coord the coordinate where to get the value
  * \param size the size in voxels
  * \param minV the minimum of the original value
@@ -50,7 +91,7 @@
  * \param alpha the alpha blending value
  * \param cmap the colormap index to use
  */
-void colormap( inout vec4 color, in sampler3D sampler, in vec3 coord, in vec3 size,
+void colormap( inout vec4 color, in sampler3D sampl, in vec3 coord, in vec3 size,
                float minV, float scaleV,
                bool clipZeroEnabled,
                float thresholdVLower, float thresholdVUpper, bool thresholdEnabled,
@@ -75,20 +116,20 @@ void colormap( inout vec4 color, in sampler3D sampler, in vec3 coord, in vec3 si
     // vec3 c101 = getNeighbourVoxel( vSize, coord, vec3( 1.0, 0.0, 1.0 ) );
     // vec3 c111 = getNeighbourVoxel( vSize, coord, vec3( 1.0, 1.0, 1.0 ) );
     //
-    // vec4 v00 = mix( colormap( texture3D( sampler, c000 ).rgba, minV, scaleV, thresholdV, thresholdEnabled, alpha, cmap, cmactive ),
-    //                 colormap( texture3D( sampler, c100 ).rgba, minV, scaleV, thresholdV, thresholdEnabled, alpha, cmap, cmactive ), coordDiff.x );
-    // vec4 v10 = mix( colormap( texture3D( sampler, c010 ).rgba, minV, scaleV, thresholdV, thresholdEnabled, alpha, cmap, cmactive ),
-    //                 colormap( texture3D( sampler, c110 ).rgba, minV, scaleV, thresholdV, thresholdEnabled, alpha, cmap, cmactive ), coordDiff.x );
-    // vec4 v01 = mix( colormap( texture3D( sampler, c001 ).rgba, minV, scaleV, thresholdV, thresholdEnabled, alpha, cmap, cmactive ),
-    //                 colormap( texture3D( sampler, c101 ).rgba, minV, scaleV, thresholdV, thresholdEnabled, alpha, cmap, cmactive ), coordDiff.x );
-    // vec4 v11 = mix( colormap( texture3D( sampler, c011 ).rgba, minV, scaleV, thresholdV, thresholdEnabled, alpha, cmap, cmactive ),
-    //                 colormap( texture3D( sampler, c111 ).rgba, minV, scaleV, thresholdV, thresholdEnabled, alpha, cmap, cmactive ), coordDiff.x );
+    // vec4 v00 = mix( colormap( texture( sampl, c000 ).rgba, minV, scaleV, thresholdV, thresholdEnabled, alpha, cmap, cmactive ),
+    //                 colormap( texture( sampl, c100 ).rgba, minV, scaleV, thresholdV, thresholdEnabled, alpha, cmap, cmactive ), coordDiff.x );
+    // vec4 v10 = mix( colormap( texture( sampl, c010 ).rgba, minV, scaleV, thresholdV, thresholdEnabled, alpha, cmap, cmactive ),
+    //                 colormap( texture( sampl, c110 ).rgba, minV, scaleV, thresholdV, thresholdEnabled, alpha, cmap, cmactive ), coordDiff.x );
+    // vec4 v01 = mix( colormap( texture( sampl, c001 ).rgba, minV, scaleV, thresholdV, thresholdEnabled, alpha, cmap, cmactive ),
+    //                 colormap( texture( sampl, c101 ).rgba, minV, scaleV, thresholdV, thresholdEnabled, alpha, cmap, cmactive ), coordDiff.x );
+    // vec4 v11 = mix( colormap( texture( sampl, c011 ).rgba, minV, scaleV, thresholdV, thresholdEnabled, alpha, cmap, cmactive ),
+    //                 colormap( texture( sampl, c111 ).rgba, minV, scaleV, thresholdV, thresholdEnabled, alpha, cmap, cmactive ), coordDiff.x );
     //
     // vec4 src = mix( mix( v00, v10, coordDiff.y ),
     //            mix( v01, v11, coordDiff.y ), coordDiff.z );
 
     // get the value and descale it
-    vec4 value = texture3D( sampler, coord ).rgba;
+    vec4 value = texture( sampl, coord ).rgba;
 
     // let someone else apply the colormap
     vec4 src = colormap( value, minV, scaleV, clipZeroEnabled,
@@ -122,7 +163,7 @@ vec4 colormapping( vec4 texcoord )
 
     // back to front compositing
 #ifdef Colormap7Enabled
-    colormap( finalColor, u_colormap7Sampler, ( gl_TextureMatrix[ Colormap7Unit ] * t ).xyz,
+    colormap( finalColor, u_colormap7Sampler, ( Colormap7Unit * t ).xyz,
               vec3( u_colormap7SizeX, u_colormap7SizeY, u_colormap7SizeZ ),
               u_colormap7Min, u_colormap7Scale,
               u_colormap7ClipZeroEnabled,
@@ -131,7 +172,7 @@ vec4 colormapping( vec4 texcoord )
               u_colormap7Alpha, u_colormap7Colormap, u_colormap7Active );
 #endif
 #ifdef Colormap6Enabled
-    colormap( finalColor, u_colormap6Sampler, ( gl_TextureMatrix[ Colormap6Unit ] * t ).xyz,
+    colormap( finalColor, u_colormap6Sampler, ( Colormap6Unit * t ).xyz,
               vec3( u_colormap6SizeX, u_colormap6SizeY, u_colormap6SizeZ ),
               u_colormap6Min, u_colormap6Scale,
               u_colormap6ClipZeroEnabled,
@@ -140,7 +181,7 @@ vec4 colormapping( vec4 texcoord )
               u_colormap6Alpha, u_colormap6Colormap, u_colormap6Active );
 #endif
 #ifdef Colormap5Enabled
-    colormap( finalColor, u_colormap5Sampler, ( gl_TextureMatrix[ Colormap5Unit ] * t ).xyz,
+    colormap( finalColor, u_colormap5Sampler, ( Colormap5Unit * t ).xyz,
               vec3( u_colormap5SizeX, u_colormap5SizeY, u_colormap5SizeZ ),
               u_colormap5Min, u_colormap5Scale,
               u_colormap5ClipZeroEnabled,
@@ -149,7 +190,7 @@ vec4 colormapping( vec4 texcoord )
               u_colormap5Alpha, u_colormap5Colormap, u_colormap5Active );
 #endif
 #ifdef Colormap4Enabled
-    colormap( finalColor, u_colormap4Sampler, ( gl_TextureMatrix[ Colormap4Unit ] * t ).xyz,
+    colormap( finalColor, u_colormap4Sampler, ( Colormap4Unit * t ).xyz,
               vec3( u_colormap4SizeX, u_colormap4SizeY, u_colormap4SizeZ ),
               u_colormap4Min, u_colormap4Scale,
               u_colormap4ClipZeroEnabled,
@@ -158,7 +199,7 @@ vec4 colormapping( vec4 texcoord )
               u_colormap4Alpha, u_colormap4Colormap, u_colormap4Active );
 #endif
 #ifdef Colormap3Enabled
-    colormap( finalColor, u_colormap3Sampler, ( gl_TextureMatrix[ Colormap3Unit ] * t ).xyz,
+    colormap( finalColor, u_colormap3Sampler, ( Colormap3Unit * t ).xyz,
               vec3( u_colormap3SizeX, u_colormap3SizeY, u_colormap3SizeZ ),
               u_colormap3Min, u_colormap3Scale,
               u_colormap3ClipZeroEnabled,
@@ -167,7 +208,7 @@ vec4 colormapping( vec4 texcoord )
               u_colormap3Alpha, u_colormap3Colormap, u_colormap3Active );
 #endif
 #ifdef Colormap2Enabled
-    colormap( finalColor, u_colormap2Sampler, ( gl_TextureMatrix[ Colormap2Unit ] * t ).xyz,
+    colormap( finalColor, u_colormap2Sampler, ( Colormap2Unit * t ).xyz,
               vec3( u_colormap2SizeX, u_colormap2SizeY, u_colormap2SizeZ ),
               u_colormap2Min, u_colormap2Scale,
               u_colormap2ClipZeroEnabled,
@@ -176,7 +217,7 @@ vec4 colormapping( vec4 texcoord )
               u_colormap2Alpha, u_colormap2Colormap, u_colormap2Active );
 #endif
 #ifdef Colormap1Enabled
-    colormap( finalColor, u_colormap1Sampler, ( gl_TextureMatrix[ Colormap1Unit ] * t ).xyz,
+    colormap( finalColor, u_colormap1Sampler, ( Colormap1Unit * t ).xyz,
               vec3( u_colormap1SizeX, u_colormap1SizeY, u_colormap1SizeZ ),
               u_colormap1Min, u_colormap1Scale,
               u_colormap1ClipZeroEnabled,
@@ -185,7 +226,7 @@ vec4 colormapping( vec4 texcoord )
               u_colormap1Alpha, u_colormap1Colormap, u_colormap1Active );
 #endif
 #ifdef Colormap0Enabled
-    colormap( finalColor, u_colormap0Sampler, ( gl_TextureMatrix[ Colormap0Unit ] * t ).xyz,
+    colormap( finalColor, u_colormap0Sampler, ( Colormap0Unit * t ).xyz,
               vec3( u_colormap0SizeX, u_colormap0SizeY, u_colormap0SizeZ ),
               u_colormap0Min, u_colormap0Scale,
               u_colormap0ClipZeroEnabled,

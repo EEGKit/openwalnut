@@ -22,27 +22,33 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
 
 #include "WGETransformationTools.glsl"
+
+out vec4 v_color;
 
 uniform vec4 u_planeColor;
 
 // The surface normal
-varying vec3 v_normal;
+out vec3 v_normal;
 
 // Normalized coordinate in the bounding volume of the sphere
-varying vec3 v_normalizedVertex;
+out vec3 v_normalizedVertex;
 
 void main()
 {
     // prepare light
-    v_normal = gl_NormalMatrix * gl_Normal;
-    v_normalizedVertex = gl_Vertex.xyz / 100.0;
+    v_normal = osg_NormalMatrix * osg_Normal;
+    v_normalizedVertex = osg_Vertex.xyz / 100.0;
 
     // for easy access to texture coordinates
-    gl_TexCoord[0] = gl_MultiTexCoord0;
+    // gl_TexCoord[0] = osg_MultiTexCoord0;
 
-    gl_FrontColor = u_planeColor;
-    gl_Position = ftransform();
+    //gl_FrontColor = u_planeColor;
+    v_color = u_planeColor;
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }

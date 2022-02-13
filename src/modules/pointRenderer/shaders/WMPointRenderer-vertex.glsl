@@ -22,7 +22,10 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
@@ -36,22 +39,22 @@ uniform float u_pointSize = 1.0;
 /////////////////////////////////////////////////////////////////////////////
 // Attributes
 /////////////////////////////////////////////////////////////////////////////
-attribute float a_pointSize;
+in float a_pointSize;
 
 /////////////////////////////////////////////////////////////////////////////
 // Varyings
 /////////////////////////////////////////////////////////////////////////////
 
-varying float v_clip;
+out float v_clip;
 
-varying float v_pointSize;
+out float v_pointSize;
 
-varying vec4 v_colorIn;
+out vec4 v_colorIn;
 
 /**
  * Vertex in world space.
  */
-varying vec4 v_worldCenterVertex;
+out vec4 v_worldCenterVertex;
 
 /////////////////////////////////////////////////////////////////////////////
 // Variables
@@ -69,7 +72,7 @@ void main()
     // use clipping planes to cut away parts
     v_clip = 0.0;
     // TODO(ebaum): implement this using proper clip-plane implementation
-    // v_clip = float( ( gl_Vertex.x > 500.0 ) || ( gl_Vertex.y>500.0 ) );
+    // v_clip = float( ( osg_Vertex.x > 500.0 ) || ( osg_Vertex.y>500.0 ) );
 
 #ifdef USE_ATTRIBUTE_ENABLED
     v_pointSize = a_pointSize * u_pointSize;
@@ -79,9 +82,9 @@ void main()
 #endif
 
     // forward to geometry shader
-    v_colorIn = gl_Color;
-    gl_Position = gl_ModelViewMatrix * gl_Vertex;
+    v_colorIn = osg_Color;
+    gl_Position = osg_ModelViewMatrix * osg_Vertex;
 
-    v_worldCenterVertex = gl_Vertex;
+    v_worldCenterVertex = osg_Vertex;
 }
 

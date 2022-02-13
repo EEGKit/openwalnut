@@ -22,16 +22,31 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 #include "WGETextureTools.glsl"
 #include "WGETransformationTools.glsl"
+
+in vec4 v_color;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Varyings
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "WMSurfaceParameterAnimator-Beams-varyings.glsl"
+// The ray's starting point in texture space
+in vec3 v_rayStart;
+
+// The ray direction in texture space
+in vec3 v_ray;
+
+// the Surface normal at this point
+in vec3 v_normal;
+
+// The light source in local coordinates
+in vec3 v_lightSource;
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Uniforms
@@ -190,7 +205,7 @@ float blinnPhongIlluminationIntensity( float ambient, float diffuse, float specu
     return ambientV + ( diffuseV + specularV ) * lightIntensity;
 }
 
-bool epsilonEquals( float value, float equals, float epsilon = 0.01 )
+bool epsilonEquals( float value, float equals, float epsilon )
 {
     return abs( value - equals ) <= epsilon;
 }
@@ -226,7 +241,7 @@ void main()
     while( i < u_steps ) // we do not need to ch
     {
         // get current value
-        value = texture3D( u_texture0Sampler, curPoint ).r;
+        value = texture( u_texture0Sampler, curPoint ).r;
 
         // is it the isovalue?
         if( abs( value - u_isovalue ) < 0.1 )
@@ -242,12 +257,12 @@ void main()
 
             // 3: find a proper normal for a headlight
             float s = 0.005;
-            float valueXP = texture3D( u_texture0Sampler, curPoint + vec3( s, 0.0, 0.0 ) ).r;
-            float valueXM = texture3D( u_texture0Sampler, curPoint - vec3( s, 0.0, 0.0 ) ).r;
-            float valueYP = texture3D( u_texture0Sampler, curPoint + vec3( 0.0, s, 0.0 ) ).r;
-            float valueYM = texture3D( u_texture0Sampler, curPoint - vec3( 0.0, s, 0.0 ) ).r;
-            float valueZP = texture3D( u_texture0Sampler, curPoint + vec3( 0.0, 0.0, s ) ).r;
-            float valueZM = texture3D( u_texture0Sampler, curPoint - vec3( 0.0, 0.0, s ) ).r;
+            float valueXP = texture( u_texture0Sampler, curPoint + vec3( s, 0.0, 0.0 ) ).r;
+            float valueXM = texture( u_texture0Sampler, curPoint - vec3( s, 0.0, 0.0 ) ).r;
+            float valueYP = texture( u_texture0Sampler, curPoint + vec3( 0.0, s, 0.0 ) ).r;
+            float valueYM = texture( u_texture0Sampler, curPoint - vec3( 0.0, s, 0.0 ) ).r;
+            float valueZP = texture( u_texture0Sampler, curPoint + vec3( 0.0, 0.0, s ) ).r;
+            float valueZM = texture( u_texture0Sampler, curPoint - vec3( 0.0, 0.0, s ) ).r;
 
             vec3 dir = v_ray;
             dir += vec3( valueXP, 0.0, 0.0 );
@@ -275,8 +290,8 @@ void main()
             float minSize = ( paramSpaceSize * 0.05 );  // the minimum size of 1% of the parameter space size
             float maxSize = ( paramSpaceSize * 0.30 );  // the maximum size -> 30% of parameter space size
 
-            float trace    = texture3D( u_texture1Sampler, curPoint ).r  * ( paramSpaceSize );
-            float traceInv = ( 1.0 - texture3D( u_texture1Sampler, curPoint ).r ) * ( paramSpaceSize );
+            float trace    = texture( u_texture1Sampler, curPoint ).r  * ( paramSpaceSize );
+            float traceInv = ( 1.0 - texture( u_texture1Sampler, curPoint ).r ) * ( paramSpaceSize );
 
             // 4: prepare animation
             // the current time step:
@@ -296,7 +311,7 @@ void main()
             // traceInv = traceInv % 50;
 
             // original surface color
-            vec4 ocol = light * gl_Color;
+            vec4 ocol = light * v_color;
             ocol.a = u_alpha;
 
             // apply animation color

@@ -22,14 +22,69 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 #include "WGEShadingTools.glsl"
 #include "WGETextureTools.glsl"
 #include "WGEPostprocessing.glsl"
 
+in vec4 v_color;
+
 // commonly used variables
-#include "WMSuperquadricGlyphs-varyings.glsl"
+
+// light direction
+// USAGE:
+// x,y,z components:        the light direction vector
+// w component:             unused
+// (4 varying floats)
+in vec4 v_lightDir;
+
+// camera direction vector
+// USAGE:
+// x,y,z components:        the direction vector
+// w component:             unused
+in vec4 v_planePoint;
+
+// point on projection plane of current pixel
+// USAGE:
+// x,y,z components:        the point
+// w component:             unused
+in vec4 v_viewDir;
+
+// alpha and beta values describing the superquadric
+// USAGE:
+// x component:             2.0/alpha
+// y component:             2.0/beta
+// z component:             alpha/beta
+// w component:             is !=0 when the glyph has to be dropped
+// (4 varying floats)
+in vec4 v_alphaBeta;
+
+/**
+ * The scaling component of the modelview matrix.
+ */
+in float v_worldScale;
+
+in mat4 v_glyphToWorld;
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// 2: uniforms
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+// scale glyphs
+uniform float u_scaling;
+
+// fractional anisotropy threshold to skip some glyphs
+uniform float u_faThreshold;
+
+// eigenvector threshold
+uniform float u_evThreshold;
+
+// sharpnes parameter
+uniform float u_gamma;
+
 
 // tollerance value for float comparisons
 float zeroTollerance = 0.01;
@@ -147,7 +202,7 @@ float superquadric( vec3 viewDir, vec3 planePoint, float t )
 /////////////////////////////////////////////////////////////////////////////////////////////
 // GPU Super Quadrics -- fragment shader -- main
 /////////////////////////////////////////////////////////////////////////////////////////////
-void main( void )
+void main()
 {
     // filter out glyphs whose anisotropy is smaller than the threshold or where the eigenvalues
     // are below the threshold (alphaBeta.w is != if this is the case)
@@ -268,7 +323,7 @@ void main( void )
         wge_FragTangent = textureNormalize( vec3( 0.0, 1.0, 0.0 ) );
 
 #ifdef DIRECTIONALCOLORING_ENABLED
-        vec3 col = gl_Color.rgb;
+        vec3 col = v_color.rgb;
 #else
         vec3 col = vec3( 1.0, 1.0, 1.0 );
 #endif
@@ -282,8 +337,10 @@ void main( void )
             30.0,                                  // shininess
 
             // light color properties
-            gl_LightSource[0].diffuse.rgb,         // light color
-            gl_LightSource[0].ambient.rgb,         // ambient light
+            // gl_LightSource[0].diffuse.rgb,         // light color https://github.com/openscenegraph/OpenSceneGraph/blob/34a1d8bc9bba5c415c4ff590b3ea5229fa876ba8/src/osgUtil/SceneView.cpp#L207
+            // gl_LightSource[0].ambient.rgb,         // ambient light
+            vec3( 0.8, 0.8, 0.8 ),
+            vec3( 0.0, 0.0, 0.0 ),
 
             // directions
             normalize( grad ),                     // normal

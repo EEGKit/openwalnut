@@ -22,14 +22,17 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
 
 /**
  * Main. Shrink box to zero size.
  */
 void main()
 {
-    // move somewhere.
+    // Move all points to zero
     gl_Position = vec4( 0.0 );
 }
 
