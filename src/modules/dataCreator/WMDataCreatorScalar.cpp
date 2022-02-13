@@ -35,7 +35,6 @@
 #include "WDataCreatorSphere.h"
 #include "WDataCreatorTangle.h"
 #include "WDataCreatorTuring.h"
-#include "WMDataCreator.xpm"
 #include "WMDataCreatorScalar.h"
 #include "core/common/WAssert.h"
 #include "core/common/WProgress.h"
@@ -70,11 +69,6 @@ std::shared_ptr< WModule > WMDataCreatorScalar::factory() const
     return std::shared_ptr< WModule >( new WMDataCreatorScalar() );
 }
 
-const char** WMDataCreatorScalar::getXPMIcon() const
-{
-    return datacreator_xpm;
-}
-
 const std::string WMDataCreatorScalar::getName() const
 {
     return "Data Creator Scalar";
@@ -82,7 +76,7 @@ const std::string WMDataCreatorScalar::getName() const
 
 const std::string WMDataCreatorScalar::getDescription() const
 {
-    return "Allows the user to create scalar data sets on a regular grid by providing a bunch of data creation schemes.";
+    return ""; // See META file
 }
 
 void WMDataCreatorScalar::connectors()
@@ -182,4 +176,3 @@ void WMDataCreatorScalar::moduleMain()
         m_moduleState.wait();
     }
 }
-

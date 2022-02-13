@@ -29,7 +29,7 @@
 #include "core/common/WAssert.h"
 
 WDataCreatorBreyzel5::WDataCreatorBreyzel5():
-    WObjectNDIP< WDataSetSingleCreatorInterface >( "Breyzel5", "Creates a volume with some nice shape." )
+    WObjectNDIP< WDataSetSingleCreatorInterface >( "Bretzel5", "Creates a volume with some nice shape." )
 {
     // add some properties
     m_scale = m_properties->addProperty( "Scale", "Scale the value domain.", 1.0 );

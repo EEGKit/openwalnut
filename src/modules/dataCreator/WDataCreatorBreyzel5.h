@@ -30,7 +30,8 @@
 #include "WDataSetSingleCreatorInterface.h"
 
 /**
- * Creates a breyzel5 inside a given grid. Only works on scalar fields.
+ * Creates a Bretzel5 inside a given grid. Only works on scalar fields.
+ * https://doi.org/10.1007/978-3-642-27343-8_4
  */
 class WDataCreatorBreyzel5: public WObjectNDIP< WDataSetSingleCreatorInterface >
 {
@@ -71,4 +72,3 @@ private:
 };
 
 #endif  // WDATACREATORBREYZEL5_H
-
