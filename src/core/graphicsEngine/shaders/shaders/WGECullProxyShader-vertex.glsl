@@ -32,7 +32,7 @@
  */
 void main()
 {
-    // move somewhere.
+    // Move all points to zero
     gl_Position = vec4( 0.0 );
 }
 

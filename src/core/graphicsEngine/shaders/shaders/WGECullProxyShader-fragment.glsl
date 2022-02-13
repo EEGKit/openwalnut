@@ -27,7 +27,7 @@
 #include "WGEShader-uniforms.glsl"
 
 /**
- * Main. Shrink box to zero size.
+ * Main. For something interesting see the vertex shader.
  */
 void main()
 {
