@@ -10,6 +10,7 @@ lvimrc
 # File backups
 *.*~
 META~
+\#*\#
 
 # Generated doc
 **/doc/developer/html/*
