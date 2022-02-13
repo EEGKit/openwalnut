@@ -84,7 +84,7 @@ void WMSpatialDerivative::properties()
     m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     // normalizing?
-    m_normalize = m_properties->addProperty( "Normalize", "If true, vectors get normalized.", true, m_propCondition );
+    m_normalize = m_properties->addProperty( "Normalize", "If true, vectors get normalized to length 1.", false, m_propCondition );
 
     // call WModule's initialization
     WModule::properties();
