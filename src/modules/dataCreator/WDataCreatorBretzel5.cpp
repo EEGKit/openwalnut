@@ -25,10 +25,10 @@
 #include <memory>
 #include <vector>
 
-#include "WDataCreatorBreyzel5.h"
+#include "WDataCreatorBretzel5.h"
 #include "core/common/WAssert.h"
 
-WDataCreatorBreyzel5::WDataCreatorBreyzel5():
+WDataCreatorBretzel5::WDataCreatorBretzel5():
     WObjectNDIP< WDataSetSingleCreatorInterface >( "Bretzel5", "Creates a volume with some nice shape." )
 {
     // add some properties
@@ -37,11 +37,11 @@ WDataCreatorBreyzel5::WDataCreatorBreyzel5():
     m_scale->setMax( 10 );
 }
 
-WDataCreatorBreyzel5::~WDataCreatorBreyzel5()
+WDataCreatorBretzel5::~WDataCreatorBretzel5()
 {
 }
 
-WValueSetBase::SPtr WDataCreatorBreyzel5::operator()( WProgress::SPtr progress,
+WValueSetBase::SPtr WDataCreatorBretzel5::operator()( WProgress::SPtr progress,
                                                       WGridRegular3D::ConstSPtr grid, unsigned char order, unsigned char dimension,
                                                       dataType /*type*/ )
 {

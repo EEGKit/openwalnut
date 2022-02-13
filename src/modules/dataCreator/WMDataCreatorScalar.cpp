@@ -28,7 +28,7 @@
 #include <thread>
 #include <chrono>
 
-#include "WDataCreatorBreyzel5.h"
+#include "WDataCreatorBretzel5.h"
 #include "WDataCreatorConstant.h"
 #include "WDataCreatorLinearAscent.h"
 #include "WDataCreatorRandom.h"
@@ -52,7 +52,7 @@ WMDataCreatorScalar::WMDataCreatorScalar():
     m_strategy.addStrategy( WDataCreatorSphere::SPtr( new WDataCreatorSphere() ) );
     m_strategy.addStrategy( WDataCreatorRandom::SPtr( new WDataCreatorRandom() ) );
     m_strategy.addStrategy( WDataCreatorTangle::SPtr( new WDataCreatorTangle() ) );
-    m_strategy.addStrategy( WDataCreatorBreyzel5::SPtr( new WDataCreatorBreyzel5() ) );
+    m_strategy.addStrategy( WDataCreatorBretzel5::SPtr( new WDataCreatorBretzel5() ) );
     m_strategy.addStrategy( WDataCreatorSphere::SPtr( new WDataCreatorLinearAscent() ) );
     m_strategy.addStrategy( WDataCreatorConstant::SPtr( new WDataCreatorConstant() ) );
     m_strategy.addStrategy( WDataCreatorConstant::SPtr( new WDataCreatorTuring() ) );
