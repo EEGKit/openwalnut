@@ -39,6 +39,38 @@ WReaderCSV::~WReaderCSV() throw()
 }
 
 
+static std::istream& safeGetLine( std::istream& is, std::string& t ) // NOLINT
+{
+    // reads a line with a non specific line ending
+    t.clear();
+    std::istream::sentry se( is, true );
+    std::streambuf* sb = is.rdbuf();
+
+    int c;
+    while( ( c = sb->sbumpc() ) != std::streambuf::traits_type::eof() )
+    {
+        switch( c )
+        {
+            case '\n':                      // Handle Unix linebreaks
+                return is;
+            case '\r':                      // Handle old mac linebreaks
+                if( sb->sgetc() == '\n' )   // Handle windows linebreaks
+                {
+                    sb->sbumpc();
+                }
+                return is;
+            default:
+                t.push_back( c );
+        }
+    }
+
+    if( t.empty() )
+    {
+        is.setstate( std::ios::eofbit );
+    }
+    return is;
+}
+
 std::shared_ptr< WDataSetCSV > WReaderCSV::read()
 {
     size_t columnCount = 0;
@@ -58,7 +90,7 @@ std::shared_ptr< WDataSetCSV > WReaderCSV::read()
     }
 
     // treat first line as header
-    std::getline( file, line );
+    safeGetLine( file, line );
     if( line == "" )
     {
         throw WException( "CSV file is empty!" );
@@ -69,8 +101,12 @@ std::shared_ptr< WDataSetCSV > WReaderCSV::read()
     columnCount = header->at( 0 ).size();
 
     // treat remaining lines as data
-    while( std::getline( file, line ) )
+    while( safeGetLine( file, line ) )
     {
+        if( line.empty() && file.eof() )    // Ignore empty line at the end of a file.
+        {
+            break;
+        }
         rawRow->push_back( line );
         row = transformLineToVector( line );
         if( row.size() != columnCount )
@@ -99,12 +135,19 @@ std::shared_ptr< WDataSetCSV > WReaderCSV::read()
 std::vector< std::string > WReaderCSV::transformLineToVector( std::string line )
 {
     std::string cell;
-    std::vector< std::string >  row;
+    std::vector< std::string > row;
 
-    std::istringstream inLine( line );
-    while( std::getline( inLine, cell, ',' ) )
+    size_t pos = 0;
+    while( ( pos = line.find( ',' ) ) != std::string::npos )
     {
+        cell = line.substr( 0, pos );
         row.push_back( cell );
+        line.erase( 0, pos + 1 );
+    }
+
+    if( !line.empty() )
+    {
+        row.push_back( line );
     }
 
     return row;

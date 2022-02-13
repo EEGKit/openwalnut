@@ -95,7 +95,8 @@ void WCsvConverter::setOutputFromCSV( )
         {
             float edep = stringToDouble( dataRow->at( m_indexes->getEdep() ) );
 
-            if( getClusterSize( edep ) < 1.0 || getClusterSize( edep ) > 35.0 )
+            if( m_propertyStatus->getVisualizationPropertyHandler()->getEnableClusterSize()->get() &&
+                ( getClusterSize( edep ) < 1.0 || getClusterSize( edep ) > 35.0 ) )
             {
                 continue;
             }
@@ -143,20 +144,22 @@ void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArra
 
         setTransferFunction( data );
 
-        float maxClusterSize = getClusterSize( maxEdep );
-        float minClusterSize = getClusterSize( minEdep );
+        bool clusterEnabled = m_propertyStatus->getVisualizationPropertyHandler()->getEnableClusterSize()->get();
+
+        float maxClusterSize = clusterEnabled ? getClusterSize( maxEdep ) : maxEdep;
+        float minClusterSize = clusterEnabled ? getClusterSize( minEdep ) : minEdep;
 
         for( std::vector< float >::iterator currentEdep = edeps->begin();
             currentEdep != edeps->end();
             currentEdep++ )
         {
-            float clusterSizeNormalized = getClusterSize( *currentEdep ) / maxClusterSize;
+            float clusterSizeNormalized = ( clusterEnabled ? getClusterSize( *currentEdep ) : *currentEdep ) / maxClusterSize;
 
             m_vectors->getSizes()->push_back( clusterSizeNormalized );
 
             if( m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get() )
             {
-                clusterSizeNormalized = static_cast< int >( 49 * clusterSizeNormalized );
+                clusterSizeNormalized = fmax( static_cast< int >( 49 * clusterSizeNormalized ), 0 );
 
                 for( int i = 0; i < 4; i++ )
                 {
@@ -168,7 +171,16 @@ void WCsvConverter::normalizeEdeps( SPFloatVector edeps, SPFloatVector colorArra
         m_colorBar->getProperties()->getProperty( "Max scale value" )->set( 0.0 );
         m_colorBar->getProperties()->getProperty( "Max scale value" )->set( maxClusterSize );
         m_colorBar->getProperties()->getProperty( "Min scale value" )->set( minClusterSize );
-        m_colorBar->getProperties()->getProperty( "Description" )->set( std::string( "Clustersize " ) );
+
+        if( clusterEnabled )
+        {
+            m_colorBar->getProperties()->getProperty( "Description" )->set( std::string( "Clustersize " ) );
+        }
+        else
+        {
+            std::string columnName = m_protonData->getCSVHeader()->at( 0 ).at( m_indexes->getEdep() );
+            m_colorBar->getProperties()->getProperty( "Description" )->set( columnName + " " );
+        }
 
         bool activated = m_propertyStatus->getVisualizationPropertyHandler()->getColorFromEdep()->get();
 
