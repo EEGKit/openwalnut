@@ -69,6 +69,7 @@ WTransferFunction2DWidget::WTransferFunction2DWidget( QWidget* qparent, WTransfe
 
     WTransferFunction2DQuadTool* square = new WTransferFunction2DQuadTool( background );
     scene->addItem( square );
+    QPointF pos( 150.0, 150.0 );
 
     initialized = true;
     // initialize the color map (aka. background)
@@ -77,13 +78,6 @@ WTransferFunction2DWidget::WTransferFunction2DWidget( QWidget* qparent, WTransfe
 
 WTransferFunction2DWidget::~WTransferFunction2DWidget()
 {
-    // // loop for debuging only
-    // WTransferFunctionPoint *current( first );
-    // while ( current )
-    // {
-    //     current = current->getRight();
-    // }
-    // hopefully, the QScene will delete all its items.
 }
 
 void WTransferFunction2DWidget::setMyBackground()

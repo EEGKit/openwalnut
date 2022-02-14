@@ -32,9 +32,11 @@
 WTransferFunction2DQuadTool::WTransferFunction2DQuadTool( QGraphicsItem *parent )
 {
     pressed = false;
-    setZValue( 10 );
+    setZValue( 2 );
     setFlag( ItemIsMovable );
     setFlag( QGraphicsItem::ItemSendsScenePositionChanges );
+    setHandlesChildEvents( false );
+    cpoint = new WTransferFunction2DColorSelectionPoint( this, boundingRect().center() );
 
     m_parent = parent;
 }
@@ -55,9 +57,9 @@ QVariant WTransferFunction2DQuadTool::itemChange( GraphicsItemChange change, con
         QPointF newPos = value.toPointF();
         QRectF rect( 0, 0, m_parent->boundingRect().width() - this->boundingRect().width(),
                          m_parent->boundingRect().height() - this->boundingRect().height() );
-        wlog::debug( "QUADParent" ) << "Height: " << - m_parent->boundingRect().height() << " Width: " << - m_parent->boundingRect().width();
+        //wlog::debug( "QUADParent" ) << "Height: " << - m_parent->boundingRect().height() << " Width: " << - m_parent->boundingRect().width();
 
-        wlog::debug( "QUAD" ) << "Height: " << - this->boundingRect().height() << " Width: " << - this->boundingRect().width();
+        //wlog::debug( "QUAD" ) << "Height: " << - this->boundingRect().height() << " Width: " << - this->boundingRect().width();
         if( !rect.contains( newPos ) )
         {
             // Keep the item inside the scene rect.
@@ -72,16 +74,10 @@ QVariant WTransferFunction2DQuadTool::itemChange( GraphicsItemChange change, con
 void WTransferFunction2DQuadTool::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )
 {
     QRectF rect = boundingRect();
-    QBrush brush( Qt::red );
 
-    if( pressed )
-    {
-        brush.setColor( Qt::green );
-    }
-    else
-    {
-        brush.setColor( Qt::cyan );
-    }
+    QColor col = cpoint->getColor();
+    QBrush brush( col );
+
     painter->fillRect( rect, brush );
     painter->drawRect( rect );
 }
@@ -99,4 +95,5 @@ void WTransferFunction2DQuadTool::mouseReleaseEvent( QGraphicsSceneMouseEvent *e
     update();
     QGraphicsItem::mouseReleaseEvent( event );
 }
+
 

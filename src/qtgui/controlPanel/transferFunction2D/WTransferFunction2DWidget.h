@@ -98,7 +98,6 @@ public:
 
 
 public slots:
-
     /**
     * Notification that the data changed, i.e., a control point has been moved or a color changed.
     */

@@ -22,33 +22,33 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WTRANSFERFUNCTION2DQUADTOOL_H
-#define WTRANSFERFUNCTION2DQUADTOOL_H
+#ifndef WTRANSFERFUNCTION2DCOLORSELECTIONPOINT_H
+#define WTRANSFERFUNCTION2DCOLORSELECTIONPOINT_H
 
 #include "QGraphicsItem"
-#include "WTransferFunction2DColorSelectionPoint.h"
+#include "QGraphicsSceneMouseEvent"
 
 /**
- * This class defines a resizable box and is used as a
- * manipulation widget for the 2D Transfer Function.
- * With this widget you select how the data is depicated
- * later, through setting the color and opacity.
+ * This class defines the color control point to select the color and opacity at a
+ * specific point in the selection widget.
  *
  */
-class WTransferFunction2DQuadTool : public QGraphicsItem
+class WTransferFunction2DColorSelectionPoint : public QGraphicsObject
 {
+    Q_OBJECT
 public:
     /**
      * Constructor
      *
-     * @param parent
+     * @param parent the parent object/widget
+     * @param position the coordinate where the color selection point should be placed within the parent
      */
-    explicit WTransferFunction2DQuadTool( QGraphicsItem *parent );
+    explicit WTransferFunction2DColorSelectionPoint( QGraphicsItem *parent, QPointF position );
 
     /**
      * Destructor
      */
-    ~WTransferFunction2DQuadTool();
+    ~WTransferFunction2DColorSelectionPoint();
 
     /**
      * Defines the bounding rectangle of this item and returns it
@@ -66,20 +66,31 @@ public:
      */
     void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr );
 
+    /**
+     * Returns the last color picked in the color picker dialog
+     *
+     * @return color
+     */
+    QColor getColor()
+    {
+        return color;
+    }
+
+public slots:
+    /**
+     * Called by the color dialog every time the user changes the color.
+     *
+     * \param color the new color
+     */
+    void colorSelected( const QColor& color );
+
 protected:
     /**
      * Fires event, when mouse button is pressed
      *
      * @param event
      */
-    void mousePressEvent( QGraphicsSceneMouseEvent *event );
-
-    /**
-     * Fires event, when mouse button is released
-     *
-     * @param event
-     */
-    void mouseReleaseEvent( QGraphicsSceneMouseEvent *event );
+    void mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event );
 
     /**
      *  Handles events, when state of this item changes
@@ -93,11 +104,17 @@ protected:
     QVariant itemChange( GraphicsItemChange change, const QVariant &value );
 
 private:
+    /**
+     * Show the color picker dialog.
+     **/
+    void showColorPicker();
+
     bool pressed; /*!< Flag to check if mouse button is pressed */
 
     QGraphicsItem* m_parent;  /*!< The parent object */
 
-    WTransferFunction2DColorSelectionPoint* cpoint; /*!< Point to select a color */
-};
+    double m_radius; /*!< The parent object */
 
-#endif  // WTRANSFERFUNCTION2DQUADTOOL_H
+    QColor color; /*!< The parent object */
+};
+#endif  // WTRANSFERFUNCTION2DCOLORSELECTIONPOINT_H
