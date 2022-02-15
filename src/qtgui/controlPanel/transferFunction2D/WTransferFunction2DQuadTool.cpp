@@ -29,6 +29,7 @@
 #include "QBrush"
 #include "QGraphicsItem"
 #include "QPainter"
+#include "QColorDialog"
 
 WTransferFunction2DQuadTool::WTransferFunction2DQuadTool( QGraphicsItem *parent )
 {
@@ -43,8 +44,8 @@ WTransferFunction2DQuadTool::WTransferFunction2DQuadTool( QGraphicsItem *parent 
 
     m_width = 50;
     m_height = 50;
-    cpoint = new WTransferFunction2DColorSelectionPoint( this, boundingRect().center() );
     m_parent = parent;
+    m_color = QColor( 255, 0, 0 , 128 );
 }
 WTransferFunction2DQuadTool::~WTransferFunction2DQuadTool()
 {
@@ -63,9 +64,7 @@ QVariant WTransferFunction2DQuadTool::itemChange( GraphicsItemChange change, con
         QPointF newPos = value.toPointF();
         QRectF rect( 0, 0, m_parent->boundingRect().width() - this->boundingRect().width(),
                          m_parent->boundingRect().height() - this->boundingRect().height() );
-        //wlog::debug( "QUADParent" ) << "Height: " << - m_parent->boundingRect().height() << " Width: " << - m_parent->boundingRect().width();
 
-        //wlog::debug( "QUAD" ) << "Height: " << - this->boundingRect().height() << " Width: " << - this->boundingRect().width();
         if( !rect.contains( newPos ) )
         {
             // Keep the item inside the scene rect.
@@ -81,9 +80,7 @@ QVariant WTransferFunction2DQuadTool::itemChange( GraphicsItemChange change, con
 void WTransferFunction2DQuadTool::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )
 {
     QRectF rect = boundingRect();
-
-    QColor col = cpoint->getColor();
-    QBrush brush( col );
+    QBrush brush( m_color );
 
     painter->fillRect( rect, brush );
     painter->drawRect( rect );
@@ -112,22 +109,22 @@ void WTransferFunction2DQuadTool::mousePressEvent( QGraphicsSceneMouseEvent *eve
     update();
     QGraphicsItem::mousePressEvent( event );
 }
-void WTransferFunction2DQuadTool::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void WTransferFunction2DQuadTool::mouseMoveEvent( QGraphicsSceneMouseEvent *event )
 {
-    QRectF bRect = boundingRect();
     double mousePosX = event->pos().x();
     double mousePosY = event->pos().y();
 
-    if( m_resizing ) {
+    if( m_resizing )
+    {
         prepareGeometryChange();
-        switch (m_resizePoints) {
+        switch( m_resizePoints )
+        {
             case RIGHT:
                 // Do not allow resizing in negative direction
                 if( mousePosX > boundingRect().left() + 20
                     && mousePosX <= m_parent->boundingRect().right() && mousePosX >= m_parent->boundingRect().left() ) // bounds of our texture
                 {
-                    //wlog::debug(" RIGHT ") << "eventPos: " << event->pos().x() << " lastMousePox: " << m_lastMousePosX;
-                    double deltaMouseX = event->pos().x() - m_lastMousePosX ;
+                    double deltaMouseX = event->pos().x() - m_lastMousePosX;
                     m_width += deltaMouseX;
                     m_lastMousePosX = mousePosX;
                 }
@@ -137,7 +134,7 @@ void WTransferFunction2DQuadTool::mouseMoveEvent(QGraphicsSceneMouseEvent *event
                 if( mousePosY > boundingRect().top() + 20
                     && mousePosY <= m_parent->boundingRect().bottom() && mousePosY >= m_parent->boundingRect().top() ) // bounds of our texture
                 {
-                    double deltaMouseY = mousePosY - m_lastMousePosY ;
+                    double deltaMouseY = mousePosY - m_lastMousePosY;
                     m_height += deltaMouseY;
                     m_lastMousePosY = mousePosY;
                 }
@@ -157,7 +154,6 @@ void WTransferFunction2DQuadTool::mouseMoveEvent(QGraphicsSceneMouseEvent *event
         update();
         QGraphicsItem::mouseMoveEvent( event );
     }
-
 }
 void WTransferFunction2DQuadTool::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
 {
@@ -169,5 +165,30 @@ void WTransferFunction2DQuadTool::mouseReleaseEvent( QGraphicsSceneMouseEvent *e
 }
 
 
+void WTransferFunction2DQuadTool::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
+{
+    event->accept();
+    wlog::debug( "SelectionPoint" ) << " Klappt. ";
+    QGraphicsObject::mouseDoubleClickEvent( event );
+    update();
+    showColorPicker();
+}
 
+void WTransferFunction2DQuadTool::colorSelected( const QColor &newcolor )
+{
+    m_color = newcolor;
+    if( m_parent )
+    {
+        m_parent->update();
+    }
+}
 
+void WTransferFunction2DQuadTool::showColorPicker()
+{
+    QColorDialog *dialog = new QColorDialog( );
+    dialog->setCurrentColor( m_color );
+    dialog->setOption( QColorDialog::NoButtons );
+    dialog->setOption( QColorDialog::ShowAlphaChannel );
+    connect( dialog, SIGNAL( currentColorChanged( const QColor& ) ), this, SLOT( colorSelected( const QColor& ) ) );
+    dialog->open();
+}

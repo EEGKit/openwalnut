@@ -45,8 +45,9 @@ enum ResizePoints
  * later, through setting the color and opacity.
  *
  */
-class WTransferFunction2DQuadTool : public QGraphicsItem
+class WTransferFunction2DQuadTool : public QGraphicsObject
 {
+    Q_OBJECT
 public:
     /**
      * Constructor
@@ -76,6 +77,14 @@ public:
      */
     void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr ) override;
 
+public slots:
+    /**
+     * Called by the color dialog every time the user changes the color.
+     *
+     * \param color the new color
+     */
+    void colorSelected( const QColor& color );
+
 protected:
     /**
      * Fires event, when mouse button is pressed
@@ -98,11 +107,16 @@ protected:
      */
     void mouseReleaseEvent( QGraphicsSceneMouseEvent *event ) override;
 
-   // void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    /**
+      * Fires event, when mouse button is pressed
+      *
+      * @param event
+      */
+    void mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event );
 
-   // void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
-
-   // void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+    // void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    // void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
+    // void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
     /**
      *  Handles events, when state of this item changes
@@ -116,6 +130,11 @@ protected:
     QVariant itemChange( GraphicsItemChange change, const QVariant &value ) override;
 
 private:
+    /**
+     * Show the color picker dialog.
+     **/
+    void showColorPicker();
+
     bool m_pressed; /*!< Flag to check if mouse button is pressed */
 
     bool m_resizing; /*!< Flag to check if mouse button is pressed */
@@ -124,14 +143,10 @@ private:
 
     QGraphicsItem* m_parent;  /*!< The parent object */
 
-    WTransferFunction2DColorSelectionPoint* cpoint; /*!< Point to select a color */
-
-    double m_lastMousePosX;
-    double m_lastMousePosY;
-    double m_width;
-    double m_height;
-
-
+    QColor m_color;  /*!< The color of the box */
+    double m_lastMousePosX; /*!< Variable to store the last mouse position in x direction */
+    double m_lastMousePosY; /*!< Variable to store the last mouse position in y direction */
+    double m_width; /*!< The width of the box */
+    double m_height; /*!< The height of the box */
 };
-
 #endif  // WTRANSFERFUNCTION2DQUADTOOL_H
