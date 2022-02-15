@@ -25,19 +25,25 @@
 #include "WTransferFunction2DQuadTool.h"
 #include "core/common/WLogger.h"
 
+#include "QApplication"
 #include "QBrush"
 #include "QGraphicsItem"
 #include "QPainter"
 
 WTransferFunction2DQuadTool::WTransferFunction2DQuadTool( QGraphicsItem *parent )
 {
-    pressed = false;
+    m_pressed = false;
     setZValue( 2 );
     setFlag( ItemIsMovable );
-    setFlag( QGraphicsItem::ItemSendsScenePositionChanges );
+    setFlag( ItemSendsScenePositionChanges );
+    setFlag( ItemIsSelectable );
+    setFlag( ItemIsFocusable );
+    setAcceptHoverEvents( true );
     setHandlesChildEvents( false );
-    cpoint = new WTransferFunction2DColorSelectionPoint( this, boundingRect().center() );
 
+    m_width = 50;
+    m_height = 50;
+    cpoint = new WTransferFunction2DColorSelectionPoint( this, boundingRect().center() );
     m_parent = parent;
 }
 WTransferFunction2DQuadTool::~WTransferFunction2DQuadTool()
@@ -46,7 +52,7 @@ WTransferFunction2DQuadTool::~WTransferFunction2DQuadTool()
 
 QRectF WTransferFunction2DQuadTool::boundingRect() const
 {
-    return QRectF( 0, 0, 50, 50 );
+    return QRectF( 0, 0, m_width, m_height );
 }
 
 QVariant WTransferFunction2DQuadTool::itemChange( GraphicsItemChange change, const QVariant &value )
@@ -68,6 +74,7 @@ QVariant WTransferFunction2DQuadTool::itemChange( GraphicsItemChange change, con
             return newPos;
         }
     }
+
     return QGraphicsItem::itemChange( change, value );
 }
 
@@ -84,16 +91,83 @@ void WTransferFunction2DQuadTool::paint( QPainter *painter, const QStyleOptionGr
 
 void WTransferFunction2DQuadTool::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {
-    pressed = true;
+    double mousePosX = event->pos().x();
+    double mousePosY = event->pos().y();
+
+    QRectF bRect = boundingRect();
+    if( mousePosX >= bRect.right() - 10 && mousePosX <= bRect.right() + 10 )
+    {
+        m_pressed = true;
+        m_resizing = true;
+        m_resizePoints = RIGHT;
+        m_lastMousePosX = event->pos().x();
+        wlog::debug( "QUADTOOL" ) << "right bound clicked.";
+    }
+    else if( mousePosY >= bRect.bottom() - 10 && mousePosY <= bRect.bottom() + 10 )
+    {
+        m_resizing = true;
+        m_resizePoints = BOTTOM;
+        m_lastMousePosY = mousePosY;
+    }
     update();
     QGraphicsItem::mousePressEvent( event );
 }
+void WTransferFunction2DQuadTool::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    QRectF bRect = boundingRect();
+    double mousePosX = event->pos().x();
+    double mousePosY = event->pos().y();
 
+    if( m_resizing ) {
+        prepareGeometryChange();
+        switch (m_resizePoints) {
+            case RIGHT:
+                // Do not allow resizing in negative direction
+                if( mousePosX > boundingRect().left() + 20
+                    && mousePosX <= m_parent->boundingRect().right() && mousePosX >= m_parent->boundingRect().left() ) // bounds of our texture
+                {
+                    //wlog::debug(" RIGHT ") << "eventPos: " << event->pos().x() << " lastMousePox: " << m_lastMousePosX;
+                    double deltaMouseX = event->pos().x() - m_lastMousePosX ;
+                    m_width += deltaMouseX;
+                    m_lastMousePosX = mousePosX;
+                }
+                break;
+            case BOTTOM:
+                // Do not allow resizing in negative direction
+                if( mousePosY > boundingRect().top() + 20
+                    && mousePosY <= m_parent->boundingRect().bottom() && mousePosY >= m_parent->boundingRect().top() ) // bounds of our texture
+                {
+                    double deltaMouseY = mousePosY - m_lastMousePosY ;
+                    m_height += deltaMouseY;
+                    m_lastMousePosY = mousePosY;
+                }
+                break;
+            default:
+                break;
+        }
+        update();
+    }
+    else
+    {
+        /*
+         * We only want to call the baseclass implementation of the mouse move event
+         * when we are not resizing the item. The base class implements the functionality
+         * that the item is movable and we do not want to move the item when resizing
+         */
+        update();
+        QGraphicsItem::mouseMoveEvent( event );
+    }
+
+}
 void WTransferFunction2DQuadTool::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
 {
-    pressed = false;
+    m_pressed = false;
+    m_resizing = false;
+    m_lastMousePosX = 0;
     update();
     QGraphicsItem::mouseReleaseEvent( event );
 }
+
+
 
 

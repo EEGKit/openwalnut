@@ -29,6 +29,16 @@
 #include "WTransferFunction2DColorSelectionPoint.h"
 
 /**
+    * Points where we can perform a resizing
+    * TODO(@Kai): Add more points
+    * */
+enum ResizePoints
+{
+    RIGHT,
+    BOTTOM
+};
+
+/**
  * This class defines a resizable box and is used as a
  * manipulation widget for the 2D Transfer Function.
  * With this widget you select how the data is depicated
@@ -55,7 +65,7 @@ public:
      *
      * @return
      */
-    QRectF boundingRect() const;
+    QRectF boundingRect() const override;
 
     /**
      * Method for painting which must be overriden by this subclass
@@ -64,7 +74,7 @@ public:
      * @param option
      * @param widget
      */
-    void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr );
+    void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr ) override;
 
 protected:
     /**
@@ -72,14 +82,27 @@ protected:
      *
      * @param event
      */
-    void mousePressEvent( QGraphicsSceneMouseEvent *event );
+    void mousePressEvent( QGraphicsSceneMouseEvent *event ) override;
 
     /**
      * Fires event, when mouse button is released
      *
      * @param event
      */
-    void mouseReleaseEvent( QGraphicsSceneMouseEvent *event );
+    void mouseMoveEvent( QGraphicsSceneMouseEvent *event ) override;
+
+    /**
+     * Fires event, when mouse button is released
+     *
+     * @param event
+     */
+    void mouseReleaseEvent( QGraphicsSceneMouseEvent *event ) override;
+
+   // void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+
+   // void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
+
+   // void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
     /**
      *  Handles events, when state of this item changes
@@ -90,14 +113,25 @@ protected:
      *
      *  @return
      */
-    QVariant itemChange( GraphicsItemChange change, const QVariant &value );
+    QVariant itemChange( GraphicsItemChange change, const QVariant &value ) override;
 
 private:
-    bool pressed; /*!< Flag to check if mouse button is pressed */
+    bool m_pressed; /*!< Flag to check if mouse button is pressed */
+
+    bool m_resizing; /*!< Flag to check if mouse button is pressed */
+
+    ResizePoints m_resizePoints; /*!< Flag to check if mouse button is pressed */
 
     QGraphicsItem* m_parent;  /*!< The parent object */
 
     WTransferFunction2DColorSelectionPoint* cpoint; /*!< Point to select a color */
+
+    double m_lastMousePosX;
+    double m_lastMousePosY;
+    double m_width;
+    double m_height;
+
+
 };
 
 #endif  // WTRANSFERFUNCTION2DQUADTOOL_H
