@@ -52,17 +52,27 @@
 #include "events/WRenderedFrameEvent.h"
 
 WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::ProjectionMode projectionMode, const QWidget* shareWidget ):
+#ifdef OW_QT5_GLWIDGET
+    QOpenGLWidget( parent ),
+#else
     QGLWidget( getDefaultFormat(), parent, dynamic_cast< const QGLWidget* >( shareWidget ) ),
+#endif
       m_nameOfViewer( nameOfViewer ),
       m_firstPaint( true )
 {
+#ifdef OW_QT5_GLWIDGET
+    setFormat( getDefaultFormat() );
+#endif
     m_initialProjectionMode = projectionMode;
 
     setSizePolicy( QSizePolicy( QSizePolicy::QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding ) );
 
-    // required
+    // This causes QOpenGLWidget to freeze so only use with QGLWidget
+#ifndef OW_QT5_GLWIDGET
     setAttribute( Qt::WA_PaintOnScreen );
     setAttribute( Qt::WA_NoSystemBackground );
+#endif
+
     setFocusPolicy( Qt::ClickFocus );
     setMouseTracking( true );
 
@@ -73,7 +83,11 @@ WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::
     m_Viewer = WKernel::getRunningKernel()->getGraphicsEngine()->createViewer(
         m_nameOfViewer, wdata, x(), y(), width(), height(), m_initialProjectionMode );
 
+#ifdef OW_QT5_GLWIDGET
+    connect( &m_Timer, SIGNAL( timeout() ), this, SLOT( update() ) );
+#else
     connect( &m_Timer, SIGNAL( timeout() ), this, SLOT( updateGL() ) );
+#endif
     m_Timer.start( 33 );
 
     m_Viewer->isFrameRendered()->getCondition()->subscribeSignal( boost::bind( &WQtGLWidget::notifyFirstRenderedFrame, this ) );

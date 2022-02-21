@@ -50,6 +50,9 @@ ELSE()
         ADD_DEFINITIONS( "-DOW_FORCE_WEBKIT" )
     ENDIF()
 
+    # Use QOpenGLWidget instead of deprecated QGLWidget
+    ADD_DEFINITIONS( "-DOW_QT5_GLWIDGET" )
+
     # Special handling if the user specified a QT path manually. Useful when using multiple installations of Qt.
     IF( DEFINED ENV{QTDIR} )
         MESSAGE( "Using custom Qt path. Ensure you set the path to the directory containing the bin and lib directories." )
