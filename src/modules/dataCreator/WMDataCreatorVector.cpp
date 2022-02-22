@@ -30,7 +30,6 @@
 #include "WDataCreatorSingleDirection.h"
 #include "WDataCreatorSphere.h"
 #include "WMDataCreatorVector.h"
-#include "WMDataCreatorVector.xpm"
 #include "core/common/WAssert.h"
 #include "core/common/WProgress.h"
 #include "core/common/WStrategyHelper.h"
@@ -61,11 +60,6 @@ std::shared_ptr< WModule > WMDataCreatorVector::factory() const
     return std::shared_ptr< WModule >( new WMDataCreatorVector() );
 }
 
-const char** WMDataCreatorVector::getXPMIcon() const
-{
-    return WMDataCreatorVector_xpm;
-}
-
 const std::string WMDataCreatorVector::getName() const
 {
     return "Data Creator Vector";
@@ -73,7 +67,7 @@ const std::string WMDataCreatorVector::getName() const
 
 const std::string WMDataCreatorVector::getDescription() const
 {
-    return "Allows the user to create vector data sets on a regular grid by providing a bunch of data creation schemes.";
+    return ""; // See META file
 }
 
 void WMDataCreatorVector::connectors()
@@ -162,4 +156,3 @@ void WMDataCreatorVector::moduleMain()
         m_moduleState.wait();
     }
 }
-

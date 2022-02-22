@@ -31,7 +31,6 @@
 #include "WDataCreatorTorus.h"
 #include "WMDataCreatorPoints.h"
 #include "WDataCreatorPointsRandom.h"
-#include "WMDataCreatorPoints.xpm"
 #include "core/common/WAssert.h"
 #include "core/common/WProgress.h"
 #include "core/common/WStrategyHelper.h"
@@ -62,11 +61,6 @@ std::shared_ptr< WModule > WMDataCreatorPoints::factory() const
     return std::shared_ptr< WModule >( new WMDataCreatorPoints() );
 }
 
-const char** WMDataCreatorPoints::getXPMIcon() const
-{
-    return datacreatorpoints_xpm;
-}
-
 const std::string WMDataCreatorPoints::getName() const
 {
     return "Data Creator Points";
@@ -74,7 +68,7 @@ const std::string WMDataCreatorPoints::getName() const
 
 const std::string WMDataCreatorPoints::getDescription() const
 {
-    return "Allows the user to create point data sets providing a bunch of data creation schemes.";
+    return ""; // See META file
 }
 
 void WMDataCreatorPoints::connectors()
