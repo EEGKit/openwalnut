@@ -107,12 +107,22 @@ public:
     void handleControllerEvent( vr::VREvent_t vrEvent );
 
     /**
+     * Find and save device IDs for later use (controller IDs for example).
+     */
+    void updateDeviceIDs();
+
+    /**
+     * Fetch and save transformation information of controller in current frame.
+     */
+    void updateControllerPoses();
+
+    /**
      * Fetch and save transformation information of HMD in current frame.
      */
     void updateHMDPose();
 
     /**
-     * Set eye view's matrices to main view matrix; also applies HMD eye offset
+     * Set eye view's matrices to main view matrix; also applies HMD eye offset.
      */
     void ResetHMDPosition();
 
@@ -178,8 +188,14 @@ private:
     vr::TrackedDevicePose_t m_poses[vr::k_unMaxTrackedDeviceCount];         // NOLINT: the size is constant
     vr::TrackedDeviceIndex_t m_grabber; //!< OpenVR current grabbing device.
 
-    osg::Vec3d m_HMD_position; //!< current position of HMD device.
-    osg::Quat m_HMD_rotation; //!< current rotation of HMD device.
+    int m_controllerRight_deviceID; //!< Device ID of right hand controller.
+    int m_controllerLeft_deviceID; //!< Device ID of left hand controller.
+
+    osg::Matrixd m_controllerRight_transform; //!< Transformation matrix of right hand controller.
+    osg::Matrixd m_controllerLeft_transform; //!< Transformation matrix of right hand controller.
+
+    osg::Vec3d m_HMD_position; //!< Current position of HMD device.
+    osg::Quat m_HMD_rotation; //!< Current rotation of HMD device.
 
     osg::ref_ptr< WRTTCamera > m_leftEyeCamera; //!< The camera for the left eye of the VR system.
     osg::ref_ptr< WRTTCamera > m_rightEyeCamera; //!< The camera for the right eye of the VR system.

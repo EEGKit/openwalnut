@@ -97,6 +97,8 @@ void WSwapUpdateCallback::handleFPSCounter()
 
 void WSwapUpdateCallback::submitFrame()
 {
+    m_module->updateDeviceIDs();
+
     // We only need to get the context from the left eye camera as the right eye camera is in the same context
     unsigned int ctxID = m_module->m_leftEyeCamera->getGraphicsContext()->getState()->getContextID();
 
