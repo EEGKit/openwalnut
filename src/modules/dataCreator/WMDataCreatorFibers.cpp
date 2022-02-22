@@ -34,7 +34,6 @@
 #include "WDataCreatorFiberStar.h"
 #include "WDataCreatorTorus.h"
 #include "WMDataCreatorFibers.h"
-#include "WMDataCreatorFibers.xpm"
 #include "core/common/WAssert.h"
 #include "core/common/WProgress.h"
 #include "core/common/WStrategyHelper.h"
@@ -65,11 +64,6 @@ std::shared_ptr< WModule > WMDataCreatorFibers::factory() const
     return std::shared_ptr< WModule >( new WMDataCreatorFibers() );
 }
 
-const char** WMDataCreatorFibers::getXPMIcon() const
-{
-    return datacreator_xpm;
-}
-
 const std::string WMDataCreatorFibers::getName() const
 {
     return "Data Creator Fibers";
@@ -77,7 +71,7 @@ const std::string WMDataCreatorFibers::getName() const
 
 const std::string WMDataCreatorFibers::getDescription() const
 {
-    return "Allows the user to create fiber data sets providing a bunch of data creation schemes.";
+    return ""; // See META file
 }
 
 void WMDataCreatorFibers::connectors()
@@ -192,4 +186,3 @@ void WMDataCreatorFibers::moduleMain()
         m_moduleState.wait();
     }
 }
-

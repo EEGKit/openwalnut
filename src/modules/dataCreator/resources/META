@@ -68,3 +68,57 @@
 
   // See template module for more possible entries of this file
 };
+
+"Data Creator Vector"
+{
+  icon="WMDataCreatorVector.png";
+  website = "http://www.openwalnut.org";
+  description = "Allows the user to create vector data sets on a regular grid by providing a bunch of data creation schemes.";
+  author = "OpenWalnut Project";
+
+  "OpenWalnut Project"
+  {
+    url="http://www.openwalnut.org";
+    email="contact@openwalnut.org";
+    what="Design, Development and Bug fixing";
+  };
+
+  tag = "Data";
+  tag = "Core";
+};
+
+"Data Creator Fibers"
+{
+  icon="WMDataCreatorFibers.png";
+  website = "http://www.openwalnut.org";
+  description = "Allows the user to create fiber data sets providing a bunch of data creation schemes.";
+  author = "OpenWalnut Project";
+
+  "OpenWalnut Project"
+  {
+    url="http://www.openwalnut.org";
+    email="contact@openwalnut.org";
+    what="Design, Development and Bug fixing";
+  };
+
+  tag = "Data";
+  tag = "Core";
+};
+
+"Data Creator Points"
+{
+  icon="WMDataCreatorPoints.png";
+  website = "http://www.openwalnut.org";
+  description = "Allows the user to create point data sets providing a bunch of data creation schemes.";
+  author = "OpenWalnut Project";
+
+  "OpenWalnut Project"
+  {
+    url="http://www.openwalnut.org";
+    email="contact@openwalnut.org";
+    what="Design, Development and Bug fixing";
+  };
+
+  tag = "Data";
+  tag = "Core";
+};
