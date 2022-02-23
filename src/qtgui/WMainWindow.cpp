@@ -590,7 +590,7 @@ bool WMainWindow::projectSave( const std::vector< std::shared_ptr< WProjectFileI
 {
     std::string filename;
 
-    if( useLastFileName )
+    if( useLastFileName && WQtGui::getSettings().value( "CurrentProjectPath", "" ) != "" )
     {
         filename = WQtGui::getSettings().value( "CurrentProjectPath", "" ).toString().toStdString();
     }
