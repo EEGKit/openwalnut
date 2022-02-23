@@ -51,10 +51,11 @@
 #include "events/WEventTypes.h"
 #include "events/WRenderedFrameEvent.h"
 
-WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::ProjectionMode projectionMode, const QWidget* shareWidget ):
 #ifdef OW_QT5_GLWIDGET
+WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::ProjectionMode projectionMode, const QWidget* /* shareWidget */ ):
     QOpenGLWidget( parent ),
 #else
+WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::ProjectionMode projectionMode, const QWidget* shareWidget ):
     QGLWidget( getDefaultFormat(), parent, dynamic_cast< const QGLWidget* >( shareWidget ) ),
 #endif
       m_nameOfViewer( nameOfViewer ),
