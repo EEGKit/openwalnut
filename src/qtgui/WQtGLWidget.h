@@ -35,6 +35,7 @@
 #ifdef OW_QT5_GLWIDGET
     #include <QSurfaceFormat> // NOLINT
     #include <QOpenGLWidget> // NOLINT
+    #include <QOpenGLFunctions> // NOLINT
 #else
     #include <QtOpenGL/QGLFormat>
     #include <QtOpenGL/QGLWidget>
@@ -62,6 +63,9 @@ class WSettingAction;
  */
 // NOTE: to make this work with MOC, the defines must be set before MOC runs (ensured in Build system)
 class WQtGLWidget: public WQtGLWidgetParent
+#ifdef OW_QT5_GLWIDGET
+    , protected QOpenGLFunctions // NOLINT
+#endif
 {
     Q_OBJECT
 
@@ -218,6 +222,11 @@ protected:
     std::string m_nameOfViewer;
 
     /**
+     * initializes the opengl context.
+     */
+    void initializeGL() override;
+
+    /**
      * Event handler for double clicks.
      *
      * \param event the event description.
@@ -334,6 +343,11 @@ private:
      * This flag is set to true if the first paint call occured. See the paint method for details.
      */
     bool m_firstPaint;
+
+    /**
+     * This flag is set to false after the first gl frame occured.
+     */
+    bool m_firstFrame;
 
     /**
      * Called by the WGEViewer to notify about the first frame rendered

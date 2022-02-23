@@ -90,7 +90,7 @@ void colormapping( mat4 texMatrix, vec4 point )
     v_colormap0TexCoord = ( Colormap0Unit * texCoord ).xyz;
 #endif
 #ifdef Colormap1Enabled
-    v_colormap1TexCoord = (  Colormap1Unit * texCoord ).xyz;
+    v_colormap1TexCoord = ( Colormap1Unit * texCoord ).xyz;
 #endif
 #ifdef Colormap2Enabled
     v_colormap2TexCoord = ( Colormap2Unit * texCoord ).xyz;

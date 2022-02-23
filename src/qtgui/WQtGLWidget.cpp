@@ -58,7 +58,8 @@ WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::
     QGLWidget( getDefaultFormat(), parent, dynamic_cast< const QGLWidget* >( shareWidget ) ),
 #endif
       m_nameOfViewer( nameOfViewer ),
-      m_firstPaint( true )
+      m_firstPaint( true ),
+      m_firstFrame( true )
 {
 #ifdef OW_QT5_GLWIDGET
     setFormat( getDefaultFormat() );
@@ -218,6 +219,11 @@ std::shared_ptr< WGEViewer > WQtGLWidget::getViewer() const
     return m_Viewer;
 }
 
+void WQtGLWidget::initializeGL()
+{
+    initializeOpenGLFunctions();
+}
+
 void WQtGLWidget::paintEvent( QPaintEvent* event )
 {
     if( m_firstPaint )
@@ -234,6 +240,12 @@ void WQtGLWidget::paintGL()
 {
     if( m_Viewer )
     {
+        if( m_firstFrame )
+        {
+            m_Viewer->getView()->getCamera()->getGraphicsContext()->setDefaultFboId( defaultFramebufferObject() );
+            m_firstFrame = false;
+        }
+
         if( !m_Viewer->getPaused() )
         {
             m_Viewer->paint();
