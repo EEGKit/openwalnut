@@ -11,6 +11,7 @@ MODULE:0:Data Creator Fibers
     PROPERTY:(0,Seed)=0
     PROPERTY:(0,Num Fibers)=500
     PROPERTY:(0,Num Vertices)=1000
+    PROPERTY:(0,Time dependent (experimental))=0
     PROPERTY:(0,Color)=1 1 1 1
     // Property Group: Dataset Creators
         PROPERTY:(0,Dataset Creators/Creator)=1
@@ -278,7 +279,7 @@ CONNECTION:(2,out)->(3,fibers)
 
 CAMERA:0:Main View
 //Camera Matrices: "Main View"
-    MANIPULATOR:(0,Matrix)=0.877633;-0.0799368;-0.00884563;0;0.0502535;0.469384;0.744218;0;-0.0627911;-0.741618;0.471984;0;125.316;-48.198;133.454;1
+    MANIPULATOR:(0,Matrix)=0.877633;-0.0799368;-0.00884562;0;0.0502535;0.469384;0.744218;0;-0.0627911;-0.741617;0.471984;0;125.316;-48.1979;133.454;1
     MANIPULATOR:(0,HomeEye)=63.936;-46.7477;63.891
     MANIPULATOR:(0,HomeCenter)=63.936;63.9595;63.891
     MANIPULATOR:(0,HomeUp)=0;0;1

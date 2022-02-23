@@ -99,6 +99,12 @@ void WMDatasetManipulator::properties()
 
     m_properties->addProperty( m_strategy.getProperties() );
 
+    std::shared_ptr< WProperties > transProps( new WProperties( "Transformations", "Availabe transformation matrices for data-set" ) );
+    m_currMatProp = transProps->addProperty( "Current applied matrix",
+                                             "The current manipulation matrix for this data set.",
+                                             m_currentMat );
+    m_infoProperties->addProperty( transProps );
+
     WModule::properties();
 }
 
@@ -124,7 +130,11 @@ void WMDatasetManipulator::moduleMain()
         {
             m_data = m_input->getData();
             initMatrix();
-            m_output->updateData( m_data );
+            WMatrixFixed< double, 4, 4 > mat = m_strategy()->getTransformationMatrix();
+
+            std::shared_ptr< WDataSet > data = transformData( mat * m_currentMat );
+
+            m_output->updateData( data );
         }
 
         if( m_data && m_strategy()->transformationChanged() )
@@ -161,6 +171,8 @@ void WMDatasetManipulator::moduleMain()
                 m_strategy()->reset();
             }
         }
+
+        m_currMatProp->set( m_currentMat );
     }
 }
 
