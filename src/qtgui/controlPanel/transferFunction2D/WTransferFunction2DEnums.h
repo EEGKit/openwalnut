@@ -36,5 +36,4 @@ enum ResizePointsRect
     BOTTOMRIGHT,
     NONE
 };
-
-#endif // WTRANSFERFUNCTION2DENUMS_H
+#endif  // WTRANSFERFUNCTION2DENUMS_H

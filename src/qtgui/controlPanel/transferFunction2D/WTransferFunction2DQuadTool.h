@@ -25,6 +25,8 @@
 #ifndef WTRANSFERFUNCTION2DQUADTOOL_H
 #define WTRANSFERFUNCTION2DQUADTOOL_H
 
+#include <vector>
+
 #include "QGraphicsItem"
 #include "WTransferFunction2DControlPoint.h"
 #include "WTransferFunction2DEnums.h"
@@ -68,8 +70,6 @@ public:
      */
     void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr ) override;
 
-    QRectF getParentBoundingRect();
-
 public slots:
     /**
      * Called by the color dialog every time the user changes the color.
@@ -78,6 +78,12 @@ public slots:
      */
     void colorSelected( const QColor& color );
 
+    /**
+     * Sets the resize handle to a new position
+     *
+     * \param handle handle location e.g. top left
+     * \param position position where it was moved to
+     */
     void setResizeHandle( ResizePointsRect handle, QPointF position );
 
 protected:
@@ -86,14 +92,14 @@ protected:
      *
      * @param event
      */
-    void mousePressEvent( QGraphicsSceneMouseEvent *event );
+    void mousePressEvent( QGraphicsSceneMouseEvent *event ) override;
 
     /**
      * Fires event, when mouse button is released
      *
      * @param event
      */
-    void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
+    void mouseMoveEvent( QGraphicsSceneMouseEvent *event ) override;
 
     /**
      * Fires event, when mouse button is released
@@ -108,10 +114,6 @@ protected:
       * @param event
       */
     void mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event ) override;
-
-    // void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
-    // void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
-    // void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
     /**
      *  Handles events, when state of this item changes
@@ -130,11 +132,10 @@ private:
      **/
     void showColorPicker();
 
+    /** Sets all control points in their desired corner of the rect */
     void setControlPointsToCorner();
 
     bool m_pressed; /*!< Flag to check if mouse button is pressed */
-
-    bool m_resizing; /*!< Flag to check if mouse button is pressed */
 
     ResizePointsRect m_resizePoints; /*!< Flag to check if mouse button is pressed */
 
@@ -145,7 +146,7 @@ private:
     double m_lastMousePosY; /*!< Variable to store the last mouse position in y direction */
     double m_width; /*!< The width of the box */
     double m_height; /*!< The height of the box */
-    std::vector< WTransferFunction2DControlPoint* > m_controlPoints;
-    QRectF m_box;
+    std::vector< WTransferFunction2DControlPoint* > m_controlPoints; /*!< The different control handles in the corners */
+    QRectF m_box; /*!< The box which is painted */
 };
 #endif  // WTRANSFERFUNCTION2DQUADTOOL_H

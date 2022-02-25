@@ -53,10 +53,14 @@ WTransferFunction2DQuadTool::WTransferFunction2DQuadTool( QGraphicsItem *parent 
     m_controlPoints.push_back( new WTransferFunction2DControlPoint( this, boundingRect().bottomLeft(), BOTTOMLEFT ) );
     m_controlPoints.push_back( new WTransferFunction2DControlPoint( this, boundingRect().topLeft(), TOPLEFT )  );
 
-    connect( m_controlPoints[0], SIGNAL( resizeHandleChanged( ResizePointsRect, QPointF ) ), this,SLOT( setResizeHandle( ResizePointsRect, QPointF ) ) );
-    connect( m_controlPoints[1], SIGNAL( resizeHandleChanged( ResizePointsRect, QPointF ) ), this,SLOT( setResizeHandle( ResizePointsRect, QPointF ) ) );
-    connect( m_controlPoints[2], SIGNAL( resizeHandleChanged( ResizePointsRect, QPointF ) ), this,SLOT( setResizeHandle( ResizePointsRect, QPointF ) ) );
-    connect( m_controlPoints[3], SIGNAL( resizeHandleChanged( ResizePointsRect, QPointF ) ), this,SLOT( setResizeHandle( ResizePointsRect, QPointF ) ) );;
+    connect( m_controlPoints[0], SIGNAL( resizeHandleChanged( ResizePointsRect, QPointF ) ),
+             this, SLOT( setResizeHandle( ResizePointsRect, QPointF ) ) );
+    connect( m_controlPoints[1], SIGNAL( resizeHandleChanged( ResizePointsRect, QPointF ) ),
+             this, SLOT( setResizeHandle( ResizePointsRect, QPointF ) ) );
+    connect( m_controlPoints[2], SIGNAL( resizeHandleChanged( ResizePointsRect, QPointF ) ),
+             this, SLOT( setResizeHandle( ResizePointsRect, QPointF ) ) );
+    connect( m_controlPoints[3], SIGNAL( resizeHandleChanged( ResizePointsRect, QPointF ) ),
+             this, SLOT( setResizeHandle( ResizePointsRect, QPointF ) ) );
 }
 WTransferFunction2DQuadTool::~WTransferFunction2DQuadTool()
 {
@@ -79,7 +83,8 @@ void WTransferFunction2DQuadTool::setControlPointsToCorner()
 
 QVariant WTransferFunction2DQuadTool::itemChange( GraphicsItemChange change, const QVariant &value )
 {
-    if (change == ItemPositionChange && scene()) {
+    if( change == ItemPositionChange && scene() )
+    {
         // value is the new position.
         QPointF newPos = value.toPointF();
         QRectF rect = scene()->sceneRect();
@@ -88,19 +93,19 @@ QVariant WTransferFunction2DQuadTool::itemChange( GraphicsItemChange change, con
         // we have to translate it back into (0,0) of the parent bounds
         // by using the inverse of the origin of this widget
         rect.translate( -m_box.topLeft() );
-        if ( !rect.contains( newPos ) ) {
+        if( !rect.contains( newPos ) )
+        {
             // Keep the item inside the scene
             newPos.setX( qMin( rect.right() - m_box.width(), qMax( newPos.x(), rect.left() ) ) );
             newPos.setY( qMin( rect.bottom() - m_box.height(), qMax( newPos.y(), rect.top() ) ) );
             return newPos;
         }
     }
-    return QGraphicsItem::itemChange(change, value);
+    return QGraphicsItem::itemChange( change, value );
 }
 
-void WTransferFunction2DQuadTool::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )
+void WTransferFunction2DQuadTool::paint( QPainter *painter, const QStyleOptionGraphicsItem*, QWidget* )
 {
-    QRectF rect = m_box;
     QBrush brush( m_color );
 
     painter->fillRect( m_box, brush );
@@ -152,7 +157,6 @@ void WTransferFunction2DQuadTool::mouseReleaseEvent( QGraphicsSceneMouseEvent *e
     update();
     QGraphicsItem::mouseReleaseEvent( event );
 }
-
 
 void WTransferFunction2DQuadTool::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
 {

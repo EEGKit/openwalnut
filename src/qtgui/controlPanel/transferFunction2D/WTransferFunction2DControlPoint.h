@@ -28,9 +28,16 @@
 #include "QGraphicsItem"
 #include "WTransferFunction2DEnums.h"
 
-class WTransferFunction2DControlPoint : public QGraphicsObject {
+/**
+ * This class represents a control point which can be used in a 2D TF Widget
+ * to control the size of e.g. the box.
+ */
+class WTransferFunction2DControlPoint : public QGraphicsObject
+        {
     Q_OBJECT
+
 public:
+    /** type of base class */
     typedef QGraphicsObject BaseClass;
 
     /**
@@ -38,6 +45,7 @@ public:
      *
      * @param parent the parent object/widget
      * @param position the coordinate where the color selection point should be placed within the parent
+     * @param handleLocation the location of the handle e.g. top left
      */
     explicit WTransferFunction2DControlPoint( BaseClass *parent, QPointF position, ResizePointsRect handleLocation );
 
@@ -61,6 +69,11 @@ public:
      */
     void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr ) override;
 
+    /**
+     * Set position of this item
+     *
+     * @param position
+     * */
     void setPosition( QPointF position );
 
 protected:
@@ -73,42 +86,58 @@ protected:
      *
      *  @return
      */
-    QVariant itemChange( GraphicsItemChange change, const QVariant &value );
+    QVariant itemChange( GraphicsItemChange change, const QVariant &value ) override;
 
     /**
      * Fires event, when mouse button is pressed
      *
      * @param event
      */
-    void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
+    void mouseMoveEvent( QGraphicsSceneMouseEvent *event ) override;
 
     /**
      * Fires event, when mouse button is pressed
      *
      * @param event
      */
-    void mouseReleaseEvent( QGraphicsSceneMouseEvent *event );
+    void mouseReleaseEvent( QGraphicsSceneMouseEvent *event ) override;
 
     /**
      * Fires event, when mouse button is pressed
      *
      * @param event
      */
-    void mousePressEvent( QGraphicsSceneMouseEvent *event );
+    void mousePressEvent( QGraphicsSceneMouseEvent *event ) override;
+
+    /**
+     * Fires event, when mouse is moved
+     *
+     * @param event
+     */
     void hoverEnterEvent( QGraphicsSceneHoverEvent *event ) override;
-    void hoverLeaveEvent( QGraphicsSceneHoverEvent *event ) override;
 
+    /**
+     * Fires event, when mouse button is released
+     *
+     * @param event
+     */
+    void hoverLeaveEvent( QGraphicsSceneHoverEvent *event ) override;
 signals:
+    /**
+     * The signal which is emited when the user selects a different resize handle
+     *
+     * @param location the handler e.g. top left
+     * @param position position of the handler to resize the box
+     * */
     void resizeHandleChanged( ResizePointsRect location, QPointF position );
 
 private:
-    BaseClass *m_parent;
-    QPointF m_position;
-    double m_radius;
-    ResizePointsRect m_handleLocation;
-    bool m_pressed;
-
+    BaseClass *m_parent; /*!< parent of this graphicsobject */
+    QPointF m_position; /*!< position of this graphicsobject */
+    double m_radius; /*!< radius of this graphicsobject */
+    ResizePointsRect m_handleLocation; /*!< Type of resize handler, which is currently selected */
+    bool m_pressed; /*!< Flag to check if mouse button is pressed */
 };
 
 
-#endif // WTRANSFERFUNCTION2DCONTROLPOINT_H
+#endif  // WTRANSFERFUNCTION2DCONTROLPOINT_H

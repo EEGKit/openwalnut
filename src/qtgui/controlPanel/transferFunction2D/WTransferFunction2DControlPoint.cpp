@@ -42,7 +42,6 @@ WTransferFunction2DControlPoint::WTransferFunction2DControlPoint( BaseClass *par
     setPos( position );
     setParentItem( parent );
     setAcceptHoverEvents( true );
-
 }
 
 WTransferFunction2DControlPoint::~WTransferFunction2DControlPoint()
@@ -56,7 +55,7 @@ QRectF WTransferFunction2DControlPoint::boundingRect() const
     return QRectF( -m_radius - padding, -m_radius - padding, diameter + padding, m_radius + padding );
 }
 
-void WTransferFunction2DControlPoint::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )
+void WTransferFunction2DControlPoint::paint( QPainter *painter, const QStyleOptionGraphicsItem*, QWidget* )
 {
     QRadialGradient gradient( 0.0, 0.0, m_radius );
 
@@ -70,7 +69,7 @@ void WTransferFunction2DControlPoint::paint( QPainter *painter, const QStyleOpti
     painter->drawEllipse( -m_radius, -m_radius, diameter, diameter );
 }
 
-void WTransferFunction2DControlPoint::setPosition(QPointF position)
+void WTransferFunction2DControlPoint::setPosition( QPointF position )
 {
     prepareGeometryChange();
     setPos( position );
@@ -79,19 +78,21 @@ void WTransferFunction2DControlPoint::setPosition(QPointF position)
 
 QVariant WTransferFunction2DControlPoint::itemChange( GraphicsItemChange change, const QVariant &value )
 {
-     if (change == ItemPositionChange && scene()) {
+     if( change == ItemPositionChange && scene() )
+     {
         // value is the new position.
         QPointF newPos = value.toPointF();
         QRectF rect = scene()->sceneRect();
-        rect.translate(mapFromScene( pos() ) );
-        if ( !rect.contains( newPos ) ) {
+        rect.translate( mapFromScene( pos() ) );
+        if( !rect.contains( newPos ) )
+        {
             // Keep the item inside the scene
             newPos.setX( qMin( rect.right(), qMax( newPos.x(), rect.left() ) ) );
             newPos.setY( qMin( rect.bottom(), qMax( newPos.y(), rect.top() ) ) );
             return newPos;
         }
     }
-    return QGraphicsItem::itemChange(change, value);
+    return QGraphicsItem::itemChange( change, value );
 }
 
 void WTransferFunction2DControlPoint::mousePressEvent( QGraphicsSceneMouseEvent *event )
@@ -126,7 +127,6 @@ void WTransferFunction2DControlPoint::mouseMoveEvent( QGraphicsSceneMouseEvent *
     update();
     m_parent->update();
     BaseClass::mouseMoveEvent( event );
-
 }
 
 void WTransferFunction2DControlPoint::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
@@ -153,13 +153,12 @@ void WTransferFunction2DControlPoint::hoverEnterEvent( QGraphicsSceneHoverEvent 
     }
     update();
     QGraphicsItem::hoverEnterEvent( event );
-
 }
 
 void WTransferFunction2DControlPoint::hoverLeaveEvent( QGraphicsSceneHoverEvent *event )
 {
     QGraphicsItem::setCursor( QCursor( Qt::ArrowCursor ) );
-    emit( resizeHandleChanged( NONE, QPointF( 0,0 ) ) );
+    emit( resizeHandleChanged( NONE, QPointF( 0, 0 ) ) );
     update();
     QGraphicsItem::hoverLeaveEvent( event );
 }
