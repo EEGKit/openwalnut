@@ -26,17 +26,8 @@
 #define WTRANSFERFUNCTION2DQUADTOOL_H
 
 #include "QGraphicsItem"
-#include "WTransferFunction2DColorSelectionPoint.h"
-
-/**
-    * Points where we can perform a resizing
-    * TODO(@Kai): Add more points
-    * */
-enum ResizePoints
-{
-    RIGHT,
-    BOTTOM
-};
+#include "WTransferFunction2DControlPoint.h"
+#include "WTransferFunction2DEnums.h"
 
 /**
  * This class defines a resizable box and is used as a
@@ -77,6 +68,8 @@ public:
      */
     void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr ) override;
 
+    QRectF getParentBoundingRect();
+
 public slots:
     /**
      * Called by the color dialog every time the user changes the color.
@@ -85,20 +78,22 @@ public slots:
      */
     void colorSelected( const QColor& color );
 
+    void setResizeHandle( ResizePointsRect handle, QPointF position );
+
 protected:
     /**
      * Fires event, when mouse button is pressed
      *
      * @param event
      */
-    void mousePressEvent( QGraphicsSceneMouseEvent *event ) override;
+    void mousePressEvent( QGraphicsSceneMouseEvent *event );
 
     /**
      * Fires event, when mouse button is released
      *
      * @param event
      */
-    void mouseMoveEvent( QGraphicsSceneMouseEvent *event ) override;
+    void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
 
     /**
      * Fires event, when mouse button is released
@@ -112,7 +107,7 @@ protected:
       *
       * @param event
       */
-    void mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event );
+    void mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event ) override;
 
     // void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     // void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
@@ -135,11 +130,13 @@ private:
      **/
     void showColorPicker();
 
+    void setControlPointsToCorner();
+
     bool m_pressed; /*!< Flag to check if mouse button is pressed */
 
     bool m_resizing; /*!< Flag to check if mouse button is pressed */
 
-    ResizePoints m_resizePoints; /*!< Flag to check if mouse button is pressed */
+    ResizePointsRect m_resizePoints; /*!< Flag to check if mouse button is pressed */
 
     QGraphicsItem* m_parent;  /*!< The parent object */
 
@@ -148,5 +145,7 @@ private:
     double m_lastMousePosY; /*!< Variable to store the last mouse position in y direction */
     double m_width; /*!< The width of the box */
     double m_height; /*!< The height of the box */
+    std::vector< WTransferFunction2DControlPoint* > m_controlPoints;
+    QRectF m_box;
 };
 #endif  // WTRANSFERFUNCTION2DQUADTOOL_H
