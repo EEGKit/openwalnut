@@ -613,7 +613,7 @@ vec4 viridis( in float value )
             vec3( 0.993248, 0.906157, 0.143936 )
             );
 
-    int id = int( value * 256.0 );
+    int id = int( value * 255.0 );
 
     return vec4( colorArray[id], 1.0 );
 }
