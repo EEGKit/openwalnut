@@ -553,14 +553,22 @@ void WGETexture< TextureType >::setupProperties( double scale, double min )
     m_interpolation = m_properties->addProperty( "Interpolate", "Interpolation of the volume data.", true, m_propCondition );
 
     m_colorMapSelectionsList = std::shared_ptr< WItemSelection >( new WItemSelection() );
-    m_colorMapSelectionsList->addItem( "Grayscale", "" );
-    m_colorMapSelectionsList->addItem( "Rainbow", "" );
-    m_colorMapSelectionsList->addItem( "Hot iron", "" );
-    m_colorMapSelectionsList->addItem( "Negative to positive", "" );
-    m_colorMapSelectionsList->addItem( "Atlas", "" );
-    m_colorMapSelectionsList->addItem( "Blue-Green-Purple", "" );
-    m_colorMapSelectionsList->addItem( "Vector", "" );
-    m_colorMapSelectionsList->addItem( "Viridis", "" );
+    m_colorMapSelectionsList->addItem( "Grayscale",
+                                       "Gray values between black (low) and white (high)." );
+    m_colorMapSelectionsList->addItem( "Rainbow",
+                                       "Fading through the rainbow colors." );
+    m_colorMapSelectionsList->addItem( "Hot iron",
+                                       "Fades between red and yellowish colors." );
+    m_colorMapSelectionsList->addItem( "Negative to positive",
+                                       "[Experimental] Maps red and blue to the positive and negative part of the interval linearly." );
+    m_colorMapSelectionsList->addItem( "Atlas",
+                                       "Tries to find distinct colors for neighbouring values" );
+    m_colorMapSelectionsList->addItem( "Blue-Green-Purple",
+                                       "Fading between blue, green and purple." );
+    m_colorMapSelectionsList->addItem( "Vector",
+                                       "Maps vector coordinate (x,y,z) to color channels (r,g,b)." );
+    m_colorMapSelectionsList->addItem( "Viridis",
+                                       "Optimized for perception. From purple via green to yellow. Default colormap in matplolib as of 2022." );
 
     m_colorMap = m_properties->addProperty( "Colormap", "The colormap of this texture.", m_colorMapSelectionsList->getSelectorFirst() );
     WPropertyHelper::PC_SELECTONLYONE::addTo( m_colorMap );

@@ -297,7 +297,7 @@ vec4 rainbow( in float value )
 }
 
 /**
- * Colormap fading between green, blue and purple.
+ * Colormap fading between blue, green and purple.
  *
  * \param value the scaled value in [0,1]
  *
