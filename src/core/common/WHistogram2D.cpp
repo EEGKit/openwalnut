@@ -23,6 +23,8 @@
 //---------------------------------------------------------------------------
 
 #include <utility>
+#include <algorithm>
+#include <vector>
 
 #include <core/common/math/WMath.h>
 #include <core/graphicsEngine/WGETexture.h>
@@ -199,18 +201,17 @@ unsigned char* WHistogram2D::getRawTexture()
     size_t imageWidth = m_buckets[ 0 ];
     size_t imageHeight = m_buckets[ 1 ];
     wlog::debug( "WHistogram2D" ) << "Texturesize width * height: " << m_buckets[0] << " * " << m_buckets[1];
-    float maxCount = 0;
+    double divisor = 0.0; // The divisor we use to calculate the brightness of an histogram entry
 
-    for( size_t j = 0; j < imageHeight; ++j ) // get max bin for scaling
-    {
-        for( size_t i = 0; i < imageWidth; ++i )
-        {
-            if( m_bins( i, j ) > maxCount )
-            {
-                maxCount = static_cast< float >( m_bins( i, j ) );
-            }
-        }
-    }
+    // We copy the histogram data and remove all zero entries
+    std::vector< int > v1( m_bins.data(), m_bins.data() + m_bins.rows() * m_bins.cols() );
+    // erase-remove idiom
+    v1.erase( std::remove( v1.begin(), v1.end(), 0.0 ), v1.end() );
+    std::sort( v1.begin(), v1.end() );
+    // then we calculate the 90 quantile and use the value there as our divisor for the calculation of the brightness
+    double p = 0.9;
+    double q = v1[ v1.size() * p ];
+    divisor = q;
 
     unsigned char * data = new unsigned char[ 4 * imageWidth * imageHeight ];
     for( size_t i = 0; i < imageWidth; ++i )
@@ -220,9 +221,9 @@ unsigned char* WHistogram2D::getRawTexture()
             // wlog::debug("2DHIST - Values") << 10 * 255 * static_cast< float >( (m_bins(i,j) / maxCount) );
             // using 8 bit grayscale yields a different outcome than usind RGBA8888
             // data[ imageWidth * i + j + 0 ] = ( unsigned char )( 255 * m_bins( i, j ) / maxCount ) ;
-            data[ 4 * imageWidth * i + 4 * j + 0 ] = ( unsigned char )( 255 * m_bins( i, j ) / maxCount );
-            data[ 4 * imageWidth * i + 4 * j + 1 ] = ( unsigned char )( 255 * m_bins( i, j ) / maxCount );
-            data[ 4 * imageWidth * i + 4 * j + 2 ] = ( unsigned char )( 255 * m_bins( i, j ) / maxCount );
+            data[ 4 * imageWidth * i + 4 * j + 0 ] = ( unsigned char )( 255 * m_bins( i, j ) / divisor );
+            data[ 4 * imageWidth * i + 4 * j + 1 ] = ( unsigned char )( 255 * m_bins( i, j ) / divisor );
+            data[ 4 * imageWidth * i + 4 * j + 2 ] = ( unsigned char )( 255 * m_bins( i, j ) / divisor );
             data[ 4 * imageWidth * i + 4 * j + 3 ] = ( unsigned char ) 255;
         }
     }
