@@ -136,34 +136,26 @@ vec4 negative2positive( in float valueDescaled, in float minV, in float scaleV )
 {
     // NOTE: this version should also respect positive-only values.
     const vec3 zeroColor = vec3( 1.0, 1.0, 1.0 );
-    const vec3 negColor = vec3( 1.0, 1.0, 0.0 );
-    const vec3 posColor= vec3( 0.0, 1.0, 1.0 );
+    const vec3 negColor = vec3( 1.0, 1.0, 0.0 ); // non-blue because it will be subtracted from white -> blue
+    const vec3 posColor= vec3( 0.0, 1.0, 1.0 ); // non-red because it will be subtracted from white -> red
 
-    // the descaled value can be in interval [minV,minV+Scale]. But as we want linear scaling where the pos and neg colors are scaled linearly
-    // agains each other, and we want to handle real negative values correctly. For only positive values, use their interval mid-point.
-    float isNegative = 1.0 - ( -1.0 * clamp( sign( minV ), -1.0, 0.0 ) ); // this is 1.0 if minV is smaller than zero
-    float mid = ( 1.0 - isNegative ) * 0.5 * scaleV;    // if negative, the mid point always is 0.0
-    // the width of the interval is its original width/2 if there are no negative values in the dataset
-    float width = ( isNegative * max( abs( minV ), abs( minV + scaleV ) ) ) + ( ( 1.0 - isNegative ) * mid );
+    // The descaled value can be in interval [minV,minV+Scale]. But as we want linear scaling where the pos and neg colors are scaled linearly
+    // against each other, and we want to handle real negative values correctly.
+    float valIsPositive = abs( clamp( sign( valueDescaled ), 0.0, 1.0 ) );
+    float valIsNegative = abs( clamp( sign( valueDescaled ), -1.0, 0.0 ) );
+    float minIsNegative = abs( clamp( sign( minV ), -1.0, 0.0 ) );
+    // not needed: float minIsPositive = abs( clamp( sign( minV ), 0.0, 1.0 ) );
 
-    // pos-neg mix factor
-    float share = ( valueDescaled - mid ) / width;
+    float extremeNeg = min( 0, minIsNegative * minV ) + 0.0001; // Add to avoid zero
+    float extremePos = max( 0, minV + scaleV ) + 0.0001; // Add to avoid zero
+    float normalizedNeg = abs( valueDescaled / extremeNeg );
+    float normalizedPos = abs( valueDescaled / extremePos );
+
 
     // use neg color for shares < 0.0 and pos color for the others
-    return vec4( zeroColor - ( abs( clamp( share, -1.0 , 0.0 ) * negColor ) + ( clamp( share, 0.0 , 1.0 ) * posColor ) ),
-                 1.0 ); // clip zeros is done in colormapping function
-    /*
-    const vec3 zeroColor = vec3( 1.0, 1.0, 1.0 );
-    const vec3 negColor = vec3( 1.0, 1.0, 0.0 );
-    const vec3 posColor = vec3( 0.0, 1.0, 1.0 );
+    return vec4( zeroColor - ( vec3( valIsNegative ) * normalizedNeg * negColor + vec3( valIsPositive ) * normalizedPos * posColor ), 1.0 );
 
-    float isNegative = 1.0 - ( -1.0 * clamp( sign( minV ), -1.0, 0.0 ) ); // this is 1.0 if minV is smaller than zero
-    float negShare = isNegative * abs( valueDescaled / minV ) * ( 1.0 - step( 0.0, valueDescaled ) );
-    float posShare = ( 1.0 - isNegative ) * abs( valueDescaled / ( minV + scaleV ) ) * step( 0.0, valueDescaled );
-
-    vec3 r1 = zeroColor - ( negColor * negShare ) -  ( posColor * posShare );
-    return vec4( r1, 1.0 );
-     */
+    // There have been a couple of iteration in this colormap. Please see version control for old code.
 }
 
 /**
@@ -345,7 +337,7 @@ vec4 blueGreenPurple( in float value )
  * "Viridis" colormap. It is optimized for perception. Default colormap in matplolib as of 2022 (since 2015).
  * Details:
  *   - https://bids.github.io/colormap/
- *   -https://github.com/matplotlib/matplotlib/blob/f6e0ee49c598f59c6e6cf4eefe473e4dc634a58a/lib/matplotlib/_cm_listed.py 
+ *   - https://github.com/matplotlib/matplotlib/blob/f6e0ee49c598f59c6e6cf4eefe473e4dc634a58a/lib/matplotlib/_cm_listed.py 
  *
  * \param value the scaled value in [0,1]
  *

@@ -561,7 +561,8 @@ void WGETexture< TextureType >::setupProperties( double scale, double min )
 
     m_colorMapSelectionsList = std::shared_ptr< WItemSelection >( new WItemSelection() );
     m_colorMapSelectionsList->addItem( "Grayscale",
-                                       "Gray values between black (low) and white (high)." );
+                                       "Gray values between black (low) and white (high)." ,
+                                       colormap_grayscale_xpm );
     m_colorMapSelectionsList->addItem( "Rainbow",
                                        "Fading through the rainbow colors.",
                                        colormap_rainbow_xpm );
