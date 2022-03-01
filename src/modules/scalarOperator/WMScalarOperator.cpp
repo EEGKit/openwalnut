@@ -106,6 +106,7 @@ void WMScalarOperator::properties()
     m_operations->addItem( "clamp( lower, upper, A )", "Clamp A between lower and upper so that l <= A <= u." );
     m_operations->addItem( "A * upper", "Scale data by factor." );
     m_operations->addItem( "Binarize A by upper", "Values > upper, become 1, below or equal become 0" );
+    m_operations->addItem( "A + upper", "Add constant value." );
 
     m_opSelection = m_properties->addProperty( "Operation", "The operation to apply on A and B.", m_operations->getSelectorFirst(),
                                                m_propCondition );
@@ -308,7 +309,7 @@ inline T opBinarizeByA( T a, T /* l */, T u )
 }
 
 /**
- * Operator applying some op to argument.
+ * Operator clamping argument.
  *
  * \tparam T Type of each parameter and the result
  * \param a the first operant
@@ -325,12 +326,28 @@ inline T opClamp( T a, T l, T u )
 }
 
 /**
- * Operator applying some op to argument.
+ * Operator adding value to argument.
  *
  * \tparam T Type of each parameter and the result
  * \param v the first operant
  * \param l ignored
  * \param u scaler
+ *
+ * \return result
+ */
+
+template< typename T >
+inline T opAddToA( T v, T /* l */, T u )
+{
+    return v + u;
+}
+/**
+ * Operator applying some op to argument.
+ *
+ * \tparam T Type of each parameter and the result
+ * \param v the first operant
+ * \param l ignored
+ * \param u costant value to add
  *
  * \return result
  */
@@ -539,6 +556,9 @@ public:
             case 8:
                 op = &opBinarizeByA< ResultT >;
                 break;
+            case 9:
+                op = &opAddToA< ResultT >;
+                break;
             default:
                 op = &opAbs< ResultT >;
                 break;
@@ -647,7 +667,7 @@ void WMScalarOperator::moduleMain()
             std::shared_ptr< WValueSetBase > newValueSet;
 
             // single operand operation?
-            if( ( s == 5 ) || ( s == 6 ) || ( s == 7 ) || ( s == 8 ) )
+            if( ( s == 5 ) || ( s == 6 ) || ( s == 7 ) || ( s == 8 ) || ( s == 9 ) )
             {
                 VisitorVSetSingleArgument visitor( s );    // the visitor cascades to the second value set
                 visitor.setBorder( m_lowerBorder->get( true ), m_upperBorder->get( true ) );
