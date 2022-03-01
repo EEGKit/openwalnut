@@ -79,7 +79,7 @@ void WMVRCamera::properties()
 bool WMVRCamera::setupVRInterface()
 {
     // Exit if we do not have an HMD present
-    if ( !vr::VR_IsHmdPresent() )
+    if( !vr::VR_IsHmdPresent() )
     {
         errorLog() << "No valid HMD present!" << std::endl;
         return false;
@@ -89,7 +89,7 @@ bool WMVRCamera::setupVRInterface()
     vr::EVRInitError eError = vr::VRInitError_None;
     m_vrSystem = vr::VR_Init( &eError, vr::VRApplication_Scene );
 
-    if ( eError != vr::VRInitError_None )
+    if( eError != vr::VRInitError_None )
     {
         m_vrSystem = nullptr;
         errorLog()
@@ -98,7 +98,7 @@ bool WMVRCamera::setupVRInterface()
         return false;
     }
 
-    if ( !vr::VRCompositor() )
+    if( !vr::VRCompositor() )
     {
         m_vrSystem = nullptr;
         vr::VR_Shutdown();
@@ -106,9 +106,9 @@ bool WMVRCamera::setupVRInterface()
         return false;
     }
 
-    m_vrRenderModels = ( vr::IVRRenderModels *)vr::VR_GetGenericInterface(vr::IVRRenderModels_Version, &eError );
+    m_vrRenderModels =( vr::IVRRenderModels * )vr::VR_GetGenericInterface( vr::IVRRenderModels_Version, &eError );
 
-    if ( m_vrRenderModels == nullptr )
+    if( m_vrRenderModels == nullptr )
     {
         m_vrSystem = nullptr;
         vr::VR_Shutdown();
@@ -141,7 +141,7 @@ void WMVRCamera::moduleMain()
     // HMD Setup
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    if ( setupVRInterface() )
+    if( setupVRInterface() )
     {
         debugLog() << "OpenVR initialized successfully";
         m_vrIsInitialized = true;
@@ -172,17 +172,17 @@ void WMVRCamera::moduleMain()
     mainView->addSlave( m_rightEyeCamera, false );
 
     // updatecallback for submitting frames
-    gc->setSwapCallback( new WSwapUpdateCallback(this) );
+    gc->setSwapCallback( new WSwapUpdateCallback( this ) );
 
     // Now, we can mark the module ready.
     ready();
     debugLog() << "Starting...";
 
     // loop until the module container requests the module to quit
-    while ( !m_shutdownFlag() )
+    while( !m_shutdownFlag() )
     {
         // woke up since the module is requested to finish
-        if ( m_shutdownFlag() )
+        if( m_shutdownFlag() )
         {
             break;
         }
@@ -203,7 +203,7 @@ void WMVRCamera::moduleMain()
 
 void WMVRCamera::activate()
 {
-    if ( m_active->get() )
+    if( m_active->get() )
     {
         debugLog() << "Activate.";
     }
@@ -254,7 +254,7 @@ void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent )
         debugLog() << "Pressed:" << vrEvent.data.controller.button;
         if(
             vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_Grip ||
-            vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_SteamVR_Trigger)
+            vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_SteamVR_Trigger )
         {
             m_grabber = vrEvent.trackedDeviceIndex;
         }
@@ -263,7 +263,7 @@ void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent )
         debugLog() << "Unpressed:" << vrEvent.data.controller.button;
         if(
             vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_Grip ||
-            vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_SteamVR_Trigger)
+            vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_SteamVR_Trigger )
         {
             m_grabber = vr::k_unTrackedDeviceIndexInvalid;
         }
@@ -280,15 +280,15 @@ void WMVRCamera::updateDeviceIDs()
         vr::ETrackedControllerRole cRole = m_vrSystem->GetControllerRoleForTrackedDeviceIndex( i );
 
         if( cRole == vr::TrackedControllerRole_LeftHand ) m_controllerLeft_deviceID = i;
-        else if( cRole == vr::TrackedControllerRole_RightHand ) m_controllerRight_deviceID = i;
-        // more devices IDs can be tracked here (such as the sonsors)        
+        if( cRole == vr::TrackedControllerRole_RightHand ) m_controllerRight_deviceID = i;
+        // more devices IDs can be tracked here (such as the sonsors)
     }
 }
 
 void WMVRCamera::updateControllerPoses()
 {
-	vr::TrackedDevicePose_t trackedDevicePose;
-	vr::VRControllerState_t controllerState;
+    vr::TrackedDevicePose_t trackedDevicePose;
+    vr::VRControllerState_t controllerState;
 
     // Left Hand
     if( m_vrSystem->GetControllerRoleForTrackedDeviceIndex( m_controllerLeft_deviceID ) == vr::TrackedControllerRole_LeftHand )
