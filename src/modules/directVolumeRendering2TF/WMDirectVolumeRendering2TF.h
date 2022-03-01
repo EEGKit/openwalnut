@@ -105,14 +105,9 @@ protected:
 
 private:
     /**
-     * The transfer function as an input data set
-     */
-    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_transferFunction_ds0;
-
-    /**
-    * The transfer function as an input data set
+    * The 2D transfer function as an input data set
     */
-    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_transferFunction_ds1;
+    std::shared_ptr< WModuleInputData< WDataSetSingle > > m_transferFunction;
 
     /**
      * An input connector used to get datasets from other modules. The connection management between connectors must not be handled by the module.

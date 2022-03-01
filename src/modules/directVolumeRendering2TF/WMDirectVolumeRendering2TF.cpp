@@ -91,20 +91,24 @@ const std::string WMDirectVolumeRendering2TF::getDescription() const
 void WMDirectVolumeRendering2TF::connectors()
 {
     // DVR needs one input: the scalar dataset
-    m_input_ds0 = WModuleInputData< WDataSetScalar >::createAndAdd( shared_from_this(), "scalar data data set 1", "The scalar dataset." );
+    m_input_ds0 = WModuleInputData< WDataSetScalar >::createAndAdd( shared_from_this(), "scalar data set 1", "The scalar dataset." );
 
     // optional: second input for a second scalar dataset
-    m_input_ds1 = WModuleInputData< WDataSetScalar >::createAndAdd( shared_from_this(), "scalar data data set 2", "The scalar dataset." );
+    m_input_ds1 = WModuleInputData< WDataSetScalar >::createAndAdd( shared_from_this(), "scalar data set 2", "The scalar dataset." );
 
     // The transfer function for our DVR
-    m_transferFunction_ds0 = WModuleInputData< WDataSetSingle >::createAndAdd( shared_from_this(),
-                                                                              "transfer function data set 1",
-                                                                              "The 1D transfer function for the first data set." );
-
-    // The transfer function for our DVR
-    m_transferFunction_ds1 = WModuleInputData< WDataSetSingle >::createAndAdd( shared_from_this(),
-                                                                              "transfer function data set 2",
-                                                                              "The 1D transfer function for the second data set." );
+    m_transferFunction = WModuleInputData< WDataSetSingle >::createAndAdd( shared_from_this(),
+                                                                               "transfer function data set 1",
+                                                                               "The 2D transfer function for the two data sets." );
+//    // The transfer function for our DVR
+//    m_transferFunction_ds0 = WModuleInputData< WDataSetSingle >::createAndAdd( shared_from_this(),
+//                                                                              "transfer function data set 1",
+//                                                                              "The 1D transfer function for the first data set." );
+//
+//    // The transfer function for our DVR
+//    m_transferFunction_ds1 = WModuleInputData< WDataSetSingle >::createAndAdd( shared_from_this(),
+//                                                                              "transfer function data set 2",
+//                                                                              "The 1D transfer function for the second data set." );
 
     // Optional: the gradient field
     m_gradients = WModuleInputData< WDataSetVector >::createAndAdd( shared_from_this(),
@@ -219,8 +223,8 @@ void WMDirectVolumeRendering2TF::moduleMain()
     WGEShaderDefineSwitch::SPtr depthProjectionEnabledDefine = m_shader->setDefine( "DEPTH_PROJECTION_ENABLED" );
 
     // the texture used for the transfer function
-    osg::ref_ptr< osg::Image > tfImage_ds0 = new osg::Image();
-    osg::ref_ptr< osg::Image > tfImage_ds1 = new osg::Image();
+    //osg::ref_ptr< osg::Image > tfImage_ds0 = new osg::Image();
+    //osg::ref_ptr< osg::Image > tfImage_ds1 = new osg::Image();
 
     osg::ref_ptr< osg::Texture2D > tfTexture2D = new osg::Texture2D();
     osg::ref_ptr< osg::Image > tfImage2D = new osg::Image();
@@ -228,8 +232,9 @@ void WMDirectVolumeRendering2TF::moduleMain()
 
     // let the main loop awake if the data changes or the properties changed.
     m_moduleState.setResetable( true, true );
-    m_moduleState.add( m_transferFunction_ds0->getDataChangedCondition() );
-    m_moduleState.add( m_transferFunction_ds1->getDataChangedCondition() );
+    m_moduleState.add( m_transferFunction->getDataChangedCondition() );
+//    m_moduleState.add( m_transferFunction_ds0->getDataChangedCondition() );
+//    m_moduleState.add( m_transferFunction_ds1->getDataChangedCondition() );
     m_moduleState.add( m_input_ds0->getDataChangedCondition() );
     m_moduleState.add( m_input_ds1->getDataChangedCondition() );
     m_moduleState.add( m_gradients->getDataChangedCondition() );
@@ -366,43 +371,22 @@ void WMDirectVolumeRendering2TF::moduleMain()
             ////////////////////////////////////////////////////////////////////////////////////////////////////
             // transfer function texture
             ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-            osg::ref_ptr< osg::Texture1D > tfTexture_ds0 = new osg::Texture1D();
-            tfTexture_ds0->setDataVariance( osg::Object::DYNAMIC );
-
-            osg::ref_ptr< osg::Texture1D > tfTexture_ds1 = new osg::Texture1D();
-            tfTexture_ds1->setDataVariance( osg::Object::DYNAMIC );
-            // create some ramp as default
+            // Default "texture" when no transfer function is connected
+            tfImage2D->allocateImage( 300, 300, 1, GL_RGBA, GL_UNSIGNED_BYTE );
+            unsigned char *data = tfImage2D->data();
+            for( int x = 0; x < 300; x++ )
             {
-                int resX = 32;
-                tfImage_ds0->allocateImage( resX, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE );
-                unsigned char *data_ds0 = tfImage_ds0->data();  // should be 4 megs
-                for( int x = 0; x < resX; x++ )
+                for( int y = 0; y < 300; y++ )
                 {
-                    unsigned char r = ( unsigned char )( 0.1 * 255.0 * static_cast< float >( x ) / static_cast< float >( resX ) );
-                    data_ds0[ 4 * x + 0 ] = 255;
-                    data_ds0[ 4 * x + 1 ] = 255;
-                    data_ds0[ 4 * x + 2 ] = 255;
-                    data_ds0[ 4 * x + 3 ] = r;
-                }
-
-                tfImage_ds1->allocateImage( resX, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE );
-                unsigned char *data_ds1 = tfImage_ds1->data();  // should be 4 megs
-                for( int x = 0; x < resX; x++ )
-                {
-                    unsigned char r = ( unsigned char )( 0.1 * 255.0 * static_cast< float >( x ) / static_cast< float >( resX ) );
-                    data_ds1[ 4 * x + 0 ] = 255;
-                    data_ds1[ 4 * x + 1 ] = 255;
-                    data_ds1[ 4 * x + 2 ] = 255;
-                    data_ds1[ 4 * x + 3 ] = r;
+                    data[ 4 * 300 * x + 4 * y + 0 ] = 0.;
+                    data[ 4 * 300 * x + 4 * y + 1 ] = 0.;
+                    data[ 4 * 300 * x + 4 * y + 2 ] = 255.;
+                    data[ 4 * 300 * x + 4 * y + 3 ] = 128.;
                 }
             }
 
             osg::ref_ptr< osg::Texture2D > tfTexture2D = new osg::Texture2D();
             tfTexture2D->setDataVariance( osg::Object::DYNAMIC );
-
-            tfTexture_ds0->setImage( tfImage_ds0 );
-            tfTexture_ds1->setImage( tfImage_ds1 );
             tfTexture2D->setImage( tfImage2D );
 
             wge::bindTexture( cube, tfTexture2D, 4, "u_transferFunction2D" );
@@ -478,68 +462,48 @@ void WMDirectVolumeRendering2TF::moduleMain()
         // load transfer function
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        if( ( updateTF || propUpdated || m_transferFunction_ds0->updated() || m_transferFunction_ds1->updated() )
+        if( ( updateTF || propUpdated || m_transferFunction->updated() )
                 && dataValid && cube )
         {
             updateTF = false;
-            std::shared_ptr< WDataSetSingle > dataSet0 = m_transferFunction_ds0->getData();
-            std::shared_ptr< WDataSetSingle > dataSet1 = m_transferFunction_ds1->getData();
+            std::shared_ptr< WDataSetSingle > dataSet = m_transferFunction->getData();
 
-            if( !dataSet0 || !dataSet1 )
+            if( !dataSet )
             {
                 debugLog() << "no data set?";
             }
             else
             {
-                WAssert( dataSet0, "data set0" );
-                std::shared_ptr< WValueSetBase > valueSet0 = dataSet0->getValueSet();
-                WAssert( valueSet0, "value set0" );
-                std::shared_ptr< WValueSet< unsigned char > > valueSet_ds0( std::dynamic_pointer_cast<WValueSet< unsigned char> >( valueSet0 ) );
+                WAssert( dataSet, "data set" );
+                std::shared_ptr< WValueSetBase > valueSet = dataSet->getValueSet();
+                WAssert( valueSet, "value set" );
+                std::shared_ptr< WValueSet< unsigned char > > cvalueSet( std::dynamic_pointer_cast<WValueSet< unsigned char> >( valueSet ) );
 
-                WAssert( dataSet1, "data set1" );
-                std::shared_ptr< WValueSetBase > valueSet1 = dataSet1->getValueSet();
-                WAssert( valueSet1, "value set1" );
-                std::shared_ptr< WValueSet< unsigned char > > valueSet_ds1( std::dynamic_pointer_cast<WValueSet< unsigned char> >( valueSet1 ) );
-                if( !valueSet_ds0 && !valueSet_ds1 )
+                if( !valueSet )
                 {
                     debugLog() << "invalid type";
                 }
                 else
                 {
-                    size_t tfsize_ds0 = valueSet_ds0->rawSize();
-                    size_t tfsize_ds1 = valueSet_ds1->rawSize();
-
-                    // create image and copy the TF
-                    tfImage_ds0->allocateImage( tfsize_ds0 / 4, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE );
-                    tfImage_ds0->setInternalTextureFormat( GL_RGBA );
-                    unsigned char* data_ds0 = reinterpret_cast< unsigned char* >( tfImage_ds0->data() );
-                    std::copy( valueSet_ds0->rawData(), &valueSet_ds0->rawData()[ tfsize_ds0 ], data_ds0 );
-
-                    // create image and copy the TF
-                    tfImage_ds1->allocateImage( tfsize_ds1 / 4, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE );
-                    tfImage_ds1->setInternalTextureFormat( GL_RGBA );
-                    unsigned char* data_ds1 = reinterpret_cast< unsigned char* >( tfImage_ds1->data() );
-                    std::copy( valueSet_ds1->rawData(), &valueSet_ds1->rawData()[ tfsize_ds1 ], data_ds1 );
-
                     //create image for 2D TF
-                    tfImage2D->allocateImage( tfsize_ds0 / 4, tfsize_ds1 / 4, 1, GL_RGBA, GL_UNSIGNED_BYTE );
+                    size_t tfsize = cvalueSet->rawSize();
+                    tfImage2D->allocateImage( tfsize / 4, tfsize / 4, 1, GL_RGBA, GL_UNSIGNED_BYTE );
                     tfImage2D->setInternalTextureFormat( GL_RGBA );
+                    unsigned char* data = reinterpret_cast< unsigned char* >( tfImage2D->data() );
+                    //TODO(Kai): I need to adept this
+                    std::copy( cvalueSet->rawData(), &cvalueSet->rawData()[ tfsize ], data );
 
-                    // Combine two 1D Transfer Functions to a 2D Transfer Function via the Tensor Product
-                    for( int row = 0; row < tfImage2D->s(); ++row )
-                    {
-                        for( int col = 0; col < tfImage2D->t(); ++col )
-                        {
-                            tfImage2D->data( col, row )[ 0 ] = ( tfImage_ds0->data( row, 0 )[ 0 ]
-                                                                * tfImage_ds1->data( col, 0 )[ 0 ] ) / 255.0;
-                            tfImage2D->data( col, row )[ 1 ] = ( tfImage_ds0->data( row, 0 )[ 1 ]
-                                                                * tfImage_ds1->data( col, 0 )[ 1 ] ) / 255.0;
-                            tfImage2D->data( col, row )[ 2 ] = ( tfImage_ds0->data( row, 0 )[ 2 ]
-                                                                * tfImage_ds1->data( col, 0 )[ 2 ] ) / 255.0;
-                            tfImage2D->data( col, row )[ 3 ] = ( tfImage_ds0->data( row, 0 )[ 3 ]
-                                                                * tfImage_ds1->data( col, 0 )[ 3 ] ) / 255.0;
-                        }
-                    }
+                    // Just a test if the data is going to be rendered red half transparent
+//                    for( int row = 0; row < tfImage2D->s(); ++row )
+//                    {
+//                        for( int col = 0; col < tfImage2D->t(); ++col )
+//                        {
+//                            tfImage2D->data( col, row )[ 0 ] = 255.;
+//                            tfImage2D->data( col, row )[ 1 ] = 0.;
+//                            tfImage2D->data( col, row )[ 2 ] = 0.;
+//                            tfImage2D->data( col, row )[ 3 ] = 128.;
+//                        }
+//                    }
 
                     // force OpenGl to use the new texture
                     tfTexture2D->dirtyTextureObject();
