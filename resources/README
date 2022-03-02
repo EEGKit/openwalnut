@@ -1,7 +1,7 @@
 Non-Compile Resources
 =====================
 
-This directory contains all additional files. They usually need no compilation
+This directory contains all additional files. They usually do not need to be compiled
 and need to be copied to a certain place.
 
 This directory contains directories for each component defined in the CMake files.
