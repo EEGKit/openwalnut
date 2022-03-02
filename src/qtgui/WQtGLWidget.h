@@ -25,6 +25,12 @@
 #ifndef WQTGLWIDGET_H
 #define WQTGLWIDGET_H
 
+// This looks very sketchy, but it works...
+// The inclusion order of QOpenGLContext seems to be the problem here
+// https://forum.qt.io/topic/94567/gldebugproc-symbol-not-defined/4
+typedef void (APIENTRY *GLDEBUGPROC)(GLenum source,GLenum type,GLuint id,GLenum severity,GLsizei length,const GLchar *message,const void *userParam);
+#include <QOpenGLContext>
+
 #include <memory>
 #include <string>
 
