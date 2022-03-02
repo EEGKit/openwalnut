@@ -154,119 +154,87 @@ size_t getId( size_t xDim, size_t yDim, size_t /*zDim*/, size_t x, size_t y, siz
     return offset + ( elements * ( z * xDim * yDim + y * xDim + x ) );
 }
 
-/**
- * Visitor for discriminating the type of the first valueset.
- */
-class VisitorVSetA: public boost::static_visitor< std::shared_ptr< WValueSetBase > >
+WMVectorOperator::VisitorVSetA::VisitorVSetA( std::shared_ptr< WGridRegular3D > grid, size_t opIdx ):
+    boost::static_visitor< result_type >(),
+    m_grid( grid ),
+    m_opIdx( opIdx )
 {
-public:
-    /**
-     * Create visitor instance.
-     *
-     * \param opIdx The operator index.
-     * \param grid the underlying grid
-     */
-    VisitorVSetA( std::shared_ptr< WGridRegular3D > grid, size_t opIdx = 0 ):
-        boost::static_visitor< result_type >(),
-        m_grid( grid ),
-        m_opIdx( opIdx )
+}
+
+template < typename T >
+boost::static_visitor<std::shared_ptr<WValueSetBase> >::result_type WMVectorOperator::VisitorVSetA::operator()(
+    const WValueSet< T >* const& vsetA ) const
+{
+    // get some info
+    std::vector< T > data;
+    data.resize( vsetA->size() );
+
+    // discriminate the right operation with the correct type. It would be nicer to use some kind of strategy pattern here, but the template
+    // character of the operators forbids it as template methods can't be virtual. Besides this, at some point in the module main the
+    // selector needs to be queried and its index mapped to a pointer. This is what we do here.
+    boost::function< T( const WVector3d&,
+                        const WVector3d&, const WVector3d&,
+                        const WVector3d&, const WVector3d&,
+                        const WVector3d&, const WVector3d& ) > op;
+    switch( m_opIdx )
     {
+        case 1:
+            op = &opCurvature< T >;
+            break;
+        case 0:
+        default:
+            op = &opLength< T >;
+            break;
     }
 
-    /**
-     * Called by boost::varying during static visiting.
-     *
-     * \tparam T the real integral type of the first value set.
-     * \param vsetA the first valueset currently visited.
-     *
-     * \return the result from the operation
-     */
-    template < typename T >
-    result_type operator()( const WValueSet< T >* const& vsetA ) const             // NOLINT
+    // some info needed for indexing the vector components
+    size_t nX = m_grid->getNbCoordsX();
+    size_t nY = m_grid->getNbCoordsY();
+    size_t nZ = m_grid->getNbCoordsZ();
+
+    // apply op to each value
+    // iterate field
+    for( size_t z = 1; z < nZ - 1; z++ )
     {
-        // get some info
-        std::vector< T > data;
-        data.resize( vsetA->size() );
-
-        // discriminate the right operation with the correct type. It would be nicer to use some kind of strategy pattern here, but the template
-        // character of the operators forbids it as template methods can't be virtual. Besides this, at some point in the module main the
-        // selector needs to be queried and its index mapped to a pointer. This is what we do here.
-        boost::function< T( const WVector3d&,
-                            const WVector3d&, const WVector3d&,
-                            const WVector3d&, const WVector3d&,
-                            const WVector3d&, const WVector3d& ) > op;
-        switch( m_opIdx )
+        for( size_t y = 1; y < nY - 1; y++ )
         {
-            case 1:
-                op = &opCurvature< T >;
-                break;
-            case 0:
-            default:
-                op = &opLength< T >;
-                break;
-        }
-
-        // some info needed for indexing the vector components
-        size_t nX = m_grid->getNbCoordsX();
-        size_t nY = m_grid->getNbCoordsY();
-        size_t nZ = m_grid->getNbCoordsZ();
-
-        // apply op to each value
-        // iterate field
-        for( size_t z = 1; z < nZ - 1; z++ )
-        {
-            for( size_t y = 1; y < nY - 1; y++ )
+            for( size_t x = 1; x < nX - 1; x++ )
             {
-                for( size_t x = 1; x < nX - 1; x++ )
-                {
-                    // this is ugly. We'll fix this crap with the upcoming new data handler
-                    size_t idx = getId( nX, nY, nZ, x, y, z );
-                    WVector3d vec = vsetA->getVector3D( idx );
+                // this is ugly. We'll fix this crap with the upcoming new data handler
+                size_t idx = getId( nX, nY, nZ, x, y, z );
+                WVector3d vec = vsetA->getVector3D( idx );
 
-                    // also get the neighbours
-                    WVector3d mx = vsetA->getVector3D( getId( nX, nY, nZ, x - 1, y, z ) );
-                    WVector3d px = vsetA->getVector3D( getId( nX, nY, nZ, x + 1, y, z ) );
-                    WVector3d my = vsetA->getVector3D( getId( nX, nY, nZ, x, y - 1, z ) );
-                    WVector3d py = vsetA->getVector3D( getId( nX, nY, nZ, x, y + 1, z ) );
-                    WVector3d mz = vsetA->getVector3D( getId( nX, nY, nZ, x, y, z - 1 ) );
-                    WVector3d pz = vsetA->getVector3D( getId( nX, nY, nZ, x, y, z + 1 ) );
+                // also get the neighbours
+                WVector3d mx = vsetA->getVector3D( getId( nX, nY, nZ, x - 1, y, z ) );
+                WVector3d px = vsetA->getVector3D( getId( nX, nY, nZ, x + 1, y, z ) );
+                WVector3d my = vsetA->getVector3D( getId( nX, nY, nZ, x, y - 1, z ) );
+                WVector3d py = vsetA->getVector3D( getId( nX, nY, nZ, x, y + 1, z ) );
+                WVector3d mz = vsetA->getVector3D( getId( nX, nY, nZ, x, y, z - 1 ) );
+                WVector3d pz = vsetA->getVector3D( getId( nX, nY, nZ, x, y, z + 1 ) );
 
-                    data[ idx ] = op( vec, mx, px, my, py, mz, pz );
-                }
+                data[ idx ] = op( vec, mx, px, my, py, mz, pz );
             }
         }
-
-        // init the border values
-        for( size_t z = 0; z < 2; z++ )
-        {
-            for( size_t y = 1; y < 2; y++ )
-            {
-                for( size_t x = 1; x < 2; x++ )
-                {
-                    size_t idx = getId( nX, nY, nZ, x * ( nX - 1 ), y * ( nY - 1 ), z * ( nZ - 1 ) );
-                    data[ idx ] = 0.0;
-                }
-            }
-        }
-
-        // create result value set
-        return std::shared_ptr< WValueSet< T > >( new WValueSet< T >( 0,
-                                                                        1,
-                                                                        std::shared_ptr< std::vector< T > >(
-                                                                            new std::vector< T >( data ) ),
-                                                                        DataType< T >::type ) );
     }
 
-    /**
-     * The underlying grid.
-     */
-    std::shared_ptr< WGridRegular3D > m_grid;
+    // init the border values
+    for( size_t z = 0; z < 2; z++ )
+    {
+        for( size_t y = 1; y < 2; y++ )
+        {
+            for( size_t x = 1; x < 2; x++ )
+            {
+                size_t idx = getId( nX, nY, nZ, x * ( nX - 1 ), y * ( nY - 1 ), z * ( nZ - 1 ) );
+                data[ idx ] = 0.0;
+            }
+        }
+    }
 
-    /**
-     * The operator index.
-     */
-    size_t m_opIdx;
-};
+    // create result value set
+    return std::shared_ptr< WValueSet< T > >( new WValueSet< T >(
+        0, 1, std::shared_ptr< std::vector< T > >( new std::vector< T >( data ) ), DataType< T >::type )
+    );
+}
 
 void WMVectorOperator::moduleMain()
 {

@@ -101,6 +101,42 @@ protected:
 
 private:
     /**
+     * Visitor for discriminating the type of the first valueset.
+     */
+    class VisitorVSetA: public boost::static_visitor< std::shared_ptr< WValueSetBase > >
+    {
+    public:
+        /**
+         * Create visitor instance.
+         *
+         * \param opIdx The operator index.
+         * \param grid the underlying grid
+         */
+        VisitorVSetA( std::shared_ptr< WGridRegular3D > grid, size_t opIdx = 0 );
+
+        /**
+         * Called by boost::varying during static visiting.
+         *
+         * \tparam T the real integral type of the first value set.
+         * \param vsetA the first valueset currently visited.
+         *
+         * \return the result from the operation
+         */
+        template < typename T >
+        result_type operator()( const WValueSet< T >* const& vsetA ) const;             // NOLINT
+
+        /**
+         * The underlying grid.
+         */
+        std::shared_ptr< WGridRegular3D > m_grid;
+
+        /**
+         * The operator index.
+         */
+        size_t m_opIdx;
+    };
+
+    /**
      * A condition used to notify about changes in several properties.
      */
     std::shared_ptr< WCondition > m_propCondition;
