@@ -60,19 +60,6 @@ std::shared_ptr< WModule > WMWriteNIfTI::factory() const
     return std::shared_ptr< WModule >( new WMWriteNIfTI() );
 }
 
-const char** WMWriteNIfTI::getXPMIcon() const
-{
-    static const char * disc_xpm[] =
-    {
-                    "16 16 7 1", "   c None", ".  c #000080", "+  c #000000", "@  c #FFFF00", "#  c #E0E0E0",
-                    "$  c #FFFFFF", "%  c #C0C0C0", "..+++++++++++..+", "..@@@@@@@@@@@..+", "..###########..+",
-                    "..$$$$$$$$$$$..+", "..###########..+", "..$$$$$$$$$$$..+", "..###########..+", "..$$$$$$$$$$$..+",
-                    "...............+", "....%%%%%%%....+", "....%..%%%%....+", "....%..%%%%....+", "....%..%%%%....+",
-                    "....%..%%%%....+", "+...%%%%%%%....+", "++++++++++++++++"
-    };
-    return disc_xpm;
-}
-
 const std::string WMWriteNIfTI::getName() const
 {
     return "Write NIfTI";
@@ -80,7 +67,7 @@ const std::string WMWriteNIfTI::getName() const
 
 const std::string WMWriteNIfTI::getDescription() const
 {
-    return "Writes a data set to a NIfTI file.";
+    return ""; // See META file
 }
 
 void WMWriteNIfTI::moduleMain()
