@@ -24,6 +24,10 @@
 
 #include <string>
 
+#include <osgDB/ReadFile>
+
+#include "core/graphicsEngine/WGEManagedGroupNode.h"
+
 #include "WMVRCamera.h"
 #include "WMVRCamera.xpm"
 
@@ -122,7 +126,15 @@ bool WMVRCamera::setupVRInterface()
     m_vrSystem->GetRecommendedRenderTargetSize( &m_vrRenderWidth, &m_vrRenderHeight );
 
     m_grabber = vr::k_unTrackedDeviceIndexInvalid;
+
+    // Check for connected controllers
     updateDeviceIDs();
+
+    // Add right hand controller if exists
+    if( m_vrSystem->GetControllerRoleForTrackedDeviceIndex( m_controllerRight_deviceID ) == vr::TrackedControllerRole_RightHand )
+    {
+        addControllerGeometry();
+    }
 
     std::string driverName = getDeviceProperty( vr::Prop_TrackingSystemName_String );
     std::string deviceSerialNumber = getDeviceProperty( vr::Prop_SerialNumber_String );
@@ -271,6 +283,18 @@ void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent )
     default:
         break;
     }
+}
+
+osg::ref_ptr< osg::Node > WMVRCamera::addControllerGeometry()
+{
+    // Add controller geometry to the scene
+    osg::ref_ptr< osg::Node > controllerNode = osgDB::readNodeFile( ( m_localPath / "VIVEController.obj" ).string() );
+
+    osg::ref_ptr<WGEManagedGroupNode> m_rootnode = osg::ref_ptr< WGEManagedGroupNode > ( new WGEManagedGroupNode( m_active ) );
+    m_rootnode->insert( controllerNode );
+    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert( m_rootnode );
+
+    return controllerNode;
 }
 
 void WMVRCamera::updateDeviceIDs()

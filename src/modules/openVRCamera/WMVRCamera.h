@@ -107,6 +107,11 @@ public:
     void handleControllerEvent( vr::VREvent_t vrEvent );
 
     /**
+     * Add controller geometry as node which will also be returned.
+     */
+    osg::ref_ptr< osg::Node > addControllerGeometry();
+
+    /**
      * Find and save device IDs for later use (controller IDs for example).
      */
     void updateDeviceIDs();
