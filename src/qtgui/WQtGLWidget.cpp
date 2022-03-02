@@ -31,6 +31,7 @@
 #include <QFileDialog>
 #include <QKeyEvent>
 #include <QPixmap>
+#include <QDebug>
 
 #include "WMainWindow.h"
 #include "WQtGLScreenCapture.h"
@@ -419,6 +420,8 @@ const QGLFormat WQtGLWidget::getDefaultFormat()
 {
     QGLFormat format;
     format.setSwapInterval( 1 );    // according to Qt Doc, this should enable VSync. But it doesn't.
+    format.setVersion( 4, 1 );
+    format.setProfile( QSurfaceFormat::CoreProfile );
     return format;
 }
 
