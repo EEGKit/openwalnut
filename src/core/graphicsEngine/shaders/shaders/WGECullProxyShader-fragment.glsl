@@ -25,6 +25,7 @@
 #version 150 core
 
 #include "WGEShader-uniforms.glsl"
+out vec4 fragColor;
 
 /**
  * Main. For something interesting see the vertex shader.
@@ -32,6 +33,6 @@
 void main()
 {
     // laplace filter kernel
-    gl_FragColor = vec4( 1.0 );
+    fragColor = vec4( 1.0 );
 }
 

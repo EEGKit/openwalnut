@@ -33,6 +33,9 @@ in vec3 v_normal;
 
 in vec4 v_color;
 
+out vec4 fragColor;
+
+
 void main()
 {
     vec4 col = v_color;
@@ -44,6 +47,6 @@ void main()
     col.rgb *= light;
 
     // finally set the color
-    gl_FragColor = col;
+    fragColor = col;
 }
 

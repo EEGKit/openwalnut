@@ -57,6 +57,9 @@ uniform float u_depthShadeU = 1.0;
 uniform float u_depthThresholdL = 0.25;
 uniform float u_depthThresholdU = 0.75;
 
+out vec4 fragColor;
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Varying
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,7 +152,7 @@ void main()
         vec3 colorBottom = vec3( 0.0 );
         vec3 colorTop  = vec3( 0.2, 0.2, 0.2 );
         gl_FragDepth = depth;
-        gl_FragColor = vec4( mix( colorBottom, colorTop, coord.y ), 1.0 );
+        fragColor = vec4( mix( colorBottom, colorTop, coord.y ), 1.0 );
         return;
     }
 #else

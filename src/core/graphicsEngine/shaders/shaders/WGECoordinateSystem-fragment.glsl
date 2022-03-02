@@ -35,6 +35,8 @@ in vec3 v_normal;
 
 in vec4 v_color;
 in vec4 v_texcoord;
+out vec4 fragColor;
+
 
 void main()
 {
@@ -46,5 +48,5 @@ void main()
     col *= light;
 
     // use texture coordinate to mix along the cylinder
-    gl_FragColor = mix( white, col, v_texcoord.t + 0.2 );
+    fragColor = mix( white, col, v_texcoord.t + 0.2 );
 }

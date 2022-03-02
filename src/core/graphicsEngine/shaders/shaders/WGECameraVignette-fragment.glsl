@@ -36,6 +36,8 @@ uniform float u_vignetteIntensity = 0.5;
  */
 in vec2 v_pos;
 
+out vec4 fragColor;
+
 void main()
 {
     // Basically, use a unit circle and shade alpha when nearing radius 1
@@ -47,5 +49,5 @@ void main()
     float alpha = u_vignetteIntensity * ( xsqr * ysqr );
 
     // use texture coordinate to mix along the cylinder
-    gl_FragColor = vec4( vec3( 0.0 ), alpha );
+    fragColor = vec4( vec3( 0.0 ), alpha );
 }

@@ -41,6 +41,7 @@ uniform float u_horizon = 33;
  * Pixel position in [0,1]
  */
 in vec2 v_pos;
+out vec4 fragColor;
 
 void main()
 {
@@ -58,7 +59,7 @@ void main()
                  ( 1.0 - bottom ) * mix( u_top1Color, u_top2Color, topScale );
 
     // use texture coordinate to mix along the cylinder
-    gl_FragColor = vec4( color.rgb, 1.0 );
+    fragColor = vec4( color.rgb, 1.0 );
     // we disabled depth write in WGEViewerEffect.cpp, but it does not seem to work ...
     gl_FragDepth = 0.9999999;
 #endif

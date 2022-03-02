@@ -91,6 +91,8 @@ uniform float u_overlayBlendOutDuration;
  */
 in vec2 v_pos;
 
+out vec4 fragColor;
+
 void main()
 {
     // pixel coordinate of screen
@@ -129,6 +131,6 @@ void main()
     autoBlendOut = ( float( u_overlayAutoBlendOut ) * autoBlendOut ) + ( 1 - float( u_overlayAutoBlendOut ) );
 
     // use texture coordinate to mix along the cylinder
-    gl_FragColor = vec4( tex.rgb, autoBlendOut* u_overlayOpacity * tex.a * valid );
+    fragColor = vec4( tex.rgb, autoBlendOut* u_overlayOpacity * tex.a * valid );
 }
 

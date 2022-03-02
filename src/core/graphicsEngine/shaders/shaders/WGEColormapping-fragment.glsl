@@ -72,7 +72,6 @@ in vec3 v_colormap6TexCoord;
  * The texture coordinate in local texture space.
  */
 in vec3 v_colormap7TexCoord;
-
 /**
  * This method applies a colormap to the specified value an mixes it with the specified color. It uses the proper colormap and is able to
  * unscale values if needed. It uses real compositing.
