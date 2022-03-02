@@ -107,7 +107,8 @@ public:
     void handleControllerEvent( vr::VREvent_t vrEvent );
 
     /**
-     * Add controller geometry as node which will also be returned.
+     * Add controller geometry as a node.
+     * \return osg::Node which hold the controller geometry.
      */
     osg::ref_ptr< osg::Node > addControllerGeometry();
 
