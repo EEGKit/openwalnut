@@ -65,14 +65,15 @@ void WDataCreatorFiberRandom::operator()( int seed,
         WVector3d v1( x1, y1, z1 );
         WVector3d v2( x2, y2, z2 );
 
-        WVector3d ray = ( v2 - v1 ) / numVertsPerFiber;   // Build new ray between start and end so that all vertices can fit in between
+        WVector3d ray = ( v2 - v1 ) / static_cast< double >( numVertsPerFiber );
+        // ^- Build new ray between start and end so that all vertices can fit in between
 
         fibIdx->push_back( fidx * numVertsPerFiber );
         lengths->push_back( numVertsPerFiber );
 
         for( size_t vidx = 0; vidx < numVertsPerFiber; ++vidx )
         {
-            WVector3d vec = ray * vidx;
+            WVector3d vec = ray * static_cast< double >( vidx );
 
             vertices->push_back( origin.x() + v1.x() + vec.x() );
             vertices->push_back( origin.y() + v1.y() + vec.y() );

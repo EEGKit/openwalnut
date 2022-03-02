@@ -856,7 +856,7 @@ public:
     template< typename RHSValueT >
     void operator/=( const RHSValueT& rhs )
     {
-        operator=( ( *this ) / rhs );
+        operator=( ( *this ) / static_cast< double >( rhs ) );
     }
 
     /**
