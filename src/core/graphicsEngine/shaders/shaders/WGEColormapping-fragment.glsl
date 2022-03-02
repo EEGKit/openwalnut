@@ -73,7 +73,7 @@ in vec3 v_colormap6TexCoord;
  */
 in vec3 v_colormap7TexCoord;
 /**
- * This method applies a colormap to the specified value an mixes it with the specified color. It uses the proper colormap and is able to
+ * This method applies a colormap to the specified value and mixes it with the specified color. It uses the proper colormap and is able to
  * unscale values if needed. It uses real compositing.
  *
  * \param color this color gets mixed using alpha value with the new colormap color
