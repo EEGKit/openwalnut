@@ -62,6 +62,7 @@ void WSwapUpdateCallback::swapBuffersImplementation( osg::GraphicsContext* gc )
         }
 
         updateRTTTransformation();
+        m_module->updateControllerPoses();
     }
 
     m_initialUpdate = false;

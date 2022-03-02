@@ -196,6 +196,12 @@ private:
     int m_controllerRight_deviceID; //!< Device ID of right hand controller.
     int m_controllerLeft_deviceID; //!< Device ID of left hand controller.
 
+    bool m_controllerRight_isLoaded; //!< Tracks whether controller right is currently loaded or not.
+    bool m_controllerLeft_isLoaded; //!< Tracks whether controller left is currently loaded or not.
+
+    osg::ref_ptr< osg::Node > m_controllerRight_node; //!< OSG::Node of the right hand controller.
+    osg::ref_ptr< osg::Node > m_controllerLeft_node; //!< OSG::Node of the right hand controller.
+
     osg::Matrixd m_controllerRight_transform; //!< Transformation matrix of right hand controller.
     osg::Matrixd m_controllerLeft_transform; //!< Transformation matrix of right hand controller.
 

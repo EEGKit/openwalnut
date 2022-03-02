@@ -130,12 +130,6 @@ bool WMVRCamera::setupVRInterface()
     // Check for connected controllers
     updateDeviceIDs();
 
-    // Add right hand controller if exists
-    if( m_vrSystem->GetControllerRoleForTrackedDeviceIndex( m_controllerRight_deviceID ) == vr::TrackedControllerRole_RightHand )
-    {
-        addControllerGeometry();
-    }
-
     std::string driverName = getDeviceProperty( vr::Prop_TrackingSystemName_String );
     std::string deviceSerialNumber = getDeviceProperty( vr::Prop_SerialNumber_String );
     debugLog() << "HMD driver name: " << driverName;
@@ -317,6 +311,13 @@ void WMVRCamera::updateControllerPoses()
     // Left Hand
     if( m_vrSystem->GetControllerRoleForTrackedDeviceIndex( m_controllerLeft_deviceID ) == vr::TrackedControllerRole_LeftHand )
     {
+        // Load geometry once controller is being tracked
+        if( m_controllerLeft_isLoaded == false )
+        {
+            m_controllerLeft_node = addControllerGeometry();
+            m_controllerLeft_isLoaded = true;
+        }
+
         m_vrSystem->GetControllerStateWithPose( vr::TrackingUniverseStanding,
         m_controllerLeft_deviceID, &controllerState, sizeof( controllerState ),
         &trackedDevicePose );
@@ -326,6 +327,13 @@ void WMVRCamera::updateControllerPoses()
     // Right Hand
     if( m_vrSystem->GetControllerRoleForTrackedDeviceIndex( m_controllerRight_deviceID ) == vr::TrackedControllerRole_RightHand )
     {
+        // Load geometry once controller is being tracked
+        if( m_controllerRight_isLoaded == false )
+        {
+            m_controllerRight_node = addControllerGeometry();
+            m_controllerRight_isLoaded = true;
+        }
+
         m_vrSystem->GetControllerStateWithPose( vr::TrackingUniverseStanding,
         m_controllerRight_deviceID, &controllerState, sizeof( controllerState ),
         &trackedDevicePose );
