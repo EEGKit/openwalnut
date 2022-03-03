@@ -91,3 +91,8 @@ osg::ref_ptr< osg::Texture2D > WRTTCamera::getTextureColor()
 {
     return m_textureColor;
 }
+
+osg::ref_ptr< WGEGroupNode > WRTTCamera::getGeometryNode()
+{
+    return m_geometry;
+}

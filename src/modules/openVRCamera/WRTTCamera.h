@@ -60,6 +60,12 @@ public:
      */
     osg::ref_ptr< osg::Texture2D > getTextureColor();
 
+    /**
+     * Gets the geometry node.
+     * \return osg::ref_ptr< WGEGroupNode > The geometry node.
+     */
+    osg::ref_ptr< WGEGroupNode > getGeometryNode();
+
 private:
     /**
      * Sets the camera options, such as: FrameBufferObject, Renderbin, etc.
