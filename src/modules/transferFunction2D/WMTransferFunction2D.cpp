@@ -81,8 +81,8 @@ void WMTransferFunction2D::connectors()
                                                                          "histogram input data set 1", "The data set used to display a histogram." );
 
     // an output connector for the transfer function created
-    //m_output = WModuleOutputData < WDataSetSingle >::createAndAdd( shared_from_this(),
-    //        "TransferFunction2D", "The selected transfer function" );
+    m_output = WModuleOutputData < WDataSetSingle >::createAndAdd( shared_from_this(),
+            "TransferFunction2D", "The selected transfer function" );
 
     WModule::connectors();
 }
@@ -165,6 +165,40 @@ void WMTransferFunction2D::moduleMain()
             }
             // either way, we changed the data and want to update the TF
             m_transferFunction->set( tf );
+        }
+
+        if( tfChanged )
+        {
+            wlog::debug( "WMTransferFunction2D" ) << "tf changed";
+            // debugLog() << "resampling transfer function";
+            //unsigned int resolution = m_resolution->get( true );
+            unsigned int resolution = 128;
+            // debugLog() << "new resolution: " << resolution;
+            std::shared_ptr< std::vector<unsigned char> > data( new std::vector<unsigned char>( resolution * resolution * 4 ) );
+            tf.sample2DTransferFunction( &( *data )[0], resolution, 0.0, 1.0 );
+//            for( int x = 0; x < resolution; x++ )
+//            {
+//                for( int y = 0; y < resolution; y++ )
+//                {
+//                    data->at( 4 * resolution * x + 4 * y + 0 ) = (unsigned char) 255.;
+//                    data->at( 4 * resolution * x + 4 * y + 1 ) = (unsigned char) 0.;
+//                    data->at( 4 * resolution * x + 4 * y + 2 ) = (unsigned char) 0.;
+//                    data->at( 4 * resolution * x + 4 * y + 3 ) = (unsigned char) 100.;
+////                    wlog::debug( "WMTRANSFERFUNCTION2D") << "Color R: " << static_cast< float >( data->at( 4 * resolution * x + 4 * y + 0 ) ) <<
+////                    " G: " <<  static_cast< float >( data->at( 4 * resolution * x + 4 * y + 1 ) ) <<
+////                    " B: " <<  static_cast< float >( data->at( 4 * resolution * x + 4 * y + 2 ) ) <<
+////                    " A: " <<  static_cast< float >( data->at( 4 * resolution * x + 4 * y + 3 ) );
+//
+//                }
+//            }
+
+            // FIXME: get transfer function and publish the function
+            std::shared_ptr< WValueSetBase > newValueSet( new WValueSet<unsigned char>( 1, 4, data, W_DT_UNSIGNED_CHAR ) );
+
+            WGridTransformOrtho transform;
+            std::shared_ptr< WGridRegular3D > newGrid( new WGridRegular3D( resolution, resolution, 1, transform ) );
+            std::shared_ptr< WDataSetSingle > newData( new WDataSetSingle( newValueSet, newGrid ) );
+            m_output->updateData( newData );
         }
     }
 }

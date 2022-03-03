@@ -30,6 +30,21 @@
 #include "WAssert.h"
 #include "WTransferFunction2D.h"
 #include "WLogger.h"
+//TODO(Kai): Remove the placeholder code inside and substitute with the real texture
+void WTransferFunction2D::sample2DTransferFunction( unsigned char*array, int width, double min, double max ) const
+{
+    for( int x = 0; x < width; x++ )
+    {
+        for( int y = 0; y < width; y++ )
+        {
+            array[ 4 * width * x + 4 * y + 0 ] = 0.0;
+            array[ 4 * width * x + 4 * y + 1 ] = 255.0;
+            array[ 4 * width * x + 4 * y + 2 ] = 0.0;
+            array[ 4 * width * x + 4 * y + 3 ] = 255.0;
+        }
+    }
+}
+
 
 bool WTransferFunction2D::operator==( const WTransferFunction2D &rhs ) const
 {

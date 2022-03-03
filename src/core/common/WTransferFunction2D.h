@@ -106,6 +106,17 @@ public:
         return m_histogram;
     }
 
+    /**
+     * sample/render the transfer function linearly between min and max in an RGBA texture.
+     * \param array pointer to an allocated data structure
+     * \param width is the number of RGBA samples.
+     * \param min the lowest value to be sampled
+     * \param max the hightes value to be sampled
+     * \post array contains the sampled data
+     * \pre array is allocated and has space for width elements
+     */
+    void sample2DTransferFunction( unsigned char*array, int width, double min, double max ) const;
+
 private:
     /**
      * Factor by which the output opacity is scaled
