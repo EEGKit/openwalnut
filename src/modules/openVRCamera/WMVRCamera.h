@@ -192,10 +192,12 @@ private:
      * OpenVR tracking information
      */
     vr::TrackedDevicePose_t m_poses[vr::k_unMaxTrackedDeviceCount];         // NOLINT: the size is constant
-    vr::TrackedDeviceIndex_t m_grabber; //!< OpenVR current grabbing device.
 
     osg::Vec3d m_HMD_position; //!< Current position of HMD device.
     osg::Quat m_HMD_rotation; //!< Current rotation of HMD device.
+
+    osg::Vec3d m_cameraPosition; //!< The camera position of the scene (without hmd).
+    osg::Quat m_cameraRotation; //!< The camera rotation of the scene (without hmd).
 
     osg::ref_ptr< WRTTCamera > m_leftEyeCamera; //!< The camera for the left eye of the VR system.
     osg::ref_ptr< WRTTCamera > m_rightEyeCamera; //!< The camera for the right eye of the VR system.

@@ -29,11 +29,17 @@
 WVRController::WVRController( int role ):
     m_role( role )
 {
+    m_triggered = false;
 }
 
 void WVRController::setDeviceID( int deviceID )
 {
     m_deviceID = deviceID;
+}
+
+void WVRController::setTriggered( bool triggered )
+{
+    m_triggered = triggered;
 }
 
 osg::ref_ptr< osg::Node > WVRController::getNode()
@@ -51,7 +57,22 @@ osg::Quat WVRController::getRotation()
     return m_rotation;
 }
 
-void WVRController::updatePose( vr::IVRSystem* vrSystem )
+osg::Vec3 WVRController::getPrevPosition()
+{
+    return m_prevPosition;
+}
+
+osg::Quat WVRController::getPrevRotation()
+{
+    return m_prevRotation;
+}
+
+bool WVRController::isTriggered()
+{
+    return m_triggered;
+}
+
+void WVRController::updatePose( vr::IVRSystem* vrSystem, osg::Vec3 cameraPosition )
 {
     if( vrSystem->GetControllerRoleForTrackedDeviceIndex( m_deviceID ) == m_role )
     {
@@ -84,15 +105,12 @@ void WVRController::updatePose( vr::IVRSystem* vrSystem )
             rotation.y() = -rotation.z();
             rotation.z() = help;
 
-            osg::ref_ptr< WGEZoomTrackballManipulator > cm = osg::dynamic_pointer_cast< WGEZoomTrackballManipulator >(
-            WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCameraManipulator() );
-            osg::Matrixd mainViewMatrix = cm ? cm->getMatrixWithoutZoom() :
-                                                WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->getViewMatrix();
-
-            osg::Matrixd controllerMatrix = osg::Matrixd::rotate( rotation ) * osg::Matrixd::translate( mainViewMatrix.getTrans() + position );
-
+            osg::Matrixd controllerMatrix = osg::Matrixd::rotate( rotation ) * osg::Matrixd::translate( cameraPosition + position );
             osg::MatrixTransform* mat = m_node->asTransform()->asMatrixTransform();
             mat->setMatrix( controllerMatrix );
+
+            m_prevPosition = m_position;
+            m_prevRotation = m_rotation;
 
             m_position = position;
             m_rotation = rotation;

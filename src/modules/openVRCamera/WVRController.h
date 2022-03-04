@@ -57,6 +57,12 @@ public:
     void setDeviceID( int deviceID );
 
     /**
+     * Sets the state of the trigger button.
+     * \param triggered Whether the trigger button is pressed or not.
+     */
+    void setTriggered( bool triggered );
+
+    /**
      * Gets the geometry node of the controller
      * \return osg::ref_ptr< osg::Node > The node.
      */
@@ -74,6 +80,25 @@ public:
      */
     osg::Quat getRotation();
 
+     /**
+     * Gets the previous position of the controller relative to the camera position.
+     * \return osg::Vec3 The position.
+     */
+    osg::Vec3 getPrevPosition();
+
+    /**
+     * Gets the previous rotation of the controller.
+     * \return osg::Quat The rotation.
+     */
+    osg::Quat getPrevRotation();
+
+    /**
+     * Gets the state of the trigger button
+     * \return true The trigger button is pressed.
+     * \return false The trigger button is not pressed.
+     */
+    bool isTriggered();
+
     /**
      * Creates the geometry with a model at the given path.
      * \param path The path to the model.
@@ -83,8 +108,9 @@ public:
     /**
      * Updates the current pose of the controller.
      * \param vrSystem The VRSystem to get the pose from.
+     * \param cameraPosition The position of the camera (without hmd).
      */
-    void updatePose( vr::IVRSystem* vrSystem );
+    void updatePose( vr::IVRSystem* vrSystem, osg::Vec3 cameraPosition );
 
 private:
     int m_role; //!< The role of the controller
@@ -94,6 +120,11 @@ private:
 
     osg::Vec3 m_position; //!< The current position of the controller relative to the camera position.
     osg::Quat m_rotation; //!< The current rotation of the controller.
+
+    osg::Vec3 m_prevPosition; //!< The position of the previous frame.
+    osg::Quat m_prevRotation; //!< The rotation of the previous frame.
+
+    bool m_triggered; //!< Whether the trigger button is pressed or not.
 };
 
 #endif  // WVRCONTROLLER_H

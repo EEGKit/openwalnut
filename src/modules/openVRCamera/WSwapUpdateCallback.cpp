@@ -127,22 +127,8 @@ void WSwapUpdateCallback::updateRTTTransformation()
 {
     m_module->updateHMDPose();
 
-    osg::ref_ptr< WGEZoomTrackballManipulator > cm = osg::dynamic_pointer_cast< WGEZoomTrackballManipulator >(
-        WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCameraManipulator() );
-    osg::Matrixd mainViewMatrix = cm ? cm->getMatrixWithoutZoom() :
-                                        WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->getViewMatrix();
-
-    // Calculate lookAt quaternation from camera to the center of the scene
-    osg::Vec3d center = WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->getBound().center();
-    osg::Vec3d ndir = center - mainViewMatrix.getTrans();
-    osg::Vec3d camdir( 0.0, 0.0, -1.0 );
-    osg::Vec3d normal = ndir ^ camdir;
-    double w = sqrt( ndir.length2() * camdir.length2() ) + ndir * camdir;
-    osg::Vec4d qt( normal.x(), normal.y(), normal.z(), w );
-    qt.normalize();
-
-    osg::Quat rot = osg::Quat( qt ) * m_module->m_HMD_rotation;
-    osg::Vec3d trans = mainViewMatrix.getTrans() + m_module->m_HMD_position;
+    osg::Quat rot = m_module->m_cameraRotation * m_module->m_HMD_rotation;
+    osg::Vec3d trans = m_module->m_cameraPosition + m_module->m_HMD_position;
 
     osg::Matrixd leftEyeOffsetMatrix = m_module->convertHmdMatrixToOSG( m_module->m_vrSystem->GetEyeToHeadTransform( vr::Eye_Left ) );
     osg::Matrixd rightEyeOffsetMatrix = m_module->convertHmdMatrixToOSG( m_module->m_vrSystem->GetEyeToHeadTransform( vr::Eye_Right ) );
