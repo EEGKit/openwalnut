@@ -24,8 +24,6 @@
 
 #include <string>
 
-#include <osgDB/ReadFile>
-
 #include "core/graphicsEngine/WGEManagedGroupNode.h"
 
 #include "WMVRCamera.h"
@@ -180,6 +178,17 @@ void WMVRCamera::moduleMain()
     // updatecallback for submitting frames
     gc->setSwapCallback( new WSwapUpdateCallback( this ) );
 
+    m_leftController = std::make_unique< WVRController >( vr::TrackedControllerRole_LeftHand );
+    m_rightController = std::make_unique< WVRController >( vr::TrackedControllerRole_RightHand );
+
+    m_leftController->createGeometry( ( m_localPath / "VIVEController.obj" ).string() );
+    m_rightController->createGeometry( ( m_localPath / "VIVEController.obj" ).string() );
+
+    m_leftEyeCamera->getGeometryNode()->insert( m_leftController->getNode() );
+    m_rightEyeCamera->getGeometryNode()->insert( m_leftController->getNode() );
+    m_leftEyeCamera->getGeometryNode()->insert( m_rightController->getNode() );
+    m_rightEyeCamera->getGeometryNode()->insert( m_rightController->getNode() );
+
     // Now, we can mark the module ready.
     ready();
     debugLog() << "Starting...";
@@ -279,135 +288,22 @@ void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent )
     }
 }
 
-osg::ref_ptr< osg::Node > WMVRCamera::addControllerGeometry()
-{
-    // Add controller geometry to the scene
-    osg::ref_ptr< osg::Node > controllerNode = osgDB::readNodeFile( ( m_localPath / "VIVEController.obj" ).string() );
-
-    osg::ref_ptr< osg::MatrixTransform > mat = osg::ref_ptr< osg::MatrixTransform >( new osg::MatrixTransform() );
-    mat->addChild( controllerNode );
-
-    osg::ref_ptr<WGEManagedGroupNode> m_rootnode = osg::ref_ptr< WGEManagedGroupNode > ( new WGEManagedGroupNode( m_active ) );
-    m_rootnode->insert( mat );
-
-    m_leftEyeCamera->getGeometryNode()->insert( m_rootnode );
-    m_rightEyeCamera->getGeometryNode()->insert( m_rootnode );
-
-    return mat;
-}
-
 void WMVRCamera::updateDeviceIDs()
 {
     for( uint32_t i = 0; i < vr::k_unMaxTrackedDeviceCount; i++ )
     {
         vr::ETrackedControllerRole cRole = m_vrSystem->GetControllerRoleForTrackedDeviceIndex( i );
 
-        if( cRole == vr::TrackedControllerRole_LeftHand ) m_controllerLeft_deviceID = i;
-        if( cRole == vr::TrackedControllerRole_RightHand ) m_controllerRight_deviceID = i;
+        if( cRole == vr::TrackedControllerRole_LeftHand ) m_leftController->setDeviceID( i );
+        if( cRole == vr::TrackedControllerRole_RightHand ) m_rightController->setDeviceID( i );
         // more devices IDs can be tracked here (such as the sonsors)
     }
 }
 
 void WMVRCamera::updateControllerPoses()
 {
-    vr::TrackedDevicePose_t trackedDevicePose;
-    vr::VRControllerState_t controllerState;
-
-    // Left Hand
-    if( m_vrSystem->GetControllerRoleForTrackedDeviceIndex( m_controllerLeft_deviceID ) == vr::TrackedControllerRole_LeftHand )
-    {
-        // Load geometry once controller is being tracked
-        if( m_controllerLeft_isLoaded == false )
-        {
-            m_controllerLeft_node = addControllerGeometry();
-            m_controllerLeft_isLoaded = true;
-        }
-
-        m_vrSystem->GetControllerStateWithPose( vr::TrackingUniverseSeated,
-        m_controllerLeft_deviceID, &controllerState, sizeof( controllerState ),
-        &trackedDevicePose );
-
-        if( !trackedDevicePose.bPoseIsValid )
-        {
-            m_controllerLeft_node->setNodeMask( 0 );
-        }
-        else
-        {
-            m_controllerLeft_node->setNodeMask( 1 );
-
-            m_controllerLeft_transform = convertHmdMatrixToOSG( trackedDevicePose.mDeviceToAbsoluteTracking );
-
-            // TODO(eschbach): refactor
-            osg::Vec3 position = m_controllerLeft_transform.getTrans() * 100.0;
-            osg::Quat rotation = m_controllerLeft_transform.getRotate();
-
-            // switch y and z axis as openvr has different coordinate system.
-            double help = position.y();
-            position.y() = -position.z();
-            position.z() = help;
-
-            help = rotation.y();
-            rotation.y() = -rotation.z();
-            rotation.z() = help;
-
-            osg::ref_ptr< WGEZoomTrackballManipulator > cm = osg::dynamic_pointer_cast< WGEZoomTrackballManipulator >(
-            WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCameraManipulator() );
-            osg::Matrixd mainViewMatrix = cm ? cm->getMatrixWithoutZoom() :
-                                                WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->getViewMatrix();
-
-            osg::Matrixd controllerMatrix = osg::Matrixd::rotate( rotation ) * osg::Matrixd::translate( mainViewMatrix.getTrans() + position );
-
-            osg::MatrixTransform* mat = m_controllerLeft_node->asTransform()->asMatrixTransform();
-            mat->setMatrix( controllerMatrix );
-        }
-    }
-    // Right Hand
-    if( m_vrSystem->GetControllerRoleForTrackedDeviceIndex( m_controllerRight_deviceID ) == vr::TrackedControllerRole_RightHand )
-    {
-        // Load geometry once controller is being tracked
-        if( m_controllerRight_isLoaded == false )
-        {
-            m_controllerRight_node = addControllerGeometry();
-            m_controllerRight_isLoaded = true;
-        }
-
-        m_vrSystem->GetControllerStateWithPose( vr::TrackingUniverseSeated,
-        m_controllerRight_deviceID, &controllerState, sizeof( controllerState ),
-        &trackedDevicePose );
-
-        if( !trackedDevicePose.bPoseIsValid )
-        {
-            m_controllerRight_node->setNodeMask( 0 );
-        }
-        else
-        {
-            m_controllerRight_node->setNodeMask( 1 );
-            m_controllerRight_transform = convertHmdMatrixToOSG( trackedDevicePose.mDeviceToAbsoluteTracking );
-
-            // TODO(eschbach): refactor
-            osg::Vec3 position = m_controllerRight_transform.getTrans() * 100.0;
-            osg::Quat rotation = m_controllerRight_transform.getRotate();
-
-            // switch y and z axis as openvr has different coordinate system.
-            double help = position.y();
-            position.y() = -position.z();
-            position.z() = help;
-
-            help = rotation.y();
-            rotation.y() = -rotation.z();
-            rotation.z() = help;
-
-            osg::ref_ptr< WGEZoomTrackballManipulator > cm = osg::dynamic_pointer_cast< WGEZoomTrackballManipulator >(
-            WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCameraManipulator() );
-            osg::Matrixd mainViewMatrix = cm ? cm->getMatrixWithoutZoom() :
-                                                WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->getViewMatrix();
-
-            osg::Matrixd controllerMatrix = osg::Matrixd::rotate( rotation ) * osg::Matrixd::translate( mainViewMatrix.getTrans() + position );
-
-            osg::MatrixTransform* mat = m_controllerRight_node->asTransform()->asMatrixTransform();
-            mat->setMatrix( controllerMatrix );
-        }
-    }
+    m_leftController->updatePose( m_vrSystem );
+    m_rightController->updatePose( m_vrSystem );
 }
 
 void WMVRCamera::updateHMDPose()

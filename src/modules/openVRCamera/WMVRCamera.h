@@ -33,6 +33,12 @@
 
 #include "WRTTCamera.h"
 #include "WSwapUpdateCallback.h"
+#include "WVRController.h"
+
+/**
+ * Forward declaration for the controlelr class.
+ */
+class WVRController;
 
 /**
  * Module starting and connecting to an OpenVR session
@@ -107,12 +113,6 @@ public:
     void handleControllerEvent( vr::VREvent_t vrEvent );
 
     /**
-     * Add controller geometry as a node.
-     * \return osg::Node which hold the controller geometry.
-     */
-    osg::ref_ptr< osg::Node > addControllerGeometry();
-
-    /**
      * Find and save device IDs for later use (controller IDs for example).
      */
     void updateDeviceIDs();
@@ -137,14 +137,14 @@ public:
      * \param mat34 The HMD Matrix.
      * \return osg::Matrix The OSG Matrix.
      */
-    osg::Matrix convertHmdMatrixToOSG( const vr::HmdMatrix34_t &mat34 );
+    static osg::Matrix convertHmdMatrixToOSG( const vr::HmdMatrix34_t &mat34 );
 
     /**
      * Converts vr::HmdMatrix34_t to osg::Matrix.
      * \param mat44 The HMD Matrix.
      * \return osg::Matrix The OSG Matrix.
      */
-    osg::Matrix convertHmdMatrixToOSG( const vr::HmdMatrix44_t &mat44 );
+    static osg::Matrix convertHmdMatrixToOSG( const vr::HmdMatrix44_t &mat44 );
 
 protected:
     /**
@@ -194,23 +194,14 @@ private:
     vr::TrackedDevicePose_t m_poses[vr::k_unMaxTrackedDeviceCount];         // NOLINT: the size is constant
     vr::TrackedDeviceIndex_t m_grabber; //!< OpenVR current grabbing device.
 
-    int m_controllerRight_deviceID; //!< Device ID of right hand controller.
-    int m_controllerLeft_deviceID; //!< Device ID of left hand controller.
-
-    bool m_controllerRight_isLoaded; //!< Tracks whether controller right is currently loaded or not.
-    bool m_controllerLeft_isLoaded; //!< Tracks whether controller left is currently loaded or not.
-
-    osg::ref_ptr< osg::Node > m_controllerRight_node; //!< OSG::Node of the right hand controller.
-    osg::ref_ptr< osg::Node > m_controllerLeft_node; //!< OSG::Node of the right hand controller.
-
-    osg::Matrixd m_controllerRight_transform; //!< Transformation matrix of right hand controller.
-    osg::Matrixd m_controllerLeft_transform; //!< Transformation matrix of right hand controller.
-
     osg::Vec3d m_HMD_position; //!< Current position of HMD device.
     osg::Quat m_HMD_rotation; //!< Current rotation of HMD device.
 
     osg::ref_ptr< WRTTCamera > m_leftEyeCamera; //!< The camera for the left eye of the VR system.
     osg::ref_ptr< WRTTCamera > m_rightEyeCamera; //!< The camera for the right eye of the VR system.
+
+    std::unique_ptr< WVRController > m_leftController; //!< The controller for the left hand.
+    std::unique_ptr< WVRController > m_rightController; //!< The controller for the right hand.
 };
 
 #endif  // WMVRCAMERA_H
