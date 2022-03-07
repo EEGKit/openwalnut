@@ -487,10 +487,9 @@ void WMDirectVolumeRendering2TF::moduleMain()
                 {
                     //create image for 2D TF
                     size_t tfsize = cvalueSet->rawSize();
-                    tfImage2D->allocateImage( tfsize / 4, tfsize / 4, 1, GL_RGBA, GL_UNSIGNED_BYTE );
+                    tfImage2D->allocateImage( sqrt( tfsize / 4 ), sqrt( tfsize / 4 ), 1, GL_RGBA, GL_UNSIGNED_BYTE );
                     tfImage2D->setInternalTextureFormat( GL_RGBA );
                     unsigned char* data = reinterpret_cast< unsigned char* >( tfImage2D->data() );
-                    //TODO(Kai): I need to adept this
                     std::copy( cvalueSet->rawData(), &cvalueSet->rawData()[ tfsize ], data );
 
                     // Just a test if the data is going to be rendered red half transparent
