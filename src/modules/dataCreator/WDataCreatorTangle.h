@@ -31,6 +31,7 @@
 
 /**
  * Creates a tangle inside a given grid. Only works on scalar fields.
+ * https://commons.wikimedia.org/w/index.php?title=File:Goursat.png&oldid=510801612
  */
 class WDataCreatorTangle: public WObjectNDIP< WDataSetSingleCreatorInterface >
 {
@@ -71,4 +72,3 @@ private:
 };
 
 #endif  // WDATACREATORTANGLE_H
-

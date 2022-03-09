@@ -22,9 +22,13 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 #include "WGEUtils.glsl"
+
+in vec4 ow_texCoord;
 
 // This is updated by a callback:
 uniform int u_animation;
@@ -75,7 +79,7 @@ uniform float  u_stepSizeFactor = 1.0;
  */
 vec2 getVec1( in vec2 pos )
 {
-    return ( 2.0 * ( texture2D( u_texture0Sampler, pos ).rg - vec2( 0.5, 0.5 ) ) );
+    return ( 2.0 * ( texture( u_texture0Sampler, pos ).rg - vec2( 0.5, 0.5 ) ) );
 }
 
 /**
@@ -87,7 +91,7 @@ vec2 getVec1( in vec2 pos )
  */
 vec2 getVec2( in vec2 pos )
 {
-    return ( 2.0 * ( texture2D( u_texture0Sampler, pos ).ba - vec2( 0.5, 0.5 ) ) );
+    return ( 2.0 * ( texture( u_texture0Sampler, pos ).ba - vec2( 0.5, 0.5 ) ) );
 }
 
 /**
@@ -99,21 +103,21 @@ vec2 getVec2( in vec2 pos )
  */
 float getNoise( in vec2 pos )
 {
-    return texture2D( u_texture1Sampler, pos ).b;
+    return texture( u_texture1Sampler, pos ).b;
 }
 
 float advection1()
 {
-    vec2 texCoord = gl_TexCoord[0].st;
+    vec2 texCoord = ow_texCoord.st;
 
 
     vec2 vec    = getVec1( texCoord );
 
     // simply iterate along the line using the vector at each point
     vec2 lastVec1 = vec;
-    vec2 lastPos1 = gl_TexCoord[0].st;
+    vec2 lastPos1 = ow_texCoord.st;
     vec2 lastVec2 = vec;
-    vec2 lastPos2 = gl_TexCoord[0].st;
+    vec2 lastPos2 = ow_texCoord.st;
     float sum = 0.0;
     int m = 2 * u_numIter;
     for( int i = 0; i < u_numIter; ++i )
@@ -129,7 +133,7 @@ float advection1()
         //     break;
         // }
 
-        // it is also possible to scale using a Geometric progression: float( u_numIter - i ) / u_numIter * texture2D
+        // it is also possible to scale using a Geometric progression: float( u_numIter - i ) / u_numIter * texture
         sum += getNoise( newPos1 );
         sum += getNoise( newPos2 );
 
@@ -148,16 +152,16 @@ float advection1()
 
 float advection2()
 {
-    vec2 texCoord = gl_TexCoord[0].st;
+    vec2 texCoord = ow_texCoord.st;
 
 
     vec2 vec    = getVec2( texCoord );
 
     // simply iterate along the line using the vector at each point
     vec2 lastVec1 = vec;
-    vec2 lastPos1 = gl_TexCoord[0].st;
+    vec2 lastPos1 = ow_texCoord.st;
     vec2 lastVec2 = vec;
-    vec2 lastPos2 = gl_TexCoord[0].st;
+    vec2 lastPos2 = ow_texCoord.st;
     float sum = 0.0;
     int m = 2 * u_numIter;
     for( int i = 0; i < u_numIter; ++i )
@@ -173,7 +177,7 @@ float advection2()
         //     break;
         // }
 
-        // it is also possible to scale using a Geometric progression: float( u_numIter - i ) / u_numIter * texture2D
+        // it is also possible to scale using a Geometric progression: float( u_numIter - i ) / u_numIter * texture
         sum += getNoise( newPos1 );
         sum += getNoise( newPos2 );
 
@@ -195,11 +199,11 @@ float advection2()
  */
 void main()
 {
-    vec2 texCoord = gl_TexCoord[0].st;
+    vec2 texCoord = ow_texCoord.st;
 
     // get some needed values
-    float edge  = texture2D( u_texture1Sampler, texCoord ).r;
-    float depth = texture2D( u_texture1Sampler, texCoord ).g;
+    float edge  = texture( u_texture1Sampler, texCoord ).r;
+    float depth = texture( u_texture1Sampler, texCoord ).g;
     float noise = getNoise( texCoord );
 
     float n1 = advection1();

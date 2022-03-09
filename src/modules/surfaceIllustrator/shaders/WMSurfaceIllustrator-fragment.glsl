@@ -22,14 +22,21 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
 
-varying vec4 verpos;
+#include "WGEShader-uniforms.glsl"
+
+#include "WGEColormapping-fragment.glsl"
+#include "WGEShadingTools.glsl"
+
+in vec4 verpos;
 
 /**
  * The normal.
  */
-varying vec3 v_normal;
+in vec3 v_normal;
+
+in vec4 v_color;
 
 /**
  * The opacity specified by the user in [0,100]
@@ -49,11 +56,13 @@ uniform float u_parameterWidth;
  */
 uniform int u_renderingType;
 
-#include "WGEShadingTools.glsl"
-
 void main()
 {
-    vec4 col = gl_Color;
+    vec4 col = v_color;
+
+#ifdef COLORMAPPING_ENABLED
+    col = colormapping();
+#endif
     //col.rgb = vec3( .7);
     float widthHalf = u_parameterWidth / 2.0;
     vec2 param = col.rg;

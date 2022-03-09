@@ -66,7 +66,7 @@ void WDataCreatorFiberStar::operator()( int seed,
 
         for( size_t vidx = 0; vidx < numVertsPerFiber; ++vidx )
         {
-            WVector3d vec = ray * vidx;
+            WVector3d vec = ray * static_cast< double >( vidx );
 
             vertices->push_back( origin.x() + vec.x() + size.x() / 2.0 );
             vertices->push_back( origin.y() + vec.y() + size.y() / 2.0 );

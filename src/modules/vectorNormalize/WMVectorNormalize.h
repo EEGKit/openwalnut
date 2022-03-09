@@ -95,6 +95,36 @@ protected:
 
 private:
     /**
+     * Visitor for discriminating the type of the first valueset.
+     */
+    class VisitorVSetA: public boost::static_visitor< std::shared_ptr< WValueSetBase > >
+    {
+    public:
+        /**
+         * Create visitor instance.
+         *
+         * \param zeroTol zero tollerance
+         */
+        explicit VisitorVSetA( double zeroTol );
+
+        /**
+         * Called by boost::varying during static visiting.
+         *
+         * \tparam T the real integral type of the first value set.
+         * \param vsetA the first valueset currently visited.
+         *
+         * \return the result from the operation
+         */
+        template < typename T >
+        result_type operator()( const WValueSet< T >* const& vsetA ) const;             // NOLINT
+
+        /**
+         * Zero tollerance. Values smaller than this are interpreted as zero
+         */
+        double m_zeroTol;
+    };
+
+    /**
      * A condition used to notify about changes in several properties.
      */
     std::shared_ptr< WCondition > m_propCondition;

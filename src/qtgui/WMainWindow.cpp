@@ -207,8 +207,8 @@ void WMainWindow::setupGUI()
     // NOTE: this only is an initial size. The state reloaded from QSettings will set it to the value the user had last session.
     resize( 1024, 768 );
     setWindowIcon( m_iconManager.getIcon( "logo" ) );
-    std::string windowHeading =  std::string( "OpenWalnut " ) + std::string( W_VERSION );
-    setWindowTitle( QString::fromStdString( windowHeading ) );
+    m_mainWindowHeading =  std::string( "OpenWalnut " ) + std::string( W_VERSION );
+    setWindowTitle( QString::fromStdString( m_mainWindowHeading ) );
 
     setDockOptions( QMainWindow::AnimatedDocks |  QMainWindow::AllowNestedDocks | QMainWindow::AllowTabbedDocks );
 
@@ -303,7 +303,7 @@ void WMainWindow::setupGUI()
 
     connect( m_loadButton, SIGNAL(  triggered( bool ) ), this, SLOT( openLoadDialog() ) );
     connect( roiButton, SIGNAL(  triggered( bool ) ), this, SLOT( newRoi() ) );
-    connect( m_saveAction, SIGNAL( triggered( bool ) ), this, SLOT( projectSaveAll() ) );
+    connect( m_saveAction, SIGNAL( triggered( bool ) ), this, SLOT( projectSaveAllAs() ) );
 
     m_loadButton->setToolTip( "Load a dataset or project from file" );
     roiButton->setToolTip( "Insert a new ROI" );
@@ -333,10 +333,12 @@ void WMainWindow::setupGUI()
                                        QKeySequence( Qt::CTRL + Qt::Key_N ) );
     fileMenu->addAction( m_loadButton );
     m_saveMenu = fileMenu->addMenu( m_iconManager.getIcon( "saveProject" ), "Save Project" );
+    m_saveMenu->addAction( "Save Project As... ", this, SLOT( projectSaveAllAs() ) );
     m_saveMenu->addAction( "Save Project", this, SLOT( projectSaveAll() ), QKeySequence::Save );
-    m_saveMenu->addAction( "Save Modules Only", this, SLOT( projectSaveModuleOnly() ) );
-    m_saveMenu->addAction( "Save Camera Only", this, SLOT( projectSaveCameraOnly() ) );
+    m_saveMenu->addAction( "Save Modules Only As...", this, SLOT( projectSaveModuleOnly() ) );
+    m_saveMenu->addAction( "Save Camera Only As...", this, SLOT( projectSaveCameraOnly() ) );
     // saveMenu->addAction( "Save ROIs Only", this, SLOT( projectSaveROIOnly() ) );
+    WQtGui::getSettings().setValue( "CurrentProjectPath", QString( "" ) );
     m_saveAction->setMenu( m_saveMenu );
 
     fileMenu->addSeparator();
@@ -584,22 +586,33 @@ WQtNetworkEditor* WMainWindow::getNetworkEditor()
     return m_networkEditor;
 }
 
-bool WMainWindow::projectSave( const std::vector< std::shared_ptr< WProjectFileIO > >& writer )
+bool WMainWindow::projectSave( const std::vector< std::shared_ptr< WProjectFileIO > >& writer, const bool useLastFileName )
 {
-    QString lastPath = WQtGui::getSettings().value( "LastProjectSavePath", "" ).toString();
-    QString selected = QFileDialog::getSaveFileName( this, "Save Project as", lastPath,
-                                                     "Project File (*.owproj *.owp)" );
-    if( selected == "" )
+    std::string filename;
+
+    if( useLastFileName && WQtGui::getSettings().value( "CurrentProjectPath", "" ) != "" )
     {
-        return false;
+        filename = WQtGui::getSettings().value( "CurrentProjectPath", "" ).toString().toStdString();
+    }
+    else
+    {
+        QString lastPath = WQtGui::getSettings().value( "LastProjectSavePath", "" ).toString();
+        QString selected = QFileDialog::getSaveFileName( this, "Save Project as", lastPath,
+                                                         "Project File (*.owproj *.owp)" );
+        if( selected == "" )
+        {
+            return false;
+        }
+
+        // extract path and save to settings
+        boost::filesystem::path p( selected.toStdString() );
+        WQtGui::getSettings().setValue( "LastProjectSavePath", QString::fromStdString( p.parent_path().string() ) );
+        setCurrentProject( p.string() );
+
+        filename = ( selected ).toStdString();
     }
 
-    // extract path and save to settings
-    boost::filesystem::path p( selected.toStdString() );
-    WQtGui::getSettings().setValue( "LastProjectSavePath", QString::fromStdString( p.parent_path().string() ) );
-
     bool success = true;
-    std::string filename = ( selected ).toStdString();
 
     // append owp if suffix is not present, yet
     if( filename.rfind( ".owp" ) != filename.size() - 4
@@ -627,15 +640,23 @@ bool WMainWindow::projectSave( const std::vector< std::shared_ptr< WProjectFileI
     catch( const std::exception& e )
     {
         QString title = "Problem while saving project file.";
-        QString message = "<b>Problem while saving project file.</b><br/><br/><b>File:  </b>" + selected +
+        QString message = "<b>Problem while saving project file.</b><br/><br/><b>File:  </b>" + QString::fromStdString( filename ) +
                           "<br/><b>Message:  </b>" + QString::fromStdString( e.what() );
         QMessageBox::critical( this, title, message );
         success = false;
     }
+
     return success;
 }
 
 bool WMainWindow::projectSaveAll()
+{
+    std::vector< std::shared_ptr< WProjectFileIO > > w;
+    // an empty list equals "all"
+    return projectSave( w, true );
+}
+
+bool WMainWindow::projectSaveAllAs()
 {
     std::vector< std::shared_ptr< WProjectFileIO > > w;
     // an empty list equals "all"
@@ -667,6 +688,7 @@ void WMainWindow::newProject()
 {
     WKernel::getRunningKernel()->getRootContainer()->removeAll();
     WDataHandler::getDataHandler()->clear();
+    setCurrentProject( "" );
 }
 
 QString collectFilters()
@@ -777,6 +799,7 @@ void WMainWindow::asyncProjectLoad( std::string filename )
                                                                       boost::placeholders::_1,
                                                                       boost::placeholders::_2,
                                                                       boost::placeholders::_3 ) ) );
+    setCurrentProject( filename );
     proj->load();
 }
 
@@ -788,6 +811,20 @@ void WMainWindow::slotLoadFinished( boost::filesystem::path file, std::vector< s
     if( errors.size() )
     {
         wlog::warn( "MainWindow" ) << "Async load error occurred. Informing user.";
+    }
+}
+
+
+void WMainWindow::setCurrentProject( std::string currentProject )
+{
+    WQtGui::getSettings().setValue( "CurrentProjectPath", QString::fromStdString( currentProject ) );
+    if( currentProject != "" )
+    {
+        setWindowTitle( QString::fromStdString( m_mainWindowHeading ) + " - Project: " + QString::fromStdString( currentProject ) );
+    }
+    else
+    {
+        setWindowTitle( QString::fromStdString( m_mainWindowHeading ) );
     }
 }
 

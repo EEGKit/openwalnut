@@ -322,7 +322,7 @@ void WScriptInterpreterPython::ScriptThread::threadMain()
 
 void WScriptInterpreterPython::ScriptThread::addToExecuteQueue( std::string const& script )
 {
-    wlog::info( "WScriptInterpreterPython::ScriptThread" ) << "Queueing script for asyncronous execution.";
+    wlog::info( "WScriptInterpreterPython::ScriptThread" ) << "Queueing script for asynchronous execution.";
 
     std::unique_lock< boost::mutex > lock( m_queueMutex );
     m_scriptQueue.push( script );

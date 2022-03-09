@@ -120,6 +120,9 @@ private:
     //! A trigger to add the transformation from the currently active strategy to the current transformation.
     WPropTrigger m_applyTrigger;
 
+    //! Property showing the current manipulation matrix.
+    WPropMatrix4X4 m_currMatProp;
+
     //! The current data.
     std::shared_ptr< WDataSet > m_data;
 

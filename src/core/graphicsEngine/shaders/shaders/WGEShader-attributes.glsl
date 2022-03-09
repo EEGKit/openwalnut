@@ -22,38 +22,25 @@
 //
 //---------------------------------------------------------------------------
 
-/**
- * The normal interpolated
- */
-varying vec3 v_normal;
+#ifndef WGESHADERATTRIBUTES_GLSL
+#define WGESHADERATTRIBUTES_GLSL
 
-/**
- * The vertex
- */
-varying vec3 v_vertex;
+// defines global attributes set by openwalnut and openscenegraph
 
-/**
- * Normal in object space
- */
-varying vec3 v_normalObject;
+in vec4 osg_Vertex;
+in vec3 osg_Normal;
+in vec4 osg_Color;
+in vec4 osg_SecondaryColor;
+in vec4 osg_FogCoord;
 
-/**
- * The normal interpolated and projected to screenspace
- */
-varying vec3 v_normalProjected;
+in vec4 osg_MultiTexCoord0;
+in vec4 osg_MultiTexCoord1;
+in vec4 osg_MultiTexCoord2;
+in vec4 osg_MultiTexCoord3;
+in vec4 osg_MultiTexCoord4;
+in vec4 osg_MultiTexCoord5;
+in vec4 osg_MultiTexCoord6;
+in vec4 osg_MultiTexCoord7;
 
-/**
- * The light source in local coordinates
- */
-varying vec3 v_lightSource;
 
-/**
- * The light source in local coordinates
- */
-varying vec3 v_viewDir;
-
-/**
- * The factor which scales the 3d noise texture to a proper size according to screen size.
- */
-varying vec3 v_noiseScaleFactor;
-
+#endif  // WGESHADERATTRIBUTES_GLSL

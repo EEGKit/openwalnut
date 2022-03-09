@@ -22,20 +22,24 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 #include "WGETextureTools.glsl"
 #include "WGEShadingTools.glsl"
 
 // The surface normal
-varying vec3 v_normal;
+in vec3 v_normal;
 
 // modelview matrix' scaling factor
-varying float v_worldScale;
+in float v_worldScale;
+
+in vec4 v_color;
 
 void main()
 {
-    vec4 col = gl_Color;
+    vec4 col = v_color;
 
     // do light
     float light = blinnPhongIlluminationIntensity( wge_DefaultLightIntensityFullDiffuse, normalize( viewAlign( v_normal ) ) );

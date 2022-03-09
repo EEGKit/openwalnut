@@ -22,7 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 // Bottom Gradient
 uniform vec4 u_bottom1Color = vec4( 0.65 );
@@ -38,7 +40,7 @@ uniform float u_horizon = 33;
 /**
  * Pixel position in [0,1]
  */
-varying vec2 v_pos;
+in vec2 v_pos;
 
 void main()
 {

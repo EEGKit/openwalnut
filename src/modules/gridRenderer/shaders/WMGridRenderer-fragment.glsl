@@ -22,23 +22,13 @@
 //
 //---------------------------------------------------------------------------
 
-/////////////////////////////////////////////////////////////////////////////
-// Varyings
-// Used in vertex and fragment shader
-/////////////////////////////////////////////////////////////////////////////
+#version 150
 
-// The ray's starting point in texture space
-varying vec3 v_rayStart;
+#include "WGEShader-uniforms.glsl"
 
-// The ray direction in texture space
-varying vec3 v_ray;
+in vec4 v_color;
 
-// the Surface normal at this point
-varying vec3 v_normal;
-
-// The isovalue scaled using texture scaling information to [0,1]
-varying float v_isovalue;
-
-// The scaling component of the modelview matrix.
-varying float v_worldScale;
-
+void main()
+{
+    gl_FragColor = v_color;
+}

@@ -166,6 +166,7 @@ void WPropertySelectionWidget::update()
         for( size_t i = 0; i < sValid.sizeAll(); ++i )
         {
             m_combo->addItem( QString::fromStdString( sValid.atAll( i )->getName() ) );
+            m_combo->setItemData( i, QString::fromStdString( sValid.atAll( i )->getDescription() ), Qt::ToolTipRole );
             // if there is an icon -> show it
             if( sValid.atAll( i )->getIcon() )
             {

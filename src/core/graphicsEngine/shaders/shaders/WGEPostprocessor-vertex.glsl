@@ -25,7 +25,10 @@
 #ifndef WGEPOSTPROCESSOR_VERTEX_GLSL
 #define WGEPOSTPROCESSOR_VERTEX_GLSL
 
-#version 120
+#version 150 core
+
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
 
 #include "WGEPostprocessorUtils-vertex.glsl"
 

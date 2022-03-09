@@ -1,4 +1,6 @@
-# Some config files of the world's most favorite text editor - VIM ;-)
+## .gitignore file for OpenWalnut
+
+# Some config files of text editor VIM
 lvimrc
 .ycm_extra_conf.py
 .ycm_extra_conf.pyc
@@ -7,6 +9,8 @@ lvimrc
 
 # File backups
 *.*~
+META~
+\#*\#
 
 # Generated doc
 **/doc/developer/html/*
@@ -47,3 +51,5 @@ openwalnut.log
 
 # AppImage
 tools/AppImage/AppImageBuild
+
+tmp.glsl

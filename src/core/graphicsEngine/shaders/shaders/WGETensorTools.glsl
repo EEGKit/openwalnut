@@ -25,7 +25,9 @@
 #ifndef WGETENSORTOOLS_GLSL
 #define WGETENSORTOOLS_GLSL
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 // (c) 2007 by Mario Hlawitschka
 

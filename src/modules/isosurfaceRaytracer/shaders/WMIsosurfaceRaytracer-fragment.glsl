@@ -22,7 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 #include "WGEColormapping-fragment.glsl"
 
@@ -34,7 +36,23 @@
 // Varyings
 /////////////////////////////////////////////////////////////////////////////
 
-#include "WMIsosurfaceRaytracer-varyings.glsl"
+// The ray's starting point in texture space
+in vec3 v_rayStart;
+
+// The ray direction in texture space
+in vec3 v_ray;
+
+// the Surface normal at this point
+in vec3 v_normal;
+
+// The isovalue scaled using texture scaling information to [0,1]
+in float v_isovalue;
+
+// The scaling component of the modelview matrix.
+in float v_worldScale;
+
+in vec4 v_color;
+
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
@@ -126,7 +144,7 @@ vec3 getNormal( in vec3 position )
 {
     vec3 grad;
 #ifdef GRADIENTTEXTURE_ENABLED
-    grad = ( 2.0 * texture3D( u_gradientsSampler, position ).rgb ) + vec3( -1.0 );
+    grad = ( 2.0 * texture( u_gradientsSampler, position ).rgb ) + vec3( -1.0 );
 #else
     grad = getGradient( u_texture0Sampler, position );
 #endif
@@ -163,7 +181,7 @@ void main()
 #ifdef STOCHASTICJITTER_ENABLED
     // stochastic jittering can help to void these ugly wood-grain artifacts with larger sampling distances but might
     // introduce some noise artifacts.
-    float jitter = 0.5 - texture2D( u_texture1Sampler, gl_FragCoord.xy / u_texture1SizeX ).r;
+    float jitter = 0.5 - texture( u_texture1Sampler, gl_FragCoord.xy / u_texture1SizeX ).r;
     // the point along the ray in cube coordinates
     vec3 curPoint = v_ray + v_rayStart + ( v_ray * stepDistance * jitter );
 #else
@@ -177,7 +195,7 @@ void main()
     while( i < SAMPLES )
     {
         // get current value
-        value = texture3D( u_texture0Sampler, curPoint ).r;
+        value = texture( u_texture0Sampler, curPoint ).r;
 
         // is it the isovalue?
         if( ( abs( value - v_isovalue ) < ISO_EPSILON )
@@ -193,7 +211,7 @@ void main()
             // Therefore, the complete standard pipeline is reproduced here:
 
             // 1: transfer to world space and right after it, to eye space
-            vec4 curPointProjected = gl_ModelViewProjectionMatrix * vec4( curPoint, 1.0 );
+            vec4 curPointProjected = osg_ModelViewProjectionMatrix * vec4( curPoint, 1.0 );
 
             // 2: scale to screen space and [0,1]
             // -> x and y is not needed
@@ -210,7 +228,7 @@ void main()
             // 4: Shading
 
             // find a proper normal for a headlight in world-space
-            vec3 normal = ( gl_ModelViewMatrix * vec4( getNormal( curPoint ), 0.0 ) ).xyz;
+            vec3 normal = ( osg_ModelViewMatrix * vec4( getNormal( curPoint ), 0.0 ) ).xyz;
 #ifdef WGE_POSTPROCESSING_ENABLED
             wge_FragNormal = textureNormalize( normal );
 #endif
@@ -228,7 +246,7 @@ void main()
             // mix color with colormap
             vec4 color = mix(
                 colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y * u_texture0SizeY, curPoint.z * u_texture0SizeZ, 1.0 ) ),
-                vec4( gl_Color.rgb, u_alpha ),
+                vec4( v_color.rgb, u_alpha ),
                 1.0 - u_colormapRatio );
             // 5: the final color construction
             wge_FragColor = vec4( light * color.rgb, color.a );

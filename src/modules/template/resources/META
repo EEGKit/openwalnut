@@ -285,7 +285,7 @@
   };
   screenshot
   {
-      description = "Colormapping on some geometry. The WGEColormapping demo.";
+      description = "Colormapping on some geometry. The WGEColormapping demo. <b>Be aware that a texture is needed!</b> See modules used in the screenshot.";
       filename = "templateColormappingScreenshot1.png";
   };
   tag = "Tutorial";

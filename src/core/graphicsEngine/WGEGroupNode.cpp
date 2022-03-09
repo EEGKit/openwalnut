@@ -24,6 +24,7 @@
 
 #include <iostream>
 #include <memory>
+#include <mutex>
 
 #include <osg/Geode>
 #include <osg/MatrixTransform>

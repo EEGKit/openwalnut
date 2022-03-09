@@ -40,7 +40,7 @@ class WDataSetFiberVectorTest : public CxxTest::TestSuite
 {
 public:
     /**
-     * Generates the test evironment
+     * Generates the test environment
      */
     void setUp( void )
     {

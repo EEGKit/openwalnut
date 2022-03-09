@@ -22,7 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 #include "WGEColormapping-fragment.glsl"
 #include "WGETextureTools.glsl"
@@ -32,7 +34,7 @@
 /**
  * The normal.
  */
-varying vec3 v_normal;
+in vec3 v_normal;
 
 /**
  * The opacity specified by the user in [0,100]
@@ -50,11 +52,13 @@ uniform bool u_outline;
 uniform float u_colormapRatio;
 
 // modelview matrix' scaling factor
-varying float v_worldScale;
+in float v_worldScale;
+
+in vec4 v_color;
 
 void main()
 {
-    vec4 col = gl_Color;
+    vec4 col = v_color;
 
 #ifdef COLORMAPPING_ENABLED
     col = mix( colormapping(), col, u_colormapRatio );

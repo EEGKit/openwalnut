@@ -22,28 +22,29 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WDATACREATORBREYZEL5_H
-#define WDATACREATORBREYZEL5_H
+#ifndef WDATACREATORBRETZEL5_H
+#define WDATACREATORBRETZEL5_H
 
 #include <core/common/WObjectNDIP.h>
 
 #include "WDataSetSingleCreatorInterface.h"
 
 /**
- * Creates a breyzel5 inside a given grid. Only works on scalar fields.
+ * Creates a Bretzel5 inside a given grid. Only works on scalar fields.
+ * https://doi.org/10.1007/978-3-642-27343-8_4
  */
-class WDataCreatorBreyzel5: public WObjectNDIP< WDataSetSingleCreatorInterface >
+class WDataCreatorBretzel5: public WObjectNDIP< WDataSetSingleCreatorInterface >
 {
 public:
     /**
      * Default constructor.
      */
-    WDataCreatorBreyzel5();
+    WDataCreatorBretzel5();
 
     /**
      * Destructor.
      */
-    virtual ~WDataCreatorBreyzel5();
+    virtual ~WDataCreatorBretzel5();
 
     /**
      * Create the dataset. This needs to be implemented by all the creators you write. This method is designed to be applicable to all kinds of
@@ -70,5 +71,4 @@ private:
     WPropDouble m_scale;
 };
 
-#endif  // WDATACREATORBREYZEL5_H
-
+#endif  // WDATACREATORBRETZEL5_H

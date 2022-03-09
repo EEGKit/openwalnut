@@ -25,8 +25,9 @@
 #ifndef WGEPOSTPROCESSOR_FRAGMENT_GLSL
 #define WGEPOSTPROCESSOR_FRAGMENT_GLSL
 
-#version 120
-#extension GL_EXT_gpu_shader4 : enable
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 #include "WGEShadingTools.glsl"
 #include "WGETextureTools.glsl"
@@ -179,7 +180,7 @@ uniform vec4 u_hatchColor = vec4( 0.1 );
 vec4 getHalftoneShading( vec4 inColor, vec2 where )
 {
     int edgeLod = 1;
-    float edge = texture2DLod( u_texture6Sampler, where, edgeLod ).r;
+    float edge = textureLod( u_texture6Sampler, where, edgeLod ).r;
     vec4 col = vec4( u_hatchColor.rgb, 1. - step( 0.75, pow( edge, 2. ) ) );
 
     // create the dither matrix.
@@ -253,22 +254,22 @@ vec4 getHalftoneShading()
  * Returns the gauss-smoothed color of the specified pixel from the input texture.
  *
  * \param where the pixel to grab
- * \param sampler the texture to gauss
+ * \param sampl the texture to gauss
  *
  * \return the color
  */
-vec4 getGaussedColor( vec2 where, sampler2D sampler )
+vec4 getGaussedColor( vec2 where, sampler2D sampl )
 {
     // get the 8-neighbourhood
-    vec4 gaussedColorc  = texture2D( sampler, where );
-    vec4 gaussedColorbl = texture2D( sampler, where + vec2( -offsetX, -offsetY ) );
-    vec4 gaussedColorl  = texture2D( sampler, where + vec2( -offsetX,     0.0  ) );
-    vec4 gaussedColortl = texture2D( sampler, where + vec2( -offsetX,  offsetY ) );
-    vec4 gaussedColort  = texture2D( sampler, where + vec2(     0.0,   offsetY ) );
-    vec4 gaussedColortr = texture2D( sampler, where + vec2(  offsetX,  offsetY ) );
-    vec4 gaussedColorr  = texture2D( sampler, where + vec2(  offsetX,     0.0  ) );
-    vec4 gaussedColorbr = texture2D( sampler, where + vec2(  offsetX,  offsetY ) );
-    vec4 gaussedColorb  = texture2D( sampler, where + vec2(     0.0,  -offsetY ) );
+    vec4 gaussedColorc  = texture( sampl, where );
+    vec4 gaussedColorbl = texture( sampl, where + vec2( -offsetX, -offsetY ) );
+    vec4 gaussedColorl  = texture( sampl, where + vec2( -offsetX,     0.0  ) );
+    vec4 gaussedColortl = texture( sampl, where + vec2( -offsetX,  offsetY ) );
+    vec4 gaussedColort  = texture( sampl, where + vec2(     0.0,   offsetY ) );
+    vec4 gaussedColortr = texture( sampl, where + vec2(  offsetX,  offsetY ) );
+    vec4 gaussedColorr  = texture( sampl, where + vec2(  offsetX,     0.0  ) );
+    vec4 gaussedColorbr = texture( sampl, where + vec2(  offsetX,  offsetY ) );
+    vec4 gaussedColorb  = texture( sampl, where + vec2(     0.0,  -offsetY ) );
 
     // apply Gauss filter
     vec4 gaussed = ( 1.0 / 16.0 ) * (
@@ -281,13 +282,13 @@ vec4 getGaussedColor( vec2 where, sampler2D sampler )
 /**
  * Returns the gauss-smoothed color of the current pixel from the input color texture.
  *
- * \param sampler the texture to gauss
+ * \param sampl the texture to gauss
  *
  * \return the color
  */
-vec4 getGaussedColor( sampler2D sampler )
+vec4 getGaussedColor( sampler2D sampl )
 {
-    return getGaussedColor( pixelCoord, sampler );
+    return getGaussedColor( pixelCoord, sampl );
 }
 
 #endif
@@ -338,7 +339,7 @@ float getSSAO( vec2 where, float radius )
     const float invSamples = 1.0/ float( SAMPLES );
 
     // grab a normal for reflecting the sample rays later on
-    vec3 fres = normalize( ( texture2D( u_noiseSampler, where * u_noiseSizeX ).xyz * 2.0 ) - vec3( 1.0 ) );
+    vec3 fres = normalize( ( texture( u_noiseSampler, where * u_noiseSizeX ).xyz * 2.0 ) - vec3( 1.0 ) );
     vec4 currentPixelSample = getNormal( where );
     float currentPixelDepth = getDepth( where );
     float radiusSS = radius * ( getZoom() * u_ssaoRadius / float( u_texture0SizeX ) ) / ( 1.0 - currentPixelDepth );
@@ -446,7 +447,7 @@ float getLineAO( vec2 where )
     const float falloff = 0.00001;
 
     // grab a random normal for reflecting the sample rays later on
-    vec3 randNormal = normalize( ( texture2D( u_noiseSampler, where * u_noiseSizeX ).xyz * 2.0 ) - vec3( 1.0 ) );
+    vec3 randNormal = normalize( ( texture( u_noiseSampler, where * u_noiseSizeX ).xyz * 2.0 ) - vec3( 1.0 ) );
 
     // grab the current pixel's normal and depth
     vec3 currentPixelSample = getNormal( where ).xyz;
@@ -495,7 +496,7 @@ float getLineAO( vec2 where )
         for( int i = 0; i < SAMPLES; ++i )
         {
             // grab a rand normal from the noise texture
-            vec3 randSphereNormal = ( texture2D( u_noiseSampler, vec2( float( i ) / float( SAMPLES ),
+            vec3 randSphereNormal = ( texture( u_noiseSampler, vec2( float( i ) / float( SAMPLES ),
                                                                        float( l + 1 ) / float( SCALERS ) ) ).rgb * 2.0 ) - vec3( 1.0 );
 
             // get a vector (randomized inside of a sphere with radius 1.0) from a texture and reflect it
@@ -544,14 +545,14 @@ float getLineAO( vec2 where )
             #ifdef WGE_POSTPROCESSOR_LINEAO_OCCLUDERLIGHT
             vec3 t = getTangent( hemispherePoint.xy, lod ).xyz;
             vec3 newnorm = normalize( cross( normalize( cross( t, normalize( hemisphereVector ) ) ), t ) );
-            float occluderDiffuse = max( dot( newnorm, gl_LightSource[0].position.xyz ), 0.0 );
+            float occluderDiffuse = max( dot( newnorm, ow_lightsource.xyz ), 0.0 );
             #else
             // you can disable this effect.
             float occluderDiffuse = 0.0;
             #endif
 
             // incorporate specular reflection
-            vec3 H = normalize( gl_LightSource[0].position.xyz + normalize( hemisphereVector ) );
+            vec3 H = normalize( ow_lightsource.xyz + normalize( hemisphereVector ) );
             float occluderSpecular = pow( max( dot( H, occluderNormal ), 0.0 ), 100.0 );
 
             // this second is as proposed for AO, the omega (hemisphere vector) and surface normal
@@ -701,28 +702,28 @@ void main()
         gl_FragData[0] = color;
     #else
         #ifdef WGE_POSTPROCESSOR_MERGEOP_UNIT0
-            vec4 color = texture2D( u_texture0Sampler, pixelCoord );
+            vec4 color = texture( u_texture0Sampler, pixelCoord );
         #endif
         #ifdef WGE_POSTPROCESSOR_MERGEOP_UNIT1
-            color = mix( color, texture2D( u_texture1Sampler, pixelCoord ), 0.5 );
+            color = mix( color, texture( u_texture1Sampler, pixelCoord ), 0.5 );
         #endif
         #ifdef WGE_POSTPROCESSOR_MERGEOP_UNIT2
-            color = mix( color, texture2D( u_texture2Sampler, pixelCoord ), 0.5 );
+            color = mix( color, texture( u_texture2Sampler, pixelCoord ), 0.5 );
         #endif
         #ifdef WGE_POSTPROCESSOR_MERGEOP_UNIT3
-            color = mix( color, texture2D( u_texture3Sampler, pixelCoord ), 0.5 );
+            color = mix( color, texture( u_texture3Sampler, pixelCoord ), 0.5 );
         #endif
         #ifdef WGE_POSTPROCESSOR_MERGEOP_UNIT4
-            color = mix( color, texture2D( u_texture4Sampler, pixelCoord ), 0.5 );
+            color = mix( color, texture( u_texture4Sampler, pixelCoord ), 0.5 );
         #endif
         #ifdef WGE_POSTPROCESSOR_MERGEOP_UNIT5
-            color = mix( color, texture2D( u_texture5Sampler, pixelCoord ), 0.5 );
+            color = mix( color, texture( u_texture5Sampler, pixelCoord ), 0.5 );
         #endif
         #ifdef WGE_POSTPROCESSOR_MERGEOP_UNIT6
-            color = mix( color, texture2D( u_texture6Sampler, pixelCoord ), 0.5 );
+            color = mix( color, texture( u_texture6Sampler, pixelCoord ), 0.5 );
         #endif
         #ifdef WGE_POSTPROCESSOR_MERGEOP_UNIT7
-            color = mix( color, texture2D( u_texture7Sampler, pixelCoord ), 0.5 );
+            color = mix( color, texture( u_texture7Sampler, pixelCoord ), 0.5 );
         #endif
         gl_FragData[0] = color;
     #endif

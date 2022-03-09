@@ -37,12 +37,12 @@
 
 
 /**
- * Holds the csv data.
+ * Holds the CSV data.
  */
 class WProtonData
 {
     /**
-     * only test class may be friend
+     * Only test class may be friend
      */
      friend class WProtonDataTest;
 public:
@@ -52,7 +52,7 @@ public:
     typedef std::shared_ptr< WProtonData > SPtr;
 
     /**
-     * constructor
+     * Constructor
      *
      * \param csvHeader pointer to a column-header of the CSV-file
      * \param csvData pointer to a content of the CSV file 
@@ -67,28 +67,28 @@ public:
     WDataSetCSV::ContentSPtr getCSVHeader();
 
     /**
-     * getter
+     * Getter
      *
      * \return pointer to a content of the CSV file 
      */
     WDataSetCSV::ContentSPtr getCSVData();
 
     /**
-     * setter
+     * Setter
      *
      * \param csvHeader set m_csvHeader
      */
     void setCSVHeader( WDataSetCSV::ContentSPtr csvHeader );
 
     /**
-     * setter
+     * Setter
      *
      * \param csvData set m_csvData
      */
     void setCSVData( WDataSetCSV::ContentSPtr csvData );
 
     /**
-     * setter
+     * Setter
      *
      * \param columnName Name of column-header of the CSV-file
      * \param index position of column-header of the CSV-file
@@ -96,7 +96,7 @@ public:
     void setStateIndex( std::string columnName, int index );
 
     /**
-     * getter
+     * Getter
      *
      * \param selectedName Name of selected name of single-selection
      * \return return the position current selected item
@@ -104,7 +104,7 @@ public:
     int getColumnIndexBySelection( std::string selectedName );
 
     /**
-     * getter
+     * Getter
      *
      * \param columnName Name of column-header of the CSV-file
      * \return return the position of column-header of the CSV-file as int
@@ -112,8 +112,8 @@ public:
     int getColumnIndex( std::string columnName );
 
     /**
-     * checks whether columns are available 
-     * \param columnName THe name of the column.
+     * Checks whether columns are available
+     * \param columnName The name of the column.
      * \return true if column is available, false if column is not available
      */
     bool isColumnAvailable( std::string columnName );
@@ -159,8 +159,8 @@ private:
     WDataSetCSV::ContentElemSPtr m_columnTypes;
 
     /**
-     * Reads csv data and stores column types in m_columnTypes
-     * \param csvData the input csv data
+     * Reads CSV data and stores column types in m_columnTypes
+     * \param csvData the input CSV data
      */
     void detectColumnTypesFromCsvData( WDataSetCSV::ContentSPtr csvData );
 

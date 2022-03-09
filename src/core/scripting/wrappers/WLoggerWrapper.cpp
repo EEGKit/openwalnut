@@ -109,4 +109,3 @@ void WLoggerWrapper::debug( std::string const& location, std::string const& mess
 {
     m_logger->addLogMessage( message, location, LL_DEBUG );
 }
-

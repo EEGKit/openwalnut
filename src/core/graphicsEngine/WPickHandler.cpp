@@ -246,11 +246,24 @@ void WPickHandler::pick( osgViewer::View* view, const osgGA::GUIEventAdapter& ea
 
     bool intersetionsExist = view->computeIntersections( x, y, intersections, 0xFFFFFFF0 );
 
+
+    WPickInfo fullPathpickInfo;
     // if something is picked, get the right thing from the list, because it might be hidden.
     bool startPickIsStillInList = false;
     osgUtil::LineSegmentIntersector::Intersections::iterator hitr;
     if( intersetionsExist )
     {
+        hitr = intersections.begin();
+
+
+        while( hitr != intersections.end() )
+        {
+            std::string nodeName = extractSuitableName( hitr );
+
+            fullPathpickInfo.appendToPickPath( nodeName );
+            ++hitr;
+        }
+
         assert( intersections.size() );
         hitr = intersections.begin();
 
@@ -299,7 +312,7 @@ void WPickHandler::pick( osgViewer::View* view, const osgGA::GUIEventAdapter& ea
         }
 
         // if we have a previous pick we search for it in the list
-        if( m_startPick.getName() != ""  && m_startPick.getName() != WPickHandler::unpickString )
+        if( m_startPick.getName() != "" && m_startPick.getName() != WPickHandler::unpickString )
         {
             while( ( hitr != intersections.end() ) && !startPickIsStillInList )
             {
@@ -315,7 +328,7 @@ void WPickHandler::pick( osgViewer::View* view, const osgGA::GUIEventAdapter& ea
     } // end of if( intersetionsExist )
     else
     {
-        // if we found no intersection and we have noting picked before
+        // If we found no intersection and we have noting picked before
         // we want to return "nothing" in order to provide the pixel coordinates
         // even though we did not hit anything.
         if(  m_startPick.getName() == "" )
@@ -360,7 +373,7 @@ void WPickHandler::pick( osgViewer::View* view, const osgGA::GUIEventAdapter& ea
     if( !startPickIsStillInList && m_startPick.getName() != ""  && m_startPick.getName() != WPickHandler::unpickString )
     {
         pickInfo = WPickInfo( m_startPick.getName(), m_viewerName, m_startPick.getPickPosition(), std::make_pair( x, y ),
-                              m_startPick.getModifierKey(), m_mouseButton, m_startPick.getPickNormal(), m_scrollWheel );
+                              m_startPick.getModifierKey(), m_mouseButton, m_startPick.getPickNormal(), m_scrollWheel, m_startPick.getPickPath() );
     }
 
     m_hitResult = pickInfo;
@@ -369,6 +382,7 @@ void WPickHandler::pick( osgViewer::View* view, const osgGA::GUIEventAdapter& ea
     m_startPick = pickInfo;
     m_inPickMode = true;
 
+    m_hitResult.setPickPath( fullPathpickInfo.getPickPath() );
     m_pickSignal( getHitResult() );
 }
 

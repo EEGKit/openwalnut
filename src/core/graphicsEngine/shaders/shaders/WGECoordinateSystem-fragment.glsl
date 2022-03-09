@@ -22,18 +22,23 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 #include "WGEShadingTools.glsl"
 
 /**
  * The normal.
  */
-varying vec3 v_normal;
+in vec3 v_normal;
+
+in vec4 v_color;
+in vec4 v_texcoord;
 
 void main()
 {
-    vec4 col = gl_FrontMaterial.diffuse;
+    vec4 col = v_color;
     vec4 white = vec4( 1, 1, 1, 1 );
 
     // calculate lighting
@@ -41,5 +46,5 @@ void main()
     col *= light;
 
     // use texture coordinate to mix along the cylinder
-    gl_FragColor = mix( white, col, gl_TexCoord[0].t + 0.2 );
+    gl_FragColor = mix( white, col, v_texcoord.t + 0.2 );
 }

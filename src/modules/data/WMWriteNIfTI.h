@@ -80,13 +80,6 @@ public:
      */
     virtual std::shared_ptr< WModule > factory() const;
 
-    /**
-     * Get the icon for this module in XPM format.
-     * \return The icon.
-     */
-    virtual const char** getXPMIcon() const;
-
-
 protected:
     /**
      * Entry point after loading the module. Runs in separate thread.

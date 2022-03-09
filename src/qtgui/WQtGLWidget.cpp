@@ -51,18 +51,30 @@
 #include "events/WEventTypes.h"
 #include "events/WRenderedFrameEvent.h"
 
+#ifdef OW_QT5_GLWIDGET
+WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::ProjectionMode projectionMode, const QWidget* /* shareWidget */ ):
+    QOpenGLWidget( parent ),
+#else
 WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::ProjectionMode projectionMode, const QWidget* shareWidget ):
     QGLWidget( getDefaultFormat(), parent, dynamic_cast< const QGLWidget* >( shareWidget ) ),
+#endif
       m_nameOfViewer( nameOfViewer ),
-      m_firstPaint( true )
+      m_firstPaint( true ),
+      m_firstFrame( true )
 {
+#ifdef OW_QT5_GLWIDGET
+    setFormat( getDefaultFormat() );
+#endif
     m_initialProjectionMode = projectionMode;
 
     setSizePolicy( QSizePolicy( QSizePolicy::QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding ) );
 
-    // required
+    // This causes QOpenGLWidget to freeze so only use with QGLWidget
+#ifndef OW_QT5_GLWIDGET
     setAttribute( Qt::WA_PaintOnScreen );
     setAttribute( Qt::WA_NoSystemBackground );
+#endif
+
     setFocusPolicy( Qt::ClickFocus );
     setMouseTracking( true );
 
@@ -73,7 +85,11 @@ WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::
     m_Viewer = WKernel::getRunningKernel()->getGraphicsEngine()->createViewer(
         m_nameOfViewer, wdata, x(), y(), width(), height(), m_initialProjectionMode );
 
+#ifdef OW_QT5_GLWIDGET
+    connect( &m_Timer, SIGNAL( timeout() ), this, SLOT( update() ) );
+#else
     connect( &m_Timer, SIGNAL( timeout() ), this, SLOT( updateGL() ) );
+#endif
     m_Timer.start( 33 );
 
     m_Viewer->isFrameRendered()->getCondition()->subscribeSignal( boost::bind( &WQtGLWidget::notifyFirstRenderedFrame, this ) );
@@ -204,6 +220,11 @@ std::shared_ptr< WGEViewer > WQtGLWidget::getViewer() const
     return m_Viewer;
 }
 
+void WQtGLWidget::initializeGL()
+{
+    initializeOpenGLFunctions();
+}
+
 void WQtGLWidget::paintEvent( QPaintEvent* event )
 {
     if( m_firstPaint )
@@ -220,6 +241,12 @@ void WQtGLWidget::paintGL()
 {
     if( m_Viewer )
     {
+        if( m_firstFrame )
+        {
+            m_Viewer->getView()->getCamera()->getGraphicsContext()->setDefaultFboId( defaultFramebufferObject() );
+            m_firstFrame = false;
+        }
+
         if( !m_Viewer->getPaused() )
         {
             m_Viewer->paint();

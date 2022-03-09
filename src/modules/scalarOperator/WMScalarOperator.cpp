@@ -106,6 +106,7 @@ void WMScalarOperator::properties()
     m_operations->addItem( "clamp( lower, upper, A )", "Clamp A between lower and upper so that l <= A <= u." );
     m_operations->addItem( "A * upper", "Scale data by factor." );
     m_operations->addItem( "Binarize A by upper", "Values > upper, become 1, below or equal become 0" );
+    m_operations->addItem( "A + upper", "Add constant value." );
 
     m_opSelection = m_properties->addProperty( "Operation", "The operation to apply on A and B.", m_operations->getSelectorFirst(),
                                                m_propCondition );
@@ -308,7 +309,7 @@ inline T opBinarizeByA( T a, T /* l */, T u )
 }
 
 /**
- * Operator applying some op to argument.
+ * Operator clamping argument.
  *
  * \tparam T Type of each parameter and the result
  * \param a the first operant
@@ -325,12 +326,28 @@ inline T opClamp( T a, T l, T u )
 }
 
 /**
- * Operator applying some op to argument.
+ * Operator adding value to argument.
  *
  * \tparam T Type of each parameter and the result
  * \param v the first operant
  * \param l ignored
  * \param u scaler
+ *
+ * \return result
+ */
+
+template< typename T >
+inline T opAddToA( T v, T /* l */, T u )
+{
+    return v + u;
+}
+/**
+ * Operator applying some op to argument.
+ *
+ * \tparam T Type of each parameter and the result
+ * \param v the first operant
+ * \param l ignored
+ * \param u costant value to add
  *
  * \return result
  */
@@ -340,254 +357,162 @@ inline T opScaleByA( T v, T /* l */, T u )
     return v * u;
 }
 
-/**
- * The second visitor which got applied to the second value set. It discriminates the integral type and applies the operator in a per value
- * style.
- *
- * \tparam VSetAType The integral type of the first valueset.
- */
 template< typename VSetAType >
-class VisitorVSetB: public boost::static_visitor< std::shared_ptr< WValueSetBase > >
+WMScalarOperator::VisitorVSetB< VSetAType >::VisitorVSetB( const WValueSet< VSetAType >* const vsetA, size_t opIdx ):
+    boost::static_visitor< result_type >(),
+    m_vsetA( vsetA ),
+    m_opIdx( opIdx )
 {
-public:
-    /**
-     * Creates visitor for the second level of cascading. Takes the first value set as parameter. This visitor applies the operation o to A and
-     * B: o(A,B).
-     *
-     * \param vsetA the first value set
-     * \param opIdx The operator index. Depending on the index, the right operation is selected
-     */
-    VisitorVSetB( const WValueSet< VSetAType >* const vsetA, size_t opIdx = 0 ):
-        boost::static_visitor< result_type >(),
-        m_vsetA( vsetA ),
-        m_opIdx( opIdx )
+}
+
+template< typename VSetAType >
+template< typename VSetBType >
+boost::static_visitor< std::shared_ptr< WValueSetBase > >::result_type WMScalarOperator::VisitorVSetB< VSetAType >::operator()(
+    const WValueSet< VSetBType >* const& vsetB ) const      // NOLINT
+{
+    // get best matching return scalar type
+    typedef typename WTypeTraits::TypePromotion< VSetAType, VSetBType >::Result ResultT;
+
+    size_t order = m_vsetA->order();
+    size_t dim = m_vsetA->dimension();
+    dataType type = DataType< ResultT >::type;
+    std::vector< ResultT > data;
+    data.resize( m_vsetA->rawSize() );
+
+    // discriminate the right operation with the correct type. It would be nicer to use some kind of strategy pattern here, but the template
+    // character of the operators forbids it as template methods can't be virtual. Besides this, at some point in the module main the
+    // selector needs to be queried and its index mapped to a pointer. This is what we do here.
+    boost::function< ResultT( ResultT, ResultT ) > op;
+    switch( m_opIdx )
     {
+        case 1:
+            op = &opMinus< ResultT >;
+            break;
+        case 2:
+            op = &opTimes< ResultT >;
+            break;
+        case 3:
+            op = &opDiv< ResultT >;
+            break;
+        case 4:
+            op = &opAbsMinus< ResultT >;
+            break;
+        case 0:
+        default:
+            op = &opPlus< ResultT >;
+            break;
     }
 
-    /**
-     * Visitor on the second valueset. This applies the operation.
-     *
-     * \tparam VSetBType the integral type of the currently visited valueset.
-     * \param vsetB the valueset currently visited (B).
-     *
-     * \return the result of o(A,B)
-     */
-    template < typename VSetBType >
-    result_type operator()( const WValueSet< VSetBType >* const& vsetB ) const      // NOLINT
+    // apply op to each value
+    const VSetAType* a = m_vsetA->rawData();
+    const VSetBType* b =   vsetB->rawData();
+    for( size_t i = 0; i < m_vsetA->rawSize(); ++i )
     {
-        // get best matching return scalar type
-        typedef typename WTypeTraits::TypePromotion< VSetAType, VSetBType >::Result ResultT;
-
-        size_t order = m_vsetA->order();
-        size_t dim = m_vsetA->dimension();
-        dataType type = DataType< ResultT >::type;
-        std::vector< ResultT > data;
-        data.resize( m_vsetA->rawSize() );
-
-        // discriminate the right operation with the correct type. It would be nicer to use some kind of strategy pattern here, but the template
-        // character of the operators forbids it as template methods can't be virtual. Besides this, at some point in the module main the
-        // selector needs to be queried and its index mapped to a pointer. This is what we do here.
-        boost::function< ResultT( ResultT, ResultT ) > op;
-        switch( m_opIdx )
-        {
-            case 1:
-                op = &opMinus< ResultT >;
-                break;
-            case 2:
-                op = &opTimes< ResultT >;
-                break;
-            case 3:
-                op = &opDiv< ResultT >;
-                break;
-            case 4:
-                op = &opAbsMinus< ResultT >;
-                break;
-            case 0:
-            default:
-                op = &opPlus< ResultT >;
-                break;
-        }
-
-        // apply op to each value
-        const VSetAType* a = m_vsetA->rawData();
-        const VSetBType* b =   vsetB->rawData();
-        for( size_t i = 0; i < m_vsetA->rawSize(); ++i )
-        {
-            data[ i ] = op( static_cast< ResultT >( a[ i ] ), static_cast< ResultT >( b[ i ] ) );
-        }
-
-        // create result value set
-        std::shared_ptr< WValueSet< ResultT > > result = std::shared_ptr< WValueSet< ResultT > >(
-            new WValueSet< ResultT >( order,
-                                      dim,
-                                      std::shared_ptr< std::vector< ResultT > >( new std::vector< ResultT >( data ) ),
-                                      type )
-        );
-        return result;
+        data[ i ] = op( static_cast< ResultT >( a[ i ] ), static_cast< ResultT >( b[ i ] ) );
     }
 
-    /**
-     * The first valueset.
-     */
-    const WValueSet< VSetAType >* const m_vsetA;
+    // create result value set
+    std::shared_ptr< WValueSet< ResultT > > result = std::shared_ptr< WValueSet< ResultT > >(
+        new WValueSet< ResultT >( order,
+                                dim,
+                                std::shared_ptr< std::vector< ResultT > >( new std::vector< ResultT >( data ) ),
+                                type )
+    );
+    return result;
+}
 
-    /**
-     * The operator index.
-     */
-    size_t m_opIdx;
-};
+
+WMScalarOperator::VisitorVSetA::VisitorVSetA( WValueSetBase* vsetB, size_t opIdx ):
+    boost::static_visitor< result_type >(),
+    m_vsetB( vsetB ),
+    m_opIdx( opIdx )
+{
+}
 
 /**
- * Visitor for discriminating the type of the first valueset. It simply creates a new instance of VisitorVSetB with the proper integral type of
- * the first value set.
+ * Called by boost::varying during static visiting. Creates a new VisitorVSetB which finally applies the operation.
+ *
+ * \tparam T the real integral type of the first value set.
+ * \param vsetA the first valueset currently visited.
+ *
+ * \return the result from the operation with this and the second value set
  */
-class VisitorVSetA: public boost::static_visitor< std::shared_ptr< WValueSetBase > >
+template < typename T >
+boost::static_visitor< std::shared_ptr< WValueSetBase > >::result_type WMScalarOperator::VisitorVSetA::operator()(
+    const WValueSet< T >* const& vsetA ) const             // NOLINT
 {
-public:
-    /**
-     * Create visitor instance. The specified valueset gets visited if the first one is visited using this visitor.
-     *
-     * \param vsetB The valueset to visit during this visit.
-     * \param opIdx The operator index. Forwarded to VisitorVSetB
-     */
-    VisitorVSetA( WValueSetBase* vsetB, size_t opIdx = 0 ):
-        boost::static_visitor< result_type >(),
-        m_vsetB( vsetB ),
-        m_opIdx( opIdx )
-    {
-    }
+    // visit the second value set as we now know the type of the first one
+    VisitorVSetB< T > visitor( vsetA, m_opIdx );
+    return m_vsetB->applyFunction( visitor );
+}
 
-    /**
-     * Called by boost::varying during static visiting. Creates a new VisitorVSetB which finally applies the operation.
-     *
-     * \tparam T the real integral type of the first value set.
-     * \param vsetA the first valueset currently visited.
-     *
-     * \return the result from the operation with this and the second value set
-     */
-    template < typename T >
-    result_type operator()( const WValueSet< T >* const& vsetA ) const             // NOLINT
-    {
-        // visit the second value set as we now know the type of the first one
-        VisitorVSetB< T > visitor( vsetA, m_opIdx );
-        return m_vsetB->applyFunction( visitor );
-    }
-
-    /**
-     * The valueset where to cascade.
-     */
-    WValueSetBase* m_vsetB;
-
-    /**
-     * The operator index.
-     */
-    size_t m_opIdx;
-};
-
-/**
- * Visitor for discriminating the type of the first valueset. It should be used for operations on ONE valueset.
- */
-class VisitorVSetSingleArgument: public boost::static_visitor< std::shared_ptr< WValueSetBase > >
+WMScalarOperator::VisitorVSetSingleArgument::VisitorVSetSingleArgument( size_t opIdx ):
+    boost::static_visitor< result_type >(),
+    m_opIdx( opIdx )
 {
-public:
-    /**
-     * Create visitor instance. The specified valueset gets visited if the first one is visited using this visitor.
-     *
-     * \param opIdx The operator index. Forwarded to VisitorVSetB
-     */
-    explicit VisitorVSetSingleArgument( size_t opIdx = 0 ):
-        boost::static_visitor< result_type >(),
-        m_opIdx( opIdx )
+}
+
+template < typename T >
+boost::static_visitor< std::shared_ptr< WValueSetBase > >::result_type WMScalarOperator::VisitorVSetSingleArgument::operator()(
+    const WValueSet< T >* const& vsetA ) const             // NOLINT
+{
+    // get best matching return scalar type
+    typedef T ResultT;
+
+    size_t order = vsetA->order();
+    size_t dim = vsetA->dimension();
+    dataType type = DataType< ResultT >::type;
+    std::vector< ResultT > data;
+    data.resize( vsetA->rawSize() );
+
+    // discriminate the right operation with the correct type. It would be nicer to use some kind of strategy pattern here, but the template
+    // character of the operators forbids it as template methods can't be virtual. Besides this, at some point in the module main the
+    // selector needs to be queried and its index mapped to a pointer. This is what we do here.
+    boost::function< ResultT( ResultT, ResultT l, ResultT u ) > op;
+    switch( m_opIdx )
     {
+        case 5:
+            op = &opAbs< ResultT >;
+            break;
+        case 6:
+            op = &opClamp< ResultT >;
+            break;
+        case 7:
+            op = &opScaleByA< ResultT >;
+            break;
+        case 8:
+            op = &opBinarizeByA< ResultT >;
+            break;
+        case 9:
+            op = &opAddToA< ResultT >;
+            break;
+        default:
+            op = &opAbs< ResultT >;
+            break;
     }
 
-    /**
-     * Called by boost::varying during static visiting. Applies the operation to it
-     *
-     * \tparam T the real integral type of the first value set.
-     * \param vsetA the first valueset currently visited.
-     *
-     * \return the result from the operation with this and the second value set
-     */
-    template < typename T >
-    result_type operator()( const WValueSet< T >* const& vsetA ) const             // NOLINT
+    // apply op to each value
+    const T* a = vsetA->rawData();
+    for( size_t i = 0; i < vsetA->rawSize(); ++i )
     {
-        // get best matching return scalar type
-        typedef T ResultT;
-
-        size_t order = vsetA->order();
-        size_t dim = vsetA->dimension();
-        dataType type = DataType< ResultT >::type;
-        std::vector< ResultT > data;
-        data.resize( vsetA->rawSize() );
-
-        // discriminate the right operation with the correct type. It would be nicer to use some kind of strategy pattern here, but the template
-        // character of the operators forbids it as template methods can't be virtual. Besides this, at some point in the module main the
-        // selector needs to be queried and its index mapped to a pointer. This is what we do here.
-        boost::function< ResultT( ResultT, ResultT l, ResultT u ) > op;
-        switch( m_opIdx )
-        {
-            case 5:
-                op = &opAbs< ResultT >;
-                break;
-            case 6:
-                op = &opClamp< ResultT >;
-                break;
-            case 7:
-                op = &opScaleByA< ResultT >;
-                break;
-            case 8:
-                op = &opBinarizeByA< ResultT >;
-                break;
-            default:
-                op = &opAbs< ResultT >;
-                break;
-        }
-
-        // apply op to each value
-        const T* a = vsetA->rawData();
-        for( size_t i = 0; i < vsetA->rawSize(); ++i )
-        {
-            data[ i ] = op( a[ i ], m_lowerBorder, m_upperBorder );
-        }
-
-        // create result value set
-        std::shared_ptr< WValueSet< ResultT > > result = std::shared_ptr< WValueSet< ResultT > >(
-            new WValueSet< ResultT >( order,
-                                      dim,
-                                      std::shared_ptr< std::vector< ResultT > >( new std::vector< ResultT >( data ) ),
-                                      type )
-        );
-        return result;
+        data[ i ] = op( a[ i ], m_lowerBorder, m_upperBorder );
     }
 
-    /**
-     * Set lower and upper border needed for several ops.
-     *
-     * \param l lower border
-     * \param u upper border
-     */
-    void setBorder( double l, double u )
-    {
-        m_lowerBorder = l;
-        m_upperBorder = u;
-    }
+    // create result value set
+    std::shared_ptr< WValueSet< ResultT > > result = std::shared_ptr< WValueSet< ResultT > >(
+        new WValueSet< ResultT >( order,
+                                    dim,
+                                    std::shared_ptr< std::vector< ResultT > >( new std::vector< ResultT >( data ) ),
+                                    type )
+    );
+    return result;
+}
 
-    /**
-     * The operator index.
-     */
-    size_t m_opIdx;
-
-    /**
-     * Lower border needed for several ops.
-     */
-    double m_lowerBorder;
-
-    /**
-     * Upper border needed for several ops.
-     */
-    double m_upperBorder;
-};
+void WMScalarOperator::VisitorVSetSingleArgument::setBorder( double l, double u )
+{
+    m_lowerBorder = l;
+    m_upperBorder = u;
+}
 
 void WMScalarOperator::moduleMain()
 {
@@ -647,7 +572,7 @@ void WMScalarOperator::moduleMain()
             std::shared_ptr< WValueSetBase > newValueSet;
 
             // single operand operation?
-            if( ( s == 5 ) || ( s == 6 ) || ( s == 7 ) || ( s == 8 ) )
+            if( ( s == 5 ) || ( s == 6 ) || ( s == 7 ) || ( s == 8 ) || ( s == 9 ) )
             {
                 VisitorVSetSingleArgument visitor( s );    // the visitor cascades to the second value set
                 visitor.setBorder( m_lowerBorder->get( true ), m_upperBorder->get( true ) );

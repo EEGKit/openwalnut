@@ -22,10 +22,14 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 #include "WGEUtils.glsl"
 #include "WGEShadingTools.glsl"
+
+in vec4 ow_texCoord;
 
 /**
  * The texture Unit for the advection texture
@@ -87,12 +91,12 @@ uniform bool u_useHighContrast;
  */
 void main()
 {
-    vec2 texCoord = gl_TexCoord[0].st;
-    float edge  = texture2D( u_texture1Sampler, texCoord ).r * ( u_useEdges ? 1.0 : 0.0 );
-    float light  = texture2D( u_texture1Sampler, texCoord ).a * ( u_useLight ? 1.0 : 0.0 );
-    float depth  = texture2D( u_texture1Sampler, texCoord ).g;
-    float advected  = texture2D( u_texture0Sampler, texCoord ).r;
-    vec3 cmap = texture2D( u_texture2Sampler, texCoord ).rgb;
+    vec2 texCoord = ow_texCoord.st;
+    float edge  = texture( u_texture1Sampler, texCoord ).r * ( u_useEdges ? 1.0 : 0.0 );
+    float light  = texture( u_texture1Sampler, texCoord ).a * ( u_useLight ? 1.0 : 0.0 );
+    float depth  = texture( u_texture1Sampler, texCoord ).g;
+    float advected  = texture( u_texture0Sampler, texCoord ).r;
+    vec3 cmap = texture( u_texture2Sampler, texCoord ).rgb;
 
     float u_contrastingS = u_useHighContrast ? 64.0 : 2.5;
     float u_contrastingP = u_useHighContrast ? 8 : 2.5;

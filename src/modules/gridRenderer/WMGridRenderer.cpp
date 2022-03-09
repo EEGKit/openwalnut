@@ -95,6 +95,8 @@ void WMGridRenderer::moduleMain()
     m_moduleState.add( m_input->getDataChangedCondition() );
     m_moduleState.add( m_recompute );
 
+    m_shader = new WGEShader( "WMGridRenderer", m_localPath );
+
     // signal ready state
     ready();
 
@@ -174,6 +176,7 @@ void WMGridRenderer::moduleMain()
             debugLog() << "Creating grid geode.";
             m_gridNode = new WGEGridNode( regGrid );
             m_gridNode->addUpdateCallback( new WGENodeMaskCallback( m_active ) );
+            m_shader->apply( m_gridNode );
             WGraphicsEngine::getGraphicsEngine()->getScene()->insert( m_gridNode );
         }
         else if( m_gridNode && !regGrid )

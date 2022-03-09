@@ -249,7 +249,7 @@ void WMFilterProtonData::properties()
 
 void WMFilterProtonData::loadNotifier( WPropertyGroup::SPtr group, WPropertyBase::SPtr property )
 {
-    std::string name = group->getDescription() + "/" + property->getName();
+    std::string name = group->getName() + "/" + property->getName();
     std::string value = property->getAsString();
     m_loadedProperties.push_back( std::pair< std::string, std::string >( name, value ) );
 }

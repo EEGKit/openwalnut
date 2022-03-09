@@ -25,7 +25,11 @@
 #ifndef WGEPOSTPROCESSORCOMBINER_FRAGMENT_GLSL
 #define WGEPOSTPROCESSORCOMBINER_FRAGMENT_GLSL
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
+
+in vec4 v_TexCoord;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Input-Texture Uniforms
@@ -64,7 +68,7 @@ uniform float u_depthThresholdU = 0.75;
 /**
  * The coordinate of the current pixel for texture lookup
  */
-vec2 pixelCoord = gl_TexCoord[0].st;
+vec2 pixelCoord = v_TexCoord.st;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utility functions.
@@ -83,7 +87,7 @@ vec2 pixelCoord = gl_TexCoord[0].st;
  */
 vec4 getColor( in vec2 where, in float lod )
 {
-    return texture2DLod( u_colorSampler, where, lod );
+    return textureLod( u_colorSampler, where, lod );
 }
 
 /**
@@ -95,7 +99,7 @@ vec4 getColor( in vec2 where, in float lod )
  */
 vec4 getColor( in vec2 where )
 {
-    return texture2D( u_colorSampler, where );
+    return texture( u_colorSampler, where );
 }
 
 /**
@@ -107,7 +111,7 @@ vec4 getColor( in vec2 where )
  */
 float getDepth( in vec2 where )
 {
-    return texture2D( u_depthSampler, where ).r;
+    return texture( u_depthSampler, where ).r;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
