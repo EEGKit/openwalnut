@@ -116,7 +116,9 @@ WGEViewer::WGEViewer( std::string name, osg::ref_ptr<osg::Referenced> wdata, int
         }
 
         // add the stats handler
-        m_View->addEventHandler( new osgViewer::StatsHandler );
+        osgViewer::StatsHandler* statsHandler = new osgViewer::StatsHandler();
+        statsHandler->setKeyEventTogglesOnScreenStats( 'F' );
+        m_View->addEventHandler( statsHandler );
 
         // Properties of the view. Collects props of the effects and similar
         m_properties = std::shared_ptr< WProperties >( new WProperties( "Viewer Properties", "The view's properties" ) );

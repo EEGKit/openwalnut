@@ -30,7 +30,7 @@ void WSwapUpdateCallback::swapBuffersImplementation( osg::GraphicsContext* gc )
 
     if( m_module->m_VR_logCameraViewMatrix->get( true ) == WPVBaseTypes::PV_TRIGGER_TRIGGERED )
     {
-        m_module->debugLog() << "Right Eye Camera view matrix: " << m_module->m_leftEyeCamera->getViewMatrix();
+        m_module->debugLog() << "Left Eye Camera view matrix: " << m_module->m_leftEyeCamera->getViewMatrix();
         m_module->debugLog() << "Right Eye Camera view matrix: " << m_module->m_rightEyeCamera->getViewMatrix();
         m_module->m_VR_logCameraViewMatrix->set( WPVBaseTypes::PV_TRIGGER_READY, false );
     }
@@ -62,7 +62,7 @@ void WSwapUpdateCallback::swapBuffersImplementation( osg::GraphicsContext* gc )
         }
 
         updateRTTTransformation();
-        m_module->updateControllerPoses();
+        // m_module->updateControllerPoses();
     }
 
     m_initialUpdate = false;

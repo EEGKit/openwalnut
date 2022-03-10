@@ -22,18 +22,20 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
 
 #include "WGETransformationTools.glsl"
+#include "WGEShader-attributes.glsl"
 
 // The surface normal
-varying vec3 v_normal;
+out vec3 v_normal;
+out vec4 v_texcoord;
 
 void main()
 {
-    gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;
+    v_texcoord = ow_TextureMatrix0 * osg_MultiTexCoord0;
 
     // prepare light
-    v_normal = gl_NormalMatrix * gl_Normal;
-    gl_Position = ftransform();
+    v_normal = osg_NormalMatrix * osg_Normal;
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }

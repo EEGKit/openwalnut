@@ -22,7 +22,7 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
 
 #include "WGEShadingTools.glsl"
 
@@ -38,8 +38,6 @@ uniform sampler2D u_texture0Sampler;
 uniform sampler2D u_texture1Sampler;
 #define u_depthSampler u_texture1Sampler
 
-vec2 pixelCoord = gl_TexCoord[0].st;
-
 vec4 getColor( in vec2 where )
 {
     return texture2D( u_colorSampler, where );
@@ -52,7 +50,10 @@ float getDepth( in vec2 where )
 
 
 // The surface normal
-varying vec3 v_normal;
+in vec3 v_normal;
+in vec4 v_texcoord;
+
+vec2 pixelCoord = v_texcoord.st;
 
 void main()
 {

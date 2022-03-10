@@ -528,6 +528,9 @@ void WMFiberDisplay::createFiberGeode( std::shared_ptr< WDataSetFibers > fibers,
     osg::ref_ptr< osg::FloatArray > texcoords = osg::ref_ptr< osg::FloatArray >( new osg::FloatArray );
     osg::ref_ptr< osg::Geometry > geometry = osg::ref_ptr< osg::Geometry >( new osg::Geometry );
 
+    osg::ref_ptr< osg::DrawElementsUInt > indices = osg::ref_ptr< osg::DrawElementsUInt >(
+        new osg::DrawElementsUInt( m_tubeEnable->get( true ) ? osg::PrimitiveSet::QUADS : osg::PrimitiveSet::LINES ) );
+
     // new attribute array
     m_bitfieldAttribs = new osg::FloatArray( m_fibers->getLineStartIndexes()->size() );
     m_secondaryColor = new osg::Vec3Array( m_fibers->getLineStartIndexes()->size() );
@@ -586,6 +589,7 @@ void WMFiberDisplay::createFiberGeode( std::shared_ptr< WDataSetFibers > fibers,
     debugLog() << "Number of vertices: " << fibVerts->size() / 3;
     size_t currentStart = 0;
     bool tubeMode = m_tubeEnable->get( true );
+
     for( size_t fidx = 0; fidx < fibStart->size() ; ++fidx )
     {
         ++*progress1;
@@ -685,17 +689,29 @@ void WMFiberDisplay::createFiberGeode( std::shared_ptr< WDataSetFibers > fibers,
         }
 
         // add the above line-strip
-        if( m_tubeEnable->get() )
+        if( tubeMode )
         {
-            geometry->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::QUAD_STRIP, 2 * currentStart, 2 * len ) );
+            for( size_t i = 0; i < len - 1; i++ )
+            {
+                indices->push_back( 2 * ( currentStart + i ) );
+                indices->push_back( 2 * ( currentStart + i ) + 1 );
+                indices->push_back( 2 * ( currentStart + i ) + 2 );
+                indices->push_back( 2 * ( currentStart + i ) + 3 );
             }
+        }
         else
         {
-            geometry->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::LINE_STRIP, currentStart, len ) );
+            for( size_t i = 0; i < len - 1; i++ )
+            {
+                indices->push_back( currentStart + i );
+                indices->push_back( currentStart + i + 1 );
+            }
         }
 
         currentStart += len;
     }
+
+    geometry->addPrimitiveSet( indices );
 
     // combine these arrays to the geometry
     geometry->setVertexArray( vertices );
