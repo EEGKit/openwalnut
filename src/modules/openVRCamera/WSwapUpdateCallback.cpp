@@ -127,7 +127,7 @@ void WSwapUpdateCallback::updateRTTTransformation()
 {
     m_module->updateHMDPose();
 
-    osg::Quat rot = m_module->m_cameraRotation * m_module->m_HMD_rotation;
+    osg::Quat rot = m_module->m_cameraRotation * m_module->m_HMD_rotation.inverse();
     osg::Vec3d trans = m_module->m_cameraPosition + m_module->m_HMD_position;
 
     osg::Matrixd leftEyeOffsetMatrix = m_module->convertHmdMatrixToOSG( m_module->m_vrSystem->GetEyeToHeadTransform( vr::Eye_Left ) );

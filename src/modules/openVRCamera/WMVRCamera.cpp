@@ -29,6 +29,11 @@
 #include "WMVRCamera.h"
 #include "WMVRCamera.xpm"
 
+static const osg::Matrix AXIS_SWAP_MATRIX(  1.0,  0.0,  0.0,  0.0,
+                                            0.0,  0.0,  1.0,  0.0,
+                                            0.0, -1.0,  0.0,  0.0,
+                                            0.0,  0.0,  0.0,  1.0 );
+
 // This line is needed by the module loader to actually find your module.
 W_LOADABLE_MODULE( WMVRCamera )
 
@@ -164,8 +169,8 @@ void WMVRCamera::moduleMain()
     osg::GraphicsContext* gc = mainView->getCamera()->getGraphicsContext();
     osg::ref_ptr< WGEGroupNode > scene = WKernel::getRunningKernel()->getGraphicsEngine()->getScene();
 
-    osg::Matrix projLeft = convertHmdMatrixToOSG( m_vrSystem->GetProjectionMatrix( vr::Eye_Left, 1.0, 1000.0 ) );
-    osg::Matrix projRight = convertHmdMatrixToOSG( m_vrSystem->GetProjectionMatrix( vr::Eye_Right, 1.0, 1000.0 ) );
+    osg::Matrix projLeft = convertHmdMatrixToOSG( m_vrSystem->GetProjectionMatrix( vr::Eye_Left, 0.01, 1000.0 ) );
+    osg::Matrix projRight = convertHmdMatrixToOSG( m_vrSystem->GetProjectionMatrix( vr::Eye_Right, 0.01, 1000.0 ) );
 
     m_leftEyeCamera = new WRTTCamera( m_vrRenderWidth, m_vrRenderHeight, gc, projLeft, scene, m_localPath );
     m_rightEyeCamera = new WRTTCamera( m_vrRenderWidth, m_vrRenderHeight, gc, projRight, scene, m_localPath );
@@ -268,11 +273,11 @@ void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent )
 
         if( vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_SteamVR_Trigger )
         {
-            if( vrEvent.trackedDeviceIndex == vr::TrackedControllerRole_LeftHand )
+            if( vrEvent.trackedDeviceIndex == m_leftController->getDeviceID() )
             {
                 m_leftController->setTriggered( true );
             }
-            else if( vrEvent.trackedDeviceIndex == vr::TrackedControllerRole_RightHand )
+            else if( vrEvent.trackedDeviceIndex == m_rightController->getDeviceID() )
             {
                 m_rightController->setTriggered( true );
             }
@@ -281,11 +286,11 @@ void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent )
     case vr::VREvent_ButtonUnpress:
         if( vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_SteamVR_Trigger )
         {
-            if( vrEvent.trackedDeviceIndex == vr::TrackedControllerRole_LeftHand )
+            if( vrEvent.trackedDeviceIndex == m_leftController->getDeviceID() )
             {
                 m_leftController->setTriggered( false );
             }
-            else if( vrEvent.trackedDeviceIndex == vr::TrackedControllerRole_RightHand )
+            else if( vrEvent.trackedDeviceIndex == m_rightController->getDeviceID() )
             {
                 m_rightController->setTriggered( false );
             }
@@ -302,9 +307,15 @@ void WMVRCamera::updateDeviceIDs()
     {
         vr::ETrackedControllerRole cRole = m_vrSystem->GetControllerRoleForTrackedDeviceIndex( i );
 
-        if( cRole == vr::TrackedControllerRole_LeftHand && m_leftController ) m_leftController->setDeviceID( i );
-        if( cRole == vr::TrackedControllerRole_RightHand && m_rightController ) m_rightController->setDeviceID( i );
-        // more devices IDs can be tracked here (such as the sonsors)
+        if( cRole == vr::TrackedControllerRole_LeftHand && m_leftController )
+        {
+            m_leftController->setDeviceID( i );
+        }
+        if( cRole == vr::TrackedControllerRole_RightHand && m_rightController )
+        {
+            m_rightController->setDeviceID( i );
+        }
+        // more devices IDs can be tracked here (such as the sensors)
     }
 }
 
@@ -320,14 +331,9 @@ void WMVRCamera::updateControllerPoses()
         double lenNow  = ( m_leftController->getPosition() - m_rightController->getPosition() ).length();
         double length = lenNow - lenPrev;
 
-        osg::Vec3 dir( 0.0, 1.0, 0.0 );
-
-        dir = ( m_cameraRotation * m_HMD_rotation.inverse() ) * dir;
+        osg::Vec3 dir( 0.0, 0.0, -1.0 );
+        dir = ( m_cameraRotation * m_HMD_rotation ) * dir;
         dir *= length;
-
-        double help = dir.y();
-        dir.y() = -dir.z();
-        dir.z() = help;
 
         m_cameraPosition += dir;
     }
@@ -358,57 +364,68 @@ void WMVRCamera::updateHMDPose()
     }
 
     // pose calculation
-    osg::Matrix poseTransform = convertHmdMatrixToOSG( trackedDevicePose.mDeviceToAbsoluteTracking );
+    osg::Matrix poseTransform = convertHmdMatrixToOSG( trackedDevicePose.mDeviceToAbsoluteTracking, true );
 
-    osg::Vec3 position = poseTransform.getTrans() * 100.0;
-    m_HMD_rotation = poseTransform.getRotate().inverse();
-
-    // switch y and z axis as openvr has different coordinate system.
-    double help = position.y();
-    position.y() = -position.z();
-    position.z() = help;
-
-    m_HMD_position = position;
+    m_HMD_position = poseTransform.getTrans() * 100.0;
+    m_HMD_rotation = poseTransform.getRotate();
 }
 
 void WMVRCamera::ResetHMDPosition()
 {
     vr::VRChaperone()->ResetZeroPose( vr::TrackingUniverseSeated );
 
-    osg::ref_ptr< WGEZoomTrackballManipulator > cm = osg::dynamic_pointer_cast< WGEZoomTrackballManipulator >(
-    WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCameraManipulator() );
-    osg::Matrixd mainViewMatrix = cm ? cm->getMatrixWithoutZoom() :
-                                        WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getCamera()->getViewMatrix();
+    // Calculate bounds
+    osg::BoundingSphere boundingSphere;
+    WGEZoomTrackballNodeVisitor cbVisitor;
+    WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->accept( cbVisitor );
+    osg::BoundingBox& bb = cbVisitor.getBoundingBox();
 
-    // Calculate lookAt quaternation from camera to the center of the scene
-    osg::Vec3d center = WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->getBound().center();
-    osg::Vec3d ndir = center - mainViewMatrix.getTrans();
-    osg::Vec3d camdir( 0.0, 0.0, -1.0 );
-    osg::Vec3d normal = ndir ^ camdir;
-    double w = sqrt( ndir.length2() * camdir.length2() ) + ndir * camdir;
-    osg::Vec4d qt( normal.x(), normal.y(), normal.z(), w );
-    qt.normalize();
+    if( bb.valid() )
+    {
+        boundingSphere.expandBy( bb );
+    }
+    else
+    {
+        boundingSphere = WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->getBound();
+    }
 
-    m_cameraPosition = mainViewMatrix.getTrans();
-    m_cameraRotation = osg::Quat( qt );
+    osg::Vec3d center = boundingSphere.center();
+
+    // Calculate distance from camera to the center of the scene
+    float pfLeft, pfRight, pfTop, pfBottom;
+    m_vrSystem->GetProjectionRaw( vr::Eye_Left, &pfLeft, &pfRight, &pfTop, &pfBottom );
+    float distance = ( boundingSphere.radius() * 2.0 ) / pfTop;
+
+    m_cameraPosition = center + osg::Vec3( 0.0, distance, 0.0 );
+    m_cameraRotation = osg::Quat();
 }
 
-osg::Matrix WMVRCamera::convertHmdMatrixToOSG( const vr::HmdMatrix34_t &mat34 )
+osg::Matrix WMVRCamera::convertHmdMatrixToOSG( const vr::HmdMatrix34_t &mat34, bool swapAxis )
 {
     osg::Matrix matrix(
         mat34.m[0][0], mat34.m[1][0], mat34.m[2][0], 0.0,
         mat34.m[0][1], mat34.m[1][1], mat34.m[2][1], 0.0,
         mat34.m[0][2], mat34.m[1][2], mat34.m[2][2], 0.0,
         mat34.m[0][3], mat34.m[1][3], mat34.m[2][3], 1.0f );
+
+    if( swapAxis )
+    {
+        matrix = matrix * AXIS_SWAP_MATRIX;
+    }
     return matrix;
 }
 
-osg::Matrix WMVRCamera::convertHmdMatrixToOSG( const vr::HmdMatrix44_t &mat44 )
+osg::Matrix WMVRCamera::convertHmdMatrixToOSG( const vr::HmdMatrix44_t &mat44, bool swapAxis )
 {
     osg::Matrix matrix(
         mat44.m[0][0], mat44.m[1][0], mat44.m[2][0], mat44.m[3][0],
         mat44.m[0][1], mat44.m[1][1], mat44.m[2][1], mat44.m[3][1],
         mat44.m[0][2], mat44.m[1][2], mat44.m[2][2], mat44.m[3][2],
         mat44.m[0][3], mat44.m[1][3], mat44.m[2][3], mat44.m[3][3] );
+
+    if( swapAxis )
+    {
+        matrix = matrix * AXIS_SWAP_MATRIX;
+    }
     return matrix;
 }

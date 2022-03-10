@@ -54,13 +54,19 @@ public:
      * Sets the device id of the controller.
      * \param deviceID The device id.
      */
-    void setDeviceID( int deviceID );
+    void setDeviceID( uint32_t deviceID );
 
     /**
      * Sets the state of the trigger button.
      * \param triggered Whether the trigger button is pressed or not.
      */
     void setTriggered( bool triggered );
+
+    /**
+     * Gets the device id
+     * \return int the device id.
+     */
+    uint32_t getDeviceID();
 
     /**
      * Gets the geometry node of the controller
@@ -114,7 +120,7 @@ public:
 
 private:
     int m_role; //!< The role of the controller
-    int m_deviceID; //!< The device id of the controller
+    uint32_t m_deviceID; //!< The device id of the controller
 
     osg::ref_ptr< osg::Node > m_node; //!< The geometry of the controller.
 

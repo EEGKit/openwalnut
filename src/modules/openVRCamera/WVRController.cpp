@@ -32,7 +32,7 @@ WVRController::WVRController( int role ):
     m_triggered = false;
 }
 
-void WVRController::setDeviceID( int deviceID )
+void WVRController::setDeviceID( uint32_t deviceID )
 {
     m_deviceID = deviceID;
 }
@@ -40,6 +40,11 @@ void WVRController::setDeviceID( int deviceID )
 void WVRController::setTriggered( bool triggered )
 {
     m_triggered = triggered;
+}
+
+uint32_t WVRController::getDeviceID()
+{
+    return m_deviceID;
 }
 
 osg::ref_ptr< osg::Node > WVRController::getNode()

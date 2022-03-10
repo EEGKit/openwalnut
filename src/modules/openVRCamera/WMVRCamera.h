@@ -29,6 +29,7 @@
 
 #include <openvr.h> // NOLINT
 
+#include "core/common/math/WMath.h"
 #include "core/kernel/WModule.h"
 
 #include "WRTTCamera.h"
@@ -137,14 +138,14 @@ public:
      * \param mat34 The HMD Matrix.
      * \return osg::Matrix The OSG Matrix.
      */
-    static osg::Matrix convertHmdMatrixToOSG( const vr::HmdMatrix34_t &mat34 );
+    static osg::Matrix convertHmdMatrixToOSG( const vr::HmdMatrix34_t &mat34, bool swapAxis = false );
 
     /**
      * Converts vr::HmdMatrix34_t to osg::Matrix.
      * \param mat44 The HMD Matrix.
      * \return osg::Matrix The OSG Matrix.
      */
-    static osg::Matrix convertHmdMatrixToOSG( const vr::HmdMatrix44_t &mat44 );
+    static osg::Matrix convertHmdMatrixToOSG( const vr::HmdMatrix44_t &mat44, bool swapAxis = false );
 
 protected:
     /**
