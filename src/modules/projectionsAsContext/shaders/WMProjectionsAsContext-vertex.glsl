@@ -22,7 +22,10 @@
 //
 //---------------------------------------------------------------------------
 
-#version 130
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
+#include "WGEShader-attributes.glsl"
 
 #include "WGEColormapping-vertex.glsl"
 

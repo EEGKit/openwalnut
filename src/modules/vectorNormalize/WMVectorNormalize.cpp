@@ -101,6 +101,14 @@ WMVectorNormalize::VisitorVSetA::VisitorVSetA( double zeroTol ):
 {
 }
 
+/**
+ * Called by boost::varying during static visiting.
+ *
+ * \tparam T the real integral type of the first value set.
+ * \param vsetA the first valueset currently visited.
+ *
+ * \return the result from the operation
+ */
 template < typename T >
 boost::static_visitor< std::shared_ptr< WValueSetBase > >::result_type WMVectorNormalize::VisitorVSetA::operator()(
     const WValueSet< T >* const& vsetA ) const             // NOLINT

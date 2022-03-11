@@ -105,6 +105,14 @@ WMVectorScale::VisitorVSetB< VSetAType >::VisitorVSetB( const WValueSet< VSetATy
 {
 }
 
+/**
+ * Visitor on the second valueset. This applies the operation.
+ *
+ * \tparam VSetBType the integral type of the currently visited valueset.
+ * \param vsetB the valueset currently visited (B).
+ *
+ * \return the result of o(A,B)
+ */
 template< typename VSetAType >
 template< typename VSetBType >
 boost::static_visitor< std::shared_ptr< WValueSetBase > >::result_type WMVectorScale::VisitorVSetB< VSetAType >::operator()(
@@ -148,6 +156,14 @@ WMVectorScale::VisitorVSetA::VisitorVSetA( WValueSetBase* vsetB ):
 {
 }
 
+/**
+ * Called by boost::varying during static visiting. Creates a new VisitorVSetB which finally applies the operation.
+ *
+ * \tparam T the real integral type of the first value set.
+ * \param vsetA the first valueset currently visited.
+ *
+ * \return the result from the operation with this and the second value set
+ */
 template < typename T >
 boost::static_visitor< std::shared_ptr< WValueSetBase > >::result_type WMVectorScale::VisitorVSetA::operator()(
     const WValueSet< T >* const& vsetA ) const             // NOLINT
