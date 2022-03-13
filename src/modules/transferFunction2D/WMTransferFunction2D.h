@@ -130,6 +130,11 @@ nnectors must not be handled by the module.
     WPropInt m_resolution;
 
     /**
+     * Histogram bin size
+     */
+    WPropDouble m_opacityScale;
+
+    /**
      * The transfer function property
      */
     WPropTransferFunction2D m_transferFunction;

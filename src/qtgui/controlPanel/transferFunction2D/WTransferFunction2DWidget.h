@@ -29,11 +29,11 @@
 
 #include "QGraphicsView"
 #include "core/common/WHistogram2D.h"
-
+#include "WTransferFunction2DQuadTool.h"
+#include "WTransferFunction2DBackground.h"
 
 class QGraphicsScene;
-class WTransferFunction2DBackground;
-
+class WTransferFunction2DQuadTool;
 
 /**
  * The class managing the widget that wants to receive updates whenever
@@ -50,7 +50,7 @@ struct WTransferFunction2DGuiNotificationClass
     }
 
     /**
-     * update the gui
+     * Is called when the GUI is changed
      * \param tf the new transfer function
      */
     virtual void guiUpdate( const WTransferFunction2D& tf ) = 0;
@@ -74,7 +74,7 @@ public:
     /**
      * Constructor. Create a TF widget with a given parent.
      *
-     * \param qparent parent widgeet
+     * \param qparent parent widget
      * \param parent  a class that receives notifications
      */
     WTransferFunction2DWidget( QWidget* qparent = NULL, WTransferFunction2DGuiNotificationClass* parent = NULL );
@@ -101,7 +101,7 @@ public slots:
     /**
     * Notification that the data changed, i.e., a control point has been moved or a color changed.
     */
-    //void dataChanged();
+    void updateTexture();
 
 protected:
     /**
@@ -128,13 +128,16 @@ private:
     /** the class that receives our update notifications */
     WTransferFunction2DGuiNotificationClass *parent;
 
+    /** List of widgets */
+    std::vector< WTransferFunction2DQuadTool* > m_widgets;
+
     /** our scene */
     QGraphicsScene *scene;
 
     /** background that displays the histogram */
     WTransferFunction2DBackground *background;
     /** histogram which is displayed on the background */
-    WHistogram2D *hist = NULL;
+    WHistogram2D *hist;
     /** set to true after initialization */
     bool initialized;
 };

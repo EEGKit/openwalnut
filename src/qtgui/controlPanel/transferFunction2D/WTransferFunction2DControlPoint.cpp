@@ -22,11 +22,13 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WTransferFunction2DControlPoint.h"
-#include "WTransferFunction2DQuadTool.h"
+
 #include "QPainter"
 #include "QtGui"
+
 #include "core/common/WLogger.h"
+#include "WTransferFunction2DControlPoint.h"
+#include "WTransferFunction2DQuadTool.h"
 #include "WTransferFunction2DScene.h"
 
 WTransferFunction2DControlPoint::WTransferFunction2DControlPoint( BaseClass *parent, QPointF position, ResizePointsRect handleLocation )

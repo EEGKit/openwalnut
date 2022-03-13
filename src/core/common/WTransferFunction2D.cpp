@@ -30,27 +30,28 @@
 #include "WAssert.h"
 #include "WTransferFunction2D.h"
 #include "WLogger.h"
-//TODO(Kai): Remove the placeholder code inside and substitute with the real texture
-void WTransferFunction2D::sample2DTransferFunction( unsigned char*array, int width, double min, double max ) const
+void WTransferFunction2D::sample2DTransferFunction( unsigned char*array, int width, int height ) const
 {
+    tfTexture->scaleImage( width, height, 1 );
+    unsigned char *data = tfTexture->data();
+    // Copy the texture to the WMTransferFunction2D Module
     for( int x = 0; x < width; x++ )
     {
-        for( int y = 0; y < width; y++ )
+        for( int y = 0; y < height; y++ )
         {
-            array[ 4 * width * x + 4 * y + 0 ] = 0.0;
-            array[ 4 * width * x + 4 * y + 1 ] = 255.0;
-            array[ 4 * width * x + 4 * y + 2 ] = 0.0;
-            array[ 4 * width * x + 4 * y + 3 ] = 255.0;
+            array[ 4 * width * x + 4 * y + 0 ] = data[ 4 * width * x + 4 * y + 0 ];
+            array[ 4 * width * x + 4 * y + 1 ] = data[ 4 * width * x + 4 * y + 1 ];
+            array[ 4 * width * x + 4 * y + 2 ] = data[ 4 * width * x + 4 * y + 2 ];
+            array[ 4 * width * x + 4 * y + 3 ] = data[ 4 * width * x + 4 * y + 3 ];
         }
     }
 }
 
-
 bool WTransferFunction2D::operator==( const WTransferFunction2D &rhs ) const
 {
-    if( m_histogram == rhs.m_histogram )
+    if( m_histogram == rhs.m_histogram && tfTexture == rhs.tfTexture )
     {
-        //wlog::debug("WTransferFunction2D") << "== true";
+        //wlog::debug("WTransferFunction2D") << "Texture or histogram changed";
         return true;
     }
     //wlog::debug("WTransferFunction2D") << "== false";
@@ -65,8 +66,14 @@ bool WTransferFunction2D::operator!=( const WTransferFunction2D &rhs ) const
 void WTransferFunction2D::setHistogram( const WHistogram2D &histogram )
 {
     //wlog::debug("WTransferFunction2D") << "setHistogram";
-    if( histogram != m_histogram )
+    if( m_histogram != histogram )
         m_histogram = histogram;
+}
+void WTransferFunction2D::setTexture( unsigned char* array, int imageWidth, int imageHeight )
+{
+    osg::ref_ptr< osg::Image > newTexture = new osg::Image();
+    newTexture->setImage( imageWidth, imageHeight, 1, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, array, osg::Image::USE_NEW_DELETE );
+    tfTexture = newTexture;
 }
 std::ostream& operator << ( std::ostream& out, const WTransferFunction2D& tf )
 {

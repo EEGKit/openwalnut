@@ -22,9 +22,6 @@
 //
 //---------------------------------------------------------------------------
 
-#include "WTransferFunction2DQuadTool.h"
-#include "core/common/WLogger.h"
-
 #include "QApplication"
 #include "QBrush"
 #include "QPainter"
@@ -32,7 +29,11 @@
 #include "QGraphicsSceneMouseEvent"
 #include "QGraphicsScene"
 
-WTransferFunction2DQuadTool::WTransferFunction2DQuadTool( QGraphicsItem *parent )
+#include "WTransferFunction2DQuadTool.h"
+
+#include "core/common/WLogger.h"
+
+WTransferFunction2DQuadTool::WTransferFunction2DQuadTool( WTransferFunction2DWidget *parent )
 {
     setFlag( ItemIsMovable );
     setFlag( ItemSendsScenePositionChanges );
@@ -78,6 +79,8 @@ void WTransferFunction2DQuadTool::setControlPointsToCorner()
     m_controlPoints[1]->setPos( m_box.bottomRight() ); // bottom right
     m_controlPoints[2]->setPos( m_box.bottomLeft() ); // bottom left
     m_controlPoints[3]->setPos( m_box.topLeft() ); // top left
+    // We also need to update the m_width and m_height property of the box
+
     update();
 }
 
@@ -112,6 +115,64 @@ void WTransferFunction2DQuadTool::paint( QPainter *painter, const QStyleOptionGr
     painter->drawRect( m_box );
 }
 
+void WTransferFunction2DQuadTool::sampleWidgetToImage( unsigned char * array, size_t imageWidth, size_t imageHeight )
+{
+    size_t xMin, xMax, yMin, yMax;
+    xMin = pos().x();
+    yMin = pos().y();
+    xMax = pos().x() + m_box.width();
+    yMax = pos().y() + m_box.height();
+//
+    wlog::debug( "" ) << " xMin: " << xMin << " xMax: " << xMax << " | yMin: " << yMin << " yMax: " << yMax;
+    for( size_t x = xMin; x <= xMax; ++x )
+    {
+        for( size_t y = yMin; y <= yMax; ++y )
+        {
+            array[ 4 * imageWidth * x + 4 * y + 0 ] = static_cast< unsigned char >( m_color.red() );
+            array[ 4 * imageWidth * x + 4 * y + 1 ] = static_cast< unsigned char >( m_color.green() );
+            array[ 4 * imageWidth * x + 4 * y + 2 ] = static_cast< unsigned char >( m_color.blue() );
+            array[ 4 * imageWidth * x + 4 * y + 3 ] = static_cast< unsigned char >( m_color.alpha() );
+//            wlog::info( "COLOR") << "| R: " << m_color.red()
+//                                        << " G: " << m_color.green()
+//                                        << " B: " << m_color.blue()
+//                                        << " A: " << m_color.alpha();
+        }
+    }
+//    for( size_t x = 0; x < imageWidth; ++x )
+//    {
+//        for( size_t y = 0; y < imageHeight; ++y )
+//        {
+//            array[ 4 * imageWidth * x + 4 * y + 0 ] = static_cast< unsigned char >( m_color.red() );
+//            array[ 4 * imageWidth * x + 4 * y + 1 ] = static_cast< unsigned char >( m_color.green() );
+//            array[ 4 * imageWidth * x + 4 * y + 2 ] = static_cast< unsigned char >( m_color.blue() );
+//            array[ 4 * imageWidth * x + 4 * y + 3 ] = static_cast< unsigned char >( m_color.alpha() );
+////            wlog::info( "COLOR") << "| R: " << m_color.red()
+////                                        << " G: " << m_color.green()
+////                                        << " B: " << m_color.blue()
+////                                        << " A: " << m_color.alpha();
+//
+//        }
+//    }
+
+//    for( size_t x = 0; x < imageWidth; ++x )
+//    {
+//        for( size_t y = 0; y < imageHeight; ++y )
+//        {
+//            std::cout << " |" <<
+//            " R: " << static_cast< float >( array[ 4 * imageWidth * x + 4 * y + 0 ] ) <<
+//            " G: " << static_cast< float >( array[ 4 * imageWidth * x + 4 * y + 1 ] ) <<
+//            " B: " << static_cast< float >( array[ 4 * imageWidth * x + 4 * y + 2 ] ) <<
+//            " A: " << static_cast< float >( array[ 4 * imageWidth * x + 4 * y + 3 ] ) <<
+//            std::endl;
+//            if( x + 1 % imageWidth == 0 )
+//            {
+//                std::cout << std::endl;
+//            }
+//
+//        }
+//    }
+}
+
 void WTransferFunction2DQuadTool::setResizeHandle( ResizePointsRect handle, QPointF position )
 {
     m_resizePoints = handle;
@@ -143,18 +204,22 @@ void WTransferFunction2DQuadTool::setResizeHandle( ResizePointsRect handle, QPoi
 void WTransferFunction2DQuadTool::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {
     update();
+    m_parent->updateTexture();
     QGraphicsItem::mousePressEvent( event );
 }
 
 void WTransferFunction2DQuadTool::mouseMoveEvent( QGraphicsSceneMouseEvent *event )
 {
     update();
+    m_parent->updateTexture();
     QGraphicsItem::mouseMoveEvent( event );
 }
 
 void WTransferFunction2DQuadTool::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
 {
     update();
+    m_parent->updateTexture();
+
     QGraphicsItem::mouseReleaseEvent( event );
 }
 

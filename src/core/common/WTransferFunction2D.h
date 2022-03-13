@@ -33,8 +33,8 @@
 #include "core/dataHandler/WValueSetBase.h"
 
 /**
- * A class that stores a 1D transfer function which consists
- * of a linear interpolation of alpha and color values.
+ * A class that stores a 2D transfer function texture and scales it to
+ * the desired size given by the user. Also holds a reference to the 2D Histogram
  */
 class WTransferFunction2D // NOLINT problem with macro
 {
@@ -43,7 +43,8 @@ public:
      * Default constructor of a meaningless transfer function
      */
     WTransferFunction2D() : m_opacityScale( 1.0 ),
-                            m_histogram( 0.0, 1.0, 0.0, 1.0, 1, 1 )
+                            m_histogram( 0.0, 1.0, 0.0, 1.0, 1, 1 ),
+                            tfTexture( nullptr )
     {
     }
 
@@ -54,7 +55,8 @@ public:
      */
     WTransferFunction2D( const WTransferFunction2D &rhs )
             : m_opacityScale( 1.0 ),
-              m_histogram( rhs.m_histogram )
+              m_histogram( rhs.m_histogram ),
+              tfTexture( rhs.tfTexture )
     {
     }
 
@@ -63,12 +65,12 @@ public:
      *
      * \param rhs the value to copy
      * \returns reference to current object
-     * \returns reference to current object
      */
     WTransferFunction2D& operator=( const WTransferFunction2D &rhs )
     {
         this->m_histogram = rhs.m_histogram;
         this->m_opacityScale = rhs.m_opacityScale;
+        this->tfTexture = rhs.tfTexture;
         return ( *this );
     }
 
@@ -97,6 +99,24 @@ public:
     void setHistogram( const WHistogram2D &histogram );
 
     /**
+     * Set the transfer function texture
+     *
+     * \param array the texture
+     * \param imageHeight width of the
+     * \param imageWidth the histogram
+     */
+    void setTexture( unsigned char* array, int imageWidth, int imageHeight );
+
+    /**
+     * Set the scaling factor for the opacity.
+     * \param factor scaling factor of opacity values
+     */
+    void setOpacityScale( double factor )
+    {
+        m_opacityScale = factor;
+    }
+
+    /**
      * Get the histogram going along with the transfer function
      *
      * \returns the stored histogram
@@ -110,14 +130,23 @@ public:
      * sample/render the transfer function linearly between min and max in an RGBA texture.
      * \param array pointer to an allocated data structure
      * \param width is the number of RGBA samples.
-     * \param min the lowest value to be sampled
-     * \param max the hightes value to be sampled
+     * \param height is the number of RGBA samples.
      * \post array contains the sampled data
-     * \pre array is allocated and has space for width elements
+     * \pre array is allocated and has space for width * height elements
      */
-    void sample2DTransferFunction( unsigned char*array, int width, double min, double max ) const;
+    void sample2DTransferFunction( unsigned char*array, int width, int height ) const;
 
 private:
+    /**
+     * Holds a reference to transfer function texture
+     */
+    osg::ref_ptr< osg::Image > tfTexture;
+
+    /**
+     * Holds a reference to the histogram to be rendered
+     */
+    WHistogram2D m_histogram;
+
     /**
      * Factor by which the output opacity is scaled
      * to allow for easier specification of very small
@@ -125,10 +154,6 @@ private:
      */
     double m_opacityScale;
 
-    /**
-     * Holds a reference to the histogram to be rendered
-     */
-    WHistogram2D m_histogram;
 
     friend std::ostream& operator << ( std::ostream& out, const WTransferFunction2D& tf );
 };

@@ -90,8 +90,28 @@ void WMTransferFunction2D::connectors()
 void WMTransferFunction2D::properties()
 {
     m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
+
     WTransferFunction2D tf;
+    unsigned char * arr = new unsigned char[ 100 * 100 * 4 ];
+    for( int x = 0; x < 100; x++ )
+            {
+                for( int y = 0; y < 100; y++ )
+                {
+                   arr[ 4 * 100 * x + 4 * y + 0 ] = static_cast< unsigned char >( 0. );
+                   arr[ 4 * 100 * x + 4 * y + 1 ] = static_cast< unsigned char >( 0. );
+                   arr[ 4 * 100 * x + 4 * y + 2 ] = static_cast< unsigned char >( 0. );
+                   arr[ 4 * 100 * x + 4 * y + 3 ] = static_cast< unsigned char >( 0. );
+                }
+            }
+    tf.setTexture( arr, 100, 100 );
     m_transferFunction = m_properties->addProperty( "2D Transfer Function", "The 2D transfer function editor.", tf, m_propCondition, false );
+
+    m_opacityScale = m_properties->addProperty( "Opacity Scaling",
+                                                "Factor used to scale opacity for easier interaction",
+                                                1.0,
+                                                m_propCondition );
+    m_opacityScale->setMin( 0 );
+    m_opacityScale->setMax( 1 );
 
     m_resolution = m_properties->addProperty( "Number of Samples",
             "Number of samples in the transfer function. "
@@ -160,22 +180,36 @@ void WMTransferFunction2D::moduleMain()
                 }
 
                 // We need a copy of the data here, because of the way how the data is handled in WTransferFunction2D
-                WHistogram2D vhistogram( histogram );
-                tf.setHistogram( vhistogram );
+                //WHistogram2D vhistogram( histogram );
+                tf.setHistogram( histogram );
             }
             // either way, we changed the data and want to update the TF
             m_transferFunction->set( tf );
         }
 
-        if( tfChanged )
+        if( tfChanged || m_opacityScale->changed() )
         {
             wlog::debug( "WMTransferFunction2D" ) << "tf changed";
             // debugLog() << "resampling transfer function";
             //unsigned int resolution = m_resolution->get( true );
+            //TODO(Kai): resolution for x & y
             unsigned int resolution = 128;
             // debugLog() << "new resolution: " << resolution;
             std::shared_ptr< std::vector<unsigned char> > data( new std::vector<unsigned char>( resolution * resolution * 4 ) );
-            tf.sample2DTransferFunction( &( *data )[0], resolution, 0.0, 1.0 );
+            tf.setOpacityScale( m_opacityScale->get( true ) );
+            tf.sample2DTransferFunction( &( *data )[0], resolution, resolution );
+//            for( int x = 0; x < resolution; x++ )
+//            {
+//                for( int y = 0; y < resolution; y++ )
+//                {
+//
+//                   std::cout
+//                   << " R: " << static_cast< float >( data->at( 4 * resolution * x + 4 * y + 0 ) )
+//                   << " G: " << static_cast< float >( data->at( 4 * resolution * x + 4 * y + 1 ) )
+//                   << " B: " << static_cast< float >( data->at( 4 * resolution * x + 4 * y + 2 ) )
+//                   << " A: " << static_cast< float >( data->at( 4 * resolution * x + 4 * y + 3 ) ) << std::endl;
+//                }
+//            }
 //            for( int x = 0; x < resolution; x++ )
 //            {
 //                for( int y = 0; y < resolution; y++ )

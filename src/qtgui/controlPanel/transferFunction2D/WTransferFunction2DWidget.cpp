@@ -28,14 +28,13 @@
 #include <QMouseEvent>
 #include <QPaintEngine>
 
-#include "core/common/WTransferFunction.h"
+#include "core/common/WTransferFunction2D.h"
 #include "qtgui/controlPanel/transferFunction2D/WTransferFunction2DBackground.h"
 #include "qtgui/controlPanel/transferFunction2D/WTransferFunction2DScene.h"
-#include "WTransferFunction2DWidget.h"
 #include "core/common/WHistogram2D.h"
 #include "core/common/WLogger.h"
-#include "core/common/WTransferFunction2D.h"
-#include "WTransferFunction2DQuadTool.h"
+#include "WTransferFunction2DWidget.h"
+
 
 WTransferFunction2DWidget::WTransferFunction2DWidget( QWidget* qparent, WTransferFunction2DGuiNotificationClass* parent ):
         BaseClass( qparent ),
@@ -61,16 +60,19 @@ WTransferFunction2DWidget::WTransferFunction2DWidget( QWidget* qparent, WTransfe
 
     this->setCacheMode( CacheNone );
     this->setRenderHint( QPainter::Antialiasing );
-    //this->setTransformationAnchor( AnchorUnderMouse );
-    //this->setResizeAnchor( AnchorViewCenter );
+
+    hist = NULL;
 
     // insert background and histogram items
     scene->addItem( background = new WTransferFunction2DBackground( this ) );
 
-    WTransferFunction2DQuadTool* square = new WTransferFunction2DQuadTool( background );
+    WTransferFunction2DQuadTool* square = new WTransferFunction2DQuadTool( this );
     scene->addItem( square );
-    QPointF pos( 150.0, 150.0 );
+    m_widgets.push_back( square );
 
+    WTransferFunction2DQuadTool* square2 = new WTransferFunction2DQuadTool( this );
+    scene->addItem( square2 );
+    m_widgets.push_back( square2 );
     initialized = true;
     // initialize the color map (aka. background)
     setMyBackground(); // trigger first paint of transfer function
@@ -87,24 +89,8 @@ void WTransferFunction2DWidget::setMyBackground()
         wlog::debug( "WTransferFunction2DWidget" ) << "::setMyBackground()";
         unsigned char * data = hist->getRawTexture();
 
-//        if( data == NULL || data == (unsigned char*)0 )
-//        {
-//            wlog::debug( "WTransferFunction2DWidget" ) << "Data is null";
-//            return;
-//        }
-
         size_t imageWidth = hist->getBucketsX();
         size_t imageHeight = hist->getBucketsY();
-
-//        int cnt = 0;
-//        wlog::debug("WTransferFunction2DWidget") << "Height * Width * 4: " << imageHeight*imageWidth*4;
-//        for( size_t i = 0; i < imageHeight*imageWidth*4; ++i )
-//        {
-//            wlog::debug("WTransferFunction2DWidget") << static_cast< float >( data[ i ] );
-//            cnt++;
-//        }
-//        wlog::debug("WTransferFunction2DWidget") << "Elements: " << cnt;
-
 
         QImage* image = new QImage( data, imageWidth, imageHeight, QImage::Format_RGBA8888 );
         QPixmap pixmap;
@@ -119,6 +105,12 @@ void WTransferFunction2DWidget::setMyBackground()
     #endif
         background->setMyPixmap( pixmap );
     }
+}
+
+void WTransferFunction2DWidget::updateTexture()
+{
+    wlog::info( "Texture update " );
+    updateTransferFunction();
 }
 
 void WTransferFunction2DWidget::drawBackground( QPainter *painter, const QRectF &rect )
@@ -154,7 +146,24 @@ void WTransferFunction2DWidget::updateTransferFunction()
     WTransferFunction2D tf;
     {
         // this part does not trigger qt rendering updates
-        tf.setHistogram( *hist ); // get the data back because we need this for comparison
+        // we need to set this or the hist wont show
+        if( hist != NULL )
+        {
+            //tf.setHistogram( *hist ); // get the data back because we need this for comparison
+        }
+        std::vector< WTransferFunction2DQuadTool* >::iterator it;
+        //this is set to 300 at the moment and is equal to the size of the scene/histogram
+        size_t imageWidth = 300;
+        size_t imageHeight = 300;
+
+        unsigned char* data = new unsigned char[ imageWidth * imageHeight * 4 ]();
+
+        // Iterate over every widget inside our window and call create the 2D Texture
+        for( it = m_widgets.begin(); it != m_widgets.end(); it++ )
+        {
+            ( *it )->sampleWidgetToImage( data, imageWidth, imageHeight );
+        }
+        tf.setTexture( data, 300, 300 );
     }
     if( parent )
     {

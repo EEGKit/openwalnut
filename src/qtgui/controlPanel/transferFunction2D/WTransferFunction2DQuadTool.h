@@ -28,9 +28,11 @@
 #include <vector>
 
 #include "QGraphicsItem"
+
+#include "WTransferFunction2DWidget.h"
 #include "WTransferFunction2DControlPoint.h"
 #include "WTransferFunction2DEnums.h"
-
+class WTransferFunction2DWidget;
 /**
  * This class defines a resizable box and is used as a
  * manipulation widget for the 2D Transfer Function.
@@ -47,7 +49,7 @@ public:
      *
      * @param parent
      */
-    explicit WTransferFunction2DQuadTool( QGraphicsItem *parent );
+    explicit WTransferFunction2DQuadTool( WTransferFunction2DWidget *parent );
 
     /**
      * Destructor
@@ -69,6 +71,15 @@ public:
      * @param widget
      */
     void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr ) override;
+
+    /**
+     * Called by the color dialog every time the user changes the color.
+     *
+     * \param array the new color
+     * \param imageWidth the texture width
+     * \param imageHeight the texture width
+     */
+    void sampleWidgetToImage( unsigned char* array, size_t imageWidth, size_t imageHeight );
 
 public slots:
     /**
@@ -139,11 +150,9 @@ private:
 
     ResizePointsRect m_resizePoints; /*!< Flag to check if mouse button is pressed */
 
-    QGraphicsItem* m_parent;  /*!< The parent object */
+    WTransferFunction2DWidget* m_parent;  /*!< The parent object */
 
     QColor m_color;  /*!< The color of the box */
-    double m_lastMousePosX; /*!< Variable to store the last mouse position in x direction */
-    double m_lastMousePosY; /*!< Variable to store the last mouse position in y direction */
     double m_width; /*!< The width of the box */
     double m_height; /*!< The height of the box */
     std::vector< WTransferFunction2DControlPoint* > m_controlPoints; /*!< The different control handles in the corners */
