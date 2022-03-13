@@ -222,8 +222,8 @@ unsigned char* WHistogram2D::getRawTexture()
             // using 8 bit grayscale yields a different outcome than usind RGBA8888
             // data[ imageWidth * i + j + 0 ] = ( unsigned char )( 255 * m_bins( i, j ) / maxCount ) ;
             data[ 4 * imageWidth * i + 4 * j + 0 ] = static_cast< unsigned char >( 255. * std::clamp( m_bins( i, j ) / divisor, 0., 1. ) );
-            data[ 4 * imageWidth * i + 4 * j + 1 ] = static_cast< unsigned char >( 255. * std::clamp ( m_bins( i, j ) / divisor , 0. , 1. ) );
-            data[ 4 * imageWidth * i + 4 * j + 2 ] = static_cast< unsigned char >( 255. * std::clamp ( m_bins( i, j ) / divisor , 0. , 1. ) );
+            data[ 4 * imageWidth * i + 4 * j + 1 ] = static_cast< unsigned char >( 255. * std::clamp( m_bins( i, j ) / divisor , 0. , 1. ) );
+            data[ 4 * imageWidth * i + 4 * j + 2 ] = static_cast< unsigned char >( 255. * std::clamp( m_bins( i, j ) / divisor , 0. , 1. ) );
             data[ 4 * imageWidth * i + 4 * j + 3 ] = static_cast< unsigned char >( 255. );
         }
     }
