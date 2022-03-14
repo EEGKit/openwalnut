@@ -27,6 +27,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QMouseEvent>
 #include <QPaintEngine>
+#include <QMenu>
 
 #include "core/common/WTransferFunction2D.h"
 #include "qtgui/controlPanel/transferFunction2D/WTransferFunction2DBackground.h"
@@ -57,7 +58,6 @@ WTransferFunction2DWidget::WTransferFunction2DWidget( QWidget* qparent, WTransfe
     scene->setSceneRect( xMin, yMin, xMax, yMax );
     this->setScene( scene );
 
-
     this->setCacheMode( CacheNone );
     this->setRenderHint( QPainter::Antialiasing );
 
@@ -66,13 +66,6 @@ WTransferFunction2DWidget::WTransferFunction2DWidget( QWidget* qparent, WTransfe
     // insert background and histogram items
     scene->addItem( background = new WTransferFunction2DBackground( this ) );
 
-    WTransferFunction2DQuadTool* square = new WTransferFunction2DQuadTool( this );
-    scene->addItem( square );
-    m_widgets.push_back( square );
-
-    WTransferFunction2DQuadTool* square2 = new WTransferFunction2DQuadTool( this );
-    scene->addItem( square2 );
-    m_widgets.push_back( square2 );
     initialized = true;
     // initialize the color map (aka. background)
     setMyBackground(); // trigger first paint of transfer function
@@ -168,5 +161,41 @@ void WTransferFunction2DWidget::updateTransferFunction()
     if( parent )
     {
         parent->guiUpdate( tf );
+    }
+}
+
+void WTransferFunction2DWidget::addBoxWidget()
+{
+    WTransferFunction2DQuadTool* box = new WTransferFunction2DQuadTool( this );
+    scene->addItem( box );
+    m_widgets.push_back( box );
+}
+
+void WTransferFunction2DWidget::cleanTransferFunction()
+{
+    std::vector< WTransferFunction2DQuadTool* >::iterator it;
+    for( it = m_widgets.begin(); it != m_widgets.end(); it++ )
+    {
+        delete( *it );
+    }
+    m_widgets.clear();
+    updateTransferFunction();
+}
+
+void WTransferFunction2DWidget::contextMenuEvent( QContextMenuEvent *event )
+{
+    QMenu menu;
+    QAction *addBox = menu.addAction( "Add box widget" );
+    QAction *clearTransferFunction = menu.addAction( "Clear Transfer Function" );
+    QAction *selectedAction = menu.exec( event->globalPos() );
+    menu.exec( event->globalPos() );
+
+    if( selectedAction == addBox )
+    {
+        addBoxWidget();
+    }
+    if( selectedAction == clearTransferFunction )
+    {
+        cleanTransferFunction();
     }
 }

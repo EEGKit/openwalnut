@@ -95,14 +95,20 @@ public:
      * \param newHistogram is the histogram which is to be set here
      */
     void setHistogram( WHistogram2D newHistogram );
-
-
 public slots:
     /**
     * Notification that the data changed, i.e., a control point has been moved or a color changed.
     */
     void updateTexture();
-
+private slots:
+    /**
+    * Adds a box widget to the scene
+    */
+    void addBoxWidget();
+    /**
+    * Removes all transfer function widgets from the scene
+    */
+    void cleanTransferFunction();
 protected:
     /**
      * Draws the background.
@@ -125,6 +131,13 @@ protected:
     void setMyBackground();
 
 private:
+    /**
+     * custom context menu e.g. add widgets, clear TF, ...
+     *
+     * @param event event fired when right clicked
+     */
+    void contextMenuEvent( QContextMenuEvent *event );
+
     /** the class that receives our update notifications */
     WTransferFunction2DGuiNotificationClass *parent;
 
