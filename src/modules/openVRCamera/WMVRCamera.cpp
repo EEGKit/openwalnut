@@ -168,12 +168,14 @@ void WMVRCamera::moduleMain()
     osg::View* mainView = WKernel::getRunningKernel()->getGraphicsEngine()->getViewer()->getView();
     osg::GraphicsContext* gc = mainView->getCamera()->getGraphicsContext();
     osg::ref_ptr< WGEGroupNode > scene = WKernel::getRunningKernel()->getGraphicsEngine()->getScene();
+    m_sceneTransform = osg::ref_ptr< osg::MatrixTransform >( new osg::MatrixTransform() );
+    m_sceneTransform->addChild( scene );
 
     osg::Matrix projLeft = convertHmdMatrixToOSG( m_vrSystem->GetProjectionMatrix( vr::Eye_Left, 0.01, 1000.0 ) );
     osg::Matrix projRight = convertHmdMatrixToOSG( m_vrSystem->GetProjectionMatrix( vr::Eye_Right, 0.01, 1000.0 ) );
 
-    m_leftEyeCamera = new WRTTCamera( m_vrRenderWidth, m_vrRenderHeight, gc, projLeft, scene, m_localPath );
-    m_rightEyeCamera = new WRTTCamera( m_vrRenderWidth, m_vrRenderHeight, gc, projRight, scene, m_localPath );
+    m_leftEyeCamera = new WRTTCamera( m_vrRenderWidth, m_vrRenderHeight, gc, projLeft, m_sceneTransform, m_localPath );
+    m_rightEyeCamera = new WRTTCamera( m_vrRenderWidth, m_vrRenderHeight, gc, projRight, m_sceneTransform, m_localPath );
 
     mainView->addSlave( m_leftEyeCamera, false );
     mainView->addSlave( m_rightEyeCamera, false );
@@ -337,6 +339,22 @@ void WMVRCamera::updateControllerPoses()
 
         m_cameraPosition += dir;
     }
+    else if( m_rightController->isTriggered() )
+    {
+        // data translation
+        osg::Vec3 diff = m_rightController->getPosition() - m_rightController->getPrevPosition();
+        m_dataPosition += diff;
+
+        // data rotation
+        osg::Vec3 contrPosition = ( m_cameraPosition - m_dataPosition ) + m_rightController->getPosition();
+        osg::Quat rotDiff = m_rightController->getPrevRotation().inverse() * m_rightController->getRotation();
+        osg::Matrixd rotMatrix = osg::Matrixd::translate( -contrPosition ) * osg::Matrixd::rotate( rotDiff ) *
+                                 osg::Matrixd::translate( contrPosition );
+
+        m_dataRotation *= rotMatrix;
+
+        m_sceneTransform->setMatrix( m_dataRotation * osg::Matrixd::translate( m_dataPosition ) );
+    }
 }
 
 void WMVRCamera::updateHMDPose()
@@ -398,6 +416,10 @@ void WMVRCamera::ResetHMDPosition()
 
     m_cameraPosition = center + osg::Vec3( 0.0, distance, 0.0 );
     m_cameraRotation = osg::Quat();
+
+    m_dataPosition = osg::Vec3();
+    m_dataRotation = osg::Matrix();
+    m_sceneTransform->setMatrix( osg::Matrix() );
 }
 
 osg::Matrix WMVRCamera::convertHmdMatrixToOSG( const vr::HmdMatrix34_t &mat34, bool swapAxis )

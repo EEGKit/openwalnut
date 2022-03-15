@@ -200,11 +200,16 @@ private:
     osg::Vec3d m_cameraPosition; //!< The camera position of the scene (without hmd).
     osg::Quat m_cameraRotation; //!< The camera rotation of the scene (without hmd).
 
+    osg::Vec3d m_dataPosition; //!< The position of the scene.
+    osg::Matrixd m_dataRotation; //!< The rotation of the data.
+
     osg::ref_ptr< WRTTCamera > m_leftEyeCamera; //!< The camera for the left eye of the VR system.
     osg::ref_ptr< WRTTCamera > m_rightEyeCamera; //!< The camera for the right eye of the VR system.
 
     std::unique_ptr< WVRController > m_leftController; //!< The controller for the left hand.
     std::unique_ptr< WVRController > m_rightController; //!< The controller for the right hand.
+
+    osg::ref_ptr< osg::MatrixTransform > m_sceneTransform; //!< The node for the scene transformation.
 };
 
 #endif  // WMVRCAMERA_H

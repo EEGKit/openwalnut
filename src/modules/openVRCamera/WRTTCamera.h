@@ -51,7 +51,7 @@ public:
                 uint32_t height,
                 osg::GraphicsContext* gc,
                 osg::Matrix projectionMatrix,
-                osg::ref_ptr< WGEGroupNode > scene,
+                osg::ref_ptr< osg::Node > scene,
                 boost::filesystem::path shaderPath );
 
     /**

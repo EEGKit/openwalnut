@@ -134,6 +134,7 @@ void WSwapUpdateCallback::updateRTTTransformation()
     osg::Matrixd rightEyeOffsetMatrix = m_module->convertHmdMatrixToOSG( m_module->m_vrSystem->GetEyeToHeadTransform( vr::Eye_Right ) );
 
     osg::Matrixd headMatrix = osg::Matrixd::translate( -trans ) * osg::Matrixd::rotate( rot );
+
     osg::Matrixd leftEyeMatrix = headMatrix * osg::Matrixd::translate( leftEyeOffsetMatrix.getTrans() * -100 );
     osg::Matrixd rightEyeMatrix = headMatrix * osg::Matrixd::translate( rightEyeOffsetMatrix.getTrans() * -100 );
 

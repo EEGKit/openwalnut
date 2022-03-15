@@ -115,6 +115,7 @@ public:
      * Updates the current pose of the controller.
      * \param vrSystem The VRSystem to get the pose from.
      * \param cameraPosition The position of the camera (without hmd).
+     * \param dataRotation The rotation of the data.
      */
     void updatePose( vr::IVRSystem* vrSystem, osg::Vec3 cameraPosition );
 
