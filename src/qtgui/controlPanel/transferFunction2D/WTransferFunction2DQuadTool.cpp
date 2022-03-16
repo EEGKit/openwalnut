@@ -80,7 +80,8 @@ void WTransferFunction2DQuadTool::setControlPointsToCorner()
     m_controlPoints[2]->setPos( m_box.bottomLeft() ); // bottom left
     m_controlPoints[3]->setPos( m_box.topLeft() ); // top left
     // We also need to update the m_width and m_height property of the box
-
+    m_width = m_box.right() - m_box.left();
+    m_height = m_box.top() - m_box.bottom();
     update();
 }
 
@@ -96,11 +97,17 @@ QVariant WTransferFunction2DQuadTool::itemChange( GraphicsItemChange change, con
         // we have to translate it back into (0,0) of the parent bounds
         // by using the inverse of the origin of this widget
         rect.translate( -m_box.topLeft() );
+        rect.setRight( rect.right() - m_box.width() );
+        rect.setBottom( rect.bottom() - m_box.height() );
+
+        WAssert( rect.width() >= 0, "Ensure bounding rect not getting a negative width!" );
+        WAssert( rect.height() >= 0, "Ensure bounding rect not getting a negative height!" );
+
         if( !rect.contains( newPos ) )
         {
             // Keep the item inside the scene
-            newPos.setX( qMin( rect.right() - m_box.width(), qMax( newPos.x(), rect.left() ) ) );
-            newPos.setY( qMin( rect.bottom() - m_box.height(), qMax( newPos.y(), rect.top() ) ) );
+            newPos.setX( qMin( rect.right(), qMax( newPos.x(), rect.left() ) ) );
+            newPos.setY( qMin( rect.bottom(), qMax( newPos.y(), rect.top() ) ) );
             return newPos;
         }
     }
