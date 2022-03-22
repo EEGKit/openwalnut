@@ -35,21 +35,20 @@
   // provided by your getDescription method.
   // HINT: multi-line strings are not supported. Please provide long texts in
   //       one line.
-  description = "This module provides an intercative widget for manipulating one-dimensional transfer functions.";
+  description = "This module provides an intercative widget for manipulating two-dimensional transfer functions.";
 
   // Help file. This should be an HTML or TXT document. Only one document allowed.
   help ="help/index.html";
 
   // Provide a list of authors. These authors can have further information associated with them.
-  author = "Mario Hlawitschka";
+  author = "Kai Messerschmidt";
   author = "OpenWalnut Project";
 
   // Provide author information. Especially a contact address is very handy.
   // This associates some URL and Mail contact info to "OpenWalnut Project".
-  "Mario Hlawitschka"
+  "Kai Messerschmidt"
   {
-    url="http://www.hlawitschka.net/";
-    email="Nachname [at] informatik [dot] uni - leipzig . de";
+    email="kai [dot] messerschmidt [at] hs - worms . de";
     what="Design, Development and Bug fixing";
   };
   "OpenWalnut Project"
