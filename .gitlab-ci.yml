@@ -16,7 +16,7 @@ cache:
 
 create_directory_and_cmake___release:
         stage: Initialization_stage
-        image: ladbukkit/openwalnut_build_environment:1.5.2
+        image: ladbukkit/openwalnut_build_environment:1.5.1
         script:
                 - ls
                 - mkdir -p build
@@ -29,7 +29,7 @@ create_directory_and_cmake___release:
                 
 create_directory_and_cmake___debug:
         stage: Initialization_stage
-        image: ladbukkit/openwalnut_build_environment:1.5.2
+        image: ladbukkit/openwalnut_build_environment:1.5.1
         script:
                 - ls
                 - mkdir -p build
@@ -42,7 +42,7 @@ create_directory_and_cmake___debug:
 
 stylecheck_job:
         stage: Stylecheck_doc_stage
-        image: ladbukkit/openwalnut_build_environment:1.5.2
+        image: ladbukkit/openwalnut_build_environment:1.5.1
         script:
                 - pwd
                 - cd build/release
@@ -52,7 +52,7 @@ stylecheck_job:
 
 doc_job:
         stage: Stylecheck_doc_stage
-        image: ladbukkit/openwalnut_build_environment:1.5.2
+        image: ladbukkit/openwalnut_build_environment:1.5.1
         script:
                 - doxygen --version
                 - pwd
@@ -63,7 +63,7 @@ doc_job:
 
 buildAndTest:
         stage: Build_and_test_release_stage
-        image: ladbukkit/openwalnut_build_environment:1.5.2
+        image: ladbukkit/openwalnut_build_environment:1.5.1
         script:
                 - pwd
                 - cd build/release
@@ -74,7 +74,7 @@ buildAndTest:
                 
 buildAndTestDebug:
         stage: Build_and_test_debug_stage
-        image: ladbukkit/openwalnut_build_environment:1.5.2
+        image: ladbukkit/openwalnut_build_environment:1.5.1
         script:
                 - pwd
                 - cd build/debug
@@ -85,7 +85,7 @@ buildAndTestDebug:
 
 buildAppImage:
         stage: Build_appimage_stage
-        image: ladbukkit/openwalnut_build_environment:1.5.2
+        image: ladbukkit/openwalnut_build_environment:1.5.1
         script:
                 - pwd
                 - cd tools/AppImage
@@ -96,7 +96,7 @@ buildAppImage:
 
 uploadArtifacts:
         stage: Upload_artifacts_stage
-        image: ladbukkit/openwalnut_build_environment:1.5.2
+        image: ladbukkit/openwalnut_build_environment:1.5.1
         script:
                 - pwd
                 - cd tools/upload
