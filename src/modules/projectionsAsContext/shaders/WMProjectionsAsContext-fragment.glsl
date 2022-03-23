@@ -24,6 +24,8 @@
 
 #version 130
 
+#include "WGEShader-uniforms.glsl"
+
 #include "WGEColormapping-fragment.glsl"
 
 // If this uniform is true, the plane should not discard fragments
