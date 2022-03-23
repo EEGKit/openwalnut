@@ -136,6 +136,7 @@ public:
     /**
      * Converts vr::HmdMatrix34_t to osg::Matrix.
      * \param mat34 The HMD Matrix.
+     * \param swapAxis Whether to swap the axis from OpenVR to OpenWalnut or not.
      * \return osg::Matrix The OSG Matrix.
      */
     static osg::Matrix convertHmdMatrixToOSG( const vr::HmdMatrix34_t &mat34, bool swapAxis = false );
@@ -143,6 +144,7 @@ public:
     /**
      * Converts vr::HmdMatrix34_t to osg::Matrix.
      * \param mat44 The HMD Matrix.
+     * \param swapAxis Whether to swap the axis from OpenVR to OpenWalnut or not.
      * \return osg::Matrix The OSG Matrix.
      */
     static osg::Matrix convertHmdMatrixToOSG( const vr::HmdMatrix44_t &mat44, bool swapAxis = false );
