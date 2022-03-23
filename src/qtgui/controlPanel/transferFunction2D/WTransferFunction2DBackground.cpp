@@ -29,7 +29,7 @@
 #include "QGraphicsSceneMouseEvent"
 
 #include "WTransferFunction2DBackground.h"
-#include "WTransferFunction2DWidget.h"
+#include "WTransferFunction2DGUIWidget.h"
 
 WTransferFunction2DBackground::WTransferFunction2DBackground( QWidget * /*parent*/ ) : BaseClass()
 {

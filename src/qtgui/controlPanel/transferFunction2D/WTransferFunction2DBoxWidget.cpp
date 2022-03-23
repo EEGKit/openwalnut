@@ -29,11 +29,11 @@
 #include "QGraphicsSceneMouseEvent"
 #include "QGraphicsScene"
 
-#include "WTransferFunction2DQuadTool.h"
+#include "WTransferFunction2DBoxWidget.h"
 
 #include "core/common/WLogger.h"
 
-WTransferFunction2DQuadTool::WTransferFunction2DQuadTool( WTransferFunction2DWidget *parent )
+WTransferFunction2DBoxWidget::WTransferFunction2DBoxWidget(WTransferFunction2DGUIWidget *parent )
 {
     setFlag( ItemIsMovable );
     setFlag( ItemSendsScenePositionChanges );
@@ -63,16 +63,16 @@ WTransferFunction2DQuadTool::WTransferFunction2DQuadTool( WTransferFunction2DWid
     connect( m_controlPoints[3], SIGNAL( resizeHandleChanged( ResizePointsRect, QPointF ) ),
              this, SLOT( setResizeHandle( ResizePointsRect, QPointF ) ) );
 }
-WTransferFunction2DQuadTool::~WTransferFunction2DQuadTool()
+WTransferFunction2DBoxWidget::~WTransferFunction2DBoxWidget()
 {
 }
 
-QRectF WTransferFunction2DQuadTool::boundingRect() const
+QRectF WTransferFunction2DBoxWidget::boundingRect() const
 {
     return m_box;
 }
 
-void WTransferFunction2DQuadTool::setControlPointsToCorner()
+void WTransferFunction2DBoxWidget::setControlPointsToCorner()
 {
     prepareGeometryChange();
     m_controlPoints[0]->setPos( m_box.topRight() ); // top right
@@ -85,7 +85,7 @@ void WTransferFunction2DQuadTool::setControlPointsToCorner()
     update();
 }
 
-QVariant WTransferFunction2DQuadTool::itemChange( GraphicsItemChange change, const QVariant &value )
+QVariant WTransferFunction2DBoxWidget::itemChange(GraphicsItemChange change, const QVariant &value )
 {
     if( change == ItemPositionChange && scene() )
     {
@@ -97,11 +97,11 @@ QVariant WTransferFunction2DQuadTool::itemChange( GraphicsItemChange change, con
         // we have to translate it back into (0,0) of the parent bounds
         // by using the inverse of the origin of this widget
         rect.translate( -m_box.topLeft() );
-        rect.setRight( rect.right() - m_box.width() );
-        rect.setBottom( rect.bottom() - m_box.height() );
+        rect.setRight( rect.right() - m_box.width() - 1 );
+        rect.setBottom( rect.bottom() - m_box.height() - 1 );
 
-        WAssert( rect.width() >= 0, "Ensure bounding rect not getting a negative width!" );
-        WAssert( rect.height() >= 0, "Ensure bounding rect not getting a negative height!" );
+        //WAssert( rect.width() >= 0, "Ensure bounding rect not getting a negative width!" );
+        //WAssert( rect.height() >= 0, "Ensure bounding rect not getting a negative height!" );
 
         if( !rect.contains( newPos ) )
         {
@@ -114,7 +114,7 @@ QVariant WTransferFunction2DQuadTool::itemChange( GraphicsItemChange change, con
     return QGraphicsItem::itemChange( change, value );
 }
 
-void WTransferFunction2DQuadTool::paint( QPainter *painter, const QStyleOptionGraphicsItem*, QWidget* )
+void WTransferFunction2DBoxWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget* )
 {
     QBrush brush( m_color );
 
@@ -122,7 +122,7 @@ void WTransferFunction2DQuadTool::paint( QPainter *painter, const QStyleOptionGr
     painter->drawRect( m_box );
 }
 
-void WTransferFunction2DQuadTool::sampleWidgetToImage( unsigned char * array, size_t imageWidth, size_t imageHeight )
+void WTransferFunction2DBoxWidget::sampleWidgetToImage(unsigned char * array, size_t imageWidth, size_t imageHeight )
 {
     size_t xMin, xMax, yMin, yMax;
     xMin = pos().x();
@@ -180,7 +180,7 @@ void WTransferFunction2DQuadTool::sampleWidgetToImage( unsigned char * array, si
 //    }
 }
 
-void WTransferFunction2DQuadTool::setResizeHandle( ResizePointsRect handle, QPointF position )
+void WTransferFunction2DBoxWidget::setResizeHandle(ResizePointsRect handle, QPointF position )
 {
     m_resizePoints = handle;
     prepareGeometryChange();
@@ -208,29 +208,28 @@ void WTransferFunction2DQuadTool::setResizeHandle( ResizePointsRect handle, QPoi
     update();
 }
 
-void WTransferFunction2DQuadTool::mousePressEvent( QGraphicsSceneMouseEvent *event )
+void WTransferFunction2DBoxWidget::mousePressEvent(QGraphicsSceneMouseEvent *event )
 {
     update();
     m_parent->updateTexture();
     QGraphicsItem::mousePressEvent( event );
 }
 
-void WTransferFunction2DQuadTool::mouseMoveEvent( QGraphicsSceneMouseEvent *event )
+void WTransferFunction2DBoxWidget::mouseMoveEvent(QGraphicsSceneMouseEvent *event )
 {
     update();
     m_parent->updateTexture();
     QGraphicsItem::mouseMoveEvent( event );
 }
 
-void WTransferFunction2DQuadTool::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
+void WTransferFunction2DBoxWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent *event )
 {
     update();
     m_parent->updateTexture();
-
     QGraphicsItem::mouseReleaseEvent( event );
 }
 
-void WTransferFunction2DQuadTool::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
+void WTransferFunction2DBoxWidget::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event )
 {
     event->accept();
     QGraphicsObject::mouseDoubleClickEvent( event );
@@ -238,7 +237,7 @@ void WTransferFunction2DQuadTool::mouseDoubleClickEvent( QGraphicsSceneMouseEven
     showColorPicker();
 }
 
-void WTransferFunction2DQuadTool::colorSelected( const QColor &newcolor )
+void WTransferFunction2DBoxWidget::colorSelected(const QColor &newcolor )
 {
     m_color = newcolor;
     if( m_parent )
@@ -247,7 +246,7 @@ void WTransferFunction2DQuadTool::colorSelected( const QColor &newcolor )
     }
 }
 
-void WTransferFunction2DQuadTool::showColorPicker()
+void WTransferFunction2DBoxWidget::showColorPicker()
 {
     QColorDialog *dialog = new QColorDialog( );
     dialog->setCurrentColor( m_color );

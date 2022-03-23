@@ -29,10 +29,10 @@
 
 #include "QGraphicsItem"
 
-#include "WTransferFunction2DWidget.h"
+#include "WTransferFunction2DGUIWidget.h"
 #include "WTransferFunction2DControlPoint.h"
 #include "WTransferFunction2DEnums.h"
-class WTransferFunction2DWidget;
+class WTransferFunction2DGUIWidget;
 /**
  * This class defines a resizable box and is used as a
  * manipulation widget for the 2D Transfer Function.
@@ -40,7 +40,7 @@ class WTransferFunction2DWidget;
  * later, through setting the color and opacity.
  *
  */
-class WTransferFunction2DQuadTool : public QGraphicsObject
+class WTransferFunction2DBoxWidget : public QGraphicsObject
 {
     Q_OBJECT
 public:
@@ -49,12 +49,12 @@ public:
      *
      * @param parent
      */
-    explicit WTransferFunction2DQuadTool( WTransferFunction2DWidget *parent );
+    explicit WTransferFunction2DBoxWidget(WTransferFunction2DGUIWidget *parent );
 
     /**
      * Destructor
      */
-    ~WTransferFunction2DQuadTool();
+    ~WTransferFunction2DBoxWidget();
 
     /**
      * Defines the bounding rectangle of this item and returns it
@@ -150,7 +150,7 @@ private:
 
     ResizePointsRect m_resizePoints; /*!< Flag to check if mouse button is pressed */
 
-    WTransferFunction2DWidget* m_parent;  /*!< The parent object */
+    WTransferFunction2DGUIWidget* m_parent;  /*!< The parent object */
 
     QColor m_color;  /*!< The color of the box */
     double m_width; /*!< The width of the box */

@@ -27,7 +27,7 @@
 
 #include "QGraphicsPixmapItem"
 
-class WTransferFunction2DWidget;
+class WTransferFunction2DGUIWidget;
 
 /**
  * A QGraphicsItem that displays a pixmap in the background of the scene.

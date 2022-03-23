@@ -34,10 +34,10 @@
 #include "qtgui/controlPanel/transferFunction2D/WTransferFunction2DScene.h"
 #include "core/common/WHistogram2D.h"
 #include "core/common/WLogger.h"
-#include "WTransferFunction2DWidget.h"
+#include "WTransferFunction2DGUIWidget.h"
 
 
-WTransferFunction2DWidget::WTransferFunction2DWidget( QWidget* qparent, WTransferFunction2DGuiNotificationClass* parent ):
+WTransferFunction2DGUIWidget::WTransferFunction2DGUIWidget(QWidget* qparent, WTransferFunction2DGuiNotificationClass* parent ):
         BaseClass( qparent ),
         parent( parent ),
         background( 0x0 ),
@@ -71,11 +71,11 @@ WTransferFunction2DWidget::WTransferFunction2DWidget( QWidget* qparent, WTransfe
     setMyBackground(); // trigger first paint of transfer function
 }
 
-WTransferFunction2DWidget::~WTransferFunction2DWidget()
+WTransferFunction2DGUIWidget::~WTransferFunction2DGUIWidget()
 {
 }
 
-void WTransferFunction2DWidget::setMyBackground()
+void WTransferFunction2DGUIWidget::setMyBackground()
 {
     if( background && hist != NULL )
     {
@@ -100,13 +100,13 @@ void WTransferFunction2DWidget::setMyBackground()
     }
 }
 
-void WTransferFunction2DWidget::updateTexture()
+void WTransferFunction2DGUIWidget::updateTexture()
 {
     wlog::info( "Texture update " );
     updateTransferFunction();
 }
 
-void WTransferFunction2DWidget::drawBackground( QPainter *painter, const QRectF &rect )
+void WTransferFunction2DGUIWidget::drawBackground(QPainter *painter, const QRectF &rect )
 {
     BaseClass::drawBackground( painter, rect );
 
@@ -115,14 +115,14 @@ void WTransferFunction2DWidget::drawBackground( QPainter *painter, const QRectF 
     // painter->drawRect( rect );
 }
 
-void WTransferFunction2DWidget::setHistogram( WHistogram2D newHistogram )
+void WTransferFunction2DGUIWidget::setHistogram(WHistogram2D newHistogram )
 {
     hist = &newHistogram;
     this->updateTransferFunction();
     forceRedraw();
 }
 
-void WTransferFunction2DWidget::forceRedraw()
+void WTransferFunction2DGUIWidget::forceRedraw()
 {
     if( !initialized )
     {
@@ -134,7 +134,7 @@ void WTransferFunction2DWidget::forceRedraw()
     this->setMyBackground();
 }
 
-void WTransferFunction2DWidget::updateTransferFunction()
+void WTransferFunction2DGUIWidget::updateTransferFunction()
 {
     WTransferFunction2D tf;
     {
@@ -144,7 +144,7 @@ void WTransferFunction2DWidget::updateTransferFunction()
         {
             //tf.setHistogram( *hist ); // get the data back because we need this for comparison
         }
-        std::vector< WTransferFunction2DQuadTool* >::iterator it;
+        std::vector< WTransferFunction2DBoxWidget* >::iterator it;
         //this is set to 300 at the moment and is equal to the size of the scene/histogram
         size_t imageWidth = 300;
         size_t imageHeight = 300;
@@ -164,16 +164,16 @@ void WTransferFunction2DWidget::updateTransferFunction()
     }
 }
 
-void WTransferFunction2DWidget::addBoxWidget()
+void WTransferFunction2DGUIWidget::addBoxWidget()
 {
-    WTransferFunction2DQuadTool* box = new WTransferFunction2DQuadTool( this );
+    WTransferFunction2DBoxWidget* box = new WTransferFunction2DBoxWidget(this );
     scene->addItem( box );
     m_widgets.push_back( box );
 }
 
-void WTransferFunction2DWidget::cleanTransferFunction()
+void WTransferFunction2DGUIWidget::cleanTransferFunction()
 {
-    std::vector< WTransferFunction2DQuadTool* >::iterator it;
+    std::vector< WTransferFunction2DBoxWidget* >::iterator it;
     for( it = m_widgets.begin(); it != m_widgets.end(); it++ )
     {
         delete( *it );
@@ -182,7 +182,7 @@ void WTransferFunction2DWidget::cleanTransferFunction()
     updateTransferFunction();
 }
 
-void WTransferFunction2DWidget::contextMenuEvent( QContextMenuEvent *event )
+void WTransferFunction2DGUIWidget::contextMenuEvent(QContextMenuEvent *event )
 {
     QMenu menu;
     QAction *addBox = menu.addAction( "Add box widget" );

@@ -29,12 +29,12 @@
 #include <QGraphicsSceneDragDropEvent>
 
 #include "WTransferFunction2DScene.h"
-#include "WTransferFunction2DWidget.h"
+#include "WTransferFunction2DGUIWidget.h"
 #include "core/common/WTransferFunction2D.h"
 
 WTransferFunction2DScene::WTransferFunction2DScene( QObject*parent )
         : BaseClass( parent ),
-          myparent( dynamic_cast<WTransferFunction2DWidget*>( parent ) )
+          myparent( dynamic_cast<WTransferFunction2DGUIWidget*>( parent ) )
 {
     setBackgroundBrush( QBrush( Qt::white, Qt::CrossPattern ) ); //Qt::white );
 }
@@ -47,7 +47,7 @@ void WTransferFunction2DScene::dragMoveEvent( QGraphicsSceneDragDropEvent* event
 {
 }
 
-void do_update( const WTransferFunction2D& tf, WTransferFunction2DWidget* m_transferFunction )
+void do_update(const WTransferFunction2D& tf, WTransferFunction2DGUIWidget* m_transferFunction )
 {
 }
 

@@ -29,11 +29,11 @@
 
 #include "QGraphicsView"
 #include "core/common/WHistogram2D.h"
-#include "WTransferFunction2DQuadTool.h"
+#include "WTransferFunction2DBoxWidget.h"
 #include "WTransferFunction2DBackground.h"
 
 class QGraphicsScene;
-class WTransferFunction2DQuadTool;
+class WTransferFunction2DBoxWidget;
 
 /**
  * The class managing the widget that wants to receive updates whenever
@@ -63,7 +63,7 @@ struct WTransferFunction2DGuiNotificationClass
  * design. Thus, we should try to split the model and the view a bit more,
  * even though this is not intended by QGraphicsView.
  */
-class WTransferFunction2DWidget : public QGraphicsView
+class WTransferFunction2DGUIWidget : public QGraphicsView
 {
     Q_OBJECT
 
@@ -77,12 +77,12 @@ public:
      * \param qparent parent widget
      * \param parent  a class that receives notifications
      */
-    WTransferFunction2DWidget( QWidget* qparent = NULL, WTransferFunction2DGuiNotificationClass* parent = NULL );
+    WTransferFunction2DGUIWidget(QWidget* qparent = NULL, WTransferFunction2DGuiNotificationClass* parent = NULL );
 
     /**
      * Destructor.
      */
-    virtual ~WTransferFunction2DWidget();
+    virtual ~WTransferFunction2DGUIWidget();
 
     /**
      * Redraw the widget
@@ -142,7 +142,7 @@ private:
     WTransferFunction2DGuiNotificationClass *parent;
 
     /** List of widgets */
-    std::vector< WTransferFunction2DQuadTool* > m_widgets;
+    std::vector< WTransferFunction2DBoxWidget* > m_widgets;
 
     /** our scene */
     QGraphicsScene *scene;

@@ -27,7 +27,7 @@
 
 #include "QGraphicsScene"
 
-class WTransferFunction2DWidget;
+class WTransferFunction2DGUIWidget;
 
 /**
  * The scene for our visualization of the transfer function.
@@ -76,7 +76,7 @@ protected:
 
 private:
     /** storage of the widget as this currently manages the data */
-    WTransferFunction2DWidget *myparent;
+    WTransferFunction2DGUIWidget *myparent;
 };
 
 #endif  // WTRANSFERFUNCTION2DSCENE_H
