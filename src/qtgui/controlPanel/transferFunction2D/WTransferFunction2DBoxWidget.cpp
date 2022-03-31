@@ -33,7 +33,7 @@
 
 #include "core/common/WLogger.h"
 
-WTransferFunction2DBoxWidget::WTransferFunction2DBoxWidget(WTransferFunction2DGUIWidget *parent )
+WTransferFunction2DBoxWidget::WTransferFunction2DBoxWidget( WTransferFunction2DGUIWidget *parent )
 {
     setFlag( ItemIsMovable );
     setFlag( ItemSendsScenePositionChanges );
@@ -85,7 +85,7 @@ void WTransferFunction2DBoxWidget::setControlPointsToCorner()
     update();
 }
 
-QVariant WTransferFunction2DBoxWidget::itemChange(GraphicsItemChange change, const QVariant &value )
+QVariant WTransferFunction2DBoxWidget::itemChange( GraphicsItemChange change, const QVariant &value )
 {
     if( change == ItemPositionChange && scene() )
     {
@@ -114,7 +114,7 @@ QVariant WTransferFunction2DBoxWidget::itemChange(GraphicsItemChange change, con
     return QGraphicsItem::itemChange( change, value );
 }
 
-void WTransferFunction2DBoxWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget* )
+void WTransferFunction2DBoxWidget::paint( QPainter *painter, const QStyleOptionGraphicsItem*, QWidget* )
 {
     QBrush brush( m_color );
 
@@ -122,7 +122,7 @@ void WTransferFunction2DBoxWidget::paint(QPainter *painter, const QStyleOptionGr
     painter->drawRect( m_box );
 }
 
-void WTransferFunction2DBoxWidget::sampleWidgetToImage(unsigned char * array, size_t imageWidth, size_t imageHeight )
+void WTransferFunction2DBoxWidget::sampleWidgetToImage( unsigned char * array, size_t imageWidth, size_t imageHeight )
 {
     size_t xMin, xMax, yMin, yMax;
     xMin = pos().x();
@@ -180,7 +180,7 @@ void WTransferFunction2DBoxWidget::sampleWidgetToImage(unsigned char * array, si
 //    }
 }
 
-void WTransferFunction2DBoxWidget::setResizeHandle(ResizePointsRect handle, QPointF position )
+void WTransferFunction2DBoxWidget::setResizeHandle( ResizePointsRect handle, QPointF position )
 {
     m_resizePoints = handle;
     prepareGeometryChange();
@@ -208,28 +208,28 @@ void WTransferFunction2DBoxWidget::setResizeHandle(ResizePointsRect handle, QPoi
     update();
 }
 
-void WTransferFunction2DBoxWidget::mousePressEvent(QGraphicsSceneMouseEvent *event )
+void WTransferFunction2DBoxWidget::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {
     update();
     m_parent->updateTexture();
     QGraphicsItem::mousePressEvent( event );
 }
 
-void WTransferFunction2DBoxWidget::mouseMoveEvent(QGraphicsSceneMouseEvent *event )
+void WTransferFunction2DBoxWidget::mouseMoveEvent( QGraphicsSceneMouseEvent *event )
 {
     update();
     m_parent->updateTexture();
     QGraphicsItem::mouseMoveEvent( event );
 }
 
-void WTransferFunction2DBoxWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent *event )
+void WTransferFunction2DBoxWidget::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
 {
     update();
     m_parent->updateTexture();
     QGraphicsItem::mouseReleaseEvent( event );
 }
 
-void WTransferFunction2DBoxWidget::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event )
+void WTransferFunction2DBoxWidget::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
 {
     event->accept();
     QGraphicsObject::mouseDoubleClickEvent( event );
@@ -237,7 +237,7 @@ void WTransferFunction2DBoxWidget::mouseDoubleClickEvent(QGraphicsSceneMouseEven
     showColorPicker();
 }
 
-void WTransferFunction2DBoxWidget::colorSelected(const QColor &newcolor )
+void WTransferFunction2DBoxWidget::colorSelected( const QColor &newcolor )
 {
     m_color = newcolor;
     if( m_parent )

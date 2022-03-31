@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WTRANSFERFUNCTION2DQUADTOOL_H
-#define WTRANSFERFUNCTION2DQUADTOOL_H
+#ifndef WTRANSFERFUNCTION2DBOXWIDGET_H
+#define WTRANSFERFUNCTION2DBOXWIDGET_H
 
 #include <vector>
 
@@ -49,7 +49,7 @@ public:
      *
      * @param parent
      */
-    explicit WTransferFunction2DBoxWidget(WTransferFunction2DGUIWidget *parent );
+    explicit WTransferFunction2DBoxWidget( WTransferFunction2DGUIWidget *parent );
 
     /**
      * Destructor
@@ -158,4 +158,4 @@ private:
     std::vector< WTransferFunction2DControlPoint* > m_controlPoints; /*!< The different control handles in the corners */
     QRectF m_box; /*!< The box which is painted */
 };
-#endif  // WTRANSFERFUNCTION2DQUADTOOL_H
+#endif  // WTRANSFERFUNCTION2DBOXWIDGET_H

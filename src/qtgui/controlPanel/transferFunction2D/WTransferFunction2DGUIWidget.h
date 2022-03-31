@@ -22,8 +22,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WTRANSFERFUNCTION2DWIDGET_H
-#define WTRANSFERFUNCTION2DWIDGET_H
+#ifndef WTRANSFERFUNCTION2DGUIWIDGET_H
+#define WTRANSFERFUNCTION2DGUIWIDGET_H
 
 #include <vector>
 
@@ -77,7 +77,7 @@ public:
      * \param qparent parent widget
      * \param parent  a class that receives notifications
      */
-    WTransferFunction2DGUIWidget(QWidget* qparent = NULL, WTransferFunction2DGuiNotificationClass* parent = NULL );
+    WTransferFunction2DGUIWidget( QWidget* qparent = NULL, WTransferFunction2DGuiNotificationClass* parent = NULL );
 
     /**
      * Destructor.
@@ -155,4 +155,4 @@ private:
     bool initialized;
 };
 
-#endif  // WTRANSFERFUNCTION2DWIDGET_H
+#endif  // WTRANSFERFUNCTION2DGUIWIDGET_H

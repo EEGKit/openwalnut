@@ -37,7 +37,7 @@
 #include "WTransferFunction2DGUIWidget.h"
 
 
-WTransferFunction2DGUIWidget::WTransferFunction2DGUIWidget(QWidget* qparent, WTransferFunction2DGuiNotificationClass* parent ):
+WTransferFunction2DGUIWidget::WTransferFunction2DGUIWidget( QWidget* qparent, WTransferFunction2DGuiNotificationClass* parent ):
         BaseClass( qparent ),
         parent( parent ),
         background( 0x0 ),
@@ -106,7 +106,7 @@ void WTransferFunction2DGUIWidget::updateTexture()
     updateTransferFunction();
 }
 
-void WTransferFunction2DGUIWidget::drawBackground(QPainter *painter, const QRectF &rect )
+void WTransferFunction2DGUIWidget::drawBackground( QPainter *painter, const QRectF &rect )
 {
     BaseClass::drawBackground( painter, rect );
 
@@ -115,7 +115,7 @@ void WTransferFunction2DGUIWidget::drawBackground(QPainter *painter, const QRect
     // painter->drawRect( rect );
 }
 
-void WTransferFunction2DGUIWidget::setHistogram(WHistogram2D newHistogram )
+void WTransferFunction2DGUIWidget::setHistogram( WHistogram2D newHistogram )
 {
     hist = &newHistogram;
     this->updateTransferFunction();
@@ -166,7 +166,7 @@ void WTransferFunction2DGUIWidget::updateTransferFunction()
 
 void WTransferFunction2DGUIWidget::addBoxWidget()
 {
-    WTransferFunction2DBoxWidget* box = new WTransferFunction2DBoxWidget(this );
+    WTransferFunction2DBoxWidget* box = new WTransferFunction2DBoxWidget( this );
     scene->addItem( box );
     m_widgets.push_back( box );
 }
@@ -182,7 +182,7 @@ void WTransferFunction2DGUIWidget::cleanTransferFunction()
     updateTransferFunction();
 }
 
-void WTransferFunction2DGUIWidget::contextMenuEvent(QContextMenuEvent *event )
+void WTransferFunction2DGUIWidget::contextMenuEvent( QContextMenuEvent *event )
 {
     QMenu menu;
     QAction *addBox = menu.addAction( "Add box widget" );
