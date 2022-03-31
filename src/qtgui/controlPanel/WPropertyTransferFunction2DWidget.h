@@ -33,7 +33,7 @@
 
 #include "WPropertyWidget.h"
 
-#include "transferFunction2D/WTransferFunction2DWidget.h"
+#include "transferFunction2D/WTransferFunction2DGUIWidget.h"
 #include "core/common/WTransferFunction2D.h"
 
 /**
@@ -111,7 +111,7 @@ protected:
     QHBoxLayout m_infoLayout;
 
     /** the current transfer function */
-    WTransferFunction2DWidget m_transferFunction;
+    WTransferFunction2DGUIWidget m_transferFunction;
 
     /** the previously used transfer function */
     WTransferFunction2D lastTransferFunction;
