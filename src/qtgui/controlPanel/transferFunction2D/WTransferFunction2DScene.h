@@ -56,24 +56,6 @@ public:
      * Default destructor
      */
     virtual ~WTransferFunction2DScene();
-
-protected:
-    /**
-     * Checks whether the drag is inside the main rectangle of the scene
-     * and whether the dragged object is of type QColor or similar.
-     *
-     * \param event the event to handle
-     */
-     virtual void dragMoveEvent( QGraphicsSceneDragDropEvent* event );
-
-    /**
-     * Allows drop of QColor-alike objects and creates new color control points
-     * in the scene.
-     *
-     * \param event the event to handle
-     */
-     virtual void dropEvent( QGraphicsSceneDragDropEvent* event );
-
 private:
     /** storage of the widget as this currently manages the data */
     WTransferFunction2DGUIWidget *myparent;

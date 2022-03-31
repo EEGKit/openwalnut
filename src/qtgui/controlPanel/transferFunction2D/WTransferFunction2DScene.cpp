@@ -43,15 +43,3 @@ WTransferFunction2DScene::~WTransferFunction2DScene()
 {
 }
 
-void WTransferFunction2DScene::dragMoveEvent( QGraphicsSceneDragDropEvent* event )
-{
-}
-
-void do_update(const WTransferFunction2D& tf, WTransferFunction2DGUIWidget* m_transferFunction )
-{
-}
-
-void WTransferFunction2DScene::dropEvent( QGraphicsSceneDragDropEvent* event )
-{
-}
-
