@@ -109,6 +109,10 @@ private slots:
     * Removes all transfer function widgets from the scene
     */
     void cleanTransferFunction();
+    /**
+    * Opens a context menu
+    */
+    void showContextMenu( const QPoint &pos );
 protected:
     /**
      * Draws the background.
@@ -131,13 +135,6 @@ protected:
     void setMyBackground();
 
 private:
-    /**
-     * custom context menu e.g. add widgets, clear TF, ...
-     *
-     * @param event event fired when right clicked
-     */
-    void contextMenuEvent( QContextMenuEvent *event );
-
     /** the class that receives our update notifications */
     WTransferFunction2DGuiNotificationClass *parent;
 

@@ -61,6 +61,11 @@ WTransferFunction2DGUIWidget::WTransferFunction2DGUIWidget( QWidget* qparent, WT
     this->setCacheMode( CacheNone );
     this->setRenderHint( QPainter::Antialiasing );
 
+    this->setContextMenuPolicy( Qt::CustomContextMenu );
+
+    connect( this, SIGNAL( customContextMenuRequested( const QPoint & ) ),
+            this, SLOT( showContextMenu( const QPoint & ) ) );
+
     hist = NULL;
 
     // insert background and histogram items
@@ -179,20 +184,18 @@ void WTransferFunction2DGUIWidget::cleanTransferFunction()
     updateTransferFunction();
 }
 
-void WTransferFunction2DGUIWidget::contextMenuEvent( QContextMenuEvent *event )
+void WTransferFunction2DGUIWidget::showContextMenu( const QPoint &pos )
 {
-    QMenu menu;
-    QAction *addBox = menu.addAction( "Add box widget" );
-    QAction *clearTransferFunction = menu.addAction( "Clear Transfer Function" );
-    QAction *selectedAction = menu.exec( event->globalPos() );
-    menu.exec( event->globalPos() );
+    QMenu contextMenu( tr( "Context menu" ), this );
 
-    if( selectedAction == addBox )
-    {
-        addBoxWidget();
-    }
-    if( selectedAction == clearTransferFunction )
-    {
-        cleanTransferFunction();
-    }
+    QAction action1( "Add box widget", this );
+    QAction action2( "Clean transfer function", this );
+    connect( &action1, SIGNAL( triggered() ), this, SLOT( addBoxWidget() ) );
+    connect( &action2, SIGNAL( triggered() ), this, SLOT( cleanTransferFunction() ) );
+
+    contextMenu.addAction( &action1 );
+    contextMenu.addSeparator();
+    contextMenu.addAction( &action2 );
+
+    contextMenu.exec( mapToGlobal( pos ) );
 }
