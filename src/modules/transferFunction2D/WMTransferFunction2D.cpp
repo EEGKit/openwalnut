@@ -104,7 +104,12 @@ void WMTransferFunction2D::properties()
                 }
             }
     tf.setTexture( arr, 100, 100 );
-    m_transferFunction = m_properties->addProperty( "2D Transfer Function", "The 2D transfer function editor.", tf, m_propCondition, false );
+    m_transferFunction = m_properties->addProperty( "2D Transfer Function",
+                                                    "The 2D transfer function editor. "
+                                                    "The Origin (0, 0) is in the top left corner. "
+                                                    "The first connected data set is shown on the y-axis from top to bottom. "
+                                                    "The second connected data set is shown on the x-axis from left to right. "
+                                                    , tf, m_propCondition, false );
 
     m_opacityScale = m_properties->addProperty( "Opacity Scaling",
                                                 "Factor used to scale opacity for easier interaction",
