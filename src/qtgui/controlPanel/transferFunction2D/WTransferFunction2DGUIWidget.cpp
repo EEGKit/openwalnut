@@ -66,6 +66,7 @@ WTransferFunction2DGUIWidget::WTransferFunction2DGUIWidget( QWidget* qparent, WT
     // insert background and histogram items
     scene->addItem( background = new WTransferFunction2DBackground( this ) );
 
+    addBoxWidget();
     initialized = true;
     // initialize the color map (aka. background)
     setMyBackground(); // trigger first paint of transfer function
@@ -109,10 +110,6 @@ void WTransferFunction2DGUIWidget::updateTexture()
 void WTransferFunction2DGUIWidget::drawBackground( QPainter *painter, const QRectF &rect )
 {
     BaseClass::drawBackground( painter, rect );
-
-    // paint the border
-    // painter->setBrush(  Qt::NoBrush );
-    // painter->drawRect( rect );
 }
 
 void WTransferFunction2DGUIWidget::setHistogram( WHistogram2D newHistogram )

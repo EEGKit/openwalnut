@@ -45,7 +45,7 @@ WTransferFunction2DBoxWidget::WTransferFunction2DBoxWidget( WTransferFunction2DG
     m_height = 50;
     m_box = QRectF( 0, 0, m_width, m_height );
     m_parent = parent;
-    m_color = QColor( 255, 0, 0 , 128 );
+    m_color = QColor( 255, 0, 0 , 10 );
     m_resizePoints = NONE;
 
     // We always start with top right and go clock wise
