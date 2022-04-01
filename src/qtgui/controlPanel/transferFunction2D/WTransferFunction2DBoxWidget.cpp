@@ -206,6 +206,7 @@ void WTransferFunction2DBoxWidget::setResizeHandle( ResizePointsRect handle, QPo
             break;
     }
     update();
+    m_parent->updateTexture();
 }
 
 void WTransferFunction2DBoxWidget::mousePressEvent( QGraphicsSceneMouseEvent *event )
