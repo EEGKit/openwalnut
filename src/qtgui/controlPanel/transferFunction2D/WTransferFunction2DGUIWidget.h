@@ -95,6 +95,13 @@ public:
      * \param newHistogram is the histogram which is to be set here
      */
     void setHistogram( WHistogram2D newHistogram );
+
+    /**
+     * Removes the specificed widget
+     *
+     * \param widget widget which is to be deleted
+     */
+    void removeWidget( WTransferFunction2DBoxWidget *widget );
 public slots:
     /**
     * Notification that the data changed, i.e., a control point has been moved or a color changed.

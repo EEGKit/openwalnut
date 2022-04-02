@@ -22,6 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
+#include <QMenu>
+#include <QKeyEvent>
+#include "QGraphicsSceneContextMenuEvent"
 #include "QApplication"
 #include "QBrush"
 #include "QPainter"
@@ -255,4 +258,12 @@ void WTransferFunction2DBoxWidget::showColorPicker()
     dialog->setOption( QColorDialog::ShowAlphaChannel );
     connect( dialog, SIGNAL( currentColorChanged( const QColor& ) ), this, SLOT( colorSelected( const QColor& ) ) );
     dialog->open();
+}
+
+void WTransferFunction2DBoxWidget::keyPressEvent( QKeyEvent *event )
+{
+    if( event->key() == Qt::Key_Backspace || event->key() == Qt::Key_Delete )
+    {
+        m_parent->removeWidget( this );
+    }
 }

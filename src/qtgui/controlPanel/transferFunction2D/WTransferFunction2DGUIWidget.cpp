@@ -199,3 +199,12 @@ void WTransferFunction2DGUIWidget::showContextMenu( const QPoint &pos )
 
     contextMenu.exec( mapToGlobal( pos ) );
 }
+
+void WTransferFunction2DGUIWidget::removeWidget( WTransferFunction2DBoxWidget *widget )
+{
+    auto it = std::find( m_widgets.begin(), m_widgets.end(), widget );
+    m_widgets.erase( it );
+    scene->removeItem( widget );
+    delete( widget );
+    updateTexture();
+}

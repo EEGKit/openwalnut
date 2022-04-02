@@ -127,6 +127,13 @@ protected:
     void mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event ) override;
 
     /**
+      * Fires event, when a button is pressed
+      *
+      * @param event
+      */
+    void keyPressEvent( QKeyEvent *event ) override;
+
+    /**
      *  Handles events, when state of this item changes
      *
      *  from QtDocs:
