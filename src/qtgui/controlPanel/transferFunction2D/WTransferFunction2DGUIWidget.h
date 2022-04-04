@@ -118,6 +118,8 @@ private slots:
     void cleanTransferFunction();
     /**
     * Opens a context menu
+     *
+     * \param pos the position on the screen where the context menu should pop up
     */
     void showContextMenu( const QPoint &pos );
 protected:
