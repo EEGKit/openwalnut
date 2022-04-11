@@ -39,10 +39,10 @@ void WTransferFunction2D::sample2DTransferFunction( unsigned char*array, int wid
     {
         for( int y = 0; y < height; y++ )
         {
-            array[ 4 * width * x + 4 * y + 0 ] = data[ 4 * width * x + 4 * y + 0 ];
-            array[ 4 * width * x + 4 * y + 1 ] = data[ 4 * width * x + 4 * y + 1 ];
-            array[ 4 * width * x + 4 * y + 2 ] = data[ 4 * width * x + 4 * y + 2 ];
-            array[ 4 * width * x + 4 * y + 3 ] = data[ 4 * width * x + 4 * y + 3 ];
+            array[ 4 * width * x + 4 * y + 0 ] = data[ 4 * width * x + 4 * y + 0 ]; // R
+            array[ 4 * width * x + 4 * y + 1 ] = data[ 4 * width * x + 4 * y + 1 ]; // G
+            array[ 4 * width * x + 4 * y + 2 ] = data[ 4 * width * x + 4 * y + 2 ]; // B
+            array[ 4 * width * x + 4 * y + 3 ] = data[ 4 * width * x + 4 * y + 3 ] * m_opacityScale; // A
         }
     }
 }
