@@ -246,7 +246,7 @@ void WTransferFunction2DBoxWidget::colorSelected( const QColor &newcolor )
     m_color = newcolor;
     if( m_parent )
     {
-        m_parent->update();
+        m_parent->updateTexture();
     }
 }
 
