@@ -172,16 +172,16 @@ void WMTransferFunction2D::moduleMain()
 
                 // At the moment we equal sized data sets
                 // Bucket size is equal to our texture size defined in WTransferFunction2DWidget
-                WHistogram2D histogram( values0->getMinimumValue(),
-                                                          values0->getMaximumValue(),
-                                                          values1->getMinimumValue(),
-                                                          values1->getMaximumValue(),
-                                                          300,
-                                                          300 );
+                auto histogram = std::make_shared< WHistogram2D >( values0->getMinimumValue(),
+                                                  values0->getMaximumValue(),
+                                                  values1->getMinimumValue(),
+                                                  values1->getMaximumValue(),
+                                                  300,
+                                                  300 );
 
                 for( size_t i = 0; i < values0->size(); ++i )
                 {
-                    histogram.insert( values0->getScalarDouble( i ), values1->getScalarDouble( i ) );
+                    histogram->insert( values0->getScalarDouble( i ), values1->getScalarDouble( i ) );
                 }
 
                 // We need a copy of the data here, because of the way how the data is handled in WTransferFunction2D
@@ -191,7 +191,6 @@ void WMTransferFunction2D::moduleMain()
             // either way, we changed the data and want to update the TF
             m_transferFunction->set( tf );
         }
-
         if( tfChanged || m_opacityScale->changed() )
         {
             wlog::debug( "WMTransferFunction2D" ) << "tf changed";
@@ -203,40 +202,14 @@ void WMTransferFunction2D::moduleMain()
             std::shared_ptr< std::vector<unsigned char> > data( new std::vector<unsigned char>( resolution * resolution * 4 ) );
             tf.setOpacityScale( m_opacityScale->get( true ) );
             tf.sample2DTransferFunction( &( *data )[0], resolution, resolution );
-//            for( int x = 0; x < resolution; x++ )
-//            {
-//                for( int y = 0; y < resolution; y++ )
-//                {
-//
-//                   std::cout
-//                   << " R: " << static_cast< float >( data->at( 4 * resolution * x + 4 * y + 0 ) )
-//                   << " G: " << static_cast< float >( data->at( 4 * resolution * x + 4 * y + 1 ) )
-//                   << " B: " << static_cast< float >( data->at( 4 * resolution * x + 4 * y + 2 ) )
-//                   << " A: " << static_cast< float >( data->at( 4 * resolution * x + 4 * y + 3 ) ) << std::endl;
-//                }
-//            }
-//            for( int x = 0; x < resolution; x++ )
-//            {
-//                for( int y = 0; y < resolution; y++ )
-//                {
-//                    data->at( 4 * resolution * x + 4 * y + 0 ) = (unsigned char) 255.;
-//                    data->at( 4 * resolution * x + 4 * y + 1 ) = (unsigned char) 0.;
-//                    data->at( 4 * resolution * x + 4 * y + 2 ) = (unsigned char) 0.;
-//                    data->at( 4 * resolution * x + 4 * y + 3 ) = (unsigned char) 100.;
-////                    wlog::debug( "WMTRANSFERFUNCTION2D") << "Color R: " << static_cast< float >( data->at( 4 * resolution * x + 4 * y + 0 ) ) <<
-////                    " G: " <<  static_cast< float >( data->at( 4 * resolution * x + 4 * y + 1 ) ) <<
-////                    " B: " <<  static_cast< float >( data->at( 4 * resolution * x + 4 * y + 2 ) ) <<
-////                    " A: " <<  static_cast< float >( data->at( 4 * resolution * x + 4 * y + 3 ) );
-//
-//                }
-//            }
 
-            // FIXME: get transfer function and publish the function
+            // Create data set which holds the TF
             std::shared_ptr< WValueSetBase > newValueSet( new WValueSet<unsigned char>( 1, 4, data, W_DT_UNSIGNED_CHAR ) );
 
             WGridTransformOrtho transform;
             std::shared_ptr< WGridRegular3D > newGrid( new WGridRegular3D( resolution, resolution, 1, transform ) );
             std::shared_ptr< WDataSetSingle > newData( new WDataSetSingle( newValueSet, newGrid ) );
+            // publish the TF
             m_output->updateData( newData );
         }
     }

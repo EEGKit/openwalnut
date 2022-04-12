@@ -66,7 +66,7 @@ WTransferFunction2DGUIWidget::WTransferFunction2DGUIWidget( QWidget* qparent, WT
     connect( this, SIGNAL( customContextMenuRequested( const QPoint & ) ),
             this, SLOT( showContextMenu( const QPoint & ) ) );
 
-    hist = NULL;
+    hist = nullptr;
 
     // insert background and histogram items
     scene->addItem( background = new WTransferFunction2DBackground( this ) );
@@ -117,9 +117,9 @@ void WTransferFunction2DGUIWidget::drawBackground( QPainter *painter, const QRec
     BaseClass::drawBackground( painter, rect );
 }
 
-void WTransferFunction2DGUIWidget::setHistogram( WHistogram2D newHistogram )
+void WTransferFunction2DGUIWidget::setHistogram( std::shared_ptr< WHistogram2D > newHistogram )
 {
-    hist = &newHistogram;
+    hist = newHistogram;
     this->updateTransferFunction();
     forceRedraw();
 }
@@ -142,10 +142,10 @@ void WTransferFunction2DGUIWidget::updateTransferFunction()
     {
         // this part does not trigger qt rendering updates
         // we need to set this or the hist wont show
-        if( hist != NULL )
-        {
-            //tf.setHistogram( *hist ); // get the data back because we need this for comparison
-        }
+         if( hist != nullptr )
+         {
+            tf.setHistogram( hist ); // get the data back because we need this for comparison
+         }
         std::vector< WTransferFunction2DBoxWidget* >::iterator it;
         //this is set to 300 at the moment and is equal to the size of the scene/histogram
         size_t imageWidth = 300;

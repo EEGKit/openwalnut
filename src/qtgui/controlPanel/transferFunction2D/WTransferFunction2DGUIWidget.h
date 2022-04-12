@@ -94,7 +94,7 @@ public:
      *
      * \param newHistogram is the histogram which is to be set here
      */
-    void setHistogram( WHistogram2D newHistogram );
+    void setHistogram( std::shared_ptr< WHistogram2D > newHistogram );
 
     /**
      * Removes the specificed widget
@@ -156,7 +156,7 @@ private:
     /** background that displays the histogram */
     WTransferFunction2DBackground *background;
     /** histogram which is displayed on the background */
-    WHistogram2D *hist;
+    std::shared_ptr< WHistogram2D > hist;
     /** set to true after initialization */
     bool initialized;
 };

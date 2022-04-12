@@ -63,20 +63,17 @@ bool WTransferFunction2D::operator!=( const WTransferFunction2D &rhs ) const
     //wlog::debug("WTransferFunction2D") << "op != :" << (!( ( *this ) == rhs ));
     return !( ( *this ) == rhs );
 }
-void WTransferFunction2D::setHistogram( const WHistogram2D &histogram )
+void WTransferFunction2D::setHistogram( std::shared_ptr< WHistogram2D > histogram )
 {
     //wlog::debug("WTransferFunction2D") << "setHistogram";
     if( m_histogram != histogram )
+    {
         m_histogram = histogram;
+    }
 }
 void WTransferFunction2D::setTexture( unsigned char* array, int imageWidth, int imageHeight )
 {
     osg::ref_ptr< osg::Image > newTexture = new osg::Image();
     newTexture->setImage( imageWidth, imageHeight, 1, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, array, osg::Image::USE_NEW_DELETE );
     tfTexture = newTexture;
-}
-std::ostream& operator << ( std::ostream& out, const WTransferFunction2D& tf )
-{
-    out << "";
-    return out;
 }

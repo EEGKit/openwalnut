@@ -43,7 +43,7 @@ public:
      * Default constructor of a meaningless transfer function
      */
     WTransferFunction2D() : m_opacityScale( 1.0 ),
-                            m_histogram( 0.0, 1.0, 0.0, 1.0, 1, 1 ),
+                            m_histogram( nullptr ),
                             tfTexture( nullptr )
     {
     }
@@ -68,10 +68,13 @@ public:
      */
     WTransferFunction2D& operator=( const WTransferFunction2D &rhs )
     {
-        this->m_histogram = rhs.m_histogram;
-        this->m_opacityScale = rhs.m_opacityScale;
-        this->tfTexture = rhs.tfTexture;
-        return ( *this );
+        if( m_histogram && m_opacityScale && tfTexture )
+        {
+            this->m_opacityScale = rhs.m_opacityScale;
+            this->m_histogram = rhs.m_histogram;
+            this->tfTexture = rhs.tfTexture;
+            return ( *this );
+        }
     }
 
     /**
@@ -96,7 +99,7 @@ public:
      *
      * \param histogram the histogram
      */
-    void setHistogram( const WHistogram2D &histogram );
+    void setHistogram( std::shared_ptr< WHistogram2D> histogram );
 
     /**
      * Set the transfer function texture
@@ -121,7 +124,7 @@ public:
      *
      * \returns the stored histogram
      */
-    const WHistogram2D& getHistogram( ) const
+    std::shared_ptr< WHistogram2D > getHistogram( )
     {
         return m_histogram;
     }
@@ -145,7 +148,7 @@ private:
     /**
      * Holds a reference to the histogram to be rendered
      */
-    WHistogram2D m_histogram;
+    std::shared_ptr< WHistogram2D > m_histogram;
 
     /**
      * Factor by which the output opacity is scaled
