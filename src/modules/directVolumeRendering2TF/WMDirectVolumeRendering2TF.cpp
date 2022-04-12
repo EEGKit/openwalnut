@@ -372,16 +372,18 @@ void WMDirectVolumeRendering2TF::moduleMain()
             // transfer function texture
             ////////////////////////////////////////////////////////////////////////////////////////////////////
             // Default "texture" when no transfer function is connected
+            int resX = 300;
             tfImage2D->allocateImage( 300, 300, 1, GL_RGBA, GL_UNSIGNED_BYTE );
             unsigned char *data = tfImage2D->data();
-            for( int x = 0; x < 300; x++ )
+            for( int x = 0; x < resX; x++ )
             {
-                for( int y = 0; y < 300; y++ )
+                for( int y = 0; y < resX; y++ )
                 {
-                    data[ 4 * 300 * x + 4 * y + 0 ] = 0.;
-                    data[ 4 * 300 * x + 4 * y + 1 ] = 0.;
-                    data[ 4 * 300 * x + 4 * y + 2 ] = 255.;
-                    data[ 4 * 300 * x + 4 * y + 3 ] = 128.;
+                    unsigned char r = ( unsigned char )( 0.1 * 255.0 * static_cast< float >( x ) / static_cast< float >( resX ) );
+                    data[ 4 * 300 * x + 4 * y + 0 ] = 255;
+                    data[ 4 * 300 * x + 4 * y + 1 ] = 255;
+                    data[ 4 * 300 * x + 4 * y + 2 ] = 255;
+                    data[ 4 * 300 * x + 4 * y + 3 ] = r;
                 }
             }
 
@@ -491,18 +493,6 @@ void WMDirectVolumeRendering2TF::moduleMain()
                     tfImage2D->setInternalTextureFormat( GL_RGBA );
                     unsigned char* data = reinterpret_cast< unsigned char* >( tfImage2D->data() );
                     std::copy( cvalueSet->rawData(), &cvalueSet->rawData()[ tfsize ], data );
-
-                    // Just a test if the data is going to be rendered red half transparent
-//                    for( int row = 0; row < tfImage2D->s(); ++row )
-//                    {
-//                        for( int col = 0; col < tfImage2D->t(); ++col )
-//                        {
-//                            tfImage2D->data( col, row )[ 0 ] = 255.;
-//                            tfImage2D->data( col, row )[ 1 ] = 0.;
-//                            tfImage2D->data( col, row )[ 2 ] = 0.;
-//                            tfImage2D->data( col, row )[ 3 ] = 128.;
-//                        }
-//                    }
 
                     // force OpenGl to use the new texture
                     tfTexture2D->dirtyTextureObject();
