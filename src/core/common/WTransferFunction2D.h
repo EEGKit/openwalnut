@@ -68,13 +68,10 @@ public:
      */
     WTransferFunction2D& operator=( const WTransferFunction2D &rhs )
     {
-        if( m_histogram && m_opacityScale && tfTexture )
-        {
             this->m_opacityScale = rhs.m_opacityScale;
-            this->m_histogram = rhs.m_histogram;
+            setHistogram( rhs.m_histogram );
             this->tfTexture = rhs.tfTexture;
             return ( *this );
-        }
     }
 
     /**
@@ -141,9 +138,11 @@ public:
 
 private:
     /**
-     * Holds a reference to transfer function texture
+     * Factor by which the output opacity is scaled
+     * to allow for easier specification of very small
+     * opacity values.
      */
-    osg::ref_ptr< osg::Image > tfTexture;
+    double m_opacityScale;
 
     /**
      * Holds a reference to the histogram to be rendered
@@ -151,25 +150,9 @@ private:
     std::shared_ptr< WHistogram2D > m_histogram;
 
     /**
-     * Factor by which the output opacity is scaled
-     * to allow for easier specification of very small
-     * opacity values.
-     */
-    double m_opacityScale;
-
-
-    friend std::ostream& operator << ( std::ostream& out, const WTransferFunction2D& tf );
+    * Holds a reference to transfer function texture
+    */
+    osg::ref_ptr< osg::Image > tfTexture;
 };
-
-/**
- * Default output operator. Currently stores values the same way as it is done in the properties.
- * This code should only be used for debugging and you should not rely on the interface.
- *
- * \param tf The transfer function to output
- * \param out The stream to which we write
- *
- * \returns reference to out
- */
-std::ostream& operator << ( std::ostream& out, const WTransferFunction2D& tf );
 
 #endif  // WTRANSFERFUNCTION2D_H
