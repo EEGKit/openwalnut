@@ -57,6 +57,9 @@ WPropertyTransferFunction2DWidget::WPropertyTransferFunction2DWidget( WPropTrans
 
     update();
 
+    //renders the initial TF
+    guiUpdate( lastTransferFunction );
+
     //connect the modification signal of the edit and slider with our callback
     //connect( &m_slider, SIGNAL( valueChanged( int ) ), this, SLOT( sliderChanged( int ) ) );
     //connect( &m_edit, SIGNAL( editingFinished() ), this, SLOT( editChanged() ) );
