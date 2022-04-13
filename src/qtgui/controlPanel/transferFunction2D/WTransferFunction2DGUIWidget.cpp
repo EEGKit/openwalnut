@@ -83,9 +83,8 @@ WTransferFunction2DGUIWidget::~WTransferFunction2DGUIWidget()
 
 void WTransferFunction2DGUIWidget::setMyBackground()
 {
-    if( background && hist != NULL )
+    if( background && hist != nullptr )
     {
-        wlog::debug( "WTransferFunction2DWidget" ) << "::setMyBackground()";
         unsigned char * data = hist->getRawTexture();
 
         size_t imageWidth = hist->getBucketsX();
@@ -106,11 +105,6 @@ void WTransferFunction2DGUIWidget::setMyBackground()
     }
 }
 
-void WTransferFunction2DGUIWidget::updateTexture()
-{
-    wlog::info( "Texture update " );
-    updateTransferFunction();
-}
 
 void WTransferFunction2DGUIWidget::drawBackground( QPainter *painter, const QRectF &rect )
 {
@@ -141,11 +135,10 @@ void WTransferFunction2DGUIWidget::updateTransferFunction()
     WTransferFunction2D tf;
     {
         // this part does not trigger qt rendering updates
-        // we need to set this or the hist wont show
-         if( hist != nullptr )
-         {
+        if( hist != nullptr )
+        {
             tf.setHistogram( hist ); // get the data back because we need this for comparison
-         }
+        }
         std::vector< WTransferFunction2DBoxWidget* >::iterator it;
         //this is set to 300 at the moment and is equal to the size of the scene/histogram
         size_t imageWidth = 300;
@@ -153,7 +146,7 @@ void WTransferFunction2DGUIWidget::updateTransferFunction()
 
         unsigned char* data = new unsigned char[ imageWidth * imageHeight * 4 ]();
 
-        // Iterate over every widget inside our window and call create the 2D Texture
+        // Iterate over every widget inside our window and call sample the color and opacity in the texture
         for( it = m_widgets.begin(); it != m_widgets.end(); it++ )
         {
             ( *it )->sampleWidgetToImage( data, imageWidth, imageHeight );
@@ -178,6 +171,7 @@ void WTransferFunction2DGUIWidget::cleanTransferFunction()
     std::vector< WTransferFunction2DBoxWidget* >::iterator it;
     for( it = m_widgets.begin(); it != m_widgets.end(); it++ )
     {
+        scene->removeItem( *it );
         delete( *it );
     }
     m_widgets.clear();
@@ -206,5 +200,5 @@ void WTransferFunction2DGUIWidget::removeWidget( WTransferFunction2DBoxWidget *w
     m_widgets.erase( it );
     scene->removeItem( widget );
     delete( widget );
-    updateTexture();
+    this->updateTransferFunction();
 }

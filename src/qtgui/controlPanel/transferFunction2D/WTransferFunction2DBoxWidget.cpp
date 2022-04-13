@@ -43,7 +43,6 @@ WTransferFunction2DBoxWidget::WTransferFunction2DBoxWidget( WTransferFunction2DG
     setFlag( ItemIsSelectable );
     setFlag( ItemIsFocusable );
 
-    m_pressed = false;
     m_width = 50;
     m_height = 50;
     m_box = QRectF( 0, 0, m_width, m_height );
@@ -103,9 +102,6 @@ QVariant WTransferFunction2DBoxWidget::itemChange( GraphicsItemChange change, co
         rect.setRight( rect.right() - m_box.width() - 1 );
         rect.setBottom( rect.bottom() - m_box.height() - 1 );
 
-        //WAssert( rect.width() >= 0, "Ensure bounding rect not getting a negative width!" );
-        //WAssert( rect.height() >= 0, "Ensure bounding rect not getting a negative height!" );
-
         if( !rect.contains( newPos ) )
         {
             // Keep the item inside the scene
@@ -132,55 +128,17 @@ void WTransferFunction2DBoxWidget::sampleWidgetToImage( unsigned char * array, s
     yMin = pos().y();
     xMax = pos().x() + m_box.width();
     yMax = pos().y() + m_box.height();
-//
-    wlog::debug( "" ) << " xMin: " << xMin << " xMax: " << xMax << " | yMin: " << yMin << " yMax: " << yMax;
+
     for( size_t x = xMin; x <= xMax; ++x )
     {
         for( size_t y = yMin; y <= yMax; ++y )
         {
-            array[ 4 * imageWidth * x + 4 * y + 0 ] = static_cast< unsigned char >( m_color.red() );
-            array[ 4 * imageWidth * x + 4 * y + 1 ] = static_cast< unsigned char >( m_color.green() );
-            array[ 4 * imageWidth * x + 4 * y + 2 ] = static_cast< unsigned char >( m_color.blue() );
-            array[ 4 * imageWidth * x + 4 * y + 3 ] = static_cast< unsigned char >( m_color.alpha() );
-//            wlog::info( "COLOR") << "| R: " << m_color.red()
-//                                        << " G: " << m_color.green()
-//                                        << " B: " << m_color.blue()
-//                                        << " A: " << m_color.alpha();
+            array[4 * imageWidth * x + 4 * y + 0] = static_cast< unsigned char >( m_color.red() );
+            array[4 * imageWidth * x + 4 * y + 1] = static_cast< unsigned char >( m_color.green() );
+            array[4 * imageWidth * x + 4 * y + 2] = static_cast< unsigned char >( m_color.blue() );
+            array[4 * imageWidth * x + 4 * y + 3] = static_cast< unsigned char >( m_color.alpha() );
         }
     }
-//    for( size_t x = 0; x < imageWidth; ++x )
-//    {
-//        for( size_t y = 0; y < imageHeight; ++y )
-//        {
-//            array[ 4 * imageWidth * x + 4 * y + 0 ] = static_cast< unsigned char >( m_color.red() );
-//            array[ 4 * imageWidth * x + 4 * y + 1 ] = static_cast< unsigned char >( m_color.green() );
-//            array[ 4 * imageWidth * x + 4 * y + 2 ] = static_cast< unsigned char >( m_color.blue() );
-//            array[ 4 * imageWidth * x + 4 * y + 3 ] = static_cast< unsigned char >( m_color.alpha() );
-////            wlog::info( "COLOR") << "| R: " << m_color.red()
-////                                        << " G: " << m_color.green()
-////                                        << " B: " << m_color.blue()
-////                                        << " A: " << m_color.alpha();
-//
-//        }
-//    }
-
-//    for( size_t x = 0; x < imageWidth; ++x )
-//    {
-//        for( size_t y = 0; y < imageHeight; ++y )
-//        {
-//            std::cout << " |" <<
-//            " R: " << static_cast< float >( array[ 4 * imageWidth * x + 4 * y + 0 ] ) <<
-//            " G: " << static_cast< float >( array[ 4 * imageWidth * x + 4 * y + 1 ] ) <<
-//            " B: " << static_cast< float >( array[ 4 * imageWidth * x + 4 * y + 2 ] ) <<
-//            " A: " << static_cast< float >( array[ 4 * imageWidth * x + 4 * y + 3 ] ) <<
-//            std::endl;
-//            if( x + 1 % imageWidth == 0 )
-//            {
-//                std::cout << std::endl;
-//            }
-//
-//        }
-//    }
 }
 
 void WTransferFunction2DBoxWidget::setResizeHandle( ResizePointsRect handle, QPointF position )
@@ -209,27 +167,27 @@ void WTransferFunction2DBoxWidget::setResizeHandle( ResizePointsRect handle, QPo
             break;
     }
     update();
-    m_parent->updateTexture();
+    m_parent->updateTransferFunction();
 }
 
 void WTransferFunction2DBoxWidget::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {
     update();
-    m_parent->updateTexture();
+    m_parent->updateTransferFunction();
     QGraphicsItem::mousePressEvent( event );
 }
 
 void WTransferFunction2DBoxWidget::mouseMoveEvent( QGraphicsSceneMouseEvent *event )
 {
     update();
-    m_parent->updateTexture();
+    m_parent->updateTransferFunction();
     QGraphicsItem::mouseMoveEvent( event );
 }
 
 void WTransferFunction2DBoxWidget::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
 {
     update();
-    m_parent->updateTexture();
+    m_parent->updateTransferFunction();
     QGraphicsItem::mouseReleaseEvent( event );
 }
 
@@ -246,12 +204,13 @@ void WTransferFunction2DBoxWidget::colorSelected( const QColor &newcolor )
     m_color = newcolor;
     if( m_parent )
     {
-        m_parent->updateTexture();
+        m_parent->updateTransferFunction();
     }
 }
 
 void WTransferFunction2DBoxWidget::showColorPicker()
 {
+    // Create a color dialog to create an RGBA quadrupel
     QColorDialog *dialog = new QColorDialog( );
     dialog->setCurrentColor( m_color );
     dialog->setOption( QColorDialog::NoButtons );

@@ -127,10 +127,10 @@ public:
     }
 
     /**
-     * sample/render the transfer function linearly between min and max in an RGBA texture.
+     * sample/render the transfer function into the given container as a set of RGBA quadruples.
      * \param array pointer to an allocated data structure
-     * \param width is the number of RGBA samples.
-     * \param height is the number of RGBA samples.
+     * \param width is the number of RGBA samples in X direction.
+     * \param height is the number of RGBA samples in Y direction.
      * \post array contains the sampled data
      * \pre array is allocated and has space for width * height elements
      */

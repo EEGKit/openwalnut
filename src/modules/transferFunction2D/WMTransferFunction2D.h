@@ -125,12 +125,17 @@ nnectors must not be handled by the module.
     std::shared_ptr< WCondition > m_propCondition;
 
     /**
-     * Resolution of the transfer function.
+     * Resolution of the transfer function in x.
      */
-    WPropInt m_resolution;
+    WPropInt m_resolutionX;
 
     /**
-     * Histogram bin size
+     * Resolution of the transfer function in y.
+     */
+    WPropInt m_resolutionY;
+
+    /**
+     * scaling factor for the opacity
      */
     WPropDouble m_opacityScale;
 

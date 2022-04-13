@@ -44,7 +44,7 @@ public:
      * Constructor
      *
      * @param parent the parent object/widget
-     * @param position the coordinate where the color selection point should be placed within the parent
+     * @param position the coordinate where the control point should be placed
      * @param handleLocation the location of the handle e.g. top left
      */
     explicit WTransferFunction2DControlPoint( BaseClass *parent, QPointF position, ResizePointsRect handleLocation );
@@ -57,15 +57,15 @@ public:
     /**
      * Defines the bounding rectangle of this item and returns it
      *
-     * @return
+     * @return the bounding rect
      */
     QRectF boundingRect() const override;
     /**
      * Method for painting which must be overriden by this subclass
      *
-     * @param painter
-     * @param option
-     * @param widget
+     * @param painter the painting device
+     * @param option style options for the painter
+     * @param widget optional: a pointer to the widget where to paint on
      */
     void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr ) override;
 
@@ -84,19 +84,19 @@ protected:
      *  @param change is the parameter of the item that is changing
      *  @param value is the new value
      *
-     *  @return
+     *  @return a Qt datatype
      */
     QVariant itemChange( GraphicsItemChange change, const QVariant &value ) override;
 
     /**
-     * Fires event, when mouse button is pressed
+     * Fires event, when mouse button is moved
      *
      * @param event
      */
     void mouseMoveEvent( QGraphicsSceneMouseEvent *event ) override;
 
     /**
-     * Fires event, when mouse button is pressed
+     * Fires event, when mouse button is released
      *
      * @param event
      */
@@ -110,14 +110,14 @@ protected:
     void mousePressEvent( QGraphicsSceneMouseEvent *event ) override;
 
     /**
-     * Fires event, when mouse is moved
+     * Fires event, when mouse enters hover area
      *
      * @param event
      */
     void hoverEnterEvent( QGraphicsSceneHoverEvent *event ) override;
 
     /**
-     * Fires event, when mouse button is released
+     * Fires event, when mouse leaves hover area
      *
      * @param event
      */

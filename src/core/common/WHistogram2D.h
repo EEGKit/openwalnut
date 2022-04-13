@@ -149,7 +149,7 @@ public:
     WGETexture2D::RPtr getTexture();
 
     /**
-     * Copy-convert this into a texture.
+     * Copy-convert this into a raw texture as set of RGBA samples.
      *
      * \return \c return raw texture of the histogram
      */

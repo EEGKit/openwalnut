@@ -63,7 +63,7 @@ public:
 
     /**
      * Set the background pixmap that will be displayed.
-     * In our case, this is the transfer function
+     * In our case, this is the 2d histogram
      *
      * \param pixmap the pixmap to display
      */

@@ -102,20 +102,22 @@ public:
      * \param widget widget which is to be deleted
      */
     void removeWidget( WTransferFunction2DBoxWidget *widget );
-public slots:
+
     /**
-    * Notification that the data changed, i.e., a control point has been moved or a color changed.
+    * Updates the transfer function.
     */
-    void updateTexture();
+    void updateTransferFunction();
 private slots:
     /**
     * Adds a box widget to the scene
     */
     void addBoxWidget();
+
     /**
     * Removes all transfer function widgets from the scene
     */
     void cleanTransferFunction();
+
     /**
     * Opens a context menu
      *
@@ -132,27 +134,17 @@ protected:
     virtual void drawBackground( QPainter *painter, const QRectF &rect );
 
     /**
-     * Updates the transfer function.
-     */
-    void updateTransferFunction();
-
-    /**
      * Internal helper function to update the QGraphicsPixmapItem that holds a representation
-     * of the current color map and displays it as a background of the widget.
-     * This function samples the texture into a QPixmap and updates the QGraphicsPixmapItem.
+     * of the current histogram and displays it as a background of the widget.
      */
     void setMyBackground();
-
 private:
     /** the class that receives our update notifications */
     WTransferFunction2DGuiNotificationClass *parent;
-
-    /** List of widgets */
+    /** List of manipulation widgets */
     std::vector< WTransferFunction2DBoxWidget* > m_widgets;
-
-    /** our scene */
+    /** The scene that holds the GraphicItems */
     QGraphicsScene *scene;
-
     /** background that displays the histogram */
     WTransferFunction2DBackground *background;
     /** histogram which is displayed on the background */

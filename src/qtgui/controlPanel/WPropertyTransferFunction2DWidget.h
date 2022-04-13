@@ -37,7 +37,7 @@
 #include "core/common/WTransferFunction2D.h"
 
 /**
- * Implements a property widget for WPropDouble.
+ * Implements a property widget for WPropTransferFunction2D.
  */
 class WPropertyTransferFunction2DWidget: public WPropertyWidget, public WTransferFunction2DGuiNotificationClass
 {
@@ -70,40 +70,14 @@ protected:
     virtual void update();
 
     /**
-     * The integer property represented by this widget.
+     * The 2d transfer function property represented by this widget.
      */
-    //WPropDouble m_doubleProperty;
     WPropTransferFunction2D m_transferFunctionProperty;
-
-    /**
-     * The slider allowing modification of the integer value
-     */
-    //QSlider m_slider;
-
-    /**
-     * The edit field showing the value of the slider
-     */
-    //QLineEdit m_edit;
 
     /**
      * Layout used to position the label and the checkbox
      */
     QHBoxLayout m_layout;
-
-    /**
-     * The current minimum value.
-     */
-    double m_min;
-
-    /**
-     * The current maximum value.
-     */
-    double m_max;
-
-    /**
-     * Used to show the property as text.
-     */
-    //QLabel m_asText;
 
     /**
      * The layout used for the pure output (information properties)

@@ -30,14 +30,7 @@
 class WTransferFunction2DGUIWidget;
 
 /**
- * The scene for our visualization of the transfer function.
- * It differs from the QT implementation because it overloads
- * the Drag&drop methods to allow users to drop colors onto
- * the graph, which adds new nodes in the color representation.
- *
- * This has to be done here according to the QT documentation
- * as we cannot drop something in a location where no object
- * exists.
+ * The scene for our visualization of the transfer function editor.
  */
 class WTransferFunction2DScene : public QGraphicsScene
 {
