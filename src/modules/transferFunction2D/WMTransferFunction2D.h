@@ -127,7 +127,7 @@ nnectors must not be handled by the module.
     /**
      * Resolution of the transfer function in x.
      */
-    WPropInt m_resolutionX;
+    WPropInt m_resolution;
 
     /**
      * Resolution of the transfer function in y.

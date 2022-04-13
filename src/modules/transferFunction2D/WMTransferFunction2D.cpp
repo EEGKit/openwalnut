@@ -118,23 +118,14 @@ void WMTransferFunction2D::properties()
     m_opacityScale->setMin( 0 );
     m_opacityScale->setMax( 1 );
 
-    m_resolutionX = m_properties->addProperty( "No. samples x",
-                                               "Number of samples in the transfer function in x direction. "
+    m_resolution = m_properties->addProperty( "No. samples ",
+                                               "Number of samples in the transfer function. "
                                                "Some modules connected to the output may have additional restrictions."
                                                " Volume rendering, e.g., requires a power of two "
                                                "samples at the moment."
                                                , 128, m_propCondition );
-    m_resolutionX->setMin( 4 );
-    m_resolutionX->setMax( 1024 );
-
-    m_resolutionY = m_properties->addProperty( "No. samples y",
-                                               "Number of samples in the transfer function in y direction. "
-                                               "Some modules connected to the output may have additional restrictions."
-                                               " Volume rendering, e.g., requires a power of two "
-                                               "samples at the moment."
-                                               , 128, m_propCondition );
-    m_resolutionY->setMin( 4 );
-    m_resolutionY->setMax( 1024 );
+    m_resolution->setMin( 4 );
+    m_resolution->setMax( 1024 );
     WModule::properties();
 }
 
@@ -201,13 +192,14 @@ void WMTransferFunction2D::moduleMain()
             // either way, we changed the data and want to update the TF
             m_transferFunction->set( tf );
         }
-        if( tfChanged || m_opacityScale->changed() )
+        if( tfChanged || m_opacityScale->changed()
+            || m_resolution->changed() )
         {
             wlog::debug( "WMTransferFunction2D" ) << "tf changed";
             // debugLog() << "resampling transfer function";
-            //unsigned int resolution = m_resolution->get( true );
+            unsigned int resolution = m_resolution->get( true );
             //TODO(Kai): resolution for x & y
-            unsigned int resolution = 128;
+            //unsigned int resolution = 128;
             // debugLog() << "new resolution: " << resolution;
             std::shared_ptr< std::vector<unsigned char> > data( new std::vector<unsigned char>( resolution * resolution * 4 ) );
             tf.setOpacityScale( m_opacityScale->get( true ) );
