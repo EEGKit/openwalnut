@@ -118,13 +118,23 @@ void WMTransferFunction2D::properties()
     m_opacityScale->setMin( 0 );
     m_opacityScale->setMax( 1 );
 
-    m_resolution = m_properties->addProperty( "Number of Samples",
-            "Number of samples in the transfer function. "
-            "Some modules connected to the output may have additional restrictions. Volume rendering, e.g., requires a power of two "
-            "samples at the moment."
-            , 128, m_propCondition );
-    m_resolution->setMin( 4 );
-    m_resolution->setMax( 1024 );
+    m_resolutionX = m_properties->addProperty( "No. samples x",
+                                               "Number of samples in the transfer function in x direction. "
+                                               "Some modules connected to the output may have additional restrictions."
+                                               " Volume rendering, e.g., requires a power of two "
+                                               "samples at the moment."
+                                               , 128, m_propCondition );
+    m_resolutionX->setMin( 4 );
+    m_resolutionX->setMax( 1024 );
+
+    m_resolutionY = m_properties->addProperty( "No. samples y",
+                                               "Number of samples in the transfer function in y direction. "
+                                               "Some modules connected to the output may have additional restrictions."
+                                               " Volume rendering, e.g., requires a power of two "
+                                               "samples at the moment."
+                                               , 128, m_propCondition );
+    m_resolutionY->setMin( 4 );
+    m_resolutionY->setMax( 1024 );
     WModule::properties();
 }
 
