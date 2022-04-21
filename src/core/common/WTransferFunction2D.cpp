@@ -33,6 +33,7 @@
 void WTransferFunction2D::sample2DTransferFunction( unsigned char*array, int width, int height ) const
 {
     tfTexture->scaleImage( width, height, 1 );
+    tfTexture->flipHorizontal();
     unsigned char *data = tfTexture->data();
     // Copy the texture to the WMTransferFunction2D Module
     for( int x = 0; x < width; x++ )

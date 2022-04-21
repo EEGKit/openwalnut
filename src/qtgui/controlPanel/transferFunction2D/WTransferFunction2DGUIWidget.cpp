@@ -91,10 +91,11 @@ void WTransferFunction2DGUIWidget::setMyBackground()
         size_t imageHeight = hist->getBucketsY();
 
         QImage* image = new QImage( data, imageWidth, imageHeight, QImage::Format_Grayscale8 );
+        QImage rotatedImage = image->transformed( QMatrix().rotate( 270.0 ) );
         QPixmap pixmap;
 
 #if( QT_VERSION >= 0x040700 )
-        pixmap.convertFromImage( *image );
+        pixmap.convertFromImage( rotatedImage );
     #else
         // older versions have convertFromImage in Qt3Support
         // to avoid linking to that one, we use the slower version
