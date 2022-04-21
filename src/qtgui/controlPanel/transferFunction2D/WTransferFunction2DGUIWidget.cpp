@@ -90,7 +90,7 @@ void WTransferFunction2DGUIWidget::setMyBackground()
         size_t imageWidth = hist->getBucketsX();
         size_t imageHeight = hist->getBucketsY();
 
-        QImage* image = new QImage( data, imageWidth, imageHeight, QImage::Format_RGBA8888 );
+        QImage* image = new QImage( data, imageWidth, imageHeight, QImage::Format_Grayscale8 );
         QPixmap pixmap;
 
 #if( QT_VERSION >= 0x040700 )
