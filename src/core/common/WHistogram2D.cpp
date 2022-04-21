@@ -200,37 +200,28 @@ unsigned char* WHistogram2D::getRawTexture()
 {
     size_t imageWidth = m_buckets[ 0 ];
     size_t imageHeight = m_buckets[ 1 ];
-    wlog::debug( "WHistogram2D" ) << "Texturesize width * height: " << m_buckets[0] << " * " << m_buckets[1];
-    double divisor = 0.0; // The divisor we use to calculate the brightness of an histogram entry
 
-    // We copy the histogram data and remove all zero entries
-    std::vector< int > v1( m_bins.data(), m_bins.data() + m_bins.rows() * m_bins.cols() );
-    // erase-remove idiom
-    v1.erase( std::remove( v1.begin(), v1.end(), 0.0 ), v1.end() );
-    std::sort( v1.begin(), v1.end() );
-    // then we calculate the 90 quantile and use the value there as our divisor for the calculation of the brightness
-    double p = 0.9;
-    double q = v1[ v1.size() * p ];
-    divisor = q;
+    double maxCount = 0;
+    for( size_t j = 0; j < imageHeight; ++j ) // get max bin for scaling
+    {
+        for( size_t i = 0; i < imageWidth; ++i )
+        {
+            if( m_bins( i, j ) > maxCount )
+            {
+                maxCount = static_cast< double >( m_bins( i, j ) );
+            }
+        }
+    }
 
-    unsigned char * data = new unsigned char[ 4 * imageWidth * imageHeight ];
+    unsigned char * data = new unsigned char[ imageWidth * imageHeight ]();
     for( size_t i = 0; i < imageWidth; ++i )
     {
         for( size_t j = 0; j < imageHeight; ++j )
         {
-            // wlog::debug("2DHIST - Values") << 10 * 255 * static_cast< float >( (m_bins(i,j) / maxCount) );
-            // using 8 bit grayscale yields a different outcome than usind RGBA8888
-            // data[ imageWidth * i + j + 0 ] = ( unsigned char )( 255 * m_bins( i, j ) / maxCount ) ;
-            data[ 4 * imageWidth * i + 4 * j + 0 ] = static_cast< unsigned char >( 255. * std::clamp( m_bins( i, j ) / divisor, 0., 1. ) );
-            data[ 4 * imageWidth * i + 4 * j + 1 ] = static_cast< unsigned char >( 255. * std::clamp( m_bins( i, j ) / divisor , 0. , 1. ) );
-            data[ 4 * imageWidth * i + 4 * j + 2 ] = static_cast< unsigned char >( 255. * std::clamp( m_bins( i, j ) / divisor , 0. , 1. ) );
-            data[ 4 * imageWidth * i + 4 * j + 3 ] = static_cast< unsigned char >( 255. );
+            // logarithmic bin count. To get linear scale, remove the log()/log()
+            data[ i + j * imageWidth ] = static_cast< unsigned char >( 255. * log( m_bins( i, j ) ) / log( maxCount ) );
         }
     }
-//    for( int k = 0; k < imageHeight * imageWidth; k++)
-//    {
-//        wlog::debug( "Hist2D" ) << static_cast< float >( data[ k ] );
-//    }
     return data;
 }
 

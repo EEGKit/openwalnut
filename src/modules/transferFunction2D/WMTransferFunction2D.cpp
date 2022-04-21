@@ -177,8 +177,8 @@ void WMTransferFunction2D::moduleMain()
                                                   values0->getMaximumValue(),
                                                   values1->getMinimumValue(),
                                                   values1->getMaximumValue(),
-                                                  300,
-                                                  300 );
+                                                  128,
+                                                  128 );
 
                 for( size_t i = 0; i < values0->size(); ++i )
                 {
