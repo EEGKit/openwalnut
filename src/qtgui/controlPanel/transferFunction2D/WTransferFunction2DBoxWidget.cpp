@@ -129,9 +129,9 @@ void WTransferFunction2DBoxWidget::sampleWidgetToImage( unsigned char * array, s
     xMax = pos().x() + m_box.width();
     yMax = pos().y() + m_box.height();
 
-    for( size_t x = xMin; x <= xMax; ++x )
+    for( size_t x = xMin; x < xMax; ++x )
     {
-        for( size_t y = yMin; y <= yMax; ++y )
+        for( size_t y = yMin; y < yMax; ++y )
         {
             array[4 * imageWidth * x + 4 * y + 0] = static_cast< unsigned char >( m_color.red() );
             array[4 * imageWidth * x + 4 * y + 1] = static_cast< unsigned char >( m_color.green() );
