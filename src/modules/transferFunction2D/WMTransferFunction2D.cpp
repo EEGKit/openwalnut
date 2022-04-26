@@ -157,7 +157,7 @@ void WMTransferFunction2D::moduleMain()
                 std::shared_ptr< WValueSetBase > values1 = dataSet1->getValueSet();
 
                 // At the moment we only support equal sized data sets
-                // TODO: bucketsize based on user value
+                // TODO(Kai?): bucketsize based on user value
                 auto histogram = std::make_shared< WHistogram2D >( values0->getMinimumValue(),
                                                   values0->getMaximumValue(),
                                                   values1->getMinimumValue(),
