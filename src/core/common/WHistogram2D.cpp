@@ -213,13 +213,18 @@ unsigned char* WHistogram2D::getRawTexture()
         }
     }
 
-    unsigned char * data = new unsigned char[ imageWidth * imageHeight ]();
+    unsigned char * data = new unsigned char[ imageWidth * imageHeight * 4 ]();
     for( size_t i = 0; i < imageWidth; ++i )
     {
         for( size_t j = 0; j < imageHeight; ++j )
         {
             // logarithmic bin count. To get linear scale, remove the log()/log()
-            data[ i + j * imageWidth ] = static_cast< unsigned char >( 255. * log( m_bins( i, j ) ) / log( maxCount ) );
+            // FIXME: use 8-bit grayscale instead of RGBA
+            //  ( outcome is rotated when using QImage::Format::Indexed8, thats why we use RGBA here )
+            data[ 4 * i  * imageWidth + 4 * j + 0 ] = static_cast< unsigned char >( 255. * log( m_bins( i, j ) ) / log( maxCount ) );
+            data[ 4 * i  * imageWidth + 4 * j + 1 ] = static_cast< unsigned char >( 255. * log( m_bins( i, j ) ) / log( maxCount ) );
+            data[ 4 * i  * imageWidth + 4 * j + 2 ] = static_cast< unsigned char >( 255. * log( m_bins( i, j ) ) / log( maxCount ) );
+            data[ 4 * i  * imageWidth + 4 * j + 3 ] = static_cast< unsigned char >( 255. );
         }
     }
     return data;
