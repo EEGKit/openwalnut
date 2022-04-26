@@ -41,7 +41,7 @@ WTransferFunction2DGUIWidget::WTransferFunction2DGUIWidget( QWidget* qparent, WT
         BaseClass( qparent ),
         parent( parent ),
         background( nullptr ),
-        hist(nullptr),
+        hist( nullptr ),
         initialized( false )
 {
     // std::cout << "new widget" << std::endl;
@@ -174,6 +174,7 @@ void WTransferFunction2DGUIWidget::insertBoxWidgetNormalized( const QPointF &pos
                                                               const double height = .167,
                                                               const QColor *const color = new QColor( 255., 0., 0., 10. ) )
 {
+    // Scene width and height are 300.
     insertBoxWidget( QPointF( pos.x()*300., pos.y()*300. ), width*300., height*300., color );
 }
 

@@ -65,7 +65,6 @@ WTransferFunction2DBoxWidget::WTransferFunction2DBoxWidget( WTransferFunction2DG
              this, SLOT( setResizeHandle( ResizePointsRect, QPointF ) ) );
     connect( m_controlPoints[3], SIGNAL( resizeHandleChanged( ResizePointsRect, QPointF ) ),
              this, SLOT( setResizeHandle( ResizePointsRect, QPointF ) ) );
-
 }
 WTransferFunction2DBoxWidget::~WTransferFunction2DBoxWidget()
 {

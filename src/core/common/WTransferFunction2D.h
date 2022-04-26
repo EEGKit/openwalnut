@@ -185,7 +185,10 @@ public:
     /**
      * Insert a new box widget
      *
-     * \param iso the new iso value
+     * \param isoX the new iso value
+     * \param isoY the new iso value
+     * \param width the new iso value
+     * \param height the new iso value
      * \param color the new color at the given iso value
      */
     void addBoxWidget( double isoX, double isoY, double width, double height, const WColor& color );
