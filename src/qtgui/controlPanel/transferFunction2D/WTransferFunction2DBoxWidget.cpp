@@ -29,32 +29,33 @@
 #include "QBrush"
 #include "QPainter"
 #include "QColorDialog"
-#include "QGraphicsSceneMouseEvent"
 #include "QGraphicsScene"
 
 #include "WTransferFunction2DBoxWidget.h"
 
 #include "core/common/WLogger.h"
 
-WTransferFunction2DBoxWidget::WTransferFunction2DBoxWidget( WTransferFunction2DGUIWidget *parent )
+WTransferFunction2DBoxWidget::WTransferFunction2DBoxWidget( WTransferFunction2DGUIWidget *parent, double width, double height, QColor color )
 {
     setFlag( ItemIsMovable );
     setFlag( ItemSendsScenePositionChanges );
     setFlag( ItemIsSelectable );
     setFlag( ItemIsFocusable );
 
-    m_width = 50;
-    m_height = 50;
+    setZValue( 3 );
+    m_width = width;
+    m_height = height;
+    // Note: this is the local coordinate system of the box widget, not of the scene
     m_box = QRectF( 0, 0, m_width, m_height );
     m_parent = parent;
-    m_color = QColor( 255, 0, 0 , 10 );
+    m_color = color;
     m_resizePoints = NONE;
 
     // We always start with top right and go clock wise
-    m_controlPoints.push_back( new WTransferFunction2DControlPoint( this, boundingRect().topRight(), TOPRIGHT ) );
-    m_controlPoints.push_back( new WTransferFunction2DControlPoint( this, boundingRect().bottomRight(), BOTTOMRIGHT ) );
-    m_controlPoints.push_back( new WTransferFunction2DControlPoint( this, boundingRect().bottomLeft(), BOTTOMLEFT ) );
-    m_controlPoints.push_back( new WTransferFunction2DControlPoint( this, boundingRect().topLeft(), TOPLEFT )  );
+    m_controlPoints.push_back( new WTransferFunction2DControlPoint( this, m_box.topRight(), TOPRIGHT ) );
+    m_controlPoints.push_back( new WTransferFunction2DControlPoint( this, m_box.bottomRight(), BOTTOMRIGHT ) );
+    m_controlPoints.push_back( new WTransferFunction2DControlPoint( this, m_box.bottomLeft(), BOTTOMLEFT ) );
+    m_controlPoints.push_back( new WTransferFunction2DControlPoint( this, m_box.topLeft(), TOPLEFT )  );
 
     connect( m_controlPoints[0], SIGNAL( resizeHandleChanged( ResizePointsRect, QPointF ) ),
              this, SLOT( setResizeHandle( ResizePointsRect, QPointF ) ) );
@@ -64,6 +65,7 @@ WTransferFunction2DBoxWidget::WTransferFunction2DBoxWidget( WTransferFunction2DG
              this, SLOT( setResizeHandle( ResizePointsRect, QPointF ) ) );
     connect( m_controlPoints[3], SIGNAL( resizeHandleChanged( ResizePointsRect, QPointF ) ),
              this, SLOT( setResizeHandle( ResizePointsRect, QPointF ) ) );
+
 }
 WTransferFunction2DBoxWidget::~WTransferFunction2DBoxWidget()
 {
@@ -82,8 +84,8 @@ void WTransferFunction2DBoxWidget::setControlPointsToCorner()
     m_controlPoints[2]->setPos( m_box.bottomLeft() ); // bottom left
     m_controlPoints[3]->setPos( m_box.topLeft() ); // top left
     // We also need to update the m_width and m_height property of the box
-    m_width = m_box.right() - m_box.left();
-    m_height = m_box.top() - m_box.bottom();
+    m_width = ( m_box.right() - m_box.left() );
+    m_height = ( m_box.bottom() - m_box.top() );
     update();
 }
 
@@ -113,32 +115,19 @@ QVariant WTransferFunction2DBoxWidget::itemChange( GraphicsItemChange change, co
     return QGraphicsItem::itemChange( change, value );
 }
 
+void WTransferFunction2DBoxWidget::setColor( QColor color )
+{
+    m_color = color;
+    this->update();
+    m_parent->dataChanged();
+}
+
 void WTransferFunction2DBoxWidget::paint( QPainter *painter, const QStyleOptionGraphicsItem*, QWidget* )
 {
     QBrush brush( m_color );
 
     painter->fillRect( m_box, brush );
     painter->drawRect( m_box );
-}
-
-void WTransferFunction2DBoxWidget::sampleWidgetToImage( unsigned char * array, size_t imageWidth, size_t imageHeight )
-{
-    size_t xMin, xMax, yMin, yMax;
-    xMin = pos().x();
-    yMin = pos().y();
-    xMax = pos().x() + m_box.width();
-    yMax = pos().y() + m_box.height();
-
-    for( size_t x = xMin; x < xMax; ++x )
-    {
-        for( size_t y = yMin; y < yMax; ++y )
-        {
-            array[4 * imageWidth * x + 4 * y + 0] = static_cast< unsigned char >( m_color.red() );
-            array[4 * imageWidth * x + 4 * y + 1] = static_cast< unsigned char >( m_color.green() );
-            array[4 * imageWidth * x + 4 * y + 2] = static_cast< unsigned char >( m_color.blue() );
-            array[4 * imageWidth * x + 4 * y + 3] = static_cast< unsigned char >( m_color.alpha() );
-        }
-    }
 }
 
 void WTransferFunction2DBoxWidget::setResizeHandle( ResizePointsRect handle, QPointF position )
@@ -167,27 +156,27 @@ void WTransferFunction2DBoxWidget::setResizeHandle( ResizePointsRect handle, QPo
             break;
     }
     update();
-    m_parent->updateTransferFunction();
+    m_parent->dataChanged();
 }
 
 void WTransferFunction2DBoxWidget::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {
     update();
-    m_parent->updateTransferFunction();
+    m_parent->dataChanged();
     QGraphicsItem::mousePressEvent( event );
 }
 
 void WTransferFunction2DBoxWidget::mouseMoveEvent( QGraphicsSceneMouseEvent *event )
 {
     update();
-    m_parent->updateTransferFunction();
+    m_parent->dataChanged();
     QGraphicsItem::mouseMoveEvent( event );
 }
 
 void WTransferFunction2DBoxWidget::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
 {
     update();
-    m_parent->updateTransferFunction();
+    m_parent->dataChanged();
     QGraphicsItem::mouseReleaseEvent( event );
 }
 
@@ -204,7 +193,7 @@ void WTransferFunction2DBoxWidget::colorSelected( const QColor &newcolor )
     m_color = newcolor;
     if( m_parent )
     {
-        m_parent->updateTransferFunction();
+        m_parent->dataChanged();
     }
 }
 

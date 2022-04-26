@@ -35,16 +35,16 @@
 /**
  * A class that stores a 2D transfer function texture and scales it to
  * the desired size given by the user. Also holds a reference to the 2D Histogram
+ * and the manipulation widgets.
  */
 class WTransferFunction2D // NOLINT problem with macro
 {
 public:
     /**
-     * Default constructor of a meaningless transfer function
+     * Default constructor of a meaningless 2D transfer function
      */
     WTransferFunction2D() : m_opacityScale( 1.0 ),
-                            m_histogram( nullptr ),
-                            tfTexture( nullptr )
+                            m_histogram( nullptr )
     {
     }
 
@@ -54,9 +54,9 @@ public:
      * \param rhs the value to histogram
      */
     WTransferFunction2D( const WTransferFunction2D &rhs )
-            : m_opacityScale( 1.0 ),
+            : m_opacityScale( rhs.m_opacityScale ),
               m_histogram( rhs.m_histogram ),
-              tfTexture( rhs.tfTexture )
+              m_widget( rhs.m_widget )
     {
     }
 
@@ -70,7 +70,7 @@ public:
     {
             this->m_opacityScale = rhs.m_opacityScale;
             setHistogram( rhs.m_histogram );
-            this->tfTexture = rhs.tfTexture;
+            this->m_widget = rhs.m_widget;
             return ( *this );
     }
 
@@ -94,18 +94,9 @@ public:
     /**
      * Set the histogram going along with the transfer function
      *
-     * \param histogram the histogram
+     * \param histogram the 2D histogram
      */
-    void setHistogram( std::shared_ptr< WHistogram2D> histogram );
-
-    /**
-     * Set the transfer function texture
-     *
-     * \param array the texture
-     * \param imageHeight width of the
-     * \param imageWidth the histogram
-     */
-    void setTexture( unsigned char* array, int imageWidth, int imageHeight );
+    void setHistogram( const std::shared_ptr< WHistogram2D>& histogram );
 
     /**
      * Set the scaling factor for the opacity.
@@ -127,6 +118,79 @@ public:
     }
 
     /**
+     * Get the number of widgets
+     *
+     * \returns the number of box widgets
+     */
+    size_t numBoxWidgets() const
+    {
+        return m_widget.size();
+    }
+
+    /**
+     * The isovalue of the color at a given index.
+     *
+     * \param i the index widget in the list.
+     * \returns the posX of the widget at index i
+     */
+    double getIsovalueX( size_t i ) const
+    {
+        return m_widget.at( i ).isoX;
+    }
+
+    /**
+     * The isovalue of the color at a given index.
+     *
+     * \param i the index widget in the list.
+     * \returns the posY of the widget at index i
+     */
+    double getIsovalueY( size_t i ) const
+    {
+        return m_widget.at( i ).isoY;
+    }
+
+    /**
+     * The width of the box widget at a given index.
+     *
+     * \param i the index widget in the list.
+     * \returns the width of the widget at index i
+     */
+    double getWidth( size_t i ) const
+    {
+        return m_widget.at( i ).width;
+    }
+
+    /**
+     * The height of the box widget at a given index.
+     *
+     * \param i the index widget in the list.
+     * \returns the height of the widget at index i
+     */
+    double getHeight( size_t i ) const
+    {
+        return m_widget.at( i ).height;
+    }
+
+    /**
+     * The color of the i-th boxwidget in the list.
+     *
+     * \param i the index widget in the list.
+     * \returns the color of the widget at index i
+     */
+    WColor getColor( size_t i ) const
+    {
+        return m_widget.at( i ).color;
+    }
+
+    /**
+     * Insert a new box widget
+     *
+     * \param iso the new iso value
+     * \param color the new color at the given iso value
+     */
+    void addBoxWidget( double isoX, double isoY, double width, double height, const WColor& color );
+
+    /**
      * sample/render the transfer function into the given container as a set of RGBA quadruples.
      * \param array pointer to an allocated data structure
      * \param width is the number of RGBA samples in X direction.
@@ -137,6 +201,69 @@ public:
     void sample2DTransferFunction( unsigned char*array, int width, int height ) const;
 
 private:
+    /**
+     * Prototype for a storage element
+     */
+    struct Entry
+    {
+        /**
+         * Default constructor
+         * \param isoX pos x
+         * \param isoY pos y
+         */
+        explicit Entry( double isoX, double isoY ) : isoX( isoX ), isoY( isoY )
+        {
+        }
+
+        /**
+         * comparison by isovalue
+         * \param rhs entry to compare t
+         * \returns true if this->iso <=  rhs.iso
+         */
+        bool operator <= ( const Entry &rhs ) const
+        {
+            return isoX <= rhs.isoX && isoY <= rhs.isoY;
+        }
+
+        /** the isovalue aka. the position */
+        double isoX;
+        double isoY;
+    };
+
+    /**
+     * Entry of a box widget with its position, width, height and color
+     */
+    struct BoxEntry : public Entry
+    {
+        /** default constructor
+         * \param isoX the x pos
+         * \param isoY the y pos
+         * \param width the width of the box
+         * \param height the height of the box
+         * \param color the color of the box
+         */
+        BoxEntry( double isoX, double isoY, double width, double height, WColor color ) : Entry( isoX, isoY ),
+                                                                                          width( width ), height( height ), color( color )
+        {
+        }
+
+        /**
+         * comparison operator to check for changes
+         * \param rhs BoxWidget to compare to
+         * \returns true if rhs equals this
+         */
+        bool operator==( const BoxEntry& rhs ) const
+        {
+            return isoX == rhs.isoX && isoY == rhs.isoY && width == rhs.width
+                   && height == rhs.height && color == rhs.color;
+        }
+
+        /** holds the current color at isovalue Entry::iso */
+        double width;
+        double height;
+        WColor color;
+    };
+
     /**
      * Factor by which the output opacity is scaled
      * to allow for easier specification of very small
@@ -150,9 +277,23 @@ private:
     std::shared_ptr< WHistogram2D > m_histogram;
 
     /**
-    * Holds a reference to transfer function texture
+    * Holds a list of box widgets used in the 2D TF
     */
-    osg::ref_ptr< osg::Image > tfTexture;
+    std::vector< BoxEntry > m_widget;
+
+    friend std::ostream& operator << ( std::ostream& out, const WTransferFunction2D& tf );
 };
+
+/**
+ * Default output operator. Currently stores values the same way as it is done in the properties.
+ * This code should only be used for debugging and you should not rely on the interface.
+ *
+ * \param tf The transfer function to output
+ * \param out The stream to which we write
+ *
+ * \returns reference to out
+ */
+std::ostream& operator << ( std::ostream& out, const WTransferFunction2D& tf );
+
 
 #endif  // WTRANSFERFUNCTION2D_H

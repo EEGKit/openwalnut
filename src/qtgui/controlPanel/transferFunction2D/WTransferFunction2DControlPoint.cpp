@@ -43,6 +43,7 @@ WTransferFunction2DControlPoint::WTransferFunction2DControlPoint( BaseClass *par
     setFlag( ItemIsMovable );
     setPos( position );
     setParentItem( parent );
+    setZValue( 4 );
     setAcceptHoverEvents( true );
 }
 

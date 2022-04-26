@@ -30,7 +30,7 @@
 class WTransferFunction2DGUIWidget;
 
 /**
- * The scene for our visualization of the transfer function editor.
+ * The scene for our visualization of the 2D transfer function editor.
  */
 class WTransferFunction2DScene : public QGraphicsScene
 {

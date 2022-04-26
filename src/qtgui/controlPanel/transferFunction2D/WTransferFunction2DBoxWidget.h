@@ -36,7 +36,7 @@ class WTransferFunction2DGUIWidget;
 /**
  * This class defines a resizable box and is used as a
  * manipulation widget for the 2D Transfer Function.
- * With this widget you select how the data is depicated
+ * With this widget you select how the data is depicted
  * later, through setting a color and opacity.
  *
  */
@@ -49,7 +49,7 @@ public:
      *
      * @param parent
      */
-    explicit WTransferFunction2DBoxWidget( WTransferFunction2DGUIWidget *parent );
+    explicit WTransferFunction2DBoxWidget( WTransferFunction2DGUIWidget *parent, double width, double height, QColor color );
 
     /**
      * Destructor
@@ -73,14 +73,41 @@ public:
     void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr ) override;
 
     /**
-     * Rasterization of the box widget with its color and opacity
-     * into the given container based on the width and height.
+     * Get the color of the box.
      *
-     * \param array the new color
-     * \param imageWidth the texture width
-     * \param imageHeight the texture width
+     * \return  the color of the box
      */
-    void sampleWidgetToImage( unsigned char* array, size_t imageWidth, size_t imageHeight );
+    QColor getColor()
+    {
+        return m_color;
+    }
+
+    /**
+     * Get the width of the box.
+     *
+     * \return  the width of the box
+     */
+    double getWidth()
+    {
+        return m_width;
+    }
+
+    /**
+     * Get the height of the box.
+     *
+     * \return  the height of the box
+     */
+    double getHeight()
+    {
+        return m_height;
+    }
+
+    /**
+     * Set the color of the box.
+     *
+     * \param color the new color
+     */
+    void setColor( QColor color );
 
 public slots:
     /**
@@ -121,14 +148,14 @@ protected:
     void mouseReleaseEvent( QGraphicsSceneMouseEvent *event ) override;
 
     /**
-      * Fires event, when mouse button is pressed
+      * Fires event, when mouse button is double clicked
       *
       * @param event
       */
     void mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event ) override;
 
     /**
-      * Fires event, when a button is pressed
+      * Fires event, when a key is pressed
       *
       * @param event
       */
@@ -156,7 +183,7 @@ private:
      * */
     void setControlPointsToCorner();
 
-    ResizePointsRect m_resizePoints; /*!< Flag to check if mouse button is pressed */
+    ResizePointsRect m_resizePoints; /*!< Flag of current selected resize point */
     WTransferFunction2DGUIWidget* m_parent;  /*!< The parent object */
     QColor m_color;  /*!< The color of the box */
     double m_width; /*!< The width of the box */

@@ -35,7 +35,7 @@
 #include "core/kernel/WModuleOutputData.h"
 
 /**
- * A module to provide 1D transfer functions, e.g., for volume rendering.
+ * A module to provide 2D transfer functions, e.g., for volume rendering.
  *
  * \ingroup modules
  */
@@ -128,11 +128,6 @@ nnectors must not be handled by the module.
      * Resolution of the transfer function in x.
      */
     WPropInt m_resolution;
-
-    /**
-     * Resolution of the transfer function in y.
-     */
-    WPropInt m_resolutionY;
 
     /**
      * scaling factor for the opacity

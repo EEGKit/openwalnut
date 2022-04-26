@@ -36,7 +36,7 @@ WTransferFunction2DScene::WTransferFunction2DScene( QObject*parent )
         : BaseClass( parent ),
           myparent( dynamic_cast<WTransferFunction2DGUIWidget*>( parent ) )
 {
-    setBackgroundBrush( QBrush( Qt::white, Qt::CrossPattern ) ); //Qt::white );
+    setBackgroundBrush( QBrush( Qt::lightGray, Qt::CrossPattern ) ); //Qt::white );
 }
 
 WTransferFunction2DScene::~WTransferFunction2DScene()

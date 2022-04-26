@@ -92,23 +92,12 @@ void WMTransferFunction2D::properties()
     m_propCondition = std::shared_ptr< WCondition >( new WCondition() );
 
     WTransferFunction2D tf;
-    unsigned char * arr = new unsigned char[ 100 * 100 * 4 ];
-    for( int x = 0; x < 100; x++ )
-            {
-                for( int y = 0; y < 100; y++ )
-                {
-                   arr[ 4 * 100 * x + 4 * y + 0 ] = static_cast< unsigned char >( 0. );
-                   arr[ 4 * 100 * x + 4 * y + 1 ] = static_cast< unsigned char >( 0. );
-                   arr[ 4 * 100 * x + 4 * y + 2 ] = static_cast< unsigned char >( 0. );
-                   arr[ 4 * 100 * x + 4 * y + 3 ] = static_cast< unsigned char >( 0. );
-                }
-            }
-    tf.setTexture( arr, 100, 100 );
+    tf.addBoxWidget( 0., 0., .167, .167, WColor( 1., 0., 0., 0.1 ) );
     m_transferFunction = m_properties->addProperty( "2D Transfer Function",
                                                     "The 2D transfer function editor. "
                                                     "The Origin (0, 0) is in the bottom left corner. "
-                                                    "The first connected data set is shown on the x-axis from left to bottom. "
-                                                    "The second connected data set is shown on the y-axis from bottom to top. "
+                                                    "The first connected data set is shown on the y-axis from top to bottom. "
+                                                    "The second connected data set is shown on the x-axis from left to right. "
                                                     , tf, m_propCondition, false );
 
     m_opacityScale = m_properties->addProperty( "Opacity Scaling",
@@ -152,6 +141,7 @@ void WMTransferFunction2D::moduleMain()
 
         bool tfChanged = m_transferFunction->changed();
         WTransferFunction2D tf = m_transferFunction->get( true );
+        debugLog() << "Current transfer function " << tf.numBoxWidgets() << " box widgets.";
         if( m_inputDataSet0->updated() || m_inputDataSet1->updated() )
         {
             std::shared_ptr< WDataSetSingle > dataSet0 = m_inputDataSet0->getData();
@@ -166,19 +156,14 @@ void WMTransferFunction2D::moduleMain()
                 std::shared_ptr< WValueSetBase > values0 = dataSet0->getValueSet();
                 std::shared_ptr< WValueSetBase > values1 = dataSet1->getValueSet();
 
-                wlog::debug( "WMTransFunc2D" ) << values0->getMinimumValue();
-                wlog::debug( "WMTransFunc2D" ) << values0->getMaximumValue();
-                wlog::debug( "WMTransFunc2D" ) << values1->getMinimumValue();
-                wlog::debug( "WMTransFunc2D" ) << values1->getMaximumValue();
-
-                // At the moment we equal sized data sets
-                // Bucket size is equal to our texture size defined in WTransferFunction2DWidget
+                // At the moment we only support equal sized data sets
+                // TODO: bucketsize based on user value
                 auto histogram = std::make_shared< WHistogram2D >( values0->getMinimumValue(),
                                                   values0->getMaximumValue(),
                                                   values1->getMinimumValue(),
                                                   values1->getMaximumValue(),
-                                                  128,
-                                                  128 );
+                                                  256,
+                                                  256 );
 
                 for( size_t i = 0; i < values0->size(); ++i )
                 {
@@ -187,7 +172,8 @@ void WMTransferFunction2D::moduleMain()
 
                 // We need a copy of the data here, because of the way how the data is handled in WTransferFunction2D
                 //WHistogram2D vhistogram( histogram );
-                tf.setHistogram( histogram );
+                auto vhistogram = histogram;
+                tf.setHistogram( vhistogram );
             }
             // either way, we changed the data and want to update the TF
             m_transferFunction->set( tf );
@@ -198,11 +184,9 @@ void WMTransferFunction2D::moduleMain()
             wlog::debug( "WMTransferFunction2D" ) << "tf changed";
             // debugLog() << "resampling transfer function";
             unsigned int resolution = m_resolution->get( true );
-            //TODO(Kai): resolution for x & y
-            //unsigned int resolution = 128;
-            // debugLog() << "new resolution: " << resolution;
             std::shared_ptr< std::vector<unsigned char> > data( new std::vector<unsigned char>( resolution * resolution * 4 ) );
             tf.setOpacityScale( m_opacityScale->get( true ) );
+            // Get the 2D texture from the TF
             tf.sample2DTransferFunction( &( *data )[0], resolution, resolution );
 
             // Create data set which holds the TF

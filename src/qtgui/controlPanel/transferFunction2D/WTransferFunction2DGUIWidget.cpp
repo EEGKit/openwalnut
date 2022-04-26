@@ -40,7 +40,8 @@
 WTransferFunction2DGUIWidget::WTransferFunction2DGUIWidget( QWidget* qparent, WTransferFunction2DGuiNotificationClass* parent ):
         BaseClass( qparent ),
         parent( parent ),
-        background( 0x0 ),
+        background( nullptr ),
+        hist(nullptr),
         initialized( false )
 {
     // std::cout << "new widget" << std::endl;
@@ -66,14 +67,10 @@ WTransferFunction2DGUIWidget::WTransferFunction2DGUIWidget( QWidget* qparent, WT
     connect( this, SIGNAL( customContextMenuRequested( const QPoint & ) ),
             this, SLOT( showContextMenu( const QPoint & ) ) );
 
-    hist = nullptr;
-
     // insert background and histogram items
     scene->addItem( background = new WTransferFunction2DBackground( this ) );
-
-    addBoxWidget();
     initialized = true;
-    // initialize the color map (aka. background)
+    // initialize the histogram (aka. background)
     setMyBackground(); // trigger first paint of transfer function
 }
 
@@ -90,12 +87,11 @@ void WTransferFunction2DGUIWidget::setMyBackground()
         size_t imageWidth = hist->getBucketsX();
         size_t imageHeight = hist->getBucketsY();
 
-        QImage* image = new QImage( data, imageWidth, imageHeight, QImage::Format_Grayscale8 );
-        QImage rotatedImage = image->transformed( QMatrix().rotate( 270.0 ) );
+        QImage image( data, imageWidth, imageHeight, QImage::Format::Format_RGBA8888 );
         QPixmap pixmap;
 
 #if( QT_VERSION >= 0x040700 )
-        pixmap.convertFromImage( rotatedImage );
+        pixmap.convertFromImage( image );
     #else
         // older versions have convertFromImage in Qt3Support
         // to avoid linking to that one, we use the slower version
@@ -112,10 +108,20 @@ void WTransferFunction2DGUIWidget::drawBackground( QPainter *painter, const QRec
     BaseClass::drawBackground( painter, rect );
 }
 
-void WTransferFunction2DGUIWidget::setHistogram( std::shared_ptr< WHistogram2D > newHistogram )
+void WTransferFunction2DGUIWidget::setHistogram( const std::shared_ptr< WHistogram2D >& newHistogram )
 {
     hist = newHistogram;
+    dataChanged();
+}
+
+void WTransferFunction2DGUIWidget::dataChanged()
+{
+    if( !initialized )
+    {
+        return;
+    }
     this->updateTransferFunction();
+    this->setMyBackground();
     forceRedraw();
 }
 
@@ -128,31 +134,35 @@ void WTransferFunction2DGUIWidget::forceRedraw()
     QRectF viewport( scene->sceneRect() );
     scene->invalidate( viewport );
     this->update();
-    this->setMyBackground();
+}
+
+namespace
+{
+    WColor toWColor( const QColor& q )
+    {
+        return WColor( q.redF(), q.greenF(), q.blueF(), q.alphaF() );
+    }
 }
 
 void WTransferFunction2DGUIWidget::updateTransferFunction()
 {
     WTransferFunction2D tf;
     {
-        // this part does not trigger qt rendering updates
         if( hist != nullptr )
         {
             tf.setHistogram( hist ); // get the data back because we need this for comparison
         }
-        std::vector< WTransferFunction2DBoxWidget* >::iterator it;
-        //this is set to 300 at the moment and is equal to the size of the scene/histogram
-        size_t imageWidth = 300;
-        size_t imageHeight = 300;
 
-        unsigned char* data = new unsigned char[ imageWidth * imageHeight * 4 ]();
-
-        // Iterate over every widget inside our window and call sample the color and opacity in the texture
-        for( it = m_widgets.begin(); it != m_widgets.end(); it++ )
+        // Serialite the current TF into the 2D TF object in normalized space
+        for( auto const &w : m_widgets )
         {
-            ( *it )->sampleWidgetToImage( data, imageWidth, imageHeight );
+            double isoX = ( w->mapToScene( w->boundingRect().topLeft() ).x() / 300 );
+            double isoY = ( w->mapToScene( w->boundingRect().topLeft() ).y() / 300 );
+            double width = ( w->getWidth() / 300 );
+            double height = ( w->getHeight() / 300 );
+            QColor col( w->getColor().red(), w->getColor().green(), w->getColor().blue(), w->getColor().alpha() );
+            tf.addBoxWidget( isoX, isoY, width, height, toWColor( col ) );
         }
-        tf.setTexture( data, 300, 300 );
     }
     if( parent )
     {
@@ -160,11 +170,28 @@ void WTransferFunction2DGUIWidget::updateTransferFunction()
     }
 }
 
-void WTransferFunction2DGUIWidget::addBoxWidget()
+void WTransferFunction2DGUIWidget::insertBoxWidgetNormalized( const QPointF &pos = QPointF( 0., 0. ), const double width = .167,
+                                                              const double height = .167,
+                                                              const QColor *const color = new QColor( 255., 0., 0., 10. ) )
 {
-    WTransferFunction2DBoxWidget* box = new WTransferFunction2DBoxWidget( this );
+    insertBoxWidget( QPointF( pos.x()*300., pos.y()*300. ), width*300., height*300., color );
+}
+
+void WTransferFunction2DGUIWidget::insertBoxWidget( const QPointF &pos, const double width, const double height,
+                                                    const QColor *const color )
+{
+    WTransferFunction2DBoxWidget *box( new WTransferFunction2DBoxWidget( this, width, height, *color ) );
+    box->setPos( pos );
     scene->addItem( box );
     m_widgets.push_back( box );
+    this->update();
+    dataChanged();
+}
+
+
+void WTransferFunction2DGUIWidget::addBoxWidget()
+{
+    insertBoxWidgetNormalized();
 }
 
 void WTransferFunction2DGUIWidget::cleanTransferFunction()
@@ -176,7 +203,7 @@ void WTransferFunction2DGUIWidget::cleanTransferFunction()
         delete( *it );
     }
     m_widgets.clear();
-    updateTransferFunction();
+    dataChanged();
 }
 
 void WTransferFunction2DGUIWidget::showContextMenu( const QPoint &pos )
@@ -185,7 +212,8 @@ void WTransferFunction2DGUIWidget::showContextMenu( const QPoint &pos )
 
     QAction action1( "Add box widget", this );
     QAction action2( "Clean transfer function", this );
-    connect( &action1, SIGNAL( triggered() ), this, SLOT( addBoxWidget() ) );
+    connect( &action1, SIGNAL( triggered() ), this,
+             SLOT( addBoxWidget() ) );
     connect( &action2, SIGNAL( triggered() ), this, SLOT( cleanTransferFunction() ) );
 
     contextMenu.addAction( &action1 );
@@ -201,5 +229,5 @@ void WTransferFunction2DGUIWidget::removeWidget( WTransferFunction2DBoxWidget *w
     m_widgets.erase( it );
     scene->removeItem( widget );
     delete( widget );
-    this->updateTransferFunction();
+    this->dataChanged();
 }

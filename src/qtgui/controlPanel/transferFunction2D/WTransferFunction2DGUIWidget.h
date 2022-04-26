@@ -37,7 +37,7 @@ class WTransferFunction2DBoxWidget;
 
 /**
  * The class managing the widget that wants to receive updates whenever
- * a change occurrs. This is only here to provide an interface and a better
+ * a change occurs. This is only here to provide an interface and a better
  * separation between gui code and the transfer function code
  */
 struct WTransferFunction2DGuiNotificationClass
@@ -57,7 +57,7 @@ struct WTransferFunction2DGuiNotificationClass
 };
 
 /**
- * A widget that holds a scene to display and modify the transfer function.
+ * A widget that holds a scene to display and modify the 2D transfer function.
  *
  * Currently most data storage is done in this class, which is not a great
  * design. Thus, we should try to split the model and the view a bit more,
@@ -94,10 +94,10 @@ public:
      *
      * \param newHistogram is the histogram which is to be set here
      */
-    void setHistogram( std::shared_ptr< WHistogram2D > newHistogram );
+    void setHistogram( const std::shared_ptr< WHistogram2D >& newHistogram );
 
     /**
-     * Removes the specificed widget
+     * Removes the specified widget
      *
      * \param widget widget which is to be deleted
      */
@@ -107,16 +107,44 @@ public:
     * Updates the transfer function.
     */
     void updateTransferFunction();
-private slots:
-    /**
-    * Adds a box widget to the scene
-    */
-    void addBoxWidget();
 
+    /**
+     * Adds a box widget to the scene and list of widgets
+     *
+     * \param pos pos of the widget
+     * \param width width of the widget
+     * \param height height of the widget
+     * \param color color of the widget
+     */
+    void insertBoxWidget( const QPointF& pos, const double width, const double height, const QColor *const color );
+
+    /**
+     * Adds a box widget to the scene and list of widgets from normalized space
+     *
+     * \param pos pos of the widget in normalized space
+     * \param width width of the widget in normalized space
+     * \param height height of the widget in normalized space
+     * \param color color of the widget
+     */
+    void insertBoxWidgetNormalized( const QPointF& pos, const double width, const double height, const QColor *const color );
+
+public slots:
     /**
     * Removes all transfer function widgets from the scene
     */
     void cleanTransferFunction();
+
+    /**
+    * adds a basic box widget
+    */
+    void addBoxWidget();
+
+    /**
+     * Notification that the data changed, i.e., a control point has been moved or a color changed.
+     */
+    void dataChanged();
+
+private slots:
 
     /**
     * Opens a context menu
@@ -139,18 +167,13 @@ protected:
      */
     void setMyBackground();
 private:
-    /** the class that receives our update notifications */
-    WTransferFunction2DGuiNotificationClass *parent;
-    /** List of manipulation widgets */
-    std::vector< WTransferFunction2DBoxWidget* > m_widgets;
-    /** The scene that holds the GraphicItems */
-    QGraphicsScene *scene;
-    /** background that displays the histogram */
-    WTransferFunction2DBackground *background;
-    /** histogram which is displayed on the background */
-    std::shared_ptr< WHistogram2D > hist;
-    /** set to true after initialization */
-    bool initialized;
+
+    WTransferFunction2DGuiNotificationClass *parent; /** the class that receives our update notifications */
+    std::vector< WTransferFunction2DBoxWidget* > m_widgets; /** List of manipulation widgets */
+    QGraphicsScene *scene; /** The scene that holds the GraphicItems */
+    WTransferFunction2DBackground *background; /** background that displays the 2D histogram */
+    std::shared_ptr< WHistogram2D > hist; /** 2D histogram which is displayed on the background */
+    bool initialized; /** set to true after initialization */
 };
 
 #endif  // WTRANSFERFUNCTION2DGUIWIDGET_H
