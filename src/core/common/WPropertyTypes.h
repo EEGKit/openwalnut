@@ -113,7 +113,7 @@ namespace WPVBaseTypes
     typedef WColor                                          PV_COLOR;                //!< base type used for every WPVColor
     typedef WMatrix4d                                       PV_MATRIX4X4;            //!< base type used for every WPVMatrix4X4
     typedef WTransferFunction                               PV_TRANSFERFUNCTION;     //!< base type for every transfer function
-    typedef WTransferFunction2D                             PV_TRANSFERFUNCTION2D;   //!< base type for every transfer function
+    typedef WTransferFunction2D                             PV_TRANSFERFUNCTION2D;   //!< base type for every 2D transfer function
     typedef WIntervalDouble                                 PV_INTERVAL;             //!< base type used for every PV_INTERVAL
 
     /**

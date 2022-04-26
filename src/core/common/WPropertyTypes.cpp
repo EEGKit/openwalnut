@@ -139,9 +139,52 @@ namespace PROPERTY_TYPE_HELPER
     WPVBaseTypes::PV_TRANSFERFUNCTION2D WStringConversion< WPVBaseTypes::PV_TRANSFERFUNCTION2D >::create(
             const WPVBaseTypes::PV_TRANSFERFUNCTION2D& /*old*/, const std::string str )
     {
+        // Create 2D TF from its serialized form
+        WTransferFunction2D tf;
+        std::vector< std::string > tokens;
+        tokens = string_utils::tokenize( str, ";" );
+        size_t idx = 0;
+        while( idx < tokens.size() )
+        {
+            std::vector< std::string > innerTokens;
+            innerTokens = string_utils::tokenize( tokens[ idx ], ":" );
+            // evaluate inner tokens
+            {
+                if( innerTokens[ 0 ] == "c" )
+                {
+                    tf.addBoxWidget(
+                            string_utils::fromString< double >( innerTokens[ 1 ].c_str() ), // isoX
+                            string_utils::fromString< double >( innerTokens[ 2 ].c_str() ), // isoY
+                            string_utils::fromString< double >( innerTokens[ 3 ].c_str() ), // width
+                            string_utils::fromString< double >( innerTokens[ 4 ].c_str() ),
+                            WColor(
+                                    string_utils::fromString< double >( innerTokens[ 5 ].c_str() ), // Red
+                                    string_utils::fromString< double >( innerTokens[ 6 ].c_str() ), // Green
+                                    string_utils::fromString< double >( innerTokens[ 7 ].c_str() ), // Blue
+                                    string_utils::fromString< double >( innerTokens[ 8 ].c_str() ) ) // Alpha
+                    );
+                }
+                idx++;
+            }
+        }
+        return tf;
     }
 
+    // Serialize 2D TF
     std::string WStringConversion< WPVBaseTypes::PV_TRANSFERFUNCTION2D >::asString( const WPVBaseTypes::PV_TRANSFERFUNCTION2D& tf )
     {
+        std::ostringstream out;
+        size_t numColors = tf.numBoxWidgets();
+        for( size_t i = 0; i < numColors; ++i )
+        {
+            double isoX = tf.getIsovalueX( i );
+            double isoY = tf.getIsovalueY( i );
+            double width = tf.getWidth( i );
+            double height = tf.getHeight( i );
+            WColor c = tf.getColor( i );
+            out << "c:" << isoX << ":" << isoY << ":" << width << ":" << height << ":"
+                << c[ 0 ] << ":" << c[ 1 ] << ":" << c[ 2 ] << ":" << c[ 3 ] << ";";
+        }
+        return out.str();
     }
 }
