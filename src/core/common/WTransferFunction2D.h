@@ -228,9 +228,9 @@ private:
             return isoX <= rhs.isoX && isoY <= rhs.isoY;
         }
 
-        /** the isovalue aka. the position */
-        double isoX;
-        double isoY;
+        
+        double isoX; /** the isovalue x aka. the position x */
+        double isoY; /** the isovalue y aka. the position y */
     };
 
     /**
@@ -261,10 +261,9 @@ private:
                    && height == rhs.height && color == rhs.color;
         }
 
-        /** holds the current color at isovalue Entry::iso */
-        double width;
-        double height;
-        WColor color;
+        double width; /** the width */
+        double height; /** the height */
+        WColor color; /** the color */
     };
 
     /**
