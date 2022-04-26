@@ -228,9 +228,10 @@ private:
             return isoX <= rhs.isoX && isoY <= rhs.isoY;
         }
 
-        
-        double isoX; /** the isovalue x aka. the position x */
-        double isoY; /** the isovalue y aka. the position y */
+        /** the isovalue x aka. the position x */
+        double isoX;
+        /** the isovalue y aka. the position y */
+        double isoY;
     };
 
     /**
@@ -261,9 +262,12 @@ private:
                    && height == rhs.height && color == rhs.color;
         }
 
-        double width; /** the width */
-        double height; /** the height */
-        WColor color; /** the color */
+        /** the width of the box */
+        double width;
+        /** the height of the box */
+        double height;
+        /** the color of the box */
+        WColor color;
     };
 
     /**

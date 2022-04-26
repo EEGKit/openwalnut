@@ -47,7 +47,10 @@ public:
     /**
      * Constructor
      *
-     * @param parent
+     * @param parent of the box
+     * @param width of the box
+     * @param height of the box
+     * @param color of the box
      */
     explicit WTransferFunction2DBoxWidget( WTransferFunction2DGUIWidget *parent, double width, double height, QColor color );
 

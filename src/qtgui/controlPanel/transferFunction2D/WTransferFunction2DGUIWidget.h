@@ -167,12 +167,12 @@ protected:
      */
     void setMyBackground();
 private:
-    WTransferFunction2DGuiNotificationClass *parent; /** the class that receives our update notifications */
-    std::vector< WTransferFunction2DBoxWidget* > m_widgets; /** List of manipulation widgets */
-    QGraphicsScene *scene; /** The scene that holds the GraphicItems */
-    WTransferFunction2DBackground *background; /** background that displays the 2D histogram */
-    std::shared_ptr< WHistogram2D > hist; /** 2D histogram which is displayed on the background */
-    bool initialized; /** set to true after initialization */
+    WTransferFunction2DGuiNotificationClass *parent; /*!< the class that receives our update notifications */
+    std::vector< WTransferFunction2DBoxWidget* > m_widgets; /*!< List of manipulation widgets */
+    QGraphicsScene *scene; /*!< The scene that holds the GraphicItems */
+    WTransferFunction2DBackground *background; /*!< background that displays the 2D histogram */
+    std::shared_ptr< WHistogram2D > hist; /*!< 2D histogram which is displayed on the background */
+    bool initialized; /*!< set to true after initialization */
 };
 
 #endif  // WTRANSFERFUNCTION2DGUIWIDGET_H
