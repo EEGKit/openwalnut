@@ -57,9 +57,6 @@ WPropertyTransferFunction2DWidget::WPropertyTransferFunction2DWidget( WPropTrans
 
     update();
 
-    //renders the initial TF
-    guiUpdate( lastTransferFunction );
-
     //connect the modification signal of the edit and slider with our callback
     //connect( &m_slider, SIGNAL( valueChanged( int ) ), this, SLOT( sliderChanged( int ) ) );
     //connect( &m_edit, SIGNAL( editingFinished() ), this, SLOT( editChanged() ) );
@@ -70,6 +67,20 @@ WPropertyTransferFunction2DWidget::~WPropertyTransferFunction2DWidget()
 {
     // cleanup
     // std::cout << "cleanup." << std::endl;
+}
+
+namespace
+{
+    QColor toQColor( const WColor &color )
+    {
+        QColor tmp;
+        tmp.setRgbF( color[0],
+                     color[1],
+                     color[2],
+                     color[3] );
+
+        return tmp;
+    }
 }
 
 // this function is more complex than it should be because of the way
@@ -85,7 +96,20 @@ void WPropertyTransferFunction2DWidget::update()
     if( tf != lastTransferFunction )
     {
         std::cout << "tf updated" << std::endl;
+        m_transferFunction.cleanTransferFunction();
         m_transferFunction.setHistogram( tf.getHistogram() );
+
+        size_t nbWidgets = tf.numBoxWidgets();
+        QColor c;
+        for( size_t i = 0; i < nbWidgets; ++i )
+        {
+            c = toQColor( tf.getColor( i ) );
+            double width = tf.getWidth( i );
+            double height = tf.getHeight( i );
+            double isoX = tf.getIsovalueX( i );
+            double isoY = tf.getIsovalueY( i );
+            m_transferFunction.insertBoxWidgetNormalized( QPointF( isoX, isoY ), width, height, &c );
+        }
     }
     else
     {
