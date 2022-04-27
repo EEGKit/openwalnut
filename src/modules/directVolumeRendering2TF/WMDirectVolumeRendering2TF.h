@@ -172,7 +172,7 @@ private:
     /**
      * If active, color coding is done by depth projection mode where the intensity is taken from the alpha channel and the color from the color channel ( last part not implemented, yet )
      */
-    WPropBool m_depthProjectionEnabled;
+    //WPropBool m_depthProjectionEnabled;
 
     /**
      * A condition used to notify about changes in several properties.

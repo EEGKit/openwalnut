@@ -100,15 +100,6 @@ void WMDirectVolumeRendering2TF::connectors()
     m_transferFunction = WModuleInputData< WDataSetSingle >::createAndAdd( shared_from_this(),
                                                                                "transfer function data set 1",
                                                                                "The 2D transfer function for the two data sets." );
-//    // The transfer function for our DVR
-//    m_transferFunction_ds0 = WModuleInputData< WDataSetSingle >::createAndAdd( shared_from_this(),
-//                                                                              "transfer function data set 1",
-//                                                                              "The 1D transfer function for the first data set." );
-//
-//    // The transfer function for our DVR
-//    m_transferFunction_ds1 = WModuleInputData< WDataSetSingle >::createAndAdd( shared_from_this(),
-//                                                                              "transfer function data set 2",
-//                                                                              "The 1D transfer function for the second data set." );
 
     // Optional: the gradient field
     m_gradients = WModuleInputData< WDataSetVector >::createAndAdd( shared_from_this(),
@@ -154,8 +145,8 @@ void WMDirectVolumeRendering2TF::properties()
     m_maximumIntensityProjectionEnabled = m_improvementGroup->addProperty( "MIP", "If enabled, MIP is used.", false,
             m_propCondition );
 
-    m_depthProjectionEnabled = m_improvementGroup->addProperty( "Depth projection", "If enabled, depth projection mode is used", false,
-            m_propCondition );
+//    m_depthProjectionEnabled = m_improvementGroup->addProperty( "Depth projection", "If enabled, depth projection mode is used", false,
+//            m_propCondition );
 
     WModule::properties();
 }
@@ -220,11 +211,8 @@ void WMDirectVolumeRendering2TF::moduleMain()
     WGEShaderDefineSwitch::SPtr opacityCorrectionEnableDefine = m_shader->setDefine( "OPACITYCORRECTION_ENABLED" );
 
     WGEShaderDefineSwitch::SPtr maximumIntensityProjectionEnabledDefine = m_shader->setDefine( "MIP_ENABLED" );
-    WGEShaderDefineSwitch::SPtr depthProjectionEnabledDefine = m_shader->setDefine( "DEPTH_PROJECTION_ENABLED" );
+    //WGEShaderDefineSwitch::SPtr depthProjectionEnabledDefine = m_shader->setDefine( "DEPTH_PROJECTION_ENABLED" );
 
-    // the texture used for the transfer function
-    //osg::ref_ptr< osg::Image > tfImage_ds0 = new osg::Image();
-    //osg::ref_ptr< osg::Image > tfImage_ds1 = new osg::Image();
 
     osg::ref_ptr< osg::Texture2D > tfTexture2D = new osg::Texture2D();
     osg::ref_ptr< osg::Image > tfImage2D = new osg::Image();
@@ -233,8 +221,6 @@ void WMDirectVolumeRendering2TF::moduleMain()
     // let the main loop awake if the data changes or the properties changed.
     m_moduleState.setResetable( true, true );
     m_moduleState.add( m_transferFunction->getDataChangedCondition() );
-//    m_moduleState.add( m_transferFunction_ds0->getDataChangedCondition() );
-//    m_moduleState.add( m_transferFunction_ds1->getDataChangedCondition() );
     m_moduleState.add( m_input_ds0->getDataChangedCondition() );
     m_moduleState.add( m_input_ds1->getDataChangedCondition() );
     m_moduleState.add( m_gradients->getDataChangedCondition() );
@@ -268,7 +254,7 @@ void WMDirectVolumeRendering2TF::moduleMain()
         std::shared_ptr< WDataSetScalar > dataSet1 = m_input_ds1->getData();
         bool dataValid   = ( dataSet0 != NULL ) && ( dataSet1 != NULL );
         bool propUpdated = m_localIlluminationAlgo->changed() || m_stochasticJitterEnabled->changed() ||  m_opacityCorrectionEnabled->changed() ||
-            m_maximumIntensityProjectionEnabled->changed() || m_depthProjectionEnabled->changed();
+            m_maximumIntensityProjectionEnabled->changed(); // || m_depthProjectionEnabled->changed();
 
 
         // reset module in case of invalid data. This accounts only for the scalar field input
@@ -331,7 +317,6 @@ void WMDirectVolumeRendering2TF::moduleMain()
             illuminationAlgoDefines->activateOption( m_localIlluminationAlgo->get( true ).getItemIndexOfSelected( 0 ) );
 
             // if there is a gradient field available -> apply as texture too
-            // TODO(Kai): Depending on the approach, make this available later
             std::shared_ptr< WDataSetVector > gradients = m_gradients->getData();
             if( gradients )
             {
@@ -340,7 +325,6 @@ void WMDirectVolumeRendering2TF::moduleMain()
                 // bind the texture to the node
                 osg::ref_ptr< WDataTexture3D > gradTexture3D = gradients->getTexture();
                 wge::bindTexture( cube, gradTexture3D, 2, "u_gradients" );
-                //wge::bindTexture( cube, gradTexture3D, 1, "u_gradients_ds1" );
                 gradTexEnableDefine->setActive( true );
             }
             else
@@ -351,7 +335,6 @@ void WMDirectVolumeRendering2TF::moduleMain()
             ////////////////////////////////////////////////////////////////////////////////////////////////////
             // stochastic jittering texture
             ////////////////////////////////////////////////////////////////////////////////////////////////////
-            // TODO(Kai): Add jitter for second data set
             // create some random noise
             jitterSamplerDefine->setActive( false );
             jitterEnable->setActive( false );
@@ -362,7 +345,6 @@ void WMDirectVolumeRendering2TF::moduleMain()
                 randTexture->setFilterMinMag( osg::Texture2D::NEAREST );
                 randTexture->setWrapSTR( osg::Texture2D::REPEAT );
                 wge::bindTexture( cube, randTexture, 3, "u_jitter" );
-                //wge::bindTexture( cube, randTexture, 2, "u_jitter_ds1" );
                 jitterSamplerDefine->setActive( true );
                 jitterEnable->setActive( true );
                 jitterSizeXDefine->setValue( size );
@@ -426,14 +408,14 @@ void WMDirectVolumeRendering2TF::moduleMain()
             // depth projection
             ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            if( m_depthProjectionEnabled->get( true ) )
+            /*if( m_depthProjectionEnabled->get( true ) )
             {
                 depthProjectionEnabledDefine->setActive( true );
             }
             else
             {
                 depthProjectionEnabledDefine->setActive( false );
-            }
+            }*/
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////
             // setup all those uniforms

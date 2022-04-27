@@ -104,6 +104,7 @@ vec3 findRayEnd( in vec3 rayStart, out float d )
  */
 vec3 getGradient( in vec3 position )
 {
+    // How do we have to incorporate the gradient of the second volume?
     #ifdef GRADIENTTEXTURE_ENABLED
         return ( 2.0 * texture3D( u_gradientsSampler, position ).rgb ) + vec3( -1.0 );
     #else
@@ -133,7 +134,6 @@ vec4 transferFunction( float value_ds1, float value_ds2 )
         return texture2D( u_transferFunction2DSampler, vec2( value_ds1, value_ds2 ) );
     #else
         // Example TF
-        //TODO(Kai): Example 2D lookup
         if( isZero( value - 0.5, 0.00005  ) )
         return vec4( 0.0 );
         vec4 c = vec4( 0.0 );
@@ -246,8 +246,8 @@ void main()
         {
             // get current value, classify and illuminate
             vec3 rayPoint = rayStart + ( currentDistance * v_ray );
-            float alpha = ( transferFunction( 0, texture3D( u_volume_ds0Sampler, rayPoint ).r ).a
-            * transferFunction( 1, texture3D( u_volume_ds1Sampler, rayPoint ).r ).a );
+            float alpha = ( transferFunction( texture3D( u_volume_ds0Sampler, rayPoint ).r,
+                            texture3D( u_volume_ds1Sampler, rayPoint ).r ).a );
             if( alpha > maxalpha )
             {
                 maxRayPoint = rayPoint;
@@ -263,10 +263,11 @@ void main()
         // both depth projection and mip need this information.
         if( maxdist > 0.0 )
         {
-            dst = ( localIllumination( maxRayPoint, transferFunction( 0, texture3D( u_volume_ds0Sampler, maxRayPoint ).r ), 0 ) *
-            localIllumination( maxRayPoint, transferFunction( 1, texture3D( u_volume_ds1Sampler, maxRayPoint ).r ), 1 ) );
+            dst = ( localIllumination( maxRayPoint, transferFunction( texture3D( u_volume_ds0Sampler, maxRayPoint ).r,
+                                                                      texture3D( u_volume_ds1Sampler, maxRayPoint ).r ) ) );
             dst.a = 1.0;
         }
+            // Currently deactivated in the cpp, because it seems to be wrong in the 2D TF
         #ifdef DEPTH_PROJECTION_ENABLED
             // FIXME: This is technically not correct as our ray starts at the boundary of the volume and not
             // in the view plane. Therefore, we get artifacts showing the edges and corners of the box.
@@ -274,19 +275,10 @@ void main()
             // map depth value to color
             if( maxdist > 0.0 )
             {
-                const float MAX_DISTANCE = 1.1; // FIXME: estimate reasonable maximum value here
+                const float MAX_DISTANCE = 2.2; // FIXME: estimate reasonable maximum value here
                 float normval = maxdist/MAX_DISTANCE;
 
-                // if( normval > 0.5 )
-                // {
-                //     dst = vec4( 0., normval-0.5, ( normval - 0.5 )*2.0, 1. );
-                // }
-                // else
-                // {
-                //     dst = vec4( 2.* ( 0.5-normval ), normval, 0., 1. );
-                // }
-                dst = vec4( texture1D( u_transferFunction_ds0Sampler, normval ).rgb, 1.0 )
-                * vec4( texture1D( u_transferFunction_ds1Sampler, normval ).rgb, 1.0 );
+                dst = vec4( texture2D( u_transferFunction2DSampler, vec2( normval, normval ) ).rgb, 1.0 );
             }
             else
             {
@@ -316,23 +308,6 @@ void main()
                     src.a = 1.0 - fastpow( 1.0 - src.a, v_relativeSampleDistance );
                 #endif
 
-                /*        vec3 planeNorm = -v_ray;
-
-                        vec3 pSphere[16] = vec3[](vec3(0.53812504, 0.18565957, -0.43192),vec3(0.13790712, 0.24864247, 0.44301823),vec3(0.33715037, 0.56794053, -0.005789503),vec3(-0.6999805, -0.04511441, -0.0019965635),vec3(0.06896307, -0.15983082, -0.85477847),vec3(0.056099437, 0.006954967, -0.1843352),vec3(-0.014653638, 0.14027752, 0.0762037),vec3(0.010019933, -0.1924225, -0.034443386),vec3(-0.35775623, -0.5301969, -0.43581226),vec3(-0.3169221, 0.106360726, 0.015860917),vec3(0.010350345, -0.58698344, 0.0046293875),vec3(-0.08972908, -0.49408212, 0.3287904),vec3(0.7119986, -0.0154690035, -0.09183723),vec3(-0.053382345, 0.059675813, -0.5411899),vec3(0.035267662, -0.063188605, 0.54602677),vec3(-0.47761092, 0.2847911, -0.0271716));
-                        float aoFactor = 0.0;
-                        vec3 g = getGradient( rayPoint );
-
-                        for( int aoI = 0; aoI < 16; ++aoI )
-                        {
-                            vec3 dir = reflect( pSphere[aoI], g );
-                            for( int aoS = 0; aoS < 16; ++aoS )
-                            {
-                                vec3 samplePoint = rayPoint + ( dir * v_sampleDistance * float(aoI+1) );
-                            vec4 sampleColor = (transferFunction( 0, texture3D( u_volume_ds0Sampler, samplePoint ).r ) *
-                                                    transferFunction( 0, texture3D( u_volume_ds1Sampler, samplePoint ).r ) );
-                            aoFactor += sampleColor.a;// * ( 1.0 / 16.0 );
-                        }
-            */
                 // apply front-to-back compositing
                 dst = ( 1.0 - dst.a ) * src + dst;
                 //dst.rgb *= 0.15*aoFactor;
@@ -349,10 +324,10 @@ void main()
 
     // have we hit something which was classified not to be transparent?
     // This is, visually, not needed but useful if volume renderer is used in conjunction with other geometry.
-    if( isZero( dst.a ) )
-    {
-        discard;
-    }
+    //    if( isZero( dst.a ) )
+    //    {
+    //        discard;
+    //    }
 
     // get depth ... currently the frag depth.
     float depth = gl_FragCoord.z;
