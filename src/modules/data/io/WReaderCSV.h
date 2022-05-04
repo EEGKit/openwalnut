@@ -25,6 +25,7 @@
 #ifndef WREADERCSV_H
 #define WREADERCSV_H
 
+#include <fstream>
 #include <memory>
 #include <string>
 #include <vector>
