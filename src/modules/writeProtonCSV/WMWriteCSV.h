@@ -107,6 +107,11 @@ private:
     void writeToFile();
 
     /**
+     * Writes only the fibers to the file
+     */
+    void writeOnlyFibersToFile();
+
+    /**
      * Trigger Event for Dialogfile
      */
     void propertyCallback();

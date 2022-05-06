@@ -39,8 +39,14 @@
 // The ray's starting point in texture space
 in vec3 v_rayStart;
 
-// The ray direction in texture space
+// The ray direction in texture space, normalized
 in vec3 v_ray;
+
+// The sampling distance
+in float v_sampleDistance;
+
+// The steps in relation to a default number of steps of 128.
+in float v_relativeSampleDistance;
 
 // the Surface normal at this point
 in vec3 v_normal;
@@ -52,7 +58,6 @@ in float v_isovalue;
 in float v_worldScale;
 
 in vec4 v_color;
-
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
@@ -93,6 +98,7 @@ uniform float u_alpha;
 // the ratio between normal color and the colormapping color.
 uniform float u_colormapRatio;
 
+
 /////////////////////////////////////////////////////////////////////////////
 // Attributes
 /////////////////////////////////////////////////////////////////////////////
@@ -105,12 +111,20 @@ uniform float u_colormapRatio;
 // Functions
 /////////////////////////////////////////////////////////////////////////////
 
-vec3 findRayEnd( out float d )
+/**
+ * Method uses the ray direction (varying) and the ray entry point in the cube (varying) to calculate the exit point. This is lateron needed to
+ * get a proper maximum distance along the ray.
+ *
+ * \param d out - this value will contain the maximum distance along the ray untill the end of the cube
+ * \param rayStart in - the start point of the ray in the volume
+ *
+ * \return the end point
+ */
+vec3 findRayEnd( in vec3 rayStart, out float d )
 {
-    vec3 r = v_ray + vec3( 0.0000001 );
-    vec3 p = v_rayStart;
-
-    // we need to ensure the vector components are not exactly 0.0
+    // we need to ensure the vector components are not exactly 0.0 since they are used for division
+    vec3 r = v_ray + vec3( 0.000000001 );
+    vec3 p = rayStart;
 
     // v_ray in cube coordinates is used to check against the unit cube borders
     // when will v_ray reach the front face?
@@ -126,11 +140,6 @@ vec3 findRayEnd( out float d )
     // get the nearest hit
     d = min( min( max( tFront, tBack ), max( tLeft, tRight ) ), max( tBottom, tTop ) );
     return p + ( r * d );
-}
-
-float pointDistance( vec3 p1, vec3 p2 )
-{
-    return length( p1 - p2 );
 }
 
 /**
@@ -156,54 +165,44 @@ vec3 getNormal( in vec3 position )
  */
 void main()
 {
-    // init outputs
     wgeInitGBuffer();
     wge_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
     gl_FragDepth = 1.0;
-
-#define SAMPLES u_steps
 
 #ifdef WGE_POSTPROCESSING_ENABLED
     wge_FragZoom = v_worldScale;
 #endif
 
-    // please do not laugh, it is a very very very simple "isosurface" shader
-
     // First, find the rayEnd point. We need to do it in the fragment shader as the ray end point may be interpolated wrong
     // when done for each vertex.
-    float totalDistance = 0.0;
-    vec3 rayEnd = findRayEnd( totalDistance );
-    float stepDistance = totalDistance / float( SAMPLES );
-
-    // the current value inside the data
-    float value;
+    float totalDistance = 0.0;      // the maximal distance along the ray until the BBox ends
+    float currentDistance = 0.02;   // accumulated distance along the ray
 
 #ifdef STOCHASTICJITTER_ENABLED
     // stochastic jittering can help to void these ugly wood-grain artifacts with larger sampling distances but might
     // introduce some noise artifacts.
-    float jitter = 0.5 - texture( u_texture1Sampler, gl_FragCoord.xy / u_texture1SizeX ).r;
-    // the point along the ray in cube coordinates
-    vec3 curPoint = v_ray + v_rayStart + ( v_ray * stepDistance * jitter );
+    float jitter = 0.5 - texture( u_texture1Sampler, gl_FragCoord.xy / float( u_texture1SizeX ) ).r;
+    vec3 rayStart = v_rayStart + ( v_ray * v_sampleDistance * jitter );
 #else
-    // the point along the ray in cube coordinates
-    vec3 curPoint = v_ray + v_rayStart;
+    vec3 rayStart = v_rayStart;
 #endif
-    vec3 rayStart = curPoint;
 
-    // the step counter
-    int i = 1;
-    while( i < SAMPLES )
+    vec3 rayEnd = findRayEnd( rayStart, totalDistance );
+
+    // walk along the ray
+    while( currentDistance <= ( totalDistance - 0.02 )  )
     {
         // get current value
-        value = texture( u_texture0Sampler, curPoint ).r;
+        vec3 rayPoint = rayStart + ( currentDistance * v_ray );
 
-        // is it the isovalue?
+        float value = texture( u_texture0Sampler, rayPoint ).r;
+
         if( ( abs( value - v_isovalue ) < ISO_EPSILON )
 #ifdef BORDERCLIP_ENABLED
                 &&
-            !( length( curPoint - rayStart ) < u_borderClipDistance )
+            !( length( rayPoint - rayStart ) < u_borderClipDistance )
                 &&
-            !( length( curPoint - rayEnd ) < u_borderClipDistance )
+            !( length( rayPoint - rayEnd ) < u_borderClipDistance )
 #endif
         )
         {
@@ -211,7 +210,7 @@ void main()
             // Therefore, the complete standard pipeline is reproduced here:
 
             // 1: transfer to world space and right after it, to eye space
-            vec4 curPointProjected = osg_ModelViewProjectionMatrix * vec4( curPoint, 1.0 );
+            vec4 rayPointProjected = osg_ModelViewProjectionMatrix * vec4( rayPoint, 1.0 );
 
             // 2: scale to screen space and [0,1]
             // -> x and y is not needed
@@ -219,16 +218,13 @@ void main()
             // curPointProjected.x  = curPointProjected.x * 0.5 + 0.5 ;
             // curPointProjected.y /= curPointProjected.w;
             // curPointProjected.y  = curPointProjected.y * 0.5 + 0.5 ;
-            curPointProjected.z /= curPointProjected.w;
-            curPointProjected.z  = curPointProjected.z * 0.5 + 0.5;
+            rayPointProjected.z /= rayPointProjected.w;
+            rayPointProjected.z  = rayPointProjected.z * 0.5 + 0.5;
 
             // 3: set depth value
-            gl_FragDepth = curPointProjected.z;
+            gl_FragDepth = rayPointProjected.z;
 
-            // 4: Shading
-
-            // find a proper normal for a headlight in world-space
-            vec3 normal = ( osg_ModelViewMatrix * vec4( getNormal( curPoint ), 0.0 ) ).xyz;
+            vec3 normal = ( osg_ModelViewMatrix * vec4( getNormal( rayPoint ), 0.0 ) ).xyz;
 #ifdef WGE_POSTPROCESSING_ENABLED
             wge_FragNormal = textureNormalize( normal );
 #endif
@@ -245,23 +241,16 @@ void main()
             // 4: set color
             // mix color with colormap
             vec4 color = mix(
-                colormapping( vec4( curPoint.x * u_texture0SizeX, curPoint.y * u_texture0SizeY, curPoint.z * u_texture0SizeZ, 1.0 ) ),
+                colormapping( vec4( rayPoint.x * u_texture0SizeX, rayPoint.y * u_texture0SizeY, rayPoint.z * u_texture0SizeZ, 1.0 ) ),
                 vec4( v_color.rgb, u_alpha ),
                 1.0 - u_colormapRatio );
             // 5: the final color construction
             wge_FragColor = vec4( light * color.rgb, color.a );
-
             break;
         }
-        else
-        {
-            // no it is not the iso value
-            // -> continue along the ray
-            curPoint += stepDistance * v_ray;
-        }
 
-        // do not miss to count the steps already done
-        i++;
+        // go to next value
+        currentDistance += v_sampleDistance;
     }
 }
 
