@@ -46,6 +46,9 @@ out float v_sampleDistance;
 // The steps in relation to a default number of steps of 128.
 out float v_relativeSampleDistance;
 
+// The position of the camera
+flat out vec3 v_eyePos;
+
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
 /////////////////////////////////////////////////////////////////////////////
@@ -77,8 +80,8 @@ void main()
         // perspective:
         // calculate object space coordinate for camera
         // create vector between camera and vertex
-        vec3 eye = ( inverse( osg_ModelViewMatrix ) * vec4( 0.0, 0.0, 0.0, 1.0 ) ).xyz;
-        v_ray = normalize( osg_Vertex.xyz - eye );
+        v_eyePos = ( inverse( osg_ModelViewMatrix ) * vec4( 0.0, 0.0, 0.0, 1.0 ) ).xyz;
+        v_ray = vec3( 0.0 );
     }
 
     gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;

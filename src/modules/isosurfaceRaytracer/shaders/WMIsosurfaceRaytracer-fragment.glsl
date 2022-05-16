@@ -57,6 +57,9 @@ in float v_isovalue;
 // The scaling component of the modelview matrix.
 in float v_worldScale;
 
+// The position of the camera
+flat in vec3 v_eyePos;
+
 in vec4 v_color;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -120,10 +123,10 @@ uniform float u_colormapRatio;
  *
  * \return the end point
  */
-vec3 findRayEnd( in vec3 rayStart, out float d )
+vec3 findRayEnd( in vec3 rayStart, in vec3 ray, out float d )
 {
     // we need to ensure the vector components are not exactly 0.0 since they are used for division
-    vec3 r = v_ray + vec3( 0.000000001 );
+    vec3 r = ray + vec3( 0.000000001 );
     vec3 p = rayStart;
 
     // v_ray in cube coordinates is used to check against the unit cube borders
@@ -149,7 +152,7 @@ vec3 findRayEnd( in vec3 rayStart, out float d )
  *
  * \return the gradient, NOT normalized
  */
-vec3 getNormal( in vec3 position )
+vec3 getNormal( in vec3 position, in vec3 ray )
 {
     vec3 grad;
 #ifdef GRADIENTTEXTURE_ENABLED
@@ -157,7 +160,7 @@ vec3 getNormal( in vec3 position )
 #else
     grad = getGradient( u_texture0Sampler, position );
 #endif
-    return sign( dot( grad, -v_ray ) ) * grad;
+    return sign( dot( grad, -ray ) ) * grad;
 }
 
 /**
@@ -168,6 +171,12 @@ void main()
     wgeInitGBuffer();
     wge_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
     gl_FragDepth = 1.0;
+
+    vec3 ray = v_ray;
+    if( osg_ProjectionMatrix[3][3] == 0.0 )
+    {
+        ray = v_rayStart - v_eyePos;
+    }
 
 #ifdef WGE_POSTPROCESSING_ENABLED
     wge_FragZoom = v_worldScale;
@@ -182,18 +191,18 @@ void main()
     // stochastic jittering can help to void these ugly wood-grain artifacts with larger sampling distances but might
     // introduce some noise artifacts.
     float jitter = 0.5 - texture( u_texture1Sampler, gl_FragCoord.xy / float( u_texture1SizeX ) ).r;
-    vec3 rayStart = v_rayStart + ( v_ray * v_sampleDistance * jitter );
+    vec3 rayStart = v_rayStart + ( ray * v_sampleDistance * jitter );
 #else
     vec3 rayStart = v_rayStart;
 #endif
 
-    vec3 rayEnd = findRayEnd( rayStart, totalDistance );
+    vec3 rayEnd = findRayEnd( rayStart, ray, totalDistance );
 
     // walk along the ray
     while( currentDistance <= ( totalDistance - 0.02 )  )
     {
         // get current value
-        vec3 rayPoint = rayStart + ( currentDistance * v_ray );
+        vec3 rayPoint = rayStart + ( currentDistance * ray );
 
         float value = texture( u_texture0Sampler, rayPoint ).r;
 
@@ -224,7 +233,7 @@ void main()
             // 3: set depth value
             gl_FragDepth = rayPointProjected.z;
 
-            vec3 normal = ( osg_ModelViewMatrix * vec4( getNormal( rayPoint ), 0.0 ) ).xyz;
+            vec3 normal = ( osg_ModelViewMatrix * vec4( getNormal( rayPoint, ray ), 0.0 ) ).xyz;
 #ifdef WGE_POSTPROCESSING_ENABLED
             wge_FragNormal = textureNormalize( normal );
 #endif

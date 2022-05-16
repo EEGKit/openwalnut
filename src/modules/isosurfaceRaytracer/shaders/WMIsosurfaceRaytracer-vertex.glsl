@@ -57,6 +57,9 @@ out float v_isovalue;
 // The scaling component of the modelview matrix.
 out float v_worldScale;
 
+// The position of the camera
+flat out vec3 v_eyePos;
+
 out vec4 v_color;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -105,8 +108,8 @@ void main()
         // perspective:
         // calculate object space coordinate for camera
         // create vector between camera and vertex
-        vec3 eye = ( inverse( osg_ModelViewMatrix ) * vec4( 0.0, 0.0, 0.0, 1.0 ) ).xyz;
-        v_ray = normalize( osg_Vertex.xyz - eye );
+        v_eyePos = ( inverse( osg_ModelViewMatrix ) * vec4( 0.0, 0.0, 0.0, 1.0 ) ).xyz;
+        v_ray = vec3( 0.0 );
     }
 
     #ifdef WGE_POSTPROCESSING_ENABLED
