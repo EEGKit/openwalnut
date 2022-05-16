@@ -68,12 +68,12 @@ void main()
     vec4 finalColor = getColor( pixelCoord );
 
     float depth = getDepth( pixelCoord );
-    if( finalColor.a == 0.0 )
-    {
-       finalColor = vec4( 1.0, 1.0, 1.0, 1.0 );
-    }
+    // if( finalColor.a == 0.0 )
+    // {
+    //    finalColor = vec4( 1.0, 1.0, 1.0, 1.0 );
+    // }
 
-    gl_FragColor = finalColor;
+    gl_FragColor = mix( vec4( 1.0 ), finalColor, finalColor.a );
     gl_FragDepth = depth;
 }
 

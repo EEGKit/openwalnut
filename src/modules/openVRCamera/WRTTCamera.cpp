@@ -45,6 +45,8 @@ WRTTCamera::WRTTCamera( uint32_t width,
     setupCamera();
     setupRTT();
 
+    wge::enableTransparency( m_node );
+
     addChild( m_node );
 }
 
