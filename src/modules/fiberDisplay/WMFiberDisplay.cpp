@@ -694,9 +694,9 @@ void WMFiberDisplay::createFiberGeode( std::shared_ptr< WDataSetFibers > fibers,
             for( size_t i = 0; i < len - 1; i++ )
             {
                 indices->push_back( 2 * ( currentStart + i ) );
-                indices->push_back( 2 * ( currentStart + i ) + 1 );
                 indices->push_back( 2 * ( currentStart + i ) + 2 );
                 indices->push_back( 2 * ( currentStart + i ) + 3 );
+                indices->push_back( 2 * ( currentStart + i ) + 1 );
             }
         }
         else
