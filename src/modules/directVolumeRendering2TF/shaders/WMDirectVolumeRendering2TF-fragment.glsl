@@ -22,10 +22,10 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
 
 // This is needed if the modulo operator % is required
-#extension GL_EXT_gpu_shader4 : enable
+//#extension GL_EXT_gpu_shader4 : enable
 
 #ifdef LOCALILLUMINATION_PHONG
 #include "WGEShadingTools.glsl"
@@ -33,11 +33,22 @@
 
 #include "WGEUtils.glsl"
 
+
 /////////////////////////////////////////////////////////////////////////////
 // Varyings
 /////////////////////////////////////////////////////////////////////////////
 
-#include "WMDirectVolumeRendering2TF-varyings.glsl"
+// The ray's starting point in texture space
+in vec3 v_rayStart;
+
+// The ray direction in texture space, normalized
+in vec3 v_ray;
+
+// The sampling distance
+in float v_sampleDistance;
+
+// The steps in relation to a default number of steps of 128.
+in float v_relativeSampleDistance;
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
@@ -106,16 +117,16 @@ vec3 getGradient( in vec3 position )
 {
     // How do we have to incorporate the gradient of the second volume?
     #ifdef GRADIENTTEXTURE_ENABLED
-        return ( 2.0 * texture3D( u_gradientsSampler, position ).rgb ) + vec3( -1.0 );
+        return ( 2.0 * texture( u_gradientsSampler, position ).rgb ) + vec3( -1.0 );
     #else
         float s = 0.02;
 
-        float valueXP = texture3D( u_volume_ds0Sampler, position + vec3( s, 0.0, 0.0 ) ).r;
-        float valueXM = texture3D( u_volume_ds0Sampler, position - vec3( s, 0.0, 0.0 ) ).r;
-        float valueYP = texture3D( u_volume_ds0Sampler, position + vec3( 0.0, s, 0.0 ) ).r;
-        float valueYM = texture3D( u_volume_ds0Sampler, position - vec3( 0.0, s, 0.0 ) ).r;
-        float valueZP = texture3D( u_volume_ds0Sampler, position + vec3( 0.0, 0.0, s ) ).r;
-        float valueZM = texture3D( u_volume_ds0Sampler, position - vec3( 0.0, 0.0, s ) ).r;
+        float valueXP = texture( u_volume_ds0Sampler, position + vec3( s, 0.0, 0.0 ) ).r;
+        float valueXM = texture( u_volume_ds0Sampler, position - vec3( s, 0.0, 0.0 ) ).r;
+        float valueYP = texture( u_volume_ds0Sampler, position + vec3( 0.0, s, 0.0 ) ).r;
+        float valueYM = texture( u_volume_ds0Sampler, position - vec3( 0.0, s, 0.0 ) ).r;
+        float valueZP = texture( u_volume_ds0Sampler, position + vec3( 0.0, 0.0, s ) ).r;
+        float valueZM = texture( u_volume_ds0Sampler, position - vec3( 0.0, 0.0, s ) ).r;
 
         return vec3( valueXP - valueXM, valueYP - valueYM, valueZP - valueZM );
 
@@ -169,7 +180,7 @@ vec4 localIllumination( in vec3 position, in vec4 color )
         // get a gradient and get it to world-space
         vec3 g = getGradient( position );
 
-        vec3 worldNormal = ( gl_ModelViewMatrix * vec4( g, 0.0 ) ).xyz;
+        vec3 worldNormal = ( osg_ModelViewMatrix * vec4( g, 0.0 ) ).xyz;
         if( length( g ) < 0.01 )
         {
             return vec4( 0.0 ); //vec4( g.x, g.y, g.z, 1.0 );
@@ -190,7 +201,7 @@ vec4 localIllumination( in vec3 position, in vec4 color )
         vec3( 1.0, 1.0, 1.0 ),                        // light ambient
         normalize( worldNormal ),                     // normal
         vec3( 0.0, 0.0, 1.0 ),                        // view direction  // in world space, this always is the view-dir
-        gl_LightSource[0].position.xyz                // light source position
+        ow_lightsource.xyz                // light source position
         );
         light.a = color.a;
         return light;
@@ -246,8 +257,8 @@ void main()
         {
             // get current value, classify and illuminate
             vec3 rayPoint = rayStart + ( currentDistance * v_ray );
-            float alpha = ( transferFunction( texture3D( u_volume_ds0Sampler, rayPoint ).r,
-                            texture3D( u_volume_ds1Sampler, rayPoint ).r ).a );
+            float alpha = ( transferFunction( texture( u_volume_ds0Sampler, rayPoint ).r,
+                            texture( u_volume_ds1Sampler, rayPoint ).r ).a );
             if( alpha > maxalpha )
             {
                 maxRayPoint = rayPoint;
@@ -263,8 +274,8 @@ void main()
         // both depth projection and mip need this information.
         if( maxdist > 0.0 )
         {
-            dst = ( localIllumination( maxRayPoint, transferFunction( texture3D( u_volume_ds0Sampler, maxRayPoint ).r,
-                                                                      texture3D( u_volume_ds1Sampler, maxRayPoint ).r ) ) );
+            dst = ( localIllumination( maxRayPoint, transferFunction( texture( u_volume_ds0Sampler, maxRayPoint ).r,
+                                                                      texture( u_volume_ds1Sampler, maxRayPoint ).r ) ) );
             dst.a = 1.0;
         }
             // Currently deactivated in the cpp, because it seems to be wrong in the 2D TF
@@ -295,8 +306,8 @@ void main()
             {
                 // get current value, classify and illuminate
                 vec3 rayPoint = rayStart + ( currentDistance * v_ray );
-                vec4 src = localIllumination( rayPoint, transferFunction( texture3D( u_volume_ds0Sampler, rayPoint ).r,
-                                                texture3D( u_volume_ds1Sampler, rayPoint ).r ) );
+                vec4 src = localIllumination( rayPoint, transferFunction( texture( u_volume_ds0Sampler, rayPoint ).r,
+                                                texture( u_volume_ds1Sampler, rayPoint ).r ) );
                 // associated colors needed
                 src.rgb *= src.a;
 
@@ -336,4 +347,3 @@ void main()
     gl_FragColor = dst;
     gl_FragDepth = depth;
 }
-
