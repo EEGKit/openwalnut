@@ -39,9 +39,9 @@ WDataTexture3D::WDataTexture3D( std::shared_ptr< WValueSetBase > valueSet, std::
     setTextureSize( grid->getNbCoordsX(), grid->getNbCoordsY(), grid->getNbCoordsZ() );
 
     // data textures do not repeat or something
-    setWrap( osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_BORDER );
-    setWrap( osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_BORDER );
-    setWrap( osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_BORDER );
+    setWrap( osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE  );
+    setWrap( osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE  );
+    setWrap( osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE  );
 
     thresholdLower()->setMin( valueSet->getMinimumValue() );
     thresholdLower()->setMax( valueSet->getMaximumValue() );

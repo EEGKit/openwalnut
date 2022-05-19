@@ -29,6 +29,7 @@
 
 #include "core/graphicsEngine/WGECamera.h"
 #include "core/graphicsEngine/WGEGroupNode.h"
+#include "core/graphicsEngine/WGEUtils.h"
 #include "core/graphicsEngine/offscreen/WGEOffscreenRenderNode.h"
 
 /**

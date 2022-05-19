@@ -118,17 +118,19 @@ void WMWriteCSV::propertyCallback()
     std::shared_ptr< WDataSetCSV > csvdataSet = m_CSVInput->getData();
     std::shared_ptr< WDataSetFibers > fibersdataSet = m_fibersInput->getData();
 
-    if( !csvdataSet )
-    {
-        throw WException( "The Data-Modul-CSV-connection is missing." );
-    }
-
     if( !fibersdataSet )
     {
         throw WException( "The Point-Connector-connection is missing." );
     }
 
-    writeToFile();
+    if( !csvdataSet )
+    {
+        writeOnlyFibersToFile();
+    }
+    else
+    {
+        writeToFile();
+    }
 }
 
 std::list< std::tuple < float, float, float, size_t > > WMWriteCSV::getListOfInternalVertex( WDataSetFibers::SPtr fibers )
@@ -219,6 +221,29 @@ size_t WMWriteCSV::createStartCounter( std::list< std::tuple < float, float, flo
         }
     }
     return eventIDcounter + 1;
+}
+
+void WMWriteCSV::writeOnlyFibersToFile()
+{
+    std::list< std::tuple < float, float, float, size_t > > listOfInternalVertex = getListOfInternalVertex( m_fibersInput->getData() );
+    std::ofstream newCSVFile( getPathToSave() );
+
+    if( !newCSVFile.is_open() )
+    {
+        throw WException( "Could not create new CSV in the selected source folder" );
+    }
+
+    newCSVFile << "posX,posY,posZ,eventID" << std::endl;
+    for( auto elm = listOfInternalVertex.begin(); elm != listOfInternalVertex.end(); elm++ )
+    {
+        float  posX = std::get< 0 >( *elm );
+        float  posY = std::get< 1 >( *elm );
+        float  posZ = std::get< 2 >( *elm );
+        size_t evnt = std::get< 3 >( *elm );
+
+        newCSVFile << posX << "," << posY << "," << posZ << "," << evnt << std::endl;
+    }
+    newCSVFile.close();
 }
 
 void WMWriteCSV::writeToFile()

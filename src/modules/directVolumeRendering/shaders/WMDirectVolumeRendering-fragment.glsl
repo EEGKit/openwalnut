@@ -51,6 +51,9 @@ in float v_sampleDistance;
 // The steps in relation to a default number of steps of 128.
 in float v_relativeSampleDistance;
 
+// The position of the camera
+flat in vec3 v_eyePos;
+
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
 /////////////////////////////////////////////////////////////////////////////
@@ -84,10 +87,10 @@ uniform int       u_samples;
  *
  * \return the end point
  */
-vec3 findRayEnd( in vec3 rayStart, out float d )
+vec3 findRayEnd( in vec3 rayStart, in vec3 ray, out float d )
 {
     // we need to ensure the vector components are not exactly 0.0 since they are used for division
-    vec3 r = v_ray + vec3( 0.000000001 );
+    vec3 r = ray + vec3( 0.000000001 );
     vec3 p = rayStart;
 
     // v_ray in cube coordinates is used to check against the unit cube borders
@@ -226,6 +229,12 @@ float fastpow( float a, float b )
  */
 void main()
 {
+    vec3 ray = v_ray;
+    if( osg_ProjectionMatrix[3][3] == 0.0 )
+    {
+        ray = v_rayStart - v_eyePos;
+    }
+
     // First, find the rayEnd point. We need to do it in the fragment shader as the ray end point may be interpolated wrong
     // when done for each vertex.
     float totalDistance = 0.0;      // the maximal distance along the ray until the BBox ends
@@ -235,12 +244,12 @@ void main()
     // stochastic jittering can help to void these ugly wood-grain artifacts with larger sampling distances but might
     // introduce some noise artifacts.
     float jitter = 0.5 - texture( u_jitterSampler, gl_FragCoord.xy / float( u_jitterSizeX ) ).r;
-    vec3 rayStart = v_rayStart + ( v_ray * v_sampleDistance * jitter );
+    vec3 rayStart = v_rayStart + ( ray * v_sampleDistance * jitter );
 #else
     vec3 rayStart = v_rayStart;
 #endif
 
-    vec3 rayEnd = findRayEnd( rayStart, totalDistance );
+    vec3 rayEnd = findRayEnd( rayStart, ray, totalDistance );
 
 #ifdef MIP_ENABLED
     // There is no nice early ray termination, so this will slow things
@@ -253,7 +262,7 @@ void main()
     while( currentDistance <= ( totalDistance - 0.02 )  )
     {
         // get current value, classify and illuminate
-        vec3 rayPoint = rayStart + ( currentDistance * v_ray );
+        vec3 rayPoint = rayStart + ( currentDistance * ray );
         float alpha = transferFunction( texture( u_volumeSampler, rayPoint ).r ).a;
         if( alpha > maxalpha )
         {
@@ -307,7 +316,7 @@ void main()
         for( int i = 0; i < 10; ++i )
         {
             // get current value, classify and illuminate
-            vec3 rayPoint = rayStart + ( currentDistance * v_ray );
+            vec3 rayPoint = rayStart + ( currentDistance * ray );
             vec4 src = localIllumination( rayPoint, transferFunction( texture( u_volumeSampler, rayPoint ).r ) );
             // associated colors needed
             src.rgb *= src.a;
@@ -320,7 +329,7 @@ void main()
             src.a = 1.0 - fastpow( 1.0 - src.a, v_relativeSampleDistance );
 #endif
 
-    /*        vec3 planeNorm = -v_ray;
+    /*        vec3 planeNorm = -ray;
 
             vec3 pSphere[16] = vec3[](vec3(0.53812504, 0.18565957, -0.43192),vec3(0.13790712, 0.24864247, 0.44301823),vec3(0.33715037, 0.56794053, -0.005789503),vec3(-0.6999805, -0.04511441, -0.0019965635),vec3(0.06896307, -0.15983082, -0.85477847),vec3(0.056099437, 0.006954967, -0.1843352),vec3(-0.014653638, 0.14027752, 0.0762037),vec3(0.010019933, -0.1924225, -0.034443386),vec3(-0.35775623, -0.5301969, -0.43581226),vec3(-0.3169221, 0.106360726, 0.015860917),vec3(0.010350345, -0.58698344, 0.0046293875),vec3(-0.08972908, -0.49408212, 0.3287904),vec3(0.7119986, -0.0154690035, -0.09183723),vec3(-0.053382345, 0.059675813, -0.5411899),vec3(0.035267662, -0.063188605, 0.54602677),vec3(-0.47761092, 0.2847911, -0.0271716));
             float aoFactor = 0.0;

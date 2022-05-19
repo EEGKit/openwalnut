@@ -31,6 +31,7 @@
 
 #include "WGETransformationTools.glsl"
 
+
 /////////////////////////////////////////////////////////////////////////////
 // Varyings
 /////////////////////////////////////////////////////////////////////////////
@@ -38,8 +39,14 @@
 // The ray's starting point in texture space
 out vec3 v_rayStart;
 
-// The ray direction in texture space
+// The ray direction in texture space, normalized
 out vec3 v_ray;
+
+// The sampling distance
+out float v_sampleDistance;
+
+// The steps in relation to a default number of steps of 128.
+out float v_relativeSampleDistance;
 
 // the Surface normal at this point
 out vec3 v_normal;
@@ -50,12 +57,15 @@ out float v_isovalue;
 // The scaling component of the modelview matrix.
 out float v_worldScale;
 
-out vec4 v_color;
+// The position of the camera
+flat out vec3 v_eyePos;
 
+out vec4 v_color;
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
 /////////////////////////////////////////////////////////////////////////////
+uniform int u_steps;
 
 // scaling factor of the data in the texture. Needed for descaling.
 uniform float u_texture0Scale;
@@ -66,18 +76,6 @@ uniform float u_texture0Min;
 // The isovalue to use.
 uniform float u_isovalue;
 
-/////////////////////////////////////////////////////////////////////////////
-// Attributes
-/////////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////////////////////////
-// Variables
-/////////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////////////////////////
-// Functions
-/////////////////////////////////////////////////////////////////////////////
-
 /**
  * Main entry point of the vertex shader.
  */
@@ -85,28 +83,40 @@ void main()
 {
     colormapping();
 
-    // scale isovalue to equal the texture data scaling.
     v_isovalue = ( u_isovalue - u_texture0Min ) / u_texture0Scale;
 
-    // for easy access to texture coordinates
-    // gl_TexCoord[0] = osg_MultiTexCoord0;
     v_normal = osg_Normal;
 
+    // to have equidistant sampling for each side of the box, use a fixed step size
+    v_sampleDistance = 1.0 / float( u_steps );
+    v_relativeSampleDistance = 128.0 /  float( u_steps );
+
     // in texture space, the starting point simply is the current surface point in texture space
-    v_rayStart = osg_MultiTexCoord0.xyz; // this equals osg_Vertex!
+    v_rayStart = osg_Vertex.xyz;
 
-    // transform the ray direction to texture space, which equals object space
-    // Therefore use two points, as we transform a vector
-    vec4 camLookAt = vec4( 0.0, 0.0, -1.0, 0.0 );
-    v_ray = worldToLocal( camLookAt ).xyz;
+    if( osg_ProjectionMatrix[3][3] == 1.0 )
+    {
+        // orthographic:
+        // transform the ray direction to texture space, which equals object space
+        // Therefore use two points, as we transform a vector
+        vec4 camLookAt = vec4( 0.0, 0.0, -1.0, 0.0 );
+        vec4 camPos    = vec4( 0.0, 0.0, 0.0, 0.0 );
+        v_ray = normalize( worldToLocal( camLookAt, camPos ).xyz );
+    }
+    else
+    {
+        // perspective:
+        // calculate object space coordinate for camera
+        // create vector between camera and vertex
+        v_eyePos = ( inverse( osg_ModelViewMatrix ) * vec4( 0.0, 0.0, 0.0, 1.0 ) ).xyz;
+        v_ray = vec3( 0.0 );
+    }
 
-#ifdef WGE_POSTPROCESSING_ENABLED
-    // Keep track of scaling information. This is needed by some postprocessors.
-    v_worldScale = getModelViewScale();
-#endif
+    #ifdef WGE_POSTPROCESSING_ENABLED
+        // Keep track of scaling information. This is needed by some postprocessors.
+        v_worldScale = getModelViewScale();
+    #endif
 
-    // Simply project the vertex
-    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
     v_color = osg_Color;
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }
-

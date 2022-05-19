@@ -46,51 +46,43 @@ out float v_sampleDistance;
 // The steps in relation to a default number of steps of 128.
 out float v_relativeSampleDistance;
 
+// The position of the camera
+flat out vec3 v_eyePos;
+
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
 /////////////////////////////////////////////////////////////////////////////
-
-// texture containing the data
-uniform sampler3D tex0;
-
-// The number of samples to use.
 uniform int u_samples;
-
-/////////////////////////////////////////////////////////////////////////////
-// Attributes
-/////////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////////////////////////
-// Variables
-/////////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////////////////////////
-// Functions
-/////////////////////////////////////////////////////////////////////////////
 
 /**
  * Main entry point of the vertex shader.
  */
 void main()
 {
-    // for easy access to texture coordinates
-    //gl_TexCoord[0] = osg_MultiTexCoord0;
-
-    // in texture space, the starting point simply is the current surface point in texture space
-    v_rayStart = osg_Vertex.xyz; // this equals osg_Vertex!
-
-    // transform the ray direction to texture space, which equals object space
-    // Therefore use two points, as we transform a vector
-    vec4 camLookAt = vec4( 0.0, 0.0, -1.0, 0.0 );
-    vec4 camPos    = vec4( 0.0, 0.0, 0.0, 0.0 );
-    v_ray = normalize( worldToLocal( camLookAt, camPos ).xyz );
-
     // to have equidistant sampling for each side of the box, use a fixed step size
     v_sampleDistance = 1.0 / float( u_samples );
     v_relativeSampleDistance = 128.0 /  float( u_samples );
 
-    // Simply project the vertex
-    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
-    //gl_FrontColor = osg_Color;
-}
+    // in texture space, the starting point simply is the current surface point in texture space
+    v_rayStart = osg_Vertex.xyz;
 
+    if( osg_ProjectionMatrix[3][3] == 1.0 )
+    {
+        // orthographic:
+        // transform the ray direction to texture space, which equals object space
+        // Therefore use two points, as we transform a vector
+        vec4 camLookAt = vec4( 0.0, 0.0, -1.0, 0.0 );
+        vec4 camPos    = vec4( 0.0, 0.0, 0.0, 0.0 );
+        v_ray = normalize( worldToLocal( camLookAt, camPos ).xyz );
+    }
+    else
+    {
+        // perspective:
+        // calculate object space coordinate for camera
+        // create vector between camera and vertex
+        v_eyePos = ( inverse( osg_ModelViewMatrix ) * vec4( 0.0, 0.0, 0.0, 1.0 ) ).xyz;
+        v_ray = vec3( 0.0 );
+    }
+
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
+}
