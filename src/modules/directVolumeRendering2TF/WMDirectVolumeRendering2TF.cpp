@@ -79,7 +79,7 @@ const char** WMDirectVolumeRendering2TF::getXPMIcon() const
 const std::string WMDirectVolumeRendering2TF::getName() const
 {
     // Specify your module name here. This name must be UNIQUE!
-    return "Direct Volume Rendering for 2 TF";
+    return "Direct Volume Rendering using a 2D transfer function.";
 }
 
 const std::string WMDirectVolumeRendering2TF::getDescription() const
@@ -98,7 +98,7 @@ void WMDirectVolumeRendering2TF::connectors()
 
     // The transfer function for our DVR
     m_transferFunction = WModuleInputData< WDataSetSingle >::createAndAdd( shared_from_this(),
-                                                                               "transfer function data set 1",
+                                                                               "transfer function",
                                                                                "The 2D transfer function for the two data sets." );
 
     // Optional: the gradient field

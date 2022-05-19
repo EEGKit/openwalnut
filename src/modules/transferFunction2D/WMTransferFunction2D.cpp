@@ -67,7 +67,7 @@ const std::string WMTransferFunction2D::getName() const
 
 const std::string WMTransferFunction2D::getDescription() const
 {
-    return "A module to modify a transfer function.";
+    return "A module to modify a 2D transfer function.";
 }
 
 void WMTransferFunction2D::connectors()

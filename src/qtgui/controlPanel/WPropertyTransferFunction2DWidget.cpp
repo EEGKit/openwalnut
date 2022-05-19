@@ -66,7 +66,6 @@ WPropertyTransferFunction2DWidget::WPropertyTransferFunction2DWidget( WPropTrans
 WPropertyTransferFunction2DWidget::~WPropertyTransferFunction2DWidget()
 {
     // cleanup
-    // std::cout << "cleanup." << std::endl;
 }
 
 namespace
@@ -90,12 +89,12 @@ namespace
 void WPropertyTransferFunction2DWidget::update()
 {
     modifying = true;
-    std::cout << "Widget update" << std::endl;
+    //std::cout << "Widget update" << std::endl;
     WTransferFunction2D tf( m_transferFunctionProperty->get() );
 
     if( tf != lastTransferFunction )
     {
-        std::cout << "tf updated" << std::endl;
+        //std::cout << "TF updated" << std::endl;
         m_transferFunction.cleanTransferFunction();
         m_transferFunction.setHistogram( tf.getHistogram() );
 
@@ -113,7 +112,7 @@ void WPropertyTransferFunction2DWidget::update()
     }
     else
     {
-        std::cout << "update blocked because nothing changed" << std::endl;
+        //std::cout << "update blocked because nothing changed" << std::endl;
     }
     modifying = false;
 }
@@ -126,13 +125,12 @@ void WPropertyTransferFunction2DWidget::guiUpdate( const WTransferFunction2D& tf
     lastTransferFunction = tf;
     if( !modifying )
     {
-        std::cout << "guiUpdate(...)" << std::endl;
+        //std::cout << "guiUpdate(...)" << std::endl;
         m_transferFunctionProperty->set( tf );
-        std::cout << "end guiUpdate(...)" << std::endl;
+        //std::cout << "end guiUpdate(...)" << std::endl;
     }
     else
     {
-        std::cout << "guiUpdate(...) blocked" << std::endl;
+        //std::cout << "guiUpdate(...) blocked" << std::endl;
     }
 }
-
