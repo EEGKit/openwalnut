@@ -95,6 +95,72 @@ protected:
 
 private:
     /**
+     * The second visitor which got applied to the second value set. It discriminates the integral type and applies the operator in a per value
+     * style.
+     *
+     * \tparam VSetAType The integral type of the first valueset.
+     */
+    template< typename VSetAType >
+    class VisitorVSetB: public boost::static_visitor< std::shared_ptr< WValueSetBase > >
+    {
+    public:
+        /**
+         * Creates visitor for the second level of cascading. Takes the first value set as parameter. This visitor applies the operation o to A and
+         * B: o(A,B).
+         *
+         * \param vsetA the first value set
+         */
+        explicit VisitorVSetB( const WValueSet< VSetAType >* const vsetA );
+
+        /**
+         * Visitor on the second valueset. This applies the operation.
+         *
+         * \tparam VSetBType the integral type of the currently visited valueset.
+         * \param vsetB the valueset currently visited (B).
+         *
+         * \return the result of o(A,B)
+         */
+        template < typename VSetBType >
+        result_type operator()( const WValueSet< VSetBType >* const& vsetB ) const;      // NOLINT
+
+        /**
+         * The first valueset.
+         */
+        const WValueSet< VSetAType >* const m_vsetA;
+    };
+
+    /**
+     * Visitor for discriminating the type of the first valueset. It simply creates a new instance of VisitorVSetB with the proper integral type of
+     * the first value set.
+     */
+    class VisitorVSetA: public boost::static_visitor< std::shared_ptr< WValueSetBase > >
+    {
+    public:
+        /**
+         * Create visitor instance. The specified valueset gets visited if the first one is visited using this visitor.
+         *
+         * \param vsetB The valueset to visit during this visit.
+         */
+        explicit VisitorVSetA( WValueSetBase* vsetB );
+
+        /**
+         * Called by boost::varying during static visiting. Creates a new VisitorVSetB which finally applies the operation.
+         *
+         * \tparam T the real integral type of the first value set.
+         * \param vsetA the first valueset currently visited.
+         *
+         * \return the result from the operation with this and the second value set
+         */
+        template < typename T >
+        result_type operator()( const WValueSet< T >* const& vsetA ) const;             // NOLINT
+
+        /**
+         * The valueset where to cascade.
+         */
+        WValueSetBase* m_vsetB;
+    };
+
+    /**
      * A condition used to notify about changes in several properties.
      */
     std::shared_ptr< WCondition > m_propCondition;

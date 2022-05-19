@@ -90,7 +90,7 @@ WQtGLWidget::WQtGLWidget( std::string nameOfViewer, QWidget* parent, WGECamera::
 #else
     connect( &m_Timer, SIGNAL( timeout() ), this, SLOT( updateGL() ) );
 #endif
-    m_Timer.start( 33 );
+    m_Timer.start( 0 );
 
     m_Viewer->isFrameRendered()->getCondition()->subscribeSignal( boost::bind( &WQtGLWidget::notifyFirstRenderedFrame, this ) );
 
@@ -418,7 +418,7 @@ void WQtGLWidget::reset()
 const QGLFormat WQtGLWidget::getDefaultFormat()
 {
     QGLFormat format;
-    format.setSwapInterval( 1 );    // according to Qt Doc, this should enable VSync. But it doesn't.
+    format.setSwapInterval( 0 );    // according to Qt Doc, this should enable VSync. But it doesn't.
     return format;
 }
 

@@ -78,3 +78,46 @@
     url="https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/qsform.html";
   };
 };
+
+"Write NIfTI"
+{
+  icon="WMWriteNIfTI.png";
+  website = "http://www.openwalnut.org";
+  description = "Writes a data set to a NIfTI file.";
+  help = "help/index.html";
+  author = "OpenWalnut Project";
+  "OpenWalnut Project"
+  {
+    url="http://www.openwalnut.org";
+    email="contact@openwalnut.org";
+    what="Design, Development and Bug fixing";
+  };
+
+  tag = "Data";
+  tag = "Core";
+
+  online
+  {
+    name="NIfTI";
+    description ="Information on NIfTI file format, sform and qform";
+    url="https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/qsform.html";
+  };
+};
+
+"Read Spherical Harmonics"
+{
+  icon="WMReadSphericalHarmonics.png";
+  website = "http://www.openwalnut.org";
+  description = "This modules loads data from vectors in NIfTI files as SphericalHarmonicsDatasets.";
+  help = "help/index.html";
+  author = "OpenWalnut Project";
+  "OpenWalnut Project"
+  {
+    url="http://www.openwalnut.org";
+    email="contact@openwalnut.org";
+    what="Design, Development and Bug fixing";
+  };
+
+  tag = "Data";
+  tag = "Core";
+};

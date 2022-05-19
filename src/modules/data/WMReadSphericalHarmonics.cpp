@@ -26,7 +26,6 @@
 #include <string>
 
 #include "WMReadSphericalHarmonics.h"
-#include "WMReadSphericalHarmonics.xpm"
 #include "core/common/WPathHelper.h"
 #include "core/dataHandler/WDataHandlerEnums.h"
 #include "core/graphicsEngine/WGERequirement.h"
@@ -47,10 +46,6 @@ std::shared_ptr< WModule > WMReadSphericalHarmonics::factory() const
     return std::shared_ptr< WModule >( new WMReadSphericalHarmonics() );
 }
 
-const char** WMReadSphericalHarmonics::getXPMIcon() const
-{
-    return WMReadSphericalHarmonics_xpm;
-}
 const std::string WMReadSphericalHarmonics::getName() const
 {
     // Specify your module name here. This name must be UNIQUE!
@@ -59,7 +54,7 @@ const std::string WMReadSphericalHarmonics::getName() const
 
 const std::string WMReadSphericalHarmonics::getDescription() const
 {
-    return "This modules loads data from vectors in NIfTI files as SphericalHarmonicsDatasets.";
+    return ""; // See META file
 }
 
 void WMReadSphericalHarmonics::connectors()

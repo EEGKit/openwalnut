@@ -185,6 +185,8 @@ osg::ref_ptr< osg::Texture2D > WGEOffscreenRenderPass::createTexture( GLint inte
     tex->setWrap( osg::Texture::WRAP_S, osg::Texture::REPEAT );
     tex->setWrap( osg::Texture::WRAP_T, osg::Texture::REPEAT );
 
+    tex->setResizeNonPowerOfTwoHint( false );
+
     return tex;
 }
 

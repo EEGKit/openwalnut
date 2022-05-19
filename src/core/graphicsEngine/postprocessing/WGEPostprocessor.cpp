@@ -85,7 +85,7 @@ osg::ref_ptr< osg::Texture2D > WGEPostprocessor::getDepth() const
 
 WGEPostprocessor::PostprocessorInput::PostprocessorInput()
 {
-    // leave them uni-initialized
+    // leave them un-initialized
 }
 
 WGEPostprocessor::PostprocessorInput::PostprocessorInput( std::vector< osg::ref_ptr< osg::Texture2D > > from )

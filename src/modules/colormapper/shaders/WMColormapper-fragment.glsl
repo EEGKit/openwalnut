@@ -46,6 +46,16 @@ in float v_value;
  */
 uniform int u_colormap = 0;
 
+/**
+ * The colormap to show.
+ */
+uniform float u_minV = 0;
+
+/**
+ * The colormap to show.
+ */
+uniform float u_scaleV = 0;
+
 /////////////////////////////////////////////////////////////////////////////
 // Attributes
 /////////////////////////////////////////////////////////////////////////////
@@ -63,7 +73,16 @@ uniform int u_colormap = 0;
  */
 void main()
 {
-    vec4 col = colormap( vec4( v_value ), 0.0, 1.0, false, 0.0, 1.0, false, vec2( 0.0, 1.0 ), false, 1.0, u_colormap, true );
+    vec4 col;
+    if( u_colormap == 3 )
+    {
+        col = colormap( vec4( v_value ), u_minV, u_scaleV, false, 0.0, 1.0, false, vec2( 0.0, 1.0 ), false, 1.0, u_colormap, true );
+    }
+    else
+    {
+        col = colormap( vec4( v_value ), 0.0, 1.0, false, 0.0, 1.0, false, vec2( 0.0, 1.0 ), false, 1.0, u_colormap, true );
+    }
+
     gl_FragColor = col;
 }
 

@@ -192,9 +192,14 @@ private:
     osg::ref_ptr< osg::Geode > m_innerGridGeode;
 
     /**
-     * The labels at the corner.
+     * The labels at the corners.
      */
     WGELabel::SPtr m_borderLabels[8];
+
+    /**
+     * The labels at the axes.
+     */
+    WGELabel::SPtr m_axisLabels[3];
 
     /**
      * The geode keeping the labels

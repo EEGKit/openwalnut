@@ -30,7 +30,7 @@ development is easy!
      networks/modules.
 
 - WMTemplateUI.*
-  -> this demonstartes the use of OpenWalnut's abstract view and widget API. You will
+  -> this demonstrates the use of OpenWalnut's abstract view and widget API. You will
      learn how to write custom views the user can interact with. It also shows how to
      combine these views into other widgets and demonstrates the use of property widgets.
 

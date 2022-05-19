@@ -242,7 +242,13 @@ void WMColormapper::moduleMain()
 
                 m_colorBar->getOrCreateStateSet()->addUniform( new WGEPropertyUniform< WPropSelection >( "u_colormap",
                                                                dataSet->getTexture()->colormap() ) );
+                m_colorBar->getOrCreateStateSet()->addUniform( new WGEPropertyUniform< WPropDouble >( "u_minV",
+                                                                dataSet->getTexture()->minimum() ) );
+                m_colorBar->getOrCreateStateSet()->addUniform( new WGEPropertyUniform< WPropDouble >( "u_scaleV",
+                                                               dataSet->getTexture()->scale() ) );
+
                 colormapShader->apply( m_colorBar );
+
 
                 // add the name label
                 osg::ref_ptr< WGELabel > nameLabel = new WGELabel();

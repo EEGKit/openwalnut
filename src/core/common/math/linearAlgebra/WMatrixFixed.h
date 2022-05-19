@@ -856,7 +856,7 @@ public:
     template< typename RHSValueT >
     void operator/=( const RHSValueT& rhs )
     {
-        operator=( ( *this ) / rhs );
+        operator=( ( *this ) / static_cast< double >( rhs ) );
     }
 
     /**
@@ -1545,4 +1545,3 @@ std::istream& operator>>( std::istream& in, WMatrixFixed< ValueT, Rows, Cols, Va
 }
 
 #endif  // WMATRIXFIXED_H
-

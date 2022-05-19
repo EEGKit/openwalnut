@@ -41,10 +41,11 @@ src/modules/modules-user.toolbox
 .cproject
 .settings
 
+# Visual Studio Code config files
+.vscode
+
 # jetbrains CLion / IntelliJ files
 **/.idea
-
-.vscode
 
 openwalnut.log
 

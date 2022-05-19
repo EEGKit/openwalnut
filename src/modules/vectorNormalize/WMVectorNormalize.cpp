@@ -95,75 +95,59 @@ void WMVectorNormalize::properties()
     WModule::properties();
 }
 
-/**
- * Visitor for discriminating the type of the first valueset.
- */
-class VisitorVSetA: public boost::static_visitor< std::shared_ptr< WValueSetBase > >
+WMVectorNormalize::VisitorVSetA::VisitorVSetA( double zeroTol ):
+    boost::static_visitor< result_type >(),
+    m_zeroTol( zeroTol )
 {
-public:
-    /**
-     * Create visitor instance.
-     *
-     * \param zeroTol zero tollerance
-     */
-    explicit VisitorVSetA( double zeroTol ):
-        boost::static_visitor< result_type >(),
-        m_zeroTol( zeroTol )
-    {
-    }
+}
 
-    /**
-     * Called by boost::varying during static visiting.
-     *
-     * \tparam T the real integral type of the first value set.
-     * \param vsetA the first valueset currently visited.
-     *
-     * \return the result from the operation
-     */
-    template < typename T >
-    result_type operator()( const WValueSet< T >* const& vsetA ) const             // NOLINT
-    {
-        // get some info
-        std::vector< T > data;
-        data.resize( vsetA->rawSize() );
+/**
+ * Called by boost::varying during static visiting.
+ *
+ * \tparam T the real integral type of the first value set.
+ * \param vsetA the first valueset currently visited.
+ *
+ * \return the result from the operation
+ */
+template < typename T >
+boost::static_visitor< std::shared_ptr< WValueSetBase > >::result_type WMVectorNormalize::VisitorVSetA::operator()(
+    const WValueSet< T >* const& vsetA ) const             // NOLINT
+{
+    // get some info
+    std::vector< T > data;
+    data.resize( vsetA->rawSize() );
 
-        // apply op to each value
-        // iterate field
-        for( size_t i = 0; i < vsetA->size(); ++i )
+    // apply op to each value
+    // iterate field
+    for( size_t i = 0; i < vsetA->size(); ++i )
+    {
+        // to avoid cascading numeric errors due to T being a low resolution type, we use doubles during calculation
+        double x = vsetA->getScalar( ( i * 3 ) + 0 );
+        double y = vsetA->getScalar( ( i * 3 ) + 1 );
+        double z = vsetA->getScalar( ( i * 3 ) + 2 );
+
+        double len = sqrt( ( x * x ) + ( y * y ) + ( z * z ) );
+        if( len < m_zeroTol )
         {
-            // to avoid cascading numeric errors due to T being a low resolution type, we use doubles during calculation
-            double x = vsetA->getScalar( ( i * 3 ) + 0 );
-            double y = vsetA->getScalar( ( i * 3 ) + 1 );
-            double z = vsetA->getScalar( ( i * 3 ) + 2 );
+            data[ ( i * 3 ) + 0 ] = 0;
+            data[ ( i * 3 ) + 1 ] = 0;
+            data[ ( i * 3 ) + 2 ] = 0;
 
-            double len = sqrt( ( x * x ) + ( y * y ) + ( z * z ) );
-            if( len < m_zeroTol )
-            {
-                data[ ( i * 3 ) + 0 ] = 0;
-                data[ ( i * 3 ) + 1 ] = 0;
-                data[ ( i * 3 ) + 2 ] = 0;
-
-                continue;
-            }
-
-            data[ ( i * 3 ) + 0 ] = static_cast< T >( x / len );
-            data[ ( i * 3 ) + 1 ] = static_cast< T >( y / len );
-            data[ ( i * 3 ) + 2 ] = static_cast< T >( z / len );
+            continue;
         }
 
-        // create result value set
-        return std::shared_ptr< WValueSet< T > >( new WValueSet< T >( 1,
-                                                                        3,
-                                                                        std::shared_ptr< std::vector< T > >(
-                                                                            new std::vector< T >( data ) ),
-                                                                        DataType< T >::type ) );
+        data[ ( i * 3 ) + 0 ] = static_cast< T >( x / len );
+        data[ ( i * 3 ) + 1 ] = static_cast< T >( y / len );
+        data[ ( i * 3 ) + 2 ] = static_cast< T >( z / len );
     }
 
-    /**
-     * Zero tollerance. Values smaller than this are interpreted as zero
-     */
-    double m_zeroTol;
-};
+    // create result value set
+    return std::shared_ptr< WValueSet< T > >( new WValueSet< T >( 1,
+                                                                    3,
+                                                                    std::shared_ptr< std::vector< T > >(
+                                                                        new std::vector< T >( data ) ),
+                                                                    DataType< T >::type ) );
+}
 
 void WMVectorNormalize::moduleMain()
 {

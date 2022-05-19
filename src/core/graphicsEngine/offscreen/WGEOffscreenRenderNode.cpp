@@ -74,7 +74,7 @@ osg::ref_ptr< WGEOffscreenRenderPass > WGEOffscreenRenderNode::addGeometryRender
     pass->addChild( node );
 
     // add proxy to ensure proper clipping/culling even when the node changes its size in the shader. The programmer of the node has to take
-    // care, that the getBounds methods of the node returns the right size (use a ComputeBoundingSpereCallback or overwrite computeBounds in
+    // care, that the getBounds methods of the node returns the right size (use a ComputeBoundingSphereCallback or overwrite computeBounds in
     // your node)
     //
     // It is important to add this proxy into the goup as the passes disable near/far recalculation. They inherit the near/far planes from the
@@ -94,7 +94,7 @@ osg::ref_ptr< WGEOffscreenRenderPass > WGEOffscreenRenderNode::addGeometryRender
     shader->apply( pass );
 
     // add proxy to ensure proper clipping/culling even when the node changes its size in the shader. The programmer of the node has to take
-    // care, that the getBounds methods of the node returns the right size (use a ComputeBoundingSpereCallback or overwrite computeBounds in
+    // care, that the getBounds methods of the node returns the right size (use a ComputeBoundingSphereCallback or overwrite computeBounds in
     // your node)
     //
     // It is important to add this proxy into the goup as the passes disable near/far recalculation. They inherit the near/far planes from the

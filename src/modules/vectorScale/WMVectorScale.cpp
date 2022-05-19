@@ -97,110 +97,81 @@ void WMVectorScale::properties()
  *
  * \tparam VSetAType The integral type of the first valueset.
  */
+
 template< typename VSetAType >
-class VisitorVSetB: public boost::static_visitor< std::shared_ptr< WValueSetBase > >
+WMVectorScale::VisitorVSetB< VSetAType >::VisitorVSetB( const WValueSet< VSetAType >* const vsetA ):
+    boost::static_visitor< result_type >(),
+    m_vsetA( vsetA )
 {
-public:
-    /**
-     * Creates visitor for the second level of cascading. Takes the first value set as parameter. This visitor applies the operation o to A and
-     * B: o(A,B).
-     *
-     * \param vsetA the first value set
-     */
-    explicit VisitorVSetB( const WValueSet< VSetAType >* const vsetA ):
-        boost::static_visitor< result_type >(),
-        m_vsetA( vsetA )
-    {
-    }
-
-    /**
-     * Visitor on the second valueset. This applies the operation.
-     *
-     * \tparam VSetBType the integral type of the currently visited valueset.
-     * \param vsetB the valueset currently visited (B).
-     *
-     * \return the result of o(A,B)
-     */
-    template < typename VSetBType >
-    result_type operator()( const WValueSet< VSetBType >* const& vsetB ) const      // NOLINT
-    {
-        // get best matching return scalar type
-        typedef typename WTypeTraits::TypePromotion< VSetAType, VSetBType >::Result ResultT;
-
-        dataType type = DataType< ResultT >::type;
-        std::vector< ResultT > data;
-        data.resize( m_vsetA->rawSize() );
-
-        // discriminate the right operation with the correct type. It would be nicer to use some kind of strategy pattern here, but the template
-        // character of the operators forbids it as template methods can't be virtual. Besides this, at some point in the module main the
-        // selector needs to be queried and its index mapped to a pointer. This is what we do here.
-
-        // apply op to each value
-        const VSetAType* a = m_vsetA->rawData();
-        const VSetBType* b =   vsetB->rawData();
-        for( size_t i = 0; i < vsetB->rawSize(); ++i )
-        {
-            size_t vi = 3 * i;
-            data[ vi + 0 ] = static_cast< ResultT >( a[ vi + 0 ] ) * static_cast< ResultT >( b[ i ] );
-            data[ vi + 1 ] = static_cast< ResultT >( a[ vi + 1 ] ) * static_cast< ResultT >( b[ i ] );
-            data[ vi + 2 ] = static_cast< ResultT >( a[ vi + 2 ] ) * static_cast< ResultT >( b[ i ] );
-        }
-
-        // create result value set
-        std::shared_ptr< WValueSet< ResultT > > result = std::shared_ptr< WValueSet< ResultT > >(
-            new WValueSet< ResultT >( 1,
-                                      3,
-                                      std::shared_ptr< std::vector< ResultT > >( new std::vector< ResultT >( data ) ),
-                                      type )
-        );
-        return result;
-    }
-
-    /**
-     * The first valueset.
-     */
-    const WValueSet< VSetAType >* const m_vsetA;
-};
+}
 
 /**
- * Visitor for discriminating the type of the first valueset. It simply creates a new instance of VisitorVSetB with the proper integral type of
- * the first value set.
+ * Visitor on the second valueset. This applies the operation.
+ *
+ * \tparam VSetBType the integral type of the currently visited valueset.
+ * \param vsetB the valueset currently visited (B).
+ *
+ * \return the result of o(A,B)
  */
-class VisitorVSetA: public boost::static_visitor< std::shared_ptr< WValueSetBase > >
+template< typename VSetAType >
+template< typename VSetBType >
+boost::static_visitor< std::shared_ptr< WValueSetBase > >::result_type WMVectorScale::VisitorVSetB< VSetAType >::operator()(
+    const WValueSet< VSetBType >* const& vsetB ) const      // NOLINT
 {
-public:
-    /**
-     * Create visitor instance. The specified valueset gets visited if the first one is visited using this visitor.
-     *
-     * \param vsetB The valueset to visit during this visit.
-     */
-    explicit VisitorVSetA( WValueSetBase* vsetB ):
-        boost::static_visitor< result_type >(),
-        m_vsetB( vsetB )
+    // get best matching return scalar type
+    typedef typename WTypeTraits::TypePromotion< VSetAType, VSetBType >::Result ResultT;
+
+    dataType type = DataType< ResultT >::type;
+    std::vector< ResultT > data;
+    data.resize( m_vsetA->rawSize() );
+
+    // discriminate the right operation with the correct type. It would be nicer to use some kind of strategy pattern here, but the template
+    // character of the operators forbids it as template methods can't be virtual. Besides this, at some point in the module main the
+    // selector needs to be queried and its index mapped to a pointer. This is what we do here.
+
+    // apply op to each value
+    const VSetAType* a = m_vsetA->rawData();
+    const VSetBType* b =   vsetB->rawData();
+    for( size_t i = 0; i < vsetB->rawSize(); ++i )
     {
+        size_t vi = 3 * i;
+        data[ vi + 0 ] = static_cast< ResultT >( a[ vi + 0 ] ) * static_cast< ResultT >( b[ i ] );
+        data[ vi + 1 ] = static_cast< ResultT >( a[ vi + 1 ] ) * static_cast< ResultT >( b[ i ] );
+        data[ vi + 2 ] = static_cast< ResultT >( a[ vi + 2 ] ) * static_cast< ResultT >( b[ i ] );
     }
 
-    /**
-     * Called by boost::varying during static visiting. Creates a new VisitorVSetB which finally applies the operation.
-     *
-     * \tparam T the real integral type of the first value set.
-     * \param vsetA the first valueset currently visited.
-     *
-     * \return the result from the operation with this and the second value set
-     */
-    template < typename T >
-    result_type operator()( const WValueSet< T >* const& vsetA ) const             // NOLINT
-    {
-        // visit the second value set as we now know the type of the first one
-        VisitorVSetB< T > visitor( vsetA );
-        return m_vsetB->applyFunction( visitor );
-    }
+    // create result value set
+    std::shared_ptr< WValueSet< ResultT > > result = std::shared_ptr< WValueSet< ResultT > >(
+        new WValueSet< ResultT >( 1,
+                                    3,
+                                    std::shared_ptr< std::vector< ResultT > >( new std::vector< ResultT >( data ) ),
+                                    type )
+    );
+    return result;
+}
 
-    /**
-     * The valueset where to cascade.
-     */
-    WValueSetBase* m_vsetB;
-};
+WMVectorScale::VisitorVSetA::VisitorVSetA( WValueSetBase* vsetB ):
+    boost::static_visitor< result_type >(),
+    m_vsetB( vsetB )
+{
+}
+
+/**
+ * Called by boost::varying during static visiting. Creates a new VisitorVSetB which finally applies the operation.
+ *
+ * \tparam T the real integral type of the first value set.
+ * \param vsetA the first valueset currently visited.
+ *
+ * \return the result from the operation with this and the second value set
+ */
+template < typename T >
+boost::static_visitor< std::shared_ptr< WValueSetBase > >::result_type WMVectorScale::VisitorVSetA::operator()(
+    const WValueSet< T >* const& vsetA ) const             // NOLINT
+{
+    // visit the second value set as we now know the type of the first one
+    VisitorVSetB< T > visitor( vsetA );
+    return m_vsetB->applyFunction( visitor );
+}
 
 void WMVectorScale::moduleMain()
 {

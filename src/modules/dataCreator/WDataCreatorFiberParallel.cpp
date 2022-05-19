@@ -78,14 +78,15 @@ void WDataCreatorFiberParallel::operator()( int seed,
         WVector3d pos( x, y, z );                           // start position of the ray
         WVector3d min = pos + ( dir * tmin );               // first intersection
         WVector3d max = pos + ( dir * tmax );               // second intersection
-        WVector3d ray = ( max - min ) / numVertsPerFiber;   // Build new ray between start and end so that all vertices can fit in between
+        WVector3d ray = ( max - min ) / static_cast< double >( numVertsPerFiber );
+        // ^- Build new ray between start and end so that all vertices can fit in between
 
         fibIdx->push_back( fidx * numVertsPerFiber );
         lengths->push_back( numVertsPerFiber );
 
         for( size_t vidx = 0; vidx < numVertsPerFiber; ++vidx )
         {
-            WVector3d vec = ray * vidx;
+            WVector3d vec = ray * static_cast< double >( vidx );
 
             vertices->push_back( origin.x() + min.x() + vec.x() );
             vertices->push_back( origin.y() + min.y() + vec.y() );

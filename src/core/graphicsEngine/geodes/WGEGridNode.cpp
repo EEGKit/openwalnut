@@ -106,6 +106,27 @@ WGEGridNode::WGEGridNode( WGridRegular3D::ConstSPtr grid ):
     m_labelGeode->addDrawable( label );
     m_borderLabels[7] = label;
 
+
+
+    // x-axis
+    label = new WGELabel( *label );
+    label->setPosition( osg::Vec3( 0.5, 0.0, 0.0 ) );
+    m_labelGeode->addDrawable( label );
+    m_axisLabels[0] = label;
+
+    // y-axis
+    label = new WGELabel( *label );
+    label->setPosition( osg::Vec3( 0.0, 0.5, 0.0 ) );
+    m_labelGeode->addDrawable( label );
+    m_axisLabels[1] = label;
+
+    // z-axis
+    label = new WGELabel( *label );
+    label->setPosition( osg::Vec3( 0.0, 0.0, 0.5 ) );
+    m_labelGeode->addDrawable( label );
+    m_axisLabels[2] = label;
+
+
     // add the others too
     addChild( m_boundaryGeode );
     addChild( m_innerGridGeode );
@@ -248,6 +269,10 @@ void WGEGridNode::callback( osg::Node* /*node*/ )
         {
             m_borderLabels[i]->setText( vec2str( m_borderLabels[i]->getPosition() * m ) );
         }
+
+        m_axisLabels[0]->setText( "x" );
+        m_axisLabels[1]->setText( "y" );
+        m_axisLabels[2]->setText( "z" );
 
         // set node mask of labels, bbox and grid
         m_labelGeode->setNodeMask( 0xFFFFFFFF * m_showLabels );

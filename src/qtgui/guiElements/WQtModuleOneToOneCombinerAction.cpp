@@ -62,7 +62,7 @@ WQtModuleOneToOneCombinerAction::WQtModuleOneToOneCombinerAction( QWidget* paren
 
     from = srcName + ": <i>" + m_combiner->getSrcConnector() + "</i> &nbsp;&nbsp;&#10140;&nbsp;&nbsp; ";
     std::string tooltip = "<b>" + targetName + "</b><br><nobr>" + from + targetName + ": <i>" + m_combiner->getTargetConnector() + "</i></nobr>";
-    tooltip += "<br><b>Module Description: </b><br/>" + m_combiner->getTargetModule()->getDescription();
+    tooltip += "<br><b>Module Description: </b><br/>" + m_combiner->getTargetModule()->getMetaInformation()->getDescription();
 
     // We need this because menu items seem not to support HTML
     std::string advancedTextString = srcName + ":" + m_combiner->getSrcConnector() + " -> " + targetName + ":" + m_combiner->getTargetConnector();
