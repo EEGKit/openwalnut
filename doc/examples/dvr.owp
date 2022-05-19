@@ -1,0 +1,109 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Modules and Properties
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+MODULE:0:Data Creator Scalar
+// Property Group: Properties
+    PROPERTY:(0,Name)=Data Creator Scalar
+    PROPERTY:(0,active)=1
+    PROPERTY:(0,Voxels X)=100
+    PROPERTY:(0,Voxels Y)=100
+    PROPERTY:(0,Voxels Z)=100
+    PROPERTY:(0,Origin)=0;0;0;
+    PROPERTY:(0,Size)=10;10;10;
+    // Property Group: Dataset Creators
+        PROPERTY:(0,Dataset Creators/Creator)=3
+        // Property Group: Spherical
+            PROPERTY:(0,Dataset Creators/Spherical/Center)=0.5;0.5;0.5;
+            PROPERTY:(0,Dataset Creators/Spherical/Radius)=0.5
+            PROPERTY:(0,Dataset Creators/Spherical/Lower Clamp Threshold)=0
+            PROPERTY:(0,Dataset Creators/Spherical/Upper Clamp Threshold)=1.79769e+308
+            PROPERTY:(0,Dataset Creators/Spherical/Lower Clamp Value)=0
+            PROPERTY:(0,Dataset Creators/Spherical/Upper Clamp Value)=0
+        // Property Group END: Spherical
+        // Property Group: Random
+            PROPERTY:(0,Dataset Creators/Random/Range Min)=0
+            PROPERTY:(0,Dataset Creators/Random/Range Max)=1
+        // Property Group END: Random
+        // Property Group: Tangle
+            PROPERTY:(0,Dataset Creators/Tangle/Scale)=1
+        // Property Group END: Tangle
+        // Property Group: Bretzel5
+            PROPERTY:(0,Dataset Creators/Bretzel5/Scale)=1
+        // Property Group END: Bretzel5
+        // Property Group: LinearAscent
+            PROPERTY:(0,Dataset Creators/LinearAscent/Range Min)=0
+            PROPERTY:(0,Dataset Creators/LinearAscent/Range Max)=1
+        // Property Group END: LinearAscent
+        // Property Group: Constant
+            PROPERTY:(0,Dataset Creators/Constant/Value)=0
+        // Property Group END: Constant
+        // Property Group: Turing
+            PROPERTY:(0,Dataset Creators/Turing/Spot size)=0.65
+            PROPERTY:(0,Dataset Creators/Turing/Spot irregularity)=0
+            PROPERTY:(0,Dataset Creators/Turing/Turing integration steps)=100
+        // Property Group END: Turing
+    // Property Group END: Dataset Creators
+// Property Group END: Properties
+
+MODULE:1:Direct Volume Rendering
+// Property Group: Properties
+    PROPERTY:(1,Name)=Direct Volume Rendering
+    PROPERTY:(1,active)=1
+    PROPERTY:(1,Sample count)=1588
+    PROPERTY:(1,Local illumination model)=1
+    // Property Group: Improvements
+        PROPERTY:(1,Improvements/Stochastic jitter)=1
+        PROPERTY:(1,Improvements/Opacity correction)=0
+        PROPERTY:(1,Improvements/MIP)=0
+        PROPERTY:(1,Improvements/Depth projection)=1
+    // Property Group END: Improvements
+// Property Group END: Properties
+
+MODULE:2:Transfer Function 1D
+// Property Group: Properties
+    PROPERTY:(2,Name)=Transfer Function 1D
+    PROPERTY:(2,active)=1
+    PROPERTY:(2,Transfer Function)=c:0:0:0:1;c:0.336667:1:0:0.0156863;c:0.5:0:1:0;c:0.613333:0.898039:0.0980392:0;c:0.703333:0.984314:0.890196:0;c:1:1:1:0;a:0:0;a:0.0466667:0;a:0.05:1;a:0.0966667:1;a:0.156667:0;a:0.31:0;a:0.336667:0;a:0.34:0.03;a:0.366667:0;a:0.546667:0;a:0.663333:0;a:0.77:0.18;a:0.843333:0.16;a:1:0.21
+    PROPERTY:(2,Opacity Scaling)=1
+    PROPERTY:(2,Histogram Resolution)=64
+    PROPERTY:(2,Number of Samples)=393
+// Property Group END: Properties
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Connections
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+CONNECTION:(0,out)->(2,histogram input)
+CONNECTION:(0,out)->(1,scalar data)
+CONNECTION:(2,transferFunction1D)->(1,transfer function)
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ROI Structure
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Camera definitions
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+CAMERA:0:Main View
+//Camera Matrices: "Main View"
+    MANIPULATOR:(0,Matrix)=0.0605461;0.0508978;-0.00127112;0;-0.0289116;0.0359965;0.0642371;0;0.0419085;-0.0487001;0.0461521;0;63.4285;-62.8974;69.3449;1
+    MANIPULATOR:(0,HomeEye)=5;-3.66025;5
+    MANIPULATOR:(0,HomeCenter)=5;5;5
+    MANIPULATOR:(0,HomeUp)=0;0;1
+//Camera Matrices END: "Main View"
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// QtGUI Network Information
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+QT5GUI_NETWORK:0=0;0
+QT5GUI_NETWORK_Flags:0=0;1
+QT5GUI_NETWORK:1=1;2
+QT5GUI_NETWORK_Flags:1=1;0
+QT5GUI_NETWORK:2=1;1
+QT5GUI_NETWORK_Flags:2=1;0
+QT5GUI_NETWORK_Scale:1
+

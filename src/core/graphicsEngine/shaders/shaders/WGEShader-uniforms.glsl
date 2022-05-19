@@ -22,50 +22,25 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef WGECOLORMAPPING_VARYINGS_GLSL
-#define WGECOLORMAPPING_VARYINGS_GLSL
+#ifndef WGESHADERUNIFORMS_GLSL
+#define WGESHADERUNIFORMS_GLSL
 
-#version 120
+// defines global attributes set by openwalnut and openscenegraph
 
-/**
- * The texture coordinate in local texture space.
- */
-varying vec3 v_colormap0TexCoord;
+uniform mat4 osg_ModelViewMatrix;
+uniform mat4 osg_ProjectionMatrix;
+uniform mat4 osg_ModelViewProjectionMatrix;
+uniform mat3 osg_NormalMatrix;
 
-/**
- * The texture coordinate in local texture space.
- */
-varying vec3 v_colormap1TexCoord;
+uniform vec4 ow_lightsource;
 
-/**
- * The texture coordinate in local texture space.
- */
-varying vec3 v_colormap2TexCoord;
+uniform mat4 ow_TextureMatrix0;
+uniform mat4 ow_TextureMatrix1;
+uniform mat4 ow_TextureMatrix2;
+uniform mat4 ow_TextureMatrix3;
+uniform mat4 ow_TextureMatrix4;
+uniform mat4 ow_TextureMatrix5;
+uniform mat4 ow_TextureMatrix6;
+uniform mat4 ow_TextureMatrix7;
 
-/**
- * The texture coordinate in local texture space.
- */
-varying vec3 v_colormap3TexCoord;
-
-/**
- * The texture coordinate in local texture space.
- */
-varying vec3 v_colormap4TexCoord;
-
-/**
- * The texture coordinate in local texture space.
- */
-varying vec3 v_colormap5TexCoord;
-
-/**
- * The texture coordinate in local texture space.
- */
-varying vec3 v_colormap6TexCoord;
-
-/**
- * The texture coordinate in local texture space.
- */
-varying vec3 v_colormap7TexCoord;
-
-#endif // WGECOLORMAPPING_VARYINGS_GLSL
-
+#endif  // WGESHADERUNIFORMS_GLSL

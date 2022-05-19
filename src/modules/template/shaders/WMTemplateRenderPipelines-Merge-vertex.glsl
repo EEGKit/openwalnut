@@ -22,19 +22,25 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
+out vec4 v_texCoord0;
+out vec4 v_texCoord1;
 
 void main()
 {
     // pass the color to the fragment shader
-    gl_FrontColor = gl_Color;
-    gl_BackColor =  gl_Color;
+    // gl_FrontColor = osg_Color;
+    // gl_BackColor =  osg_Color;
 
     // pass tex coordinates
-    gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;
-    gl_TexCoord[1] = gl_TextureMatrix[0] * gl_MultiTexCoord0;
+    v_texCoord0 = ow_TextureMatrix0 * osg_MultiTexCoord0;
+    v_texCoord1 = ow_TextureMatrix1 * osg_MultiTexCoord1;
 
     // transform position
-    gl_Position = ftransform();
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }
 

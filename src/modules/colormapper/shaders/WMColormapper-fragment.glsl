@@ -22,7 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 #include "WGEColorMapsImproved.glsl"
 
@@ -33,7 +35,7 @@
 /**
  * The value along the bar.
  */
-varying float v_value;
+in float v_value;
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms

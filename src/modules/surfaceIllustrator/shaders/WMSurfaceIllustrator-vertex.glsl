@@ -22,22 +22,35 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
+#include "WGEColormapping-vertex.glsl"
 
 /**
  * The normal.
  */
-varying vec3 v_normal;
+out vec3 v_normal;
 
-varying vec4 verpos;
+out vec4 verpos;
+
+out vec4 v_color;
 
 void main()
 {
+#ifdef COLORMAPPING_ENABLED
+    // prepare colormapping
+    colormapping();
+#endif
+
     // get normal
-    v_normal = gl_NormalMatrix * gl_Normal;
+    v_normal = osg_NormalMatrix * osg_Normal;
 
     // apply standard pipeline
-    gl_FrontColor = gl_Color;
-    verpos = gl_Vertex;
-    gl_Position = ftransform();
+    // gl_FrontColor = osg_Color;
+    v_color = osg_Color;
+    verpos = osg_Vertex;
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }

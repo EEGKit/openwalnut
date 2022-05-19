@@ -22,7 +22,12 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
+
+in vec4 v_texCoord0;
+in vec4 v_texCoord1;
 
 /**
  * The texture Unit for the colors
@@ -40,8 +45,8 @@ uniform sampler2D u_texture1Sampler;
 void main()
 {
     // Grab texels and mix.
-    vec4 color  = texture2D( u_texture0Sampler, gl_TexCoord[0].st );   // <- the cell shaded colors
-    float edge  = texture2D( u_texture1Sampler, gl_TexCoord[1].st ).r;   // <- the edges
+    vec4 color  = texture( u_texture0Sampler, v_texCoord0.st );   // <- the cell shaded colors
+    float edge  = texture( u_texture1Sampler, v_texCoord1.st ).r;   // <- the edges
     vec4 edgeColor = vec4( 1.0 );
 
     // The nice thing is, the color input stores an alpha value which tells us whether the pixel was occupied or not. This way, we transport

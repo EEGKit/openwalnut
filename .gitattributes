@@ -1,0 +1,2 @@
+# This is so git does not remove the line endings from the csv fixtures of the data module
+src/modules/data/io/test/fixtures/CSVs/*.csv binary

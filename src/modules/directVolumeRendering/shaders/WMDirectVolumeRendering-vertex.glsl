@@ -22,15 +22,29 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
 
 #include "WGETransformationTools.glsl"
+
 
 /////////////////////////////////////////////////////////////////////////////
 // Varyings
 /////////////////////////////////////////////////////////////////////////////
 
-#include "WMDirectVolumeRendering-varyings.glsl"
+// The ray's starting point in texture space
+out vec3 v_rayStart;
+
+// The ray direction in texture space, normalized
+out vec3 v_ray;
+
+// The sampling distance
+out float v_sampleDistance;
+
+// The steps in relation to a default number of steps of 128.
+out float v_relativeSampleDistance;
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
@@ -60,10 +74,10 @@ uniform int u_samples;
 void main()
 {
     // for easy access to texture coordinates
-    gl_TexCoord[0] = gl_MultiTexCoord0;
+    //gl_TexCoord[0] = osg_MultiTexCoord0;
 
     // in texture space, the starting point simply is the current surface point in texture space
-    v_rayStart = gl_Vertex.xyz; // this equals gl_Vertex!
+    v_rayStart = osg_Vertex.xyz; // this equals osg_Vertex!
 
     // transform the ray direction to texture space, which equals object space
     // Therefore use two points, as we transform a vector
@@ -76,7 +90,7 @@ void main()
     v_relativeSampleDistance = 128.0 /  float( u_samples );
 
     // Simply project the vertex
-    gl_Position = ftransform();
-    gl_FrontColor = gl_Color;
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
+    //gl_FrontColor = osg_Color;
 }
 

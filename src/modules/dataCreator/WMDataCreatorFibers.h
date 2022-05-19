@@ -73,12 +73,6 @@ public:
      */
     virtual std::shared_ptr< WModule > factory() const;
 
-    /**
-     * Get the icon for this module in XPM format.
-     * \return The icon.
-     */
-    virtual const char** getXPMIcon() const;
-
 protected:
     /**
      * Entry point after loading the module. Runs in separate thread.
@@ -112,6 +106,13 @@ private:
      * Number of vertices per fiber.
      */
     WPropInt m_numVertsPerFiber;
+
+    /**
+     * The seed for the random.
+     */
+    WPropInt m_seed;
+
+    WPropBool m_timeDependent; //!< Use time dependent variation of data (experimental).
 
     /**
      * Fiber color.

@@ -306,11 +306,12 @@ protected:
     /**
      * Called for each project save request.
      *
-     * \param writer the list of writers to use.
+     * \param writer The list of writers to use.
+     * \param useLastFileName Save the project to the CurrentProjectPath
      *
      * \returns true if saving was successful
      */
-    virtual bool projectSave( const std::vector< std::shared_ptr< WProjectFileIO > >& writer );
+    virtual bool projectSave( const std::vector< std::shared_ptr< WProjectFileIO > >& writer, const bool useLastFileName = false );
 
     /**
      * drag and drop implementation for loading files
@@ -369,6 +370,11 @@ public slots:
      * Gets called whenever the user presses the project save button.
      */
     bool projectSaveAll();
+
+    /**
+     * Gets called whenever the user presses the project save-as button.
+     */
+    bool projectSaveAllAs();
 
     /**
      * Gets called by the save menu to only save the camera settings
@@ -456,6 +462,8 @@ private:
     QDockWidget* m_dummyWidget; //!< The dummywidget serves as spacer in the dockwidget area;
     WQtGLDockWidget* m_mainGLDock; //!< the dock containing the main gl widget
 
+    std::string m_mainWindowHeading; //!< The standard title of the window. Part of the actual title that is shown.
+
     /**
      * Used to handle the two-stage close process.
      */
@@ -525,6 +533,13 @@ private:
      * \param warnings the list of warnings
      */
     void slotLoadFinished( boost::filesystem::path file, std::vector< std::string > errors, std::vector< std::string > warnings );
+
+    /**
+     * Sets the path of the current project and append it to the window title
+     *
+     * \param currentProject The path of the current project
+     */
+    void setCurrentProject( std::string currentProject );
 
 private slots:
     /**

@@ -31,6 +31,7 @@
 
 /**
  * Creates a 3D turing pattern. Only works on scalar fields.
+ * https://en.wikipedia.org/wiki/Turing_pattern
  */
 class WDataCreatorTuring: public WObjectNDIP< WDataSetSingleCreatorInterface >
 {

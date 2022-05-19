@@ -25,7 +25,11 @@
 #ifndef WGEPOSTPROCESSORUTILS_FRAGMENT_GLSL
 #define WGEPOSTPROCESSORUTILS_FRAGMENT_GLSL
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
+
+in vec4 v_TexCoord;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Input-Texture Uniforms
@@ -115,7 +119,7 @@ uniform int u_texture5SizeY;
 /**
  * The coordinate of the current pixel for texture lookup
  */
-vec2 pixelCoord = gl_TexCoord[0].st;
+vec2 pixelCoord = v_TexCoord.st;
 
 /**
  * This is needed for some swizzle tricks
@@ -129,7 +133,7 @@ const vec2 zeroOneList = vec2( 1.0, 0.0 );
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Adapt texture2DLod, which officially is not allowed in fragment shaders. We need a solution here.
+ * Adapt textureLod, which officially is not allowed in fragment shaders. We need a solution here.
  *
  * \param texture texture sampler
  * \param where location
@@ -137,10 +141,10 @@ const vec2 zeroOneList = vec2( 1.0, 0.0 );
  *
  * \return color.
  */
-vec4 texture2DLodAdapter( sampler2D texture, vec2 where, float lod )
+vec4 textureLodAdapter( sampler2D txt, vec2 where, float lod )
 {
     // TODO(ebaum): find a solution
-    return texture2DLod( texture, where, lod );
+    return textureLod( txt, where, lod );
 }
 
 /**
@@ -157,9 +161,9 @@ vec4 texture2DLodAdapter( sampler2D texture, vec2 where, float lod )
  *
  * \return the value at the given point
  */
-vec4 texture2DUnscaledLOD( sampler2D texture, vec2 point, float minimum, float scale, float lod )
+vec4 textureUnscaledLOD( sampler2D txt, vec2 point, float minimum, float scale, float lod )
 {
-    return ( scale * texture2DLodAdapter( texture, point, lod ) ) + vec4( minimum );
+    return ( scale * textureLodAdapter( txt, point, lod ) ) + vec4( minimum );
 }
 
 /**
@@ -172,7 +176,7 @@ vec4 texture2DUnscaledLOD( sampler2D texture, vec2 point, float minimum, float s
  */
 vec4 getColor( in vec2 where, in float lod )
 {
-    return texture2DLodAdapter( u_colorSampler, where, lod );
+    return textureLodAdapter( u_colorSampler, where, lod );
 }
 
 /**
@@ -222,7 +226,7 @@ vec4 getColor()
  */
 vec4 getNormal( in vec2 where, in float lod )
 {
-    return normalize( texture2DUnscaledLOD( u_normalSampler, where, -1.0, 2.0, lod ).xyz ).xyzz * zeroOneList.xxxy + zeroOneList.yyyx;
+    return normalize( textureUnscaledLOD( u_normalSampler, where, -1.0, 2.0, lod ).xyz ).xyzz * zeroOneList.xxxy + zeroOneList.yyyx;
 }
 
 /**
@@ -272,7 +276,7 @@ vec4 getNormal()
  */
 vec4 getTangent( in vec2 where, in float lod )
 {
-    return normalize( texture2DUnscaledLOD( u_tangentSampler, where, -1.0, 2.0, lod ).xyz ).xyzz * zeroOneList.xxxy + zeroOneList.yyyx;
+    return normalize( textureUnscaledLOD( u_tangentSampler, where, -1.0, 2.0, lod ).xyz ).xyzz * zeroOneList.xxxy + zeroOneList.yyyx;
 }
 
 /**
@@ -325,7 +329,7 @@ vec4 getTangent()
  */
 float getDepth( in vec2 where, in float lod  )
 {
-    return texture2DLodAdapter( u_depthSampler, where, lod ).r;
+    return textureLodAdapter( u_depthSampler, where, lod ).r;
 }
 
 /**
@@ -375,7 +379,7 @@ float getDepth()
  */
 float getZoom( in vec2 where )
 {
-    return texture2D( u_parameterSampler, pixelCoord ).r;
+    return texture( u_parameterSampler, pixelCoord ).r;
 }
 
 /**
@@ -397,7 +401,7 @@ float getZoom()
  */
 vec3 getNoiseAsVector( in vec2 where )
 {
-    return texture2D( u_noiseSampler, where ).rgb * 2.0 - vec3( 1.0 );
+    return texture( u_noiseSampler, where ).rgb * 2.0 - vec3( 1.0 );
 }
 
 /**
@@ -410,5 +414,5 @@ vec3 getNoiseAsVector()
     return getNoiseAsVector( pixelCoord );
 }
 
-#endif // WGEPOSTPROCESSORUTILS_FRAGMENT_GLSL
+#endif  // WGEPOSTPROCESSORUTILS_FRAGMENT_GLSL
 

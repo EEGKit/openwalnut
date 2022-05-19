@@ -122,7 +122,7 @@ const std::string WMCoordinateSystem::getName() const
 
 const std::string WMCoordinateSystem::getDescription() const
 {
-    return "This module displays coordinate systems as overlay withn the main 3D view.";
+    return "This module displays coordinate systems as overlay within the main 3D view.";
 }
 
 void WMCoordinateSystem::properties()

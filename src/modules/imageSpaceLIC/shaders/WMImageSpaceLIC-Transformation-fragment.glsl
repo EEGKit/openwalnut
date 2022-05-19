@@ -22,7 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 #include "WGEColormapping-fragment.glsl"
 
@@ -31,7 +33,40 @@
 #include "WGETransformationTools.glsl"
 #include "WGEUtils.glsl"
 
-#include "WMImageSpaceLIC-Transformation-varyings.glsl"
+in vec4 ow_texCoord;
+
+/**
+ * The normal interpolated
+ */
+in vec3 v_normal;
+
+/**
+ * Normal in object space
+ */
+in vec3 v_normalObject;
+
+/**
+ * The normal interpolated and projected to screenspace
+ */
+in vec3 v_normalProjected;
+
+/**
+ * The light source in local coordinates
+ */
+in vec3 v_lightSource;
+
+/**
+ * The light source in local coordinates
+ */
+in vec3 v_viewDir;
+
+/**
+ * The factor which scales the 3d noise texture to a proper size according to screen size.
+ */
+#ifdef NOISE3D_ENABLED
+in vec3 v_noiseScaleFactor;
+#endif
+
 
 /**
  * The texture unit sampler
@@ -82,14 +117,16 @@ void main()
 
     // if we have a 3D noise texture, use it.
 #ifdef NOISE3D_ENABLED
-    float noise3D = texture3D( u_texture1Sampler, gl_TexCoord[0].xyz * v_noiseScaleFactor.xyz ).r;
+    float noise3D = texture( u_texture1Sampler, ow_texCoord.xyz * v_noiseScaleFactor.xyz ).r;
 #else
     float noise3D = 1.0;
 #endif
 
+    vec3 vec;
+
 #ifdef VECTORDATA
     // get the current vector at this position
-    vec3 vec = texture3DUnscaled( u_texture0Sampler, gl_TexCoord[0].xyz, u_texture0Min, u_texture0Scale ).rgb;
+    vec = textureUnscaled( u_texture0Sampler, ow_texCoord.xyz, u_texture0Min, u_texture0Scale ).rgb;
     vec *= sign( vec.x );
 
     // zero length vectors are uninteresting. discard them
@@ -110,14 +147,14 @@ void main()
     float sx = 1.0 / u_texture0SizeX;
     float sy = 1.0 / u_texture0SizeY;
     float sz = 1.0 / u_texture0SizeZ;
-    float valueXP = texture3DUnscaled( u_texture0Sampler, gl_TexCoord[0].xyz + vec3( sx, 0.0, 0.0 ), 0.0, 1.0 ).r;
-    float valueXM = texture3DUnscaled( u_texture0Sampler, gl_TexCoord[0].xyz - vec3( sx, 0.0, 0.0 ), 0.0, 1.0 ).r;
-    float valueYP = texture3DUnscaled( u_texture0Sampler, gl_TexCoord[0].xyz + vec3( 0.0, sy, 0.0 ), 0.0, 1.0 ).r;
-    float valueYM = texture3DUnscaled( u_texture0Sampler, gl_TexCoord[0].xyz - vec3( 0.0, sy, 0.0 ), 0.0, 1.0 ).r;
-    float valueZP = texture3DUnscaled( u_texture0Sampler, gl_TexCoord[0].xyz + vec3( 0.0, 0.0, sz ), 0.0, 1.0 ).r;
-    float valueZM = texture3DUnscaled( u_texture0Sampler, gl_TexCoord[0].xyz - vec3( 0.0, 0.0, sz ), 0.0, 1.0 ).r;
+    float valueXP = textureUnscaled( u_texture0Sampler, ow_texCoord.xyz + vec3( sx, 0.0, 0.0 ), 0.0, 1.0 ).r;
+    float valueXM = textureUnscaled( u_texture0Sampler, ow_texCoord.xyz - vec3( sx, 0.0, 0.0 ), 0.0, 1.0 ).r;
+    float valueYP = textureUnscaled( u_texture0Sampler, ow_texCoord.xyz + vec3( 0.0, sy, 0.0 ), 0.0, 1.0 ).r;
+    float valueYM = textureUnscaled( u_texture0Sampler, ow_texCoord.xyz - vec3( 0.0, sy, 0.0 ), 0.0, 1.0 ).r;
+    float valueZP = textureUnscaled( u_texture0Sampler, ow_texCoord.xyz + vec3( 0.0, 0.0, sz ), 0.0, 1.0 ).r;
+    float valueZM = textureUnscaled( u_texture0Sampler, ow_texCoord.xyz - vec3( 0.0, 0.0, sz ), 0.0, 1.0 ).r;
 
-    vec3 vec = vec3( valueXP - valueXM, valueYP - valueYM, valueZP - valueZM );
+    vec = vec3( valueXP - valueXM, valueYP - valueYM, valueZP - valueZM );
     vec *= sign( vec.x );
 
     // zero length vectors are uninteresting. discard them

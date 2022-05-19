@@ -1,0 +1,301 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Modules and Properties
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+MODULE:0:Data Creator Fibers
+// Property Group: Properties
+    PROPERTY:(0,Name)=Data Creator Fibers
+    PROPERTY:(0,active)=1
+    PROPERTY:(0,Origin)=0;0;0;
+    PROPERTY:(0,Size)=128;128;128;
+    PROPERTY:(0,Seed)=0
+    PROPERTY:(0,Num Fibers)=500
+    PROPERTY:(0,Num Vertices)=1000
+    PROPERTY:(0,Time dependent (experimental))=0
+    PROPERTY:(0,Color)=1 1 1 1
+    // Property Group: Dataset Creators
+        PROPERTY:(0,Dataset Creators/Creator)=1
+        // Property Group: Parallel
+            PROPERTY:(0,Dataset Creators/Parallel/Direction)=1;0;0;
+        // Property Group END: Parallel
+        // Property Group: Random
+        // Property Group END: Random
+        // Property Group: Spiral
+            PROPERTY:(0,Dataset Creators/Spiral/Num Rotations)=25
+            PROPERTY:(0,Dataset Creators/Spiral/Tube Radius)=1
+        // Property Group END: Spiral
+        // Property Group: Star
+        // Property Group END: Star
+        // Property Group: Torus
+            PROPERTY:(0,Dataset Creators/Torus/Inner radius)=0.1
+            PROPERTY:(0,Dataset Creators/Torus/Generate inner data)=1
+            PROPERTY:(0,Dataset Creators/Torus/X rotation)=0
+            PROPERTY:(0,Dataset Creators/Torus/Y rotation)=0
+            PROPERTY:(0,Dataset Creators/Torus/Z rotation)=0
+        // Property Group END: Torus
+    // Property Group END: Dataset Creators
+// Property Group END: Properties
+
+MODULE:1:Fiber Display
+// Property Group: Properties
+    PROPERTY:(1,Name)=Fiber Display
+    PROPERTY:(1,active)=1
+    PROPERTY:(1,ROI Filtering)=1
+    PROPERTY:(1,ROI Coloring)=1
+    // Property Group: Coloring
+        PROPERTY:(1,Coloring/Illumination)=1
+        PROPERTY:(1,Coloring/Use plain color)=0
+        PROPERTY:(1,Coloring/Color)=1 1 1 1
+        PROPERTY:(1,Coloring/Enable colormapping)=0
+        PROPERTY:(1,Coloring/Colormap Ratio)=0.5
+        // Property Group: Data-Set Properties
+            PROPERTY:(1,Coloring/Data-Set Properties/Color Scheme)=0
+        // Property Group END: Data-Set Properties
+    // Property Group END: Coloring
+    // Property Group: Clipping
+        PROPERTY:(1,Clipping/Enabled)=0
+        PROPERTY:(1,Clipping/Show Clip Plane)=0
+        PROPERTY:(1,Clipping/Plane point)=0;0;0;
+        PROPERTY:(1,Clipping/Plane normal)=1;0;0;
+        PROPERTY:(1,Clipping/Clip distance)=10
+    // Property Group END: Clipping
+    // Property Group: Line Rendering
+        PROPERTY:(1,Line Rendering/Line width)=1
+        PROPERTY:(1,Line Rendering/Anti-Alias)=0
+    // Property Group END: Line Rendering
+    // Property Group: Tube Rendering
+        PROPERTY:(1,Tube Rendering/Enable Tubes)=1
+        PROPERTY:(1,Tube Rendering/Use end caps)=1
+        PROPERTY:(1,Tube Rendering/Ribbon mode)=0
+        PROPERTY:(1,Tube Rendering/Zoomable)=1
+        PROPERTY:(1,Tube Rendering/Width)=10
+    // Property Group END: Tube Rendering
+    // Property Group: Post-processing
+        PROPERTY:(1,Post-processing/Texture debug)=0
+        PROPERTY:(1,Post-processing/Enable)=0
+        PROPERTY:(1,Post-processing/Postprocessor)=0
+        // Property Group: Settings for Edge Enhance
+            PROPERTY:(1,Post-processing/Settings for Edge Enhance/Effect Only)=0
+            PROPERTY:(1,Post-processing/Settings for Edge Enhance/Effect Scaling)=1
+            PROPERTY:(1,Post-processing/Settings for Edge Enhance/White Edge)=0
+            PROPERTY:(1,Post-processing/Settings for Edge Enhance/Edge Lower Threshold)=0
+            PROPERTY:(1,Post-processing/Settings for Edge Enhance/Edge Upper Threshold)=1
+        // Property Group END: Settings for Edge Enhance
+        // Property Group: Settings for Cel Shading
+            PROPERTY:(1,Post-processing/Settings for Cel Shading/Effect Only)=0
+            PROPERTY:(1,Post-processing/Settings for Cel Shading/Effect Scaling)=1
+            PROPERTY:(1,Post-processing/Settings for Cel Shading/Number of Bins)=10
+        // Property Group END: Settings for Cel Shading
+        // Property Group: Settings for Gauss Filtering
+            PROPERTY:(1,Post-processing/Settings for Gauss Filtering/Effect Only)=0
+            PROPERTY:(1,Post-processing/Settings for Gauss Filtering/Effect Scaling)=1
+        // Property Group END: Settings for Gauss Filtering
+        // Property Group: Settings for SSAO
+            PROPERTY:(1,Post-processing/Settings for SSAO/Effect Only)=0
+            PROPERTY:(1,Post-processing/Settings for SSAO/Effect Scaling)=1
+            PROPERTY:(1,Post-processing/Settings for SSAO/Samples)=16
+            PROPERTY:(1,Post-processing/Settings for SSAO/Radius)=10
+            PROPERTY:(1,Post-processing/Settings for SSAO/Total Strength)=2
+            PROPERTY:(1,Post-processing/Settings for SSAO/Strength)=1
+            PROPERTY:(1,Post-processing/Settings for SSAO/Falloff)=0
+        // Property Group END: Settings for SSAO
+        // Property Group: Settings for LineAO
+            PROPERTY:(1,Post-processing/Settings for LineAO/Effect Only)=0
+            PROPERTY:(1,Post-processing/Settings for LineAO/Effect Scaling)=1
+            PROPERTY:(1,Post-processing/Settings for LineAO/Samples)=32
+            PROPERTY:(1,Post-processing/Settings for LineAO/Hemispheres)=3
+            PROPERTY:(1,Post-processing/Settings for LineAO/Radius)=2
+            PROPERTY:(1,Post-processing/Settings for LineAO/Total Strength)=1
+            PROPERTY:(1,Post-processing/Settings for LineAO/Density Weight)=1
+            PROPERTY:(1,Post-processing/Settings for LineAO/Use Gaussed ND-Map)=0
+            PROPERTY:(1,Post-processing/Settings for LineAO/Use Occluder Light)=1
+        // Property Group END: Settings for LineAO
+        // Property Group: Settings for Halftone
+            PROPERTY:(1,Post-processing/Settings for Halftone/Effect Only)=0
+            PROPERTY:(1,Post-processing/Settings for Halftone/Effect Scaling)=1
+            PROPERTY:(1,Post-processing/Settings for Halftone/Rotation angle)=30
+            PROPERTY:(1,Post-processing/Settings for Halftone/Texture Size)=4
+            PROPERTY:(1,Post-processing/Settings for Halftone/Cross Hatch Threshold)=0.9
+            PROPERTY:(1,Post-processing/Settings for Halftone/Dither Clip)=0.6
+            PROPERTY:(1,Post-processing/Settings for Halftone/Hatch Color)=0.1 0.1 0.1 1
+            // Property Group: Settings for Edge Enhance
+                PROPERTY:(1,Post-processing/Settings for Halftone/Settings for Edge Enhance/Effect Only)=1
+                PROPERTY:(1,Post-processing/Settings for Halftone/Settings for Edge Enhance/Effect Scaling)=1
+                PROPERTY:(1,Post-processing/Settings for Halftone/Settings for Edge Enhance/White Edge)=0
+                PROPERTY:(1,Post-processing/Settings for Halftone/Settings for Edge Enhance/Edge Lower Threshold)=0
+                PROPERTY:(1,Post-processing/Settings for Halftone/Settings for Edge Enhance/Edge Upper Threshold)=1
+            // Property Group END: Settings for Edge Enhance
+        // Property Group END: Settings for Halftone
+        // Property Group: Additional Depth Shading
+            PROPERTY:(1,Post-processing/Additional Depth Shading/Enable)=0
+            PROPERTY:(1,Post-processing/Additional Depth Shading/Lower depth threshold)=0.25
+            PROPERTY:(1,Post-processing/Additional Depth Shading/Upper depth threshold)=0.75
+            PROPERTY:(1,Post-processing/Additional Depth Shading/Lower shading intensity)=0.75
+            PROPERTY:(1,Post-processing/Additional Depth Shading/Upper shading intensity)=1
+        // Property Group END: Additional Depth Shading
+    // Property Group END: Post-processing
+// Property Group END: Properties
+
+MODULE:2:Dataset Manipulator
+// Property Group: Properties
+    PROPERTY:(2,Name)=Dataset Manipulator
+    PROPERTY:(2,active)=1
+    PROPERTY:(2,Reset)=PV_TRIGGER_READY
+    PROPERTY:(2,Apply)=PV_TRIGGER_READY
+    // Property Group: Manipulators
+        PROPERTY:(2,Manipulators/Manipulator)=0
+        // Property Group: Translation
+            PROPERTY:(2,Manipulators/Translation/Translation)=150;0;0;
+        // Property Group END: Translation
+        // Property Group: Rotation
+            PROPERTY:(2,Manipulators/Rotation/Rotation axis)=0;0;1;
+            PROPERTY:(2,Manipulators/Rotation/Rotation angle)=0
+        // Property Group END: Rotation
+        // Property Group: Scaling
+            PROPERTY:(2,Manipulators/Scaling/Scale)=1;1;1;
+        // Property Group END: Scaling
+        // Property Group: Normalize
+            PROPERTY:(2,Manipulators/Normalize/Scale)=1;1;1;
+        // Property Group END: Normalize
+    // Property Group END: Manipulators
+// Property Group END: Properties
+
+MODULE:3:Fiber Display
+// Property Group: Properties
+    PROPERTY:(3,Name)=Fiber Display
+    PROPERTY:(3,active)=1
+    PROPERTY:(3,ROI Filtering)=1
+    PROPERTY:(3,ROI Coloring)=1
+    // Property Group: Coloring
+        PROPERTY:(3,Coloring/Illumination)=1
+        PROPERTY:(3,Coloring/Use plain color)=0
+        PROPERTY:(3,Coloring/Color)=1 1 1 1
+        PROPERTY:(3,Coloring/Enable colormapping)=0
+        PROPERTY:(3,Coloring/Colormap Ratio)=0.5
+        // Property Group: Data-Set Properties
+            PROPERTY:(3,Coloring/Data-Set Properties/Color Scheme)=0
+        // Property Group END: Data-Set Properties
+    // Property Group END: Coloring
+    // Property Group: Clipping
+        PROPERTY:(3,Clipping/Enabled)=0
+        PROPERTY:(3,Clipping/Show Clip Plane)=0
+        PROPERTY:(3,Clipping/Plane point)=0;0;0;
+        PROPERTY:(3,Clipping/Plane normal)=1;0;0;
+        PROPERTY:(3,Clipping/Clip distance)=10
+    // Property Group END: Clipping
+    // Property Group: Line Rendering
+        PROPERTY:(3,Line Rendering/Line width)=1
+        PROPERTY:(3,Line Rendering/Anti-Alias)=0
+    // Property Group END: Line Rendering
+    // Property Group: Tube Rendering
+        PROPERTY:(3,Tube Rendering/Enable Tubes)=1
+        PROPERTY:(3,Tube Rendering/Use end caps)=1
+        PROPERTY:(3,Tube Rendering/Ribbon mode)=0
+        PROPERTY:(3,Tube Rendering/Zoomable)=1
+        PROPERTY:(3,Tube Rendering/Width)=10
+    // Property Group END: Tube Rendering
+    // Property Group: Post-processing
+        PROPERTY:(3,Post-processing/Texture debug)=0
+        PROPERTY:(3,Post-processing/Enable)=1
+        PROPERTY:(3,Post-processing/Postprocessor)=5
+        // Property Group: Settings for Edge Enhance
+            PROPERTY:(3,Post-processing/Settings for Edge Enhance/Effect Only)=0
+            PROPERTY:(3,Post-processing/Settings for Edge Enhance/Effect Scaling)=1
+            PROPERTY:(3,Post-processing/Settings for Edge Enhance/White Edge)=0
+            PROPERTY:(3,Post-processing/Settings for Edge Enhance/Edge Lower Threshold)=0
+            PROPERTY:(3,Post-processing/Settings for Edge Enhance/Edge Upper Threshold)=1
+        // Property Group END: Settings for Edge Enhance
+        // Property Group: Settings for Cel Shading
+            PROPERTY:(3,Post-processing/Settings for Cel Shading/Effect Only)=0
+            PROPERTY:(3,Post-processing/Settings for Cel Shading/Effect Scaling)=1
+            PROPERTY:(3,Post-processing/Settings for Cel Shading/Number of Bins)=10
+        // Property Group END: Settings for Cel Shading
+        // Property Group: Settings for Gauss Filtering
+            PROPERTY:(3,Post-processing/Settings for Gauss Filtering/Effect Only)=0
+            PROPERTY:(3,Post-processing/Settings for Gauss Filtering/Effect Scaling)=1
+        // Property Group END: Settings for Gauss Filtering
+        // Property Group: Settings for SSAO
+            PROPERTY:(3,Post-processing/Settings for SSAO/Effect Only)=0
+            PROPERTY:(3,Post-processing/Settings for SSAO/Effect Scaling)=1
+            PROPERTY:(3,Post-processing/Settings for SSAO/Samples)=16
+            PROPERTY:(3,Post-processing/Settings for SSAO/Radius)=10
+            PROPERTY:(3,Post-processing/Settings for SSAO/Total Strength)=2
+            PROPERTY:(3,Post-processing/Settings for SSAO/Strength)=1
+            PROPERTY:(3,Post-processing/Settings for SSAO/Falloff)=0
+        // Property Group END: Settings for SSAO
+        // Property Group: Settings for LineAO
+            PROPERTY:(3,Post-processing/Settings for LineAO/Effect Only)=0
+            PROPERTY:(3,Post-processing/Settings for LineAO/Effect Scaling)=1.556
+            PROPERTY:(3,Post-processing/Settings for LineAO/Samples)=32
+            PROPERTY:(3,Post-processing/Settings for LineAO/Hemispheres)=3
+            PROPERTY:(3,Post-processing/Settings for LineAO/Radius)=2
+            PROPERTY:(3,Post-processing/Settings for LineAO/Total Strength)=1
+            PROPERTY:(3,Post-processing/Settings for LineAO/Density Weight)=1
+            PROPERTY:(3,Post-processing/Settings for LineAO/Use Gaussed ND-Map)=0
+            PROPERTY:(3,Post-processing/Settings for LineAO/Use Occluder Light)=1
+        // Property Group END: Settings for LineAO
+        // Property Group: Settings for Halftone
+            PROPERTY:(3,Post-processing/Settings for Halftone/Effect Only)=0
+            PROPERTY:(3,Post-processing/Settings for Halftone/Effect Scaling)=1
+            PROPERTY:(3,Post-processing/Settings for Halftone/Rotation angle)=30
+            PROPERTY:(3,Post-processing/Settings for Halftone/Texture Size)=4
+            PROPERTY:(3,Post-processing/Settings for Halftone/Cross Hatch Threshold)=0.9
+            PROPERTY:(3,Post-processing/Settings for Halftone/Dither Clip)=0.6
+            PROPERTY:(3,Post-processing/Settings for Halftone/Hatch Color)=0.1 0.1 0.1 1
+            // Property Group: Settings for Edge Enhance
+                PROPERTY:(3,Post-processing/Settings for Halftone/Settings for Edge Enhance/Effect Only)=1
+                PROPERTY:(3,Post-processing/Settings for Halftone/Settings for Edge Enhance/Effect Scaling)=1
+                PROPERTY:(3,Post-processing/Settings for Halftone/Settings for Edge Enhance/White Edge)=0
+                PROPERTY:(3,Post-processing/Settings for Halftone/Settings for Edge Enhance/Edge Lower Threshold)=0
+                PROPERTY:(3,Post-processing/Settings for Halftone/Settings for Edge Enhance/Edge Upper Threshold)=1
+            // Property Group END: Settings for Edge Enhance
+        // Property Group END: Settings for Halftone
+        // Property Group: Additional Depth Shading
+            PROPERTY:(3,Post-processing/Additional Depth Shading/Enable)=0
+            PROPERTY:(3,Post-processing/Additional Depth Shading/Lower depth threshold)=0.25
+            PROPERTY:(3,Post-processing/Additional Depth Shading/Upper depth threshold)=0.75
+            PROPERTY:(3,Post-processing/Additional Depth Shading/Lower shading intensity)=0.75
+            PROPERTY:(3,Post-processing/Additional Depth Shading/Upper shading intensity)=1
+        // Property Group END: Additional Depth Shading
+    // Property Group END: Post-processing
+// Property Group END: Properties
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Connections
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+CONNECTION:(0,out)->(1,fibers)
+CONNECTION:(0,out)->(2,in)
+CONNECTION:(2,out)->(3,fibers)
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ROI Structure
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Camera definitions
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+CAMERA:0:Main View
+//Camera Matrices: "Main View"
+    MANIPULATOR:(0,Matrix)=0.877633;-0.0799368;-0.00884562;0;0.0502535;0.469384;0.744218;0;-0.0627911;-0.741617;0.471984;0;125.316;-48.1979;133.454;1
+    MANIPULATOR:(0,HomeEye)=63.936;-46.7477;63.891
+    MANIPULATOR:(0,HomeCenter)=63.936;63.9595;63.891
+    MANIPULATOR:(0,HomeUp)=0;0;1
+//Camera Matrices END: "Main View"
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// QtGUI Network Information
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+QT5GUI_NETWORK:0=0;0
+QT5GUI_NETWORK_Flags:0=0;0
+QT5GUI_NETWORK:1=0;1
+QT5GUI_NETWORK_Flags:1=1;0
+QT5GUI_NETWORK:2=1;1
+QT5GUI_NETWORK_Flags:2=1;0
+QT5GUI_NETWORK:3=1;2
+QT5GUI_NETWORK_Flags:3=1;0
+QT5GUI_NETWORK_Scale:1
+

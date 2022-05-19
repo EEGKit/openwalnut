@@ -25,6 +25,7 @@
 #ifndef WCOUNTER_H
 #define WCOUNTER_H
 
+#include <mutex>
 #include <shared_mutex>
 
 #include <boost/thread.hpp>

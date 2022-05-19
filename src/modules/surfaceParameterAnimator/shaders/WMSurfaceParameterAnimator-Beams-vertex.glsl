@@ -22,15 +22,31 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
 
 #include "WGETransformationTools.glsl"
+
+out vec4 v_color;
 
 /////////////////////////////////////////////////////////////////////////////
 // Varyings
 /////////////////////////////////////////////////////////////////////////////
 
-#include "WMSurfaceParameterAnimator-Beams-varyings.glsl"
+// The ray's starting point in texture space
+out vec3 v_rayStart;
+
+// The ray direction in texture space
+out vec3 v_ray;
+
+// the Surface normal at this point
+out vec3 v_normal;
+
+// The light source in local coordinates
+out vec3 v_lightSource;
+
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
@@ -54,13 +70,13 @@
 void main()
 {
     // for easy access to texture coordinates
-    gl_TexCoord[0] = gl_MultiTexCoord0;
-    gl_TexCoord[1] = gl_MultiTexCoord1;
+    // gl_TexCoord[0] = osg_MultiTexCoord0;
+    // gl_TexCoord[1] = osg_MultiTexCoord1;
 
-    v_normal = gl_Normal;
+    v_normal = osg_Normal;
 
     // in texture space, the starting point simply is the current surface point in texture space
-    v_rayStart = gl_TexCoord[0].xyz; // this equals gl_Vertex!
+    v_rayStart = osg_MultiTexCoord0.xyz; // this equals osg_Vertex!
 
     // transform the ray direction to texture space, which equals object space
     // Therefore use two points, as we transform a vector
@@ -68,13 +84,14 @@ void main()
     vec4 camPos    = vec4( 0.0, 0.0, 0.0, 1.0 );
     v_ray = worldToLocal( camLookAt, camPos ).xyz;
 
-    vec4 lpos = gl_LightSource[0].position;
+    vec4 lpos = ow_lightsource;
     lpos = vec4( 0.0, 0.0, 1000.0, 1.0 );
     v_lightSource = worldToLocal( lpos ).xyz;
 
     // Simply project the vertex
-    gl_Position = ftransform();
-    gl_FrontColor = gl_FrontMaterial.diffuse;
-    gl_BackColor = gl_BackMaterial.diffuse;
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
+    v_color = osg_Color;
+    // gl_FrontColor = gl_FrontMaterial.diffuse;
+    // gl_BackColor = gl_BackMaterial.diffuse;
 }
 

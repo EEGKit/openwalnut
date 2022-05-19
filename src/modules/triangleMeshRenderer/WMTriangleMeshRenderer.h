@@ -301,6 +301,11 @@ private:
      * The shader for the mesh
      */
     osg::ref_ptr< WGEShader > m_shader;
+
+    /**
+     * The matrix for the colormapping texture
+     */
+    osg::ref_ptr< osg::TexMat > m_textureMatrix;
 };
 
 #endif  // WMTRIANGLEMESHRENDERER_H

@@ -22,15 +22,71 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
-#extension GL_ARB_gpu_shader5 : enable  // for inverse()
+#version 150 core
+
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+//#extension GL_ARB_gpu_shader5 : enable  // for inverse()
 
 // include some utility functions
 #include "WGETensorTools.glsl"
 #include "WGETransformationTools.glsl"
 
+out vec4 v_color;
+
 // commonly used variables
-#include "WMSuperquadricGlyphs-varyings.glsl"
+// light direction
+// USAGE:
+// x,y,z components:        the light direction vector
+// w component:             unused
+// (4 varying floats)
+out vec4 v_lightDir;
+
+// camera direction vector
+// USAGE:
+// x,y,z components:        the direction vector
+// w component:             unused
+out vec4 v_planePoint;
+
+// point on projection plane of current pixel
+// USAGE:
+// x,y,z components:        the point
+// w component:             unused
+out vec4 v_viewDir;
+
+// alpha and beta values describing the superquadric
+// USAGE:
+// x component:             2.0/alpha
+// y component:             2.0/beta
+// z component:             alpha/beta
+// w component:             is !=0 when the glyph has to be dropped
+// (4 varying floats)
+out vec4 v_alphaBeta;
+
+/**
+ * The scaling component of the modelview matrix.
+ */
+out float v_worldScale;
+
+out mat4 v_glyphToWorld;
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// 2: uniforms
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+// scale glyphs
+uniform float u_scaling;
+
+// fractional anisotropy threshold to skip some glyphs
+uniform float u_faThreshold;
+
+// eigenvector threshold
+uniform float u_evThreshold;
+
+// sharpnes parameter
+uniform float u_gamma;
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 // GPU Super Quadrics -- vertex shader -- main
@@ -43,17 +99,17 @@ void main()
     /////////////////////////////////////////////////////////////////////////////////////////////
 
     // aquire texture data
-    gl_TexCoord[0] = gl_MultiTexCoord0;
-    gl_TexCoord[1] = gl_MultiTexCoord1;
-    gl_TexCoord[2] = gl_MultiTexCoord2;
+    // gl_TexCoord[0] = osg_MultiTexCoord0;
+    // gl_TexCoord[1] = osg_MultiTexCoord1;
+    // gl_TexCoord[2] = osg_MultiTexCoord2;
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     // 2: aquire tensor data, calculate eigen system
     /////////////////////////////////////////////////////////////////////////////////////////////
 
     // get tensor data
-    vec3 diag    = vec3( gl_TexCoord[1].x, gl_TexCoord[1].y, gl_TexCoord[1].z );
-    vec3 offdiag = vec3( gl_TexCoord[2].x, gl_TexCoord[2].y, gl_TexCoord[2].z );
+    vec3 diag    = vec3( osg_MultiTexCoord1.x, osg_MultiTexCoord1.y, osg_MultiTexCoord1.z );
+    vec3 offdiag = vec3( osg_MultiTexCoord2.x, osg_MultiTexCoord2.y, osg_MultiTexCoord2.z );
 
     // calculate eigenvectors, and rotation matrix
     vec3 evals = getEigenvalues( diag, offdiag );
@@ -77,7 +133,8 @@ void main()
     // glyphs color and anisotropy
     float FA = getFA( evals );
     FA = clamp( FA, 0.0, 1.000 ); // filter out invalid FA values later
-    gl_FrontColor = getColor( ev0.xyz, FA );
+    // gl_FrontColor = getColor( ev0.xyz, FA );
+    v_color = getColor( ev0.xyz, FA );
 
     // throw away glyphs whose FA is below threshold and whose eigenvalues are below threshold
     v_alphaBeta.w = 0.0;
@@ -159,28 +216,29 @@ void main()
                                    0.0, 0.0, 1.0 / dimZ, 0.0,
                                    0.0, 0.0, 0.0, 1.0 );
 
-    gl_TexCoord[0].w = 0.0;
-    gl_Position = gl_ModelViewProjectionMatrix * ( gl_Vertex + glyphSystem * glyphScale * gl_TexCoord[0] );
+    vec4 tex0 = osg_MultiTexCoord0;
+    tex0.w = 0.0;
+    gl_Position = osg_ModelViewProjectionMatrix * ( osg_Vertex + glyphSystem * glyphScale * tex0 );
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     // 5: Transform light and plane as well as ray back to glyph space
     /////////////////////////////////////////////////////////////////////////////////////////////
 
     // transform a vector from world space to glyph space
-    mat4 worldToGlyph = glyphScaleInverse * transpose( glyphSystem ) * gl_ModelViewMatrixInverse;
+    mat4 worldToGlyph = glyphScaleInverse * transpose( glyphSystem ) * inverse( osg_ModelViewMatrix );
     // also build its inverse, Remember:
     //  * (AB)^-1 = B^-1 * A^-1
     //  * (A^T)^-1 = (A^-1)^T
-    v_glyphToWorld = gl_ModelViewMatrix * transpose( inverse( glyphSystem ) ) * glyphScale;
+    v_glyphToWorld = osg_ModelViewMatrix * transpose( inverse( glyphSystem ) ) * glyphScale;
 
     // calculate light direction once per quadric
-    v_lightDir.xyz = normalize( ( worldToGlyph * gl_LightSource[0].position ).xyz );
+    v_lightDir.xyz = normalize( ( worldToGlyph * ow_lightsource ).xyz );
 
     // the viewing direction for this vertex:
     v_viewDir = ( worldToGlyph * vec4( 0.0, 0.0, 1.0, 0.0 ) );
     v_viewDir.w = 1.0;
 
-    v_planePoint.xyz = gl_TexCoord[0].xyz;
+    v_planePoint.xyz = tex0.xyz;
 
     // get scaling from modelview matrix
     v_worldScale = getModelViewScale();

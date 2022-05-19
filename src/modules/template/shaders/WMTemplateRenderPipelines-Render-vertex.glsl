@@ -22,18 +22,21 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
 
 #include "WGETransformationTools.glsl"
 
 // Now you are in the vertex shader of the first pass. All the shaders for each pass are nothing special. They are standard GLSL shaders.
 
 // The surface normal
-varying vec3 v_normal;
+out vec3 v_normal;
 
 void main()
 {
     // prepare light
-    v_normal = gl_NormalMatrix * gl_Normal;
-    gl_Position = ftransform();
+    v_normal = osg_NormalMatrix * osg_Normal;
+    gl_Position = osg_ModelViewProjectionMatrix * osg_Vertex;
 }

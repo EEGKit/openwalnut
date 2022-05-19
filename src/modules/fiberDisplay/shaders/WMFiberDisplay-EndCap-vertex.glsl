@@ -22,7 +22,11 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-attributes.glsl"
+#include "WGEShader-uniforms.glsl"
+
 
 /////////////////////////////////////////////////////////////////////////////
 // Uniforms
@@ -36,7 +40,7 @@
  * This vertex attribute is the bitmask denoting whether to show the fiber or not
  */
 #ifdef BITFIELD_ENABLED
-    attribute float a_bitfield;
+    in float a_bitfield;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
@@ -46,43 +50,43 @@
 /**
  * The normal in scene-space
  */
-varying vec3 v_normal;
+out vec3 v_normal;
 
 /**
  * Varying defines wether to discard the fragments or not.
  */
-varying float v_discard;
+out float v_discard;
 
 /**
  * Second color array
  */
-varying vec4 v_secondaryColor;
+out vec4 v_secondaryColor;
 
 
 /**
  * The output normal for the fragment shader in world-space
  */
-varying vec3 v_normalWorld;
+out vec3 v_normalWorld;
 
 /**
  * The vertex coordinates in world-space
  */
-varying vec4 v_vertex;
+out vec4 v_vertex;
 
 /**
  * The scaling component of the modelview matrix.
  */
-varying float v_worldScale;
+out float v_worldScale;
 
 /**
  * This varying carries the current cluster color.
  */
-varying vec4 v_clusterColor;
+out vec4 v_clusterColor;
 
 /**
  * The color passed to the geometry shader.
  */
-varying vec4 v_colorIn;
+out vec4 v_colorIn;
 
 /////////////////////////////////////////////////////////////////////////////
 // Variables
@@ -107,11 +111,11 @@ void main()
     v_worldScale = 1.0;
     v_clusterColor = vec4( 1.0 );
 
-    v_secondaryColor = vec4( gl_SecondaryColor.rgb, 1.0 );
+    v_secondaryColor = vec4( osg_SecondaryColor.rgb, 1.0 );
 
     // forward to geometry shader
-    v_normal = gl_Normal;
-    v_colorIn = gl_Color;
-    gl_Position = gl_Vertex;
+    v_normal = osg_Normal;
+    v_colorIn = osg_Color;
+    gl_Position = osg_Vertex;
 }
 

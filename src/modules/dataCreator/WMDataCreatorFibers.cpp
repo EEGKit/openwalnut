@@ -25,10 +25,15 @@
 #include <algorithm>
 #include <memory>
 #include <string>
+#include <thread>
+#include <chrono>
 
+#include "WDataCreatorFiberParallel.h"
+#include "WDataCreatorFiberRandom.h"
 #include "WDataCreatorFiberSpiral.h"
+#include "WDataCreatorFiberStar.h"
+#include "WDataCreatorTorus.h"
 #include "WMDataCreatorFibers.h"
-#include "WMDataCreatorFibers.xpm"
 #include "core/common/WAssert.h"
 #include "core/common/WProgress.h"
 #include "core/common/WStrategyHelper.h"
@@ -41,7 +46,11 @@ WMDataCreatorFibers::WMDataCreatorFibers():
                 "Creator", "A list of all known creators." )
 {
     // add some strategies here
+    m_strategy.addStrategy( WDataCreatorFiberParallel::SPtr( new WDataCreatorFiberParallel() ) );
+    m_strategy.addStrategy( WDataCreatorFiberRandom::SPtr( new WDataCreatorFiberRandom() ) );
     m_strategy.addStrategy( WDataCreatorFiberSpiral::SPtr( new WDataCreatorFiberSpiral() ) );
+    m_strategy.addStrategy( WDataCreatorFiberStar::SPtr( new WDataCreatorFiberStar() ) );
+    m_strategy.addStrategy( WDataCreatorFibersTorus::SPtr( new WDataCreatorFibersTorus() ) );
 }
 
 WMDataCreatorFibers::~WMDataCreatorFibers()
@@ -55,11 +64,6 @@ std::shared_ptr< WModule > WMDataCreatorFibers::factory() const
     return std::shared_ptr< WModule >( new WMDataCreatorFibers() );
 }
 
-const char** WMDataCreatorFibers::getXPMIcon() const
-{
-    return datacreator_xpm;
-}
-
 const std::string WMDataCreatorFibers::getName() const
 {
     return "Data Creator Fibers";
@@ -67,7 +71,7 @@ const std::string WMDataCreatorFibers::getName() const
 
 const std::string WMDataCreatorFibers::getDescription() const
 {
-    return "Allows the user to create fiber data sets providing a bunch of data creation schemes.";
+    return ""; // See META file
 }
 
 void WMDataCreatorFibers::connectors()
@@ -88,6 +92,9 @@ void WMDataCreatorFibers::properties()
     m_size = m_properties->addProperty( "Size", "The size of the dataset along the X,Y, and Z axis in the OpenWalnut coordinate system.",
                                         WPosition( 128.0, 128.0, 128.0 ), m_propCondition );
 
+    // the seed
+    m_seed = m_properties->addProperty( "Seed", "The seed for the random numbers to create.", 0, m_propCondition );
+
     // how much fibs and verts?
     m_numFibers = m_properties->addProperty( "Num Fibers", "The number of fibers to create.", 500, m_propCondition );
     m_numFibers->setMin( 1 );
@@ -95,6 +102,11 @@ void WMDataCreatorFibers::properties()
     m_numVertsPerFiber = m_properties->addProperty( "Num Vertices", "Vertices per fiber.", 1000, m_propCondition );
     m_numVertsPerFiber->setMin( 1 );
     m_numVertsPerFiber->setMax( 10000 );
+
+    m_timeDependent = m_properties->addProperty( "Time dependent (experimental)",
+                                                 "Vary data over time. This feature is <b>experimental</b>.",
+                                                 false,
+                                                 m_propCondition );
 
     m_fibColor = m_properties->addProperty( "Color", "Color for the fibers.", defaultColor::WHITE, m_propCondition );
 
@@ -141,7 +153,9 @@ void WMDataCreatorFibers::moduleMain()
         colors->reserve( numVerts * 3 );
 
         // get the current strategy
-        m_strategy()->operator()( progress, m_fibColor->get(),
+        m_strategy()->operator()( m_seed->get(),
+                                            progress,
+                                            m_fibColor->get(),
                                             numFibers,
                                             numVertsPerFiber,
                                             m_origin->get(),
@@ -160,10 +174,15 @@ void WMDataCreatorFibers::moduleMain()
         // done. update output
         m_output->updateData( ds );
 
+        if( m_timeDependent->get() )
+        {
+            m_size->set( WVector3d( m_size->get()[0], m_size->get()[1], static_cast<int>( m_size->get()[2] + 10 ) % 1000 ) );
+            std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
+        }
+
         // Now, the moduleState variable comes into play. The module can wait for the condition, which gets fired whenever the input receives data
         // or an property changes. The main loop now waits until something happens.
         debugLog() << "Waiting ...";
         m_moduleState.wait();
     }
 }
-

@@ -192,6 +192,12 @@ void WMIsosurface::moduleMain()
         debugLog() << "Rendering surface ...";
 
         renderMesh();
+
+        osg::Vec4 color = m_surfaceColor->get( true );
+        for( size_t id = 0; id < m_triMesh->vertSize(); ++id )
+        {
+            m_triMesh->setVertexColor( id, color );
+        }
         m_output->updateData( m_triMesh );
 
         debugLog() << "Done!";

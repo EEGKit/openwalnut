@@ -111,9 +111,9 @@ MODULE:4:Scalar Data Creator
         // Property Group: Tangle
             PROPERTY:(4,Dataset Creators/Tangle/Scale)=1
         // Property Group END: Tangle
-        // Property Group: Breyzel5
-            PROPERTY:(4,Dataset Creators/Breyzel5/Scale)=1
-        // Property Group END: Breyzel5
+        // Property Group: Bretzel5
+            PROPERTY:(4,Dataset Creators/Bretzel5/Scale)=1
+        // Property Group END: Bretzel5
         // Property Group: LinearAscent
             PROPERTY:(4,Dataset Creators/LinearAscent/Range Min)=0
             PROPERTY:(4,Dataset Creators/LinearAscent/Range Max)=1

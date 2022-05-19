@@ -22,20 +22,13 @@
 //
 //---------------------------------------------------------------------------
 
-/////////////////////////////////////////////////////////////////////////////
-// Varyings
-// Used in vertex and fragment shader
-/////////////////////////////////////////////////////////////////////////////
+#include "WGETexMatUniformCallback.h"
 
-// The ray's starting point in texture space
-varying vec3 v_rayStart;
+WGETexMatUniformCallback::WGETexMatUniformCallback( osg::TexMat* texMat ): m_texMat( texMat )
+{
+}
 
-// The ray direction in texture space, normalized
-varying vec3 v_ray;
-
-// The sampling distance
-varying float v_sampleDistance;
-
-// The steps in relation to a default number of steps of 128.
-varying float v_relativeSampleDistance;
-
+void WGETexMatUniformCallback::operator()( osg::Uniform* uniform, osg::NodeVisitor* /*nv*/ )
+{
+    uniform->set( m_texMat->getMatrix() );
+}

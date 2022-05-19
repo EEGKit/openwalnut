@@ -166,9 +166,11 @@ void enableTransparency( osg::StateSet* state )
 
     // Conversely, disable writing to depth buffer so that a transparent polygon will allow polygons behind it to shine through.
     // OSG renders transparent polygons after opaque ones.
-    osg::Depth* depth = new osg::Depth;
-    depth->setWriteMask( false );
-    state->setAttributeAndModes( depth, osg::StateAttribute::ON );
+
+    // This code is commented out so the postprecessing filters work (They need depth write)
+    // osg::Depth* depth = new osg::Depth;
+    // depth->setWriteMask( false );
+    // state->setAttributeAndModes( depth, osg::StateAttribute::ON );
 
     // disable light for this geode as lines can't be lit properly
     state->setMode( GL_LIGHTING, osg::StateAttribute::OFF | osg::StateAttribute::PROTECTED );
@@ -263,8 +265,8 @@ void WMFiberDisplay::moduleMain()
     m_shader->addPreprocessor( defineTmp );
     m_endCapShader->addPreprocessor( defineTmp );
 
-    m_shader->addBindAttribLocation( "a_bitfield", 6 );
-    m_endCapShader->addBindAttribLocation( "a_bitfield", 6 );
+    m_shader->addBindAttribLocation( "a_bitfield", 15 );
+    m_endCapShader->addBindAttribLocation( "a_bitfield", 15 );
 
     // get notified about data changes
     m_moduleState.setResetable( true, true );
@@ -734,19 +736,19 @@ void WMFiberDisplay::createFiberGeode( std::shared_ptr< WDataSetFibers > fibers,
     endGeometry->setUseVertexBufferObjects( true );
 
     // bind the attribute
-    geometry->setVertexAttribArray( 6, m_bitfieldAttribs );
+    geometry->setVertexAttribArray( 15, m_bitfieldAttribs );
     geometry->setSecondaryColorArray( m_secondaryColor );
     // the attributes are define per line strip, thus we bind the array accordingly
-    geometry->setVertexAttribBinding( 6, osg::Geometry::BIND_PER_PRIMITIVE_SET );
+    geometry->setVertexAttribBinding( 15, osg::Geometry::BIND_PER_PRIMITIVE_SET );
     geometry->setSecondaryColorBinding( osg::Geometry::BIND_PER_PRIMITIVE_SET );
 
     if( tubeMode )
     {
         // we have one vertex per line, so bind the attribute array per vertex
-        startGeometry->setVertexAttribArray( 6, m_bitfieldAttribs );
-        startGeometry->setVertexAttribBinding( 6, osg::Geometry::BIND_PER_PRIMITIVE_SET );
-        endGeometry->setVertexAttribArray( 6, m_bitfieldAttribs );
-        endGeometry->setVertexAttribBinding( 6, osg::Geometry::BIND_PER_PRIMITIVE_SET );
+        startGeometry->setVertexAttribArray( 15, m_bitfieldAttribs );
+        startGeometry->setVertexAttribBinding( 15, osg::Geometry::BIND_PER_PRIMITIVE_SET );
+        endGeometry->setVertexAttribArray( 15, m_bitfieldAttribs );
+        endGeometry->setVertexAttribBinding( 15, osg::Geometry::BIND_PER_PRIMITIVE_SET );
 
         startGeometry->setSecondaryColorArray( m_secondaryColor );
         startGeometry->setSecondaryColorBinding( osg::Geometry::BIND_PER_PRIMITIVE_SET );

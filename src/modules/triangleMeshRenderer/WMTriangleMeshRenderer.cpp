@@ -303,10 +303,13 @@ void WMTriangleMeshRenderer::moduleMain()
 
     // load the GLSL shader:
     m_shader = new WGEShader( "WMTriangleMeshRenderer", m_localPath );
-    m_colorMapTransformation = new osg::Uniform( "u_colorMapTransformation", osg::Matrixd::identity() );
+    m_colorMapTransformation = new osg::Uniform( osg::Uniform::FLOAT_MAT4, "u_colorMapTransformation" );
+    m_textureMatrix = new osg::TexMat();
+    m_textureMatrix->setMatrix( osg::Matrixd::identity() );
     m_shader->addPreprocessor( WGEShaderPreprocessor::SPtr(
         new WGEShaderPropertyDefineOptions< WPropBool >( m_colormap, "COLORMAPPING_DISABLED", "COLORMAPPING_ENABLED" ) )
     );
+    m_colorMapTransformation->setUpdateCallback( new WGETexMatUniformCallback( m_textureMatrix ) );
 
     // set the opacity and material color property as GLSL uniforms:
     moduleNodeState->addUniform( new WGEPropertyUniform< WPropDouble >( "u_opacity", m_opacity ) );
@@ -362,6 +365,7 @@ void WMTriangleMeshRenderer::renderMesh( std::shared_ptr< WTriangleMesh > mesh )
     debugLog() << "Start rendering Mesh";
     osg::ref_ptr< osg::Geometry > geometry;
     osg::ref_ptr< osg::Geode > geode( new osg::Geode );
+    geode->setName( "Triangle Mesh Renderer Geode" );
     geode->getOrCreateStateSet()->addUniform( m_colorMapTransformation );
     geode->getOrCreateStateSet()->addUniform( new WGEPropertyUniform< WPropDouble >( "u_colormapRatio", m_colormapRatio ) );
 
@@ -510,7 +514,7 @@ void WMTriangleMeshRenderer::updateTransformation()
                                 matrixTranslate;
 
         m_moduleNode->setMatrix( matrixComplete );
-        m_colorMapTransformation->set( matrixComplete );
+        m_textureMatrix->setMatrix( matrixComplete );
     }
 }
 

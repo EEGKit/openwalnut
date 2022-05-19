@@ -60,6 +60,7 @@ public:
     /**
      * Create the dataset. This needs to be implemented by all the creators you write.
      *
+     * \param seed the seed for the random values.
      * \param progress progress indicator
      * \param color color of all fibers
      * \param numFibers number of fibers
@@ -72,7 +73,8 @@ public:
      * \param fibIdxVertexMap inverse map. Fill this.
      * \param colors the color array. Fill this.
      */
-    virtual void operator()( WProgress::SPtr progress,
+    virtual void operator()( int seed,
+                             WProgress::SPtr progress,
                              const WColor& color,
                              size_t numFibers,
                              size_t numVertsPerFiber,

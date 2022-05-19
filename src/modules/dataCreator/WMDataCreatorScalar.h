@@ -75,12 +75,6 @@ public:
      */
     virtual std::shared_ptr< WModule > factory() const;
 
-    /**
-     * Get the icon for this module in XPM format.
-     * \return The icon.
-     */
-    virtual const char** getXPMIcon() const;
-
 protected:
     /**
      * Entry point after loading the module. Runs in separate thread.
@@ -111,6 +105,8 @@ private:
 
     WPropPosition m_origin; //!< where to put the origin
     WPropPosition m_size; //!< where to put the origin
+
+    WPropBool m_timeDependent; //!< Use time dependent variation of data (experimental).
 
     WPropSelection m_valueType; //!< the datatype of the valueset
     WPropSelection m_structuralType; //!< select between scalar, vector and other structural types

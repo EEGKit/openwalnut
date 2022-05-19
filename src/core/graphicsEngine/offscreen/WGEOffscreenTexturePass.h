@@ -30,6 +30,7 @@
 #include <osg/Geode>
 #include <osg/TexMat>
 
+#include "core/graphicsEngine/callbacks/WGETexMatUniformCallback.h"
 #include "WGEOffscreenRenderPass.h"
 
 class WGETextureHud;

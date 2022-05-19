@@ -77,6 +77,7 @@ public:
      * \param mButton mouse button that initiated the pick
      * \param pickNormal normal at position where object was hit. (0,0,0) means not set.
      * \param wheelValue the value of the scroll wheel
+     * \param pickPath Names of objects hit in pick
      */
     inline WPickInfo( std::string name,
                       std::string viewerName,
@@ -85,7 +86,8 @@ public:
                       modifierKey modKey,
                       WMouseButton mButton = WPickInfo::MOUSE_LEFT,
                       WVector3d pickNormal = WVector3d(),
-                      int32_t wheelValue = 0 );
+                      int32_t wheelValue = 0,
+                      std::string pickPath = "" );
 
     /**
      * Creates an object with the empty name, zero position and no modkey.
@@ -125,6 +127,27 @@ public:
      * \return object name
      */
     inline std::string getName() const;
+
+    /**
+     * Get name of all picked objects in ray.
+     *
+     * \return Names
+     */
+    inline std::string getPickPath() const;
+
+    /**
+     * Set pick path string.
+     *
+     * \param path String representing the pick path
+     */
+    inline void setPickPath( std::string path );
+
+    /**
+     * Add object to pick path.
+     *
+     * \param name Name of new object in path.
+     */
+    inline void appendToPickPath( std::string name );
 
     /**
      * Get name of the viewer.
@@ -180,14 +203,15 @@ public:
 
 protected:
 private:
-    std::string m_name; //!< name of picked object.
-    std::string m_viewerName; //!< name of the viewer
-    WPosition m_pickPosition; //!< position where object was hit.
+    std::string m_name; //!< Name of picked object.
+    std::string m_viewerName; //!< Name of the viewer
+    WPosition m_pickPosition; //!< Position where object was hit.
     std::pair< float, float > m_pixelCoords; //!< Pixel coordinates of the mouse.
-    modifierKey m_modKey; //!< modifier key associated with the pick
-    WMouseButton m_mouseButton; //!< which mouse button was used for the pick
-    WVector3d m_pickNormal; //!< normal at position where object was hit.
-    int32_t m_scrollValue; //!< the scroll wheel value.
+    modifierKey m_modKey; //!< Modifier key associated with the pick
+    WMouseButton m_mouseButton; //!< Which mouse button was used for the pick
+    WVector3d m_pickNormal; //!< Normal at position where object was hit.
+    int32_t m_scrollValue; //!< The scroll wheel value.
+    std::string m_pickPath; //!< Name of all picked objects along path.
 };
 
 WPickInfo::WPickInfo( std::string name,
@@ -197,7 +221,8 @@ WPickInfo::WPickInfo( std::string name,
                       modifierKey modKey,
                       WMouseButton mButton,
                       WVector3d pickNormal,
-                      int32_t wheelValue ) :
+                      int32_t wheelValue,
+                      std::string pickPath ) :
     m_name( name ),
     m_viewerName( viewerName ),
     m_pickPosition( pickPosition ),
@@ -205,7 +230,8 @@ WPickInfo::WPickInfo( std::string name,
     m_modKey( modKey ),
     m_mouseButton( mButton ),
     m_pickNormal( pickNormal ),
-    m_scrollValue( wheelValue )
+    m_scrollValue( wheelValue ),
+    m_pickPath( pickPath )
 {
 }
 
@@ -216,7 +242,8 @@ WPickInfo::WPickInfo() :
     m_pixelCoords( std::make_pair( 0.0, 0.0 ) ),
     m_modKey( WPickInfo::NONE ),
     m_mouseButton( WPickInfo::MOUSE_LEFT ),
-    m_scrollValue( 0 )
+    m_scrollValue( 0 ),
+    m_pickPath( "" )
 {
 }
 
@@ -243,6 +270,21 @@ void WPickInfo::setMouseButton( const WMouseButton& mButton )
 std::string WPickInfo::getName() const
 {
     return m_name;
+}
+
+std::string WPickInfo::getPickPath() const
+{
+    return m_pickPath;
+}
+
+void WPickInfo::setPickPath( std::string path )
+{
+     m_pickPath = path;
+}
+
+void WPickInfo::appendToPickPath( std::string name )
+{
+     m_pickPath += " -- " + name + "\n ";
 }
 
 std::string WPickInfo::getViewerName() const

@@ -22,7 +22,9 @@
 //
 //---------------------------------------------------------------------------
 
-#version 120
+#version 150 core
+
+#include "WGEShader-uniforms.glsl"
 
 uniform bool u_clickType;
 

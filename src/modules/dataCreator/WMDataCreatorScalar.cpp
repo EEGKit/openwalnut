@@ -25,15 +25,16 @@
 #include <algorithm>
 #include <memory>
 #include <string>
+#include <thread>
+#include <chrono>
 
-#include "WDataCreatorBreyzel5.h"
+#include "WDataCreatorBretzel5.h"
 #include "WDataCreatorConstant.h"
 #include "WDataCreatorLinearAscent.h"
 #include "WDataCreatorRandom.h"
 #include "WDataCreatorSphere.h"
 #include "WDataCreatorTangle.h"
 #include "WDataCreatorTuring.h"
-#include "WMDataCreator.xpm"
 #include "WMDataCreatorScalar.h"
 #include "core/common/WAssert.h"
 #include "core/common/WProgress.h"
@@ -51,7 +52,7 @@ WMDataCreatorScalar::WMDataCreatorScalar():
     m_strategy.addStrategy( WDataCreatorSphere::SPtr( new WDataCreatorSphere() ) );
     m_strategy.addStrategy( WDataCreatorRandom::SPtr( new WDataCreatorRandom() ) );
     m_strategy.addStrategy( WDataCreatorTangle::SPtr( new WDataCreatorTangle() ) );
-    m_strategy.addStrategy( WDataCreatorBreyzel5::SPtr( new WDataCreatorBreyzel5() ) );
+    m_strategy.addStrategy( WDataCreatorBretzel5::SPtr( new WDataCreatorBretzel5() ) );
     m_strategy.addStrategy( WDataCreatorSphere::SPtr( new WDataCreatorLinearAscent() ) );
     m_strategy.addStrategy( WDataCreatorConstant::SPtr( new WDataCreatorConstant() ) );
     m_strategy.addStrategy( WDataCreatorConstant::SPtr( new WDataCreatorTuring() ) );
@@ -68,11 +69,6 @@ std::shared_ptr< WModule > WMDataCreatorScalar::factory() const
     return std::shared_ptr< WModule >( new WMDataCreatorScalar() );
 }
 
-const char** WMDataCreatorScalar::getXPMIcon() const
-{
-    return datacreator_xpm;
-}
-
 const std::string WMDataCreatorScalar::getName() const
 {
     return "Data Creator Scalar";
@@ -80,7 +76,7 @@ const std::string WMDataCreatorScalar::getName() const
 
 const std::string WMDataCreatorScalar::getDescription() const
 {
-    return "Allows the user to create scalar data sets on a regular grid by providing a bunch of data creation schemes.";
+    return ""; // See META file
 }
 
 void WMDataCreatorScalar::connectors()
@@ -111,6 +107,11 @@ void WMDataCreatorScalar::properties()
     m_origin = m_properties->addProperty( "Origin", "Coordinate of the origin (voxel 0,0,0).", WPosition( 0.0, 0.0, 0.0 ), m_propCondition );
     m_size = m_properties->addProperty( "Size", "The size of the dataset along the X,Y, and Z axis in the OpenWalnut coordinate system.",
                                         WPosition( 128.0, 128.0, 128.0 ), m_propCondition );
+
+    m_timeDependent = m_properties->addProperty( "Time dependent (experimental)",
+                                                 "Vary data over time. This feature is <b>experimental</b>.",
+                                                 false,
+                                                 m_propCondition );
 
     // now, setup the strategy helper.
     m_properties->addProperty( m_strategy.getProperties() );
@@ -163,10 +164,15 @@ void WMDataCreatorScalar::moduleMain()
         // done. update output
         m_output->updateData( ds );
 
+        if( m_timeDependent->get() )
+        {
+            m_size->set( WVector3d( m_size->get()[0], m_size->get()[1], static_cast<int>( m_size->get()[2] + 10 ) % 1000 ) );
+            std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
+        }
+
         // Now, the moduleState variable comes into play. The module can wait for the condition, which gets fired whenever the input receives data
         // or an property changes. The main loop now waits until something happens.
         debugLog() << "Waiting ...";
         m_moduleState.wait();
     }
 }
-
