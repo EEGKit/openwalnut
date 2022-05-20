@@ -62,6 +62,12 @@ public:
      */
     void setTriggered( bool triggered );
 
+     /**
+     * Sets the state of the grip button.
+     * \param gripped Whether the grip button is pressed or not.
+     */
+    void setGripped( bool gripped );
+
     /**
      * Gets the device id
      * \return int the device id.
@@ -106,6 +112,13 @@ public:
     bool isTriggered();
 
     /**
+     * Gets the state of the grip button
+     * \return true The grip button is pressed.
+     * \return false The grip button is not pressed.
+     */
+    bool isGripped();
+
+    /**
      * Creates the geometry with a model at the given path.
      * \param path The path to the model.
      */
@@ -131,6 +144,7 @@ private:
     osg::Quat m_prevRotation; //!< The rotation of the previous frame.
 
     bool m_triggered; //!< Whether the trigger button is pressed or not.
+    bool m_gripped; //!< Whether the grip button is pressed or not.
 };
 
 #endif  // WVRCONTROLLER_H

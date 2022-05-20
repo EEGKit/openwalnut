@@ -30,6 +30,7 @@ WVRController::WVRController( int role ):
     m_role( role )
 {
     m_triggered = false;
+    m_gripped = false;
 }
 
 void WVRController::setDeviceID( uint32_t deviceID )
@@ -40,6 +41,11 @@ void WVRController::setDeviceID( uint32_t deviceID )
 void WVRController::setTriggered( bool triggered )
 {
     m_triggered = triggered;
+}
+
+void WVRController::setGripped( bool gripped )
+{
+    m_gripped = gripped;
 }
 
 uint32_t WVRController::getDeviceID()
@@ -75,6 +81,11 @@ osg::Quat WVRController::getPrevRotation()
 bool WVRController::isTriggered()
 {
     return m_triggered;
+}
+
+bool WVRController::isGripped()
+{
+    return m_gripped;
 }
 
 void WVRController::updatePose( vr::IVRSystem* vrSystem, osg::Vec3 cameraPosition )

@@ -267,39 +267,28 @@ void WMVRCamera::handleVREvent( vr::VREvent_t vrEvent )
 
 void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent )
 {
-    switch( vrEvent.eventType )
-    {
-    case vr::VREvent_ButtonPress:
-        // check for any changes regarding controller device IDs on any button press
-        updateDeviceIDs();
+    WVRController* controller = vrEvent.trackedDeviceIndex == m_leftController->getDeviceID() ? m_leftController.get() :
+                                vrEvent.trackedDeviceIndex == m_rightController->getDeviceID() ? m_rightController.get() : nullptr;
 
-        if( vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_SteamVR_Trigger )
-        {
-            if( vrEvent.trackedDeviceIndex == m_leftController->getDeviceID() )
-            {
-                m_leftController->setTriggered( true );
-            }
-            else if( vrEvent.trackedDeviceIndex == m_rightController->getDeviceID() )
-            {
-                m_rightController->setTriggered( true );
-            }
-        }
-        break;
-    case vr::VREvent_ButtonUnpress:
-        if( vrEvent.data.controller.button == vr::EVRButtonId::k_EButton_SteamVR_Trigger )
-        {
-            if( vrEvent.trackedDeviceIndex == m_leftController->getDeviceID() )
-            {
-                m_leftController->setTriggered( false );
-            }
-            else if( vrEvent.trackedDeviceIndex == m_rightController->getDeviceID() )
-            {
-                m_rightController->setTriggered( false );
-            }
-        }
-        break;
-    default:
-        break;
+    if( !controller )
+    {
+        return; // Not a controller
+    }
+
+    bool pressed = vrEvent.eventType == vr::VREvent_ButtonPress ? true : false;
+    if( !pressed && vrEvent.eventType != vr::VREvent_ButtonUnpress )
+    {
+        return; // neither press nor unpress
+    }
+
+    switch( vrEvent.data.controller.button )
+    {
+        case vr::EVRButtonId::k_EButton_SteamVR_Trigger:
+            controller->setTriggered( pressed );
+            break;
+        case vr::EVRButtonId::k_EButton_Grip:
+            controller->setGripped( pressed );
+            break;
     }
 }
 
@@ -354,6 +343,11 @@ void WMVRCamera::updateControllerPoses()
         m_dataRotation *= rotMatrix;
 
         m_sceneTransform->setMatrix( m_dataRotation * osg::Matrixd::translate( m_dataPosition ) );
+    }
+
+    if( m_leftController->isGripped() && m_rightController->isGripped() )
+    {
+        ResetHMDPosition();
     }
 }
 
