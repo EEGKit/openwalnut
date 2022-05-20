@@ -514,6 +514,8 @@ osg::ref_ptr< osg::Node > WMFiberDisplay::createClipPlane() const
 void WMFiberDisplay::createFiberGeode( std::shared_ptr< WDataSetFibers > fibers, osg::ref_ptr< osg::Geode > fibGeode,
                                                                                          osg::ref_ptr< osg::Geode > endCapGeode )
 {
+    bool tubeMode = m_tubeEnable->get( true );
+
     // geode and geometry
     osg::StateSet* state = fibGeode->getOrCreateStateSet();
     osg::StateSet* endState = endCapGeode->getOrCreateStateSet();
@@ -532,8 +534,8 @@ void WMFiberDisplay::createFiberGeode( std::shared_ptr< WDataSetFibers > fibers,
         new osg::DrawElementsUInt( m_tubeEnable->get( true ) ? osg::PrimitiveSet::QUADS : osg::PrimitiveSet::LINES ) );
 
     // new attribute array
-    m_bitfieldAttribs = new osg::FloatArray( m_fibers->getLineStartIndexes()->size() );
-    m_secondaryColor = new osg::Vec3Array( m_fibers->getLineStartIndexes()->size() );
+    m_bitfieldAttribs = new osg::FloatArray( m_fibers->getNbVertices() * ( tubeMode ? 2 : 1 ) );
+    m_secondaryColor = new osg::Vec3Array( m_fibers->getNbVertices() * ( tubeMode ? 2 : 1 ) );
 
     // this is needed for the end- sprites
     osg::ref_ptr< osg::Vec3Array > endVertices = osg::ref_ptr< osg::Vec3Array >( new osg::Vec3Array );
@@ -588,8 +590,8 @@ void WMFiberDisplay::createFiberGeode( std::shared_ptr< WDataSetFibers > fibers,
     debugLog() << "Iterating over " << fibStart->size() << " fibers.";
     debugLog() << "Number of vertices: " << fibVerts->size() / 3;
     size_t currentStart = 0;
-    bool tubeMode = m_tubeEnable->get( true );
 
+    size_t vidx = 0;
     for( size_t fidx = 0; fidx < fibStart->size() ; ++fidx )
     {
         ++*progress1;
@@ -600,12 +602,6 @@ void WMFiberDisplay::createFiberGeode( std::shared_ptr< WDataSetFibers > fibers,
 
         // the length of the fiber
         size_t len = fibLen->at( fidx );
-
-        // also initialize the ROI filter bitfield
-        ( *m_bitfieldAttribs )[ fidx ] = m_fiberSelector->getBitfield()->at( fidx );
-        // NOTE: secondary color arrays only support RGB colors
-        WColor c = m_fiberSelector->getFiberColor( fidx );
-        ( *m_secondaryColor )[ fidx ] = osg::Vec3( c.r(), c.g(), c.b() );
 
         // a line needs 2 verts at least
         if( len < 2 )
@@ -664,6 +660,13 @@ void WMFiberDisplay::createFiberGeode( std::shared_ptr< WDataSetFibers > fibers,
             colors->push_back( color );
             tangents->push_back( tangent );
 
+            // For the rois
+            ( *m_bitfieldAttribs )[ vidx ] = m_fiberSelector->getBitfield()->at( fidx );
+            // NOTE: secondary color arrays only support RGB colors
+            WColor c = m_fiberSelector->getFiberColor( fidx );
+            ( *m_secondaryColor )[ vidx ] = osg::Vec3( c.r(), c.g(), c.b() );
+            vidx++;
+
             if( tubeMode )
             {
                 // if in tube-mode, some final sprites are needed to provide some kind of ending for the tube
@@ -685,6 +688,13 @@ void WMFiberDisplay::createFiberGeode( std::shared_ptr< WDataSetFibers > fibers,
                 // This saves some mem.
                 texcoords->push_back( 1.0 );
                 texcoords->push_back( -1.0 );
+
+                // add a second bitfield for the tubes
+                ( *m_bitfieldAttribs )[ vidx ] = m_fiberSelector->getBitfield()->at( fidx );
+                // NOTE: secondary color arrays only support RGB colors
+                WColor c = m_fiberSelector->getFiberColor( fidx );
+                ( *m_secondaryColor )[ vidx ] = osg::Vec3( c.r(), c.g(), c.b() );
+                vidx++;
             }
         }
 
@@ -755,21 +765,21 @@ void WMFiberDisplay::createFiberGeode( std::shared_ptr< WDataSetFibers > fibers,
     geometry->setVertexAttribArray( 15, m_bitfieldAttribs );
     geometry->setSecondaryColorArray( m_secondaryColor );
     // the attributes are define per line strip, thus we bind the array accordingly
-    geometry->setVertexAttribBinding( 15, osg::Geometry::BIND_PER_PRIMITIVE_SET );
-    geometry->setSecondaryColorBinding( osg::Geometry::BIND_PER_PRIMITIVE_SET );
+    geometry->setVertexAttribBinding( 15, osg::Geometry::BIND_PER_VERTEX );
+    geometry->setSecondaryColorBinding( osg::Geometry::BIND_PER_VERTEX );
 
     if( tubeMode )
     {
         // we have one vertex per line, so bind the attribute array per vertex
         startGeometry->setVertexAttribArray( 15, m_bitfieldAttribs );
-        startGeometry->setVertexAttribBinding( 15, osg::Geometry::BIND_PER_PRIMITIVE_SET );
+        startGeometry->setVertexAttribBinding( 15, osg::Geometry::BIND_PER_VERTEX );
         endGeometry->setVertexAttribArray( 15, m_bitfieldAttribs );
-        endGeometry->setVertexAttribBinding( 15, osg::Geometry::BIND_PER_PRIMITIVE_SET );
+        endGeometry->setVertexAttribBinding( 15, osg::Geometry::BIND_PER_VERTEX );
 
         startGeometry->setSecondaryColorArray( m_secondaryColor );
-        startGeometry->setSecondaryColorBinding( osg::Geometry::BIND_PER_PRIMITIVE_SET );
+        startGeometry->setSecondaryColorBinding( osg::Geometry::BIND_PER_VERTEX );
         endGeometry->setSecondaryColorArray( m_secondaryColor );
-        endGeometry->setSecondaryColorBinding( osg::Geometry::BIND_PER_PRIMITIVE_SET );
+        endGeometry->setSecondaryColorBinding( osg::Geometry::BIND_PER_VERTEX );
     }
 
     // add an update callback which later handles several things like the filter attribute array
@@ -786,6 +796,8 @@ void WMFiberDisplay::createFiberGeode( std::shared_ptr< WDataSetFibers > fibers,
 
 void WMFiberDisplay::geometryUpdate( osg::Drawable* geometry )
 {
+    bool tubeMode = m_tubeEnable->get( true );
+
     if( m_fiberSelectorChanged )
     {
         std::unique_lock< boost::mutex > lock( m_mutex );
@@ -794,12 +806,37 @@ void WMFiberDisplay::geometryUpdate( osg::Drawable* geometry )
         m_roiFilterColorsOverride->set( overrideROIFiltering ? 1.0f : 0.0f );
 
         m_fiberSelectorChanged = false;
+
         // now initialize attribute array
+        WDataSetFibers::LengthArray fibLen = m_fibers->getLineLengths();
+
+        size_t vidx = 0;
         for( size_t fidx = 0; fidx < m_fibers->getLineStartIndexes()->size() ; ++fidx )
         {
-            ( *m_bitfieldAttribs )[ fidx ] = overrideROIFiltering | m_fiberSelector->getBitfield()->at( fidx );
+            size_t len = fibLen->at( fidx );
+            bool bitf = overrideROIFiltering | m_fiberSelector->getBitfield()->at( fidx );
             WColor c = m_fiberSelector->getFiberColor( fidx );
-            ( *m_secondaryColor )[ fidx ] = osg::Vec3( c.r(), c.g(), c.b() );
+            osg::Vec3 col = osg::Vec3( c.r(), c.g(), c.b() );
+
+            if( bitf == ( *m_bitfieldAttribs )[ vidx ] && col == ( *m_secondaryColor )[ vidx ] )
+            {
+                vidx += len * ( tubeMode ? 2 : 1 );
+                continue;
+            }
+
+            for( size_t vertx = 0; vertx < len; ++vertx )
+            {
+                ( *m_bitfieldAttribs )[ vidx ] = bitf;
+                ( *m_secondaryColor )[ vidx ] = col;
+                vidx++;
+
+                if( tubeMode )
+                {
+                    ( *m_bitfieldAttribs )[ vidx ] = bitf;
+                    ( *m_secondaryColor )[ vidx ] = col;
+                    vidx++;
+                }
+            }
         }
         m_bitfieldAttribs->dirty();
         m_secondaryColor->dirty();

@@ -238,7 +238,7 @@ WDataSetFibers::VertexArray WDataSetFibers::getVertices() const
 
 size_t WDataSetFibers::getNbVertices() const
 {
-    return std::accumulate( m_lineLengths->begin(), m_lineLengths->end(), 0 );
+    return m_vertices->size();
 }
 
 WDataSetFibers::IndexArray WDataSetFibers::getLineStartIndexes() const
