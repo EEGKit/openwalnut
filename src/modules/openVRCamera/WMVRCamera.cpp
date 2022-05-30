@@ -285,6 +285,7 @@ void WMVRCamera::handleControllerEvent( vr::VREvent_t vrEvent )
     {
         case vr::EVRButtonId::k_EButton_SteamVR_Trigger:
             controller->setTriggered( pressed );
+            controller->setCurrentSelection( pressed ? findSelectedObject( controller ) : nullptr );
             break;
         case vr::EVRButtonId::k_EButton_Grip:
             controller->setGripped( pressed );
@@ -315,40 +316,171 @@ void WMVRCamera::updateControllerPoses()
     m_leftController->updatePose( m_vrSystem, m_cameraPosition );
     m_rightController->updatePose( m_vrSystem, m_cameraPosition );
 
-    // zooming
     if( m_leftController->isTriggered() && m_rightController->isTriggered() )
     {
-        double lenPrev = ( m_leftController->getPrevPosition() - m_rightController->getPrevPosition() ).length();
-        double lenNow  = ( m_leftController->getPosition() - m_rightController->getPosition() ).length();
-        double length = lenNow - lenPrev;
-
-        osg::Vec3 dir( 0.0, 0.0, -1.0 );
-        dir = ( m_cameraRotation * m_HMD_rotation ) * dir;
-        dir *= length;
-
-        m_cameraPosition += dir;
+        if( m_leftController->getCurrentSelection() != nullptr )
+        {
+            handleResize();
+        }
+        else
+        {
+            handleZoom();
+        }
     }
     else if( m_rightController->isTriggered() )
     {
-        // data translation
-        osg::Vec3 diff = m_rightController->getPosition() - m_rightController->getPrevPosition();
-        m_dataPosition += diff;
-
-        // data rotation
-        osg::Vec3 contrPosition = ( m_cameraPosition - m_dataPosition ) + m_rightController->getPosition();
-        osg::Quat rotDiff = m_rightController->getPrevRotation().inverse() * m_rightController->getRotation();
-        osg::Matrixd rotMatrix = osg::Matrixd::translate( -contrPosition ) * osg::Matrixd::rotate( rotDiff ) *
-                                 osg::Matrixd::translate( contrPosition );
-
-        m_dataRotation *= rotMatrix;
-
-        m_sceneTransform->setMatrix( m_dataRotation * osg::Matrixd::translate( m_dataPosition ) );
+        handleGrab();
+    }
+    else if( m_leftController->isTriggered() )
+    {
+        handlePick();
     }
 
     if( m_leftController->isGripped() && m_rightController->isGripped() )
     {
         ResetHMDPosition();
     }
+}
+
+void WMVRCamera::handleZoom()
+{
+    double lenPrev = ( m_leftController->getPrevPosition() - m_rightController->getPrevPosition() ).length();
+    double lenNow  = ( m_leftController->getPosition() - m_rightController->getPosition() ).length();
+    double length = lenNow - lenPrev;
+
+    osg::Vec3 dir( 0.0, 0.0, -1.0 );
+    dir = ( m_cameraRotation * m_HMD_rotation ) * dir;
+    dir *= length;
+
+    m_cameraPosition += dir;
+}
+
+void WMVRCamera::handleGrab()
+{
+    // data translation
+    osg::Vec3 diff = m_rightController->getPosition() - m_rightController->getPrevPosition();
+    m_dataPosition += diff;
+
+    // data rotation
+    osg::Vec3 contrPosition = ( m_cameraPosition - m_dataPosition ) + m_rightController->getPosition();
+    osg::Quat rotDiff = m_rightController->getPrevRotation().inverse() * m_rightController->getRotation();
+    osg::Matrixd rotMatrix = osg::Matrixd::translate( -contrPosition ) * osg::Matrixd::rotate( rotDiff ) * osg::Matrixd::translate( contrPosition );
+
+    m_dataRotation *= rotMatrix;
+
+    m_sceneTransform->setMatrix( m_dataRotation * osg::Matrixd::translate( m_dataPosition ) );
+}
+
+
+std::string extractSuitableName( osgUtil::RayIntersector::Intersections::iterator hitr )
+{
+    if( !hitr->nodePath.empty() && !( hitr->nodePath.back()->getName().empty() ) )
+    {
+        return hitr->nodePath.back()->getName();
+    }
+    else if( hitr->drawable.valid() )
+    {
+        return  hitr->drawable->className();
+    }
+    assert( 0 && "This should not happen. Tell \"wiebel\" if it does." );
+    return ""; // This line will not be reached.
+}
+
+osg::Geode* WMVRCamera::findSelectedObject( WVRController* controller )
+{
+    osg::Vec3 dir = controller->getRotation() * osg::Vec3( 0.0, 1.0, 0.0 );
+    osg::Vec3 pos = m_cameraPosition + controller->getPosition();
+
+    osgUtil::RayIntersector::Intersections intersections;
+
+    osg::ref_ptr< osgUtil::RayIntersector > picker = new osgUtil::RayIntersector( pos, dir );
+    osgUtil::IntersectionVisitor iv( picker.get() );
+
+    m_leftEyeCamera->accept( iv );
+
+    osgUtil::RayIntersector::Intersections::iterator hitr;
+
+    if( picker->containsIntersections() )
+    {
+        intersections = picker->getIntersections();
+        assert( intersections.size() );
+
+        hitr = intersections.begin();
+
+        while( hitr != intersections.end() )
+        {
+            std::string nodeName = extractSuitableName( hitr );
+            WAssert( nodeName.size() > 2, "Geode name too short for picking." );
+
+            // now we skip everything that starts with an underscores or vr
+            if( nodeName[0] == '_' || ( nodeName[0] == 'v' && nodeName[1] == 'r' ) )
+            {
+                ++hitr;
+            }
+            else
+            {
+                return hitr->nodePath.back()->asGeode();
+            }
+        }
+    }
+
+    return nullptr;
+}
+
+void WMVRCamera::handleResize()
+{
+    WROIBox* roi = dynamic_cast< WROIBox* >( m_leftController->getCurrentSelection() );
+    if( !roi )
+    {
+        return;
+    }
+
+    osg::Matrixd sceneMatrix = m_dataRotation * osg::Matrixd::translate( m_dataPosition );
+    osg::Vec3 maxPos = roi->getMaxPos();
+    maxPos = maxPos * sceneMatrix;
+
+    osg::Vec3 diff = m_rightController->getPosition() - m_rightController->getPrevPosition();
+    maxPos += diff;
+
+    maxPos = maxPos * osg::Matrixd::inverse( sceneMatrix );
+    roi->getMaxPosProperty()->set( WPosition( maxPos ) );
+}
+
+void WMVRCamera::handlePick()
+{
+    if( m_leftController->getCurrentSelection() == nullptr )
+    {
+        return;
+    }
+
+    WROIBox* roi = dynamic_cast< WROIBox* >( m_leftController->getCurrentSelection() );
+    if( !roi )
+    {
+        return;
+    }
+
+    osg::Matrixd sceneMatrix = m_dataRotation * osg::Matrixd::translate( m_dataPosition );
+
+    osg::Vec3 sizeHalf( ( roi->getMaxPos() - roi->getMinPos() ) * 0.5 );
+    osg::Vec3 center( roi->getMinPos() );
+    center += sizeHalf;
+    center = center * sceneMatrix;
+
+    osg::Vec3 diff = m_leftController->getPosition()- m_leftController->getPrevPosition();
+    center += diff;
+
+    osg::Vec3 contrPosition = m_cameraPosition + m_leftController->getPosition();
+    osg::Quat rotDiff =  m_leftController->getPrevRotation().inverse() * m_leftController->getRotation();
+    osg::Matrixd rotMatrix = osg::Matrixd::translate( -contrPosition ) * osg::Matrixd::rotate( rotDiff ) * osg::Matrixd::translate( contrPosition );
+
+    center = center * rotMatrix;
+    center = center * osg::Matrixd::inverse( sceneMatrix );
+
+    osg::Vec3 minPos = center- sizeHalf;
+    osg::Vec3 maxPos = center + sizeHalf;
+
+    roi->getMinPosProperty()->set( WPosition( minPos ) );
+    roi->getMaxPosProperty()->set( WPosition( maxPos ) );
 }
 
 void WMVRCamera::updateHMDPose()

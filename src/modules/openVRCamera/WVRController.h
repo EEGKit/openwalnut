@@ -69,10 +69,22 @@ public:
     void setGripped( bool gripped );
 
     /**
+     * Sets the current selection.
+     * \param selection The new selection.
+     */
+    void setCurrentSelection( osg::Geode* selection );
+
+    /**
      * Gets the device id
      * \return int the device id.
      */
     uint32_t getDeviceID();
+
+    /**
+     * Gets the current selection.
+     * \return osg::Geode* The current selection.
+     */
+    osg::Geode* getCurrentSelection();
 
     /**
      * Gets the geometry node of the controller
@@ -136,8 +148,10 @@ private:
     uint32_t m_deviceID; //!< The device id of the controller
 
     osg::ref_ptr< osg::Node > m_node; //!< The geometry of the controller.
+    osg::ref_ptr< osg::Geode > m_directionIndicator; //!< The indicator for the direction.
 
     osg::Vec3 m_position; //!< The current position of the controller relative to the camera position.
+
     osg::Quat m_rotation; //!< The current rotation of the controller.
 
     osg::Vec3 m_prevPosition; //!< The position of the previous frame.
@@ -145,6 +159,8 @@ private:
 
     bool m_triggered; //!< Whether the trigger button is pressed or not.
     bool m_gripped; //!< Whether the grip button is pressed or not.
+
+    osg::Geode* m_currentSelection; // The current selection for the left controller.
 };
 
 #endif  // WVRCONTROLLER_H

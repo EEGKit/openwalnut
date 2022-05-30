@@ -48,9 +48,19 @@ void WVRController::setGripped( bool gripped )
     m_gripped = gripped;
 }
 
+void WVRController::setCurrentSelection( osg::Geode* selection )
+{
+    m_currentSelection = selection;
+}
+
 uint32_t WVRController::getDeviceID()
 {
     return m_deviceID;
+}
+
+osg::Geode* WVRController::getCurrentSelection()
+{
+    return m_currentSelection;
 }
 
 osg::ref_ptr< osg::Node > WVRController::getNode()
@@ -138,8 +148,28 @@ void WVRController::createGeometry( std::string path )
 {
     osg::ref_ptr< osg::Node > controllerNode = osgDB::readNodeFile( path );
 
+    // handle direction
+    m_directionIndicator = new osg::Geode();
+    osg::Geometry* geo = new osg::Geometry();
+    osg::Vec4Array* v = new osg::Vec4Array();
+    osg::Vec4Array* c = new osg::Vec4Array();
+
+    v->push_back( osg::Vec4( 0.0, 0.0, 0.0, 1.0 ) );
+    v->push_back( osg::Vec4( 0.0, 1.0, 0.0, 0.0 ) );
+
+    c->push_back( osg::Vec4( 0.0, 0.0, 0.0, 1.0 ) );
+    c->push_back( osg::Vec4( 0.0, 0.0, 0.0, 1.0 ) );
+
+    geo->setVertexArray( v );
+    geo->setColorArray( c );
+
+    geo->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::LINES, 0, v->size() ) );
+    m_directionIndicator->addDrawable( geo );
+
+    // handle transform
     osg::ref_ptr< osg::MatrixTransform > mat = osg::ref_ptr< osg::MatrixTransform >( new osg::MatrixTransform() );
     mat->addChild( controllerNode );
+    mat->addChild( m_directionIndicator );
 
     mat->setNodeMask( 0 );
 

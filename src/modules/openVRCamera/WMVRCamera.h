@@ -29,8 +29,11 @@
 
 #include <openvr.h> // NOLINT
 
+#include <osgUtil/RayIntersector>
+
 #include "core/common/math/WMath.h"
 #include "core/kernel/WModule.h"
+#include "core/graphicsEngine/WROIBox.h"
 
 #include "WRTTCamera.h"
 #include "WSwapUpdateCallback.h"
@@ -177,6 +180,34 @@ protected:
     bool setupVRInterface();
 
 private:
+    /**
+     * Handles the zoom interaction.
+     */
+    void handleZoom();
+
+    /**
+     * Handles the grab interaction.
+     */
+    void handleGrab();
+
+    /**
+     * Handles the pick interaction.
+     */
+    void handlePick();
+
+    /**
+     * Handles the resize interaction.
+     */
+    void handleResize();
+
+    /**
+     * Finds the object the controller is pointing at.
+     * 
+     * \param controller The controller that points.
+     * \return osg::Geode* The object that is pointed at.
+     */
+    osg::Geode* findSelectedObject( WVRController* controller );
+
     std::shared_ptr< WCondition > m_propCondition; //!< A condition for property updates.
 
     WPropBool m_vrOn; //!< A feature toggle for submitting frames to OpenVR SDK
