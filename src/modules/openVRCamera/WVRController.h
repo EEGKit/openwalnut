@@ -160,7 +160,7 @@ private:
     bool m_triggered; //!< Whether the trigger button is pressed or not.
     bool m_gripped; //!< Whether the grip button is pressed or not.
 
-    osg::Geode* m_currentSelection; // The current selection for the left controller.
+    osg::Geode* m_currentSelection; //!< The current selection for the left controller.
 };
 
 #endif  // WVRCONTROLLER_H
