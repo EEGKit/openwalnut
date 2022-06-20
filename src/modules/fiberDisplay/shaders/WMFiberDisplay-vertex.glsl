@@ -111,6 +111,14 @@ uniform vec3 u_planeVector;
  */
 uniform float u_tubeSize;
 
+#ifdef BITFIELD_ENABLED
+    uniform sampler2D bitfieldSampler;
+    uniform int bitfieldSize;
+
+    uniform sampler2D selColorSampler;
+    uniform int selColorSize;
+#endif
+
 /////////////////////////////////////////////////////////////////////////////
 // Attributes
 /////////////////////////////////////////////////////////////////////////////
@@ -119,7 +127,7 @@ uniform float u_tubeSize;
  * This vertex attribute is the bitmask denoting whether to show the fiber or not
  */
 #ifdef BITFIELD_ENABLED
-    in float a_bitfield;
+    in int a_primitiveID;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
@@ -129,6 +137,18 @@ uniform float u_tubeSize;
 /////////////////////////////////////////////////////////////////////////////
 // Functions
 /////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Converts an index to a vec2
+ * \param idx the index
+ * \param size the size of the quadratic texture
+ *
+ * \return The x and y coordinates of the index
+ */
+ivec2 index2Vec2( int idx, int size )
+{
+    return ivec2( idx % size, idx / size );
+}
 
 /**
  * Main entry point of the vertex shader.
@@ -202,10 +222,9 @@ void main()
 #endif
 
 #ifdef BITFIELD_ENABLED
-    v_discard = 1.0 - a_bitfield;
+    v_discard = 1.0 - texelFetch( bitfieldSampler, index2Vec2( a_primitiveID, bitfieldSize ), 0 ).r;
+    v_clusterColor = texelFetch( selColorSampler, index2Vec2( a_primitiveID, selColorSize ), 0 );
 #endif
-
-    v_clusterColor = osg_SecondaryColor.rgba;
 
     // Simply project the vertex afterwards
     gl_Position = osg_ProjectionMatrix * v_vertex;

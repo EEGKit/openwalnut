@@ -329,19 +329,34 @@ private:
     void roiUpdate();
 
     /**
-     * Contains the ROI bitfield
+     * Contains the normalized primitive id
      */
-    osg::ref_ptr< osg::FloatArray > m_bitfieldAttribs;
-
-    /**
-     * Contains the ROI color map for live branch coloring.
-     */
-    osg::ref_ptr< osg::Vec3Array > m_secondaryColor;
+    osg::ref_ptr< osg::IntArray > m_primitiveID;
 
     /**
      * Ratio between dataset color and ROI color.
      */
     osg::ref_ptr< osg::Uniform > m_roiFilterColorsOverride;
+
+    /**
+     * The image for the bitfield used for the bitfield texture.
+     */
+    osg::ref_ptr< osg::Image > m_bitfieldImage;
+
+    /**
+     * The image for the selection color texture.
+     */
+    osg::ref_ptr< osg::Image > m_selColorImage;
+
+    /**
+     * The texture containing the bitfield data.
+     */
+    osg::ref_ptr< osg::Texture2D > m_bitfieldTexture;
+
+    /**
+     * The texture containing the selection color data.
+     */
+    osg::ref_ptr< osg::Texture2D > m_selColorTexture;
 };
 
 #endif  // WMFIBERDISPLAY_H
